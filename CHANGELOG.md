@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.458] - 2026-06-06
+### Fixed
+- **Quality Gates Phase 4 evidence no longer loops on JSON shape alone.** Core accepts `verificationEvidence` as either an object with `commands` or a top-level command array.
+- **Formal verification now hard-gates the executable surface.** Evidence for `npm run qg:all`, phase aggregate scripts, direct hook commands, and explicit `sh .husky/pre-*` hook runs is enough to prove the configured gates are runnable without requiring every internal npm script to be listed separately.
+- **Verified Quality Gates repair can proceed to Phase 5.** A valid verification repair with aggregate/hook evidence now returns `open_persistent_return` instead of repeatedly asking the agent to repair `missing_verification_evidence`.
+
+### Verification
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.js packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-verification-repair.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.457] - 2026-06-06
 ### Fixed
 - **Quality Gates Phase 4 verification repair now stays in Phase 4.** Core creates `quality-gates.phase4.repair.taskN` after rejected formal verification evidence instead of falling back to draft or Phase 3 integration repair task ids.

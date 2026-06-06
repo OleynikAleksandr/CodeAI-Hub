@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "cc5d21912",
+  "lastRecordedCommit": "2893e16e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream8.task1",
-  "expectedCommitMessage": "fix: relax quality gates verification evidence gate",
+  "currentTaskId": "phase9.stream8.task2",
+  "expectedCommitMessage": "docs: prepare release 1.2.458 notes",
   "debt": {
-    "expectedCommitMessage": "fix: relax quality gates verification evidence gate",
-    "preCommitHead": "cc5d21912",
+    "expectedCommitMessage": "docs: prepare release 1.2.458 notes",
+    "preCommitHead": "2893e16e7",
     "stage": "commit_pending",
-    "taskId": "phase9.stream8.task1"
+    "taskId": "phase9.stream8.task2"
   }
 }
 ```
@@ -186,9 +186,9 @@
 ### Stream: Verification Evidence Gate Relaxation
 
 72. [DONE] `phase9.stream8.task1` Relax Quality Gates Phase 4 verification evidence validation so Core hard-gates the executable surface, accepts aggregate/hook evidence, and does not loop on evidence JSON shape alone (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: relax quality gates verification evidence gate`).
-73. [PENDING] `phase9.stream8.commit1` Git Commit: `fix: relax quality gates verification evidence gate` (hash: TBD)
-74. [TODO] `phase9.stream8.task2` Update release-facing metadata for the confirmed 1.2.458 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.458 notes`).
-75. [TODO] `phase9.stream8.commit2` Git Commit: `docs: prepare release 1.2.458 notes` (hash: TBD)
+73. [DONE] `phase9.stream8.commit1` Git Commit: `fix: relax quality gates verification evidence gate` (hash: 2893e16e7)
+74. [DONE] `phase9.stream8.task2` Update release-facing metadata for the confirmed 1.2.458 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.458 notes`).
+75. [PENDING] `phase9.stream8.commit2` Git Commit: `docs: prepare release 1.2.458 notes` (hash: TBD)
 76. [TODO] `phase9.stream8.task3` Run the confirmed release build flow for the 1.2.458 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.458`).
 77. [TODO] `phase9.stream8.commit3` Git Commit: `chore: build release 1.2.458` (hash: TBD)
 
