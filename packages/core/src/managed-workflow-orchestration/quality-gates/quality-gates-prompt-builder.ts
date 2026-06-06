@@ -9,6 +9,15 @@ export interface QualityGatesIntegrationRepairPromptOptions
   readonly rejectedCommitHash?: string | null;
 }
 
+const QUALITY_GATES_STAGE_TODO_PLAN_PATH =
+  "doc/TODO/stages/quality-gates/todo-plan.md";
+const buildPhaseEnvelope = (title: string): readonly string[] => [
+  title,
+  `Active stage todo-plan: \`${QUALITY_GATES_STAGE_TODO_PLAN_PATH}\`.`,
+  "Treat this as a zero-context Core phase prompt; continue only from this phase envelope, listed artifacts, and diagnostics.",
+  "",
+];
+
 const buildContractArtifactPaths = (
   workspaceSlug: string
 ): readonly string[] => [
@@ -187,6 +196,11 @@ export const buildQualityGatesDraftRepairPrompt = (
     ? buildResearchArtifactPaths(options.workspaceSlug)
     : buildDraftContractArtifactPaths(options.workspaceSlug);
   return [
+    ...buildPhaseEnvelope(
+      researchOnly
+        ? "Core opens Phase 1 Quality Gates Research Repair."
+        : "Core opens Phase 2 Quality Gates Contract Repair."
+    ),
     "Core rejected the current Quality Gates draft.",
     researchOnly
       ? "Repair only the Quality Gates research artifacts and then stop for Core validation."
@@ -231,8 +245,8 @@ export const buildQualityGatesContractDraftPrompt = (options: {
   readonly workspaceSlug: string;
 }): string =>
   [
+    ...buildPhaseEnvelope("Core opens Phase 2 Quality Gates Contract Draft."),
     "Core accepted the Quality Gates research report and opens contract drafting.",
-    "",
     "Use the approved research artifacts as source of truth:",
     `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates-research.md\``,
     `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates-research.json\``,
@@ -251,8 +265,7 @@ export const buildQualityGatesIntegrationPrompt = (options: {
   readonly workspaceSlug: string;
 }): string =>
   [
-    "Core opens Phase 3 Quality Gates Integration.",
-    "",
+    ...buildPhaseEnvelope("Core opens Phase 3 Quality Gates Integration."),
     "The user accepted the Quality Gates contract. Integrate the accepted gate baseline into the workspace filesystem.",
     "",
     "Source of truth artifacts:",
@@ -286,6 +299,9 @@ export const buildQualityGatesIntegrationRepairPrompt = (
   options: QualityGatesIntegrationRepairPromptOptions
 ): string =>
   [
+    ...buildPhaseEnvelope(
+      "Core opens Phase 3 Quality Gates Integration Repair."
+    ),
     `Core rejected Quality Gates integration attempt ${options.attemptNumber}.`,
     "",
     ...(options.rejectedCommitHash
@@ -310,6 +326,9 @@ export const buildQualityGatesReviewRevisionPrompt = (options: {
   readonly workspaceSlug: string;
 }): string =>
   [
+    ...buildPhaseEnvelope(
+      "Core opens Phase 2 Quality Gates Contract Revision."
+    ),
     "Core received Quality Gates review corrections from the user.",
     "Revise only the Quality Gates contract artifacts and then stop for Core validation.",
     "",
@@ -333,6 +352,9 @@ export const buildQualityGatesResearchReviewRevisionPrompt = (options: {
   readonly workspaceSlug: string;
 }): string =>
   [
+    ...buildPhaseEnvelope(
+      "Core opens Phase 1 Quality Gates Research Revision."
+    ),
     "Core received Quality Gates research review corrections from the user.",
     "Revise only the Quality Gates research artifacts and then stop for Core validation.",
     "",
