@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "defca4e37",
+  "lastRecordedCommit": "e7940c77b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream7.task5",
-  "expectedCommitMessage": "docs: prepare release 1.2.457 notes",
+  "currentTaskId": "phase9.stream7.task6",
+  "expectedCommitMessage": "chore: build release 1.2.457",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.457 notes",
-    "preCommitHead": "defca4e37",
+    "expectedCommitMessage": "chore: build release 1.2.457",
+    "preCommitHead": "e7940c77b",
     "stage": "commit_pending",
-    "taskId": "phase9.stream7.task5"
+    "taskId": "phase9.stream7.task6"
   }
 }
 ```
@@ -179,9 +179,9 @@
 66. [DONE] `phase9.stream7.task4` Run targeted Quality Gates orchestration tests and core build after the persistent-return repair (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates persistent return repair`).
 67. [DONE] `phase9.stream7.commit4` Git Commit: `test: verify quality gates persistent return repair` (hash: defca4e37)
 68. [DONE] `phase9.stream7.task5` Update release-facing metadata for the confirmed next retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.457 notes`).
-69. [PENDING] `phase9.stream7.commit5` Git Commit: `docs: prepare release 1.2.457 notes` (hash: TBD)
-70. [TODO] `phase9.stream7.task6` Run the confirmed release build flow for the 1.2.457 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.457`).
-71. [TODO] `phase9.stream7.commit6` Git Commit: `chore: build release 1.2.457` (hash: TBD)
+69. [DONE] `phase9.stream7.commit5` Git Commit: `docs: prepare release 1.2.457 notes` (hash: e7940c77b)
+70. [DONE] `phase9.stream7.task6` Run the confirmed release build flow for the 1.2.457 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.457`).
+71. [PENDING] `phase9.stream7.commit6` Git Commit: `chore: build release 1.2.457` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
