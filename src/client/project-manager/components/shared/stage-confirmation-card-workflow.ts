@@ -35,6 +35,11 @@ type UpstreamArtifactInfo = {
   readonly available: boolean;
 };
 
+export const resolveDisplayedArtifactName = (
+  artifact: UpstreamArtifactInfo,
+  blockedByDirtyGit: boolean
+): string => (blockedByDirtyGit ? "workspace changes" : artifact.fileName);
+
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" ||
   value === "codexCli" ||

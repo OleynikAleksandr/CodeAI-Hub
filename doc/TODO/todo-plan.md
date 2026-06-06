@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "88ac25c54",
+  "lastRecordedCommit": "8f1e8da67",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream6.task1",
-  "expectedCommitMessage": "fix: ignore provider runtime residue in technical dirty gate",
+  "currentTaskId": "phase9.stream6.task2",
+  "expectedCommitMessage": "fix: label workspace dirty gate separately from artifacts",
   "debt": {
-    "expectedCommitMessage": "fix: ignore provider runtime residue in technical dirty gate",
-    "preCommitHead": "88ac25c54",
+    "expectedCommitMessage": "fix: label workspace dirty gate separately from artifacts",
+    "preCommitHead": "8f1e8da67",
     "stage": "commit_pending",
-    "taskId": "phase9.stream6.task1"
+    "taskId": "phase9.stream6.task2"
   }
 }
 ```
@@ -162,9 +162,9 @@
 ### Stream: Provider Runtime Dirty Gate Repair
 
 54. [DONE] `phase9.stream6.task1` Classify provider runtime scratch/session backup residue as volatile for the technical pre-start dirty gate so Quality Gates is not blocked by stale provider files after clear undo/restart (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore provider runtime residue in technical dirty gate`).
-55. [PENDING] `phase9.stream6.commit1` Git Commit: `fix: ignore provider runtime residue in technical dirty gate` (hash: TBD)
-56. [TODO] `phase9.stream6.task2` Correct the Project Manager start-card dirty-state wording so workspace dirty cleanup is not rendered as a specific upstream artifact cleanup when dirty files still block a step (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: label workspace dirty gate separately from artifacts`).
-57. [TODO] `phase9.stream6.commit2` Git Commit: `fix: label workspace dirty gate separately from artifacts` (hash: TBD)
+55. [DONE] `phase9.stream6.commit1` Git Commit: `fix: ignore provider runtime residue in technical dirty gate` (hash: 8f1e8da67)
+56. [DONE] `phase9.stream6.task2` Correct the Project Manager start-card dirty-state wording so workspace dirty cleanup is not rendered as a specific upstream artifact cleanup when dirty files still block a step (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: label workspace dirty gate separately from artifacts`).
+57. [PENDING] `phase9.stream6.commit2` Git Commit: `fix: label workspace dirty gate separately from artifacts` (hash: TBD)
 58. [TODO] `phase9.stream6.task3` Run focused verification for the provider runtime dirty gate and start-card wording changes before deciding whether a new release build is needed (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify provider runtime dirty gate repair`).
 59. [TODO] `phase9.stream6.commit3` Git Commit: `test: verify provider runtime dirty gate repair` (hash: TBD)
 

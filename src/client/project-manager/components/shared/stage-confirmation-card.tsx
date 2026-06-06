@@ -23,6 +23,7 @@ import {
   type ConfirmableStageId,
   type StageSessionIntent,
   hasExistingStageSession,
+  resolveDisplayedArtifactName,
   resolveInheritedStageProviderId,
   resolveStageSessionIntent,
   resolveUpstreamArtifactInfo,
@@ -120,6 +121,10 @@ export const StageConfirmationCard: React.FC<{
   const blocked = !upstream.available;
   const dirtyFiles = workflowSnapshot.gating.dirtyFiles ?? [];
   const blockedByDirtyGit = blocked && dirtyFiles.length > 0;
+  const displayedArtifactName = resolveDisplayedArtifactName(
+    upstream,
+    blockedByDirtyGit
+  );
   const managedPreviewStage =
     workflowSnapshot.managedWorkflowPreview?.stages.find(
       (item) => item.controllerId === stage
@@ -347,7 +352,7 @@ export const StageConfirmationCard: React.FC<{
       <div style={{ display: "grid", gap: 12 }}>
         <div>{inputLabel}</div>
         <div style={ARTIFACT_BOX_STYLE}>
-          <code>{upstream.fileName}</code>
+          <code>{displayedArtifactName}</code>
           {upstream.available ? (
             <span
               style={{ color: "var(--pm-accent-strong)", fontSize: 11, marginLeft: 8 }}

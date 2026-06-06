@@ -5,6 +5,7 @@ import test from "node:test";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolveStageSyncPayload } from "../layout/workspace-tree-branch-nodes";
 import {
+  resolveDisplayedArtifactName,
   resolveInheritedStageProviderId,
   resolveStageSessionIntent,
 } from "./stage-confirmation-card-workflow";
@@ -117,6 +118,23 @@ test("stage confirmation workflow includes technical root stage labels", async (
   );
   assert.equal(source.includes('application_skeleton: "product-parts.index.md"'), true);
   assert.equal(source.includes('quality_gates: "application-skeleton-map.json"'), true);
+});
+
+test("stage confirmation card labels dirty workspace cleanup separately from artifacts", () => {
+  assert.equal(
+    resolveDisplayedArtifactName(
+      { available: false, fileName: "application-skeleton-map.json" },
+      true
+    ),
+    "workspace changes"
+  );
+  assert.equal(
+    resolveDisplayedArtifactName(
+      { available: false, fileName: "application-skeleton-map.json" },
+      false
+    ),
+    "application-skeleton-map.json"
+  );
 });
 
 const buildWorkflowSnapshot = (): WorkflowStateSnapshot => ({
