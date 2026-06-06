@@ -401,3 +401,56 @@ test("Quality Gates verification phase accepts aggregate array evidence", async 
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("Quality Gates verification phase accepts nested command evidence", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-verified-nested-")
+  );
+  try {
+    await writeQualityGatesArtifacts(workspaceRoot);
+    const verifiedContract = buildVerifiedContract();
+    await writeQualityGatesJson(workspaceRoot, {
+      ...verifiedContract,
+      requiredBeforePush: ["qg-secret-scan"],
+      verificationEvidence: {
+        commandEvidence: {
+          "npm run qg:before-commit": {
+            exitCode: 0,
+            status: "passed",
+          },
+          "sh .husky/pre-commit": {
+            exitCode: 0,
+            status: "passed",
+          },
+        },
+        commandRuns: [
+          {
+            command: "npm run qg:before-push",
+            exitCode: 0,
+            status: "passed",
+          },
+          {
+            command: "sh .husky/pre-push",
+            exitCode: 0,
+            status: "passed",
+          },
+        ],
+      },
+      verificationState: "verified",
+    });
+    await writeAggregateRunnerEvidence(workspaceRoot);
+    await writeVerificationStagePlan(workspaceRoot);
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, true, JSON.stringify(result.diagnostics));
+    assert.equal(result.phase, "verification");
+    assert.equal(result.nextAction, "open_persistent_return");
+    assert.match(result.nextPrompt ?? "", VERIFIED_RETURN_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});

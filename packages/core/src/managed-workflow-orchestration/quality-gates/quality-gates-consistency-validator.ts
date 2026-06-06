@@ -101,10 +101,10 @@ interface VerificationRequirement {
   readonly diagnosticCommand: string;
 }
 
-const readVerificationCommands = (
+const appendVerificationCommands = (
+  commands: Map<string, string>,
   rawCommands: readonly unknown[]
-): ReadonlyMap<string, string> => {
-  const commands = new Map<string, string>();
+): void => {
   for (const entry of rawCommands) {
     if (typeof entry === "string") {
       commands.set(entry, "passed");
@@ -118,24 +118,60 @@ const readVerificationCommands = (
       typeof entry.status === "string" ? entry.status : "unknown"
     );
   }
-  return commands;
+};
+
+const appendVerificationCommandEvidence = (
+  commands: Map<string, string>,
+  rawEvidence: unknown
+): void => {
+  if (!isRecord(rawEvidence)) {
+    return;
+  }
+  for (const [command, rawStatus] of Object.entries(rawEvidence)) {
+    if (typeof rawStatus === "string") {
+      commands.set(command, rawStatus);
+      continue;
+    }
+    if (!isRecord(rawStatus)) {
+      continue;
+    }
+    commands.set(
+      command,
+      typeof rawStatus.status === "string" ? rawStatus.status : "unknown"
+    );
+  }
 };
 
 const readVerificationCommandStatuses = (
   contractJson: Record<string, unknown>
 ): VerificationEvidence | null => {
+  const commands = new Map<string, string>();
   const rawEvidence = contractJson.verificationEvidence;
   if (Array.isArray(rawEvidence)) {
-    return { commands: readVerificationCommands(rawEvidence) };
+    appendVerificationCommands(commands, rawEvidence);
+  } else if (isRecord(rawEvidence)) {
+    for (const key of [
+      "commands",
+      "commandRuns",
+      "verificationCommandEvidence",
+    ]) {
+      const rawCommands = rawEvidence[key];
+      if (Array.isArray(rawCommands)) {
+        appendVerificationCommands(commands, rawCommands);
+      }
+    }
+    appendVerificationCommandEvidence(commands, rawEvidence.commandEvidence);
   }
-  if (!isRecord(rawEvidence)) {
+  const rawVerificationCommandEvidence =
+    contractJson.verificationCommandEvidence;
+  if (Array.isArray(rawVerificationCommandEvidence)) {
+    appendVerificationCommands(commands, rawVerificationCommandEvidence);
+  }
+  appendVerificationCommandEvidence(commands, contractJson.commandEvidence);
+  if (!rawEvidence && commands.size === 0) {
     return null;
   }
-  const rawCommands = rawEvidence.commands;
-  if (!Array.isArray(rawCommands)) {
-    return { commands: new Map() };
-  }
-  return { commands: readVerificationCommands(rawCommands) };
+  return { commands };
 };
 
 const hasPassedCommand = (
