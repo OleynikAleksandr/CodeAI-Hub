@@ -88,6 +88,22 @@ const explainDiagnostic = (
     const [, gateId = "", evidence = ""] = diagnostic.split(":");
     return `Gate \`${gateId}\` is still listed as planned/not_integrated, but Core found integration runner evidence after Phase 3 (${evidence}). Promote it to the required executable state if it affects future code, or remove that runner evidence if it is truly future-only.`;
   }
+  if (diagnostic.startsWith("missing_verification_command_evidence:")) {
+    const command = diagnostic
+      .replace("missing_verification_command_evidence:", "")
+      .trim();
+    return `Core did not find passed formal verification evidence for \`${command}\` in \`quality-gates.json\`. Record it under \`verificationEvidence.commands[]\` as \`{ "command": "${command}", "status": "passed", "exitCode": 0 }\`. Core also accepts \`verificationEvidence.commandRuns[]\`, \`verificationEvidence.verificationCommandEvidence[]\`, \`verificationEvidence.commandEvidence["${command}"]\`, and top-level \`verificationCommandEvidence[]\`, but \`verificationEvidence.commands[]\` is the preferred repair target.`;
+  }
+  if (diagnostic.startsWith("verification_command_not_passed:")) {
+    const [, command = "", status = "unknown"] = diagnostic.split(":");
+    return `Core found formal verification evidence for \`${command}\`, but its status is \`${status}\` instead of \`passed\`. Re-run the command, fix any failure, then record \`status: "passed"\` and the exit code.`;
+  }
+  if (diagnostic.startsWith("verification_state_not_verified:")) {
+    const state = diagnostic
+      .replace("verification_state_not_verified:", "")
+      .trim();
+    return `Set \`verificationState: "verified"\` only after the required aggregate commands and Husky hook scripts have passed. Current recorded state is \`${state}\`.`;
+  }
   if (diagnostic.startsWith("planned_required_gate_non_active:")) {
     const gateId = diagnostic
       .replace("planned_required_gate_non_active:", "")
@@ -164,8 +180,63 @@ const explainDiagnostic = (
       "Add a concise `stackSummary` explaining the detected stack and why the research applies.",
     missing_required_size_policy_gate:
       'Add one required gate to `requiredBeforeCommit` or `requiredBeforePush` whose `commands.<gate-id>.policy` is exactly `{ "type": "source_size_limit", "maxLines": 500, "appliesTo": ["source_files", "classes"] }`. Keep its package script and hook call wired with the same gate id.',
+    missing_verification_evidence:
+      'Record formal verification evidence in `quality-gates.json`. Preferred shape: `{ "verificationState": "verified", "verificationEvidence": { "commands": [{ "command": "npm run qg:before-commit", "status": "passed", "exitCode": 0 }] } }`.',
+    missing_verification_state:
+      'Set `verificationState: "verified"` in `quality-gates.json` after the required formal verification commands and Husky hook scripts pass.',
   };
   return knownDiagnostics[diagnostic] ?? diagnostic;
+};
+
+const extractMissingVerificationCommand = (
+  diagnostic: string
+): string | null =>
+  diagnostic.startsWith("missing_verification_command_evidence:")
+    ? diagnostic.replace("missing_verification_command_evidence:", "").trim()
+    : null;
+
+const buildVerificationEvidenceRepairContract = (
+  diagnostics: readonly string[]
+): readonly string[] => {
+  const commands = diagnostics
+    .map(extractMissingVerificationCommand)
+    .filter((command): command is string => Boolean(command));
+  const commandEntries =
+    commands.length > 0
+      ? commands.map((command) => ({
+          command,
+          exitCode: 0,
+          status: "passed",
+        }))
+      : [
+          {
+            command: "npm run qg:before-commit",
+            exitCode: 0,
+            status: "passed",
+          },
+        ];
+  return [
+    "Core verification evidence read contract:",
+    "- Source of truth: `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`.",
+    "- Preferred repair path: `verificationEvidence.commands[]`.",
+    "- Also accepted: `verificationEvidence.commandRuns[]`, `verificationEvidence.verificationCommandEvidence[]`, `verificationEvidence.commandEvidence[command]`, and top-level `verificationCommandEvidence[]`.",
+    "- Do not rely on `.codeai-hub/<workspaceSlug>/workflow/managed/quality_gates.json`; Core validates the canonical Quality Gates artifact.",
+    "- If evidence was already recorded in another shape, duplicate the passing entries into `verificationEvidence.commands[]` instead of adding new field names.",
+    "",
+    "Minimal accepted JSON shape for this repair:",
+    "```json",
+    JSON.stringify(
+      {
+        verificationEvidence: {
+          commands: commandEntries,
+        },
+        verificationState: "verified",
+      },
+      null,
+      2
+    ),
+    "```",
+  ];
 };
 
 const formatDiagnostics = (
@@ -339,6 +410,8 @@ export const buildQualityGatesVerificationRepairPrompt = (
       : []),
     "Diagnostics:",
     ...formatDiagnostics(options.diagnostics, { phase: "verification" }),
+    "",
+    ...buildVerificationEvidenceRepairContract(options.diagnostics),
     "",
     "Repair the Quality Gates verification evidence within the already accepted and integrated contract scope.",
     "Run the required formal verification commands and record exact passing evidence in the Quality Gates artifacts.",

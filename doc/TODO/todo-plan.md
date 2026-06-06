@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "552f452a1",
+  "lastRecordedCommit": "70f18bf70",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream9.task1",
-  "expectedCommitMessage": "fix: read quality gates nested verification evidence",
+  "currentTaskId": "phase9.stream10.task1",
+  "expectedCommitMessage": "fix: explain quality gates verification repairs",
   "debt": {
-    "expectedCommitMessage": "fix: read quality gates nested verification evidence",
-    "preCommitHead": "552f452a1",
+    "expectedCommitMessage": "fix: explain quality gates verification repairs",
+    "preCommitHead": "70f18bf70",
     "stage": "commit_pending",
-    "taskId": "phase9.stream9.task1"
+    "taskId": "phase9.stream10.task1"
   }
 }
 ```
@@ -195,11 +195,16 @@
 ### Stream: Nested Verification Evidence Repair
 
 78. [DONE] `phase9.stream9.task1` Teach Quality Gates Phase 4 validation to read agent-recorded nested verification evidence shapes such as `commandRuns`, `commandEvidence`, and `verificationCommandEvidence`, then verify against the FinderWidget retest artifact (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: read quality gates nested verification evidence`).
-79. [PENDING] `phase9.stream9.commit1` Git Commit: `fix: read quality gates nested verification evidence` (hash: TBD)
+79. [DONE] `phase9.stream9.commit1` Git Commit: `fix: read quality gates nested verification evidence` (hash: 70f18bf70)
+
+### Stream: Verification Repair Prompt Diagnostics
+
+80. [DONE] `phase9.stream10.task1` Make Quality Gates Phase 4 repair prompts actionable by explaining the Core-read evidence paths, concrete missing commands, and minimal accepted JSON shape for one-pass agent repair (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain quality gates verification repairs`).
+81. [PENDING] `phase9.stream10.commit1` Git Commit: `fix: explain quality gates verification repairs` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Closeout
 
-80. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
-81. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+82. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
+83. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
