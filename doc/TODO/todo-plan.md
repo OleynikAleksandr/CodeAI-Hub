@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "9a774ea88",
+  "lastRecordedCommit": "88ac25c54",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream5.task4",
-  "expectedCommitMessage": "chore: build release 1.2.456",
+  "currentTaskId": "phase9.stream6.task1",
+  "expectedCommitMessage": "fix: ignore provider runtime residue in technical dirty gate",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.456",
-    "preCommitHead": "9a774ea88",
+    "expectedCommitMessage": "fix: ignore provider runtime residue in technical dirty gate",
+    "preCommitHead": "88ac25c54",
     "stage": "commit_pending",
-    "taskId": "phase9.stream5.task4"
+    "taskId": "phase9.stream6.task1"
   }
 }
 ```
@@ -157,11 +157,20 @@
 48. [DONE] `phase9.stream5.task3` Update release-facing metadata for the confirmed 1.2.456 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.456 notes`).
 49. [DONE] `phase9.stream5.commit3` Git Commit: `docs: prepare release 1.2.456 notes` (hash: 9a774ea88)
 50. [DONE] `phase9.stream5.task4` Run the confirmed release build flow for the 1.2.456 retest build: ensure managed-plan release state is recorded, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.456`).
-51. [PENDING] `phase9.stream5.commit4` Git Commit: `chore: build release 1.2.456` (hash: TBD)
+51. [DONE] `phase9.stream5.commit4` Git Commit: `chore: build release 1.2.456` (hash: 88ac25c54)
+
+### Stream: Provider Runtime Dirty Gate Repair
+
+54. [DONE] `phase9.stream6.task1` Classify provider runtime scratch/session backup residue as volatile for the technical pre-start dirty gate so Quality Gates is not blocked by stale provider files after clear undo/restart (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore provider runtime residue in technical dirty gate`).
+55. [PENDING] `phase9.stream6.commit1` Git Commit: `fix: ignore provider runtime residue in technical dirty gate` (hash: TBD)
+56. [TODO] `phase9.stream6.task2` Correct the Project Manager start-card dirty-state wording so workspace dirty cleanup is not rendered as a specific upstream artifact cleanup when dirty files still block a step (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: label workspace dirty gate separately from artifacts`).
+57. [TODO] `phase9.stream6.commit2` Git Commit: `fix: label workspace dirty gate separately from artifacts` (hash: TBD)
+58. [TODO] `phase9.stream6.task3` Run focused verification for the provider runtime dirty gate and start-card wording changes before deciding whether a new release build is needed (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify provider runtime dirty gate repair`).
+59. [TODO] `phase9.stream6.commit3` Git Commit: `test: verify provider runtime dirty gate repair` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Closeout
 
-52. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
-53. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+60. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
+61. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)

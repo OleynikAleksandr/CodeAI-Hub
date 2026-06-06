@@ -362,6 +362,18 @@ test("technical stage dirty status ignores volatile Core metadata after restart"
       `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,
       "{}\n"
     );
+    for (const providerResiduePath of [
+      "runtime/providers/codex/home/shell_snapshots/snapshot.sh",
+      "runtime/providers/claude/home/.claude/backups/.claude.json.backup.1",
+      "runtime/providers/claude/home/.claude/projects/workspace/session.jsonl",
+      "runtime/providers/claude/home/.claude/sessions/session.json",
+    ]) {
+      await writeWorkspaceFile(
+        workspaceRoot,
+        `.codeai-hub/${workspaceSlug}/${providerResiduePath}`,
+        "{}\n"
+      );
+    }
     await writeWorkspaceFile(
       workspaceRoot,
       "doc/TODO/workspace.plan.md",

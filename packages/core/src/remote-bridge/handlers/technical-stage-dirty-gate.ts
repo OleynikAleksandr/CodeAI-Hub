@@ -42,6 +42,22 @@ const isNonSemanticDiagramModulesSidecar = (
 ): boolean =>
   file === `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`;
 
+const isVolatileProviderRuntimePath = (
+  file: string,
+  workspaceSlug: string
+): boolean => {
+  const providerRoot = `.codeai-hub/${workspaceSlug}/runtime/providers/`;
+  if (!file.startsWith(providerRoot)) {
+    return false;
+  }
+  return (
+    file.includes("/home/shell_snapshots/") ||
+    file.includes("/home/.claude/backups/") ||
+    file.includes("/home/.claude/projects/") ||
+    file.includes("/home/.claude/sessions/")
+  );
+};
+
 const isVolatileCoreMetadataPath = (
   file: string,
   workspaceSlug: string
@@ -55,6 +71,7 @@ const isVolatileCoreMetadataPath = (
   file.startsWith(`.codeai-hub/${workspaceSlug}/description/`) ||
   file.startsWith(`.codeai-hub/${workspaceSlug}/virtual_simulation/`) ||
   isNonSemanticDiagramModulesSidecar(file, workspaceSlug) ||
+  isVolatileProviderRuntimePath(file, workspaceSlug) ||
   file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/checkpoints/`) ||
   file === `.codeai-hub/${workspaceSlug}/workflow/state.json` ||
   file === `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`;
