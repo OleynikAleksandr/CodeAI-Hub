@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "60e00b842",
+  "lastRecordedCommit": "678819c95",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream4.task4",
-  "expectedCommitMessage": "docs: prepare release 1.2.455 notes",
+  "currentTaskId": "phase9.stream4.task5",
+  "expectedCommitMessage": "chore: build release 1.2.455",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.455 notes",
-    "preCommitHead": "60e00b842",
+    "expectedCommitMessage": "chore: build release 1.2.455",
+    "preCommitHead": "678819c95",
     "stage": "commit_pending",
-    "taskId": "phase9.stream4.task4"
+    "taskId": "phase9.stream4.task5"
   }
 }
 ```
@@ -144,9 +144,9 @@
 38. [DONE] `phase9.stream4.task3` Standardize Quality Gates Phase 2, Phase 3, and repair continuation prompts with explicit phase names, active stage todo-plan path, and zero-context resume guidance (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts`; expected commit: `fix: standardize quality gates continuation prompts`).
 39. [DONE] `phase9.stream4.commit3` Git Commit: `fix: standardize quality gates continuation prompts` (hash: 60e00b842)
 40. [DONE] `phase9.stream4.task4` Update release-facing metadata for the confirmed 1.2.455 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.455 notes`).
-41. [PENDING] `phase9.stream4.commit4` Git Commit: `docs: prepare release 1.2.455 notes` (hash: TBD)
-42. [TODO] `phase9.stream4.task5` Run the confirmed release build flow for the retest build: ensure clean tree, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: package versions/manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.455`).
-43. [TODO] `phase9.stream4.commit5` Git Commit: `chore: build release 1.2.455` (hash: TBD)
+41. [DONE] `phase9.stream4.commit4` Git Commit: `docs: prepare release 1.2.455 notes` (hash: 678819c95)
+42. [DONE] `phase9.stream4.task5` Run the confirmed release build flow for the retest build: ensure clean tree, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.455`).
+43. [PENDING] `phase9.stream4.commit5` Git Commit: `chore: build release 1.2.455` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
