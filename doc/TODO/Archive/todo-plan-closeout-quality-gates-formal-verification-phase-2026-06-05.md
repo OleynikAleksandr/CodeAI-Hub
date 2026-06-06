@@ -1,3 +1,18 @@
+# Plan Closeout: quality-gates-formal-verification-phase-2026-06-05
+
+**Created:** 2026-06-06T17:37:03.580Z
+**Acceptance:** User accepted release 1.2.459 Quality Gates Baseline retest on 2026-06-06; scope can be closed.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase10.stream1.task1
+**Expected Commit:** docs: close quality gates formal verification scope
+**Last Recorded Commit:** bb4a83645
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_FormalVerification_Phase_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_FormalVerification_Phase_Planning.md",
   "currentTaskId": "phase10.stream1.task1",
   "expectedCommitMessage": "docs: close quality gates formal verification scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates formal verification scope",
-    "preCommitHead": "bb4a83645",
-    "stage": "commit_pending",
-    "taskId": "phase10.stream1.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -213,6 +223,7 @@
 
 ### Stream: Closeout
 
-86. [DONE] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan, dispose the planning source, and sync closeout documentation without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: close quality gates formal verification scope`).
-87. [PENDING] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+86. [IN_PROGRESS] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan, dispose the planning source, and sync closeout documentation without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: close quality gates formal verification scope`).
+87. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
 88. [TODO] `phase10.stream1.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. (scope: process only; expected commit: none).
+````
