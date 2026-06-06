@@ -9,6 +9,10 @@ import {
   buildQualityGatesContract,
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
+import {
+  buildArtifactModeBlock,
+  buildWorkflowStagePrompt,
+} from "./workflow-prompt-pack-quality-gates-envelope";
 
 type WorkflowStageId =
   | "description"
@@ -382,23 +386,6 @@ const buildSourceBlock = (
         ]),
       ].join("\n");
 
-const buildArtifactModeBlock = (relativePath: string): string => {
-  const researchLine = relativePath.endsWith("/quality-gates-research.md")
-    ? "- Quality Gates research pass is research-only: create `quality-gates-research.md` and `quality-gates-research.json`; do not create `quality-gates.md` or `quality-gates.json`."
-    : null;
-  return [
-    "Workflow artifact mode:",
-    "- Mode: `create_initial_draft`.",
-    `- Target artifact: \`${relativePath}\`.`,
-    "- Write the target artifact directly from the current prompt and runtime-provided inputs.",
-    "- Do not search for, read, or check whether the target artifact already exists.",
-    "- If existing artifact content is relevant, it must be included in this prompt as runtime-provided artifact context.",
-    researchLine,
-  ]
-    .filter((line): line is string => Boolean(line))
-    .join("\n");
-};
-
 export const buildCoreWorkflowPromptPack = async (params: {
   readonly artifactLanguage?: string;
   readonly chatLanguage?: string;
@@ -424,7 +411,10 @@ export const buildCoreWorkflowPromptPack = async (params: {
   );
   const target = buildTargetPath(params);
   const sourceArtifacts = await readSourceArtifacts(params);
-  const prompt = buildBundledPrompt(params.stage) ?? contract.prompt;
+  const prompt = buildWorkflowStagePrompt(
+    params.stage,
+    buildBundledPrompt(params.stage) ?? contract.prompt
+  );
   const content = [
     buildLanguageBlock({ artifactLanguage, chatLanguage, stage: params.stage }),
     prompt,
