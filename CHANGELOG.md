@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.456] - 2026-06-06
+### Fixed
+- **Quality Gates repair continuations now keep Core validation active.** Managed Core-gated sessions no longer suppress repeated `turn_completed` events while a managed continuation is still locked, so a Phase 4 verification repair can be validated by Core instead of leaving the user at the agent's final message.
+- **Quality Gates verification repair now reopens Phase 4 before user return.** A regression covers the full chain: Phase 4 evidence failure, Phase 3 integration repair, repeated Phase 4 formal verification continuation, and persistent user return.
+
+### Verification
+- `node --test packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.js`
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.455] - 2026-06-06
 ### Fixed
 - **Quality Gates integration repair now opens formal verification.** A valid `quality-gates.phase3.repair.taskN` result follows the same Phase 4 verification path as the initial Phase 3 integration instead of completing the stage.
