@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "318c8970d",
+  "lastRecordedCommit": "80e5aaff7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream11.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.459 notes",
+  "currentTaskId": "phase9.stream11.task2",
+  "expectedCommitMessage": "chore: build release 1.2.459",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.459 notes",
-    "preCommitHead": "318c8970d",
+    "expectedCommitMessage": "chore: build release 1.2.459",
+    "preCommitHead": "80e5aaff7",
     "stage": "commit_pending",
-    "taskId": "phase9.stream11.task1"
+    "taskId": "phase9.stream11.task2"
   }
 }
 ```
@@ -205,9 +205,9 @@
 ### Stream: Release 459 Build
 
 82. [DONE] `phase9.stream11.task1` Update release-facing metadata for the confirmed 1.2.459 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.459 notes`).
-83. [PENDING] `phase9.stream11.commit1` Git Commit: `docs: prepare release 1.2.459 notes` (hash: TBD)
-84. [TODO] `phase9.stream11.task2` Run the confirmed release build flow for the 1.2.459 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.459`).
-85. [TODO] `phase9.stream11.commit2` Git Commit: `chore: build release 1.2.459` (hash: TBD)
+83. [DONE] `phase9.stream11.commit1` Git Commit: `docs: prepare release 1.2.459 notes` (hash: 80e5aaff7)
+84. [DONE] `phase9.stream11.task2` Run the confirmed release build flow for the 1.2.459 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.459`). Artifacts: `codeai-hub-1.2.459.vsix`, `doc/tmp/releases/claude-module-1.2.459.tar.bz2`, `doc/tmp/releases/glm-claude-code-module-1.2.459.tar.bz2`, `doc/tmp/releases/codex-module-1.2.459.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.459.tar.bz2`, `doc/tmp/releases/kimi-module-1.2.459.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.459.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.459.tar.bz2`, `doc/tmp/releases/project-manager-1.2.459.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.459.tar.bz2`.
+85. [PENDING] `phase9.stream11.commit2` Git Commit: `chore: build release 1.2.459` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
