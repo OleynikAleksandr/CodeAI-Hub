@@ -74,7 +74,6 @@ const resolveMaterializationRepairAttemptNumber = (
   const value = Number(match?.[1]);
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
-
 const buildQualityGatesVerificationContinuation = (
   workspaceSlug: string
 ): string =>
@@ -96,7 +95,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly productPartBriefTurn =
     new ProductPartDevelopmentBriefTurnController();
   private readonly qualityGatesStagePlan: QualityGatesStagePlanController;
-
   constructor(options: SessionRequestHandlerManagedWorkflowTurnOptions) {
     this.options = options;
     this.applicationStagePlan =
@@ -431,7 +429,9 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       );
       return "continued";
     }
-    const completesStage = decision.nextAction === "open_persistent_return";
+    const completesStage =
+      decision.phase === "verification" &&
+      decision.nextAction === "open_persistent_return";
     if (decision.nextAction !== "open_user_review" && !completesStage) {
       return "settled";
     }

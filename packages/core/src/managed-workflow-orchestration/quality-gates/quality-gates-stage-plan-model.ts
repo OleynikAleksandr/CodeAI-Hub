@@ -331,7 +331,8 @@ export const resolveNextAfterCommit = (params: {
   }
   if (
     params.decision.nextAction === "open_persistent_return" &&
-    params.currentTaskId.startsWith(INTEGRATE_TASK_PREFIX)
+    (params.currentTaskId.startsWith(INTEGRATE_TASK_PREFIX) ||
+      params.currentTaskId.startsWith(INTEGRATION_REPAIR_TASK_PREFIX))
   ) {
     return {
       expectedCommitMessage: FORMAL_VERIFY_COMMIT_MESSAGE,

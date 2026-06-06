@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "80878d1a8",
+  "lastRecordedCommit": "d32d38449",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream2.task2",
-  "expectedCommitMessage": "test: align quality gates prompt taxonomy assertions",
+  "currentTaskId": "phase9.stream4.task1",
+  "expectedCommitMessage": "fix: route quality gates repair success to verification",
   "debt": {
-    "expectedCommitMessage": "test: align quality gates prompt taxonomy assertions",
-    "preCommitHead": "80878d1a8",
+    "expectedCommitMessage": "fix: route quality gates repair success to verification",
+    "preCommitHead": "d32d38449",
     "stage": "commit_pending",
-    "taskId": "phase9.stream2.task2"
+    "taskId": "phase9.stream4.task1"
   }
 }
 ```
@@ -132,12 +132,25 @@
 29. [DONE] `phase9.stream2.task1` Remove misleading provider-visible `Phase 1A` / `Phase 1B` taxonomy from Quality Gates prompts and runtime artifact-mode guidance while keeping Core-owned Phase numbering intact (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: clarify quality gates prompt phase taxonomy`).
 30. [DONE] `phase9.stream2.commit1` Git Commit: `fix: clarify quality gates prompt phase taxonomy` (hash: 80878d1a8)
 31. [DONE] `phase9.stream2.task2` Update bundled Quality Gates prompt and workflow prompt-pack tests so they assert research/draft pass terminology instead of provider-visible `Phase 1A` / `Phase 1B` (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`; expected commit: `test: align quality gates prompt taxonomy assertions`).
-32. [PENDING] `phase9.stream2.commit2` Git Commit: `test: align quality gates prompt taxonomy assertions` (hash: TBD)
-33. [TODO] `phase9.stream3.task1` Hand the repaired Quality Gates prompt taxonomy and release artifact back for user workflow acceptance retest (scope: user workflow acceptance; expected commit: none).
+32. [DONE] `phase9.stream2.commit2` Git Commit: `test: align quality gates prompt taxonomy assertions` (hash: d32d38449)
+33. [BLOCKED] `phase9.stream3.task1` Hand the repaired Quality Gates prompt taxonomy and release artifact back for user workflow acceptance retest (scope: user workflow acceptance; expected commit: none). Failure report: release 1.2.454 still uses the old provider-visible `Phase 1A` / `Phase 1B` prompt, Core prompt envelopes are inconsistent across Quality Gates turns, context-window rollover repair prompts do not carry a full phase resume envelope, and integration repair success incorrectly ends the stage without opening Phase 4 Formal Quality Gates Verification or Phase 5 Persistent Quality Gates User Return.
+
+### Stream: Acceptance Failure Repair
+
+34. [DONE] `phase9.stream4.task1` Route successful Quality Gates integration repair through the same Phase 4 formal verification continuation as the initial Phase 3 integration path and fail closed before terminal completion (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `fix: route quality gates repair success to verification`).
+35. [PENDING] `phase9.stream4.commit1` Git Commit: `fix: route quality gates repair success to verification` (hash: TBD)
+36. [TODO] `phase9.stream4.task2` Add a Core-owned Quality Gates Phase 1 startup envelope with the active stage todo-plan path and assert that the initial prompt no longer relies on legacy subphase wording (scope: `packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`; expected commit: `fix: add quality gates startup phase envelope`).
+37. [TODO] `phase9.stream4.commit2` Git Commit: `fix: add quality gates startup phase envelope` (hash: TBD)
+38. [TODO] `phase9.stream4.task3` Standardize Quality Gates Phase 2, Phase 3, and repair continuation prompts with explicit phase names, active stage todo-plan path, and zero-context resume guidance (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: standardize quality gates continuation prompts`).
+39. [TODO] `phase9.stream4.commit3` Git Commit: `fix: standardize quality gates continuation prompts` (hash: TBD)
+40. [TODO] `phase9.stream4.task4` Update release-facing metadata for the confirmed 1.2.455 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.455 notes`).
+41. [TODO] `phase9.stream4.commit4` Git Commit: `docs: prepare release 1.2.455 notes` (hash: TBD)
+42. [TODO] `phase9.stream4.task5` Run the confirmed release build flow for the retest build: ensure clean tree, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: package versions/manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.455`).
+43. [TODO] `phase9.stream4.commit5` Git Commit: `chore: build release 1.2.455` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Closeout
 
-34. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
-35. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+44. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
+45. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)

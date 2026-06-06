@@ -398,6 +398,73 @@ test("QualityGatesStagePlanController records integration repair after rejected 
   }
 });
 
+test("QualityGatesStagePlanController opens formal verification after integration repair", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "quality-gates-repair-to-verify-")
+  );
+  const controller = new QualityGatesStagePlanController();
+  try {
+    await prepareWorkspace(workspaceRoot);
+    await controller.openDraftPhase({ workspaceRoot });
+    await controller.commitManagedTurn({
+      decision: createDraftDecision(),
+      sessionId: "session-1",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await controller.acceptUserReviewWithoutRevision({ workspaceRoot });
+    await controller.recordRejectedTurn({
+      decision: createInvalidIntegrationDecision(),
+      rejectedCommitHash: "feed1234",
+      workspaceRoot,
+    });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      QUALITY_GATES_JSON_PATH,
+      `${JSON.stringify(createIntegratedDecision().contractJson, null, 2)}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      '{"scripts":{"qg:secret-scan":"node scripts/quality-gates/secret-scan.mjs"}}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/quality-gates/secret-scan.mjs",
+      "console.log('ok');\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
+    );
+    const repairCommit = await controller.commitManagedTurn({
+      decision: createIntegratedDecision(),
+      sessionId: "session-1",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(repairCommit.blocked, null);
+    assert.equal(
+      repairCommit.commit?.nextTaskId,
+      "quality-gates.phase4.verify.task1"
+    );
+    const repairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md"
+    );
+    assert.match(repairPlan, PHASE_4_RE);
+    assert.match(repairPlan, FORMAL_VERIFY_TASK_RE);
+    assert.doesNotMatch(
+      await readWorkspaceFile(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      QUALITY_GATES_COMPLETED_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("QualityGatesStagePlanController labels draft repairs without duplicate phase numbers", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "quality-gates-draft-repair-labels-")
