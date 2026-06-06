@@ -48,7 +48,7 @@ const isResearchFirstDiagnostic = (diagnostic: string): boolean =>
 
 const explainDiagnostic = (
   diagnostic: string,
-  options: { readonly phase?: "draft" | "integration" } = {}
+  options: { readonly phase?: "draft" | "integration" | "verification" } = {}
 ): string => {
   if (diagnostic.startsWith("json_parse_error:")) {
     return `Fix \`quality-gates.json\`; it is not valid JSON. Parser detail: ${diagnostic
@@ -170,7 +170,7 @@ const explainDiagnostic = (
 
 const formatDiagnostics = (
   diagnostics: readonly string[],
-  options: { readonly phase?: "draft" | "integration" } = {}
+  options: { readonly phase?: "draft" | "integration" | "verification" } = {}
 ): readonly string[] =>
   diagnostics.length > 0
     ? diagnostics.map(
@@ -319,6 +319,31 @@ export const buildQualityGatesIntegrationRepairPrompt = (
     "If a diagnostic mentions a generated build artifact, delete that file and change the responsible command so future build output is written outside the workspace root.",
     "Do not run Git commands or edit managed plan files.",
     "When the repair is ready, stop with a content-readiness note for Core validation. Do not claim the Quality Gates step is complete; Core must open Phase 4 Formal Quality Gates Verification first.",
+  ].join("\n");
+
+export const buildQualityGatesVerificationRepairPrompt = (
+  options: QualityGatesIntegrationRepairPromptOptions
+): string =>
+  [
+    ...buildPhaseEnvelope(
+      "Core opens Phase 4 Quality Gates Verification Repair."
+    ),
+    `Core rejected Quality Gates formal verification attempt ${options.attemptNumber}.`,
+    "",
+    ...(options.rejectedCommitHash
+      ? [
+          "The safe attempt was committed as workflow history:",
+          `- ${options.rejectedCommitHash}`,
+          "",
+        ]
+      : []),
+    "Diagnostics:",
+    ...formatDiagnostics(options.diagnostics, { phase: "verification" }),
+    "",
+    "Repair the Quality Gates verification evidence within the already accepted and integrated contract scope.",
+    "Run the required formal verification commands and record exact passing evidence in the Quality Gates artifacts.",
+    "Do not run Git commands or edit managed plan files.",
+    "When the repair is ready, stop with a content-readiness note for Core validation. Do not claim the Quality Gates step is complete; Core must open Phase 5 Persistent Quality Gates User Return first.",
   ].join("\n");
 
 export const buildQualityGatesReviewRevisionPrompt = (options: {

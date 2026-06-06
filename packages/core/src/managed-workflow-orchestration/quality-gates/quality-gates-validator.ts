@@ -10,6 +10,7 @@ import {
   buildQualityGatesIntegrationRepairPrompt,
   buildQualityGatesPersistentReturnMessage,
   buildQualityGatesUserReviewMessage,
+  buildQualityGatesVerificationRepairPrompt,
 } from "./quality-gates-prompt-builder";
 import { collectRequiredSizePolicyDiagnostics } from "./quality-gates-required-size-policy";
 import { resolveQualityGatesResearchFirstBoundary } from "./quality-gates-research-first-boundary";
@@ -55,7 +56,8 @@ const NON_BLOCKING_ARRAY_KEYS = [
 ] as const;
 const INTEGRATION_PLAN_TASK_RE =
   /^quality-gates\.phase3\.(?:integrate|repair)\.task\d+$/u;
-const VERIFICATION_PLAN_TASK_RE = /^quality-gates\.phase4\.verify\.task\d+$/u;
+const VERIFICATION_PLAN_TASK_RE =
+  /^quality-gates\.phase4\.(?:verify|repair)\.task\d+$/u;
 
 const relativeQualityGatesPath = (
   workspaceSlug: string,
@@ -360,6 +362,30 @@ const resolvePhase = async (
   (await resolvePlanPhase(request.workspaceRoot)) ??
   resolveArtifactPhase(contractJson);
 
+const buildRepairPrompt = (params: {
+  readonly diagnostics: readonly string[];
+  readonly phase: QualityGatesManagedPhase;
+  readonly workspaceSlug: string;
+}): string => {
+  const options = {
+    diagnostics: params.diagnostics,
+    workspaceSlug: params.workspaceSlug,
+  };
+  if (params.phase === "draft") {
+    return buildQualityGatesDraftRepairPrompt(options);
+  }
+  if (params.phase === "verification") {
+    return buildQualityGatesVerificationRepairPrompt({
+      ...options,
+      attemptNumber: 1,
+    });
+  }
+  return buildQualityGatesIntegrationRepairPrompt({
+    ...options,
+    attemptNumber: 1,
+  });
+};
+
 const buildInvalidResult = (params: {
   readonly contractJson: Record<string, unknown> | null;
   readonly diagnostics: readonly string[];
@@ -370,17 +396,7 @@ const buildInvalidResult = (params: {
   diagnostics: params.diagnostics,
   nextAction:
     params.phase === "draft" ? "repair_current_artifact" : "repair_integration",
-  nextPrompt:
-    params.phase === "draft"
-      ? buildQualityGatesDraftRepairPrompt({
-          diagnostics: params.diagnostics,
-          workspaceSlug: params.workspaceSlug,
-        })
-      : buildQualityGatesIntegrationRepairPrompt({
-          attemptNumber: 1,
-          diagnostics: params.diagnostics,
-          workspaceSlug: params.workspaceSlug,
-        }),
+  nextPrompt: buildRepairPrompt(params),
   phase: params.phase,
   valid: false,
 });

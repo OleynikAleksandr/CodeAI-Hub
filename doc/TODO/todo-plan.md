@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "248404e46",
+  "lastRecordedCommit": "1e9be8c44",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream6.task3",
-  "expectedCommitMessage": "test: verify provider runtime dirty gate repair",
+  "currentTaskId": "phase9.stream7.task1",
+  "expectedCommitMessage": "fix: open quality gates persistent return after verified repair",
   "debt": {
-    "expectedCommitMessage": "test: verify provider runtime dirty gate repair",
-    "preCommitHead": "248404e46",
+    "expectedCommitMessage": "fix: open quality gates persistent return after verified repair",
+    "preCommitHead": "1e9be8c44",
     "stage": "commit_pending",
-    "taskId": "phase9.stream6.task3"
+    "taskId": "phase9.stream7.task1"
   }
 }
 ```
@@ -166,11 +166,26 @@
 56. [DONE] `phase9.stream6.task2` Correct the Project Manager start-card dirty-state wording so workspace dirty cleanup is not rendered as a specific upstream artifact cleanup when dirty files still block a step (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: label workspace dirty gate separately from artifacts`).
 57. [DONE] `phase9.stream6.commit2` Git Commit: `fix: label workspace dirty gate separately from artifacts` (hash: 248404e46)
 58. [DONE] `phase9.stream6.task3` Run focused verification for the provider runtime dirty gate and start-card wording changes before deciding whether a new release build is needed (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify provider runtime dirty gate repair`).
-59. [PENDING] `phase9.stream6.commit3` Git Commit: `test: verify provider runtime dirty gate repair` (hash: TBD)
+59. [DONE] `phase9.stream6.commit3` Git Commit: `test: verify provider runtime dirty gate repair` (hash: 1e9be8c44)
+
+### Stream: Persistent Return Repair
+
+60. [DONE] `phase9.stream7.task1` Fix Quality Gates repair advancement so a valid post-verification repair with `nextAction: open_persistent_return` creates/advances the persistent return plan boundary instead of rewinding the stage plan pointer to an old review task (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-paths.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts`; expected commit: `fix: open quality gates persistent return after verified repair`).
+61. [PENDING] `phase9.stream7.commit1` Git Commit: `fix: open quality gates persistent return after verified repair` (hash: TBD)
+62. [TODO] `phase9.stream7.task2` Route rejected Phase 4 verification attempts through a Phase 4 repair dispatch prompt instead of the Phase 3 integration repair envelope (scope: `packages/core/src/remote-bridge/handlers/quality-gates-repair-prompt-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: dispatch quality gates verification repair prompt`).
+63. [TODO] `phase9.stream7.commit2` Git Commit: `fix: dispatch quality gates verification repair prompt` (hash: TBD)
+64. [TODO] `phase9.stream7.task3` Add regression coverage for a Quality Gates Phase 4 verification rejection followed by a valid repair that must open Phase 5 Persistent Quality Gates User Return and keep the stage plan pointer on the return boundary (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates verified repair persistent return`).
+65. [TODO] `phase9.stream7.commit3` Git Commit: `test: cover quality gates verified repair persistent return` (hash: TBD)
+66. [TODO] `phase9.stream7.task4` Run targeted Quality Gates orchestration tests and core build after the persistent-return repair (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates persistent return repair`).
+67. [TODO] `phase9.stream7.commit4` Git Commit: `test: verify quality gates persistent return repair` (hash: TBD)
+68. [TODO] `phase9.stream7.task5` Update release-facing metadata for the confirmed next retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.457 notes`).
+69. [TODO] `phase9.stream7.commit5` Git Commit: `docs: prepare release 1.2.457 notes` (hash: TBD)
+70. [TODO] `phase9.stream7.task6` Run the confirmed release build flow for the 1.2.457 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.457`).
+71. [TODO] `phase9.stream7.commit6` Git Commit: `chore: build release 1.2.457` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Closeout
 
-60. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
-61. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+72. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
+73. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
