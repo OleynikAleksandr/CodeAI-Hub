@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.457] - 2026-06-06
+### Fixed
+- **Quality Gates Phase 4 verification repair now stays in Phase 4.** Core creates `quality-gates.phase4.repair.taskN` after rejected formal verification evidence instead of falling back to draft or Phase 3 integration repair task ids.
+- **Successful verification repair now opens persistent user return.** A valid Phase 4 repair advances the stage plan to `quality-gates.phase5.user-return.task1` and appends the Phase 5 persistent return boundary instead of rewinding to the Phase 2 review pointer.
+- **Verification repair prompts now name the correct phase.** The repair dispatch sends a Phase 4 verification repair envelope and no longer tells the agent that Core must reopen Phase 4 after a Phase 4 evidence repair.
+
+### Verification
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-verification-repair.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.456] - 2026-06-06
 ### Fixed
 - **Quality Gates repair continuations now keep Core validation active.** Managed Core-gated sessions no longer suppress repeated `turn_completed` events while a managed continuation is still locked, so a Phase 4 verification repair can be validated by Core instead of leaving the user at the agent's final message.
