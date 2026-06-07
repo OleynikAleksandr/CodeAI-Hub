@@ -40,7 +40,7 @@ test("buildWorkspaceRuntimeCapsuleGitignore resolves the capsule gitignore path"
   assert.equal(gitignore.content, WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT);
 });
 
-test("workspace runtime gitignore keeps workflow sessions trackable", () => {
+test("workspace runtime gitignore keeps the runtime capsule local-only", () => {
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "!runtime/settings/settings.json"
@@ -49,32 +49,33 @@ test("workspace runtime gitignore keeps workflow sessions trackable", () => {
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes("runtime/settings/"),
-    true
+    false
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "runtime/localization/"
     ),
-    true
+    false
   );
   assert.equal(gitignoreLines.includes("runtime/providers/**/home/"), false);
   assert.equal(gitignoreLines.includes("runtime/sessions/unified/*/"), false);
-  assert.equal(gitignoreLines.includes("!runtime/sessions/unified/"), true);
-  assert.equal(gitignoreLines.includes("!runtime/providers/**/home/"), true);
+  assert.equal(gitignoreLines.includes("!runtime/sessions/unified/"), false);
+  assert.equal(gitignoreLines.includes("!runtime/providers/**/home/"), false);
+  assert.equal(gitignoreLines.includes("runtime/"), true);
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes("runtime/**/tmp/"),
     false
   );
 });
 
-test("workspace runtime gitignore tracks provider-native session histories", async () => {
+test("workspace runtime gitignore ignores provider-native and unified runtime histories", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "codeai-provider-native-gitignore-")
   );
   const capsule = resolveWorkspaceRuntimeCapsule({ workspaceRoot });
   await bootstrapWorkspaceRuntimeCapsule({ workspaceRoot });
 
-  const trackedSessionPaths = [
+  const runtimePaths = [
     path.posix.join(
       capsule.providerHomes.codex.relativePath,
       "sessions",
@@ -107,23 +108,12 @@ test("workspace runtime gitignore tracks provider-native session histories", asy
     ),
     path.posix.join(capsule.providerHomes.kimi.relativePath, "wire.jsonl"),
   ];
-  const ignoredProviderTmpPath = path.posix.join(
-    capsule.providerHomes.codex.relativePath,
-    "tmp",
-    "arg0",
-    "scratch.lock"
-  );
-  const ignoredGeminiAuthPath = path.posix.join(
-    capsule.providerHomes.gemini.relativePath,
-    ".gemini",
-    "oauth_creds.json"
+  const productArtifactPath = path.posix.join(
+    capsule.descriptionRoot.relativePath,
+    "Final_Description.md"
   );
 
-  for (const relativePath of [
-    ...trackedSessionPaths,
-    ignoredProviderTmpPath,
-    ignoredGeminiAuthPath,
-  ]) {
+  for (const relativePath of [...runtimePaths, productArtifactPath]) {
     await mkdir(path.dirname(path.join(workspaceRoot, relativePath)), {
       recursive: true,
     });
@@ -141,18 +131,17 @@ test("workspace runtime gitignore tracks provider-native session histories", asy
     .filter(Boolean)
     .map((line) => line.slice(3));
 
-  for (const relativePath of trackedSessionPaths) {
+  for (const relativePath of runtimePaths) {
     assert.equal(
       statusPaths.includes(relativePath),
-      true,
-      `${relativePath} must stay visible to Git`
+      false,
+      `${relativePath} must stay outside Git`
     );
   }
-  assert.equal(statusPaths.includes(ignoredProviderTmpPath), false);
-  assert.equal(statusPaths.includes(ignoredGeminiAuthPath), false);
+  assert.equal(statusPaths.includes(productArtifactPath), true);
 });
 
-test("workspace rollback ignore classifies mutable runtime paths", () => {
+test("workspace rollback ignore classifies the whole runtime capsule", () => {
   const capsule = resolveWorkspaceRuntimeCapsule({
     workspaceRoot: "/tmp/CodeAI-Hub codex 5.4",
   });
@@ -179,7 +168,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/config.toml",
     }),
-    false
+    true
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -187,7 +176,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/skills/.system/imagegen/SKILL.md",
     }),
-    false
+    true
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -195,7 +184,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/sessions/2026/05/26/session.jsonl",
     }),
-    false
+    true
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -203,7 +192,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.jsonl",
     }),
-    false
+    true
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -211,7 +200,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.translations.jsonl",
     }),
-    false
+    true
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -219,24 +208,30 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/session.json",
     }),
+    true
+  );
+  assert.equal(
+    isWorkspaceRollbackIgnoredRuntimePath({
+      capsule,
+      relativePath:
+        ".codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md",
+    }),
     false
   );
 });
 
-test("workspace rollback ignore untracks only live settings and localization files", async () => {
+test("workspace rollback ignore untracks runtime files while preserving workflow artifacts", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "codeai-runtime-untrack-")
   );
   const capsule = resolveWorkspaceRuntimeCapsule({ workspaceRoot });
-  const trackedMutablePaths = [
+  const trackedRuntimePaths = [
     capsule.settingsFile.relativePath,
     path.posix.join(
       capsule.localizationRoot.relativePath,
       "cache",
       "browser-runtime-bootstrap.json"
     ),
-  ];
-  const rollbackOwnedPaths = [
     path.posix.join(capsule.providerHomes.codex.relativePath, "config.toml"),
     path.posix.join(
       capsule.providerHomes.codex.relativePath,
@@ -264,14 +259,15 @@ test("workspace rollback ignore untracks only live settings and localization fil
       "glmclaudecode-description.translations.jsonl"
     ),
   ];
-  const rollbackOwnedSessionIndexPath = path.posix.join(
-    capsule.unifiedSessionsRoot.relativePath,
-    "session.json"
-  );
+  const workflowArtifactPaths = [
+    path.posix.join(
+      capsule.descriptionRoot.relativePath,
+      "Final_Description.md"
+    ),
+  ];
   for (const relativePath of [
-    ...trackedMutablePaths,
-    ...rollbackOwnedPaths,
-    rollbackOwnedSessionIndexPath,
+    ...trackedRuntimePaths,
+    ...workflowArtifactPaths,
   ]) {
     await mkdir(path.dirname(path.join(workspaceRoot, relativePath)), {
       recursive: true,
@@ -290,26 +286,23 @@ test("workspace rollback ignore untracks only live settings and localization fil
   });
 
   const tracked = (await git(workspaceRoot, ["ls-files"])).split("\n");
-  for (const relativePath of trackedMutablePaths) {
+  for (const relativePath of trackedRuntimePaths) {
     assert.equal(tracked.includes(relativePath), false);
   }
-  for (const relativePath of [
-    ...rollbackOwnedPaths,
-    rollbackOwnedSessionIndexPath,
-  ]) {
+  for (const relativePath of workflowArtifactPaths) {
     assert.equal(tracked.includes(relativePath), true);
   }
   assert.deepEqual(
     filterWorkspaceRollbackIgnoredGitStatusEntries({
       capsule,
       entries: [
-        ` M ${trackedMutablePaths[0]}`,
-        `?? ${trackedMutablePaths[1]}`,
-        `?? ${rollbackOwnedPaths[0]}`,
-        ` M ${rollbackOwnedSessionIndexPath}`,
+        ` M ${trackedRuntimePaths[0]}`,
+        `?? ${trackedRuntimePaths[1]}`,
+        `?? ${trackedRuntimePaths[2]}`,
+        ` M ${workflowArtifactPaths[0]}`,
       ],
     }),
-    [`?? ${rollbackOwnedPaths[0]}`, ` M ${rollbackOwnedSessionIndexPath}`]
+    [` M ${workflowArtifactPaths[0]}`]
   );
 });
 
@@ -344,31 +337,32 @@ test("bootstrap updates an existing capsule gitignore to the current rollback co
   );
 });
 
-test("workspace runtime gitignore excludes provider secrets and caches", () => {
+test("workspace runtime gitignore excludes the whole runtime capsule through one rule", () => {
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "runtime/providers/gemini/home/.gemini/oauth_creds.json"
     ),
-    true
+    false
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "runtime/providers/**/home/**/.cache/"
     ),
-    true
+    false
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "runtime/providers/**/home/**/Caches/"
     ),
-    true
+    false
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "runtime/providers/**/home/**/*-cache.json"
     ),
-    true
+    false
   );
+  assert.equal(gitignoreLines.includes("runtime/"), true);
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.endsWith("\n"),
     true

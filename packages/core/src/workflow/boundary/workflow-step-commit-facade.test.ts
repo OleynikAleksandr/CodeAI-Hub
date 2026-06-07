@@ -40,6 +40,7 @@ const CAPSULE_UNIFIED_SESSION_RE =
 const RUNTIME_SLICES_RE = new RegExp(["runtime", "slices"].join("-"), "u");
 const LOCAL_STATE_IGNORE_RE = /\.codeai-hub\/state\//u;
 const LOCAL_STATE_TIMER_RE = /\.codeai-hub\/state\/task-timers\.json/u;
+const WORKSPACE_RUNTIME_IGNORE_RE = /\.codeai-hub\/\*\/runtime\//u;
 
 const writeText = async (filePath: string, content: string): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
@@ -120,6 +121,10 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
       await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
       LOCAL_STATE_IGNORE_RE
     );
+    assert.match(
+      await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
+      WORKSPACE_RUNTIME_IGNORE_RE
+    );
     assert.equal(
       await readFile(
         path.join(
@@ -137,10 +142,10 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedFiles, CAPSULE_FINAL_DESCRIPTION_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
-    assert.match(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
-    assert.match(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
-    assert.match(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
-    assert.match(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
     assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
@@ -278,7 +283,7 @@ test("accepted step commit untracks already tracked local CodeAI runtime state",
   }
 });
 
-test("accepted step commit untracks provider secrets and caches left by older capsule commits", async () => {
+test("accepted step commit untracks provider runtime left by older capsule commits", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-volatile-workspace-")
   );
@@ -355,13 +360,13 @@ test("accepted step commit untracks provider secrets and caches left by older ca
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_AUTH_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CACHE_JSON_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CACHES_RE);
-    assert.match(trackedFiles, CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
 
-test("accepted step commit preserves Git-owned provider session history while ignoring settings", async () => {
+test("accepted step commit untracks legacy runtime while preserving files on disk", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-settings-workspace-")
   );
@@ -447,8 +452,8 @@ test("accepted step commit preserves Git-owned provider session history while ig
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_SETTINGS_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
-    assert.match(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
-    assert.match(trackedFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
     assert.match(
       await git(workspaceRoot, ["log", "--oneline", "-1"]),
       ACCEPTED_STEP_COMMIT_RE
@@ -461,8 +466,8 @@ test("accepted step commit preserves Git-owned provider session history while ig
     ]);
     assert.doesNotMatch(headTreeFiles, CAPSULE_SETTINGS_RE);
     assert.doesNotMatch(headTreeFiles, CAPSULE_LOCALIZATION_CACHE_RE);
-    assert.match(headTreeFiles, CAPSULE_PROVIDER_CONFIG_RE);
-    assert.match(headTreeFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
+    assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_CONFIG_RE);
+    assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

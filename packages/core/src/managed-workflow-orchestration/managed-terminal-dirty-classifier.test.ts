@@ -27,6 +27,7 @@ const NO_FILE_PATH_RE = /No file path was reported/u;
 const CORE_INTERNALS_RE =
   /Core|classified|unclassified|managed terminal|dirty-tree/u;
 const LOCAL_STATE_IGNORE_RE = /\.codeai-hub\/state\//u;
+const WORKSPACE_RUNTIME_IGNORE_RE = /\.codeai-hub\/\*\/runtime\//u;
 const execFileAsync = promisify(execFile);
 
 const git = async (
@@ -77,7 +78,11 @@ test("terminal dirty classifier treats Diagram Modules sidecars and runtime meta
 
 test("terminal dirty classifier treats local runtime state as volatile clean state", () => {
   const result = classifyManagedTerminalDirtyEntries({
-    entries: ["?? .codeai-hub/state/task-timers.json"],
+    entries: [
+      "?? .codeai-hub/state/task-timers.json",
+      ` M .codeai-hub/${WORKSPACE_SLUG}/runtime/providers/codex/home/sessions/2026/06/07/session.jsonl`,
+      `?? .codeai-hub/${WORKSPACE_SLUG}/runtime/sessions/unified/codex/dialog.jsonl`,
+    ],
     stage: "quality_gates",
     workspaceSlug: WORKSPACE_SLUG,
   });
@@ -87,7 +92,7 @@ test("terminal dirty classifier treats local runtime state as volatile clean sta
   assert.deepEqual(result.unclassifiedPaths, []);
   assert.deepEqual(
     result.entries.map((entry) => entry.kind),
-    ["local_volatile"]
+    ["local_volatile", "local_volatile", "local_volatile"]
   );
 });
 
@@ -212,7 +217,7 @@ test("terminal dirty classifier reads the current git tree", async () => {
   }
 });
 
-test("terminal clean boundary ignores local runtime state and commits metadata gitignore", async () => {
+test("terminal clean boundary untracks local runtime and commits metadata gitignore", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "managed-terminal-local-state-clean-")
   );
@@ -222,8 +227,18 @@ test("terminal clean boundary ignores local runtime state and commits metadata g
     await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
     await writeWorkspaceFile(workspaceRoot, "README.md", "# demo\n");
     await writeWorkspaceFile(workspaceRoot, ".gitignore", "node_modules/\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/runtime/providers/codex/home/sessions/2026/06/07/session.jsonl`,
+      "old runtime\n"
+    );
     await git(workspaceRoot, ["add", "."]);
     await git(workspaceRoot, ["commit", "-m", "test: initial"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/runtime/providers/codex/home/sessions/2026/06/07/session.jsonl`,
+      "new runtime\n"
+    );
     await writeWorkspaceFile(
       workspaceRoot,
       ".codeai-hub/state/task-timers.json",
@@ -249,6 +264,18 @@ test("terminal clean boundary ignores local runtime state and commits metadata g
     assert.match(
       await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
       LOCAL_STATE_IGNORE_RE
+    );
+    assert.match(
+      await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
+      WORKSPACE_RUNTIME_IGNORE_RE
+    );
+    assert.equal(
+      await git(workspaceRoot, [
+        "ls-files",
+        "--",
+        `.codeai-hub/${WORKSPACE_SLUG}/runtime/providers/codex/home/sessions/2026/06/07/session.jsonl`,
+      ]),
+      ""
     );
     assert.equal(
       await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
