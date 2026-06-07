@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.465** (Product Part Bootstrap Turn Sequencing)
+**Current Release — v1.2.466** (Codex Shared Auth Provider Home)
+
+This release fixes the reused refresh-token failure that could appear after a
+Development Tree Clear/Undo followed by a fresh managed Codex turn. Workspace
+Codex provider homes no longer keep an independent copied `auth.json`; at
+provider startup, Core replaces stale workspace copies with a shared reference
+to the global Codex auth file so OAuth refresh state cannot diverge between
+normal Codex and CodeAI Hub managed sessions.
+
+After installing this release, restart Core and retest `Quality Gates Baseline`
+after Clear/Undo without manually deleting the workspace runtime provider home.
+The Quality Gates Codex session should start without the `refresh token was
+already used` error, Product Part handoff should remain sequential, and Git
+should stay clean.
+
+**Previous Release — v1.2.465** (Product Part Bootstrap Turn Sequencing)
 
 This release fixes the fresh Development Tree handoff after `Quality Gates
 Baseline`. When Core creates multiple Product Part agent sessions, it now waits

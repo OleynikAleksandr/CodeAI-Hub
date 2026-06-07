@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.466] - 2026-06-07
+### Fixed
+- **Codex workspace provider homes now share the global auth source.** Core replaces stale copied workspace `auth.json` files with a shared reference to `~/.codex/auth.json` before starting the Codex app-server, so refresh-token rotation cannot diverge between normal Codex and CodeAI Hub managed sessions.
+- **Clear/Undo retests are protected across all Codex-managed workflow steps.** The fix is in the central Codex app-server process startup path, covering Description, Diagram Modules, Application Skeleton, Quality Gates, Product Part, and later Codex-backed managed sessions that use workspace provider homes.
+
+### Verification
+- `npm run build --workspace=packages/Codex_AppServer_Module`
+- `node --test packages/Codex_AppServer_Module/dist/app-server/process/codex-provider-home-auth.test.js`
+- `npm run plan:validate`
+
 ## [1.2.465] - 2026-06-07
 ### Fixed
 - **Fresh Product Part bootstrap now waits for each initial agent turn.** Core waits for the current Product Part session to move from `running` back to `idle` before starting the next Product Part session after `Quality Gates Baseline`.

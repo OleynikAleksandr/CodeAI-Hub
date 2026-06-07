@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "c06f87071",
+  "lastRecordedCommit": "270230b7a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase26.verify.task1",
-  "expectedCommitMessage": "test: verify codex auth home hotfix",
+  "currentTaskId": "development-tree-product-part-review.phase27.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.466 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify codex auth home hotfix",
-    "preCommitHead": "c06f87071",
+    "expectedCommitMessage": "docs: prepare 1.2.466 release notes",
+    "preCommitHead": "270230b7a",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase26.verify.task1"
+    "taskId": "development-tree-product-part-review.phase27.release-notes.task1"
   }
 }
 ```
@@ -301,14 +301,14 @@
 ### Stream: Targeted Verification
 
 103. [DONE] `development-tree-product-part-review.phase26.verify.task1` Run targeted Codex module build and provider-home auth tests for the shared auth hotfix (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex auth home hotfix`).
-104. [PENDING] Git Commit: `test: verify codex auth home hotfix` (hash: TBD)
+104. [DONE] Git Commit: `test: verify codex auth home hotfix` (hash: 270230b7a)
 
 ## Phase 27 - Release Build (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Release After Confirmation
 
-105. [TODO] `development-tree-product-part-review.phase27.release-notes.task1` Prepare release notes for future version `1.2.466` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.466 release notes`).
-106. [TODO] Git Commit: `docs: prepare 1.2.466 release notes` (hash: TBD)
+105. [DONE] `development-tree-product-part-review.phase27.release-notes.task1` Prepare release notes for future version `1.2.466` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.466 release notes`).
+106. [PENDING] Git Commit: `docs: prepare 1.2.466 release notes` (hash: TBD)
 107. [TODO] `development-tree-product-part-review.phase27.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.466 release build state`).
 108. [TODO] Git Commit: `docs: checkpoint 1.2.466 release build state` (hash: TBD)
 109. [TODO] `development-tree-product-part-review.phase27.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.466` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.466 unified release artifacts`).
