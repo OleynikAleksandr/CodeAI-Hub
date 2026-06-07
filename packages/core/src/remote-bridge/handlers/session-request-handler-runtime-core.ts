@@ -9,6 +9,7 @@ import { SessionModelBindingResolver } from "../../session-model-binding/session
 import { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import { createCoreTranslationFacade } from "../../translation/core-translation-facade-factory";
 import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
+import { waitForDevelopmentTreeAgentTurnSettled } from "./development-tree-agent-turn-settle-waiter";
 import { SessionContinuityLockService } from "./session-continuity-lock-service";
 import { SessionDescriptionDialogSync } from "./session-description-dialog-sync";
 import { SessionProviderBindingService } from "./session-provider-binding-service";
@@ -199,6 +200,23 @@ export const createSessionRequestHandlerRuntimeCore = (
         await options.callbacks.createSessionForWorkflow(workflowOptions),
       handleMessage: async (sessionId, content) =>
         await messageDispatchRef.get().sendInternalMessage(sessionId, content),
+      waitForInitialTurnSettled: async (sessionId) => {
+        const session = options.sessionManager.getSession(sessionId);
+        const result = await waitForDevelopmentTreeAgentTurnSettled({
+          sessionId,
+          workspaceRoot:
+            session?.workspacePath ??
+            options.config.claudeWorkspacePath ??
+            process.cwd(),
+          workspaceRuntime: options.workspaceRuntime,
+        });
+        if (result === "timeout") {
+          options.logger.warn(
+            "Timed out waiting for Development Tree Product Part initial turn to settle",
+            { sessionId }
+          );
+        }
+      },
       persistStartPrompt: (sessionId, content) =>
         eventMessages.appendDialogMessage(sessionId, {
           content,

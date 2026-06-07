@@ -31,6 +31,7 @@ export interface DevelopmentTreeAgentSessionGateway {
     sessionId: string,
     content: string
   ) => Promise<void> | void;
+  readonly waitForInitialTurnSettled?: (sessionId: string) => Promise<void>;
 }
 
 export interface NodeAgentSessionBootstrapperOptions {
@@ -302,6 +303,7 @@ export class NodeAgentSessionBootstrapper {
         firstMessageContent
       );
       await options.gateway.handleMessage(session.id, firstMessageContent);
+      await options.gateway.waitForInitialTurnSettled?.(session.id);
     }
     return {
       draftFileNames: firstMessage.draftFileNames,

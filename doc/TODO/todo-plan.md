@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "d900d4cc8",
+  "lastRecordedCommit": "a90c2d53b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase21.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.464 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase23.bootstrap-wait.task1",
+  "expectedCommitMessage": "fix: wait for product part bootstrap turns",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.464 vsix release",
-    "preCommitHead": "d900d4cc8",
+    "expectedCommitMessage": "fix: wait for product part bootstrap turns",
+    "preCommitHead": "a90c2d53b",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase21.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase23.bootstrap-wait.task1"
   }
 }
 ```
@@ -256,17 +256,26 @@
 81. [DONE] `development-tree-product-part-review.phase21.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.464` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.464 unified release artifacts`).
 82. [DONE] Git Commit: `build: prepare 1.2.464 unified release artifacts` (hash: d900d4cc8)
 83. [DONE] `development-tree-product-part-review.phase21.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.464` (scope: `codeai-hub-1.2.464.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.464 vsix release`).
-84. [PENDING] Git Commit: `build: package 1.2.464 vsix release` (hash: TBD)
+84. [DONE] Git Commit: `build: package 1.2.464 vsix release` (hash: a90c2d53b)
 
 ## Phase 22 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
 ### Stream: Runtime Git Hygiene Retest
 
-85. [TODO] `development-tree-product-part-review.phase22.user.task1` User installs release `1.2.464` and retests from a fresh Description flow plus Product Part Clear/Undo: Git stays clean after generated sessions/runtime are recreated, and tracked workflow/product artifacts still roll back through Git (scope: user workflow; expected commit: none).
+85. [DONE] `development-tree-product-part-review.phase22.user.task1` User installs release `1.2.464` and retests from a fresh Description flow plus Product Part Clear/Undo: Git stays clean after generated sessions/runtime are recreated, and tracked workflow/product artifacts still roll back through Git (scope: user workflow; expected commit: none). Result: Git hygiene stayed clean, but fresh Quality Gates handoff started multiple Product Part Codex turns at once; `finder-widget-shell` stayed on the start prompt until user stop.
+
+## Phase 23 - Product Part Bootstrap Turn Sequencing Hotfix (owner: Codex, updated: 2026-06-07)
+
+### Stream: Initial Agent Turn Wait
+
+86. [DONE] `development-tree-product-part-review.phase23.bootstrap-wait.task1` Make managed Product Part auto-bootstrap wait for the current Product Part agent's initial provider turn to settle before starting the next Product Part session (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: wait for product part bootstrap turns`).
+87. [PENDING] Git Commit: `fix: wait for product part bootstrap turns` (hash: TBD)
+88. [TODO] `development-tree-product-part-review.phase23.bootstrap-wait-tests.task1` Add targeted test coverage for the Product Part initial turn settlement hook (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap turn wait`).
+89. [TODO] Git Commit: `test: verify product part bootstrap turn wait` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-86. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-87. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+90. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+91. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
