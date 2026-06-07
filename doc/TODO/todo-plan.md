@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "8715a63d6",
+  "lastRecordedCommit": "f796e3b6a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase3.docs.task1",
-  "expectedCommitMessage": "docs: describe product part review lifecycle",
+  "currentTaskId": "development-tree-product-part-review.phase4.verify.task1",
+  "expectedCommitMessage": "test: verify product part review lifecycle",
   "debt": {
-    "expectedCommitMessage": "docs: describe product part review lifecycle",
-    "preCommitHead": "8715a63d6",
+    "expectedCommitMessage": "test: verify product part review lifecycle",
+    "preCommitHead": "f796e3b6a",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase3.docs.task1"
+    "taskId": "development-tree-product-part-review.phase4.verify.task1"
   }
 }
 ```
@@ -70,14 +70,14 @@
 ### Stream: SSOT Update
 
 7. [DONE] `development-tree-product-part-review.phase3.docs.task1` Document Product Part review lifecycle and current lead/non-lead boundary before Development Order Plan implementation (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe product part review lifecycle`).
-8. [PENDING] Git Commit: `docs: describe product part review lifecycle` (hash: TBD)
+8. [DONE] Git Commit: `docs: describe product part review lifecycle` (hash: f796e3b6a)
 
 ## Phase 4 - Tooling Verification (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Targeted Verification
 
-9. [TODO] `development-tree-product-part-review.phase4.verify.task1` Run targeted tests for Product Part review lifecycle and relevant Core handlers (scope: `packages/core`; expected commit: `test: verify product part review lifecycle`).
-10. [TODO] Git Commit: `test: verify product part review lifecycle` (hash: TBD)
+9. [DONE] `development-tree-product-part-review.phase4.verify.task1` Run targeted tests for Product Part review lifecycle and relevant Core handlers (scope: `packages/core`; expected commit: `test: verify product part review lifecycle`).
+10. [PENDING] Git Commit: `test: verify product part review lifecycle` (hash: TBD)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
