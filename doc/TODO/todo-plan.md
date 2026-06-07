@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "252ed93fe",
+  "lastRecordedCommit": "f3f1120db",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase24.build-all.task1",
-  "expectedCommitMessage": "build: prepare 1.2.465 unified release artifacts",
+  "currentTaskId": "development-tree-product-part-review.phase24.vsix.task1",
+  "expectedCommitMessage": "build: package 1.2.465 vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare 1.2.465 unified release artifacts",
-    "preCommitHead": "252ed93fe",
+    "expectedCommitMessage": "build: package 1.2.465 vsix release",
+    "preCommitHead": "f3f1120db",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase24.build-all.task1"
+    "taskId": "development-tree-product-part-review.phase24.vsix.task1"
   }
 }
 ```
@@ -282,9 +282,9 @@
 92. [DONE] `development-tree-product-part-review.phase24.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.465 release build state`).
 93. [DONE] Git Commit: `docs: checkpoint 1.2.465 release build state` (hash: 252ed93fe)
 94. [DONE] `development-tree-product-part-review.phase24.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.465` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.465 unified release artifacts`).
-95. [PENDING] Git Commit: `build: prepare 1.2.465 unified release artifacts` (hash: TBD)
-96. [TODO] `development-tree-product-part-review.phase24.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.465` (scope: `codeai-hub-1.2.465.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.465 vsix release`).
-97. [TODO] Git Commit: `build: package 1.2.465 vsix release` (hash: TBD)
+95. [DONE] Git Commit: `build: prepare 1.2.465 unified release artifacts` (hash: f3f1120db)
+96. [DONE] `development-tree-product-part-review.phase24.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.465` (scope: `codeai-hub-1.2.465.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.465 vsix release`).
+97. [PENDING] Git Commit: `build: package 1.2.465 vsix release` (hash: TBD)
 98. [TODO] `development-tree-product-part-review.phase24.user.task1` User installs release `1.2.465` and retests fresh Quality Gates handoff: Product Part sessions are created one by one, each initial agent turn reaches assistant response/draft commit before the next Product Part starts, and Product Part Clear/Undo remains scoped and Git-clean (scope: user workflow; expected commit: none).
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
