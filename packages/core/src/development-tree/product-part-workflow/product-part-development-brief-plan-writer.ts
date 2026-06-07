@@ -141,6 +141,18 @@ const createLeadOrderPlanPhases = (params: {
   ];
 };
 
+const createReturnPhase = (params: {
+  readonly itemNumber: number;
+  readonly partId: string;
+}): string[] => [
+  "",
+  "## Phase Return - User Return And Revisions",
+  "",
+  "### Stream: User Return And Revisions",
+  "",
+  `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase-return.user-return.task1\` Product Part workflow is paused in an accepted state; user may return later with corrections or clarifications (scope: user workflow; expected commit: none).`,
+];
+
 const renderPlan = (params: {
   readonly isLeadPart: boolean;
   readonly leadProductPartId?: string | null;
@@ -188,6 +200,10 @@ const renderPlan = (params: {
           workspaceSlug: params.workspaceSlug,
         })
       : []),
+    ...createReturnPhase({
+      itemNumber: params.isLeadPart ? 9 : 5,
+      partId: params.node.partId,
+    }),
     "",
   ].join("\n");
 };

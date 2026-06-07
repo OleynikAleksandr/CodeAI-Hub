@@ -25,6 +25,7 @@ const PLAN_START = "<!-- codeai-plan-state:start -->";
 const PRODUCT_PART_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)$/u;
 const STATUS_RE = /^status:\s*\S+\s*$/im;
+const IS_LEAD_PLAN_RE = /^-\s+This Product Part is lead:\s+yes\.$/im;
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -68,6 +69,12 @@ const createTaskPrefix = (partId: string): string =>
 
 const createReviewTaskId = (partId: string): string =>
   `${createTaskPrefix(partId)}.phase2.brief-review.task1`;
+
+const createReturnTaskId = (partId: string): string =>
+  `${createTaskPrefix(partId)}.phase-return.user-return.task1`;
+
+const createOrderPlanTaskId = (partId: string): string =>
+  `${createTaskPrefix(partId)}.phase3.order-plan.task1`;
 
 const createPlanPath = (partId: string): string =>
   `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
@@ -136,6 +143,43 @@ const markReviewTaskAccepted = (params: {
       ),
       `$1DONE$2${params.commitHash}$3`
     );
+};
+
+const appendReturnPhaseIfMissing = (params: {
+  readonly content: string;
+  readonly partId: string;
+}): string => {
+  if (params.content.includes("User Return And Revisions")) {
+    return params.content;
+  }
+  const taskId = createReturnTaskId(params.partId);
+  return [
+    params.content.trimEnd(),
+    "",
+    "## Phase Return - User Return And Revisions",
+    "",
+    "### Stream: User Return And Revisions",
+    "",
+    `${nextItemNumber(params.content)}. [IN_PROGRESS] \`${taskId}\` Product Part brief is accepted; user may return later with corrections or clarifications (scope: user workflow; expected commit: none).`,
+    "",
+  ].join("\n");
+};
+
+const markOrderPlanTaskInProgress = (content: string, partId: string): string =>
+  content.replace(
+    new RegExp(
+      `^(\\d+\\. \\[)(?:TODO|BLOCKED)(\\] \`${escapeRegExp(
+        createOrderPlanTaskId(partId)
+      )}\` .*)$`,
+      "mu"
+    ),
+    "$1IN_PROGRESS$2"
+  );
+
+const nextItemNumber = (content: string): number => {
+  const matches = [...content.matchAll(/^(\d+)\.\s+\[/gmu)];
+  const last = Number(matches.at(-1)?.[1] ?? 0);
+  return Number.isFinite(last) ? last + 1 : 1;
 };
 
 const markBriefAccepted = (content: string): string => {
@@ -229,18 +273,18 @@ export class ProductPartDevelopmentBriefReviewController {
       params.workspaceRoot,
       planPath,
       replaceStateBlock(
-        markReviewTaskAccepted({
+        createAcceptedPlanText({
           commitHash: commit.hash,
-          commitMessage: planState.expectedCommitMessage,
           content: planText,
+          expectedCommitMessage: planState.expectedCommitMessage,
           partId,
         }),
-        {
-          ...planState,
-          currentTaskId: null,
-          expectedCommitMessage: null,
-          lastRecordedCommit: commit.hash,
-        }
+        createNextPlanState({
+          commitHash: commit.hash,
+          partId,
+          planState,
+          planText,
+        })
       )
     );
     await this.git.commit({
@@ -265,3 +309,44 @@ export class ProductPartDevelopmentBriefReviewController {
     };
   }
 }
+
+const createAcceptedPlanText = (params: {
+  readonly commitHash: string;
+  readonly content: string;
+  readonly expectedCommitMessage: string;
+  readonly partId: string;
+}): string => {
+  const accepted = markReviewTaskAccepted({
+    commitHash: params.commitHash,
+    commitMessage: params.expectedCommitMessage,
+    content: params.content,
+    partId: params.partId,
+  });
+  if (IS_LEAD_PLAN_RE.test(params.content)) {
+    return markOrderPlanTaskInProgress(accepted, params.partId);
+  }
+  return appendReturnPhaseIfMissing({
+    content: accepted,
+    partId: params.partId,
+  });
+};
+
+const createNextPlanState = (params: {
+  readonly commitHash: string;
+  readonly partId: string;
+  readonly planState: ManagedPlanState;
+  readonly planText: string;
+}): ManagedPlanState =>
+  IS_LEAD_PLAN_RE.test(params.planText)
+    ? {
+        ...params.planState,
+        currentTaskId: createOrderPlanTaskId(params.partId),
+        expectedCommitMessage: "docs: update lead development order plan",
+        lastRecordedCommit: params.commitHash,
+      }
+    : {
+        ...params.planState,
+        currentTaskId: createReturnTaskId(params.partId),
+        expectedCommitMessage: null,
+        lastRecordedCommit: params.commitHash,
+      };

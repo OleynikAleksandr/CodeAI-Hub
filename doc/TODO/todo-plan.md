@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "7a5be893d",
+  "lastRecordedCommit": "6d1fc87cf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase1.routing.task1",
-  "expectedCommitMessage": "feat: handle product part brief review decisions",
+  "currentTaskId": "development-tree-product-part-review.phase2.return.task1",
+  "expectedCommitMessage": "feat: open product part user return after brief acceptance",
   "debt": {
-    "expectedCommitMessage": "feat: handle product part brief review decisions",
-    "preCommitHead": "7a5be893d",
+    "expectedCommitMessage": "feat: open product part user return after brief acceptance",
+    "preCommitHead": "6d1fc87cf",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase1.routing.task1"
+    "taskId": "development-tree-product-part-review.phase2.return.task1"
   }
 }
 ```
@@ -56,14 +56,14 @@
 ### Stream: Review Routing
 
 3. [DONE] `development-tree-product-part-review.phase1.routing.task1` Add Product Part review-decision routing so normal user messages stay in revision flow and explicit acceptance is handled by Core (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts`; expected commit: `feat: handle product part brief review decisions`).
-4. [PENDING] Git Commit: `feat: handle product part brief review decisions` (hash: TBD)
+4. [DONE] Git Commit: `feat: handle product part brief review decisions` (hash: 6d1fc87cf)
 
 ## Phase 2 - Product Part Return State (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Managed Plan Advancement
 
-5. [TODO] `development-tree-product-part-review.phase2.return.task1` Advance accepted non-lead Product Part plans into `User Return And Revisions` and keep lead Product Part plans ready for the next managed assignment (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open product part user return after brief acceptance`).
-6. [TODO] Git Commit: `feat: open product part user return after brief acceptance` (hash: TBD)
+5. [DONE] `development-tree-product-part-review.phase2.return.task1` Advance accepted non-lead Product Part plans into `User Return And Revisions` and keep lead Product Part plans ready for the next managed assignment (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open product part user return after brief acceptance`).
+6. [PENDING] Git Commit: `feat: open product part user return after brief acceptance` (hash: TBD)
 
 ## Phase 3 - Documentation Sync (owner: Codex, updated: 2026-06-07)
 

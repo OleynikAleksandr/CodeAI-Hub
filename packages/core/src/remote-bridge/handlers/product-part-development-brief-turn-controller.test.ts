@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import { ProductPartDevelopmentBriefReviewController } from "./product-part-development-brief-review-controller";
 import { ProductPartDevelopmentBriefTurnController } from "./product-part-development-brief-turn-controller";
 
 const execFileAsync = promisify(execFile);
@@ -23,6 +24,11 @@ const PHASE1_GIT_COMMIT_RE =
   /Git Commit: `docs: update engine product part development brief` \(hash: [a-f0-9]+\)/u;
 const PHASE2_REVIEW_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase2\.brief-review\.task1`/u;
+const RETURN_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase-return\.user-return\.task1`/u;
+const LEAD_ORDER_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase3\.order-plan\.task1`/u;
+const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -71,6 +77,51 @@ const createPlan = (): string => {
     `2. [TODO] Git Commit: \`docs: update ${PART_ID} product part development brief\` (hash: TBD)`,
     `3. [TODO] \`${taskPrefix}.phase2.brief-review.task1\` Review the Product Part Development Brief (scope: user workflow; expected commit: \`docs: accept ${PART_ID} product part development brief\`).`,
     `4. [TODO] Git Commit: \`docs: accept ${PART_ID} product part development brief\` (hash: TBD)`,
+    "",
+  ].join("\n");
+};
+
+const createReviewPlan = (isLeadPart: boolean): string => {
+  const taskPrefix = `development-tree.product-part.${PART_ID}`;
+  const state = JSON.stringify(
+    {
+      schema: "codeai-plan-v1",
+      executionScopeStatus: "ACTIVE",
+      planId: `development-tree-product-part-${PART_ID}`,
+      branch: "main",
+      baseHead: "TBD",
+      lastRecordedCommit: "draft123",
+      planningSource: `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${PART_ID}.md`,
+      currentTaskId: `${taskPrefix}.phase2.brief-review.task1`,
+      expectedCommitMessage: `docs: accept ${PART_ID} product part development brief`,
+      debt: null,
+    },
+    null,
+    2
+  );
+  return [
+    "# Product Part Development Brief Managed TODO Plan",
+    "",
+    "<!-- codeai-plan-state:start -->",
+    "```json",
+    state,
+    "```",
+    "<!-- codeai-plan-state:end -->",
+    "",
+    "## Managed Context",
+    "",
+    `- This Product Part is lead: ${isLeadPart ? "yes" : "no"}.`,
+    "",
+    `1. [DONE] \`${taskPrefix}.phase1.brief.task1\` Draft the Product Part Development Brief (scope: \`${BRIEF_PATH}\`; expected commit: \`docs: update ${PART_ID} product part development brief\`).`,
+    `2. [DONE] Git Commit: \`docs: update ${PART_ID} product part development brief\` (hash: draft123)`,
+    `3. [IN_PROGRESS] \`${taskPrefix}.phase2.brief-review.task1\` Review the Product Part Development Brief (scope: user workflow; expected commit: \`docs: accept ${PART_ID} product part development brief\`).`,
+    `4. [TODO] Git Commit: \`docs: accept ${PART_ID} product part development brief\` (hash: TBD)`,
+    ...(isLeadPart
+      ? [
+          `5. [TODO] \`${taskPrefix}.phase3.order-plan.task1\` After every Product Part Development Brief is accepted, the lead Product Part agent drafts the Core-readable Development Order Plan and JSON companion (scope: order plan; expected commit: \`docs: update lead development order plan\`).`,
+          "6. [TODO] Git Commit: `docs: update lead development order plan` (hash: TBD)",
+        ]
+      : []),
     "",
   ].join("\n");
 };
@@ -185,3 +236,62 @@ test("Product Part brief handoff commits accepted draft and opens user review", 
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("Product Part review acceptance opens non-lead user return", async () => {
+  const workspaceRoot = await prepareReviewWorkspace(false);
+  try {
+    await acceptReview(workspaceRoot);
+    const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
+    const brief = await readFile(path.join(workspaceRoot, BRIEF_PATH), "utf8");
+    assert.match(plan, RETURN_IN_PROGRESS_RE);
+    assert.match(brief, STATUS_ACCEPTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Product Part review acceptance prepares lead order plan task", async () => {
+  const workspaceRoot = await prepareReviewWorkspace(true);
+  try {
+    await acceptReview(workspaceRoot);
+    const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
+    assert.match(plan, LEAD_ORDER_IN_PROGRESS_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "product-part-brief-review-")
+  );
+  await runGit(workspaceRoot, ["init"]);
+  await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
+  await runGit(workspaceRoot, ["config", "user.name", "Test"]);
+  await writeWorkspaceFile(
+    workspaceRoot,
+    PLAN_PATH,
+    createReviewPlan(isLeadPart)
+  );
+  await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
+  await runGit(workspaceRoot, ["add", "."]);
+  await runGit(workspaceRoot, [
+    "commit",
+    "-m",
+    "docs: update engine product part development brief",
+  ]);
+  return workspaceRoot;
+};
+
+const acceptReview = async (workspaceRoot: string): Promise<void> => {
+  const result =
+    await new ProductPartDevelopmentBriefReviewController().handleAccepted({
+      sessionId: "product-part-session-1",
+      stage: `development_tree/materialized/product-parts/${PART_ID}`,
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+  assert.equal(result.handled, true);
+  const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
+  assert.equal(stdout.trim(), "");
+};
