@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.462** (Scoped Product Part Clear/Undo Restart)
+**Current Release — v1.2.463** (Codex Provider Turn Serialization)
+
+This release hardens Codex provider execution for Development Tree workflows
+with many automatic agent sessions. Codex operations that share one
+workspace-scoped `CODEX_HOME` now run through a provider-home queue, so Product
+Part agent creation, resumed turns, usage-limit reads, and diagnostics cannot
+start overlapping refresh-token activity against the same auth state.
+
+After installing this release, any workspace that already hit the Codex
+`refresh token was already used` error still needs one manual Codex sign-out /
+sign-in to replace the stale token. The release prevents the same Core-side
+race from being recreated after re-authentication.
+
+**Previous Release — v1.2.462** (Scoped Product Part Clear/Undo Restart)
 
 This release fixes the Product Part Clear/Undo restart scope found in v1.2.461.
 Clearing one Product Part now recreates only that selected `partId`; sibling

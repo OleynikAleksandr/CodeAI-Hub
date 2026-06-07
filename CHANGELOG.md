@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.463] - 2026-06-07
+### Fixed
+- **Codex provider operations now serialize access to the shared provider home.** `createSession`, `resumeSession`, `sendMessage`, usage-limit refresh, and native request capture now run through one provider-home queue inside the Codex adapter, preventing Core-side overlap against the same `CODEX_HOME` auth state.
+- **Multi-Product-Part workflows are protected after Codex re-authentication.** Workspaces that already hit the `refresh token was already used` error still need one manual Codex sign-out/sign-in, but subsequent Product Part restarts should not recreate the same provider-home refresh-token race from Core.
+
+### Verification
+- `npm run build --workspace @codeai-hub/codex-app-server-module`
+- `node --test packages/Codex_AppServer_Module/dist/provider/codex-provider-adapter.test.js`
+- `npm run plan:validate`
+
 ## [1.2.462] - 2026-06-07
 ### Fixed
 - **Product Part Clear/Undo restart is now scoped to the selected Product Part.** Core passes the cleared `partId` into Development Tree Product Part bootstrap, so clearing `widget-display` cannot also recreate `latest-note-search` or any other sibling Product Part session.

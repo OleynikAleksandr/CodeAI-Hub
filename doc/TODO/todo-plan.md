@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "5c8ab47bc",
+  "lastRecordedCommit": "e547c086a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase17.codex-queue.task2",
-  "expectedCommitMessage": "test: verify codex provider operation serialization",
+  "currentTaskId": "development-tree-product-part-review.phase18.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.463 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify codex provider operation serialization",
-    "preCommitHead": "5c8ab47bc",
+    "expectedCommitMessage": "docs: prepare 1.2.463 release notes",
+    "preCommitHead": "e547c086a",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase17.codex-queue.task2"
+    "taskId": "development-tree-product-part-review.phase18.release-notes.task1"
   }
 }
 ```
@@ -207,18 +207,22 @@
 52. [DONE] `development-tree-product-part-review.phase17.codex-queue.task1` Serialize Codex provider operations that can touch the shared `CODEX_HOME` auth state so multiple Product Part sessions cannot trigger concurrent refresh-token use (scope: `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts, packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: serialize codex provider turns`).
 53. [DONE] Git Commit: `fix: serialize codex provider turns` (hash: 5c8ab47bc)
 54. [DONE] `development-tree-product-part-review.phase17.codex-queue.task2` Run targeted Codex provider adapter verification for serialized create/resume/send/usage-limit operations (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex provider operation serialization`).
-55. [PENDING] Git Commit: `test: verify codex provider operation serialization` (hash: TBD)
+55. [DONE] Git Commit: `test: verify codex provider operation serialization` (hash: e547c086a)
 
 ## Phase 18 - Release Build (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Release After Confirmation
 
-56. [TODO] `development-tree-product-part-review.phase18.release.task1` After explicit user confirmation, prepare release notes and build the next VSIX for the Codex provider serialization hotfix (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: package codex provider serialization hotfix`).
-57. [TODO] Git Commit: `build: package codex provider serialization hotfix` (hash: TBD)
+56. [DONE] `development-tree-product-part-review.phase18.release-notes.task1` Prepare release notes for future version `1.2.463` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.463 release notes`).
+57. [PENDING] Git Commit: `docs: prepare 1.2.463 release notes` (hash: TBD)
+58. [TODO] `development-tree-product-part-review.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.463` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.463 unified release artifacts`).
+59. [TODO] Git Commit: `build: prepare 1.2.463 unified release artifacts` (hash: TBD)
+60. [TODO] `development-tree-product-part-review.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.463` (scope: `codeai-hub-1.2.463.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.463 vsix release`).
+61. [TODO] Git Commit: `build: package 1.2.463 vsix release` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-58. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-59. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+62. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+63. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
