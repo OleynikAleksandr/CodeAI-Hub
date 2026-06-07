@@ -14,6 +14,7 @@ const GENERATED_OUTPUT_SEGMENTS = new Set([
 
 const INSTALL_OUTPUT_PACKAGE_MANAGERS = new Set(["bun", "npm", "pnpm", "yarn"]);
 const LOCAL_RUNTIME_STATE_DIR = ".codeai-hub/state";
+const WORKSPACE_RUNTIME_CAPSULE_DIR = ".codeai-hub/*/runtime";
 const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.\//u;
 const NEGATED_PATTERN_RE = /^!/u;
@@ -120,6 +121,11 @@ export const auditApplicationSkeletonGitignore = async (params: {
   if (!ignoresPath(lines, LOCAL_RUNTIME_STATE_DIR)) {
     errors.push(
       "application skeleton gitignore must ignore local runtime state: .codeai-hub/state"
+    );
+  }
+  if (!ignoresPath(lines, WORKSPACE_RUNTIME_CAPSULE_DIR)) {
+    errors.push(
+      "application skeleton gitignore must ignore workspace runtime capsules: .codeai-hub/*/runtime"
     );
   }
   return errors;

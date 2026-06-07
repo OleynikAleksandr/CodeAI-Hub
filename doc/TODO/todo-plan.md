@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "f35034b42",
+  "lastRecordedCommit": "6f33dbfd2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase18.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.463 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase20.runtime-gitignore.task1",
+  "expectedCommitMessage": "fix: ignore workspace runtime capsules",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.463 vsix release",
-    "preCommitHead": "f35034b42",
+    "expectedCommitMessage": "fix: ignore workspace runtime capsules",
+    "preCommitHead": "6f33dbfd2",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase18.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase20.runtime-gitignore.task1"
   }
 }
 ```
@@ -218,11 +218,28 @@
 58. [DONE] `development-tree-product-part-review.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.463` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.463 unified release artifacts`).
 59. [DONE] Git Commit: `build: prepare 1.2.463 unified release artifacts` (hash: f35034b42)
 60. [DONE] `development-tree-product-part-review.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.463` (scope: `codeai-hub-1.2.463.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.463 vsix release`).
-61. [PENDING] Git Commit: `build: package 1.2.463 vsix release` (hash: TBD)
+61. [DONE] Git Commit: `build: package 1.2.463 vsix release` (hash: 6f33dbfd2)
+
+## Phase 19 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+
+### Stream: FinderWidget Codex Reauth Retest
+
+62. [DONE] `development-tree-product-part-review.phase19.user.task1` User installs release `1.2.463`, performs one Codex provider sign-out/sign-in if the workspace already has the reused refresh-token error, then retests Product Part Clear/Undo for `widget-display` and `latest-note-search`: sessions and todo-plans are recreated, and Codex provider turns proceed without recreating a Core-side refresh-token race (scope: user workflow; expected commit: none). Result: functional retest passed; Git hygiene failed because provider/unified runtime files remain tracked and dirty after session recreation.
+
+## Phase 20 - Workspace Runtime Git Hygiene Hotfix (owner: Codex, updated: 2026-06-07)
+
+### Stream: Runtime Local-Only Contract
+
+63. [DONE] `development-tree-product-part-review.phase20.runtime-gitignore.task1` Change generated workspace Git ignore contracts so `.codeai-hub/<workspace>/runtime/` is local-only runtime state, not product Git truth (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts`; expected commit: `fix: ignore workspace runtime capsules`).
+64. [PENDING] Git Commit: `fix: ignore workspace runtime capsules` (hash: TBD)
+65. [TODO] `development-tree-product-part-review.phase20.runtime-cleanup.task1` Update managed commit/clean boundaries to untrack already tracked workspace runtime files and stop classifying runtime provider/session logs as committable residue (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts`; expected commit: `fix: untrack workspace runtime during managed commits`).
+66. [TODO] Git Commit: `fix: untrack workspace runtime during managed commits` (hash: TBD)
+67. [TODO] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
+68. [TODO] Git Commit: `test: verify workspace runtime stays local only` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-62. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-63. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+69. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+70. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
