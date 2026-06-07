@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "2652de01b",
+  "lastRecordedCommit": "4c8b2641a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase5.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.460 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase6.clear-undo-docs.task1",
+  "expectedCommitMessage": "docs: document development tree git-first clear undo model",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.460 vsix release",
-    "preCommitHead": "2652de01b",
+    "expectedCommitMessage": "docs: document development tree git-first clear undo model",
+    "preCommitHead": "4c8b2641a",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase5.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase6.clear-undo-docs.task1"
   }
 }
 ```
@@ -99,17 +99,24 @@
 ### Stream: VSIX Packaging
 
 17. [DONE] `development-tree-product-part-review.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-1.2.460.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.460 vsix release`).
-18. [PENDING] Git Commit: `build: package 1.2.460 vsix release` (hash: TBD)
+18. [DONE] Git Commit: `build: package 1.2.460 vsix release` (hash: 4c8b2641a)
 
-## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+## Phase 6 - Development Tree Clear/Undo Planning Sync (owner: Codex, updated: 2026-06-07)
+
+### Stream: Git-First Clear/Undo Model
+
+19. [DONE] `development-tree-product-part-review.phase6.clear-undo-docs.task1` Document the Git-first Development Tree Clear/Undo and refactoring model in the active planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document development tree git-first clear undo model`).
+20. [PENDING] Git Commit: `docs: document development tree git-first clear undo model` (hash: TBD)
+
+## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
 ### Stream: FinderWidget Retest
 
-19. [TODO] `development-tree-product-part-review.phase6.user.task1` User installs release `1.2.460` and retests `latest-note-search` and `widget-display` Product Part sessions: revision messages continue agent work, acceptance transitions to return/revision state (scope: user workflow; expected commit: none).
+21. [TODO] `development-tree-product-part-review.phase7.user.task1` User installs release `1.2.460` and retests `latest-note-search` and `widget-display` Product Part sessions: revision messages continue agent work, acceptance transitions to return/revision state (scope: user workflow; expected commit: none).
 
-## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-07)
+## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-20. [TODO] `development-tree-product-part-review.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-21. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+22. [TODO] `development-tree-product-part-review.phase8.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+23. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

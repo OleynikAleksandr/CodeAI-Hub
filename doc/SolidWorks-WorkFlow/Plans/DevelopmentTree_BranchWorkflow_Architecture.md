@@ -1,8 +1,8 @@
 # Development Tree Branch Workflow Architecture
 
-**Status:** Reference Architecture (updated 2026-06-02). Sidebar visualization of Product Part / Cluster / Module branch structure and automatic first-draft materialization are already implemented in production. This document defines the next branch workflow model after `Quality Gates Baseline`: compact filesystem scaffolding, one module node, one module-agent session, artifact/user-review phases, interactive Implementation TODO Plan, and read-only worker sessions.
+**Status:** Reference Architecture (updated 2026-06-07). Sidebar visualization of Product Part / Cluster / Module branch structure and automatic first-draft materialization are already implemented in production. This document defines the next branch workflow model after `Quality Gates Baseline`: compact filesystem scaffolding, one module node, one module-agent session, artifact/user-review phases, interactive Implementation TODO Plan, read-only worker sessions, and Git-first Clear/Undo reconciliation.
 **Created:** 2026-04-07
-**Updated:** 2026-06-02
+**Updated:** 2026-06-07
 **Owner:** Oleksandr + Codex
 **Scope:** Формализовать Development Tree после `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline`: `Product Part Development Brief`, `Lead Development Order Plan`, `Cluster Design`, managed module workflow, worker visibility, user review gates, and MVP boundaries for implementation execution.
 
@@ -69,6 +69,8 @@ Fresh Development Tree scaffolding follows the same rule. Core creates only real
 - разворачивать каждую микрозадачу `Implementation TODO Plan` в левом Development Tree;
 - требовать полностью автоматического исполнения implementation plan Core-ом в первой версии;
 - сохранять отдельный required artifact `Implementation Foundation` как обязательную фазу модуля;
+- строить отдельный rollback ledger, generation store или shadow-Git поверх Git;
+- использовать `Clear` как способ удалить Product Part / Cluster / Module из продукта; изменение состава дерева является refactoring через upstream artifacts;
 - менять уже принятые правила: Core owns workflow truth, Project Manager is projection.
 
 ---
@@ -86,6 +88,41 @@ Trunk workflow заканчивается на технически готово
 5. `Quality Gates Baseline`
 
 Development Tree начинается только после того, как Core видит принятую структуру модулей, installable skeleton и baseline gates.
+
+### 4.1.1. Git-first Clear/Undo and refactoring model
+
+Development Tree Clear/Undo не должен вводить собственный механизм отката поверх Git. Git остаётся единственной историей того, в какой точке программный продукт считался корректным. Core/Project Manager после любого Git rollback, checkout, revert или refactoring commit должны заново вывести состояние workflow из текущего `HEAD`, файловой системы и принятых артефактов.
+
+Общий принцип:
+
+1. Git возвращает workspace или отдельную branch/worktree в выбранную точку.
+2. Core выполняет reconciliation from current truth, а не replay собственной rollback-памяти.
+3. Core читает accepted artifacts (`Diagram Modules`, `Application Skeleton`, `Quality Gates`, Product Part briefs, Development Order Plan), существующие branches/worktrees и materialized files.
+4. Project Manager показывает Core-derived состояние: `not_started`, `in_progress`, `awaiting_review`, `accepted`, `stale`, `orphaned`, `ready_for_integration` or equivalent lifecycle labels.
+
+`Clear` и `Refactoring` используют один и тот же reconciliation механизм, но имеют разный смысл:
+
+- `Clear` означает: текущий узел или шаг сделан плохо, его нужно пересоздать из той же текущей продуктовой структуры.
+- `Refactoring` означает: сама продуктовая структура изменилась. Пользователь возвращается к upstream artifact (`Diagram Modules`, later `Development Order Plan`) и удаляет, добавляет или переносит Product Part / Cluster / Module там.
+
+Если после `Clear` текущая Git/filesystem truth всё ещё требует существования cleared step, Core обязан автоматически создать новую fresh session этого шага. Отдельная UX-опция `Clear only` для Development Tree узлов не нужна: если узел всё ещё описан в accepted structure, отсутствие его сессии является временным состоянием, которое orchestrator должен закрыть перезапуском. Если узел больше не нужен, это не `Clear`, а refactoring upstream artifacts.
+
+Session state не является rollback truth. При Clear конкретного шага Core удаляет обе эпостаси его сессии:
+
+- provider-neutral / unified session history and continuity entry;
+- provider-native session history, binding and runtime metadata;
+- Core/system review cards/messages, managed decision files and step-local runtime residue created for that step.
+
+После Clear session всегда стартует с нуля. Core не пытается анализировать старый transcript и не пытается привязать его к новому `HEAD`.
+
+Product Part agents are the last Development Tree sessions that run in the main workspace. They create branch-root Product Part briefs and, for the lead Product Part, the Development Order Plan that coordinates downstream work. Cluster and Module work must run in separate Git worktrees/branches created from the accepted main-workspace state. This keeps rollback simple and enables parallel execution:
+
+- main workspace owns trunk stages, Product Part Development Briefs and accepted Development Order Plan;
+- cluster/module worktrees own their own commits, sessions and implementation artifacts;
+- rollback of a cluster/module step is a normal Git operation inside that branch/worktree;
+- integration back into the main product is a later merge/PR/patch step governed by the accepted Development Order Plan and Quality Gates.
+
+After restart, Core must not rely on stale in-memory state. It rehydrates Development Tree by comparing current Git/filesystem truth with accepted artifacts and existing Git worktrees/branches. Branches/worktrees not described by current accepted artifacts are reported as stale/orphaned refactoring outcomes; branches/worktrees required by current artifacts but missing are `not_started` and may be created by the orchestrator.
 
 ### 4.2. Product Part Development Brief remains the branch root
 
