@@ -25,9 +25,9 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.doesNotMatch(hookSource, /window\.confirm/u);
   assert.match(hookSource, /mode: "confirm"/u);
   assert.match(hookSource, />\s*Cancel\s*</u);
-  assert.match(hookSource, />\s*Clear\s*</u);
-  assert.match(hookSource, /Core will use Git rollback/u);
-  assert.match(hookSource, /git clean -fd/u);
+  assert.match(hookSource, />\s*Clear\/Undo\s*</u);
+  assert.match(hookSource, /Product Part nodes are cleared and restarted/u);
+  assert.match(hookSource, /Top-level workflow stages use Git rollback/u);
   assert.match(hookSource, /onContextMenu/u);
   assert.match(hookSource, /onContextMenuCapture/u);
   assert.match(hookSource, /event\.button === 2/u);
@@ -37,10 +37,13 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.match(hookSource, /const result = await clearWorkflowStep/u);
   assert.match(hookSource, /restore: result\.restore/u);
   assert.match(hookSource, /deletedSessionIds: result\.deletedSessionIds/u);
+  assert.match(hookSource, /productPartRestart: result\.productPartRestart/u);
+  assert.match(hookSource, /deletedProviderNativeSessionPaths/u);
   assert.match(hookSource, /pm:workflow-step:cleared/u);
   assert.match(hookSource, /pm:workflow-step:clear-failed/u);
   assert.match(clientSource, /workflow-step-clear/u);
   assert.match(clientSource, /WorkflowStepClearResult/u);
+  assert.match(clientSource, /WorkflowStepClearProductPartRestartResult/u);
   assert.match(clientSource, /invalid Core response/u);
 });
 

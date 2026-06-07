@@ -127,7 +127,10 @@ export const useWorkspaceTreeClearMenu = (params: {
         new CustomEvent("pm:workflow-step:cleared", {
           detail: {
             target: result.target,
+            deletedProviderNativeSessionPaths:
+              result.deletedProviderNativeSessionPaths ?? [],
             deletedSessionIds: result.deletedSessionIds,
+            productPartRestart: result.productPartRestart ?? null,
             restore: result.restore,
             workspacePath: params.workspacePath,
             workspaceSlug: result.workspaceSlug,
@@ -157,8 +160,9 @@ export const useWorkspaceTreeClearMenu = (params: {
           undone.
         </div>
         <div className="pm-tree-menu__warning">
-          Core will use Git rollback, then run git clean -fd. Untracked files
-          that are not ignored under this workspace will be removed.
+          Product Part nodes are cleared and restarted from current Development
+          Tree state. Top-level workflow stages use Git rollback and may remove
+          untracked workspace files.
         </div>
         <div className="pm-tree-menu__actions">
           <button

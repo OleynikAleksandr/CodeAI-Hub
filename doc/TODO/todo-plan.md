@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "e3be8afdc",
+  "lastRecordedCommit": "ec8da212b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase8.clear-core.task1",
-  "expectedCommitMessage": "feat: clear and restart product part agent sessions",
+  "currentTaskId": "development-tree-product-part-review.phase8.clear-ui.task1",
+  "expectedCommitMessage": "feat: expose product part clear restart feedback",
   "debt": {
-    "expectedCommitMessage": "feat: clear and restart product part agent sessions",
-    "preCommitHead": "e3be8afdc",
+    "expectedCommitMessage": "feat: expose product part clear restart feedback",
+    "preCommitHead": "ec8da212b",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase8.clear-core.task1"
+    "taskId": "development-tree-product-part-review.phase8.clear-ui.task1"
   }
 }
 ```
@@ -119,12 +119,12 @@
 ### Stream: Core Clear And Auto-Restart
 
 22. [DONE] `development-tree-product-part-review.phase8.clear-core.task1` Implement Product Part root-node Clear/Undo so Core deletes the old Product Part session state, removes its Product Part todo-plan/drafts, and immediately recreates the Product Part plan/session from current Development Tree truth (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear*.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat: clear and restart product part agent sessions`).
-23. [PENDING] Git Commit: `feat: clear and restart product part agent sessions` (hash: TBD)
+23. [DONE] Git Commit: `feat: clear and restart product part agent sessions` (hash: ec8da212b)
 
 ### Stream: Project Manager Clear Feedback
 
-24. [TODO] `development-tree-product-part-review.phase8.clear-ui.task1` Surface Product Part clear/restart response details in the Project Manager clear event contract so retest can confirm deleted sessions and replaced Product Part todo-plans (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `feat: expose product part clear restart feedback`).
-25. [TODO] Git Commit: `feat: expose product part clear restart feedback` (hash: TBD)
+24. [DONE] `development-tree-product-part-review.phase8.clear-ui.task1` Surface Product Part clear/restart response details in the Project Manager clear event contract so retest can confirm deleted sessions and replaced Product Part todo-plans (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `feat: expose product part clear restart feedback`).
+25. [PENDING] Git Commit: `feat: expose product part clear restart feedback` (hash: TBD)
 
 ### Stream: Documentation Sync
 

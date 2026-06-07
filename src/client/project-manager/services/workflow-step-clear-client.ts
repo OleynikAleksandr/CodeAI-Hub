@@ -17,9 +17,22 @@ export interface WorkflowStepClearRestoreResult {
   readonly stage: string;
 }
 
+export interface WorkflowStepClearProductPartRestartResult {
+  readonly bootstrapSessionIds: readonly string[];
+  readonly deletedContinuityPaths: readonly string[];
+  readonly deletedManagedPaths: readonly string[];
+  readonly deletedProductPartPlanPaths: readonly string[];
+  readonly deletedUnifiedSessionPaths: readonly string[];
+  readonly partId: string;
+  readonly recreatedDraftPaths: readonly string[];
+  readonly recreatedProductPartPlanPaths: readonly string[];
+}
+
 export interface WorkflowStepClearResult {
   readonly cleared: true;
+  readonly deletedProviderNativeSessionPaths?: readonly string[];
   readonly deletedSessionIds: readonly string[];
+  readonly productPartRestart?: WorkflowStepClearProductPartRestartResult;
   readonly restore: WorkflowStepClearRestoreResult;
   readonly target: WorkflowStepClearTarget;
   readonly workspaceSlug: string;
@@ -58,6 +71,28 @@ export const clearWorkflowStep = async (params: {
   return payload;
 };
 
+const isStringArray = (value: unknown): value is readonly string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
+const isProductPartRestartResult = (
+  value: unknown
+): value is WorkflowStepClearProductPartRestartResult => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const record = value as Partial<WorkflowStepClearProductPartRestartResult>;
+  return (
+    typeof record.partId === "string" &&
+    isStringArray(record.bootstrapSessionIds) &&
+    isStringArray(record.deletedContinuityPaths) &&
+    isStringArray(record.deletedManagedPaths) &&
+    isStringArray(record.deletedProductPartPlanPaths) &&
+    isStringArray(record.deletedUnifiedSessionPaths) &&
+    isStringArray(record.recreatedDraftPaths) &&
+    isStringArray(record.recreatedProductPartPlanPaths)
+  );
+};
+
 const isWorkflowStepClearResult = (
   value: unknown
 ): value is WorkflowStepClearResult => {
@@ -70,7 +105,11 @@ const isWorkflowStepClearResult = (
     Array.isArray(record.deletedSessionIds) &&
     typeof record.workspaceSlug === "string" &&
     Boolean(record.restore) &&
-    Boolean(record.target)
+    Boolean(record.target) &&
+    (record.deletedProviderNativeSessionPaths === undefined ||
+      isStringArray(record.deletedProviderNativeSessionPaths)) &&
+    (record.productPartRestart === undefined ||
+      isProductPartRestartResult(record.productPartRestart))
   );
 };
 
