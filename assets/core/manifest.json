@@ -3,10 +3,10 @@
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "platforms": {
     "darwin-arm64": {
-      "coreVersion": "1.2.464",
-      "package": "codeai-hub-core-darwin-arm64-1.2.464.tar.bz2",
-      "size": 38639096,
-      "sha1": "89049e8300b37986c11c860bfb836277e786fb45"
+      "coreVersion": "1.2.465",
+      "package": "codeai-hub-core-darwin-arm64-1.2.465.tar.bz2",
+      "size": 38640358,
+      "sha1": "880a63d89791519d335e073908ee01002f922c6f"
     },
     "darwin-x64": {
       "coreVersion": "0.1.0",
