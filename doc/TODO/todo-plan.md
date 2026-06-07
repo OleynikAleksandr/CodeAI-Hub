@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "f796e3b6a",
+  "lastRecordedCommit": "6795e1d39",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase4.verify.task1",
-  "expectedCommitMessage": "test: verify product part review lifecycle",
+  "currentTaskId": "development-tree-product-part-review.phase5.release-plan.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.460 release build scope",
   "debt": {
-    "expectedCommitMessage": "test: verify product part review lifecycle",
-    "preCommitHead": "f796e3b6a",
+    "expectedCommitMessage": "docs: prepare 1.2.460 release build scope",
+    "preCommitHead": "6795e1d39",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase4.verify.task1"
+    "taskId": "development-tree-product-part-review.phase5.release-plan.task1"
   }
 }
 ```
@@ -77,18 +77,39 @@
 ### Stream: Targeted Verification
 
 9. [DONE] `development-tree-product-part-review.phase4.verify.task1` Run targeted tests for Product Part review lifecycle and relevant Core handlers (scope: `packages/core`; expected commit: `test: verify product part review lifecycle`).
-10. [PENDING] Git Commit: `test: verify product part review lifecycle` (hash: TBD)
+10. [DONE] Git Commit: `test: verify product part review lifecycle` (hash: 6795e1d39)
 
-## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+## Phase 5 - Release Build (owner: Codex, updated: 2026-06-07)
+
+### Stream: Release Preparation
+
+11. [DONE] `development-tree-product-part-review.phase5.release-plan.task1` Add release build streams after explicit user request and keep user retest after VSIX delivery (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release build scope`).
+12. [PENDING] Git Commit: `docs: prepare 1.2.460 release build scope` (hash: TBD)
+
+### Stream: Release Notes
+
+13. [TODO] `development-tree-product-part-review.phase5.release-notes.task1` Update release notes for future version `1.2.460` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release notes`).
+14. [TODO] Git Commit: `docs: prepare 1.2.460 release notes` (hash: TBD)
+
+### Stream: Unified Artifacts
+
+15. [TODO] `development-tree-product-part-review.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts (scope: release scripts and generated version artifacts; expected commit: `build: prepare 1.2.460 unified release artifacts`).
+16. [TODO] Git Commit: `build: prepare 1.2.460 unified release artifacts` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+17. [TODO] `development-tree-product-part-review.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: release packaging artifacts; expected commit: `build: package 1.2.460 vsix release`).
+18. [TODO] Git Commit: `build: package 1.2.460 vsix release` (hash: TBD)
+
+## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
 ### Stream: FinderWidget Retest
 
-11. [TODO] `development-tree-product-part-review.phase5.user.task1` User retests `latest-note-search` and `widget-display` Product Part sessions: revision messages continue agent work, acceptance transitions to return/revision state (scope: user workflow; expected commit: none).
-12. [TODO] Git Commit: `none` (hash: N/A)
+19. [TODO] `development-tree-product-part-review.phase6.user.task1` User installs release `1.2.460` and retests `latest-note-search` and `widget-display` Product Part sessions: revision messages continue agent work, acceptance transitions to return/revision state (scope: user workflow; expected commit: none).
 
-## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-07)
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-13. [TODO] `development-tree-product-part-review.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-14. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+20. [TODO] `development-tree-product-part-review.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+21. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
