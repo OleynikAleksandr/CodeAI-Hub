@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.464** (Workspace Runtime Git Hygiene)
+**Current Release — v1.2.465** (Product Part Bootstrap Turn Sequencing)
+
+This release fixes the fresh Development Tree handoff after `Quality Gates
+Baseline`. When Core creates multiple Product Part agent sessions, it now waits
+for the current Product Part agent's initial provider turn to settle before
+starting the next Product Part. This keeps `finder-widget` and
+`finder-widget-shell` style workflows from launching overlapping native Codex
+turns during the first Product Part draft pass.
+
+After installing this release, retest from a fresh `Description` flow through
+`Quality Gates Baseline`: the lead Product Part should draft and commit its
+brief before the secondary Product Part starts its own initial turn. Product
+Part Clear/Undo should remain scoped to the selected Product Part and keep Git
+clean.
+
+**Previous Release — v1.2.464** (Workspace Runtime Git Hygiene)
 
 This release hardens Git cleanliness for workflow rollback and Development Tree
 agent sessions. Workspace runtime capsules under

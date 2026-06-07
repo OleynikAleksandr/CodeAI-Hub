@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.465] - 2026-06-07
+### Fixed
+- **Fresh Product Part bootstrap now waits for each initial agent turn.** Core waits for the current Product Part session to move from `running` back to `idle` before starting the next Product Part session after `Quality Gates Baseline`.
+- **Primary and secondary Product Part drafts no longer launch overlapping Codex turns during initial handoff.** Workflows with multiple Product Parts should now avoid the `finder-widget-shell` symptom where the secondary session remained on the start prompt until stopped.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.js`
+- `npm run plan:validate`
+
 ## [1.2.464] - 2026-06-07
 ### Fixed
 - **Workspace runtime capsules now stay local-only.** Generated workspace `.gitignore` files ignore `.codeai-hub/*/runtime/`, capsule `.gitignore` files ignore `runtime/`, and Application Skeleton readiness rejects missing runtime ignore coverage.
