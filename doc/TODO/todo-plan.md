@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "312a70531",
+  "lastRecordedCommit": "e55f6013f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase20.runtime-clean-boundary-deletions.task1",
-  "expectedCommitMessage": "fix: commit workspace runtime index cleanup",
+  "currentTaskId": "development-tree-product-part-review.phase20.runtime-clean-boundary-anchor.task1",
+  "expectedCommitMessage": "fix: commit ignored runtime cleanup through gitignore anchor",
   "debt": {
-    "expectedCommitMessage": "fix: commit workspace runtime index cleanup",
-    "preCommitHead": "312a70531",
+    "expectedCommitMessage": "fix: commit ignored runtime cleanup through gitignore anchor",
+    "preCommitHead": "e55f6013f",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase20.runtime-clean-boundary-deletions.task1"
+    "taskId": "development-tree-product-part-review.phase20.runtime-clean-boundary-anchor.task1"
   }
 }
 ```
@@ -237,15 +237,17 @@
 67. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary.task1` Update managed terminal clean boundary so already tracked workspace runtime residue is removed from the Git index instead of being silently tolerated (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: clean tracked workspace runtime residue`).
 68. [DONE] Git Commit: `fix: clean tracked workspace runtime residue` (hash: 312a70531)
 69. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary-deletions.task1` Include workspace runtime index cleanup paths in the managed residue commit so removing previously tracked runtime files leaves Git clean (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: commit workspace runtime index cleanup`).
-70. [PENDING] Git Commit: `fix: commit workspace runtime index cleanup` (hash: TBD)
-71. [TODO] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
-72. [TODO] Git Commit: `test: verify workspace runtime stays local only` (hash: TBD)
-73. [TODO] `development-tree-product-part-review.phase20.runtime-docs.task1` Sync SSOT docs with the Git-first rule: tracked workflow/product artifacts are rollback truth; workspace runtime is local execution residue recreated from tracked truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit: `docs: clarify local runtime rollback boundary`).
-74. [TODO] Git Commit: `docs: clarify local runtime rollback boundary` (hash: TBD)
+70. [DONE] Git Commit: `fix: commit workspace runtime index cleanup` (hash: e55f6013f)
+71. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary-anchor.task1` Commit staged runtime index cleanup through a safe `.gitignore` anchor so ignored runtime files are not passed back to `git add` (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: commit ignored runtime cleanup through gitignore anchor`).
+72. [PENDING] Git Commit: `fix: commit ignored runtime cleanup through gitignore anchor` (hash: TBD)
+73. [TODO] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
+74. [TODO] Git Commit: `test: verify workspace runtime stays local only` (hash: TBD)
+75. [TODO] `development-tree-product-part-review.phase20.runtime-docs.task1` Sync SSOT docs with the Git-first rule: tracked workflow/product artifacts are rollback truth; workspace runtime is local execution residue recreated from tracked truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit: `docs: clarify local runtime rollback boundary`).
+76. [TODO] Git Commit: `docs: clarify local runtime rollback boundary` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-75. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-76. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+77. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+78. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

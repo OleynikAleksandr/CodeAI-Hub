@@ -156,7 +156,7 @@ export const ensureManagedTerminalGitClean = async (params: {
     const managedPaths = [
       ...new Set([
         ...classification.committablePaths,
-        ...localVolatileCleanupPaths,
+        ...(localVolatileCleanupPaths.length > 0 ? [GITIGNORE_PATH] : []),
       ]),
     ];
     await params.gitBoundary.commitManagedChanges({
