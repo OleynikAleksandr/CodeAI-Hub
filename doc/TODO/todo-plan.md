@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "b5256625f",
+  "lastRecordedCommit": "13d97a76d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase8.clear-docs.task1",
-  "expectedCommitMessage": "docs: describe product part clear restart mvp",
+  "currentTaskId": "development-tree-product-part-review.phase9.verify.task1",
+  "expectedCommitMessage": "test: verify product part clear restart",
   "debt": {
-    "expectedCommitMessage": "docs: describe product part clear restart mvp",
-    "preCommitHead": "b5256625f",
+    "expectedCommitMessage": "test: verify product part clear restart",
+    "preCommitHead": "13d97a76d",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase8.clear-docs.task1"
+    "taskId": "development-tree-product-part-review.phase9.verify.task1"
   }
 }
 ```
@@ -129,14 +129,14 @@
 ### Stream: Documentation Sync
 
 26. [DONE] `development-tree-product-part-review.phase8.clear-docs.task1` Document the Product Part Clear/Undo MVP boundary and visible retest contract (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part clear restart mvp`).
-27. [PENDING] Git Commit: `docs: describe product part clear restart mvp` (hash: TBD)
+27. [DONE] Git Commit: `docs: describe product part clear restart mvp` (hash: 13d97a76d)
 
 ## Phase 9 - Tooling Verification (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Targeted Verification
 
-28. [TODO] `development-tree-product-part-review.phase9.verify.task1` Run targeted Core and Project Manager tests for Product Part Clear/Undo restart behavior (scope: `packages/core, src/client/project-manager`; expected commit: `test: verify product part clear restart`).
-29. [TODO] Git Commit: `test: verify product part clear restart` (hash: TBD)
+28. [DONE] `development-tree-product-part-review.phase9.verify.task1` Run targeted Core and Project Manager tests for Product Part Clear/Undo restart behavior (scope: `packages/core, src/client/project-manager`; expected commit: `test: verify product part clear restart`).
+29. [PENDING] Git Commit: `test: verify product part clear restart` (hash: TBD)
 
 ## Phase 10 - Release Build (owner: Codex, updated: 2026-06-07)
 
