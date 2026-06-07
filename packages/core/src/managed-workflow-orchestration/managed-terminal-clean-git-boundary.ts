@@ -69,7 +69,7 @@ const ensureRootGitignorePatterns = async (params: {
 
 const untrackLocalVolatileRuntimePaths = async (
   workspaceRoot: string
-): Promise<void> => {
+): Promise<readonly string[]> => {
   const { stdout } = await execFileAsync(
     "git",
     ["ls-files", "-z", "--", ".codeai-hub"],
@@ -85,13 +85,14 @@ const untrackLocalVolatileRuntimePaths = async (
         WORKSPACE_RUNTIME_PATH_RE.test(relativePath)
     );
   if (trackedPaths.length === 0) {
-    return;
+    return [];
   }
   await execFileAsync(
     "git",
     ["rm", "--cached", "--ignore-unmatch", "--", ...trackedPaths],
     { cwd: workspaceRoot }
   );
+  return trackedPaths;
 };
 
 export const formatManagedTerminalDirtyBlocker = (
@@ -130,7 +131,9 @@ export const ensureManagedTerminalGitClean = async (params: {
     patterns: [LOCAL_STATE_IGNORE_PATTERN, WORKSPACE_RUNTIME_IGNORE_PATTERN],
     workspaceRoot: params.workspaceRoot,
   });
-  await untrackLocalVolatileRuntimePaths(params.workspaceRoot);
+  let localVolatileCleanupPaths = await untrackLocalVolatileRuntimePaths(
+    params.workspaceRoot
+  );
   let classification = await classifyManagedTerminalDirtyTree({
     stage: params.stage,
     workspaceRoot: params.workspaceRoot,
@@ -142,7 +145,7 @@ export const ensureManagedTerminalGitClean = async (params: {
     attempt < TERMINAL_RESIDUE_COMMIT_ATTEMPTS;
     attempt += 1
   ) {
-    if (classification.clean) {
+    if (classification.clean && localVolatileCleanupPaths.length === 0) {
       return;
     }
     if (classification.unclassifiedPaths.length > 0) {
@@ -150,11 +153,18 @@ export const ensureManagedTerminalGitClean = async (params: {
         formatManagedTerminalDirtyBlocker(classification.unclassifiedPaths)
       );
     }
+    const managedPaths = [
+      ...new Set([
+        ...classification.committablePaths,
+        ...localVolatileCleanupPaths,
+      ]),
+    ];
     await params.gitBoundary.commitManagedChanges({
       commitMessage: TERMINAL_RESIDUE_COMMIT_MESSAGE,
-      managedPaths: classification.committablePaths,
+      managedPaths,
       workspaceRoot: params.workspaceRoot,
     });
+    localVolatileCleanupPaths = [];
     classification = await classifyManagedTerminalDirtyTree({
       stage: params.stage,
       workspaceRoot: params.workspaceRoot,
