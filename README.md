@@ -2,7 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.461** (Product Part Clear/Undo Restart)
+**Current Release — v1.2.462** (Scoped Product Part Clear/Undo Restart)
+
+This release fixes the Product Part Clear/Undo restart scope found in v1.2.461.
+Clearing one Product Part now recreates only that selected `partId`; sibling
+Product Parts are not bootstrapped, do not receive fresh todo plans, and do not
+start parallel provider turns. This keeps workspaces with many Product Parts
+from triggering avoidable concurrent Codex OAuth refresh attempts during a
+single-node Clear/Undo retest.
+
+**Previous Release — v1.2.461** (Product Part Clear/Undo Restart)
 
 This release adds the first Product Part-level Clear/Undo slice for Development
 Tree agent sessions. Clearing a root Product Part node such as

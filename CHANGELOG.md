@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.462] - 2026-06-07
+### Fixed
+- **Product Part Clear/Undo restart is now scoped to the selected Product Part.** Core passes the cleared `partId` into Development Tree Product Part bootstrap, so clearing `widget-display` cannot also recreate `latest-note-search` or any other sibling Product Part session.
+- **Multi-Product-Part workspaces no longer start sibling provider turns during single-node Clear/Undo.** The scoped restart prevents the avoidable concurrent Codex OAuth refresh race observed during the `1.2.461` retest.
+
+### Verification
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts`
+- `npm run build --workspace packages/core`
+- `npm run plan:validate`
+
 ## [1.2.461] - 2026-06-07
 ### Added
 - **Product Part root Clear/Undo now clears and restarts the agent session.** For root Product Part nodes under `development_tree/materialized/product-parts/<part-id>`, Core removes the old managed session registration, provider-native/unified history, continuity entry, Product Part draft/order/research artifacts, and the Product Part stage `todo-plan.md`.

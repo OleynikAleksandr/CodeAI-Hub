@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "bf1a5a135",
+  "lastRecordedCommit": "548138aa9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase14.verify.task1",
-  "expectedCommitMessage": "test: verify scoped product part clear restart",
+  "currentTaskId": "development-tree-product-part-review.phase15.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.462 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify scoped product part clear restart",
-    "preCommitHead": "bf1a5a135",
+    "expectedCommitMessage": "docs: prepare 1.2.462 release notes",
+    "preCommitHead": "548138aa9",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase14.verify.task1"
+    "taskId": "development-tree-product-part-review.phase15.release-notes.task1"
   }
 }
 ```
@@ -175,14 +175,14 @@
 ### Stream: Targeted Verification
 
 43. [DONE] `development-tree-product-part-review.phase14.verify.task1` Run targeted Core tests for Product Part Clear/Undo scoped restart behavior and confirm only the cleared Product Part is recreated (scope: `packages/core`; expected commit: `test: verify scoped product part clear restart`).
-44. [PENDING] Git Commit: `test: verify scoped product part clear restart` (hash: TBD)
+44. [DONE] Git Commit: `test: verify scoped product part clear restart` (hash: 548138aa9)
 
 ## Phase 15 - Release Build (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Release Notes
 
-45. [TODO] `development-tree-product-part-review.phase15.release-notes.task1` Update release notes for future version `1.2.462` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.462 release notes`).
-46. [TODO] Git Commit: `docs: prepare 1.2.462 release notes` (hash: TBD)
+45. [DONE] `development-tree-product-part-review.phase15.release-notes.task1` Update release notes for future version `1.2.462` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.462 release notes`).
+46. [PENDING] Git Commit: `docs: prepare 1.2.462 release notes` (hash: TBD)
 
 ### Stream: Unified Artifacts
 
