@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "12009e918",
+  "lastRecordedCommit": "05f240ee1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase5.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.460 release notes",
+  "currentTaskId": "development-tree-product-part-review.phase5.build-all.task1",
+  "expectedCommitMessage": "build: prepare 1.2.460 unified release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.460 release notes",
-    "preCommitHead": "12009e918",
+    "expectedCommitMessage": "build: prepare 1.2.460 unified release artifacts",
+    "preCommitHead": "05f240ee1",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase5.release-notes.task1"
+    "taskId": "development-tree-product-part-review.phase5.build-all.task1"
   }
 }
 ```
@@ -89,12 +89,12 @@
 ### Stream: Release Notes
 
 13. [DONE] `development-tree-product-part-review.phase5.release-notes.task1` Update release notes for future version `1.2.460` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release notes`).
-14. [PENDING] Git Commit: `docs: prepare 1.2.460 release notes` (hash: TBD)
+14. [DONE] Git Commit: `docs: prepare 1.2.460 release notes` (hash: 05f240ee1)
 
 ### Stream: Unified Artifacts
 
-15. [TODO] `development-tree-product-part-review.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts (scope: release scripts and generated version artifacts; expected commit: `build: prepare 1.2.460 unified release artifacts`).
-16. [TODO] Git Commit: `build: prepare 1.2.460 unified release artifacts` (hash: TBD)
+15. [DONE] `development-tree-product-part-review.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.460 unified release artifacts`).
+16. [PENDING] Git Commit: `build: prepare 1.2.460 unified release artifacts` (hash: TBD)
 
 ### Stream: VSIX Packaging
 
