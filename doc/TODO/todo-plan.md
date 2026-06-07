@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "9e9d55bba",
+  "lastRecordedCommit": "f35034b42",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase18.build-all.task1",
-  "expectedCommitMessage": "build: prepare 1.2.463 unified release artifacts",
+  "currentTaskId": "development-tree-product-part-review.phase18.vsix.task1",
+  "expectedCommitMessage": "build: package 1.2.463 vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare 1.2.463 unified release artifacts",
-    "preCommitHead": "9e9d55bba",
+    "expectedCommitMessage": "build: package 1.2.463 vsix release",
+    "preCommitHead": "f35034b42",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase18.build-all.task1"
+    "taskId": "development-tree-product-part-review.phase18.vsix.task1"
   }
 }
 ```
@@ -216,9 +216,9 @@
 56. [DONE] `development-tree-product-part-review.phase18.release-notes.task1` Prepare release notes for future version `1.2.463` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.463 release notes`).
 57. [DONE] Git Commit: `docs: prepare 1.2.463 release notes` (hash: 9e9d55bba)
 58. [DONE] `development-tree-product-part-review.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.463` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.463 unified release artifacts`).
-59. [PENDING] Git Commit: `build: prepare 1.2.463 unified release artifacts` (hash: TBD)
-60. [TODO] `development-tree-product-part-review.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.463` (scope: `codeai-hub-1.2.463.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.463 vsix release`).
-61. [TODO] Git Commit: `build: package 1.2.463 vsix release` (hash: TBD)
+59. [DONE] Git Commit: `build: prepare 1.2.463 unified release artifacts` (hash: f35034b42)
+60. [DONE] `development-tree-product-part-review.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.463` (scope: `codeai-hub-1.2.463.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.463 vsix release`).
+61. [PENDING] Git Commit: `build: package 1.2.463 vsix release` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
