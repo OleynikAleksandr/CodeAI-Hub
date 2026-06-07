@@ -113,6 +113,43 @@ test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage
   assert.match(sentMessages[0] ?? "", CORE_VALIDATOR_POLICY_PATTERN);
 });
 
+test("NodeAgentSessionBootstrapper waits for initial turn settlement when gateway provides it", async () => {
+  const gatewayEvents: string[] = [];
+  const result = await new NodeAgentSessionBootstrapper().bootstrapNode(
+    {
+      absolutePath:
+        "/workspace/.codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager",
+      id: "project-manager",
+      kind: "product_part",
+      partId: "project-manager",
+      relativePath:
+        ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager",
+    },
+    {
+      gateway: {
+        createSessionForWorkflow: () => Promise.resolve({ id: "session-1" }),
+        handleMessage: () => {
+          gatewayEvents.push("send");
+          return Promise.resolve();
+        },
+        persistStartPrompt: () => {
+          gatewayEvents.push("persist");
+        },
+        waitForInitialTurnSettled: (sessionId) => {
+          gatewayEvents.push(`wait:${sessionId}`);
+          return Promise.resolve();
+        },
+      },
+      providerId: "codexCli",
+      workspacePath: "/workspace",
+      workspaceSlug: "demo-workspace",
+    }
+  );
+
+  assert.equal(result.firstMessageSent, true);
+  assert.deepEqual(gatewayEvents, ["persist", "send", "wait:session-1"]);
+});
+
 test("NodeAgentSessionBootstrapper reads response language from settings reasoning category", async () => {
   const settingsDir = await mkdtemp(
     path.join(os.tmpdir(), "node-agent-settings-")

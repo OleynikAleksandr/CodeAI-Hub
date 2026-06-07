@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "a90c2d53b",
+  "lastRecordedCommit": "b7a269a82",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase23.bootstrap-wait.task1",
-  "expectedCommitMessage": "fix: wait for product part bootstrap turns",
+  "currentTaskId": "development-tree-product-part-review.phase23.bootstrap-wait-tests.task1",
+  "expectedCommitMessage": "test: verify product part bootstrap turn wait",
   "debt": {
-    "expectedCommitMessage": "fix: wait for product part bootstrap turns",
-    "preCommitHead": "a90c2d53b",
+    "expectedCommitMessage": "test: verify product part bootstrap turn wait",
+    "preCommitHead": "b7a269a82",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase23.bootstrap-wait.task1"
+    "taskId": "development-tree-product-part-review.phase23.bootstrap-wait-tests.task1"
   }
 }
 ```
@@ -269,9 +269,9 @@
 ### Stream: Initial Agent Turn Wait
 
 86. [DONE] `development-tree-product-part-review.phase23.bootstrap-wait.task1` Make managed Product Part auto-bootstrap wait for the current Product Part agent's initial provider turn to settle before starting the next Product Part session (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: wait for product part bootstrap turns`).
-87. [PENDING] Git Commit: `fix: wait for product part bootstrap turns` (hash: TBD)
-88. [TODO] `development-tree-product-part-review.phase23.bootstrap-wait-tests.task1` Add targeted test coverage for the Product Part initial turn settlement hook (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap turn wait`).
-89. [TODO] Git Commit: `test: verify product part bootstrap turn wait` (hash: TBD)
+87. [DONE] Git Commit: `fix: wait for product part bootstrap turns` (hash: b7a269a82)
+88. [DONE] `development-tree-product-part-review.phase23.bootstrap-wait-tests.task1` Add targeted test coverage for the Product Part initial turn settlement hook (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap turn wait`).
+89. [PENDING] Git Commit: `test: verify product part bootstrap turn wait` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
