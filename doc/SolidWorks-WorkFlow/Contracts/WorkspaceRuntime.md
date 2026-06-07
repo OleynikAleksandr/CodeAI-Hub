@@ -11,14 +11,14 @@
 
 ## Workspace Runtime Capsule
 
-Active workspace-owned mutable runtime lives under `.codeai-hub/<workspaceSlug>/runtime/**` inside the selected workspace. Core/PM must scope behavior-changing settings and localization to that capsule once a workspace is active:
+Active workspace-owned mutable runtime lives under `.codeai-hub/<workspaceSlug>/runtime/**` inside the selected workspace. This directory is local execution state, not Git rollback truth. Workspace root `.gitignore` must ignore `.codeai-hub/*/runtime/`, and Core clean/commit boundaries must remove legacy tracked runtime entries from the Git index while leaving the files on disk for the running process.
 
-- `runtime/settings/settings.json` — live workspace Settings truth for Project Manager/workflow defaults;
-- `runtime/localization/**` — live workspace localization catalogs, metadata, glossary overrides and browser bootstrap cache;
-- `runtime/providers/**/home/**` — provider native homes/session logs/config for workflow runtime;
-- `runtime/sessions/unified/**` — Core logical session history that participates in workflow recovery/accepted-step commits.
+- `runtime/settings/settings.json` — live workspace Settings/defaults used by Project Manager and workflow runtime;
+- `runtime/localization/**` — live localization catalogs, metadata, glossary overrides and browser bootstrap cache;
+- `runtime/providers/**/home/**` — provider native homes/session logs/config used by current workflow execution;
+- `runtime/sessions/unified/**` — Core logical session history used by the current runtime projection.
 
-Settings, localization runtime and provider homes are rollback-ignored live state and must be preserved across workflow Clear/Undo. Core logical sessions, accepted artifacts and applied model/config evidence remain the rollback/recovery proof.
+Accepted artifacts, managed workflow state, boundary commits, todo plans, Development Tree drafts/order files and materialized product files are the Git-owned rollback/recovery proof. Runtime files are disposable projections: Clear/Undo may delete them, and Core recreates fresh sessions from the tracked workflow truth instead of replaying old runtime transcripts.
 
 ## Wire Boundary / Diagnostics (runtime stability)
 - PM/Core WebSocket frames проходят owner-layer validators до dispatch. PM валидирует входящий Core stream на своей границе, Core валидирует входящие PM commands на remote-bridge границе; invalid frame не должен попадать в downstream handlers.

@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "cbfc10423",
+  "lastRecordedCommit": "ab608c465",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase20.runtime-tests.task1",
-  "expectedCommitMessage": "test: verify workspace runtime stays local only",
+  "currentTaskId": "development-tree-product-part-review.phase20.runtime-docs.task1",
+  "expectedCommitMessage": "docs: clarify local runtime rollback boundary",
   "debt": {
-    "expectedCommitMessage": "test: verify workspace runtime stays local only",
-    "preCommitHead": "cbfc10423",
+    "expectedCommitMessage": "docs: clarify local runtime rollback boundary",
+    "preCommitHead": "ab608c465",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase20.runtime-tests.task1"
+    "taskId": "development-tree-product-part-review.phase20.runtime-docs.task1"
   }
 }
 ```
@@ -241,9 +241,9 @@
 71. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary-anchor.task1` Commit staged runtime index cleanup through a safe `.gitignore` anchor so ignored runtime files are not passed back to `git add` (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: commit ignored runtime cleanup through gitignore anchor`).
 72. [DONE] Git Commit: `fix: commit ignored runtime cleanup through gitignore anchor` (hash: cbfc10423)
 73. [DONE] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
-74. [PENDING] Git Commit: `test: verify workspace runtime stays local only` (hash: TBD)
-75. [TODO] `development-tree-product-part-review.phase20.runtime-docs.task1` Sync SSOT docs with the Git-first rule: tracked workflow/product artifacts are rollback truth; workspace runtime is local execution residue recreated from tracked truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit: `docs: clarify local runtime rollback boundary`).
-76. [TODO] Git Commit: `docs: clarify local runtime rollback boundary` (hash: TBD)
+74. [DONE] Git Commit: `test: verify workspace runtime stays local only` (hash: ab608c465)
+75. [DONE] `development-tree-product-part-review.phase20.runtime-docs.task1` Sync SSOT docs with the Git-first rule: tracked workflow/product artifacts are rollback truth; workspace runtime is local execution residue recreated from tracked truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit: `docs: clarify local runtime rollback boundary`).
+76. [PENDING] Git Commit: `docs: clarify local runtime rollback boundary` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
