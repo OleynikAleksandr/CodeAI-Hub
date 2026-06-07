@@ -46,10 +46,7 @@ const isWorkspaceSettingsGitStatusEntry = (params: {
 
 const buildRollbackIgnoredRuntimeRoots = (
   capsule: WorkspaceRuntimeCapsule
-): readonly string[] => [
-  capsule.settingsRoot.relativePath,
-  capsule.localizationRoot.relativePath,
-];
+): readonly string[] => [capsule.runtimeRoot.relativePath];
 
 export const isWorkspaceRollbackIgnoredRuntimePath = (params: {
   readonly capsule: WorkspaceRuntimeCapsule;

@@ -116,8 +116,6 @@ const resolveCoreRuntimePatterns = (
   "doc/TODO/stages/",
   `.codeai-hub/${workspaceSlug}/continuity/`,
   `.codeai-hub/${workspaceSlug}/description/description-step.json`,
-  `.codeai-hub/${workspaceSlug}/runtime/providers/`,
-  `.codeai-hub/${workspaceSlug}/runtime/sessions/`,
   `.codeai-hub/${workspaceSlug}/workflow/boundaries.json`,
   `.codeai-hub/${workspaceSlug}/workflow/checkpoints/`,
   `.codeai-hub/${workspaceSlug}/workflow/managed/`,
@@ -125,8 +123,12 @@ const resolveCoreRuntimePatterns = (
   `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,
 ];
 
-const isLocalVolatileRuntimePath = (pathValue: string): boolean =>
-  pathValue.startsWith(".codeai-hub/state/");
+const isLocalVolatileRuntimePath = (params: {
+  readonly pathValue: string;
+  readonly workspaceSlug: string;
+}): boolean =>
+  params.pathValue.startsWith(".codeai-hub/state/") ||
+  params.pathValue.startsWith(`.codeai-hub/${params.workspaceSlug}/runtime/`);
 
 const isGateOrFormatterResidue = (
   stage: ManagedTerminalStage,
@@ -170,6 +172,9 @@ const classifyKind = (params: {
   if (matchesAnyWorkspaceStageDirectory(params.pathValue, params.stage)) {
     return "stage_owned";
   }
+  if (isLocalVolatileRuntimePath(params)) {
+    return "local_volatile";
+  }
   if (
     matchesExactOrPrefix(
       params.pathValue,
@@ -177,9 +182,6 @@ const classifyKind = (params: {
     )
   ) {
     return "core_runtime";
-  }
-  if (isLocalVolatileRuntimePath(params.pathValue)) {
-    return "local_volatile";
   }
   return isGateOrFormatterResidue(
     params.stage,

@@ -64,31 +64,10 @@ const GITIGNORE_PATH = ".gitignore";
 const GIT_STATUS_PATH_OFFSET = 3;
 const LOCAL_STATE_ROOT = ".codeai-hub/state";
 const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
+const WORKSPACE_RUNTIME_IGNORE_PATTERN = ".codeai-hub/*/runtime/";
 const NEWLINE_RE = /\r?\n/u;
 const RENAME_SEPARATOR = " -> ";
 const TRAILING_SLASHES_RE = /\/+$/u;
-const VOLATILE_PROVIDER_FILE_NAMES = new Set([
-  ".env",
-  ".netrc",
-  ".npmrc",
-  "auth.json",
-  "credentials.json",
-  "models_cache.json",
-  "secrets.json",
-  "token.json",
-  "tokens.json",
-]);
-const VOLATILE_PROVIDER_SEGMENTS = new Set([
-  ".cache",
-  ".npm",
-  ".pnpm-store",
-  "Cache",
-  "Caches",
-  "Code Cache",
-  "GPUCache",
-  "node_modules",
-  "tmp",
-]);
 
 const buildAcceptedStepCommitMessage = (stage: WorkflowStageId): string =>
   `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} accepted`;
@@ -137,33 +116,6 @@ const pathExtension = (value: string): string => {
   return dotIndex >= 0 ? basename.slice(dotIndex).toLowerCase() : "";
 };
 
-const isProviderRuntimePath = (parts: readonly string[]): boolean =>
-  parts.length > 6 &&
-  parts[0] === ".codeai-hub" &&
-  parts[2] === "runtime" &&
-  parts[3] === "providers" &&
-  parts[5] === "home";
-
-const isVolatileProviderRuntimePath = (value: string): boolean => {
-  const parts = splitGitPath(value);
-  if (!isProviderRuntimePath(parts)) {
-    return false;
-  }
-  const providerHomePath = parts.slice(6).join("/");
-  const providerHomeParts = splitGitPath(providerHomePath);
-  const fileName = providerHomeParts.at(-1) ?? "";
-  return (
-    VOLATILE_PROVIDER_FILE_NAMES.has(fileName) ||
-    fileName.startsWith("oauth") ||
-    fileName.endsWith("-cache.json") ||
-    providerHomeParts.some((part) => VOLATILE_PROVIDER_SEGMENTS.has(part)) ||
-    providerHomePath.endsWith(".sqlite") ||
-    providerHomePath.endsWith(".sqlite-shm") ||
-    providerHomePath.endsWith(".sqlite-wal") ||
-    providerHomePath.endsWith(".log")
-  );
-};
-
 const selectWorkflowNeutralDocumentPaths = (
   dirtyPaths: readonly string[]
 ): readonly string[] => [
@@ -172,20 +124,24 @@ const selectWorkflowNeutralDocumentPaths = (
   ),
 ];
 
-const normalizesToLocalStateIgnore = (line: string): boolean => {
+const normalizesToIgnorePattern = (line: string, pattern: string): boolean => {
   const normalized = line.trim().replace(TRAILING_SLASHES_RE, "");
-  return normalized === ".codeai-hub/state";
+  return normalized === pattern.replace(TRAILING_SLASHES_RE, "");
 };
 
-const ensureLocalStateIgnored = async (
-  workspaceRoot: string
-): Promise<void> => {
+const ensureRootGitignorePatterns = async (params: {
+  readonly patterns: readonly string[];
+  readonly workspaceRoot: string;
+}): Promise<void> => {
   const existingContent = await readFile(
-    `${workspaceRoot}/${GITIGNORE_PATH}`,
+    `${params.workspaceRoot}/${GITIGNORE_PATH}`,
     "utf8"
   ).catch(() => "");
   const lines = existingContent.split(NEWLINE_RE);
-  if (lines.some(normalizesToLocalStateIgnore)) {
+  const missingPatterns = params.patterns.filter(
+    (pattern) => !lines.some((line) => normalizesToIgnorePattern(line, pattern))
+  );
+  if (missingPatterns.length === 0) {
     return;
   }
   const prefix =
@@ -193,40 +149,9 @@ const ensureLocalStateIgnored = async (
       ? existingContent
       : `${existingContent}\n`;
   await writeFile(
-    `${workspaceRoot}/${GITIGNORE_PATH}`,
-    `${prefix}${LOCAL_STATE_IGNORE_PATTERN}\n`,
+    `${params.workspaceRoot}/${GITIGNORE_PATH}`,
+    `${prefix}${missingPatterns.join("\n")}\n`,
     "utf8"
-  );
-};
-
-const readTrackedCapsulePaths = async (
-  workspaceRoot: string,
-  capsuleRoot: string
-): Promise<readonly string[]> => {
-  const { stdout } = await execFileAsync(
-    "git",
-    ["ls-files", "-z", "--", capsuleRoot],
-    { cwd: workspaceRoot }
-  ).catch(() => ({ stdout: "" }));
-  return stdout.split("\0").filter((value) => value.length > 0);
-};
-
-const untrackVolatileProviderRuntimePaths = async (params: {
-  readonly capsuleRoot: string;
-  readonly workspaceRoot: string;
-}): Promise<void> => {
-  const trackedPaths = await readTrackedCapsulePaths(
-    params.workspaceRoot,
-    params.capsuleRoot
-  );
-  const volatilePaths = trackedPaths.filter(isVolatileProviderRuntimePath);
-  if (volatilePaths.length === 0) {
-    return;
-  }
-  await execFileAsync(
-    "git",
-    ["rm", "--cached", "--ignore-unmatch", "--", ...volatilePaths],
-    { cwd: params.workspaceRoot }
   );
 };
 
@@ -273,10 +198,6 @@ export class WorkflowStepCommitFacade {
   ): Promise<WorkflowStepCommitResult> {
     const capsule = resolveWorkspaceRuntimeCapsule(params);
     await this.#git.ensureRepository(params.workspaceRoot);
-    await untrackVolatileProviderRuntimePaths({
-      capsuleRoot: capsule.workspaceCapsuleRoot.relativePath,
-      workspaceRoot: params.workspaceRoot,
-    });
     await untrackWorkspaceRollbackIgnoredRuntimePaths({
       capsule,
       workspaceRoot: params.workspaceRoot,
@@ -286,7 +207,10 @@ export class WorkflowStepCommitFacade {
       workspaceRoot: params.workspaceRoot,
     });
     await untrackLocalStateRuntimePaths(params.workspaceRoot);
-    await ensureLocalStateIgnored(params.workspaceRoot);
+    await ensureRootGitignorePatterns({
+      patterns: [LOCAL_STATE_IGNORE_PATTERN, WORKSPACE_RUNTIME_IGNORE_PATTERN],
+      workspaceRoot: params.workspaceRoot,
+    });
     const commit = await this.#git.commit({
       allowEmpty: true,
       commitMessage: buildAcceptedStepCommitMessage(params.stage),

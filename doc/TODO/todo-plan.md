@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "6f33dbfd2",
+  "lastRecordedCommit": "59b308021",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase20.runtime-gitignore.task1",
-  "expectedCommitMessage": "fix: ignore workspace runtime capsules",
+  "currentTaskId": "development-tree-product-part-review.phase20.runtime-cleanup.task1",
+  "expectedCommitMessage": "fix: untrack workspace runtime during managed commits",
   "debt": {
-    "expectedCommitMessage": "fix: ignore workspace runtime capsules",
-    "preCommitHead": "6f33dbfd2",
+    "expectedCommitMessage": "fix: untrack workspace runtime during managed commits",
+    "preCommitHead": "59b308021",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase20.runtime-gitignore.task1"
+    "taskId": "development-tree-product-part-review.phase20.runtime-cleanup.task1"
   }
 }
 ```
@@ -231,9 +231,9 @@
 ### Stream: Runtime Local-Only Contract
 
 63. [DONE] `development-tree-product-part-review.phase20.runtime-gitignore.task1` Change generated workspace Git ignore contracts so `.codeai-hub/<workspace>/runtime/` is local-only runtime state, not product Git truth (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts`; expected commit: `fix: ignore workspace runtime capsules`).
-64. [PENDING] Git Commit: `fix: ignore workspace runtime capsules` (hash: TBD)
-65. [TODO] `development-tree-product-part-review.phase20.runtime-cleanup.task1` Update managed commit/clean boundaries to untrack already tracked workspace runtime files and stop classifying runtime provider/session logs as committable residue (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts`; expected commit: `fix: untrack workspace runtime during managed commits`).
-66. [TODO] Git Commit: `fix: untrack workspace runtime during managed commits` (hash: TBD)
+64. [DONE] Git Commit: `fix: ignore workspace runtime capsules` (hash: 59b308021)
+65. [DONE] `development-tree-product-part-review.phase20.runtime-cleanup.task1` Update managed commit/clean boundaries to untrack already tracked workspace runtime files and stop classifying runtime provider/session logs as committable residue (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts`; expected commit: `fix: untrack workspace runtime during managed commits`).
+66. [PENDING] Git Commit: `fix: untrack workspace runtime during managed commits` (hash: TBD)
 67. [TODO] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
 68. [TODO] Git Commit: `test: verify workspace runtime stays local only` (hash: TBD)
 
