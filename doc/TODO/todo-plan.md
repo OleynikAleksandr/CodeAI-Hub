@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "13d97a76d",
+  "lastRecordedCommit": "7d08bbe6f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase9.verify.task1",
-  "expectedCommitMessage": "test: verify product part clear restart",
+  "currentTaskId": "development-tree-product-part-review.phase10.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.461 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify product part clear restart",
-    "preCommitHead": "13d97a76d",
+    "expectedCommitMessage": "docs: prepare 1.2.461 release notes",
+    "preCommitHead": "7d08bbe6f",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase9.verify.task1"
+    "taskId": "development-tree-product-part-review.phase10.release-notes.task1"
   }
 }
 ```
@@ -136,14 +136,14 @@
 ### Stream: Targeted Verification
 
 28. [DONE] `development-tree-product-part-review.phase9.verify.task1` Run targeted Core and Project Manager tests for Product Part Clear/Undo restart behavior (scope: `packages/core, src/client/project-manager`; expected commit: `test: verify product part clear restart`).
-29. [PENDING] Git Commit: `test: verify product part clear restart` (hash: TBD)
+29. [DONE] Git Commit: `test: verify product part clear restart` (hash: 7d08bbe6f)
 
 ## Phase 10 - Release Build (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Release Notes
 
-30. [TODO] `development-tree-product-part-review.phase10.release-notes.task1` Update release notes for future version `1.2.461` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.461 release notes`).
-31. [TODO] Git Commit: `docs: prepare 1.2.461 release notes` (hash: TBD)
+30. [DONE] `development-tree-product-part-review.phase10.release-notes.task1` Update release notes for future version `1.2.461` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.461 release notes`).
+31. [PENDING] Git Commit: `docs: prepare 1.2.461 release notes` (hash: TBD)
 
 ### Stream: Unified Artifacts
 

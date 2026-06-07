@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.461] - 2026-06-07
+### Added
+- **Product Part root Clear/Undo now clears and restarts the agent session.** For root Product Part nodes under `development_tree/materialized/product-parts/<part-id>`, Core removes the old managed session registration, provider-native/unified history, continuity entry, Product Part draft/order/research artifacts, and the Product Part stage `todo-plan.md`.
+- **Core immediately recreates the Product Part plan/session from current Development Tree truth.** After cleanup, the orchestrator reruns Product Part bootstrap for the cleared part so `latest-note-search` and `widget-display` get fresh Product Part todo plans and sessions without rolling back `Quality Gates Baseline`.
+- **Project Manager receives clear/restart details for retest.** The Clear/Undo event now includes Product Part restart metadata, including deleted and recreated paths, so the UI/test harness can prove the old Product Part session artifacts were replaced.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts`
+- `node --import tsx --test src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.460] - 2026-06-07
 ### Fixed
 - **Development Tree Product Part review actions are Core-owned.** Ordinary user messages during Product Part review continue the same provider revision session, while the `Подтверждаю` button submits a scoped managed review action instead of relying on typed acceptance text.
