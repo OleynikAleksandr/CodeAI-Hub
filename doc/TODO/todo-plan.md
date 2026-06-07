@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "f3f1120db",
+  "lastRecordedCommit": "0b9d12069",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase24.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.465 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase25.codex-auth.task1",
+  "expectedCommitMessage": "fix: share codex auth across provider homes",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.465 vsix release",
-    "preCommitHead": "f3f1120db",
+    "expectedCommitMessage": "fix: share codex auth across provider homes",
+    "preCommitHead": "0b9d12069",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase24.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase25.codex-auth.task1"
   }
 }
 ```
@@ -284,12 +284,47 @@
 94. [DONE] `development-tree-product-part-review.phase24.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.465` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.465 unified release artifacts`).
 95. [DONE] Git Commit: `build: prepare 1.2.465 unified release artifacts` (hash: f3f1120db)
 96. [DONE] `development-tree-product-part-review.phase24.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.465` (scope: `codeai-hub-1.2.465.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.465 vsix release`).
-97. [PENDING] Git Commit: `build: package 1.2.465 vsix release` (hash: TBD)
-98. [TODO] `development-tree-product-part-review.phase24.user.task1` User installs release `1.2.465` and retests fresh Quality Gates handoff: Product Part sessions are created one by one, each initial agent turn reaches assistant response/draft commit before the next Product Part starts, and Product Part Clear/Undo remains scoped and Git-clean (scope: user workflow; expected commit: none).
+97. [DONE] Git Commit: `build: package 1.2.465 vsix release` (hash: 0b9d12069)
+98. [DONE] `development-tree-product-part-review.phase24.user.task1` User installs release `1.2.465` and retests fresh Quality Gates handoff: Product Part sessions are created one by one, each initial agent turn reaches assistant response/draft commit before the next Product Part starts, and Product Part Clear/Undo remains scoped and Git-clean (scope: user workflow; expected commit: none). Result: fresh Quality Gates restart still fails when workspace Codex provider home has a stale copied `auth.json`; OAuth refresh token was already consumed by another Codex home.
+
+## Phase 25 - Codex Shared Auth Hotfix (owner: Codex, updated: 2026-06-07)
+
+### Stream: Provider Home Auth Source
+
+99. [DONE] `development-tree-product-part-review.phase25.codex-auth.task1` Stop cloning Codex OAuth auth into workspace provider homes; materialize workspace `auth.json` as a shared reference to the global Codex auth source so refresh tokens cannot diverge between homes (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-auth.ts, doc/TODO/todo-plan.md`; expected commit: `fix: share codex auth across provider homes`).
+100. [PENDING] Git Commit: `fix: share codex auth across provider homes` (hash: TBD)
+101. [TODO] `development-tree-product-part-review.phase25.codex-auth-tests.task1` Add targeted Codex provider-home auth materialization tests, including stale copied auth replacement (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-auth.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify codex shared auth materialization`).
+102. [TODO] Git Commit: `test: verify codex shared auth materialization` (hash: TBD)
+
+## Phase 26 - Tooling Verification (owner: Codex, updated: 2026-06-07)
+
+### Stream: Targeted Verification
+
+103. [TODO] `development-tree-product-part-review.phase26.verify.task1` Run targeted Codex module build and provider-home auth tests for the shared auth hotfix (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex auth home hotfix`).
+104. [TODO] Git Commit: `test: verify codex auth home hotfix` (hash: TBD)
+
+## Phase 27 - Release Build (owner: Codex, updated: 2026-06-07)
+
+### Stream: Release After Confirmation
+
+105. [TODO] `development-tree-product-part-review.phase27.release-notes.task1` Prepare release notes for future version `1.2.466` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.466 release notes`).
+106. [TODO] Git Commit: `docs: prepare 1.2.466 release notes` (hash: TBD)
+107. [TODO] `development-tree-product-part-review.phase27.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.466 release build state`).
+108. [TODO] Git Commit: `docs: checkpoint 1.2.466 release build state` (hash: TBD)
+109. [TODO] `development-tree-product-part-review.phase27.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.466` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.466 unified release artifacts`).
+110. [TODO] Git Commit: `build: prepare 1.2.466 unified release artifacts` (hash: TBD)
+111. [TODO] `development-tree-product-part-review.phase27.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.466` (scope: `codeai-hub-1.2.466.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.466 vsix release`).
+112. [TODO] Git Commit: `build: package 1.2.466 vsix release` (hash: TBD)
+
+## Phase 28 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+
+### Stream: FinderWidget Codex Auth Retest
+
+113. [TODO] `development-tree-product-part-review.phase28.user.task1` User installs the next release and retests Quality Gates restart after Clear Undo with existing workspace Codex runtime home: stale copied auth is replaced by shared auth, the Quality Gates agent starts without the reused refresh-token error, Product Part handoff stays sequential, and Git remains clean (scope: user workflow; expected commit: none).
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-99. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-100. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+114. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+115. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

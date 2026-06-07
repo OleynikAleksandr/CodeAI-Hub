@@ -10,6 +10,7 @@ import {
   type CodexAppServerProcessProfileKey,
   resolveCodexAppServerProcessProfile,
 } from "./codex-app-server-process-profile";
+import { materializeCodexProviderHomeAuth } from "./codex-provider-home-auth";
 import { materializeCodexProviderHomeSummaryConfig } from "./codex-provider-home-config";
 
 export {
@@ -159,7 +160,11 @@ const copyLegacyFileIfMissing = async (
 const prepareProviderCodexHome = async (): Promise<string> => {
   const providerCodexHome = resolveProviderCodexHome();
   await mkdir(providerCodexHome, { recursive: true });
-  await copyLegacyFileIfMissing(AUTH_FILENAME, providerCodexHome);
+  await materializeCodexProviderHomeAuth({
+    authFilename: AUTH_FILENAME,
+    legacyCodexHome: LEGACY_CODEX_HOME,
+    providerCodexHome,
+  });
   await copyLegacyFileIfMissing(CONFIG_FILENAME, providerCodexHome);
   await materializeCodexProviderHomeSummaryConfig(providerCodexHome);
   return providerCodexHome;
