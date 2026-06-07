@@ -2,7 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.459** (Quality Gates Evidence Repair Guidance)
+**Current Release — v1.2.460** (Development Tree Product Part Review)
+
+This release makes Development Tree Product Part review sessions actionable after
+Quality Gates completion. Normal user messages in a Product Part review stay in
+the agent revision flow, while the `Подтверждаю` review action is handled by
+Core as acceptance. Secondary Product Parts now enter `User Return And
+Revisions` after acceptance, and the lead Product Part advances to the next
+managed boundary for `Development Order Plan Draft`.
+
+**Previous Release — v1.2.459** (Quality Gates Evidence Repair Guidance)
 
 This release fixes the Quality Gates Phase 4 verification retest loop found in
 v1.2.458. Core now reads nested evidence shapes that agents naturally record

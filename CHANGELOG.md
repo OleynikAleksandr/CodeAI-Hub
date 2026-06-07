@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.460] - 2026-06-07
+### Fixed
+- **Development Tree Product Part review actions are Core-owned.** Ordinary user messages during Product Part review continue the same provider revision session, while the `Подтверждаю` button submits a scoped managed review action instead of relying on typed acceptance text.
+- **Secondary Product Parts now land in `User Return And Revisions`.** After Core accepts and commits a non-lead Product Part brief, the node plan enters a durable return/revision state that the user can resume later.
+- **Lead Product Part acceptance now stops at the next assignment boundary.** The lead part prepares the `Development Order Plan Draft` task without starting downstream order-plan execution in the same slice.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js`
+- `npm run plan:validate`
+
 ## [1.2.459] - 2026-06-06
 ### Fixed
 - **Quality Gates Phase 4 now reads nested agent evidence.** Core accepts `verificationEvidence.commandRuns`, `verificationEvidence.commandEvidence`, `verificationEvidence.verificationCommandEvidence`, and top-level `verificationCommandEvidence` in addition to the preferred `verificationEvidence.commands[]` shape.

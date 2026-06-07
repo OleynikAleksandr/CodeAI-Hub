@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "6795e1d39",
+  "lastRecordedCommit": "12009e918",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase5.release-plan.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.460 release build scope",
+  "currentTaskId": "development-tree-product-part-review.phase5.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.460 release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.460 release build scope",
-    "preCommitHead": "6795e1d39",
+    "expectedCommitMessage": "docs: prepare 1.2.460 release notes",
+    "preCommitHead": "12009e918",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase5.release-plan.task1"
+    "taskId": "development-tree-product-part-review.phase5.release-notes.task1"
   }
 }
 ```
@@ -84,12 +84,12 @@
 ### Stream: Release Preparation
 
 11. [DONE] `development-tree-product-part-review.phase5.release-plan.task1` Add release build streams after explicit user request and keep user retest after VSIX delivery (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release build scope`).
-12. [PENDING] Git Commit: `docs: prepare 1.2.460 release build scope` (hash: TBD)
+12. [DONE] Git Commit: `docs: prepare 1.2.460 release build scope` (hash: 12009e918)
 
 ### Stream: Release Notes
 
-13. [TODO] `development-tree-product-part-review.phase5.release-notes.task1` Update release notes for future version `1.2.460` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release notes`).
-14. [TODO] Git Commit: `docs: prepare 1.2.460 release notes` (hash: TBD)
+13. [DONE] `development-tree-product-part-review.phase5.release-notes.task1` Update release notes for future version `1.2.460` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release notes`).
+14. [PENDING] Git Commit: `docs: prepare 1.2.460 release notes` (hash: TBD)
 
 ### Stream: Unified Artifacts
 
