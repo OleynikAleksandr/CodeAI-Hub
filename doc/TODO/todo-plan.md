@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "ec8da212b",
+  "lastRecordedCommit": "b5256625f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase8.clear-ui.task1",
-  "expectedCommitMessage": "feat: expose product part clear restart feedback",
+  "currentTaskId": "development-tree-product-part-review.phase8.clear-docs.task1",
+  "expectedCommitMessage": "docs: describe product part clear restart mvp",
   "debt": {
-    "expectedCommitMessage": "feat: expose product part clear restart feedback",
-    "preCommitHead": "ec8da212b",
+    "expectedCommitMessage": "docs: describe product part clear restart mvp",
+    "preCommitHead": "b5256625f",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase8.clear-ui.task1"
+    "taskId": "development-tree-product-part-review.phase8.clear-docs.task1"
   }
 }
 ```
@@ -124,12 +124,12 @@
 ### Stream: Project Manager Clear Feedback
 
 24. [DONE] `development-tree-product-part-review.phase8.clear-ui.task1` Surface Product Part clear/restart response details in the Project Manager clear event contract so retest can confirm deleted sessions and replaced Product Part todo-plans (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `feat: expose product part clear restart feedback`).
-25. [PENDING] Git Commit: `feat: expose product part clear restart feedback` (hash: TBD)
+25. [DONE] Git Commit: `feat: expose product part clear restart feedback` (hash: b5256625f)
 
 ### Stream: Documentation Sync
 
-26. [TODO] `development-tree-product-part-review.phase8.clear-docs.task1` Document the Product Part Clear/Undo MVP boundary and visible retest contract (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part clear restart mvp`).
-27. [TODO] Git Commit: `docs: describe product part clear restart mvp` (hash: TBD)
+26. [DONE] `development-tree-product-part-review.phase8.clear-docs.task1` Document the Product Part Clear/Undo MVP boundary and visible retest contract (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part clear restart mvp`).
+27. [PENDING] Git Commit: `docs: describe product part clear restart mvp` (hash: TBD)
 
 ## Phase 9 - Tooling Verification (owner: Codex, updated: 2026-06-07)
 
