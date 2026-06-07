@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "4ee9d42ae",
+  "lastRecordedCommit": "335f83cf7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase15.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.462 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase17.codex-queue.task1",
+  "expectedCommitMessage": "fix: serialize codex provider turns",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.462 vsix release",
-    "preCommitHead": "4ee9d42ae",
+    "expectedCommitMessage": "fix: serialize codex provider turns",
+    "preCommitHead": "335f83cf7",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase15.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase17.codex-queue.task1"
   }
 }
 ```
@@ -192,17 +192,33 @@
 ### Stream: VSIX Packaging
 
 49. [DONE] `development-tree-product-part-review.phase15.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.462` (scope: `codeai-hub-1.2.462.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.462 vsix release`).
-50. [PENDING] Git Commit: `build: package 1.2.462 vsix release` (hash: TBD)
+50. [DONE] Git Commit: `build: package 1.2.462 vsix release` (hash: 335f83cf7)
 
 ## Phase 16 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
 ### Stream: FinderWidget Scoped Clear/Undo Retest
 
-51. [TODO] `development-tree-product-part-review.phase16.user.task1` User installs release `1.2.462` and retests Clear/Undo on `widget-display` and `latest-note-search`: only the selected Product Part session/todo-plan is deleted and recreated, siblings are not restarted, and no concurrent provider auth refresh is triggered by Clear/Undo (scope: user workflow; expected commit: none).
+51. [DONE] `development-tree-product-part-review.phase16.user.task1` User installs release `1.2.462` and retests Clear/Undo on `widget-display` and `latest-note-search`: only the selected Product Part session/todo-plan is deleted and recreated, siblings are not restarted, and no concurrent provider auth refresh is triggered by Clear/Undo (scope: user workflow; expected commit: none). Result: scoped restart worked per Product Part timestamps, but the Codex provider home was already left with a stale/reused refresh token and every new Codex turn now fails before native session start.
+
+## Phase 17 - Codex Provider Auth Race Hotfix (owner: Codex, updated: 2026-06-07)
+
+### Stream: Provider Turn Serialization
+
+52. [DONE] `development-tree-product-part-review.phase17.codex-queue.task1` Serialize Codex provider operations that can touch the shared `CODEX_HOME` auth state so multiple Product Part sessions cannot trigger concurrent refresh-token use (scope: `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts, packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: serialize codex provider turns`).
+53. [PENDING] Git Commit: `fix: serialize codex provider turns` (hash: TBD)
+54. [TODO] `development-tree-product-part-review.phase17.codex-queue.task2` Run targeted Codex provider adapter verification for serialized create/resume/send/usage-limit operations (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex provider operation serialization`).
+55. [TODO] Git Commit: `test: verify codex provider operation serialization` (hash: TBD)
+
+## Phase 18 - Release Build (owner: Codex, updated: 2026-06-07)
+
+### Stream: Release After Confirmation
+
+56. [TODO] `development-tree-product-part-review.phase18.release.task1` After explicit user confirmation, prepare release notes and build the next VSIX for the Codex provider serialization hotfix (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: package codex provider serialization hotfix`).
+57. [TODO] Git Commit: `build: package codex provider serialization hotfix` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-52. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-53. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+58. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+59. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

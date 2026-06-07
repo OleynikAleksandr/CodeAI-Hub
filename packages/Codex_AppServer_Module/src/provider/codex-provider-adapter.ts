@@ -13,6 +13,7 @@ export class CodexProviderAdapter {
   readonly usageLimitsFacade?: CodexModuleOptions["usageLimitsFacade"];
   private readonly facade: CodexAppServerFacade;
   private readonly nativeRequestCaptureService: CodexNativeRequestCaptureService;
+  private operationQueue: Promise<void> = Promise.resolve();
 
   constructor(options: CodexModuleOptions) {
     this.usageLimitsFacade = options.usageLimitsFacade;
@@ -28,11 +29,15 @@ export class CodexProviderAdapter {
   }
 
   createSession(workspacePath?: string): Promise<string> {
-    return this.facade.createSession(workspacePath);
+    return this.enqueueProviderHomeOperation(() =>
+      this.facade.createSession(workspacePath)
+    );
   }
 
   resumeSession(sessionId: string, workspacePath?: string): Promise<string> {
-    return this.facade.resumeSession(sessionId, workspacePath);
+    return this.enqueueProviderHomeOperation(() =>
+      this.facade.resumeSession(sessionId, workspacePath)
+    );
   }
 
   closeSession(sessionId: string): Promise<void> {
@@ -42,7 +47,9 @@ export class CodexProviderAdapter {
   captureNativeRequest(
     options: CodexNativeRequestCaptureOptions
   ): Promise<void> {
-    return this.nativeRequestCaptureService.captureNativeRequest(options);
+    return this.enqueueProviderHomeOperation(() =>
+      this.nativeRequestCaptureService.captureNativeRequest(options)
+    );
   }
 
   sendMessage(
@@ -50,7 +57,9 @@ export class CodexProviderAdapter {
     content: string,
     turnOptions?: CodexTurnOptions
   ): Promise<void> {
-    return this.facade.sendMessage(sessionId, content, turnOptions);
+    return this.enqueueProviderHomeOperation(() =>
+      this.facade.sendMessage(sessionId, content, turnOptions)
+    );
   }
 
   subscribe(
@@ -66,9 +75,11 @@ export class CodexProviderAdapter {
     readonly runtimeSessionId: string;
     readonly workspacePath: string;
   }): Promise<void> {
-    const payload = await this.facade
-      .refreshUsageLimits()
-      .catch((): CodexUsageLimitsStreamPayload | null => null);
+    const payload = await this.enqueueProviderHomeOperation(() =>
+      this.facade
+        .refreshUsageLimits()
+        .catch((): CodexUsageLimitsStreamPayload | null => null)
+    );
     if (!payload) {
       return;
     }
@@ -79,5 +90,17 @@ export class CodexProviderAdapter {
       uuid: `${crypto.randomUUID()}::usage_limits`,
       timestamp: new Date().toISOString(),
     });
+  }
+
+  private enqueueProviderHomeOperation<TResult>(
+    operation: () => Promise<TResult>
+  ): Promise<TResult> {
+    const previous = this.operationQueue ?? Promise.resolve();
+    const current = previous.catch(() => undefined).then(operation);
+    this.operationQueue = current.then(
+      () => undefined,
+      () => undefined
+    );
+    return current;
   }
 }
