@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "ab608c465",
+  "lastRecordedCommit": "b5035eed5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase20.runtime-docs.task1",
-  "expectedCommitMessage": "docs: clarify local runtime rollback boundary",
+  "currentTaskId": "development-tree-product-part-review.phase21.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.464 release notes",
   "debt": {
-    "expectedCommitMessage": "docs: clarify local runtime rollback boundary",
-    "preCommitHead": "ab608c465",
+    "expectedCommitMessage": "docs: prepare 1.2.464 release notes",
+    "preCommitHead": "b5035eed5",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase20.runtime-docs.task1"
+    "taskId": "development-tree-product-part-review.phase21.release-notes.task1"
   }
 }
 ```
@@ -243,11 +243,28 @@
 73. [DONE] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
 74. [DONE] Git Commit: `test: verify workspace runtime stays local only` (hash: ab608c465)
 75. [DONE] `development-tree-product-part-review.phase20.runtime-docs.task1` Sync SSOT docs with the Git-first rule: tracked workflow/product artifacts are rollback truth; workspace runtime is local execution residue recreated from tracked truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit: `docs: clarify local runtime rollback boundary`).
-76. [PENDING] Git Commit: `docs: clarify local runtime rollback boundary` (hash: TBD)
+76. [DONE] Git Commit: `docs: clarify local runtime rollback boundary` (hash: b5035eed5)
+
+## Phase 21 - Release Build (owner: Codex, updated: 2026-06-07)
+
+### Stream: Release After Confirmation
+
+77. [DONE] `development-tree-product-part-review.phase21.release-notes.task1` Prepare release notes for future version `1.2.464` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.464 release notes`).
+78. [PENDING] Git Commit: `docs: prepare 1.2.464 release notes` (hash: TBD)
+79. [TODO] `development-tree-product-part-review.phase21.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.464` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.464 unified release artifacts`).
+80. [TODO] Git Commit: `build: prepare 1.2.464 unified release artifacts` (hash: TBD)
+81. [TODO] `development-tree-product-part-review.phase21.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.464` (scope: `codeai-hub-1.2.464.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.464 vsix release`).
+82. [TODO] Git Commit: `build: package 1.2.464 vsix release` (hash: TBD)
+
+## Phase 22 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+
+### Stream: Runtime Git Hygiene Retest
+
+83. [TODO] `development-tree-product-part-review.phase22.user.task1` User installs release `1.2.464` and retests from a fresh Description flow plus Product Part Clear/Undo: Git stays clean after generated sessions/runtime are recreated, and tracked workflow/product artifacts still roll back through Git (scope: user workflow; expected commit: none).
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-77. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-78. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+84. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+85. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

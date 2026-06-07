@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.463** (Codex Provider Turn Serialization)
+**Current Release — v1.2.464** (Workspace Runtime Git Hygiene)
+
+This release hardens Git cleanliness for workflow rollback and Development Tree
+agent sessions. Workspace runtime capsules under
+`.codeai-hub/<workspace>/runtime/` are now local execution residue, not Git
+rollback truth. Core writes root/capsule ignore rules for runtime directories,
+untracks legacy runtime files that were already committed, and keeps managed
+commit/clean boundaries focused on tracked workflow/product artifacts.
+
+After installing this release, retest from a fresh `Description` flow and
+Product Part Clear/Undo should leave Git clean even when provider-native logs,
+unified session histories, shell snapshots, settings/localization runtime and
+other session files are recreated on disk.
+
+**Previous Release — v1.2.463** (Codex Provider Turn Serialization)
 
 This release hardens Codex provider execution for Development Tree workflows
 with many automatic agent sessions. Codex operations that share one

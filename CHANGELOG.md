@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.464] - 2026-06-07
+### Fixed
+- **Workspace runtime capsules now stay local-only.** Generated workspace `.gitignore` files ignore `.codeai-hub/*/runtime/`, capsule `.gitignore` files ignore `runtime/`, and Application Skeleton readiness rejects missing runtime ignore coverage.
+- **Managed commits clean legacy tracked runtime files.** Accepted-step and managed-terminal boundaries remove previously tracked `.codeai-hub/<workspace>/runtime/**` entries from the Git index while leaving files on disk for the running process.
+- **Runtime logs no longer count as rollback truth.** Provider homes, provider-native histories, unified session logs, shell snapshots, settings/localization runtime, caches and credentials are recreated from tracked workflow/product artifacts instead of being committed as development state.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.js`
+- `npm run plan:validate`
+
 ## [1.2.463] - 2026-06-07
 ### Fixed
 - **Codex provider operations now serialize access to the shared provider home.** `createSession`, `resumeSession`, `sendMessage`, usage-limit refresh, and native request capture now run through one provider-home queue inside the Codex adapter, preventing Core-side overlap against the same `CODEX_HOME` auth state.
