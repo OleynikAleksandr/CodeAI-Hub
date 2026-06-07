@@ -181,6 +181,14 @@ export class HttpApiRouter {
       WORKFLOW_STEP_CLEAR_ENDPOINT,
       async (req: Request, res: Response) => {
         await handleWorkflowStepClear(req, res, {
+          developmentTreeAgentGateway: {
+            createSessionForWorkflow: async (workflowOptions) =>
+              await this.deps.sessionHandler.createSessionForWorkflow(
+                workflowOptions
+              ),
+            handleMessage: async (sessionId, content) =>
+              await this.deps.sessionHandler.handleMessage(sessionId, content),
+          },
           logger: this.deps.logger,
           resetWorkflowState: (workspaceSlug) =>
             this.deps.workflowStateService.resetWorkspaceState(workspaceSlug),

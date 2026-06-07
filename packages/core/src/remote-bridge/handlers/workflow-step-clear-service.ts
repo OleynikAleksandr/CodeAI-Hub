@@ -1,11 +1,15 @@
 import { readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
-import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import { isStageAtOrAfter } from "../../workflow/boundary/workflow-boundary-model";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
+import {
+  clearAndRestartProductPart,
+  isProductPartRootClear,
+  type ProductPartClearDeps,
+} from "./workflow-step-clear-product-part-restart";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
@@ -32,10 +36,9 @@ type ClearTarget =
       readonly workflowPath: string;
     };
 
-export interface WorkflowStepClearDeps {
+export interface WorkflowStepClearDeps extends ProductPartClearDeps {
   readonly logger: Logger;
   readonly resetWorkflowState: (workspaceSlug: string) => void;
-  readonly sessionManager: SessionManager;
   readonly workflowBoundaryFacade?: Pick<
     WorkflowBoundaryFacade,
     "restoreBoundary"
@@ -259,6 +262,46 @@ export const handleWorkflowStepClear = async (
     return;
   }
   if (parsed.target.kind === "development_tree_node") {
+    if (isProductPartRootClear(parsed.target)) {
+      try {
+        const result = await clearAndRestartProductPart(
+          { ...parsed, target: parsed.target },
+          deps
+        );
+        deps.resetWorkflowState(parsed.workspaceSlug);
+        res.json({
+          cleared: true,
+          deletedProviderNativeSessionPaths:
+            result.deletedProviderNativeSessionPaths,
+          deletedSessionIds: result.clearedSessions.deletedSessionIds,
+          productPartRestart: result.restart,
+          restore: {
+            boundaryHash: "development-tree-product-part-restart",
+            clearCommitHash: "development-tree-product-part-restart",
+            prunedStages: [parsed.target.workflowPath],
+            registryPath: "",
+            stage: parsed.target.workflowPath,
+          },
+          target: parsed.target,
+          workspaceSlug: parsed.workspaceSlug,
+        });
+      } catch (error) {
+        deps.logger.error(
+          "Failed to clear and restart Product Part Development Tree node",
+          error as Error,
+          {
+            target: parsed.target,
+            workspacePath: parsed.workspacePath,
+            workspaceSlug: parsed.workspaceSlug,
+          }
+        );
+        res.status(HTTP_INTERNAL_ERROR).json({
+          error:
+            "Unable to clear and restart Product Part Development Tree node",
+        });
+      }
+      return;
+    }
     res.status(HTTP_NOT_IMPLEMENTED).json({
       code: DEVELOPMENT_TREE_CLEAR_PENDING_CODE,
       error: DEVELOPMENT_TREE_CLEAR_PENDING_ERROR,

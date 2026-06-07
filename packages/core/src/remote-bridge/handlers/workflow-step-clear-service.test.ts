@@ -363,12 +363,13 @@ test("workflow step clear prunes provider-native workflow sessions only", async 
   }
 });
 
-test("workflow step clear keeps development-tree node clear fail-closed", async () => {
+test("workflow step clear keeps downstream development-tree node clear fail-closed", async () => {
   const result = await runClear({
     target: {
       codeWorkspacePath: null,
       kind: "development_tree_node",
-      workflowPath: "development_tree/product-part/task",
+      workflowPath:
+        "development_tree/materialized/product-parts/core/clusters/runtime",
     },
     workspacePath: "/tmp/demo",
     workspaceSlug: "demo-workspace",
@@ -382,7 +383,8 @@ test("workflow step clear keeps development-tree node clear fail-closed", async 
     target: {
       codeWorkspacePath: null,
       kind: "development_tree_node",
-      workflowPath: "development_tree/product-part/task",
+      workflowPath:
+        "development_tree/materialized/product-parts/core/clusters/runtime",
     },
   });
   assert.deepEqual(result.resetCalls, []);
