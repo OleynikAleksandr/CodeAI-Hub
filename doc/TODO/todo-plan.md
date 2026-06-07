@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "f1cb982be",
+  "lastRecordedCommit": "c06f87071",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase25.codex-auth-tests.task1",
-  "expectedCommitMessage": "test: verify codex shared auth materialization",
+  "currentTaskId": "development-tree-product-part-review.phase26.verify.task1",
+  "expectedCommitMessage": "test: verify codex auth home hotfix",
   "debt": {
-    "expectedCommitMessage": "test: verify codex shared auth materialization",
-    "preCommitHead": "f1cb982be",
+    "expectedCommitMessage": "test: verify codex auth home hotfix",
+    "preCommitHead": "c06f87071",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase25.codex-auth-tests.task1"
+    "taskId": "development-tree-product-part-review.phase26.verify.task1"
   }
 }
 ```
@@ -294,14 +294,14 @@
 99. [DONE] `development-tree-product-part-review.phase25.codex-auth.task1` Stop cloning Codex OAuth auth into workspace provider homes; materialize workspace `auth.json` as a shared reference to the global Codex auth source so refresh tokens cannot diverge between homes (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-auth.ts, doc/TODO/todo-plan.md`; expected commit: `fix: share codex auth across provider homes`).
 100. [DONE] Git Commit: `fix: share codex auth across provider homes` (hash: f1cb982be)
 101. [DONE] `development-tree-product-part-review.phase25.codex-auth-tests.task1` Add targeted Codex provider-home auth materialization tests, including stale copied auth replacement (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-auth.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify codex shared auth materialization`).
-102. [PENDING] Git Commit: `test: verify codex shared auth materialization` (hash: TBD)
+102. [DONE] Git Commit: `test: verify codex shared auth materialization` (hash: c06f87071)
 
 ## Phase 26 - Tooling Verification (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Targeted Verification
 
-103. [TODO] `development-tree-product-part-review.phase26.verify.task1` Run targeted Codex module build and provider-home auth tests for the shared auth hotfix (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex auth home hotfix`).
-104. [TODO] Git Commit: `test: verify codex auth home hotfix` (hash: TBD)
+103. [DONE] `development-tree-product-part-review.phase26.verify.task1` Run targeted Codex module build and provider-home auth tests for the shared auth hotfix (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex auth home hotfix`).
+104. [PENDING] Git Commit: `test: verify codex auth home hotfix` (hash: TBD)
 
 ## Phase 27 - Release Build (owner: Codex, updated: 2026-06-07)
 
