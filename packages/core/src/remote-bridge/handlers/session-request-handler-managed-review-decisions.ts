@@ -27,6 +27,7 @@ import {
   isQualityGatesReviewOpen,
   readApplicationSkeletonTaskId,
 } from "./managed-review-state-readers";
+import { ProductPartDevelopmentBriefReviewController } from "./product-part-development-brief-review-controller";
 import {
   dispatchQualityGatesReviewRevision,
   openQualityGatesNextAcceptedReviewPhase,
@@ -60,6 +61,8 @@ interface ManagedReviewDecisionDeps {
 }
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
+const PRODUCT_PART_STAGE_RE =
+  /^development_tree\/materialized\/product-parts\/[^/]+$/u;
 const QUALITY_GATES_STAGE = "quality_gates";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
@@ -86,6 +89,8 @@ export class SessionRequestHandlerManagedReviewDecisions {
     new ApplicationSkeletonCoreMaterializer();
   private readonly deps: ManagedReviewDecisionDeps;
   private readonly preliminaryReviewCommitter: SessionRequestHandlerPreliminaryReviewCommitter;
+  private readonly productPartBriefReview =
+    new ProductPartDevelopmentBriefReviewController();
   private readonly qualityGatesStagePlan =
     new QualityGatesStagePlanController();
   private readonly stepCommitFacade = new WorkflowStepCommitFacade();
@@ -113,6 +118,14 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     if (
       await this.handleDiagramModulesReviewDecision({
+        ...options,
+        intent: classifyManagedReviewIntent(options.content),
+      })
+    ) {
+      return true;
+    }
+    if (
+      await this.handleProductPartReviewDecision({
         ...options,
         intent: classifyManagedReviewIntent(options.content),
       })
@@ -192,6 +205,41 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     this.appendUserReviewMessage(options);
     await this.completeDiagramModulesReview(options.session);
+    return true;
+  }
+
+  private async handleProductPartReviewDecision(
+    options: ManagedReviewDecisionOptions & {
+      readonly intent: ManagedReviewIntent;
+    }
+  ): Promise<boolean> {
+    if (
+      !(
+        options.session.stage &&
+        PRODUCT_PART_STAGE_RE.test(options.session.stage) &&
+        options.session.workspacePath &&
+        options.session.initiativeSlug
+      )
+    ) {
+      return false;
+    }
+    if (options.intent !== "accept") {
+      return false;
+    }
+    this.appendUserReviewMessage(options);
+    const result = await this.productPartBriefReview.handleAccepted({
+      sessionId: options.sessionId,
+      stage: options.session.stage,
+      workspaceRoot: options.session.workspacePath,
+      workspaceSlug: options.session.initiativeSlug,
+    });
+    if (!result.handled) {
+      return false;
+    }
+    this.deps.eventMessages.appendCoreMessage(
+      options.sessionId,
+      result.message
+    );
     return true;
   }
 

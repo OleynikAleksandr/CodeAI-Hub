@@ -119,6 +119,12 @@ const createContinuityIndexPath = (workspaceSlug: string): string =>
 const createTaskPrefix = (partId: string): string =>
   `development-tree.product-part.${partId}`;
 
+const createReviewTaskId = (partId: string): string =>
+  `${createTaskPrefix(partId)}.phase2.brief-review.task1`;
+
+const isReviewTaskId = (taskId: string | null, partId: string): boolean =>
+  taskId === createReviewTaskId(partId);
+
 const parseStateBlock = <TState>(content: string): TState => {
   const rawBlock = content.split(PLAN_START)[1]?.split(PLAN_END)[0];
   const json = rawBlock
@@ -153,7 +159,7 @@ const markBriefTaskAccepted = (params: {
   readonly currentTaskId: string;
   readonly partId: string;
 }): string => {
-  const reviewTaskId = `${createTaskPrefix(params.partId)}.phase2.brief-review.task1`;
+  const reviewTaskId = createReviewTaskId(params.partId);
   const taskPattern = new RegExp(
     `^(\\d+\\. \\[)(?:TODO|IN_PROGRESS|BLOCKED)(\\] \`${escapeRegExp(
       params.currentTaskId
@@ -289,9 +295,24 @@ export class ProductPartDevelopmentBriefTurnController {
       };
     }
 
+    const planPath = createPlanPath(partId);
+    const planText = await readText(params.workspaceRoot, planPath);
+    const planState = parseStateBlock<ManagedPlanState>(planText);
+    if (isReviewTaskId(planState.currentTaskId, partId)) {
+      return {
+        handled: true,
+        message: createReadyMessage({
+          commitHash: planState.lastRecordedCommit ?? "not-committed",
+          partId,
+        }),
+      };
+    }
+
     return await this.commitAcceptedBrief({
       classification,
       partId,
+      planState,
+      planText,
       sessionId: params.sessionId,
       stage: params.stage,
       workspaceRoot: params.workspaceRoot,
@@ -302,15 +323,19 @@ export class ProductPartDevelopmentBriefTurnController {
   private async commitAcceptedBrief(params: {
     readonly classification: ReturnType<DraftReadinessClassifier["classify"]>;
     readonly partId: string;
+    readonly planState: ManagedPlanState;
+    readonly planText: string;
     readonly sessionId: string;
     readonly stage: string;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<ProductPartBriefTurnResult> {
     const planPath = createPlanPath(params.partId);
-    const planText = await readText(params.workspaceRoot, planPath);
-    const planState = parseStateBlock<ManagedPlanState>(planText);
-    if (!(planState.currentTaskId && planState.expectedCommitMessage)) {
+    if (
+      !(
+        params.planState.currentTaskId && params.planState.expectedCommitMessage
+      )
+    ) {
       return {
         handled: true,
         message: createBlockedMessage({
@@ -329,7 +354,7 @@ export class ProductPartDevelopmentBriefTurnController {
     );
     await writeText(params.workspaceRoot, briefPath, acceptedBriefContent);
     const gitCommit = await this.gitBoundary.commitManagedChanges({
-      commitMessage: planState.expectedCommitMessage,
+      commitMessage: params.planState.expectedCommitMessage,
       managedPaths: await uniqueExistingPaths(params.workspaceRoot, [
         briefPath,
         `.codeai-hub/${params.workspaceSlug}/continuity/${params.stage}/`,
@@ -341,7 +366,7 @@ export class ProductPartDevelopmentBriefTurnController {
         handled: true,
         message: createBlockedMessage({
           diagnostics: [
-            `No staged Product Part brief changes for commit "${planState.expectedCommitMessage}".`,
+            `No staged Product Part brief changes for commit "${params.planState.expectedCommitMessage}".`,
           ],
           partId: params.partId,
         }),
@@ -354,7 +379,7 @@ export class ProductPartDevelopmentBriefTurnController {
       buildReadyDecision({
         classification: params.classification,
         commitHash: gitCommit.hash,
-        commitMessage: planState.expectedCommitMessage,
+        commitMessage: params.planState.expectedCommitMessage,
         partId: params.partId,
         sessionId: params.sessionId,
       })
@@ -365,13 +390,13 @@ export class ProductPartDevelopmentBriefTurnController {
       replaceStateBlock(
         markBriefTaskAccepted({
           commitHash: gitCommit.hash,
-          commitMessage: planState.expectedCommitMessage,
-          content: planText,
-          currentTaskId: planState.currentTaskId,
+          commitMessage: params.planState.expectedCommitMessage,
+          content: params.planText,
+          currentTaskId: params.planState.currentTaskId,
           partId: params.partId,
         }),
         {
-          ...planState,
+          ...params.planState,
           currentTaskId: `${createTaskPrefix(
             params.partId
           )}.phase2.brief-review.task1`,
