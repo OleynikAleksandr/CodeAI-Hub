@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "335f83cf7",
+  "lastRecordedCommit": "5c8ab47bc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase17.codex-queue.task1",
-  "expectedCommitMessage": "fix: serialize codex provider turns",
+  "currentTaskId": "development-tree-product-part-review.phase17.codex-queue.task2",
+  "expectedCommitMessage": "test: verify codex provider operation serialization",
   "debt": {
-    "expectedCommitMessage": "fix: serialize codex provider turns",
-    "preCommitHead": "335f83cf7",
+    "expectedCommitMessage": "test: verify codex provider operation serialization",
+    "preCommitHead": "5c8ab47bc",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase17.codex-queue.task1"
+    "taskId": "development-tree-product-part-review.phase17.codex-queue.task2"
   }
 }
 ```
@@ -205,9 +205,9 @@
 ### Stream: Provider Turn Serialization
 
 52. [DONE] `development-tree-product-part-review.phase17.codex-queue.task1` Serialize Codex provider operations that can touch the shared `CODEX_HOME` auth state so multiple Product Part sessions cannot trigger concurrent refresh-token use (scope: `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts, packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: serialize codex provider turns`).
-53. [PENDING] Git Commit: `fix: serialize codex provider turns` (hash: TBD)
-54. [TODO] `development-tree-product-part-review.phase17.codex-queue.task2` Run targeted Codex provider adapter verification for serialized create/resume/send/usage-limit operations (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex provider operation serialization`).
-55. [TODO] Git Commit: `test: verify codex provider operation serialization` (hash: TBD)
+53. [DONE] Git Commit: `fix: serialize codex provider turns` (hash: 5c8ab47bc)
+54. [DONE] `development-tree-product-part-review.phase17.codex-queue.task2` Run targeted Codex provider adapter verification for serialized create/resume/send/usage-limit operations (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex provider operation serialization`).
+55. [PENDING] Git Commit: `test: verify codex provider operation serialization` (hash: TBD)
 
 ## Phase 18 - Release Build (owner: Codex, updated: 2026-06-07)
 
