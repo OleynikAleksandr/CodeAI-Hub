@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "5530fde36",
+  "lastRecordedCommit": "223ba2db0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase10.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.461 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase13.hotfix-api.task1",
+  "expectedCommitMessage": "feat: add targeted product part bootstrap filter",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.461 vsix release",
-    "preCommitHead": "5530fde36",
+    "expectedCommitMessage": "feat: add targeted product part bootstrap filter",
+    "preCommitHead": "223ba2db0",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase10.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase13.hotfix-api.task1"
   }
 }
 ```
@@ -153,17 +153,56 @@
 ### Stream: VSIX Packaging
 
 34. [DONE] `development-tree-product-part-review.phase10.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.461` (scope: `codeai-hub-1.2.461.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.461 vsix release`).
-35. [PENDING] Git Commit: `build: package 1.2.461 vsix release` (hash: TBD)
+35. [DONE] Git Commit: `build: package 1.2.461 vsix release` (hash: 223ba2db0)
 
 ## Phase 11 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
 ### Stream: FinderWidget Clear/Undo Retest
 
-36. [TODO] `development-tree-product-part-review.phase11.user.task1` User installs release `1.2.461` and retests Clear/Undo on `latest-note-search` and `widget-display`: old Product Part sessions and todo-plans disappear, new Product Part sessions and fresh todo-plans are recreated automatically (scope: user workflow; expected commit: none).
+36. [DONE] `development-tree-product-part-review.phase11.user.task1` User installs release `1.2.461` and retests Clear/Undo on `latest-note-search` and `widget-display`: old Product Part sessions and todo-plans disappear, new Product Part sessions and fresh todo-plans are recreated automatically (scope: user workflow; expected commit: none). Result: retest found that clearing `widget-display` also restarted sibling Product Part `latest-note-search`, causing concurrent Codex provider turns and an OAuth refresh-token race.
+
+## Phase 13 - Product Part Clear/Undo Scoped Restart Hotfix (owner: Codex, updated: 2026-06-07)
+
+### Stream: Target Part Restart Only
+
+39. [DONE] `development-tree-product-part-review.phase13.hotfix-api.task1` Add a targeted Product Part bootstrap filter to the Core Development Tree bootstrap API, without changing existing full bootstrap callers (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/development-tree-product-part-agent-bootstrap.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add targeted product part bootstrap filter`).
+40. [PENDING] Git Commit: `feat: add targeted product part bootstrap filter` (hash: TBD)
+41. [TODO] `development-tree-product-part-review.phase13.hotfix-clear.task1` Restrict Product Part Clear/Undo restart to the selected Product Part only and cover the multi-Product-Part regression (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope product part clear restart to target part`).
+42. [TODO] Git Commit: `fix: scope product part clear restart to target part` (hash: TBD)
+
+## Phase 14 - Tooling Verification (owner: Codex, updated: 2026-06-07)
+
+### Stream: Targeted Verification
+
+43. [TODO] `development-tree-product-part-review.phase14.verify.task1` Run targeted Core tests for Product Part Clear/Undo scoped restart behavior and confirm only the cleared Product Part is recreated (scope: `packages/core`; expected commit: `test: verify scoped product part clear restart`).
+44. [TODO] Git Commit: `test: verify scoped product part clear restart` (hash: TBD)
+
+## Phase 15 - Release Build (owner: Codex, updated: 2026-06-07)
+
+### Stream: Release Notes
+
+45. [TODO] `development-tree-product-part-review.phase15.release-notes.task1` Update release notes for future version `1.2.462` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.462 release notes`).
+46. [TODO] Git Commit: `docs: prepare 1.2.462 release notes` (hash: TBD)
+
+### Stream: Unified Artifacts
+
+47. [TODO] `development-tree-product-part-review.phase15.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.462` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.462 unified release artifacts`).
+48. [TODO] Git Commit: `build: prepare 1.2.462 unified release artifacts` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+49. [TODO] `development-tree-product-part-review.phase15.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.462` (scope: `codeai-hub-1.2.462.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.462 vsix release`).
+50. [TODO] Git Commit: `build: package 1.2.462 vsix release` (hash: TBD)
+
+## Phase 16 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+
+### Stream: FinderWidget Scoped Clear/Undo Retest
+
+51. [TODO] `development-tree-product-part-review.phase16.user.task1` User installs release `1.2.462` and retests Clear/Undo on `widget-display` and `latest-note-search`: only the selected Product Part session/todo-plan is deleted and recreated, siblings are not restarted, and no concurrent provider auth refresh is triggered by Clear/Undo (scope: user workflow; expected commit: none).
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-37. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-38. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+52. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+53. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

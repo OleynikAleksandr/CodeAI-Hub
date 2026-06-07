@@ -36,6 +36,7 @@ export interface DevelopmentTreeNodeBootstrapRequest
   readonly leadProductPartId?: string | null;
   readonly nodeKinds?: readonly DevelopmentTreeDetectedNodeKind[];
   readonly productPartLeadershipOrder?: readonly string[];
+  readonly targetProductPartIds?: readonly string[];
   readonly writeProductPartPlans?: boolean;
 }
 
@@ -56,9 +57,15 @@ export class DevelopmentTreeNodeBootstrapFacade {
   async consumeNewNodes(
     params: DevelopmentTreeNodeBootstrapRequest
   ): Promise<DevelopmentTreeNodeBootstrapScanResult> {
-    const nodes = (await this.watcher.scan(params)).filter(
-      (node) => !params.nodeKinds || params.nodeKinds.includes(node.kind)
-    );
+    const targetProductPartIds = new Set(params.targetProductPartIds ?? []);
+    const nodes = (await this.watcher.scan(params)).filter((node) => {
+      const matchesKind =
+        !params.nodeKinds || params.nodeKinds.includes(node.kind);
+      const matchesProductPart =
+        targetProductPartIds.size === 0 ||
+        targetProductPartIds.has(node.partId);
+      return matchesKind && matchesProductPart;
+    });
     const newNodes = this.state.filterUnprocessed(nodes);
     const agentSessions: NodeAgentSessionBootstrapResult[] = [];
     const writtenDrafts: DevelopmentTreeWrittenDraft[] = [];

@@ -7,6 +7,7 @@ export interface DevelopmentTreeProductPartAgentBootstrapRequest {
   readonly leadProductPartId?: string | null;
   readonly productPartLeadershipOrder?: readonly string[];
   readonly providerId?: string | null;
+  readonly targetProductPartIds?: readonly string[];
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
@@ -31,6 +32,7 @@ export const bootstrapDevelopmentTreeProductPartAgents = async (
     leadProductPartId: request.leadProductPartId,
     nodeKinds: ["product_part"],
     productPartLeadershipOrder: request.productPartLeadershipOrder,
+    targetProductPartIds: request.targetProductPartIds,
     workspaceRoot: request.workspaceRoot,
     workspaceSlug: request.workspaceSlug,
     writeProductPartPlans: true,
