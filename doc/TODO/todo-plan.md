@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "6d1fc87cf",
+  "lastRecordedCommit": "8715a63d6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase2.return.task1",
-  "expectedCommitMessage": "feat: open product part user return after brief acceptance",
+  "currentTaskId": "development-tree-product-part-review.phase3.docs.task1",
+  "expectedCommitMessage": "docs: describe product part review lifecycle",
   "debt": {
-    "expectedCommitMessage": "feat: open product part user return after brief acceptance",
-    "preCommitHead": "6d1fc87cf",
+    "expectedCommitMessage": "docs: describe product part review lifecycle",
+    "preCommitHead": "8715a63d6",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase2.return.task1"
+    "taskId": "development-tree-product-part-review.phase3.docs.task1"
   }
 }
 ```
@@ -63,14 +63,14 @@
 ### Stream: Managed Plan Advancement
 
 5. [DONE] `development-tree-product-part-review.phase2.return.task1` Advance accepted non-lead Product Part plans into `User Return And Revisions` and keep lead Product Part plans ready for the next managed assignment (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open product part user return after brief acceptance`).
-6. [PENDING] Git Commit: `feat: open product part user return after brief acceptance` (hash: TBD)
+6. [DONE] Git Commit: `feat: open product part user return after brief acceptance` (hash: 8715a63d6)
 
 ## Phase 3 - Documentation Sync (owner: Codex, updated: 2026-06-07)
 
 ### Stream: SSOT Update
 
-7. [TODO] `development-tree-product-part-review.phase3.docs.task1` Document Product Part review lifecycle and current lead/non-lead boundary before Development Order Plan implementation (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe product part review lifecycle`).
-8. [TODO] Git Commit: `docs: describe product part review lifecycle` (hash: TBD)
+7. [DONE] `development-tree-product-part-review.phase3.docs.task1` Document Product Part review lifecycle and current lead/non-lead boundary before Development Order Plan implementation (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe product part review lifecycle`).
+8. [PENDING] Git Commit: `docs: describe product part review lifecycle` (hash: TBD)
 
 ## Phase 4 - Tooling Verification (owner: Codex, updated: 2026-06-07)
 

@@ -118,6 +118,7 @@ Continuity chains remain stage-family agnostic. The same load/persistence rules 
 - Branch-node selection: `pm:branch:selected` opens the real working surface: left node session pane and right draft artifact pane.
 - Live refresh: when an agent writes required draft artifacts, the right artifact pane and sidebar readiness/color refresh without switching steps or reopening the workspace.
 - Context boundary: Product Part node first prompts receive the exact owner `diagram_modules/product-parts/<part-id>.md` whole; Cluster/Module prompts receive scoped relevant excerpts. Automatic first-draft sessions may use only first-prompt context and listed target draft files until the user explicitly permits additional reads.
+- Product Part review lifecycle: after a Product Part agent creates the branch-root draft and Core opens the review card, ordinary user text remains a provider-directed revision turn. Explicit acceptance is a Core-owned review action scoped to the active review message. Core commits the accepted draft, records `reviewState: "accepted"`, and advances the node plan by role: secondary Product Parts enter `User Return And Revisions` so the user can resume or ask for more work later, while the lead Product Part enters the next managed assignment boundary for `Development Order Plan Draft`.
 - Deferred: full branch-level implementation waves, provider inheritance for future per-branch handoffs, outdated propagation beyond current draft readiness, and progress counters.
 
 ---
