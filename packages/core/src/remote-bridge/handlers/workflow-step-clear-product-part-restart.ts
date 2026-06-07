@@ -399,6 +399,7 @@ export const clearAndRestartProductPart = async (
     productPartLeadershipOrder: progress?.productPartLeadershipOrder?.length
       ? progress.productPartLeadershipOrder
       : progress?.plannedPartIds,
+    targetProductPartIds: [partId],
     workspaceRoot: request.workspacePath,
     workspaceSlug: request.workspaceSlug,
   });

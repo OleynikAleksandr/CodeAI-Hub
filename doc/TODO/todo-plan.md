@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "223ba2db0",
+  "lastRecordedCommit": "760a50db0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase13.hotfix-api.task1",
-  "expectedCommitMessage": "feat: add targeted product part bootstrap filter",
+  "currentTaskId": "development-tree-product-part-review.phase13.hotfix-clear.task1",
+  "expectedCommitMessage": "fix: scope product part clear restart to target part",
   "debt": {
-    "expectedCommitMessage": "feat: add targeted product part bootstrap filter",
-    "preCommitHead": "223ba2db0",
+    "expectedCommitMessage": "fix: scope product part clear restart to target part",
+    "preCommitHead": "760a50db0",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase13.hotfix-api.task1"
+    "taskId": "development-tree-product-part-review.phase13.hotfix-clear.task1"
   }
 }
 ```
@@ -166,9 +166,9 @@
 ### Stream: Target Part Restart Only
 
 39. [DONE] `development-tree-product-part-review.phase13.hotfix-api.task1` Add a targeted Product Part bootstrap filter to the Core Development Tree bootstrap API, without changing existing full bootstrap callers (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/development-tree-product-part-agent-bootstrap.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add targeted product part bootstrap filter`).
-40. [PENDING] Git Commit: `feat: add targeted product part bootstrap filter` (hash: TBD)
-41. [TODO] `development-tree-product-part-review.phase13.hotfix-clear.task1` Restrict Product Part Clear/Undo restart to the selected Product Part only and cover the multi-Product-Part regression (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope product part clear restart to target part`).
-42. [TODO] Git Commit: `fix: scope product part clear restart to target part` (hash: TBD)
+40. [DONE] Git Commit: `feat: add targeted product part bootstrap filter` (hash: 760a50db0)
+41. [DONE] `development-tree-product-part-review.phase13.hotfix-clear.task1` Restrict Product Part Clear/Undo restart to the selected Product Part only and cover the multi-Product-Part regression (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope product part clear restart to target part`).
+42. [PENDING] Git Commit: `fix: scope product part clear restart to target part` (hash: TBD)
 
 ## Phase 14 - Tooling Verification (owner: Codex, updated: 2026-06-07)
 

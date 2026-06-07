@@ -40,6 +40,7 @@ test("Product Part root clear removes old session material and recreates agent p
     path.join(tmpdir(), "clear-product-part-")
   );
   const partId = "latest-note-search";
+  const siblingPartId = "widget-display";
   const workflowPath = `development_tree/materialized/product-parts/${partId}`;
   const oldSessionProviderId = "old-product-part-provider-session";
   const sessionManager = new SessionManager();
@@ -59,10 +60,23 @@ test("Product Part root clear removes old session material and recreates agent p
     WORKSPACE_SLUG,
     workflowPath
   );
+  const siblingProductPartRoot = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "development_tree/materialized/product-parts",
+    siblingPartId
+  );
   const planPath = path.join(
     workspaceRoot,
     "doc/TODO/stages/development-tree/product-parts",
     partId,
+    "todo-plan.md"
+  );
+  const siblingPlanPath = path.join(
+    workspaceRoot,
+    "doc/TODO/stages/development-tree/product-parts",
+    siblingPartId,
     "todo-plan.md"
   );
   const continuityPath = path.join(
@@ -96,6 +110,7 @@ test("Product Part root clear removes old session material and recreates agent p
   );
 
   try {
+    await mkdir(siblingProductPartRoot, { recursive: true });
     await writeText(planPath, "old product part plan\n");
     await writeText(
       path.join(productPartRoot, "ProductPartDevelopmentBrief.draft.md"),
@@ -161,12 +176,18 @@ test("Product Part root clear removes old session material and recreates agent p
     );
 
     const sessions = sessionManager.listSessions();
+    const siblingSessions = sessions.filter(
+      (session) =>
+        session.stage ===
+        `development_tree/materialized/product-parts/${siblingPartId}`
+    );
     assert.equal(
       isProductPartRootClear({ kind: "development_tree_node", workflowPath }),
       true
     );
     assert.deepEqual(result.clearedSessions.deletedSessionIds, [oldSession.id]);
     assert.equal(sessions.length, 1);
+    assert.equal(siblingSessions.length, 0);
     assert.equal(sessions[0]?.stage, workflowPath);
     assert.deepEqual(result.restart.bootstrapSessionIds, [sessions[0]?.id]);
     assert.equal(await fileExists(providerNativePath), false);
@@ -193,6 +214,16 @@ test("Product Part root clear removes old session material and recreates agent p
     assert.deepEqual(result.restart.recreatedDraftPaths, [
       `.codeai-hub/${WORKSPACE_SLUG}/${workflowPath}/ProductPartDevelopmentBrief.draft.md`,
     ]);
+    assert.equal(await fileExists(siblingPlanPath), false);
+    assert.equal(
+      await fileExists(
+        path.join(
+          siblingProductPartRoot,
+          "ProductPartDevelopmentBrief.draft.md"
+        )
+      ),
+      false
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
