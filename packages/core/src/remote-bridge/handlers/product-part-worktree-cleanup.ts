@@ -64,13 +64,13 @@ const removeEmptyParents = async (params: {
   let currentPath = params.startPath;
   const stopPath = path.resolve(params.stopPath);
   while (isWithinPath(stopPath, currentPath)) {
-    if (path.resolve(currentPath) === stopPath) {
-      break;
-    }
     if (await directoryHasEntries(currentPath)) {
       break;
     }
     await rmdir(currentPath).catch(() => null);
+    if (path.resolve(currentPath) === stopPath) {
+      break;
+    }
     currentPath = path.dirname(currentPath);
   }
 };
