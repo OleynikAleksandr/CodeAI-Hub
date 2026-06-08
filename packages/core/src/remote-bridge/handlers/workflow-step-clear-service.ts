@@ -5,6 +5,7 @@ import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import { isStageAtOrAfter } from "../../workflow/boundary/workflow-boundary-model";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
+import { clearDevelopmentTreeNode } from "./workflow-step-clear-development-tree-node";
 import {
   clearAndRestartProductPart,
   isProductPartRootClear,
@@ -13,11 +14,6 @@ import {
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
-const HTTP_NOT_IMPLEMENTED = 501;
-const DEVELOPMENT_TREE_CLEAR_PENDING_CODE =
-  "workflow_clear_development_tree_boundary_pending";
-const DEVELOPMENT_TREE_CLEAR_PENDING_ERROR =
-  "Development Tree node clear is unavailable until node-level Git boundary rollback is implemented";
 const WORKFLOW_STAGES = [
   "description",
   "virtual_simulation",
@@ -302,11 +298,41 @@ export const handleWorkflowStepClear = async (
       }
       return;
     }
-    res.status(HTTP_NOT_IMPLEMENTED).json({
-      code: DEVELOPMENT_TREE_CLEAR_PENDING_CODE,
-      error: DEVELOPMENT_TREE_CLEAR_PENDING_ERROR,
-      target: parsed.target,
-    });
+    try {
+      const result = await clearDevelopmentTreeNode(
+        { ...parsed, target: parsed.target },
+        deps
+      );
+      deps.resetWorkflowState(parsed.workspaceSlug);
+      res.json({
+        cleared: true,
+        deletedContinuityPaths: result.deletedContinuityPaths,
+        deletedSessionIds: result.deletedSessionIds,
+        deletedWorktreePaths: result.deletedWorktreePaths,
+        restore: {
+          boundaryHash: result.clearCommitHash,
+          clearCommitHash: result.clearCommitHash,
+          prunedStages: [parsed.target.workflowPath],
+          registryPath: "",
+          stage: parsed.target.workflowPath,
+        },
+        target: parsed.target,
+        workspaceSlug: parsed.workspaceSlug,
+      });
+    } catch (error) {
+      deps.logger.error(
+        "Failed to clear downstream Development Tree node",
+        error as Error,
+        {
+          target: parsed.target,
+          workspacePath: parsed.workspacePath,
+          workspaceSlug: parsed.workspaceSlug,
+        }
+      );
+      res.status(HTTP_INTERNAL_ERROR).json({
+        error: "Unable to clear downstream Development Tree node",
+      });
+    }
     return;
   }
 

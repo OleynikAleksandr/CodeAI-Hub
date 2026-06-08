@@ -70,7 +70,7 @@ const parseProductPartRootStage = (workflowPath: string): string | null =>
 export const isProductPartRootClear = (target: {
   readonly kind?: unknown;
   readonly workflowPath?: unknown;
-}): target is ProductPartClearTarget =>
+}): boolean =>
   target.kind === "development_tree_node" &&
   typeof target.workflowPath === "string" &&
   parseProductPartRootStage(target.workflowPath) !== null;

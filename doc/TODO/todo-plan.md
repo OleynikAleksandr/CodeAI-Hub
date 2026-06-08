@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "bc9cf9f3d",
+  "lastRecordedCommit": "e84a56a4d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase14.worktree-naming.task1",
-  "expectedCommitMessage": "fix: clarify cluster worktree root paths",
+  "currentTaskId": "development-tree-cluster-contract.phase14.node-clearundo-core.task1",
+  "expectedCommitMessage": "fix: clear downstream development tree nodes",
   "debt": {
-    "expectedCommitMessage": "fix: clarify cluster worktree root paths",
-    "preCommitHead": "bc9cf9f3d",
+    "expectedCommitMessage": "fix: clear downstream development tree nodes",
+    "preCommitHead": "e84a56a4d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase14.worktree-naming.task1"
+    "taskId": "development-tree-cluster-contract.phase14.node-clearundo-core.task1"
   }
 }
 ```
@@ -292,12 +292,12 @@ Release evidence:
 ### Stream: Worktree Root Naming
 
 125. [DONE] `development-tree-cluster-contract.phase14.worktree-naming.task1` Rename new downstream worktree roots away from artifact-like `.../contract/` suffixes while keeping existing Product Part cleanup compatible with legacy paths (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts`; expected commit: `fix: clarify cluster worktree root paths`).
-126. [PENDING] Git Commit: `fix: clarify cluster worktree root paths` (hash: TBD)
+126. [DONE] Git Commit: `fix: clarify cluster worktree root paths` (hash: e84a56a4d)
 
 ### Stream: Cluster And Module ClearUndo
 
-127. [TODO] `development-tree-cluster-contract.phase14.node-clearundo-core.task1` Add Core-owned ClearUndo handling for downstream cluster/module Development Tree nodes: remove the node worktree through Git, delete native/unified session traces and continuity/projection records, and reset node status to empty/unstarted in the main Product Part coordination state (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts`; expected commit: `fix: clear downstream development tree nodes`).
-128. [TODO] Git Commit: `fix: clear downstream development tree nodes` (hash: TBD)
+127. [DONE] `development-tree-cluster-contract.phase14.node-clearundo-core.task1` Add Core-owned ClearUndo handling for downstream cluster/module Development Tree nodes: remove the node worktree through Git, delete native/unified session traces and continuity/projection records, and reset node status to empty/unstarted in the main Product Part coordination state (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts`; expected commit: `fix: clear downstream development tree nodes`).
+128. [PENDING] Git Commit: `fix: clear downstream development tree nodes` (hash: TBD)
 129. [TODO] `development-tree-cluster-contract.phase14.node-clearundo-ui.task1` Wire Project Manager cluster/module clear targets to the Core node ClearUndo response so cleared nodes render with an empty icon instead of a stale yellow/in-progress state (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: clear downstream node markers in project manager`).
 130. [TODO] Git Commit: `fix: clear downstream node markers in project manager` (hash: TBD)
 131. [TODO] `development-tree-cluster-contract.phase14.node-clearundo-test.task1` Add targeted regression coverage for cluster/module ClearUndo removing worktrees, deleting projected sessions, pruning traces, and returning the graph node to an unstarted state (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream node clearundo`).
