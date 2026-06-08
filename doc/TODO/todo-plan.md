@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "8adc151a0",
+  "lastRecordedCommit": "4cd5b724e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.repair-continuation.task1",
-  "expectedCommitMessage": "fix: continue lead order plan repair after validation failure",
+  "currentTaskId": "development-tree-cluster-contract.phase10.repair-test.task1",
+  "expectedCommitMessage": "test: verify lead order plan repair continuation",
   "debt": {
-    "expectedCommitMessage": "fix: continue lead order plan repair after validation failure",
-    "preCommitHead": "8adc151a0",
+    "expectedCommitMessage": "test: verify lead order plan repair continuation",
+    "preCommitHead": "4cd5b724e",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.repair-continuation.task1"
+    "taskId": "development-tree-cluster-contract.phase10.repair-test.task1"
   }
 }
 ```
@@ -161,9 +161,9 @@ Verification evidence:
 ### Stream: Lead Order Plan Repair Continuation
 
 49. [DONE] `development-tree-cluster-contract.phase10.repair-continuation.task1` Dispatch an internal repair prompt when lead Product Part `DevelopmentOrderPlan.v2` validation fails instead of settling after the Core refusal message (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, doc/TODO/todo-plan.md`; expected commit: `fix: continue lead order plan repair after validation failure`).
-50. [PENDING] Git Commit: `fix: continue lead order plan repair after validation failure` (hash: TBD)
-51. [TODO] `development-tree-cluster-contract.phase10.repair-test.task1` Add targeted regression coverage for the lead order-plan validation repair continuation path (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan repair continuation`).
-52. [TODO] Git Commit: `test: verify lead order plan repair continuation` (hash: TBD)
+50. [DONE] Git Commit: `fix: continue lead order plan repair after validation failure` (hash: 4cd5b724e)
+51. [DONE] `development-tree-cluster-contract.phase10.repair-test.task1` Add targeted regression coverage for the lead order-plan validation repair continuation path (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan repair continuation`).
+52. [PENDING] Git Commit: `test: verify lead order plan repair continuation` (hash: TBD)
 53. [TODO] `development-tree-cluster-contract.phase10.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release (scope: user workflow; expected commit: none).
 54. [TODO] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none).
 
