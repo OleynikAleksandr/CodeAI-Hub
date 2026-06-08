@@ -1,3 +1,4 @@
+import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -29,6 +30,7 @@ interface SessionRequestHandlerSessionActionsOptions {
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly continuityLockService: SessionContinuityLockService;
   readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
+  readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly eventMessages: SessionRequestHandlerEventMessages;
   readonly logger: Logger;
   readonly messageDispatch: SessionRequestHandlerMessageDispatch;
@@ -95,6 +97,7 @@ export class SessionRequestHandlerSessionActions {
     this.managedReviewDecisions =
       new SessionRequestHandlerManagedReviewDecisions({
         broadcaster: (event) => options.broadcaster(event as BridgeEvent),
+        developmentTreeAgentGateway: options.developmentTreeAgentGateway,
         eventMessages: options.eventMessages,
         managedInputGate: {
           lock: (sessionId) =>

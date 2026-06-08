@@ -241,6 +241,12 @@ export class SessionRequestHandler {
       broadcaster: this.broadcaster,
       continuityLockService: this.continuityLockService,
       continuityRolloverOrchestrator: this.continuityRolloverOrchestrator,
+      developmentTreeAgentGateway: {
+        createSessionForWorkflow: async (workflowOptions) =>
+          await this.workflowSession.createSessionForWorkflow(workflowOptions),
+        handleMessage: async (sessionId, content) =>
+          await this.handleMessage(sessionId, content),
+      },
       eventMessages: this.eventMessages,
       logger: this.logger,
       messageDispatch: this.messageDispatch,
