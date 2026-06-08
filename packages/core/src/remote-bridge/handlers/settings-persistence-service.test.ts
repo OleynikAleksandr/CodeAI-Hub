@@ -59,6 +59,14 @@ const readCodexDefaultModel = (settings: Record<string, unknown>): string => {
   return String(codex.defaultModel);
 };
 
+const readCodexReasoningByModel = (
+  settings: Record<string, unknown>
+): Record<string, unknown> => {
+  const providers = settings.providers as Record<string, unknown>;
+  const codex = providers.codex as Record<string, unknown>;
+  return codex.reasoningByModel as Record<string, unknown>;
+};
+
 const hasGeneralSettings = (settings: Record<string, unknown>): boolean =>
   typeof settings.general === "object" && settings.general !== null;
 
@@ -84,7 +92,7 @@ test("SettingsPersistenceService seeds workspace settings from existing workspac
   });
 
   const loadedA = await service.load({ workspace: workspaceA });
-  assert.equal(readCodexDefaultModel(loadedA), "gpt-5.3-codex");
+  assert.equal(readCodexDefaultModel(loadedA), "gpt-5.4-mini");
 
   await service.save(setCodexDefaultModel(loadedA, "workspace-a-model"), {
     workspace: workspaceA,
@@ -133,9 +141,53 @@ test("SettingsPersistenceService rejects unscoped writes and can seed global gen
     WORKSPACE_SETTINGS_SCOPE_REQUIRED
   );
   await assert.rejects(service.reset(), WORKSPACE_SETTINGS_SCOPE_REQUIRED);
-  assert.equal(readCodexDefaultModel(await service.load()), "gpt-5.3-codex");
+  assert.equal(readCodexDefaultModel(await service.load()), "gpt-5.4-mini");
   const globalSettings = JSON.parse(
     await readFile(globalSettingsPath, "utf8")
   ) as Record<string, unknown>;
   assert.equal(hasGeneralSettings(globalSettings), true);
+});
+
+test("SettingsPersistenceService migrates unsupported Codex model settings", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
+  const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
+  const config = createConfig(globalSettingsPath);
+  const workspace = {
+    workspaceRoot: path.join(tempRoot, "workspace-a"),
+    workspaceSlug: "workspace-a",
+  };
+  const service = new SettingsPersistenceService({ config, logger });
+
+  const staleSettings = buildDefaultSettingsSnapshot(config);
+  const providers = staleSettings.providers as Record<string, unknown>;
+  const codex = providers.codex as Record<string, unknown>;
+  codex.defaultModel = "gpt-5.3-codex";
+  codex.reasoningByModel = {
+    ...(codex.reasoningByModel as Record<string, unknown>),
+    "gpt-5.3-codex": "xhigh",
+  };
+
+  await service.save(staleSettings, { workspace });
+
+  const loaded = await service.load({ workspace });
+  assert.equal(readCodexDefaultModel(loaded), "gpt-5.4-mini");
+  assert.equal(
+    Object.hasOwn(readCodexReasoningByModel(loaded), "gpt-5.3-codex"),
+    false
+  );
+
+  const persistedWorkspace = JSON.parse(
+    await readFile(
+      resolveWorkspaceRuntimeCapsule(workspace).settingsFile.absolutePath,
+      "utf8"
+    )
+  ) as Record<string, unknown>;
+  assert.equal(readCodexDefaultModel(persistedWorkspace), "gpt-5.4-mini");
+  assert.equal(
+    Object.hasOwn(
+      readCodexReasoningByModel(persistedWorkspace),
+      "gpt-5.3-codex"
+    ),
+    false
+  );
 });

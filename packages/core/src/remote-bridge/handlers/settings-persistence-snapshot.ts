@@ -11,6 +11,7 @@ import { applyLocalizationSettingsMigration } from "./settings-request-handler-l
 
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
+const UNSUPPORTED_CODEX_MODEL_ID = "gpt-5.3-codex";
 
 const DEFAULT_LOCALIZATION_SETTINGS = {
   defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
@@ -142,12 +143,32 @@ export interface WorkspaceSettingsScope {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
 const normalizeSettingsString = (value: unknown, fallback: string): string =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : fallback;
-
+const normalizeCodexProviderSettings = (
+  rawCodex: Record<string, unknown>,
+  defaultCodex: Record<string, unknown>
+) => {
+  const fallbackModel = defaultCodex.defaultModel as string;
+  const rawReasoningByModel = isRecord(rawCodex.reasoningByModel)
+    ? rawCodex.reasoningByModel
+    : {};
+  const reasoningByModel = {
+    ...(defaultCodex.reasoningByModel as Record<string, unknown>),
+    ...rawReasoningByModel,
+  };
+  const defaultModel =
+    rawCodex.defaultModel === UNSUPPORTED_CODEX_MODEL_ID
+      ? fallbackModel
+      : normalizeSettingsString(rawCodex.defaultModel, fallbackModel);
+  const changed =
+    rawCodex.defaultModel === UNSUPPORTED_CODEX_MODEL_ID ||
+    UNSUPPORTED_CODEX_MODEL_ID in rawReasoningByModel;
+  delete reasoningByModel[UNSUPPORTED_CODEX_MODEL_ID];
+  return { changed, defaultModel, reasoningByModel };
+};
 const normalizeLocalizationLanguage = (
   value: unknown,
   fallback: string
@@ -351,6 +372,10 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     ...rawClaude,
     thinking: normalizedClaudeThinking,
   };
+  const codexSettings = normalizeCodexProviderSettings(
+    rawCodex,
+    defaults.providers.codex
+  );
   const general = {
     ...defaults.general,
     ...rawGeneral,
@@ -402,19 +427,20 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     claude.thinkingDisplaySyncEnabled = true;
     changed = true;
   }
-  if (typeof rawGemini.thinkingDisplaySyncEnabled !== "boolean") {
-    changed = true;
-  }
-  if (typeof rawKimi.thinkingDisplaySyncEnabled !== "boolean") {
-    changed = true;
-  }
-  if (typeof rawGlmClaudeCode.thinkingDisplaySyncEnabled !== "boolean") {
+  if (
+    typeof rawGemini.thinkingDisplaySyncEnabled !== "boolean" ||
+    typeof rawKimi.thinkingDisplaySyncEnabled !== "boolean" ||
+    typeof rawGlmClaudeCode.thinkingDisplaySyncEnabled !== "boolean"
+  ) {
     changed = true;
   }
   if (
     JSON.stringify(rawClaude.thinking) !==
     JSON.stringify(normalizedClaudeThinking)
   ) {
+    changed = true;
+  }
+  if (codexSettings.changed) {
     changed = true;
   }
 
@@ -429,6 +455,8 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
         codex: {
           ...defaults.providers.codex,
           ...rawCodex,
+          defaultModel: codexSettings.defaultModel,
+          reasoningByModel: codexSettings.reasoningByModel,
         },
         gemini: {
           ...defaults.providers.gemini,
