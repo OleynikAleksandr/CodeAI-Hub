@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "bd8c1e7f6",
+  "lastRecordedCommit": "edddee5c5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.initial-prompt.task1",
-  "expectedCommitMessage": "fix: clarify lead order plan initial prompt node ids",
+  "currentTaskId": "development-tree-cluster-contract.phase10.initial-prompt-test.task1",
+  "expectedCommitMessage": "test: verify lead order plan initial prompt node ids",
   "debt": {
-    "expectedCommitMessage": "fix: clarify lead order plan initial prompt node ids",
-    "preCommitHead": "bd8c1e7f6",
+    "expectedCommitMessage": "test: verify lead order plan initial prompt node ids",
+    "preCommitHead": "edddee5c5",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.initial-prompt.task1"
+    "taskId": "development-tree-cluster-contract.phase10.initial-prompt-test.task1"
   }
 }
 ```
@@ -179,9 +179,9 @@ Verification evidence:
 ### Stream: Lead Order Plan Initial Prompt Repair
 
 61. [DONE] `development-tree-cluster-contract.phase10.initial-prompt.task1` Clarify the initial lead `DevelopmentOrderPlan.v2` assignment prompt with exact cluster, cluster-module, and standalone-module node id shapes before repair is needed (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify lead order plan initial prompt node ids`).
-62. [PENDING] Git Commit: `fix: clarify lead order plan initial prompt node ids` (hash: TBD)
-63. [TODO] `development-tree-cluster-contract.phase10.initial-prompt-test.task1` Add targeted regression coverage proving the initial lead order-plan prompt includes standalone-module node guidance and a parseable v2 example (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan initial prompt node ids`).
-64. [TODO] Git Commit: `test: verify lead order plan initial prompt node ids` (hash: TBD)
+62. [DONE] Git Commit: `fix: clarify lead order plan initial prompt node ids` (hash: edddee5c5)
+63. [DONE] `development-tree-cluster-contract.phase10.initial-prompt-test.task1` Add targeted regression coverage proving the initial lead order-plan prompt includes standalone-module node guidance and a parseable v2 example (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan initial prompt node ids`).
+64. [PENDING] Git Commit: `test: verify lead order plan initial prompt node ids` (hash: TBD)
 65. [TODO] `development-tree-cluster-contract.phase10.next-release-confirm.task1` Ask the user for explicit confirmation before building the next initial-prompt regression-fix release (scope: user workflow; expected commit: none).
 
 ## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
