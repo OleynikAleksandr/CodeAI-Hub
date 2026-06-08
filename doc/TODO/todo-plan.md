@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4563691f3",
+  "lastRecordedCommit": "620882b5a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.order-plan-wave-gateway.task1",
-  "expectedCommitMessage": "fix: wire order plan first wave bootstrap gateway",
+  "currentTaskId": "development-tree-cluster-contract.phase10.order-plan-wave-test.task1",
+  "expectedCommitMessage": "test: verify cluster wave starts after order plan acceptance",
   "debt": {
-    "expectedCommitMessage": "fix: wire order plan first wave bootstrap gateway",
-    "preCommitHead": "4563691f3",
+    "expectedCommitMessage": "test: verify cluster wave starts after order plan acceptance",
+    "preCommitHead": "620882b5a",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.order-plan-wave-gateway.task1"
+    "taskId": "development-tree-cluster-contract.phase10.order-plan-wave-test.task1"
   }
 }
 ```
@@ -191,9 +191,9 @@ Verification evidence:
 68. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-handler.task1` Route Product Part managed review acceptance through a helper that dispatches internal lead prompts and starts first-wave cluster bootstrap when the typed signal is present (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: handle product part first wave bootstrap`).
 69. [DONE] Git Commit: `fix: handle product part first wave bootstrap` (hash: 4563691f3)
 70. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-gateway.task1` Wire the Development Tree agent gateway into user-review session actions so cluster-contract worktrees and sessions can be created after order-plan acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wire order plan first wave bootstrap gateway`).
-71. [PENDING] Git Commit: `fix: wire order plan first wave bootstrap gateway` (hash: TBD)
-72. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-test.task1` Add targeted regression coverage proving Product Part order-plan acceptance creates the unlocked cluster-contract session and sends the first cluster prompt (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster wave starts after order plan acceptance`).
-73. [TODO] Git Commit: `test: verify cluster wave starts after order plan acceptance` (hash: TBD)
+71. [DONE] Git Commit: `fix: wire order plan first wave bootstrap gateway` (hash: 620882b5a)
+72. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-test.task1` Add targeted regression coverage proving Product Part order-plan acceptance creates the unlocked cluster-contract session and sends the first cluster prompt (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster wave starts after order plan acceptance`).
+73. [PENDING] Git Commit: `test: verify cluster wave starts after order plan acceptance` (hash: TBD)
 
 ### Stream: Final Regression Fix Release
 
