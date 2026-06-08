@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "4b7974765",
+  "lastRecordedCommit": "cc4cc0e77",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase37.order-plan-review.task1",
-  "expectedCommitMessage": "fix: accept lead product part order plan review",
+  "currentTaskId": "development-tree-product-part-review.phase38.verify.task1",
+  "expectedCommitMessage": "test: verify lead order plan review acceptance",
   "debt": {
-    "expectedCommitMessage": "fix: accept lead product part order plan review",
-    "preCommitHead": "4b7974765",
+    "expectedCommitMessage": "test: verify lead order plan review acceptance",
+    "preCommitHead": "cc4cc0e77",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase37.order-plan-review.task1"
+    "taskId": "development-tree-product-part-review.phase38.verify.task1"
   }
 }
 ```
@@ -398,14 +398,14 @@
 ### Stream: Order Plan Review Completion
 
 142. [DONE] `development-tree-product-part-review.phase37.order-plan-review.task1` Accept lead Product Part Development Order Plan user review and move the Product Part workflow into `User Return And Revisions` without opening downstream agents yet (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: accept lead product part order plan review`).
-143. [PENDING] Git Commit: `fix: accept lead product part order plan review` (hash: TBD)
+143. [DONE] Git Commit: `fix: accept lead product part order plan review` (hash: cc4cc0e77)
 
 ## Phase 38 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Targeted Verification
 
-144. [TODO] `development-tree-product-part-review.phase38.verify.task1` Run targeted Product Part order-plan review acceptance tests and Core build/type verification (scope: `packages/core`; expected commit: `test: verify lead order plan review acceptance`).
-145. [TODO] Git Commit: `test: verify lead order plan review acceptance` (hash: TBD)
+144. [DONE] `development-tree-product-part-review.phase38.verify.task1` Run targeted Product Part order-plan review acceptance tests and Core build/type verification (scope: `packages/core`; expected commit: `test: verify lead order plan review acceptance`).
+145. [PENDING] Git Commit: `test: verify lead order plan review acceptance` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
