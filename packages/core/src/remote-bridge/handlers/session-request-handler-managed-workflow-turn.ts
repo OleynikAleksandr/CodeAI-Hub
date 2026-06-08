@@ -31,6 +31,7 @@ import {
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import type { Session, SessionManager } from "../../session-manager";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
+import { ClusterContractTurnController } from "./cluster-contract-turn-controller";
 import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import { dispatchManagedInternalContinuation as dispatchContinuation } from "./managed-internal-continuation-dispatch";
 import { persistManagedDecision } from "./managed-workflow-decision-persister";
@@ -88,6 +89,7 @@ const resolveDiagramModulesRepairAttemptNumber = (
 ): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
 export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
+  private readonly clusterContractTurn = new ClusterContractTurnController();
   private readonly diagramStagePlan: DiagramModulesStagePlanController;
   private readonly options: SessionRequestHandlerManagedWorkflowTurnOptions;
   private readonly productPartBootstrap =
@@ -105,7 +107,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     this.qualityGatesStagePlan =
       options.qualityGatesStagePlan ?? new QualityGatesStagePlanController();
   }
-
   async handleTurnCompleted(
     sessionId: string
   ): Promise<ManagedWorkflowTurnCompletionResult> {
@@ -153,21 +154,23 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         workspaceSlug: session.initiativeSlug,
       });
     }
-    const productPartTurn = await this.productPartBriefTurn.handleTurnCompleted(
-      {
+    for (const developmentTreeTurn of [
+      this.clusterContractTurn,
+      this.productPartBriefTurn,
+    ]) {
+      const result = await developmentTreeTurn.handleTurnCompleted({
         sessionId,
         stage: session.stage,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
+      });
+      if (result.handled) {
+        this.appendCoreMessage(sessionId, result.message);
+        return "settled";
       }
-    );
-    if (productPartTurn.handled) {
-      this.appendCoreMessage(sessionId, productPartTurn.message);
-      return "settled";
     }
     return "not_managed";
   }
-
   private async handleDiagramModulesTurn(params: {
     readonly sessionId: string;
     readonly workspaceRoot: string;
@@ -261,7 +264,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     }
     return "settled";
   }
-
   private async handleApplicationSkeletonTurn(params: {
     readonly sessionId: string;
     readonly workspaceRoot: string;
@@ -329,7 +331,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     }
     return "settled";
   }
-
   private dispatchApplicationRepairPrompt(
     params: {
       readonly sessionId: string;
@@ -461,7 +462,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     }
     return "settled";
   }
-
   private dispatchQualityGatesRepairPrompt(
     params: {
       readonly sessionId: string;
