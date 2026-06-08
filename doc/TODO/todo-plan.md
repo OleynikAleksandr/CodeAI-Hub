@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "e5637c2d4",
+  "lastRecordedCommit": "688e21df2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase17.build-all.task1",
-  "expectedCommitMessage": "build: prepare projected cluster dialog release artifacts",
+  "currentTaskId": "development-tree-cluster-contract.phase17.vsix.task1",
+  "expectedCommitMessage": "build: package projected cluster dialog vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare projected cluster dialog release artifacts",
-    "preCommitHead": "e5637c2d4",
+    "expectedCommitMessage": "build: package projected cluster dialog vsix release",
+    "preCommitHead": "688e21df2",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase17.build-all.task1"
+    "taskId": "development-tree-cluster-contract.phase17.vsix.task1"
   }
 }
 ```
@@ -357,9 +357,9 @@ Verification evidence:
 154. [DONE] `development-tree-cluster-contract.phase17.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster dialog release build state`).
 155. [DONE] Git Commit: `docs: checkpoint projected cluster dialog release build state` (hash: e5637c2d4)
 156. [DONE] `development-tree-cluster-contract.phase17.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster dialog release artifacts`).
-157. [PENDING] Git Commit: `build: prepare projected cluster dialog release artifacts` (hash: TBD)
-158. [TODO] `development-tree-cluster-contract.phase17.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster dialog vsix release`).
-159. [TODO] Git Commit: `build: package projected cluster dialog vsix release` (hash: TBD)
+157. [DONE] Git Commit: `build: prepare projected cluster dialog release artifacts` (hash: 688e21df2)
+158. [DONE] `development-tree-cluster-contract.phase17.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster dialog vsix release`).
+159. [PENDING] Git Commit: `build: package projected cluster dialog vsix release` (hash: TBD)
 160. [TODO] `development-tree-cluster-contract.phase17.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster dialog user retest state`).
 161. [TODO] Git Commit: `docs: checkpoint projected cluster dialog user retest state` (hash: TBD)
 
