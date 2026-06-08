@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4cd5b724e",
+  "lastRecordedCommit": "b2ce4bf1e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.repair-test.task1",
-  "expectedCommitMessage": "test: verify lead order plan repair continuation",
+  "currentTaskId": "development-tree-cluster-contract.phase10.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare lead order plan repair release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify lead order plan repair continuation",
-    "preCommitHead": "4cd5b724e",
+    "expectedCommitMessage": "docs: prepare lead order plan repair release notes",
+    "preCommitHead": "b2ce4bf1e",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.repair-test.task1"
+    "taskId": "development-tree-cluster-contract.phase10.release-notes.task1"
   }
 }
 ```
@@ -163,14 +163,23 @@ Verification evidence:
 49. [DONE] `development-tree-cluster-contract.phase10.repair-continuation.task1` Dispatch an internal repair prompt when lead Product Part `DevelopmentOrderPlan.v2` validation fails instead of settling after the Core refusal message (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, doc/TODO/todo-plan.md`; expected commit: `fix: continue lead order plan repair after validation failure`).
 50. [DONE] Git Commit: `fix: continue lead order plan repair after validation failure` (hash: 4cd5b724e)
 51. [DONE] `development-tree-cluster-contract.phase10.repair-test.task1` Add targeted regression coverage for the lead order-plan validation repair continuation path (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan repair continuation`).
-52. [PENDING] Git Commit: `test: verify lead order plan repair continuation` (hash: TBD)
-53. [TODO] `development-tree-cluster-contract.phase10.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release (scope: user workflow; expected commit: none).
-54. [TODO] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none).
+52. [DONE] Git Commit: `test: verify lead order plan repair continuation` (hash: b2ce4bf1e)
+53. [DONE] `development-tree-cluster-contract.phase10.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release (scope: user workflow; expected commit: none). Result: user explicitly confirmed regression-fix release build
+
+### Stream: Regression Fix Release
+
+54. [DONE] `development-tree-cluster-contract.phase10.release-notes.task1` Prepare release notes for the lead order-plan repair continuation regression fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lead order plan repair release notes`).
+55. [PENDING] Git Commit: `docs: prepare lead order plan repair release notes` (hash: TBD)
+56. [TODO] `development-tree-cluster-contract.phase10.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan repair release artifacts`).
+57. [TODO] Git Commit: `build: prepare lead order plan repair release artifacts` (hash: TBD)
+58. [TODO] `development-tree-cluster-contract.phase10.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan repair vsix release`).
+59. [TODO] Git Commit: `build: package lead order plan repair vsix release` (hash: TBD)
+60. [TODO] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none).
 
 ## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-55. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-56. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-57. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+61. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+62. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+63. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

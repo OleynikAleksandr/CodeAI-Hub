@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.472] - 2026-06-08
+### Fixed
+- **Lead Product Part order-plan validation failures now continue the agent turn.** When Core rejects `DevelopmentOrderPlan.draft.json`, it emits diagnostics to the user and sends an internal repair continuation back to the same lead Product Part session instead of leaving the agent idle after `managed-workflow-validation`.
+- **The repair prompt now spells out valid `DevelopmentOrderPlan.v2` node id shapes.** It distinguishes `cluster:<part>/<cluster>`, `module:<part>/<cluster>/<module>`, and `standalone-module:<part>/<module>` so the agent can fix standalone module references without another user nudge.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.js`
+
 ## [1.2.471] - 2026-06-08
 ### Added
 - **Lead Product Part order plans now use a Core-readable `DevelopmentOrderPlan.v2` unlock contract.** Core validates Product Part briefs, node references, dependencies, first-wave unlockability, and locked-node reasons before opening downstream work.
