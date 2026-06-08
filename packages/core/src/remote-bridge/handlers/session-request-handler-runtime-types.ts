@@ -1,6 +1,7 @@
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
@@ -35,6 +36,7 @@ export interface ContinuityRootResolutionOptionsLike {
 
 export interface SessionRequestHandlerRuntimeCallbacks {
   readonly createSessionForWorkflow: (options: {
+    readonly inheritedModelBinding?: SessionModelBinding | null;
     readonly providerId: string;
     readonly workspacePath: string;
     readonly context: {

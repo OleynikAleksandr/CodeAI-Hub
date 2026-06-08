@@ -6,6 +6,7 @@ import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchest
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import { isWorkflowBoundaryStage } from "../../workflow/boundary/workflow-boundary-model";
@@ -85,6 +86,7 @@ export class SessionRequestHandlerWorkflowSession {
   }
 
   async createSessionForWorkflow(options: {
+    readonly inheritedModelBinding?: SessionModelBinding | null;
     readonly providerId: string;
     readonly workspacePath: string;
     readonly context: {
@@ -180,6 +182,7 @@ export class SessionRequestHandlerWorkflowSession {
     try {
       return await this.deps.createAndRegisterSession({
         providerId: options.providerId,
+        inheritedModelBinding: options.inheritedModelBinding ?? null,
         workspacePath: options.workspacePath,
         adapter,
         resumeMode: options.context.resumeMode,

@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "623a795a5",
+  "lastRecordedCommit": "a833c4850",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.codex-capture-selection.task1",
-  "expectedCommitMessage": "fix: remove unsupported codex capture selection",
+  "currentTaskId": "development-tree-cluster-contract.phase11.workflow-model-boundary.task1",
+  "expectedCommitMessage": "fix: pass inherited model through workflow session creation",
   "debt": {
-    "expectedCommitMessage": "fix: remove unsupported codex capture selection",
-    "preCommitHead": "623a795a5",
+    "expectedCommitMessage": "fix: pass inherited model through workflow session creation",
+    "preCommitHead": "a833c4850",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.codex-capture-selection.task1"
+    "taskId": "development-tree-cluster-contract.phase11.workflow-model-boundary.task1"
   }
 }
 ```
@@ -221,22 +221,24 @@ Verification evidence:
 87. [DONE] `development-tree-cluster-contract.phase11.codex-runtime-fallback.task1` Replace remaining active runtime fallback defaults that can still select unsupported `gpt-5.3-codex` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `fix: remove unsupported codex runtime fallbacks`).
 88. [DONE] Git Commit: `fix: remove unsupported codex runtime fallbacks` (hash: 623a795a5)
 89. [DONE] `development-tree-cluster-contract.phase11.codex-capture-selection.task1` Replace Project Manager native capture defaults and typed tests that still use unsupported `gpt-5.3-codex` (scope: `src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/settings/native-request-capture-runner.test.ts`; expected commit: `fix: remove unsupported codex capture selection`).
-90. [PENDING] Git Commit: `fix: remove unsupported codex capture selection` (hash: TBD)
-91. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions inherit the accepted Product Part session model binding instead of resolving defaults from the new worktree (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
-92. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
-93. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
-94. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
+90. [DONE] Git Commit: `fix: remove unsupported codex capture selection` (hash: a833c4850)
+91. [DONE] `development-tree-cluster-contract.phase11.workflow-model-boundary.task1` Allow workflow-created sessions to receive an inherited model binding instead of always resolving settings from the target workspace (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-callbacks.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-types.ts`; expected commit: `fix: pass inherited model through workflow session creation`).
+92. [PENDING] Git Commit: `fix: pass inherited model through workflow session creation` (hash: TBD)
+93. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions pass the accepted Product Part session model binding into workflow session creation (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
+94. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
+95. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance, including handler/bootstrapper regression coverage (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
+96. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
 
 ## Phase 12 - Regression Fix Release Build (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Release Build Confirmation
 
-95. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the downstream model binding regression fix (scope: user workflow; expected commit: none).
+97. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the downstream model binding regression fix (scope: user workflow; expected commit: none).
 
 ## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-96. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-97. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-98. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+98. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+99. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+100. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
