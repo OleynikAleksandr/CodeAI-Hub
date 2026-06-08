@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "e144a238f",
+  "lastRecordedCommit": "42042271d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase3.bootstrap.task1",
-  "expectedCommitMessage": "feat: bootstrap cluster contract subagents",
+  "currentTaskId": "development-tree-cluster-contract.phase4.prompt.task1",
+  "expectedCommitMessage": "feat: build cluster contract subagent prompts",
   "debt": {
-    "expectedCommitMessage": "feat: bootstrap cluster contract subagents",
-    "preCommitHead": "e144a238f",
+    "expectedCommitMessage": "feat: build cluster contract subagent prompts",
+    "preCommitHead": "42042271d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase3.bootstrap.task1"
+    "taskId": "development-tree-cluster-contract.phase4.prompt.task1"
   }
 }
 ```
@@ -80,14 +80,14 @@
 13. [DONE] `development-tree-cluster-contract.phase3.cluster-plan.task1` Create the Core-owned managed plan writer for cluster-contract sub-agents, including specification/facade draft, review, merge-ready, and return/revision phases (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: write cluster contract managed plans`).
 14. [DONE] Git Commit: `feat: write cluster contract managed plans` (hash: e144a238f)
 15. [DONE] `development-tree-cluster-contract.phase3.bootstrap.task1` Bootstrap the first unlocked cluster-contract sub-agent from accepted order-plan unlock state, creating its worktree, managed plan, and provider session without opening module agents yet (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `feat: bootstrap cluster contract subagents`).
-16. [PENDING] Git Commit: `feat: bootstrap cluster contract subagents` (hash: TBD)
+16. [DONE] Git Commit: `feat: bootstrap cluster contract subagents` (hash: 42042271d)
 
 ## Phase 4 - Cluster Contract Artifact Lifecycle (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Prompt, Draft Commit, And Review
 
-17. [TODO] `development-tree-cluster-contract.phase4.prompt.task1` Add the cluster-contract first prompt builder with inline Product Part brief, accepted order-plan context, skeleton/gates constraints, and explicit artifact targets for `ClusterSpecification` and `ClusterFacadeContract` markdown/json files (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: build cluster contract subagent prompts`).
-18. [TODO] Git Commit: `feat: build cluster contract subagent prompts` (hash: TBD)
+17. [DONE] `development-tree-cluster-contract.phase4.prompt.task1` Add the cluster-contract first prompt builder with inline Product Part brief, accepted order-plan context, skeleton/gates constraints, and explicit artifact targets for `ClusterSpecification` and `ClusterFacadeContract` markdown/json files (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: build cluster contract subagent prompts`).
+18. [PENDING] Git Commit: `feat: build cluster contract subagent prompts` (hash: TBD)
 19. [TODO] `development-tree-cluster-contract.phase4.turn.task1` Add the cluster-contract turn controller that validates generated specification/facade artifacts, commits them inside the cluster worktree, and opens the user/lead review gate (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts`; expected commit: `feat: open cluster contract review`).
 20. [TODO] Git Commit: `feat: open cluster contract review` (hash: TBD)
 21. [TODO] `development-tree-cluster-contract.phase4.review.task1` Add cluster-contract review handling so ordinary user/lead messages request sub-agent revisions while explicit acceptance records a merge-ready result and summary for lead Product Part coordination (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.test.ts`; expected commit: `feat: accept cluster contract review results`).

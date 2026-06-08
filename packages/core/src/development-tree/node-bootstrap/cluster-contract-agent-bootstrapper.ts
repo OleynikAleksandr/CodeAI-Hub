@@ -4,6 +4,7 @@ import {
   ClusterContractPlanWriter,
   type ClusterContractPlanWriterResult,
 } from "../cluster-workflow/cluster-contract-plan-writer";
+import { ClusterContractPromptBuilder } from "../cluster-workflow/cluster-contract-prompt-builder";
 import { createDevelopmentOrderUnlockStatePath } from "../product-part-workflow/development-order-plan-unlock-state";
 import {
   type DevelopmentTreeClusterWorktreeRequest,
@@ -20,6 +21,10 @@ export interface ClusterContractAgentSessionGateway {
     readonly providerId: string;
     readonly workspacePath: string;
   }) => Promise<{ readonly id: string } | null>;
+  readonly handleMessage?: (
+    sessionId: string,
+    content: string
+  ) => Promise<void>;
 }
 
 export interface ClusterContractAgentBootstrapperOptions {
@@ -37,6 +42,7 @@ export interface ClusterContractAgentBootstrapRequest {
 export interface ClusterContractAgentBootstrapResult {
   readonly branchName: string;
   readonly clusterId: string;
+  readonly firstMessageSent: boolean;
   readonly plan: ClusterContractPlanWriterResult;
   readonly sessionId: string | null;
   readonly stage: string;
@@ -77,6 +83,19 @@ const createStage = (params: {
 }): string =>
   `development_tree/materialized/product-parts/${params.partId}/clusters/${params.clusterId}`;
 
+const createProductPartArtifactPath = (params: {
+  readonly fileName: string;
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/${params.fileName}`;
+
+const readOptionalText = (
+  workspaceRoot: string,
+  relativePath: string
+): Promise<string | null> =>
+  readFile(path.join(workspaceRoot, relativePath), "utf8").catch(() => null);
+
 const readUnlockState = async (params: {
   readonly partId: string;
   readonly workspaceRoot: string;
@@ -108,6 +127,7 @@ const selectUnlockedClusterNodes = (
 export class ClusterContractAgentBootstrapper {
   private readonly options: ClusterContractAgentBootstrapperOptions;
   private readonly planWriter: ClusterPlanWriter;
+  private readonly promptBuilder = new ClusterContractPromptBuilder();
   private readonly worktreeCreator: ClusterWorktreeCreator;
 
   constructor(
@@ -168,13 +188,75 @@ export class ClusterContractAgentBootstrapper {
       providerId: this.options.providerId,
       workspacePath: worktree.worktreePath,
     });
+    const firstMessageSent = await this.sendFirstMessageIfPossible({
+      clusterId: request.clusterId,
+      partId: request.partId,
+      sessionId: session?.id ?? null,
+      worktreePath: worktree.worktreePath,
+      workspaceSlug: request.workspaceSlug,
+    });
     return {
       branchName: worktree.branchName,
       clusterId: request.clusterId,
+      firstMessageSent,
       plan,
       sessionId: session?.id ?? null,
       stage,
       worktreePath: worktree.worktreePath,
     };
+  }
+
+  private async sendFirstMessageIfPossible(params: {
+    readonly clusterId: string;
+    readonly partId: string;
+    readonly sessionId: string | null;
+    readonly worktreePath: string;
+    readonly workspaceSlug: string;
+  }): Promise<boolean> {
+    if (!(params.sessionId && this.options.gateway.handleMessage)) {
+      return false;
+    }
+    const prompt = this.promptBuilder.buildPrompt({
+      applicationSkeletonMap: await readOptionalText(
+        params.worktreePath,
+        `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`
+      ),
+      clusterId: params.clusterId,
+      orderPlanJson:
+        (await readOptionalText(
+          params.worktreePath,
+          createProductPartArtifactPath({
+            fileName: "DevelopmentOrderPlan.draft.json",
+            partId: params.partId,
+            workspaceSlug: params.workspaceSlug,
+          })
+        )) ?? "{}",
+      orderPlanMarkdown:
+        (await readOptionalText(
+          params.worktreePath,
+          createProductPartArtifactPath({
+            fileName: "DevelopmentOrderPlan.draft.md",
+            partId: params.partId,
+            workspaceSlug: params.workspaceSlug,
+          })
+        )) ?? "",
+      partId: params.partId,
+      productPartBrief:
+        (await readOptionalText(
+          params.worktreePath,
+          createProductPartArtifactPath({
+            fileName: "ProductPartDevelopmentBrief.draft.md",
+            partId: params.partId,
+            workspaceSlug: params.workspaceSlug,
+          })
+        )) ?? "",
+      qualityGatesContract: await readOptionalText(
+        params.worktreePath,
+        `.codeai-hub/${params.workspaceSlug}/quality_gates/quality-gates.json`
+      ),
+      workspaceSlug: params.workspaceSlug,
+    });
+    await this.options.gateway.handleMessage(params.sessionId, prompt);
+    return true;
   }
 }
