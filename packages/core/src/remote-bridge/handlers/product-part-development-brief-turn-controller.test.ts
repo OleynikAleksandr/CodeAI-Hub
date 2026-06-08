@@ -250,6 +250,31 @@ test("Product Part review acceptance opens non-lead user return", async () => {
   }
 });
 
+test("Product Part review acceptance ignores local runtime session directory", async () => {
+  const workspaceRoot = await prepareReviewWorkspace(false);
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".gitignore",
+      `.codeai-hub/${WORKSPACE_SLUG}/runtime/\n`
+    );
+    await runGit(workspaceRoot, ["add", ".gitignore"]);
+    await runGit(workspaceRoot, ["commit", "-m", "test: ignore runtime"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/runtime/sessions/session.json`,
+      '{"runtime":true}\n'
+    );
+
+    await acceptReview(workspaceRoot);
+
+    const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
+    assert.equal(stdout.trim(), "");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("Product Part review acceptance prepares lead order plan task", async () => {
   const workspaceRoot = await prepareReviewWorkspace(true);
   try {

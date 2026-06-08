@@ -235,7 +235,6 @@ export class ProductPartDevelopmentBriefReviewController {
       paths: await uniqueExistingPaths(params.workspaceRoot, [
         briefPath,
         `.codeai-hub/${params.workspaceSlug}/continuity/${params.stage}/`,
-        `.codeai-hub/${params.workspaceSlug}/runtime/sessions/`,
       ]),
       workspaceRoot: params.workspaceRoot,
     });

@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "8afb98ca3",
+  "lastRecordedCommit": "f4c76d383",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase27.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.466 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase29.product-part-acceptance.task1",
+  "expectedCommitMessage": "fix: keep product part acceptance out of runtime paths",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.466 vsix release",
-    "preCommitHead": "8afb98ca3",
+    "expectedCommitMessage": "fix: keep product part acceptance out of runtime paths",
+    "preCommitHead": "f4c76d383",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase27.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase29.product-part-acceptance.task1"
   }
 }
 ```
@@ -314,17 +314,31 @@
 109. [DONE] `development-tree-product-part-review.phase27.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.466` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.466 unified release artifacts`).
 110. [DONE] Git Commit: `build: prepare 1.2.466 unified release artifacts` (hash: 8afb98ca3)
 111. [DONE] `development-tree-product-part-review.phase27.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.466` (scope: `codeai-hub-1.2.466.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.466 vsix release`).
-112. [PENDING] Git Commit: `build: package 1.2.466 vsix release` (hash: TBD)
+112. [DONE] Git Commit: `build: package 1.2.466 vsix release` (hash: f4c76d383)
 
 ## Phase 28 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
 
 ### Stream: FinderWidget Codex Auth Retest
 
-113. [TODO] `development-tree-product-part-review.phase28.user.task1` User installs the next release and retests Quality Gates restart after Clear Undo with existing workspace Codex runtime home: stale copied auth is replaced by shared auth, the Quality Gates agent starts without the reused refresh-token error, Product Part handoff stays sequential, and Git remains clean (scope: user workflow; expected commit: none).
+113. [DONE] `development-tree-product-part-review.phase28.user.task1` User installs the next release and retests Quality Gates restart after Clear Undo with existing workspace Codex runtime home: stale copied auth is replaced by shared auth, the Quality Gates agent starts without the reused refresh-token error, Product Part handoff stays sequential, and Git remains clean (scope: user workflow; expected commit: none). Result: release 1.2.466 starts both Product Part sessions and reaches Product Part brief user review, but pressing the managed "Подтверждаю" button leaves the UI pending and does not advance either Product Part.
+
+## Phase 29 - Product Part Acceptance Button Hotfix (owner: Codex, updated: 2026-06-08)
+
+### Stream: Runtime-Ignored Acceptance Paths
+
+114. [DONE] `development-tree-product-part-review.phase29.product-part-acceptance.task1` Keep Product Part brief acceptance commits away from ignored runtime session paths and cover acceptance with an existing ignored runtime directory (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep product part acceptance out of runtime paths`).
+115. [PENDING] Git Commit: `fix: keep product part acceptance out of runtime paths` (hash: TBD)
+
+## Phase 30 - Tooling Verification (owner: Codex, updated: 2026-06-08)
+
+### Stream: Targeted Verification
+
+116. [TODO] `development-tree-product-part-review.phase30.verify.task1` Run targeted Product Part acceptance tests and Core build after the acceptance button hotfix (scope: `packages/core`; expected commit: `test: verify product part acceptance button hotfix`).
+117. [TODO] Git Commit: `test: verify product part acceptance button hotfix` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-114. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-115. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+118. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+119. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
