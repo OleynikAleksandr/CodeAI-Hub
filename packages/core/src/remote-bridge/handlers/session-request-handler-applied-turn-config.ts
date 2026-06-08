@@ -86,7 +86,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       env: process.env,
       providerId,
       fallbackClaudeModel: this.config.claudeDefaultModel,
-      fallbackCodexModel: this.config.codexDefaultModel ?? "gpt-5.3-codex",
+      fallbackCodexModel: this.config.codexDefaultModel ?? "gpt-5.4-mini",
       fallbackCodexReasoningEffort:
         this.config.codexDefaultReasoningEffort ?? "medium",
       fallbackGeminiModel: this.config.geminiDefaultModel,
