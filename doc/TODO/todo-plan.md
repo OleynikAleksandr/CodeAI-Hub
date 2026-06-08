@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "b48819d3c",
+  "lastRecordedCommit": "11d85f15a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase12.vsix.task1",
-  "expectedCommitMessage": "build: package product part restart vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase12.release-handoff.task1",
+  "expectedCommitMessage": "docs: checkpoint product part restart user retest state",
   "debt": {
-    "expectedCommitMessage": "build: package product part restart vsix release",
-    "preCommitHead": "b48819d3c",
+    "expectedCommitMessage": "docs: checkpoint product part restart user retest state",
+    "preCommitHead": "11d85f15a",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase12.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase12.release-handoff.task1"
   }
 }
 ```
@@ -252,17 +252,28 @@ Verification evidence:
 110. [DONE] `development-tree-cluster-contract.phase12.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part restart release artifacts`).
 111. [DONE] Git Commit: `build: prepare product part restart release artifacts` (hash: b48819d3c)
 112. [DONE] `development-tree-cluster-contract.phase12.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part restart vsix release`).
-113. [PENDING] Git Commit: `build: package product part restart vsix release` (hash: TBD)
+113. [DONE] Git Commit: `build: package product part restart vsix release` (hash: 11d85f15a)
 
 Release evidence:
 - `./scripts/build-release.sh --use-current-version` passed for `1.2.474`.
 - Output VSIX: `codeai-hub-1.2.474.vsix` (5.0M).
 - Required release markers observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`.
 
-## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
+### Stream: Release Handoff
+
+114. [DONE] `development-tree-cluster-contract.phase12.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint product part restart user retest state`).
+115. [PENDING] Git Commit: `docs: checkpoint product part restart user retest state` (hash: TBD)
+
+## Phase 13 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
+
+### Stream: Product Part Restart Retest
+
+116. [TODO] `development-tree-cluster-contract.phase13.user-retest.task1` User installs release `1.2.474` and retests Product Part Clear&Do plus downstream cluster-contract startup: unsupported `gpt-5.3-codex` must not be selected, downstream sessions must inherit the Product Part model, lead Phase 5 must include a paired Git Commit line, and clearing a Product Part must remove stale downstream worktrees before recreating sessions (scope: user workflow; expected commit: none).
+
+## Phase 14 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-114. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-115. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-116. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+117. [TODO] `development-tree-cluster-contract.phase14.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+118. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+119. [TODO] `development-tree-cluster-contract.phase14.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
