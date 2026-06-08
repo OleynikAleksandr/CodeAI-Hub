@@ -8,7 +8,7 @@ orchestrator removal.
 
 ## [Unreleased]
 
-## [1.2.470] - 2026-06-08
+## [1.2.471] - 2026-06-08
 ### Added
 - **Lead Product Part order plans now use a Core-readable `DevelopmentOrderPlan.v2` unlock contract.** Core validates Product Part briefs, node references, dependencies, first-wave unlockability, and locked-node reasons before opening downstream work.
 - **First-wave Cluster Contract sub-agents now run in dedicated Git worktrees/branches.** Core creates the worktree, writes a managed cluster plan, sends an inline-context prompt, validates `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, and opens a user/lead review gate.

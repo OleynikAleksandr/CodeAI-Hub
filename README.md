@@ -2,7 +2,7 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.470** (Cluster Contract Sub-Agent Orchestration)
+**Current Release — v1.2.471** (Cluster Contract Sub-Agent Orchestration)
 
 This release opens the first real downstream Development Tree slice after lead
 Product Part order-plan acceptance. The lead agent now produces a Core-readable
