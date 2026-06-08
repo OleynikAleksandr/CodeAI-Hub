@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "e558a6f04",
+  "lastRecordedCommit": "6f52c606b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase15.verify.task1",
-  "expectedCommitMessage": "test: verify cluster node rollback workflow",
+  "currentTaskId": "development-tree-cluster-contract.phase15.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare cluster node rollback release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify cluster node rollback workflow",
-    "preCommitHead": "e558a6f04",
+    "expectedCommitMessage": "docs: prepare cluster node rollback release notes",
+    "preCommitHead": "6f52c606b",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase15.verify.task1"
+    "taskId": "development-tree-cluster-contract.phase15.release-notes.task1"
   }
 }
 ```
@@ -308,8 +308,8 @@ Release evidence:
 ### Stream: Regression Verification
 
 133. [DONE] `development-tree-cluster-contract.phase15.verify.task1` Run targeted builds/tests for cluster projection visibility, clean worktree ledger boundary, renamed worktree roots, and cluster/module ClearUndo rollback behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster node rollback workflow`).
-134. [PENDING] Git Commit: `test: verify cluster node rollback workflow` (hash: TBD)
-135. [TODO] `development-tree-cluster-contract.phase15.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release for cluster node visibility and ClearUndo (scope: user workflow; expected commit: none).
+134. [DONE] Git Commit: `test: verify cluster node rollback workflow` (hash: 6f52c606b)
+135. [DONE] `development-tree-cluster-contract.phase15.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release for cluster node visibility and ClearUndo (scope: user workflow; expected commit: none). Result: user explicitly confirmed release build for cluster node visibility, clean worktree ledger, clearer worktree roots, and Cluster/Module ClearUndo fixes.
 
 Verification evidence:
 - `npm run build --workspace packages/core` passed.
@@ -318,10 +318,27 @@ Verification evidence:
 - `node --test ...cluster-contract-agent-bootstrapper.test.js ...development-tree-projected-session.test.js ...cluster-contract-turn-controller.test.js` passed: 3/3 tests.
 - `node --test ...development-tree-node-worktree-service.test.js ...workflow-step-clear-development-tree-node.test.js ...workflow-step-clear-service.test.js` passed: 9/9 tests.
 
-## Phase 16 - Scope Closeout (owner: Codex, updated: 2026-06-08)
+### Stream: Release After Confirmation
+
+136. [DONE] `development-tree-cluster-contract.phase15.release-notes.task1` Prepare release notes for the cluster node rollback regression fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster node rollback release notes`).
+137. [PENDING] Git Commit: `docs: prepare cluster node rollback release notes` (hash: TBD)
+138. [TODO] `development-tree-cluster-contract.phase15.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster node rollback release build state`).
+139. [TODO] Git Commit: `docs: checkpoint cluster node rollback release build state` (hash: TBD)
+140. [TODO] `development-tree-cluster-contract.phase15.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster node rollback release artifacts`).
+141. [TODO] Git Commit: `build: prepare cluster node rollback release artifacts` (hash: TBD)
+142. [TODO] `development-tree-cluster-contract.phase15.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster node rollback vsix release`).
+143. [TODO] Git Commit: `build: package cluster node rollback vsix release` (hash: TBD)
+
+## Phase 16 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
+
+### Stream: Cluster Node Rollback Retest
+
+144. [TODO] `development-tree-cluster-contract.phase16.user-retest.task1` User installs the release and retests FinderWidget downstream cluster startup plus Cluster/Module ClearUndo: cluster sessions must show in Project Manager, cluster review must leave clean worktree Git status, new worktree roots must use `cluster-contracts/<cluster>`, and clearing a cluster node must remove the worktree and return the graph marker to empty/todo while main Git stays clean (scope: user workflow; expected commit: none).
+
+## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-136. [TODO] `development-tree-cluster-contract.phase16.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-137. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-138. [TODO] `development-tree-cluster-contract.phase16.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+145. [TODO] `development-tree-cluster-contract.phase17.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+146. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+147. [TODO] `development-tree-cluster-contract.phase17.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

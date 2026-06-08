@@ -2,7 +2,31 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.474** (Product Part Restart Cleanup)
+**Current Release — v1.2.475** (Cluster Node Rollback Cleanup)
+
+This regression-fix release completes the downstream Cluster/Module ClearUndo
+loop for Product Part coordination. Cluster sessions created in dedicated
+worktrees are now projected back into the main workspace, so Project Manager can
+show and open them from the lead Product Part graph.
+
+Cluster Contract worktrees now leave a clean Git boundary after draft review:
+Core commits the managed todo-plan and continuity ledger together with the
+review transition. New cluster-contract worktrees use the clearer
+`<workspace>.worktrees/<slug>/product-parts/<part>/cluster-contracts/<cluster>`
+root instead of looking like the project was nested inside an artifact
+`contract/` folder.
+
+Cluster/Module `ClearUndo` now removes the downstream Git worktree, prunes
+projected session/continuity state, commits the clear boundary in the main
+workspace, and returns the graph node to an unstarted marker instead of leaving
+a stale yellow in-progress icon.
+
+Retest by starting the lead Product Part first cluster wave, confirming that the
+cluster session appears in Project Manager, then using ClearUndo on the cluster
+node. The worktree should disappear, the node marker should return to empty, and
+the main workspace Git status should remain clean.
+
+**Previous Release — v1.2.474** (Product Part Restart Cleanup)
 
 This regression-fix release keeps downstream Development Tree sessions on the
 same supported Codex model selected by the Product Part session. The obsolete

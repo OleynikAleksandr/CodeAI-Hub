@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.475] - 2026-06-08
+### Fixed
+- **Cluster sessions are projected into the main Product Part workspace.** Automatically bootstrapped cluster-contract sessions now record their session id, stage, branch, worktree path, and inherited model binding in the main coordination state so Project Manager can show/open them from the lead Product Part graph.
+- **Cluster Contract review leaves a clean worktree ledger.** Core now commits the cluster managed todo-plan and continuity ledger when opening review, preventing dirty/untracked worktree state after draft validation.
+- **Cluster-contract worktree roots no longer look like artifact folders.** New downstream worktrees use `cluster-contracts/<cluster>` roots while Product Part cleanup remains compatible with legacy paths.
+- **Cluster/Module ClearUndo is Core-owned.** Clearing a downstream node removes its Git worktree, prunes session/continuity projection state, commits the clear boundary, and returns the graph node to an unstarted marker instead of a stale yellow in-progress state.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `node --test packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js packages/core/dist/remote-bridge/handlers/development-tree-projected-session.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js`
+- `node --test packages/core/dist/development-tree/node-bootstrap/development-tree-node-worktree-service.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js`
+
 ## [1.2.474] - 2026-06-08
 ### Fixed
 - **Downstream Product Part sessions now inherit the selected Codex model.** Automatically bootstrapped cluster-contract sessions receive the Product Part session model binding instead of falling back to workspace defaults.
