@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "0b11377d2",
+  "lastRecordedCommit": "84f17ad76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase12.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare product part restart release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase12.release-state.task1",
+  "expectedCommitMessage": "docs: checkpoint product part restart release build state",
   "debt": {
-    "expectedCommitMessage": "docs: prepare product part restart release notes",
-    "preCommitHead": "0b11377d2",
+    "expectedCommitMessage": "docs: checkpoint product part restart release build state",
+    "preCommitHead": "84f17ad76",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase12.release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase12.release-state.task1"
   }
 }
 ```
@@ -246,9 +246,9 @@ Verification evidence:
 ### Stream: Release After Confirmation
 
 106. [DONE] `development-tree-cluster-contract.phase12.release-notes.task1` Prepare release notes for the downstream model binding, Product Part coordination plan, and Clear&Do worktree cleanup fixes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part restart release notes`).
-107. [PENDING] Git Commit: `docs: prepare product part restart release notes` (hash: TBD)
-108. [TODO] `development-tree-cluster-contract.phase12.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint product part restart release build state`).
-109. [TODO] Git Commit: `docs: checkpoint product part restart release build state` (hash: TBD)
+107. [DONE] Git Commit: `docs: prepare product part restart release notes` (hash: 84f17ad76)
+108. [DONE] `development-tree-cluster-contract.phase12.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint product part restart release build state`).
+109. [PENDING] Git Commit: `docs: checkpoint product part restart release build state` (hash: TBD)
 110. [TODO] `development-tree-cluster-contract.phase12.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part restart release artifacts`).
 111. [TODO] Git Commit: `build: prepare product part restart release artifacts` (hash: TBD)
 112. [TODO] `development-tree-cluster-contract.phase12.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part restart vsix release`).
