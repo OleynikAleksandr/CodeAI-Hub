@@ -5,18 +5,18 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
+  "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
-  "baseHead": "e6cd05104",
-  "lastRecordedCommit": "aa38a3a85",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase12.closeout.task1",
-  "expectedCommitMessage": "docs: close development tree product part review lifecycle scope",
+  "baseHead": "b90dba86c",
+  "lastRecordedCommit": "b90dba86c",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
+  "currentTaskId": "development-tree-cluster-contract.phase0.plan.task1",
+  "expectedCommitMessage": "docs: start cluster contract subagent orchestration plan",
   "debt": {
-    "expectedCommitMessage": "docs: close development tree product part review lifecycle scope",
-    "preCommitHead": "aa38a3a85",
+    "expectedCommitMessage": "docs: start cluster contract subagent orchestration plan",
+    "preCommitHead": "b90dba86c",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase12.closeout.task1"
+    "taskId": "development-tree-cluster-contract.phase0.plan.task1"
   }
 }
 ```
@@ -24,419 +24,138 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Only this list is the recovery context source for this execution cycle.
 
 ## Execution Rules
 
 - Required reading before each fix: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
-- Each implementation task must touch no more than 3 files.
-- Every task is followed by a separate `Git Commit: ...` item.
+- Each implementation task must touch no more than 3 files/packages.
+- Every implementation task is followed by a separate `Git Commit: ...` item.
 - Use `npm run plan:commit -- "<expected commit message>"` for normal commit workflow.
 - Do not bypass Husky hooks or quality gates.
-- Keep `SystemArchitecture.md`, `WorkflowSteps_Overview.md`, and relevant cluster/module docs synchronized when behavior changes.
+- Keep `SystemArchitecture.md`, `WorkflowSteps_Overview.md`, `CoreOrchestrator.md`, and `Project_Manager.md` synchronized when behavior changes.
 - Release build is not automatic. Ask the user before release notes, version bump, `build-all.sh`, or `build-release.sh`.
+- Final scope goal: a working FinderWidget flow where accepted `DevelopmentOrderPlan.v2` opens the first cluster-contract sub-agent for `note-selection-cluster`, creates and validates cluster specification/facade artifacts, returns the result through lead Product Part coordination, and exposes the state in Project Manager.
 
-## Phase 0 - Scope Intake (owner: Codex, updated: 2026-06-07)
+## Phase 0 - Scope Intake (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Active Plan Setup
 
-1. [DONE] `development-tree-product-part-review.phase0.plan.task1` Create the active execution plan for Product Part review lifecycle work (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: start development tree product part review lifecycle plan`).
-2. [DONE] Git Commit: `docs: start development tree product part review lifecycle plan` (hash: 7a5be893d)
+1. [DONE] `development-tree-cluster-contract.phase0.plan.task1` Create the active execution plan for Development Tree cluster-contract sub-agent orchestration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: start cluster contract subagent orchestration plan`).
+2. [PENDING] Git Commit: `docs: start cluster contract subagent orchestration plan` (hash: TBD)
 
-## Phase 1 - Product Part Review Decisions (owner: Codex, updated: 2026-06-07)
+## Phase 1 - DevelopmentOrderPlan.v2 Contract (owner: Codex, updated: 2026-06-08)
 
-### Stream: Review Routing
+### Stream: Core-Readable Order Plan
 
-3. [DONE] `development-tree-product-part-review.phase1.routing.task1` Add Product Part review-decision routing so normal user messages stay in revision flow and explicit acceptance is handled by Core (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts`; expected commit: `feat: handle product part brief review decisions`).
-4. [DONE] Git Commit: `feat: handle product part brief review decisions` (hash: 6d1fc87cf)
+3. [TODO] `development-tree-cluster-contract.phase1.contract.task1` Add the `DevelopmentOrderPlan.v2` parser/validator contract for required briefs, qualified node ids, waves, locked nodes, and first-wave unlockability (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.ts, packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts`; expected commit: `feat: validate development order plan v2`).
+4. [TODO] Git Commit: `feat: validate development order plan v2` (hash: TBD)
+5. [TODO] `development-tree-cluster-contract.phase1.prompt.task1` Update the lead Product Part order-plan assignment so the agent writes `DevelopmentOrderPlan.v2` markdown plus JSON unlock contract instead of the v1 recommendation shape (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: request development order plan v2`).
+6. [TODO] Git Commit: `feat: request development order plan v2` (hash: TBD)
 
-## Phase 2 - Product Part Return State (owner: Codex, updated: 2026-06-07)
+## Phase 2 - Lead Product Part Coordination State (owner: Codex, updated: 2026-06-08)
 
-### Stream: Managed Plan Advancement
+### Stream: Downstream Coordination Instead Of Immediate Return
 
-5. [DONE] `development-tree-product-part-review.phase2.return.task1` Advance accepted non-lead Product Part plans into `User Return And Revisions` and keep lead Product Part plans ready for the next managed assignment (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open product part user return after brief acceptance`).
-6. [DONE] Git Commit: `feat: open product part user return after brief acceptance` (hash: 8715a63d6)
+7. [TODO] `development-tree-cluster-contract.phase2.lead-plan.task1` Change lead Product Part managed plan advancement so accepted `DevelopmentOrderPlan.v2` opens a downstream coordination phase and moves `User Return And Revisions` to the final assembled/paused Product Part boundary (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: keep lead product part in downstream coordination`).
+8. [TODO] Git Commit: `feat: keep lead product part in downstream coordination` (hash: TBD)
+9. [TODO] `development-tree-cluster-contract.phase2.unlock-state.task1` Persist accepted order-plan unlock state for first-wave cluster/standalone module nodes, including locked reasons for later module nodes (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: persist development order unlock state`).
+10. [TODO] Git Commit: `feat: persist development order unlock state` (hash: TBD)
 
-## Phase 3 - Documentation Sync (owner: Codex, updated: 2026-06-07)
+## Phase 3 - Cluster Sub-Agent Worktree Bootstrap (owner: Codex, updated: 2026-06-08)
 
-### Stream: SSOT Update
+### Stream: Worktree And Managed Plan Scaffolding
 
-7. [DONE] `development-tree-product-part-review.phase3.docs.task1` Document Product Part review lifecycle and current lead/non-lead boundary before Development Order Plan implementation (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe product part review lifecycle`).
-8. [DONE] Git Commit: `docs: describe product part review lifecycle` (hash: f796e3b6a)
+11. [TODO] `development-tree-cluster-contract.phase3.worktree.task1` Add Development Tree sub-agent worktree/branch creation support for cluster-contract nodes, with deterministic branch/worktree naming from Product Part and cluster ids (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts`; expected commit: `feat: create development tree cluster worktrees`).
+12. [TODO] Git Commit: `feat: create development tree cluster worktrees` (hash: TBD)
+13. [TODO] `development-tree-cluster-contract.phase3.cluster-plan.task1` Create the Core-owned managed plan writer for cluster-contract sub-agents, including specification/facade draft, review, merge-ready, and return/revision phases (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: write cluster contract managed plans`).
+14. [TODO] Git Commit: `feat: write cluster contract managed plans` (hash: TBD)
+15. [TODO] `development-tree-cluster-contract.phase3.bootstrap.task1` Bootstrap the first unlocked cluster-contract sub-agent from accepted order-plan unlock state, creating its worktree, managed plan, and provider session without opening module agents yet (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `feat: bootstrap cluster contract subagents`).
+16. [TODO] Git Commit: `feat: bootstrap cluster contract subagents` (hash: TBD)
 
-## Phase 4 - Tooling Verification (owner: Codex, updated: 2026-06-07)
+## Phase 4 - Cluster Contract Artifact Lifecycle (owner: Codex, updated: 2026-06-08)
 
-### Stream: Targeted Verification
+### Stream: Prompt, Draft Commit, And Review
 
-9. [DONE] `development-tree-product-part-review.phase4.verify.task1` Run targeted tests for Product Part review lifecycle and relevant Core handlers (scope: `packages/core`; expected commit: `test: verify product part review lifecycle`).
-10. [DONE] Git Commit: `test: verify product part review lifecycle` (hash: 6795e1d39)
+17. [TODO] `development-tree-cluster-contract.phase4.prompt.task1` Add the cluster-contract first prompt builder with inline Product Part brief, accepted order-plan context, skeleton/gates constraints, and explicit artifact targets for `ClusterSpecification` and `ClusterFacadeContract` markdown/json files (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: build cluster contract subagent prompts`).
+18. [TODO] Git Commit: `feat: build cluster contract subagent prompts` (hash: TBD)
+19. [TODO] `development-tree-cluster-contract.phase4.turn.task1` Add the cluster-contract turn controller that validates generated specification/facade artifacts, commits them inside the cluster worktree, and opens the user/lead review gate (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts`; expected commit: `feat: open cluster contract review`).
+20. [TODO] Git Commit: `feat: open cluster contract review` (hash: TBD)
+21. [TODO] `development-tree-cluster-contract.phase4.review.task1` Add cluster-contract review handling so ordinary user/lead messages request sub-agent revisions while explicit acceptance records a merge-ready result and summary for lead Product Part coordination (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.test.ts`; expected commit: `feat: accept cluster contract review results`).
+22. [TODO] Git Commit: `feat: accept cluster contract review results` (hash: TBD)
 
-## Phase 5 - Release Build (owner: Codex, updated: 2026-06-07)
+## Phase 5 - Lead Coordination And Merge (owner: Codex, updated: 2026-06-08)
 
-### Stream: Release Preparation
+### Stream: Result Summary And Mainline Merge
 
-11. [DONE] `development-tree-product-part-review.phase5.release-plan.task1` Add release build streams after explicit user request and keep user retest after VSIX delivery (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release build scope`).
-12. [DONE] Git Commit: `docs: prepare 1.2.460 release build scope` (hash: 12009e918)
+23. [TODO] `development-tree-cluster-contract.phase5.lead-summary.task1` Feed accepted cluster-contract summaries back into the lead Product Part coordination plan so the lead agent can accept, reject, or request revisions at node level (scope: `packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.test.ts`; expected commit: `feat: summarize cluster contract results for lead coordination`).
+24. [TODO] Git Commit: `feat: summarize cluster contract results for lead coordination` (hash: TBD)
+25. [TODO] `development-tree-cluster-contract.phase5.merge.task1` Add Core-owned merge for accepted cluster-contract worktree results back into the main workspace with merge evidence, clean Git assertions, and node-level rollback boundary metadata (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts`; expected commit: `feat: merge accepted cluster contract worktrees`).
+26. [TODO] Git Commit: `feat: merge accepted cluster contract worktrees` (hash: TBD)
+27. [TODO] `development-tree-cluster-contract.phase5.advance.task1` Advance the lead Product Part coordination graph after cluster-contract merge, marking `note-selection-cluster` merged and keeping module nodes locked until the accepted cluster contract can unlock the next module-contract wave (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: advance lead coordination after cluster merge`).
+28. [TODO] Git Commit: `feat: advance lead coordination after cluster merge` (hash: TBD)
 
-### Stream: Release Notes
+## Phase 6 - Project Manager Coordination Projection (owner: Codex, updated: 2026-06-08)
 
-13. [DONE] `development-tree-product-part-review.phase5.release-notes.task1` Update release notes for future version `1.2.460` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.460 release notes`).
-14. [DONE] Git Commit: `docs: prepare 1.2.460 release notes` (hash: 05f240ee1)
+### Stream: One Visible Product Part Graph
 
-### Stream: Unified Artifacts
+29. [TODO] `development-tree-cluster-contract.phase6.core-readmodel.task1` Expose Product Part coordination graph state through the Core workflow-state read model, including unlocked/running/review/merge-ready/merged/locked node statuses and worktree references (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: expose product part coordination graph state`).
+30. [TODO] Git Commit: `feat: expose product part coordination graph state` (hash: TBD)
+31. [TODO] `development-tree-cluster-contract.phase6.pm-ui.task1` Render the Product Part coordination graph in Project Manager and route cluster-contract node actions to Core while keeping sub-agent technical state hidden by default (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/workspace-tree.test.tsx`; expected commit: `feat: show cluster contract coordination graph`).
+32. [TODO] Git Commit: `feat: show cluster contract coordination graph` (hash: TBD)
 
-15. [DONE] `development-tree-product-part-review.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.460 unified release artifacts`).
-16. [DONE] Git Commit: `build: prepare 1.2.460 unified release artifacts` (hash: 2652de01b)
+## Phase 7 - Documentation Sync (owner: Codex, updated: 2026-06-08)
 
-### Stream: VSIX Packaging
+### Stream: SSOT Updates
 
-17. [DONE] `development-tree-product-part-review.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-1.2.460.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.460 vsix release`).
-18. [DONE] Git Commit: `build: package 1.2.460 vsix release` (hash: 4c8b2641a)
+33. [TODO] `development-tree-cluster-contract.phase7.docs.task1` Synchronize SSOT documentation for `DevelopmentOrderPlan.v2`, lead Product Part downstream coordination, cluster-contract sub-agent worktrees, user-visible Product Part graph, and node-level rollback gates (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe cluster contract subagent orchestration`).
+34. [TODO] Git Commit: `docs: describe cluster contract subagent orchestration` (hash: TBD)
+35. [TODO] `development-tree-cluster-contract.phase7.pm-docs.task1` Document the Project Manager projection and user workflow for one Product Part coordination surface with optional sub-agent detail drill-in (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part coordination projection`).
+36. [TODO] Git Commit: `docs: describe product part coordination projection` (hash: TBD)
 
-## Phase 6 - Development Tree Clear/Undo Planning Sync (owner: Codex, updated: 2026-06-07)
-
-### Stream: Git-First Clear/Undo Model
-
-19. [DONE] `development-tree-product-part-review.phase6.clear-undo-docs.task1` Document the Git-first Development Tree Clear/Undo and refactoring model in the active planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document development tree git-first clear undo model`).
-20. [DONE] Git Commit: `docs: document development tree git-first clear undo model` (hash: e3be8afdc)
-
-## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
-
-### Stream: FinderWidget Retest
-
-21. [DONE] `development-tree-product-part-review.phase7.user.task1` User installs release `1.2.460` and retests `latest-note-search` and `widget-display` Product Part sessions: revision messages continue agent work, acceptance transitions to return/revision state (scope: user workflow; expected commit: none). Result: 1.2.460 retest passed; scope continues with Product Part Clear/Undo MVP by user request
-
-## Phase 8 - Product Part Clear/Undo MVP (owner: Codex, updated: 2026-06-07)
-
-### Stream: Core Clear And Auto-Restart
-
-22. [DONE] `development-tree-product-part-review.phase8.clear-core.task1` Implement Product Part root-node Clear/Undo so Core deletes the old Product Part session state, removes its Product Part todo-plan/drafts, and immediately recreates the Product Part plan/session from current Development Tree truth (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear*.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat: clear and restart product part agent sessions`).
-23. [DONE] Git Commit: `feat: clear and restart product part agent sessions` (hash: ec8da212b)
-
-### Stream: Project Manager Clear Feedback
-
-24. [DONE] `development-tree-product-part-review.phase8.clear-ui.task1` Surface Product Part clear/restart response details in the Project Manager clear event contract so retest can confirm deleted sessions and replaced Product Part todo-plans (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `feat: expose product part clear restart feedback`).
-25. [DONE] Git Commit: `feat: expose product part clear restart feedback` (hash: b5256625f)
-
-### Stream: Documentation Sync
-
-26. [DONE] `development-tree-product-part-review.phase8.clear-docs.task1` Document the Product Part Clear/Undo MVP boundary and visible retest contract (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part clear restart mvp`).
-27. [DONE] Git Commit: `docs: describe product part clear restart mvp` (hash: 13d97a76d)
-
-## Phase 9 - Tooling Verification (owner: Codex, updated: 2026-06-07)
+## Phase 8 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Targeted Verification
 
-28. [DONE] `development-tree-product-part-review.phase9.verify.task1` Run targeted Core and Project Manager tests for Product Part Clear/Undo restart behavior (scope: `packages/core, src/client/project-manager`; expected commit: `test: verify product part clear restart`).
-29. [DONE] Git Commit: `test: verify product part clear restart` (hash: 7d08bbe6f)
+37. [TODO] `development-tree-cluster-contract.phase8.verify.task1` Run targeted Core and Project Manager verification for order-plan v2 validation, first-wave cluster bootstrap, cluster artifact review, worktree merge, and coordination graph projection (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract subagent orchestration`).
+38. [TODO] Git Commit: `test: verify cluster contract subagent orchestration` (hash: TBD)
 
-## Phase 10 - Release Build (owner: Codex, updated: 2026-06-07)
+## Phase 9 - Release Build (owner: Codex, updated: 2026-06-08)
 
-### Stream: Release Notes
+### Stream: Release Build Confirmation
 
-30. [DONE] `development-tree-product-part-review.phase10.release-notes.task1` Update release notes for future version `1.2.461` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.461 release notes`).
-31. [DONE] Git Commit: `docs: prepare 1.2.461 release notes` (hash: 843edd247)
-
-### Stream: Unified Artifacts
-
-32. [DONE] `development-tree-product-part-review.phase10.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.461` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.461 unified release artifacts`).
-33. [DONE] Git Commit: `build: prepare 1.2.461 unified release artifacts` (hash: 5530fde36)
-
-### Stream: VSIX Packaging
-
-34. [DONE] `development-tree-product-part-review.phase10.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.461` (scope: `codeai-hub-1.2.461.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.461 vsix release`).
-35. [DONE] Git Commit: `build: package 1.2.461 vsix release` (hash: 223ba2db0)
-
-## Phase 11 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
-
-### Stream: FinderWidget Clear/Undo Retest
-
-36. [DONE] `development-tree-product-part-review.phase11.user.task1` User installs release `1.2.461` and retests Clear/Undo on `latest-note-search` and `widget-display`: old Product Part sessions and todo-plans disappear, new Product Part sessions and fresh todo-plans are recreated automatically (scope: user workflow; expected commit: none). Result: retest found that clearing `widget-display` also restarted sibling Product Part `latest-note-search`, causing concurrent Codex provider turns and an OAuth refresh-token race.
-
-## Phase 13 - Product Part Clear/Undo Scoped Restart Hotfix (owner: Codex, updated: 2026-06-07)
-
-### Stream: Target Part Restart Only
-
-39. [DONE] `development-tree-product-part-review.phase13.hotfix-api.task1` Add a targeted Product Part bootstrap filter to the Core Development Tree bootstrap API, without changing existing full bootstrap callers (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/development-tree-product-part-agent-bootstrap.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add targeted product part bootstrap filter`).
-40. [DONE] Git Commit: `feat: add targeted product part bootstrap filter` (hash: 760a50db0)
-41. [DONE] `development-tree-product-part-review.phase13.hotfix-clear.task1` Restrict Product Part Clear/Undo restart to the selected Product Part only and cover the multi-Product-Part regression (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope product part clear restart to target part`).
-42. [DONE] Git Commit: `fix: scope product part clear restart to target part` (hash: bf1a5a135)
-
-## Phase 14 - Tooling Verification (owner: Codex, updated: 2026-06-07)
-
-### Stream: Targeted Verification
-
-43. [DONE] `development-tree-product-part-review.phase14.verify.task1` Run targeted Core tests for Product Part Clear/Undo scoped restart behavior and confirm only the cleared Product Part is recreated (scope: `packages/core`; expected commit: `test: verify scoped product part clear restart`).
-44. [DONE] Git Commit: `test: verify scoped product part clear restart` (hash: 548138aa9)
-
-## Phase 15 - Release Build (owner: Codex, updated: 2026-06-07)
-
-### Stream: Release Notes
-
-45. [DONE] `development-tree-product-part-review.phase15.release-notes.task1` Update release notes for future version `1.2.462` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.462 release notes`).
-46. [DONE] Git Commit: `docs: prepare 1.2.462 release notes` (hash: 5f35e9660)
-
-### Stream: Unified Artifacts
-
-47. [DONE] `development-tree-product-part-review.phase15.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.462` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.462 unified release artifacts`).
-48. [DONE] Git Commit: `build: prepare 1.2.462 unified release artifacts` (hash: 4ee9d42ae)
-
-### Stream: VSIX Packaging
-
-49. [DONE] `development-tree-product-part-review.phase15.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.462` (scope: `codeai-hub-1.2.462.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.462 vsix release`).
-50. [DONE] Git Commit: `build: package 1.2.462 vsix release` (hash: 335f83cf7)
-
-## Phase 16 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
-
-### Stream: FinderWidget Scoped Clear/Undo Retest
-
-51. [DONE] `development-tree-product-part-review.phase16.user.task1` User installs release `1.2.462` and retests Clear/Undo on `widget-display` and `latest-note-search`: only the selected Product Part session/todo-plan is deleted and recreated, siblings are not restarted, and no concurrent provider auth refresh is triggered by Clear/Undo (scope: user workflow; expected commit: none). Result: scoped restart worked per Product Part timestamps, but the Codex provider home was already left with a stale/reused refresh token and every new Codex turn now fails before native session start.
-
-## Phase 17 - Codex Provider Auth Race Hotfix (owner: Codex, updated: 2026-06-07)
-
-### Stream: Provider Turn Serialization
-
-52. [DONE] `development-tree-product-part-review.phase17.codex-queue.task1` Serialize Codex provider operations that can touch the shared `CODEX_HOME` auth state so multiple Product Part sessions cannot trigger concurrent refresh-token use (scope: `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts, packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: serialize codex provider turns`).
-53. [DONE] Git Commit: `fix: serialize codex provider turns` (hash: 5c8ab47bc)
-54. [DONE] `development-tree-product-part-review.phase17.codex-queue.task2` Run targeted Codex provider adapter verification for serialized create/resume/send/usage-limit operations (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex provider operation serialization`).
-55. [DONE] Git Commit: `test: verify codex provider operation serialization` (hash: e547c086a)
-
-## Phase 18 - Release Build (owner: Codex, updated: 2026-06-07)
+39. [TODO] `development-tree-cluster-contract.phase9.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none).
 
 ### Stream: Release After Confirmation
 
-56. [DONE] `development-tree-product-part-review.phase18.release-notes.task1` Prepare release notes for future version `1.2.463` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.463 release notes`).
-57. [DONE] Git Commit: `docs: prepare 1.2.463 release notes` (hash: 9e9d55bba)
-58. [DONE] `development-tree-product-part-review.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.463` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.463 unified release artifacts`).
-59. [DONE] Git Commit: `build: prepare 1.2.463 unified release artifacts` (hash: f35034b42)
-60. [DONE] `development-tree-product-part-review.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.463` (scope: `codeai-hub-1.2.463.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.463 vsix release`).
-61. [DONE] Git Commit: `build: package 1.2.463 vsix release` (hash: 6f33dbfd2)
+40. [TODO] `development-tree-cluster-contract.phase9.release-notes.task1` Prepare release notes for the next version after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract subagent release notes`).
+41. [TODO] Git Commit: `docs: prepare cluster contract subagent release notes` (hash: TBD)
+42. [TODO] `development-tree-cluster-contract.phase9.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract subagent release build state`).
+43. [TODO] Git Commit: `docs: checkpoint cluster contract subagent release build state` (hash: TBD)
+44. [TODO] `development-tree-cluster-contract.phase9.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract subagent unified release artifacts`).
+45. [TODO] Git Commit: `build: prepare cluster contract subagent unified release artifacts` (hash: TBD)
+46. [TODO] `development-tree-cluster-contract.phase9.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract subagent vsix release`).
+47. [TODO] Git Commit: `build: package cluster contract subagent vsix release` (hash: TBD)
 
-## Phase 19 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
+## Phase 10 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
-### Stream: FinderWidget Codex Reauth Retest
+### Stream: FinderWidget Cluster Contract Retest
 
-62. [DONE] `development-tree-product-part-review.phase19.user.task1` User installs release `1.2.463`, performs one Codex provider sign-out/sign-in if the workspace already has the reused refresh-token error, then retests Product Part Clear/Undo for `widget-display` and `latest-note-search`: sessions and todo-plans are recreated, and Codex provider turns proceed without recreating a Core-side refresh-token race (scope: user workflow; expected commit: none). Result: functional retest passed; Git hygiene failed because provider/unified runtime files remain tracked and dirty after session recreation.
+48. [TODO] `development-tree-cluster-contract.phase10.user.task1` User installs the release and retests FinderWidget end-to-end: accepted lead `DevelopmentOrderPlan.v2` opens the `note-selection-cluster` cluster-contract sub-agent, the agent creates `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, Core validates and commits them, acceptance returns a merge-ready result to lead Product Part coordination, Core merges the worktree result, and Project Manager shows the Product Part coordination graph with cluster merged and module nodes still locked until the next wave (scope: user workflow; expected commit: none).
 
-## Phase 20 - Workspace Runtime Git Hygiene Hotfix (owner: Codex, updated: 2026-06-07)
-
-### Stream: Runtime Local-Only Contract
-
-63. [DONE] `development-tree-product-part-review.phase20.runtime-gitignore.task1` Change generated workspace Git ignore contracts so `.codeai-hub/<workspace>/runtime/` is local-only runtime state, not product Git truth (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts`; expected commit: `fix: ignore workspace runtime capsules`).
-64. [DONE] Git Commit: `fix: ignore workspace runtime capsules` (hash: 59b308021)
-65. [DONE] `development-tree-product-part-review.phase20.runtime-cleanup.task1` Update managed commit/clean boundaries to untrack already tracked workspace runtime files and stop classifying runtime provider/session logs as committable residue (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts`; expected commit: `fix: untrack workspace runtime during managed commits`).
-66. [DONE] Git Commit: `fix: untrack workspace runtime during managed commits` (hash: 735bdb5ea)
-67. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary.task1` Update managed terminal clean boundary so already tracked workspace runtime residue is removed from the Git index instead of being silently tolerated (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: clean tracked workspace runtime residue`).
-68. [DONE] Git Commit: `fix: clean tracked workspace runtime residue` (hash: 312a70531)
-69. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary-deletions.task1` Include workspace runtime index cleanup paths in the managed residue commit so removing previously tracked runtime files leaves Git clean (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: commit workspace runtime index cleanup`).
-70. [DONE] Git Commit: `fix: commit workspace runtime index cleanup` (hash: e55f6013f)
-71. [DONE] `development-tree-product-part-review.phase20.runtime-clean-boundary-anchor.task1` Commit staged runtime index cleanup through a safe `.gitignore` anchor so ignored runtime files are not passed back to `git add` (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: commit ignored runtime cleanup through gitignore anchor`).
-72. [DONE] Git Commit: `fix: commit ignored runtime cleanup through gitignore anchor` (hash: cbfc10423)
-73. [DONE] `development-tree-product-part-review.phase20.runtime-tests.task1` Update focused runtime Git hygiene tests for generated `.gitignore`, step commit cleanup, and managed terminal dirty classification (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `test: verify workspace runtime stays local only`).
-74. [DONE] Git Commit: `test: verify workspace runtime stays local only` (hash: ab608c465)
-75. [DONE] `development-tree-product-part-review.phase20.runtime-docs.task1` Sync SSOT docs with the Git-first rule: tracked workflow/product artifacts are rollback truth; workspace runtime is local execution residue recreated from tracked truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit: `docs: clarify local runtime rollback boundary`).
-76. [DONE] Git Commit: `docs: clarify local runtime rollback boundary` (hash: b5035eed5)
-
-## Phase 21 - Release Build (owner: Codex, updated: 2026-06-07)
-
-### Stream: Release After Confirmation
-
-77. [DONE] `development-tree-product-part-review.phase21.release-notes.task1` Prepare release notes for future version `1.2.464` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.464 release notes`).
-78. [DONE] Git Commit: `docs: prepare 1.2.464 release notes` (hash: 766827923)
-79. [DONE] `development-tree-product-part-review.phase21.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.464 release build state`).
-80. [DONE] Git Commit: `docs: checkpoint 1.2.464 release build state` (hash: c72d7fb90)
-81. [DONE] `development-tree-product-part-review.phase21.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.464` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.464 unified release artifacts`).
-82. [DONE] Git Commit: `build: prepare 1.2.464 unified release artifacts` (hash: d900d4cc8)
-83. [DONE] `development-tree-product-part-review.phase21.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.464` (scope: `codeai-hub-1.2.464.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.464 vsix release`).
-84. [DONE] Git Commit: `build: package 1.2.464 vsix release` (hash: a90c2d53b)
-
-## Phase 22 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
-
-### Stream: Runtime Git Hygiene Retest
-
-85. [DONE] `development-tree-product-part-review.phase22.user.task1` User installs release `1.2.464` and retests from a fresh Description flow plus Product Part Clear/Undo: Git stays clean after generated sessions/runtime are recreated, and tracked workflow/product artifacts still roll back through Git (scope: user workflow; expected commit: none). Result: Git hygiene stayed clean, but fresh Quality Gates handoff started multiple Product Part Codex turns at once; `finder-widget-shell` stayed on the start prompt until user stop.
-
-## Phase 23 - Product Part Bootstrap Turn Sequencing Hotfix (owner: Codex, updated: 2026-06-07)
-
-### Stream: Initial Agent Turn Wait
-
-86. [DONE] `development-tree-product-part-review.phase23.bootstrap-wait.task1` Make managed Product Part auto-bootstrap wait for the current Product Part agent's initial provider turn to settle before starting the next Product Part session (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: wait for product part bootstrap turns`).
-87. [DONE] Git Commit: `fix: wait for product part bootstrap turns` (hash: b7a269a82)
-88. [DONE] `development-tree-product-part-review.phase23.bootstrap-wait-tests.task1` Add targeted test coverage for the Product Part initial turn settlement hook (scope: `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap turn wait`).
-89. [DONE] Git Commit: `test: verify product part bootstrap turn wait` (hash: 995d884e3)
-
-## Phase 24 - Release Build (owner: Codex, updated: 2026-06-07)
-
-### Stream: Release After Confirmation
-
-90. [DONE] `development-tree-product-part-review.phase24.release-notes.task1` Prepare release notes for future version `1.2.465` before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.465 release notes`).
-91. [DONE] Git Commit: `docs: prepare 1.2.465 release notes` (hash: b8c041d86)
-92. [DONE] `development-tree-product-part-review.phase24.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.465 release build state`).
-93. [DONE] Git Commit: `docs: checkpoint 1.2.465 release build state` (hash: 252ed93fe)
-94. [DONE] `development-tree-product-part-review.phase24.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.465` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.465 unified release artifacts`).
-95. [DONE] Git Commit: `build: prepare 1.2.465 unified release artifacts` (hash: f3f1120db)
-96. [DONE] `development-tree-product-part-review.phase24.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.465` (scope: `codeai-hub-1.2.465.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.465 vsix release`).
-97. [DONE] Git Commit: `build: package 1.2.465 vsix release` (hash: 0b9d12069)
-98. [DONE] `development-tree-product-part-review.phase24.user.task1` User installs release `1.2.465` and retests fresh Quality Gates handoff: Product Part sessions are created one by one, each initial agent turn reaches assistant response/draft commit before the next Product Part starts, and Product Part Clear/Undo remains scoped and Git-clean (scope: user workflow; expected commit: none). Result: fresh Quality Gates restart still fails when workspace Codex provider home has a stale copied `auth.json`; OAuth refresh token was already consumed by another Codex home.
-
-## Phase 25 - Codex Shared Auth Hotfix (owner: Codex, updated: 2026-06-07)
-
-### Stream: Provider Home Auth Source
-
-99. [DONE] `development-tree-product-part-review.phase25.codex-auth.task1` Stop cloning Codex OAuth auth into workspace provider homes; materialize workspace `auth.json` as a shared reference to the global Codex auth source so refresh tokens cannot diverge between homes (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-auth.ts, doc/TODO/todo-plan.md`; expected commit: `fix: share codex auth across provider homes`).
-100. [DONE] Git Commit: `fix: share codex auth across provider homes` (hash: f1cb982be)
-101. [DONE] `development-tree-product-part-review.phase25.codex-auth-tests.task1` Add targeted Codex provider-home auth materialization tests, including stale copied auth replacement (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-auth.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify codex shared auth materialization`).
-102. [DONE] Git Commit: `test: verify codex shared auth materialization` (hash: c06f87071)
-
-## Phase 26 - Tooling Verification (owner: Codex, updated: 2026-06-07)
-
-### Stream: Targeted Verification
-
-103. [DONE] `development-tree-product-part-review.phase26.verify.task1` Run targeted Codex module build and provider-home auth tests for the shared auth hotfix (scope: `packages/Codex_AppServer_Module`; expected commit: `test: verify codex auth home hotfix`).
-104. [DONE] Git Commit: `test: verify codex auth home hotfix` (hash: 270230b7a)
-
-## Phase 27 - Release Build (owner: Codex, updated: 2026-06-07)
-
-### Stream: Release After Confirmation
-
-105. [DONE] `development-tree-product-part-review.phase27.release-notes.task1` Prepare release notes for future version `1.2.466` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.466 release notes`).
-106. [DONE] Git Commit: `docs: prepare 1.2.466 release notes` (hash: a04566e09)
-107. [DONE] `development-tree-product-part-review.phase27.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.466 release build state`).
-108. [DONE] Git Commit: `docs: checkpoint 1.2.466 release build state` (hash: b6f3db34e)
-109. [DONE] `development-tree-product-part-review.phase27.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.466` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.466 unified release artifacts`).
-110. [DONE] Git Commit: `build: prepare 1.2.466 unified release artifacts` (hash: 8afb98ca3)
-111. [DONE] `development-tree-product-part-review.phase27.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.466` (scope: `codeai-hub-1.2.466.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.466 vsix release`).
-112. [DONE] Git Commit: `build: package 1.2.466 vsix release` (hash: f4c76d383)
-
-## Phase 28 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-07)
-
-### Stream: FinderWidget Codex Auth Retest
-
-113. [DONE] `development-tree-product-part-review.phase28.user.task1` User installs the next release and retests Quality Gates restart after Clear Undo with existing workspace Codex runtime home: stale copied auth is replaced by shared auth, the Quality Gates agent starts without the reused refresh-token error, Product Part handoff stays sequential, and Git remains clean (scope: user workflow; expected commit: none). Result: release 1.2.466 starts both Product Part sessions and reaches Product Part brief user review, but pressing the managed "Подтверждаю" button leaves the UI pending and does not advance either Product Part.
-
-## Phase 29 - Product Part Acceptance Button Hotfix (owner: Codex, updated: 2026-06-08)
-
-### Stream: Runtime-Ignored Acceptance Paths
-
-114. [DONE] `development-tree-product-part-review.phase29.product-part-acceptance.task1` Keep Product Part brief acceptance commits away from ignored runtime session paths and cover acceptance with an existing ignored runtime directory (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep product part acceptance out of runtime paths`).
-115. [DONE] Git Commit: `fix: keep product part acceptance out of runtime paths` (hash: d22bbaa47)
-
-## Phase 30 - Tooling Verification (owner: Codex, updated: 2026-06-08)
-
-### Stream: Targeted Verification
-
-116. [DONE] `development-tree-product-part-review.phase30.verify.task1` Run targeted Product Part acceptance tests and Core build after the acceptance button hotfix (scope: `packages/core`; expected commit: `test: verify product part acceptance button hotfix`).
-117. [DONE] Git Commit: `test: verify product part acceptance button hotfix` (hash: e8c35cac8)
-
-## Phase 31 - Release Build (owner: Codex, updated: 2026-06-08)
-
-### Stream: Release After Confirmation
-
-118. [DONE] `development-tree-product-part-review.phase31.release-notes.task1` Prepare release notes for future version `1.2.467` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.467 release notes`).
-119. [DONE] Git Commit: `docs: prepare 1.2.467 release notes` (hash: 2dd03e002)
-120. [DONE] `development-tree-product-part-review.phase31.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.467 release build state`).
-121. [DONE] Git Commit: `docs: checkpoint 1.2.467 release build state` (hash: 443b2fcab)
-122. [DONE] `development-tree-product-part-review.phase31.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.467` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.467 unified release artifacts`).
-123. [DONE] Git Commit: `build: prepare 1.2.467 unified release artifacts` (hash: e1b2f433f)
-124. [DONE] `development-tree-product-part-review.phase31.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.467` (scope: `codeai-hub-1.2.467.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.467 vsix release`).
-125. [DONE] Git Commit: `build: package 1.2.467 vsix release` (hash: d7d8be7a7)
-
-## Phase 32 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
-
-### Stream: FinderWidget Product Part Acceptance Retest
-
-126. [DONE] `development-tree-product-part-review.phase32.user.task1` User installs release `1.2.467` and retests Product Part managed review acceptance: pressing "Подтверждаю" in the lead and secondary Product Part sessions advances the Product Part todo-plan instead of leaving the UI pending, runtime session files stay local-only, and Git stays clean (scope: user workflow; expected commit: none). Result: acceptance button now works, but lead Product Part stops visually at brief review even though its node plan advances to the lead-only Development Order Plan draft phase.
-
-## Phase 33 - Lead Product Part Order Plan Continuation (owner: Codex, updated: 2026-06-08)
-
-### Stream: Lead Assignment Dispatch
-
-127. [DONE] `development-tree-product-part-review.phase33.lead-continuation.task1` After lead Product Part brief acceptance, dispatch the next managed internal assignment for `DevelopmentOrderPlan.draft.md` and `DevelopmentOrderPlan.draft.json` while secondary Product Parts remain in `User Return And Revisions` (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: continue lead product part order plan draft`).
-128. [DONE] Git Commit: `feat: continue lead product part order plan draft` (hash: 334cf06bd)
-
-### Stream: Lead Order Plan Completion
-
-129. [DONE] `development-tree-product-part-review.phase33.lead-order-completion.task1` Commit the lead agent's Development Order Plan draft artifacts and open the lead order-plan user review gate (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open lead product part order plan review`).
-130. [DONE] Git Commit: `feat: open lead product part order plan review` (hash: 3e77e460d)
-
-## Phase 34 - Tooling Verification (owner: Codex, updated: 2026-06-08)
-
-### Stream: Targeted Verification
-
-131. [DONE] `development-tree-product-part-review.phase34.verify.task1` Run targeted Product Part review and lead order-plan continuation tests plus Core build/type verification (scope: `packages/core`; expected commit: `test: verify lead product part order plan continuation`).
-132. [DONE] Git Commit: `test: verify lead product part order plan continuation` (hash: 7539d2e92)
-
-## Phase 35 - Release Build (owner: Codex, updated: 2026-06-08)
-
-### Stream: Release After Confirmation
-
-133. [DONE] `development-tree-product-part-review.phase35.release-notes.task1` Prepare release notes for future version `1.2.468` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.468 release notes`).
-134. [DONE] Git Commit: `docs: prepare 1.2.468 release notes` (hash: af98ac179)
-135. [DONE] `development-tree-product-part-review.phase35.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.468 release build state`).
-136. [DONE] Git Commit: `docs: checkpoint 1.2.468 release build state` (hash: 342e38cc4)
-137. [DONE] `development-tree-product-part-review.phase35.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.468` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.468 unified release artifacts`).
-138. [DONE] Git Commit: `build: prepare 1.2.468 unified release artifacts` (hash: c34d0d2c1)
-139. [DONE] `development-tree-product-part-review.phase35.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.468` (scope: `codeai-hub-1.2.468.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.468 vsix release`).
-140. [DONE] Git Commit: `build: package 1.2.468 vsix release` (hash: 4b7974765)
-
-## Phase 36 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
-
-### Stream: FinderWidget Lead Order Plan Retest
-
-141. [DONE] `development-tree-product-part-review.phase36.user.task1` User installs release `1.2.468` and retests lead Product Part continuation: secondary Product Part acceptance stays in `User Return And Revisions`, lead Product Part acceptance immediately dispatches Development Order Plan assignment, and after the lead agent writes `DevelopmentOrderPlan.draft.md/json`, Core commits the artifacts and opens order-plan user review (scope: user workflow; expected commit: none). Result: Phase 3 now works, but confirming Phase 4 Lead Development Order Plan User Review is not handled by Core, so the Product Part plan remains in `phase4.order-plan-review`.
-
-## Phase 37 - Lead Order Plan Review Acceptance Hotfix (owner: Codex, updated: 2026-06-08)
-
-### Stream: Order Plan Review Completion
-
-142. [DONE] `development-tree-product-part-review.phase37.order-plan-review.task1` Accept lead Product Part Development Order Plan user review and move the Product Part workflow into `User Return And Revisions` without opening downstream agents yet (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: accept lead product part order plan review`).
-143. [DONE] Git Commit: `fix: accept lead product part order plan review` (hash: cc4cc0e77)
-
-## Phase 38 - Tooling Verification (owner: Codex, updated: 2026-06-08)
-
-### Stream: Targeted Verification
-
-144. [DONE] `development-tree-product-part-review.phase38.verify.task1` Run targeted Product Part order-plan review acceptance tests and Core build/type verification (scope: `packages/core`; expected commit: `test: verify lead order plan review acceptance`).
-145. [DONE] Git Commit: `test: verify lead order plan review acceptance` (hash: e105cdd9b)
-
-## Phase 39 - Release Build (owner: Codex, updated: 2026-06-08)
-
-### Stream: Release After Confirmation
-
-146. [DONE] `development-tree-product-part-review.phase39.release-notes.task1` Prepare release notes for future version `1.2.469` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.469 release notes`).
-147. [DONE] Git Commit: `docs: prepare 1.2.469 release notes` (hash: 6c1bd2017)
-148. [DONE] `development-tree-product-part-review.phase39.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.469 release build state`).
-149. [DONE] Git Commit: `docs: checkpoint 1.2.469 release build state` (hash: 6527fcdec)
-150. [DONE] `development-tree-product-part-review.phase39.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.469` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.469 unified release artifacts`).
-151. [DONE] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: ae02c15f1)
-152. [DONE] `development-tree-product-part-review.phase39.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.469` (scope: `codeai-hub-1.2.469.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.469 vsix release`).
-153. [DONE] Git Commit: `build: package 1.2.469 vsix release` (hash: b41f0edeb)
-
-## Phase 40 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
-
-### Stream: FinderWidget Product Part Final Retest
-
-154. [DONE] `development-tree-product-part-review.phase40.user.task1` User installs release `1.2.469` and retests Product Part logical final state: confirming Phase 4 Lead Development Order Plan User Review commits `docs: accept lead development order plan`, moves the lead Product Part plan to `User Return And Revisions`, and leaves downstream Development Order Plan v2 / agent launch design for the next discussion (scope: user workflow; expected commit: none). Result: release 1.2.469 accepted for the lead Product Part logical-final hotfix; next planning scope reopens the downstream coordination design so lead Product Part `Phase Return` becomes the final assembled-product-part state instead of the immediate post-order-plan state.
-
-## Phase 41 - Product Part Sub-Agent Orchestration Planning (owner: Codex, updated: 2026-06-08)
-
-### Stream: Lead Coordination Model
-
-155. [DONE] `development-tree-product-part-review.phase41.subagent-planning.task1` Create a separate planning document for lead Product Part visible coordination, downstream cluster/module sub-agents, Git worktree execution, node-level user gates, and final Product Part return state (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document product part subagent orchestration plan`).
-156. [DONE] Git Commit: `docs: document product part subagent orchestration plan` (hash: aa38a3a85)
-
-## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
+## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-157. [DONE] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning sources; keep `DevelopmentTree_BranchWorkflow_Architecture.md` as the active reference architecture and keep `DevelopmentTree_ProductPartSubagentOrchestration.md` as the next active implementation planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-158. [PENDING] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
-159. [TODO] `development-tree-product-part-review.phase12.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+49. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+50. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+51. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
