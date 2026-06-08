@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "0dbf72a28",
+  "lastRecordedCommit": "f3d5c06d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.final-build-all.task1",
-  "expectedCommitMessage": "build: prepare lead order plan wave bootstrap release artifacts",
+  "currentTaskId": "development-tree-cluster-contract.phase10.final-vsix.task1",
+  "expectedCommitMessage": "build: package lead order plan wave bootstrap vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare lead order plan wave bootstrap release artifacts",
-    "preCommitHead": "0dbf72a28",
+    "expectedCommitMessage": "build: package lead order plan wave bootstrap vsix release",
+    "preCommitHead": "f3d5c06d2",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.final-build-all.task1"
+    "taskId": "development-tree-cluster-contract.phase10.final-vsix.task1"
   }
 }
 ```
@@ -202,9 +202,9 @@ Verification evidence:
 76. [DONE] `development-tree-cluster-contract.phase10.final-release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint lead order plan wave bootstrap release build state`).
 77. [DONE] Git Commit: `docs: checkpoint lead order plan wave bootstrap release build state` (hash: 0dbf72a28)
 78. [DONE] `development-tree-cluster-contract.phase10.final-build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the final regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan wave bootstrap release artifacts`).
-79. [PENDING] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: TBD)
-80. [TODO] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
-81. [TODO] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: TBD)
+79. [DONE] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: f3d5c06d2)
+80. [DONE] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
+81. [PENDING] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: TBD)
 
 ## Phase 11 - Final Release Acceptance Testing (owner: user, updated: 2026-06-08)
 
