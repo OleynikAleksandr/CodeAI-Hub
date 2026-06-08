@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "2318c01ce",
+  "lastRecordedCommit": "343846e8f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase3.worktree.task1",
-  "expectedCommitMessage": "feat: create development tree cluster worktrees",
+  "currentTaskId": "development-tree-cluster-contract.phase3.cluster-plan.task1",
+  "expectedCommitMessage": "feat: write cluster contract managed plans",
   "debt": {
-    "expectedCommitMessage": "feat: create development tree cluster worktrees",
-    "preCommitHead": "2318c01ce",
+    "expectedCommitMessage": "feat: write cluster contract managed plans",
+    "preCommitHead": "343846e8f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase3.worktree.task1"
+    "taskId": "development-tree-cluster-contract.phase3.cluster-plan.task1"
   }
 }
 ```
@@ -76,9 +76,9 @@
 ### Stream: Worktree And Managed Plan Scaffolding
 
 11. [DONE] `development-tree-cluster-contract.phase3.worktree.task1` Add Development Tree sub-agent worktree/branch creation support for cluster-contract nodes, with deterministic branch/worktree naming from Product Part and cluster ids (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts`; expected commit: `feat: create development tree cluster worktrees`).
-12. [PENDING] Git Commit: `feat: create development tree cluster worktrees` (hash: TBD)
-13. [TODO] `development-tree-cluster-contract.phase3.cluster-plan.task1` Create the Core-owned managed plan writer for cluster-contract sub-agents, including specification/facade draft, review, merge-ready, and return/revision phases (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: write cluster contract managed plans`).
-14. [TODO] Git Commit: `feat: write cluster contract managed plans` (hash: TBD)
+12. [DONE] Git Commit: `feat: create development tree cluster worktrees` (hash: 343846e8f)
+13. [DONE] `development-tree-cluster-contract.phase3.cluster-plan.task1` Create the Core-owned managed plan writer for cluster-contract sub-agents, including specification/facade draft, review, merge-ready, and return/revision phases (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: write cluster contract managed plans`).
+14. [PENDING] Git Commit: `feat: write cluster contract managed plans` (hash: TBD)
 15. [TODO] `development-tree-cluster-contract.phase3.bootstrap.task1` Bootstrap the first unlocked cluster-contract sub-agent from accepted order-plan unlock state, creating its worktree, managed plan, and provider session without opening module agents yet (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `feat: bootstrap cluster contract subagents`).
 16. [TODO] Git Commit: `feat: bootstrap cluster contract subagents` (hash: TBD)
 
