@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "6527fcdec",
+  "lastRecordedCommit": "ae02c15f1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase39.build-all.task1",
-  "expectedCommitMessage": "build: prepare 1.2.469 unified release artifacts",
+  "currentTaskId": "development-tree-product-part-review.phase39.vsix.task1",
+  "expectedCommitMessage": "build: package 1.2.469 vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare 1.2.469 unified release artifacts",
-    "preCommitHead": "6527fcdec",
+    "expectedCommitMessage": "build: package 1.2.469 vsix release",
+    "preCommitHead": "ae02c15f1",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase39.build-all.task1"
+    "taskId": "development-tree-product-part-review.phase39.vsix.task1"
   }
 }
 ```
@@ -416,9 +416,9 @@
 148. [DONE] `development-tree-product-part-review.phase39.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.469 release build state`).
 149. [DONE] Git Commit: `docs: checkpoint 1.2.469 release build state` (hash: 6527fcdec)
 150. [DONE] `development-tree-product-part-review.phase39.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.469` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.469 unified release artifacts`).
-151. [PENDING] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: TBD)
-152. [TODO] `development-tree-product-part-review.phase39.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.469` (scope: `codeai-hub-1.2.469.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.469 vsix release`).
-153. [TODO] Git Commit: `build: package 1.2.469 vsix release` (hash: TBD)
+151. [DONE] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: ae02c15f1)
+152. [DONE] `development-tree-product-part-review.phase39.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.469` (scope: `codeai-hub-1.2.469.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.469 vsix release`).
+153. [PENDING] Git Commit: `build: package 1.2.469 vsix release` (hash: TBD)
 
 ## Phase 40 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
