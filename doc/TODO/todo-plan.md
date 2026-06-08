@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "b90dba86c",
+  "lastRecordedCommit": "f5dbcd7a4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase0.plan.task1",
-  "expectedCommitMessage": "docs: start cluster contract subagent orchestration plan",
+  "currentTaskId": "development-tree-cluster-contract.phase1.contract.task1",
+  "expectedCommitMessage": "feat: validate development order plan v2",
   "debt": {
-    "expectedCommitMessage": "docs: start cluster contract subagent orchestration plan",
-    "preCommitHead": "b90dba86c",
+    "expectedCommitMessage": "feat: validate development order plan v2",
+    "preCommitHead": "f5dbcd7a4",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase0.plan.task1"
+    "taskId": "development-tree-cluster-contract.phase1.contract.task1"
   }
 }
 ```
@@ -51,14 +51,14 @@
 ### Stream: Active Plan Setup
 
 1. [DONE] `development-tree-cluster-contract.phase0.plan.task1` Create the active execution plan for Development Tree cluster-contract sub-agent orchestration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: start cluster contract subagent orchestration plan`).
-2. [PENDING] Git Commit: `docs: start cluster contract subagent orchestration plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: start cluster contract subagent orchestration plan` (hash: f5dbcd7a4)
 
 ## Phase 1 - DevelopmentOrderPlan.v2 Contract (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Core-Readable Order Plan
 
-3. [TODO] `development-tree-cluster-contract.phase1.contract.task1` Add the `DevelopmentOrderPlan.v2` parser/validator contract for required briefs, qualified node ids, waves, locked nodes, and first-wave unlockability (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.ts, packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts`; expected commit: `feat: validate development order plan v2`).
-4. [TODO] Git Commit: `feat: validate development order plan v2` (hash: TBD)
+3. [DONE] `development-tree-cluster-contract.phase1.contract.task1` Add the `DevelopmentOrderPlan.v2` parser/validator contract for required briefs, qualified node ids, waves, locked nodes, and first-wave unlockability (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.ts, packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts`; expected commit: `feat: validate development order plan v2`).
+4. [PENDING] Git Commit: `feat: validate development order plan v2` (hash: TBD)
 5. [TODO] `development-tree-cluster-contract.phase1.prompt.task1` Update the lead Product Part order-plan assignment so the agent writes `DevelopmentOrderPlan.v2` markdown plus JSON unlock contract instead of the v1 recommendation shape (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: request development order plan v2`).
 6. [TODO] Git Commit: `feat: request development order plan v2` (hash: TBD)
 

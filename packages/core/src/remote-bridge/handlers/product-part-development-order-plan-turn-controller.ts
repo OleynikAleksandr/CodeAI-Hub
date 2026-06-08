@@ -1,5 +1,6 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { validateDevelopmentOrderPlanV2 } from "../../development-tree/product-part-workflow/development-order-plan-v2-contract";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 
 interface ManagedPlanState {
@@ -36,7 +37,6 @@ const PLAN_START = "<!-- codeai-plan-state:start -->";
 const PRODUCT_PART_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)$/u;
 const SENTINEL_RE = /CODEAI_AGENT_FILL_SENTINEL|agent-fill/u;
-const VALID_ORDER_PLAN_SCHEMA = "codeai-development-order-plan-v1";
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -256,9 +256,11 @@ export class ProductPartDevelopmentOrderPlanTurnController {
     const orderPlanPath = createOrderPlanPath(params);
     const orderPlanJsonPath = createOrderPlanJsonPath(params);
     const diagnostics = await this.validateOrderPlanArtifacts({
+      partId: params.partId,
       orderPlanJsonPath,
       orderPlanPath,
       workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
     });
     if (diagnostics.length > 0) {
       return createBlockedMessage({ diagnostics, partId: params.partId });
@@ -302,7 +304,9 @@ export class ProductPartDevelopmentOrderPlanTurnController {
   private async validateOrderPlanArtifacts(params: {
     readonly orderPlanJsonPath: string;
     readonly orderPlanPath: string;
+    readonly partId: string;
     readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
   }): Promise<readonly string[]> {
     const diagnostics: string[] = [];
     if (!(await fileExists(params.workspaceRoot, params.orderPlanPath))) {
@@ -324,9 +328,22 @@ export class ProductPartDevelopmentOrderPlanTurnController {
       const json = parseOrderPlanJson(
         await readText(params.workspaceRoot, params.orderPlanJsonPath)
       );
-      if (!json || json.schema !== VALID_ORDER_PLAN_SCHEMA) {
+      if (json) {
         diagnostics.push(
-          `${ORDER_PLAN_JSON_FILE_NAME}: schema must be ${VALID_ORDER_PLAN_SCHEMA}.`
+          ...(
+            await validateDevelopmentOrderPlanV2({
+              leadProductPartId: params.partId,
+              plan: json,
+              workspaceRoot: params.workspaceRoot,
+              workspaceSlug: params.workspaceSlug,
+            })
+          ).diagnostics.map(
+            (diagnostic) => `${ORDER_PLAN_JSON_FILE_NAME}: ${diagnostic}`
+          )
+        );
+      } else {
+        diagnostics.push(
+          `${ORDER_PLAN_JSON_FILE_NAME}: root must be an object.`
         );
       }
     } catch (error) {
