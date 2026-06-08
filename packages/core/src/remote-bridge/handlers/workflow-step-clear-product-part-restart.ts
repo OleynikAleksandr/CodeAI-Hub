@@ -4,6 +4,11 @@ import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/
 import type { Session, SessionManager } from "../../session-manager";
 import { bootstrapDevelopmentTreeProductPartAgents } from "./development-tree-product-part-agent-bootstrap";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import {
+  createProductPartWorktreeRoot,
+  isWithinPath,
+  removeProductPartWorktrees,
+} from "./product-part-worktree-cleanup";
 
 const PRODUCT_PART_ROOT_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([a-z0-9]+(?:-[a-z0-9]+)*)$/u;
@@ -37,6 +42,7 @@ export interface ProductPartClearRestartResult {
   readonly deletedManagedPaths: readonly string[];
   readonly deletedProductPartPlanPaths: readonly string[];
   readonly deletedUnifiedSessionPaths: readonly string[];
+  readonly deletedWorktreePaths: readonly string[];
   readonly partId: string;
   readonly recreatedDraftPaths: readonly string[];
   readonly recreatedProductPartPlanPaths: readonly string[];
@@ -71,11 +77,17 @@ export const isProductPartRootClear = (target: {
 
 const isProductPartSessionInTarget = (
   request: ProductPartClearRequest,
-  session: Session
-): boolean =>
-  session.workspacePath === request.workspacePath &&
-  session.initiativeSlug === request.workspaceSlug &&
-  session.stage === request.target.workflowPath;
+  session: Session,
+  productPartWorktreeRoot: string
+): boolean => {
+  const stage = session.stage ?? "";
+  return (
+    session.initiativeSlug === request.workspaceSlug &&
+    (session.stage === request.target.workflowPath ||
+      stage.startsWith(`${request.target.workflowPath}/`) ||
+      isWithinPath(productPartWorktreeRoot, session.workspacePath))
+  );
+};
 
 const clearProductPartRuntimeSessions = (
   request: ProductPartClearRequest,
@@ -84,10 +96,18 @@ const clearProductPartRuntimeSessions = (
   const deletedSessionIds: string[] = [];
   const providerNativeSessions: ProviderNativeSessionRef[] = [];
   let restartProviderId: string | null = null;
-  for (const session of deps.sessionManager.getSessionsByWorkspacePath(
-    request.workspacePath
-  )) {
-    if (!isProductPartSessionInTarget(request, session)) {
+  const partId = parseProductPartRootStage(request.target.workflowPath);
+  const productPartWorktreeRoot = partId
+    ? createProductPartWorktreeRoot({
+        partId,
+        workspacePath: request.workspacePath,
+        workspaceSlug: request.workspaceSlug,
+      })
+    : "";
+  for (const session of deps.sessionManager.listSessions()) {
+    if (
+      !isProductPartSessionInTarget(request, session, productPartWorktreeRoot)
+    ) {
       continue;
     }
     restartProviderId ??= session.providerId;
@@ -388,6 +408,11 @@ export const clearAndRestartProductPart = async (
     workspacePath: request.workspacePath,
     workspaceSlug: request.workspaceSlug,
   });
+  const deletedWorktreePaths = await removeProductPartWorktrees({
+    partId,
+    workspacePath: request.workspacePath,
+    workspaceSlug: request.workspaceSlug,
+  });
   const progress = await readDiagramModulesProgressSnapshot({
     workspaceRoot: request.workspacePath,
     workspaceSlug: request.workspaceSlug,
@@ -414,6 +439,7 @@ export const clearAndRestartProductPart = async (
       deletedContinuityPaths,
       deletedManagedPaths: removedArtifacts.deletedManagedPaths,
       deletedProductPartPlanPaths: removedArtifacts.deletedProductPartPlanPaths,
+      deletedWorktreePaths,
       deletedUnifiedSessionPaths,
       recreatedDraftPaths: bootstrap.writtenDrafts
         .filter((draft) => draft.action !== "unchanged")

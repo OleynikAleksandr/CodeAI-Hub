@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4ed702f77",
+  "lastRecordedCommit": "c6bd69623",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.product-part-coordination-commit-pair.task1",
-  "expectedCommitMessage": "fix: add product part coordination commit pair",
+  "currentTaskId": "development-tree-cluster-contract.phase11.product-part-clear-worktrees.task1",
+  "expectedCommitMessage": "fix: clear product part downstream worktrees",
   "debt": {
-    "expectedCommitMessage": "fix: add product part coordination commit pair",
-    "preCommitHead": "4ed702f77",
+    "expectedCommitMessage": "fix: clear product part downstream worktrees",
+    "preCommitHead": "c6bd69623",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.product-part-coordination-commit-pair.task1"
+    "taskId": "development-tree-cluster-contract.phase11.product-part-clear-worktrees.task1"
   }
 }
 ```
@@ -229,9 +229,9 @@ Verification evidence:
 95. [DONE] `development-tree-cluster-contract.phase11.codex-settings-migration.task1` Migrate persisted Codex settings away from unsupported `gpt-5.3-codex` defaults and stale reasoning entries (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: migrate unsupported codex model settings`).
 96. [DONE] Git Commit: `fix: migrate unsupported codex model settings` (hash: 4ed702f77)
 97. [DONE] `development-tree-cluster-contract.phase11.product-part-coordination-commit-pair.task1` Ensure lead Product Part Downstream Coordination todo-plan entries are commit-backed and existing accepted plans are repaired when Core advances to Phase 5 (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: add product part coordination commit pair`).
-98. [PENDING] Git Commit: `fix: add product part coordination commit pair` (hash: TBD)
-99. [TODO] `development-tree-cluster-contract.phase11.product-part-clear-worktrees.task1` Remove downstream Development Tree worktrees when Clear&Do restarts a Product Part root node (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part downstream worktrees`).
-100. [TODO] Git Commit: `fix: clear product part downstream worktrees` (hash: TBD)
+98. [DONE] Git Commit: `fix: add product part coordination commit pair` (hash: c6bd69623)
+99. [DONE] `development-tree-cluster-contract.phase11.product-part-clear-worktrees.task1` Remove downstream Development Tree worktrees when Clear&Do restarts a Product Part root node (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/product-part-worktree-cleanup.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part downstream worktrees`).
+100. [PENDING] Git Commit: `fix: clear product part downstream worktrees` (hash: TBD)
 101. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup, Product Part coordination plan repair, Product Part Clear&Do worktree cleanup, and downstream cluster-contract model inheritance (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify product part restart workflow`).
 102. [TODO] Git Commit: `test: verify product part restart workflow` (hash: TBD)
 
