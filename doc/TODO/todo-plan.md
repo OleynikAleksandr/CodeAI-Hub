@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "6c1bd2017",
+  "lastRecordedCommit": "6527fcdec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase39.release-state.task1",
-  "expectedCommitMessage": "docs: checkpoint 1.2.469 release build state",
+  "currentTaskId": "development-tree-product-part-review.phase39.build-all.task1",
+  "expectedCommitMessage": "build: prepare 1.2.469 unified release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint 1.2.469 release build state",
-    "preCommitHead": "6c1bd2017",
+    "expectedCommitMessage": "build: prepare 1.2.469 unified release artifacts",
+    "preCommitHead": "6527fcdec",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase39.release-state.task1"
+    "taskId": "development-tree-product-part-review.phase39.build-all.task1"
   }
 }
 ```
@@ -414,9 +414,9 @@
 146. [DONE] `development-tree-product-part-review.phase39.release-notes.task1` Prepare release notes for future version `1.2.469` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.469 release notes`).
 147. [DONE] Git Commit: `docs: prepare 1.2.469 release notes` (hash: 6c1bd2017)
 148. [DONE] `development-tree-product-part-review.phase39.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.469 release build state`).
-149. [PENDING] Git Commit: `docs: checkpoint 1.2.469 release build state` (hash: TBD)
-150. [TODO] `development-tree-product-part-review.phase39.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.469` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.469 unified release artifacts`).
-151. [TODO] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: TBD)
+149. [DONE] Git Commit: `docs: checkpoint 1.2.469 release build state` (hash: 6527fcdec)
+150. [DONE] `development-tree-product-part-review.phase39.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.469` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.469 unified release artifacts`).
+151. [PENDING] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: TBD)
 152. [TODO] `development-tree-product-part-review.phase39.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.469` (scope: `codeai-hub-1.2.469.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.469 vsix release`).
 153. [TODO] Git Commit: `build: package 1.2.469 vsix release` (hash: TBD)
 
