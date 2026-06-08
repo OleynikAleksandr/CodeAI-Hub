@@ -20,6 +20,9 @@ const PART_ID = "finder-widget";
 const CLUSTER_ID = "note-selection-cluster";
 const MERGE_BOUNDARY_SCHEMA_RE =
   /codeai-development-tree-node-merge-boundary-v1/u;
+const MERGED_STATUS_RE = /"status": "merged"/u;
+const LOCKED_STATUS_RE = /"status": "locked"/u;
+const UNLOCK_STATE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${PART_ID}.unlock-state.json`;
 
 const runGit = async (
   workspaceRoot: string,
@@ -51,6 +54,43 @@ const initializeMainRepository = async (
   await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
   await runGit(workspaceRoot, ["config", "user.name", "Test"]);
   await writeWorkspaceFile(workspaceRoot, "README.md", "# Test\n");
+  await writeWorkspaceFile(
+    workspaceRoot,
+    UNLOCK_STATE_PATH,
+    `${JSON.stringify(
+      {
+        acceptedOrderPlanCommitHash: "abc123",
+        firstWaveId: "wave-1",
+        firstWaveUnlockNodeIds: [`cluster:${PART_ID}/${CLUSTER_ID}`],
+        nodes: [
+          {
+            clusterId: CLUSTER_ID,
+            dependsOn: [],
+            id: `cluster:${PART_ID}/${CLUSTER_ID}`,
+            kind: "cluster",
+            partId: PART_ID,
+            status: "unlocked",
+          },
+          {
+            clusterId: CLUSTER_ID,
+            dependsOn: [`cluster:${PART_ID}/${CLUSTER_ID}`],
+            id: `module:${PART_ID}/${CLUSTER_ID}/engine-core`,
+            kind: "module",
+            moduleId: "engine-core",
+            partId: PART_ID,
+            reason: "waiting_for_cluster_specification_and_facade_contract",
+            status: "locked",
+          },
+        ],
+        partId: PART_ID,
+        schema: "codeai-development-order-unlock-state-v1",
+        updatedAt: "2026-06-08T00:00:00.000Z",
+        workspaceSlug: WORKSPACE_SLUG,
+      },
+      null,
+      2
+    )}\n`
+  );
   await runGit(workspaceRoot, ["add", "."]);
   await runGit(workspaceRoot, ["commit", "-m", "test: initial"]);
 };
@@ -142,6 +182,13 @@ test("DevelopmentTreeNodeMergeService merges accepted cluster contract files int
       await readFile(path.join(workspaceRoot, result.boundaryPath), "utf8"),
       MERGE_BOUNDARY_SCHEMA_RE
     );
+    assert.ok(result.coordinationCommitHash);
+    const unlockState = await readFile(
+      path.join(workspaceRoot, UNLOCK_STATE_PATH),
+      "utf8"
+    );
+    assert.match(unlockState, MERGED_STATUS_RE);
+    assert.match(unlockState, LOCKED_STATUS_RE);
     assert.equal(await runGit(workspaceRoot, ["status", "--porcelain"]), "");
     assert.equal(await runGit(worktreeRoot, ["status", "--porcelain"]), "");
   } finally {

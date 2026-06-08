@@ -13,10 +13,12 @@ export interface DevelopmentOrderUnlockNodeState {
   readonly dependsOn: readonly string[];
   readonly id: string;
   readonly kind: string;
+  readonly mergeCommitHash?: string;
+  readonly mergedAt?: string;
   readonly moduleId?: string;
   readonly partId: string;
   readonly reason?: string;
-  readonly status: "locked" | "unlocked" | "waiting";
+  readonly status: "locked" | "merged" | "unlocked" | "waiting";
 }
 
 export interface DevelopmentOrderUnlockState {
@@ -151,3 +153,26 @@ export const createDevelopmentOrderUnlockState = (
     workspaceSlug: request.workspaceSlug,
   };
 };
+
+export const markDevelopmentOrderClusterMerged = (params: {
+  readonly clusterId: string;
+  readonly mergeCommitHash: string;
+  readonly partId: string;
+  readonly state: DevelopmentOrderUnlockState;
+  readonly updatedAt: string;
+}): DevelopmentOrderUnlockState => ({
+  ...params.state,
+  nodes: params.state.nodes.map((node) =>
+    node.kind === "cluster" &&
+    node.partId === params.partId &&
+    node.clusterId === params.clusterId
+      ? {
+          ...node,
+          mergeCommitHash: params.mergeCommitHash,
+          mergedAt: params.updatedAt,
+          status: "merged",
+        }
+      : node
+  ),
+  updatedAt: params.updatedAt,
+});

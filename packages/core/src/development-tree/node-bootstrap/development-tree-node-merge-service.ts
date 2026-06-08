@@ -1,8 +1,20 @@
 import { execFile } from "node:child_process";
-import { copyFile, mkdir, realpath, stat, writeFile } from "node:fs/promises";
+import {
+  copyFile,
+  mkdir,
+  readFile,
+  realpath,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import {
+  createDevelopmentOrderUnlockStatePath,
+  type DevelopmentOrderUnlockState,
+  markDevelopmentOrderClusterMerged,
+} from "../product-part-workflow/development-order-plan-unlock-state";
 
 const execFileAsync = promisify(execFile);
 const WORKTREE_BLOCK_RE = /\n\s*\n/u;
@@ -21,6 +33,7 @@ export interface ClusterContractMergeRequest {
 
 export interface ClusterContractMergeResult {
   readonly boundaryPath: string;
+  readonly coordinationCommitHash: string | null;
   readonly copiedPaths: readonly string[];
   readonly mergeCommitHash: string;
   readonly sourceHead: string;
@@ -173,8 +186,14 @@ export class DevelopmentTreeNodeMergeService {
       paths: [...copiedPaths, boundaryPath],
       workspaceRoot: targetWorkspaceRoot,
     });
+    const coordinationCommitHash = await this.markClusterMerged({
+      ...request,
+      mergeCommitHash: mergeCommit.hash,
+      targetWorkspaceRoot,
+    });
     return {
       boundaryPath,
+      coordinationCommitHash,
       copiedPaths,
       mergeCommitHash: mergeCommit.hash,
       sourceHead,
@@ -233,5 +252,40 @@ export class DevelopmentTreeNodeMergeService {
       )}\n`,
       "utf8"
     );
+  }
+
+  private async markClusterMerged(
+    request: ClusterContractMergeRequest & {
+      readonly mergeCommitHash: string;
+      readonly targetWorkspaceRoot: string;
+    }
+  ): Promise<string | null> {
+    const unlockStatePath = createDevelopmentOrderUnlockStatePath(request);
+    const absolutePath = path.join(
+      request.targetWorkspaceRoot,
+      unlockStatePath
+    );
+    const content = await readFile(absolutePath, "utf8").catch(() => null);
+    if (!content) {
+      return null;
+    }
+    const state = markDevelopmentOrderClusterMerged({
+      clusterId: request.clusterId,
+      mergeCommitHash: request.mergeCommitHash,
+      partId: request.partId,
+      state: JSON.parse(content) as DevelopmentOrderUnlockState,
+      updatedAt: new Date().toISOString(),
+    });
+    await writeFile(
+      absolutePath,
+      `${JSON.stringify(state, null, 2)}\n`,
+      "utf8"
+    );
+    const commit = await this.git.commit({
+      commitMessage: `chore: advance ${request.clusterId} coordination state`,
+      paths: [unlockStatePath],
+      workspaceRoot: request.targetWorkspaceRoot,
+    });
+    return commit.noStagedChanges ? null : commit.hash;
   }
 }
