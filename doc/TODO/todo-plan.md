@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "3d9bb86d1",
+  "lastRecordedCommit": "8adc151a0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase9.vsix.task1",
-  "expectedCommitMessage": "build: package cluster contract subagent vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase10.repair-continuation.task1",
+  "expectedCommitMessage": "fix: continue lead order plan repair after validation failure",
   "debt": {
-    "expectedCommitMessage": "build: package cluster contract subagent vsix release",
-    "preCommitHead": "3d9bb86d1",
+    "expectedCommitMessage": "fix: continue lead order plan repair after validation failure",
+    "preCommitHead": "8adc151a0",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase9.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase10.repair-continuation.task1"
   }
 }
 ```
@@ -150,18 +150,27 @@ Verification evidence:
 44. [DONE] `development-tree-cluster-contract.phase9.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract subagent unified release artifacts`).
 45. [DONE] Git Commit: `build: prepare cluster contract subagent unified release artifacts` (hash: 3d9bb86d1)
 46. [DONE] `development-tree-cluster-contract.phase9.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract subagent vsix release`).
-47. [PENDING] Git Commit: `build: package cluster contract subagent vsix release` (hash: TBD)
+47. [DONE] Git Commit: `build: package cluster contract subagent vsix release` (hash: 8adc151a0)
 
 ## Phase 10 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: FinderWidget Cluster Contract Retest
 
-48. [TODO] `development-tree-cluster-contract.phase10.user.task1` User installs the release and retests FinderWidget end-to-end: accepted lead `DevelopmentOrderPlan.v2` opens the `note-selection-cluster` cluster-contract sub-agent, the agent creates `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, Core validates and commits them, acceptance returns a merge-ready result to lead Product Part coordination, Core merges the worktree result, and Project Manager shows the Product Part coordination graph with cluster merged and module nodes still locked until the next wave (scope: user workflow; expected commit: none).
+48. [BLOCKED] `development-tree-cluster-contract.phase10.user.task1` User installs the release and retests FinderWidget end-to-end: accepted lead `DevelopmentOrderPlan.v2` opens the `note-selection-cluster` cluster-contract sub-agent, the agent creates `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, Core validates and commits them, acceptance returns a merge-ready result to lead Product Part coordination, Core merges the worktree result, and Project Manager shows the Product Part coordination graph with cluster merged and module nodes still locked until the next wave (scope: user workflow; expected commit: none). Blocker: 2026-06-08 retest showed rejected lead `DevelopmentOrderPlan.draft.json` only emits `managed-workflow-validation`; no internal repair prompt is dispatched back to the agent.
+
+### Stream: Lead Order Plan Repair Continuation
+
+49. [DONE] `development-tree-cluster-contract.phase10.repair-continuation.task1` Dispatch an internal repair prompt when lead Product Part `DevelopmentOrderPlan.v2` validation fails instead of settling after the Core refusal message (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, doc/TODO/todo-plan.md`; expected commit: `fix: continue lead order plan repair after validation failure`).
+50. [PENDING] Git Commit: `fix: continue lead order plan repair after validation failure` (hash: TBD)
+51. [TODO] `development-tree-cluster-contract.phase10.repair-test.task1` Add targeted regression coverage for the lead order-plan validation repair continuation path (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan repair continuation`).
+52. [TODO] Git Commit: `test: verify lead order plan repair continuation` (hash: TBD)
+53. [TODO] `development-tree-cluster-contract.phase10.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release (scope: user workflow; expected commit: none).
+54. [TODO] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none).
 
 ## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-49. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-50. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-51. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+55. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+56. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+57. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

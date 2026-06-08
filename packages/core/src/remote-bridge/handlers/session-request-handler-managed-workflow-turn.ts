@@ -133,39 +133,35 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       this.appendCoreMessage(sessionId, gate);
       return "settled";
     }
+    const managedParams = {
+      sessionId,
+      stage: session.stage,
+      workspaceRoot: session.workspacePath,
+      workspaceSlug: session.initiativeSlug,
+    };
     if (session.stage === DIAGRAM_MODULES_STAGE) {
-      return await this.handleDiagramModulesTurn({
-        sessionId,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
+      return await this.handleDiagramModulesTurn(managedParams);
     }
     if (session.stage === APPLICATION_SKELETON_STAGE) {
-      return await this.handleApplicationSkeletonTurn({
-        sessionId,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
+      return await this.handleApplicationSkeletonTurn(managedParams);
     }
     if (session.stage === QUALITY_GATES_STAGE) {
-      return await this.handleQualityGatesTurn({
-        sessionId,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
+      return await this.handleQualityGatesTurn(managedParams);
     }
     for (const developmentTreeTurn of [
       this.clusterContractTurn,
       this.productPartBriefTurn,
     ]) {
-      const result = await developmentTreeTurn.handleTurnCompleted({
-        sessionId,
-        stage: session.stage,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
+      const result =
+        await developmentTreeTurn.handleTurnCompleted(managedParams);
       if (result.handled) {
         this.appendCoreMessage(sessionId, result.message);
+        const nextInternalMessage =
+          "nextInternalMessage" in result ? result.nextInternalMessage : null;
+        if (typeof nextInternalMessage === "string" && nextInternalMessage) {
+          this.dispatchAgentContinuation(sessionId, nextInternalMessage);
+          return "continued";
+        }
         return "settled";
       }
     }

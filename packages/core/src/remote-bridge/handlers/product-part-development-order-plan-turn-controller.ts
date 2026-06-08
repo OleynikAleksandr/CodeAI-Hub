@@ -15,6 +15,7 @@ type OrderPlanTurnResult =
   | {
       readonly handled: true;
       readonly message: { readonly content: string; readonly tag: string };
+      readonly nextInternalMessage?: string;
     };
 
 interface OrderPlanGitBoundary {
@@ -189,6 +190,7 @@ const parseOrderPlanJson = (
 
 const createBlockedMessage = (params: {
   readonly diagnostics: readonly string[];
+  readonly nextInternalMessage?: string;
   readonly partId: string;
 }): OrderPlanTurnResult => ({
   handled: true,
@@ -200,7 +202,33 @@ const createBlockedMessage = (params: {
     ].join("\n"),
     tag: "managed-workflow-validation",
   },
+  nextInternalMessage: params.nextInternalMessage,
 });
+
+const createRepairPrompt = (params: {
+  readonly diagnostics: readonly string[];
+  readonly orderPlanJsonPath: string;
+  readonly orderPlanPath: string;
+  readonly partId: string;
+}): string =>
+  [
+    `Core managed repair: lead Product Part \`${params.partId}\` Development Order Plan was rejected by the Core validator.`,
+    "",
+    "Continue in this same session. Repair both artifacts in place:",
+    `- \`${params.orderPlanPath}\``,
+    `- \`${params.orderPlanJsonPath}\``,
+    "",
+    "Diagnostics to fix:",
+    ...params.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+    "",
+    "Use only node ids that exist in the materialized Development Tree and match the validator shapes:",
+    `- Cluster node: \`cluster:${params.partId}/<clusterId>\` with \`kind: "cluster"\` and \`clusterId\`.`,
+    `- Module inside a cluster: \`module:${params.partId}/<clusterId>/<moduleId>\` with \`kind: "module"\`, \`clusterId\`, and \`moduleId\`.`,
+    `- Standalone module: \`standalone-module:${params.partId}/<moduleId>\` with \`kind: "standalone_module"\` and \`moduleId\`; do not encode it as \`module:${params.partId}/<moduleId>\`.`,
+    "",
+    "The first wave may unlock only dependency-free `cluster` or `standalone_module` nodes. Keep module nodes inside clusters locked until their cluster contract exists.",
+    "After editing, respond briefly that the repaired Development Order Plan artifacts are ready for Core validation.",
+  ].join("\n");
 
 export class ProductPartDevelopmentOrderPlanTurnController {
   private readonly gitBoundary: OrderPlanGitBoundary;
@@ -263,7 +291,16 @@ export class ProductPartDevelopmentOrderPlanTurnController {
       workspaceSlug: params.workspaceSlug,
     });
     if (diagnostics.length > 0) {
-      return createBlockedMessage({ diagnostics, partId: params.partId });
+      return createBlockedMessage({
+        diagnostics,
+        nextInternalMessage: createRepairPrompt({
+          diagnostics,
+          orderPlanJsonPath,
+          orderPlanPath,
+          partId: params.partId,
+        }),
+        partId: params.partId,
+      });
     }
     const gitCommit = await this.gitBoundary.commitManagedChanges({
       commitMessage: params.planState.expectedCommitMessage ?? "",
