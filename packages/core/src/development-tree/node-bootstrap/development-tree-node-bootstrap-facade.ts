@@ -3,6 +3,12 @@ import {
   ProductPartDevelopmentBriefPlanWriter,
 } from "../product-part-workflow/product-part-development-brief-plan-writer";
 import {
+  ClusterContractAgentBootstrapper,
+  type ClusterContractAgentBootstrapperOptions,
+  type ClusterContractAgentBootstrapRequest,
+  type ClusterContractAgentBootstrapResult,
+} from "./cluster-contract-agent-bootstrapper";
+import {
   DevelopmentTreeFilesystemWatcher,
   type DevelopmentTreeFilesystemWatcherRequest,
 } from "./development-tree-filesystem-watcher";
@@ -118,5 +124,14 @@ export class DevelopmentTreeNodeBootstrapFacade {
     params: DevelopmentTreeClusterWorktreeRequest
   ): Promise<DevelopmentTreeClusterWorktreeResult> {
     return await this.worktreeService.createClusterContractWorktree(params);
+  }
+
+  async bootstrapUnlockedClusterContracts(
+    params: ClusterContractAgentBootstrapRequest,
+    options: ClusterContractAgentBootstrapperOptions
+  ): Promise<readonly ClusterContractAgentBootstrapResult[]> {
+    return await new ClusterContractAgentBootstrapper(
+      options
+    ).bootstrapFirstWave(params);
   }
 }
