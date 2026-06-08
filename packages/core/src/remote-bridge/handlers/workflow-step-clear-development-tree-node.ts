@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import {
+  access,
   mkdir,
   readdir,
   readFile,
@@ -213,6 +214,15 @@ const listGitWorktreePaths = async (
     .filter(Boolean);
 };
 
+const pathExists = async (absolutePath: string): Promise<boolean> => {
+  try {
+    await access(absolutePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const createFallbackWorktreePaths = (params: {
   readonly parsedNode: ParsedDevelopmentTreeNode;
   readonly workspacePath: string;
@@ -288,8 +298,10 @@ const removeNodeWorktrees = async (params: {
       ).catch(async () => {
         await rm(registeredPath, { force: true, recursive: true });
       });
-    } else {
+    } else if (await pathExists(candidate)) {
       await rm(candidate, { force: true, recursive: true });
+    } else {
+      continue;
     }
     removed.push(path.relative(params.workspacePath, candidate));
     await removeEmptyParents({
@@ -356,6 +368,7 @@ const clearContinuity = async (params: {
   );
   const targetRoot = path.join(continuityRoot, params.target.workflowPath);
   await rm(targetRoot, { force: true, recursive: true });
+  await mkdir(continuityRoot, { recursive: true });
   const indexPath = path.join(continuityRoot, "index.json");
   const raw = await readFile(indexPath, "utf8").catch(() => null);
   if (raw) {

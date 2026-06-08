@@ -363,31 +363,30 @@ test("workflow step clear prunes provider-native workflow sessions only", async 
   }
 });
 
-test("workflow step clear keeps downstream development-tree node clear fail-closed", async () => {
-  const result = await runClear({
-    target: {
-      codeWorkspacePath: null,
-      kind: "development_tree_node",
-      workflowPath:
-        "development_tree/materialized/product-parts/core/clusters/runtime",
-    },
-    workspacePath: "/tmp/demo",
-    workspaceSlug: "demo-workspace",
-  });
+test("workflow step clear routes downstream development-tree node clear through Core", async () => {
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "clear-node-route-"));
+  try {
+    const result = await runClear({
+      target: {
+        codeWorkspacePath: null,
+        kind: "development_tree_node",
+        workflowPath:
+          "development_tree/materialized/product-parts/core/clusters/runtime",
+      },
+      workspacePath: workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
 
-  assert.equal(result.statusCode, 501);
-  assert.deepEqual(result.payload, {
-    code: "workflow_clear_development_tree_boundary_pending",
-    error:
-      "Development Tree node clear is unavailable until node-level Git boundary rollback is implemented",
-    target: {
-      codeWorkspacePath: null,
-      kind: "development_tree_node",
-      workflowPath:
-        "development_tree/materialized/product-parts/core/clusters/runtime",
-    },
-  });
-  assert.deepEqual(result.resetCalls, []);
+    assert.equal(result.statusCode, 200);
+    assert.deepEqual(result.resetCalls, ["demo-workspace"]);
+    assert.deepEqual(
+      (result.payload as { readonly deletedWorktreePaths: readonly string[] })
+        .deletedWorktreePaths,
+      []
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
 });
 
 test("workflow step clear removes Diagram Modules work through Git rollback", async () => {
