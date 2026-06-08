@@ -49,7 +49,6 @@ export const CODEX_MODEL_CAPABILITIES = [
   createCodexModelCapabilities(SPARK_MODEL_ID, {
     supportsReasoningSummary: false,
   }),
-  createCodexModelCapabilities("gpt-5.3-codex"),
   createCodexModelCapabilities("gpt-5.4-mini"),
   createCodexModelCapabilities("gpt-5.4"),
   createCodexModelCapabilities("gpt-5.5"),

@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "3feaa4654",
+  "lastRecordedCommit": "8f469293f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.codex-model-registry.task1",
-  "expectedCommitMessage": "fix: remove unsupported codex model from defaults",
+  "currentTaskId": "development-tree-cluster-contract.phase11.codex-model-profile.task1",
+  "expectedCommitMessage": "fix: align codex model profiles with supported models",
   "debt": {
-    "expectedCommitMessage": "fix: remove unsupported codex model from defaults",
-    "preCommitHead": "3feaa4654",
+    "expectedCommitMessage": "fix: align codex model profiles with supported models",
+    "preCommitHead": "8f469293f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.codex-model-registry.task1"
+    "taskId": "development-tree-cluster-contract.phase11.codex-model-profile.task1"
   }
 }
 ```
@@ -215,24 +215,28 @@ Verification evidence:
 ### Stream: Codex Model Binding Regression Fix
 
 83. [DONE] `development-tree-cluster-contract.phase11.codex-model-registry.task1` Remove unsupported Codex model `gpt-5.3-codex` from active/default registries used by settings and runtime model resolution (scope: `src/types/codex-model-registry.ts, packages/core/src/config/provider-defaults-resolver.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; expected commit: `fix: remove unsupported codex model from defaults`).
-84. [PENDING] Git Commit: `fix: remove unsupported codex model from defaults` (hash: TBD)
-85. [TODO] `development-tree-cluster-contract.phase11.codex-model-profile.task1` Remove unsupported Codex model `gpt-5.3-codex` from model invocation compatibility profiles and alignment tests (scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts, src/client/project-manager/services/codex-model-registry-alignment.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: align codex model profiles with supported models`).
-86. [TODO] Git Commit: `test: align codex model profiles with supported models` (hash: TBD)
-87. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions inherit the accepted Product Part session model binding instead of resolving defaults from the new worktree (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
-88. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
-89. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
-90. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
+84. [DONE] Git Commit: `fix: remove unsupported codex model from defaults` (hash: 8f469293f)
+85. [DONE] `development-tree-cluster-contract.phase11.codex-model-profile.task1` Remove unsupported Codex model `gpt-5.3-codex` from runtime capabilities and model invocation compatibility profiles (scope: `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts, packages/core/src/model-invocation/model-invocation-profile-resolver.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align codex model profiles with supported models`).
+86. [PENDING] Git Commit: `fix: align codex model profiles with supported models` (hash: TBD)
+87. [TODO] `development-tree-cluster-contract.phase11.codex-runtime-fallback.task1` Replace remaining active runtime fallback defaults that can still select unsupported `gpt-5.3-codex` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `fix: remove unsupported codex runtime fallbacks`).
+88. [TODO] Git Commit: `fix: remove unsupported codex runtime fallbacks` (hash: TBD)
+89. [TODO] `development-tree-cluster-contract.phase11.codex-capture-selection.task1` Replace Project Manager native capture defaults and typed tests that still use unsupported `gpt-5.3-codex` (scope: `src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/settings/native-request-capture-runner.test.ts`; expected commit: `fix: remove unsupported codex capture selection`).
+90. [TODO] Git Commit: `fix: remove unsupported codex capture selection` (hash: TBD)
+91. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions inherit the accepted Product Part session model binding instead of resolving defaults from the new worktree (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
+92. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
+93. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
+94. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
 
 ## Phase 12 - Regression Fix Release Build (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Release Build Confirmation
 
-91. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the downstream model binding regression fix (scope: user workflow; expected commit: none).
+95. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the downstream model binding regression fix (scope: user workflow; expected commit: none).
 
 ## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-92. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-93. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-94. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+96. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+97. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+98. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
