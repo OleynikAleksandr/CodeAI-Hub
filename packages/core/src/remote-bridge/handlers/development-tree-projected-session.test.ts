@@ -3,8 +3,12 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { buildSessionFilePath } from "@codeai-hub/unified-session";
 import { Logger } from "../../telemetry/logger";
+import { WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG } from "../../unified-session/storage";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
+import { DialogHistoryService } from "./dialog-history-service";
 import { DialogListService } from "./dialog-list-service";
 
 const PART_CONTENT = `# Product Part: UI Shell
@@ -37,7 +41,8 @@ const writePart = async (workspaceRoot: string): Promise<void> => {
 };
 
 const writeProjectedUnlockState = async (
-  workspaceRoot: string
+  workspaceRoot: string,
+  worktreePath: string
 ): Promise<void> => {
   const statePath = path.join(
     workspaceRoot,
@@ -67,7 +72,7 @@ const writeProjectedUnlockState = async (
               "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster",
             startedAt: "2026-06-08T12:00:00.000Z",
             status: "unlocked",
-            worktreePath: "/tmp/ui-shell-layout-cluster",
+            worktreePath,
           },
         ],
       },
@@ -78,13 +83,59 @@ const writeProjectedUnlockState = async (
   );
 };
 
+const writeWorktreeCapsuleHistory = async (params: {
+  readonly dialogId: string;
+  readonly providerId: string;
+  readonly workspaceSlug: string;
+  readonly worktreePath: string;
+}): Promise<void> => {
+  const capsule = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: params.worktreePath,
+    workspaceSlug: params.workspaceSlug,
+  });
+  const historyPath = buildSessionFilePath({
+    rootDirectory: capsule.sessionsRoot.absolutePath,
+    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    provider: params.providerId,
+    sessionId: params.dialogId,
+  });
+  await mkdir(path.dirname(historyPath), { recursive: true });
+  await writeFile(
+    historyPath,
+    [
+      JSON.stringify({
+        type: "session-open",
+        timestamp: "2026-06-08T12:00:00.000Z",
+        provider: params.providerId,
+        sessionId: params.dialogId,
+      }),
+      JSON.stringify({
+        type: "message",
+        timestamp: "2026-06-08T12:01:00.000Z",
+        provider: params.providerId,
+        messageId: "cluster-message-1",
+        role: "assistant",
+        content: "Cluster contract draft accepted for review.",
+      }),
+    ].join("\n"),
+    "utf8"
+  );
+};
+
 test("projected cluster sessions are visible from the main workspace", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "devtree-projected-session-")
   );
+  const worktreePath = `${workspaceRoot}.worktrees/ui-shell-layout-cluster`;
   try {
     await writePart(workspaceRoot);
-    await writeProjectedUnlockState(workspaceRoot);
+    await writeProjectedUnlockState(workspaceRoot, worktreePath);
+    await writeWorktreeCapsuleHistory({
+      dialogId: "cluster-session-1",
+      providerId: "codex",
+      workspaceSlug: "demo",
+      worktreePath,
+    });
 
     const snapshot = await readDevelopmentTreeSnapshot({
       generatedPartIds: ["ui-shell"],
@@ -108,7 +159,7 @@ test("projected cluster sessions are visible from the main workspace", async () 
             }
           | undefined
       )?.coordination?.worktreePath,
-      "/tmp/ui-shell-layout-cluster"
+      worktreePath
     );
 
     const dialogs = await new DialogListService({
@@ -118,7 +169,31 @@ test("projected cluster sessions are visible from the main workspace", async () 
     assert.equal(dialogs[0]?.dialogId, "cluster-session-1");
     assert.equal(dialogs[0]?.stage, cluster?.workflowPath);
     assert.equal(dialogs[0]?.modelBinding?.modelId, "gpt-5.4-mini");
+    assert.equal(
+      (
+        dialogs[0] as
+          | {
+              readonly worktreePath?: string;
+            }
+          | undefined
+      )?.worktreePath,
+      worktreePath
+    );
+
+    const history = await new DialogHistoryService({
+      logger: new Logger("error"),
+    }).readHistory({
+      dialogId: "cluster-session-1",
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+    assert.equal(history.messages.length, 1);
+    assert.equal(
+      history.messages[0]?.content,
+      "Cluster contract draft accepted for review."
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
+    await rm(worktreePath, { force: true, recursive: true });
   }
 });
