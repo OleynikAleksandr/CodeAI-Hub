@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4153f455b",
+  "lastRecordedCommit": "dabbf0ad0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase14.main-projection-readmodel.task1",
-  "expectedCommitMessage": "fix: expose projected cluster sessions",
+  "currentTaskId": "development-tree-cluster-contract.phase14.worktree-ledger.task1",
+  "expectedCommitMessage": "fix: commit cluster contract review ledger",
   "debt": {
-    "expectedCommitMessage": "fix: expose projected cluster sessions",
-    "preCommitHead": "4153f455b",
+    "expectedCommitMessage": "fix: commit cluster contract review ledger",
+    "preCommitHead": "dabbf0ad0",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase14.main-projection-readmodel.task1"
+    "taskId": "development-tree-cluster-contract.phase14.worktree-ledger.task1"
   }
 }
 ```
@@ -282,12 +282,12 @@ Release evidence:
 119. [DONE] `development-tree-cluster-contract.phase14.main-projection.task1` Persist cluster-contract session projection in the main workspace when Core bootstraps a downstream worktree session, including node id, stage, worktree path, branch, session id, and inherited model binding (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/product-part-workflow, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `fix: project cluster sessions into main workspace`).
 120. [DONE] Git Commit: `fix: project cluster sessions into main workspace` (hash: 4153f455b)
 121. [DONE] `development-tree-cluster-contract.phase14.main-projection-readmodel.task1` Expose projected downstream sessions through the Core workflow-state/dialog projection so Project Manager can show/open cluster sessions from the main Product Part coordination surface (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`; expected commit: `fix: expose projected cluster sessions`).
-122. [PENDING] Git Commit: `fix: expose projected cluster sessions` (hash: TBD)
+122. [DONE] Git Commit: `fix: expose projected cluster sessions` (hash: dabbf0ad0)
 
 ### Stream: Clean Worktree Ledger Boundary
 
-123. [TODO] `development-tree-cluster-contract.phase14.worktree-ledger.task1` Ensure cluster-contract worktree draft review leaves its managed todo-plan and required coordination metadata committed or intentionally ignored, so the worktree is clean after Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract review ledger`).
-124. [TODO] Git Commit: `fix: commit cluster contract review ledger` (hash: TBD)
+123. [DONE] `development-tree-cluster-contract.phase14.worktree-ledger.task1` Ensure cluster-contract worktree draft review leaves its managed todo-plan and required coordination metadata committed or intentionally ignored, so the worktree is clean after Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract review ledger`).
+124. [PENDING] Git Commit: `fix: commit cluster contract review ledger` (hash: TBD)
 
 ### Stream: Worktree Root Naming
 

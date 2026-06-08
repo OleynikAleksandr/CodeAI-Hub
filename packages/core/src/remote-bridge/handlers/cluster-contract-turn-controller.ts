@@ -48,6 +48,9 @@ const createPlanPath = (params: {
 }): string =>
   `doc/TODO/stages/development-tree/product-parts/${params.partId}/clusters/${params.clusterId}/todo-plan.md`;
 
+const createContinuityLedgerPath = (workspaceSlug: string): string =>
+  `.codeai-hub/${workspaceSlug}/continuity`;
+
 const createArtifactPath = (params: {
   readonly clusterId: string;
   readonly fileName: string;
@@ -253,7 +256,7 @@ export class ClusterContractTurnController {
     );
     await this.git.commit({
       commitMessage: "chore: advance managed workflow ledger",
-      paths: [planPath],
+      paths: [planPath, createContinuityLedgerPath(params.workspaceSlug)],
       workspaceRoot: params.workspaceRoot,
     });
     return {
