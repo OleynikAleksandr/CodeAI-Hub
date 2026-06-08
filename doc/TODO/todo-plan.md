@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "edddee5c5",
+  "lastRecordedCommit": "a8bbedab6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.initial-prompt-test.task1",
-  "expectedCommitMessage": "test: verify lead order plan initial prompt node ids",
+  "currentTaskId": "development-tree-cluster-contract.phase10.order-plan-wave-signal.task1",
+  "expectedCommitMessage": "fix: signal order plan first wave bootstrap",
   "debt": {
-    "expectedCommitMessage": "test: verify lead order plan initial prompt node ids",
-    "preCommitHead": "edddee5c5",
+    "expectedCommitMessage": "fix: signal order plan first wave bootstrap",
+    "preCommitHead": "a8bbedab6",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.initial-prompt-test.task1"
+    "taskId": "development-tree-cluster-contract.phase10.order-plan-wave-signal.task1"
   }
 }
 ```
@@ -181,13 +181,33 @@ Verification evidence:
 61. [DONE] `development-tree-cluster-contract.phase10.initial-prompt.task1` Clarify the initial lead `DevelopmentOrderPlan.v2` assignment prompt with exact cluster, cluster-module, and standalone-module node id shapes before repair is needed (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify lead order plan initial prompt node ids`).
 62. [DONE] Git Commit: `fix: clarify lead order plan initial prompt node ids` (hash: edddee5c5)
 63. [DONE] `development-tree-cluster-contract.phase10.initial-prompt-test.task1` Add targeted regression coverage proving the initial lead order-plan prompt includes standalone-module node guidance and a parseable v2 example (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan initial prompt node ids`).
-64. [PENDING] Git Commit: `test: verify lead order plan initial prompt node ids` (hash: TBD)
-65. [TODO] `development-tree-cluster-contract.phase10.next-release-confirm.task1` Ask the user for explicit confirmation before building the next initial-prompt regression-fix release (scope: user workflow; expected commit: none).
+64. [DONE] Git Commit: `test: verify lead order plan initial prompt node ids` (hash: a8bbedab6)
+65. [DONE] `development-tree-cluster-contract.phase10.next-release-confirm.task1` Ask the user for explicit confirmation before building the next initial-prompt regression-fix release (scope: user workflow; expected commit: none). Result: user explicitly confirmed continuing fixes and building the next release.
+
+### Stream: Accepted Order Plan First Wave Bootstrap
+
+66. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-signal.task1` Return a typed first-wave bootstrap signal when lead `DevelopmentOrderPlan.v2` review acceptance materializes unlock-state (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: signal order plan first wave bootstrap`).
+67. [PENDING] Git Commit: `fix: signal order plan first wave bootstrap` (hash: TBD)
+68. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-handler.task1` Route Product Part managed review acceptance through a helper that dispatches internal lead prompts and starts first-wave cluster bootstrap when the typed signal is present (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: handle product part first wave bootstrap`).
+69. [TODO] Git Commit: `fix: handle product part first wave bootstrap` (hash: TBD)
+70. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-gateway.task1` Wire the Development Tree agent gateway into user-review session actions so cluster-contract worktrees and sessions can be created after order-plan acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wire order plan first wave bootstrap gateway`).
+71. [TODO] Git Commit: `fix: wire order plan first wave bootstrap gateway` (hash: TBD)
+72. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-test.task1` Add targeted regression coverage proving Product Part order-plan acceptance creates the unlocked cluster-contract session and sends the first cluster prompt (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster wave starts after order plan acceptance`).
+73. [TODO] Git Commit: `test: verify cluster wave starts after order plan acceptance` (hash: TBD)
+
+### Stream: Final Regression Fix Release
+
+74. [TODO] `development-tree-cluster-contract.phase10.final-release-notes.task1` Prepare release notes for the lead order-plan initial prompt and first-wave bootstrap regression fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lead order plan wave bootstrap release notes`).
+75. [TODO] Git Commit: `docs: prepare lead order plan wave bootstrap release notes` (hash: TBD)
+76. [TODO] `development-tree-cluster-contract.phase10.final-build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the final regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan wave bootstrap release artifacts`).
+77. [TODO] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: TBD)
+78. [TODO] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
+79. [TODO] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: TBD)
 
 ## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-66. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-67. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-68. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+80. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+81. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+82. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

@@ -18,6 +18,7 @@ export type ProductPartOrderPlanReviewResult =
   | {
       readonly handled: true;
       readonly message: { readonly content: string; readonly tag: string };
+      readonly startFirstWave?: { readonly partId: string };
     };
 
 const FENCED_JSON_END_RE = /\s*```$/u;
@@ -373,10 +374,11 @@ export class ProductPartDevelopmentOrderPlanReviewController {
         content: [
           `Core: пользователь принял lead Product Part \`${partId}\` Development Order Plan.`,
           `Commit: \`${commit.hash}\`.`,
-          "Lead Product Part workflow переведён в Downstream Product Part Coordination; Core может открыть первую разрешённую wave после materialized unlock-state.",
+          "Lead Product Part workflow переведён в Downstream Product Part Coordination; Core запускает первую разрешённую wave по materialized unlock-state.",
         ].join("\n"),
         tag: "managed-workflow-assignment",
       },
+      startFirstWave: { partId },
     };
   }
 }
