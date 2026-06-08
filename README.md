@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.472** (Lead Order Plan Repair Continuation)
+**Current Release — v1.2.473** (Lead Order Plan First Wave Bootstrap)
+
+This regression-fix release completes the accepted lead Product Part order-plan
+handoff. When the user confirms the accepted `DevelopmentOrderPlan.v2`, Core
+now uses the materialized unlock-state immediately, creates the first unlocked
+Cluster Contract worktree/session, and sends the first cluster prompt instead
+of stopping at Downstream Product Part Coordination.
+
+The lead `DevelopmentOrderPlan.v2` assignment prompt also now includes a valid
+standalone module example up front. The initial prompt distinguishes
+`cluster:<part>/<cluster>`, `module:<part>/<cluster>/<module>`, and
+`standalone-module:<part>/<module>`, so the lead agent should not need a repair
+turn just to correct standalone module ids.
+
+After installing this release, retest the FinderWidget lead Product Part flow:
+accept the Product Part brief, let the lead agent draft the Development Order
+Plan, confirm the order-plan review, and verify that the first cluster-contract
+session starts for `note-selection-cluster`.
+
+**Previous Release — v1.2.472** (Lead Order Plan Repair Continuation)
 
 This regression-fix release keeps the lead Product Part session moving when
 Core rejects `DevelopmentOrderPlan.draft.json`. After validation diagnostics are

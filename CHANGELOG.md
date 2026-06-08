@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.473] - 2026-06-08
+### Fixed
+- **Lead Product Part order-plan acceptance now starts the first unlocked cluster-contract wave.** Confirming the accepted `DevelopmentOrderPlan.v2` no longer stops at Downstream Product Part Coordination; Core now routes the accepted unlock-state into the cluster-contract bootstrapper, creates the first cluster worktree/session, and sends the first cluster prompt.
+- **The initial lead order-plan prompt now includes standalone module node guidance.** The assignment prompt now shows a valid `standalone-module:<part>/<module>` node with `kind: "standalone_module"` and explicitly forbids encoding standalone modules as two-segment `module:<part>/<module>` ids.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-managed-review-decision-handler.test.js`
+
 ## [1.2.472] - 2026-06-08
 ### Fixed
 - **Lead Product Part order-plan validation failures now continue the agent turn.** When Core rejects `DevelopmentOrderPlan.draft.json`, it emits diagnostics to the user and sends an internal repair continuation back to the same lead Product Part session instead of leaving the agent idle after `managed-workflow-validation`.

@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "620882b5a",
+  "lastRecordedCommit": "b1721b877",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.order-plan-wave-test.task1",
-  "expectedCommitMessage": "test: verify cluster wave starts after order plan acceptance",
+  "currentTaskId": "development-tree-cluster-contract.phase10.final-release-notes.task1",
+  "expectedCommitMessage": "docs: prepare lead order plan wave bootstrap release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify cluster wave starts after order plan acceptance",
-    "preCommitHead": "620882b5a",
+    "expectedCommitMessage": "docs: prepare lead order plan wave bootstrap release notes",
+    "preCommitHead": "b1721b877",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.order-plan-wave-test.task1"
+    "taskId": "development-tree-cluster-contract.phase10.final-release-notes.task1"
   }
 }
 ```
@@ -193,12 +193,12 @@ Verification evidence:
 70. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-gateway.task1` Wire the Development Tree agent gateway into user-review session actions so cluster-contract worktrees and sessions can be created after order-plan acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wire order plan first wave bootstrap gateway`).
 71. [DONE] Git Commit: `fix: wire order plan first wave bootstrap gateway` (hash: 620882b5a)
 72. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-test.task1` Add targeted regression coverage proving Product Part order-plan acceptance creates the unlocked cluster-contract session and sends the first cluster prompt (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster wave starts after order plan acceptance`).
-73. [PENDING] Git Commit: `test: verify cluster wave starts after order plan acceptance` (hash: TBD)
+73. [DONE] Git Commit: `test: verify cluster wave starts after order plan acceptance` (hash: b1721b877)
 
 ### Stream: Final Regression Fix Release
 
-74. [TODO] `development-tree-cluster-contract.phase10.final-release-notes.task1` Prepare release notes for the lead order-plan initial prompt and first-wave bootstrap regression fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lead order plan wave bootstrap release notes`).
-75. [TODO] Git Commit: `docs: prepare lead order plan wave bootstrap release notes` (hash: TBD)
+74. [DONE] `development-tree-cluster-contract.phase10.final-release-notes.task1` Prepare release notes for the lead order-plan initial prompt and first-wave bootstrap regression fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lead order plan wave bootstrap release notes`).
+75. [PENDING] Git Commit: `docs: prepare lead order plan wave bootstrap release notes` (hash: TBD)
 76. [TODO] `development-tree-cluster-contract.phase10.final-build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the final regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan wave bootstrap release artifacts`).
 77. [TODO] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: TBD)
 78. [TODO] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
