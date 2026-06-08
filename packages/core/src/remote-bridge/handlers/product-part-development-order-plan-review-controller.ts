@@ -1,5 +1,9 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  createDevelopmentOrderUnlockState,
+  createDevelopmentOrderUnlockStatePath,
+} from "../../development-tree/product-part-workflow/development-order-plan-unlock-state";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 
 interface ManagedPlanState {
@@ -20,6 +24,7 @@ const FENCED_JSON_END_RE = /\s*```$/u;
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const PLAN_END = "<!-- codeai-plan-state:end -->";
 const PLAN_START = "<!-- codeai-plan-state:start -->";
+const ORDER_PLAN_JSON_FILE_NAME = "DevelopmentOrderPlan.draft.json";
 const PRODUCT_PART_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)$/u;
 
@@ -80,6 +85,12 @@ const createManagedDecisionPath = (params: {
   readonly workspaceSlug: string;
 }): string =>
   `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-product-parts/${params.partId}.json`;
+
+const createOrderPlanJsonPath = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/${ORDER_PLAN_JSON_FILE_NAME}`;
 
 const createContinuityIndexPath = (workspaceSlug: string): string =>
   `.codeai-hub/${workspaceSlug}/continuity/index.json`;
@@ -195,6 +206,28 @@ const appendDownstreamCoordinationPhaseIfMissing = (params: {
   ].join("\n");
 };
 
+const readOrderPlanJson = async (params: {
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<Record<string, unknown> | null> => {
+  const content = await readText(
+    params.workspaceRoot,
+    createOrderPlanJsonPath(params)
+  ).catch(() => null);
+  if (!content) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(content) as unknown;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
+};
+
 const createBlockedMessage = (params: {
   readonly diagnostic: string;
   readonly partId: string;
@@ -234,6 +267,37 @@ export class ProductPartDevelopmentOrderPlanReviewController {
       partId,
       workspaceSlug: params.workspaceSlug,
     });
+    const unlockStatePath = createDevelopmentOrderUnlockStatePath({
+      partId,
+      workspaceSlug: params.workspaceSlug,
+    });
+    const orderPlanJson = await readOrderPlanJson({
+      partId,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    if (!orderPlanJson) {
+      return createBlockedMessage({
+        diagnostic: `${ORDER_PLAN_JSON_FILE_NAME} is missing or invalid.`,
+        partId,
+      });
+    }
+    const updatedAt = new Date().toISOString();
+    await writeText(
+      params.workspaceRoot,
+      unlockStatePath,
+      `${JSON.stringify(
+        createDevelopmentOrderUnlockState({
+          acceptedOrderPlanCommitHash: planState.lastRecordedCommit ?? "",
+          partId,
+          plan: orderPlanJson,
+          updatedAt,
+          workspaceSlug: params.workspaceSlug,
+        }),
+        null,
+        2
+      )}\n`
+    );
     await writeText(
       params.workspaceRoot,
       managedDecisionPath,
@@ -246,7 +310,7 @@ export class ProductPartDevelopmentOrderPlanReviewController {
           reviewState: "order_plan_accepted",
           schema: "codeai-development-order-plan-managed-v1",
           sessionId: params.sessionId,
-          updatedAt: new Date().toISOString(),
+          updatedAt,
         },
         null,
         2
@@ -256,6 +320,7 @@ export class ProductPartDevelopmentOrderPlanReviewController {
       commitMessage: planState.expectedCommitMessage,
       paths: await uniqueExistingPaths(params.workspaceRoot, [
         managedDecisionPath,
+        unlockStatePath,
         `.codeai-hub/${params.workspaceSlug}/continuity/${params.stage}/`,
       ]),
       workspaceRoot: params.workspaceRoot,

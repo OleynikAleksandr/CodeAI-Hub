@@ -19,7 +19,9 @@ const BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/
 const ORDER_PLAN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/DevelopmentOrderPlan.draft.md`;
 const ORDER_PLAN_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/DevelopmentOrderPlan.draft.json`;
 const CONTINUITY_INDEX_PATH = `.codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`;
+const MATERIALIZED_MODULE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/clusters/${CLUSTER_ID}/modules/${MODULE_ID}`;
 const PLAN_PATH = `doc/TODO/stages/development-tree/product-parts/${PART_ID}/todo-plan.md`;
+const UNLOCK_STATE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${PART_ID}.unlock-state.json`;
 const ACCEPTED_BRIEF_COMMIT_RE =
   /docs: update engine product part development brief/u;
 const AGENT_TOUCHED_TRUE_RE = /^agentTouched: true$/mu;
@@ -418,6 +420,18 @@ test("Lead Product Part order plan review acceptance opens downstream coordinati
     assert.match(plan, LEAD_ORDER_REVIEW_DONE_RE);
     assert.match(plan, LEAD_ORDER_REVIEW_GIT_COMMIT_RE);
     assert.match(plan, DOWNSTREAM_IN_PROGRESS_RE);
+    const unlockState = await readFile(
+      path.join(workspaceRoot, UNLOCK_STATE_PATH),
+      "utf8"
+    );
+    assert.match(
+      unlockState,
+      new RegExp(`"id": "${CLUSTER_NODE_ID}"[\\s\\S]*"status": "unlocked"`)
+    );
+    assert.match(
+      unlockState,
+      new RegExp(`"id": "${MODULE_NODE_ID}"[\\s\\S]*"status": "locked"`)
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -434,22 +448,9 @@ const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
     createReviewPlan(isLeadPart)
   );
   await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
-  await mkdir(
-    path.join(
-      workspaceRoot,
-      ".codeai-hub",
-      WORKSPACE_SLUG,
-      "development_tree",
-      "materialized",
-      "product-parts",
-      PART_ID,
-      "clusters",
-      CLUSTER_ID,
-      "modules",
-      MODULE_ID
-    ),
-    { recursive: true }
-  );
+  await mkdir(path.join(workspaceRoot, MATERIALIZED_MODULE_PATH), {
+    recursive: true,
+  });
   await commitAll(
     workspaceRoot,
     "docs: update engine product part development brief"

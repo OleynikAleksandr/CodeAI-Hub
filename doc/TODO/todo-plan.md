@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "0a1b1b8ab",
+  "lastRecordedCommit": "578bf28e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase2.lead-plan.task1",
-  "expectedCommitMessage": "feat: keep lead product part in downstream coordination",
+  "currentTaskId": "development-tree-cluster-contract.phase2.unlock-state.task1",
+  "expectedCommitMessage": "feat: persist development order unlock state",
   "debt": {
-    "expectedCommitMessage": "feat: keep lead product part in downstream coordination",
-    "preCommitHead": "0a1b1b8ab",
+    "expectedCommitMessage": "feat: persist development order unlock state",
+    "preCommitHead": "578bf28e7",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase2.lead-plan.task1"
+    "taskId": "development-tree-cluster-contract.phase2.unlock-state.task1"
   }
 }
 ```
@@ -67,9 +67,9 @@
 ### Stream: Downstream Coordination Instead Of Immediate Return
 
 7. [DONE] `development-tree-cluster-contract.phase2.lead-plan.task1` Change lead Product Part managed plan advancement so accepted `DevelopmentOrderPlan.v2` opens a downstream coordination phase and moves `User Return And Revisions` to the final assembled/paused Product Part boundary (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: keep lead product part in downstream coordination`).
-8. [PENDING] Git Commit: `feat: keep lead product part in downstream coordination` (hash: TBD)
-9. [TODO] `development-tree-cluster-contract.phase2.unlock-state.task1` Persist accepted order-plan unlock state for first-wave cluster/standalone module nodes, including locked reasons for later module nodes (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: persist development order unlock state`).
-10. [TODO] Git Commit: `feat: persist development order unlock state` (hash: TBD)
+8. [DONE] Git Commit: `feat: keep lead product part in downstream coordination` (hash: 578bf28e7)
+9. [DONE] `development-tree-cluster-contract.phase2.unlock-state.task1` Persist accepted order-plan unlock state for first-wave cluster/standalone module nodes, including locked reasons for later module nodes (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: persist development order unlock state`).
+10. [PENDING] Git Commit: `feat: persist development order unlock state` (hash: TBD)
 
 ## Phase 3 - Cluster Sub-Agent Worktree Bootstrap (owner: Codex, updated: 2026-06-08)
 
