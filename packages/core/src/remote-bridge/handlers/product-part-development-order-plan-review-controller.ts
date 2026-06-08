@@ -66,6 +66,9 @@ const createTaskPrefix = (partId: string): string =>
 const createOrderPlanReviewTaskId = (partId: string): string =>
   `${createTaskPrefix(partId)}.phase4.order-plan-review.task1`;
 
+const createDownstreamCoordinationTaskId = (partId: string): string =>
+  `${createTaskPrefix(partId)}.phase5.downstream-coordination.task1`;
+
 const createReturnTaskId = (partId: string): string =>
   `${createTaskPrefix(partId)}.phase-return.user-return.task1`;
 
@@ -115,7 +118,6 @@ const markOrderPlanReviewAccepted = (params: {
   readonly partId: string;
 }): string => {
   const taskId = createOrderPlanReviewTaskId(params.partId);
-  const returnTaskId = createReturnTaskId(params.partId);
   return params.content
     .replace(
       new RegExp(
@@ -130,15 +132,22 @@ const markOrderPlanReviewAccepted = (params: {
         "mu"
       ),
       `$1DONE$2${params.commitHash}$3`
-    )
-    .replace(
-      new RegExp(
-        `^(\\d+\\. \\[)(?:TODO|BLOCKED)(\\] \`${escapeRegExp(returnTaskId)}\` .*)$`,
-        "mu"
-      ),
-      "$1IN_PROGRESS$2"
     );
 };
+
+const markDownstreamCoordinationInProgress = (params: {
+  readonly content: string;
+  readonly partId: string;
+}): string =>
+  params.content.replace(
+    new RegExp(
+      `^(\\d+\\. \\[)(?:TODO|BLOCKED)(\\] \`${escapeRegExp(
+        createDownstreamCoordinationTaskId(params.partId)
+      )}\` .*)$`,
+      "mu"
+    ),
+    "$1IN_PROGRESS$2"
+  );
 
 const nextItemNumber = (content: string): number => {
   const matches = [...content.matchAll(/^(\d+)\.\s+\[/gmu)];
@@ -160,7 +169,28 @@ const appendReturnPhaseIfMissing = (params: {
     "",
     "### Stream: User Return And Revisions",
     "",
-    `${nextItemNumber(params.content)}. [IN_PROGRESS] \`${createReturnTaskId(params.partId)}\` Product Part workflow is paused in an accepted state; user may return later with corrections or clarifications (scope: user workflow; expected commit: none).`,
+    `${nextItemNumber(params.content)}. [TODO] \`${createReturnTaskId(params.partId)}\` Product Part workflow is paused in an accepted state; user may return later with corrections or clarifications (scope: user workflow; expected commit: none).`,
+    "",
+  ].join("\n");
+};
+
+const appendDownstreamCoordinationPhaseIfMissing = (params: {
+  readonly content: string;
+  readonly partId: string;
+}): string => {
+  if (
+    params.content.includes(createDownstreamCoordinationTaskId(params.partId))
+  ) {
+    return params.content;
+  }
+  return [
+    params.content.trimEnd(),
+    "",
+    "## Phase 5 - Downstream Product Part Coordination",
+    "",
+    "### Stream: Cluster And Module Coordination",
+    "",
+    `${nextItemNumber(params.content)}. [TODO] \`${createDownstreamCoordinationTaskId(params.partId)}\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: none).`,
     "",
   ].join("\n");
 };
@@ -240,18 +270,24 @@ export class ProductPartDevelopmentOrderPlanReviewController {
       params.workspaceRoot,
       planPath,
       replaceStateBlock(
-        appendReturnPhaseIfMissing({
-          content: markOrderPlanReviewAccepted({
-            commitHash: commit.hash,
-            commitMessage: planState.expectedCommitMessage,
-            content: planText,
+        markDownstreamCoordinationInProgress({
+          content: appendReturnPhaseIfMissing({
+            content: appendDownstreamCoordinationPhaseIfMissing({
+              content: markOrderPlanReviewAccepted({
+                commitHash: commit.hash,
+                commitMessage: planState.expectedCommitMessage,
+                content: planText,
+                partId,
+              }),
+              partId,
+            }),
             partId,
           }),
           partId,
         }),
         {
           ...planState,
-          currentTaskId: createReturnTaskId(partId),
+          currentTaskId: createDownstreamCoordinationTaskId(partId),
           expectedCommitMessage: null,
           lastRecordedCommit: commit.hash,
         }
@@ -272,9 +308,9 @@ export class ProductPartDevelopmentOrderPlanReviewController {
         content: [
           `Core: пользователь принял lead Product Part \`${partId}\` Development Order Plan.`,
           `Commit: \`${commit.hash}\`.`,
-          "Lead Product Part workflow переведён в User Return And Revisions; downstream agents остаются закрыты до отдельного следующего шага.",
+          "Lead Product Part workflow переведён в Downstream Product Part Coordination; Core может открыть первую разрешённую wave после materialized unlock-state.",
         ].join("\n"),
-        tag: "managed-workflow-complete",
+        tag: "managed-workflow-assignment",
       },
     };
   }

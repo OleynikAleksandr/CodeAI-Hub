@@ -153,6 +153,18 @@ const createReturnPhase = (params: {
   `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase-return.user-return.task1\` Product Part workflow is paused in an accepted state; user may return later with corrections or clarifications (scope: user workflow; expected commit: none).`,
 ];
 
+const createDownstreamCoordinationPhase = (params: {
+  readonly itemNumber: number;
+  readonly partId: string;
+}): string[] => [
+  "",
+  "## Phase 5 - Downstream Product Part Coordination",
+  "",
+  "### Stream: Cluster And Module Coordination",
+  "",
+  `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase5.downstream-coordination.task1\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: none).`,
+];
+
 const renderPlan = (params: {
   readonly isLeadPart: boolean;
   readonly leadProductPartId?: string | null;
@@ -200,8 +212,14 @@ const renderPlan = (params: {
           workspaceSlug: params.workspaceSlug,
         })
       : []),
+    ...(params.isLeadPart
+      ? createDownstreamCoordinationPhase({
+          itemNumber: 9,
+          partId: params.node.partId,
+        })
+      : []),
     ...createReturnPhase({
-      itemNumber: params.isLeadPart ? 9 : 5,
+      itemNumber: params.isLeadPart ? 10 : 5,
       partId: params.node.partId,
     }),
     "",
