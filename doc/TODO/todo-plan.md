@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "39df62d2f",
+  "lastRecordedCommit": "623a795a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.codex-runtime-fallback.task1",
-  "expectedCommitMessage": "fix: remove unsupported codex runtime fallbacks",
+  "currentTaskId": "development-tree-cluster-contract.phase11.codex-capture-selection.task1",
+  "expectedCommitMessage": "fix: remove unsupported codex capture selection",
   "debt": {
-    "expectedCommitMessage": "fix: remove unsupported codex runtime fallbacks",
-    "preCommitHead": "39df62d2f",
+    "expectedCommitMessage": "fix: remove unsupported codex capture selection",
+    "preCommitHead": "623a795a5",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.codex-runtime-fallback.task1"
+    "taskId": "development-tree-cluster-contract.phase11.codex-capture-selection.task1"
   }
 }
 ```
@@ -219,9 +219,9 @@ Verification evidence:
 85. [DONE] `development-tree-cluster-contract.phase11.codex-model-profile.task1` Remove unsupported Codex model `gpt-5.3-codex` from runtime capabilities and model invocation compatibility profiles (scope: `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts, packages/core/src/model-invocation/model-invocation-profile-resolver.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align codex model profiles with supported models`).
 86. [DONE] Git Commit: `fix: align codex model profiles with supported models` (hash: 39df62d2f)
 87. [DONE] `development-tree-cluster-contract.phase11.codex-runtime-fallback.task1` Replace remaining active runtime fallback defaults that can still select unsupported `gpt-5.3-codex` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `fix: remove unsupported codex runtime fallbacks`).
-88. [PENDING] Git Commit: `fix: remove unsupported codex runtime fallbacks` (hash: TBD)
-89. [TODO] `development-tree-cluster-contract.phase11.codex-capture-selection.task1` Replace Project Manager native capture defaults and typed tests that still use unsupported `gpt-5.3-codex` (scope: `src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/settings/native-request-capture-runner.test.ts`; expected commit: `fix: remove unsupported codex capture selection`).
-90. [TODO] Git Commit: `fix: remove unsupported codex capture selection` (hash: TBD)
+88. [DONE] Git Commit: `fix: remove unsupported codex runtime fallbacks` (hash: 623a795a5)
+89. [DONE] `development-tree-cluster-contract.phase11.codex-capture-selection.task1` Replace Project Manager native capture defaults and typed tests that still use unsupported `gpt-5.3-codex` (scope: `src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/settings/native-request-capture-runner.test.ts`; expected commit: `fix: remove unsupported codex capture selection`).
+90. [PENDING] Git Commit: `fix: remove unsupported codex capture selection` (hash: TBD)
 91. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions inherit the accepted Product Part session model binding instead of resolving defaults from the new worktree (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
 92. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
 93. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).

@@ -17,7 +17,7 @@ const PROVIDER_DEFAULTS: Record<
   { readonly model: string; readonly reasoning: string }
 > = {
   claude: { model: "sonnet", reasoning: "thinking-high" },
-  codex: { model: "gpt-5.3-codex", reasoning: "reasoning-high" },
+  codex: { model: "gpt-5.4-mini", reasoning: "reasoning-high" },
   kimi: { model: "kimi-for-coding", reasoning: "default" },
   glmClaudeCode: { model: "glm-5.1", reasoning: "thinking-high" },
 };

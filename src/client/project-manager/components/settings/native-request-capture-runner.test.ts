@@ -108,7 +108,7 @@ const runCapture = async (
         activeWorkspacePath: "/tmp/demo",
         activeWorkspaceSlug: "demo-workspace",
       },
-      modelId: "gpt-5.3-codex",
+      modelId: "gpt-5.4-mini",
       providerId: "codex",
       reasoning,
       scenarioId,
@@ -127,7 +127,7 @@ test("capture runner bypasses upstream guard for virtual simulation on empty wor
   const captured = await runCapture("virtual_simulation");
 
   assert.equal(captured.providerId, "codex");
-  assert.equal(captured.modelId, "gpt-5.3-codex");
+  assert.equal(captured.modelId, "gpt-5.4-mini");
   assert.equal(captured.options?.scenarioId, "virtual_simulation");
   assert.equal(captured.options?.reasoning, undefined);
   assert.equal(
