@@ -1,3 +1,4 @@
+import type { ClusterContractAgentSessionGateway } from "../../development-tree/node-bootstrap/cluster-contract-agent-bootstrapper";
 import { ApplicationSkeletonCoreMaterializer } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
@@ -28,7 +29,7 @@ import {
   isQualityGatesReviewOpen,
   readApplicationSkeletonTaskId,
 } from "./managed-review-state-readers";
-import { ProductPartDevelopmentBriefReviewController } from "./product-part-development-brief-review-controller";
+import { handleProductPartManagedReviewDecision } from "./product-part-managed-review-decision-handler";
 import {
   dispatchQualityGatesReviewRevision,
   openQualityGatesNextAcceptedReviewPhase,
@@ -39,8 +40,6 @@ import { SessionRequestHandlerPreliminaryReviewCommitter } from "./session-reque
 
 type ManagedReviewIntent = "accept" | "none" | "revision";
 type ApplicationSkeletonReviewPhase = "draft" | "final";
-type ReviewReadySession = Session &
-  Record<"initiativeSlug" | "stage" | "workspacePath", string>;
 interface ManagedReviewDecisionOptions {
   readonly content: string;
   readonly hiddenUserMessage: boolean;
@@ -49,6 +48,7 @@ interface ManagedReviewDecisionOptions {
 }
 interface ManagedReviewDecisionDeps {
   readonly broadcaster: (event: unknown) => void;
+  readonly developmentTreeAgentGateway?: ClusterContractAgentSessionGateway;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage" | "waitForMessagePersistence"
@@ -64,8 +64,6 @@ interface ManagedReviewDecisionDeps {
 }
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
-const PRODUCT_PART_STAGE_RE =
-  /^development_tree\/materialized\/product-parts\/[^/]+$/u;
 const QUALITY_GATES_STAGE = "quality_gates";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
@@ -74,15 +72,6 @@ const NEGATED_ACCEPT_RE =
 const hasManagedStageSession = (session: Session, stage: string): boolean =>
   Boolean(
     session.stage === stage && session.workspacePath && session.initiativeSlug
-  );
-const hasProductPartReviewSession = (
-  session: Session
-): session is ReviewReadySession =>
-  Boolean(
-    session.stage &&
-      PRODUCT_PART_STAGE_RE.test(session.stage) &&
-      session.workspacePath &&
-      session.initiativeSlug
   );
 const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   const normalized = content.trim();
@@ -105,8 +94,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     new ApplicationSkeletonCoreMaterializer();
   private readonly deps: ManagedReviewDecisionDeps;
   private readonly preliminaryReviewCommitter: SessionRequestHandlerPreliminaryReviewCommitter;
-  private readonly productPartBriefReview =
-    new ProductPartDevelopmentBriefReviewController();
   private readonly qualityGatesStagePlan =
     new QualityGatesStagePlanController();
   private readonly stepCommitFacade = new WorkflowStepCommitFacade();
@@ -153,9 +140,12 @@ export class SessionRequestHandlerManagedReviewDecisions {
       return true;
     }
     if (
-      await this.handleProductPartReviewDecision({
-        ...options,
+      await handleProductPartManagedReviewDecision({
+        developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
+        eventMessages: this.deps.eventMessages,
         intent: managedIntent,
+        messageDispatch: this.deps.messageDispatch,
+        options,
       })
     ) {
       return true;
@@ -223,40 +213,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     await this.completeDiagramModulesReview(options.session);
     return true;
   }
-  private async handleProductPartReviewDecision(
-    options: ManagedReviewDecisionOptions & {
-      readonly intent: ManagedReviewIntent;
-    }
-  ): Promise<boolean> {
-    if (!hasProductPartReviewSession(options.session)) {
-      return false;
-    }
-    if (options.intent !== "accept") {
-      return false;
-    }
-    this.appendUserReviewMessage(options);
-    const result = await this.productPartBriefReview.handleAccepted({
-      sessionId: options.sessionId,
-      stage: options.session.stage,
-      workspaceRoot: options.session.workspacePath,
-      workspaceSlug: options.session.initiativeSlug,
-    });
-    if (!result.handled) {
-      return false;
-    }
-    this.deps.eventMessages.appendCoreMessage(
-      options.sessionId,
-      result.message
-    );
-    if (result.nextInternalMessage) {
-      await this.deps.messageDispatch.sendInternalMessage(
-        options.sessionId,
-        result.nextInternalMessage
-      );
-    }
-    return true;
-  }
-
   private async handleQualityGatesReviewDecision(
     options: ManagedReviewDecisionOptions & {
       readonly intent: ManagedReviewIntent;

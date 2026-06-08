@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "a8bbedab6",
+  "lastRecordedCommit": "91229c20c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.order-plan-wave-signal.task1",
-  "expectedCommitMessage": "fix: signal order plan first wave bootstrap",
+  "currentTaskId": "development-tree-cluster-contract.phase10.order-plan-wave-handler.task1",
+  "expectedCommitMessage": "fix: handle product part first wave bootstrap",
   "debt": {
-    "expectedCommitMessage": "fix: signal order plan first wave bootstrap",
-    "preCommitHead": "a8bbedab6",
+    "expectedCommitMessage": "fix: handle product part first wave bootstrap",
+    "preCommitHead": "91229c20c",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.order-plan-wave-signal.task1"
+    "taskId": "development-tree-cluster-contract.phase10.order-plan-wave-handler.task1"
   }
 }
 ```
@@ -187,9 +187,9 @@ Verification evidence:
 ### Stream: Accepted Order Plan First Wave Bootstrap
 
 66. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-signal.task1` Return a typed first-wave bootstrap signal when lead `DevelopmentOrderPlan.v2` review acceptance materializes unlock-state (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: signal order plan first wave bootstrap`).
-67. [PENDING] Git Commit: `fix: signal order plan first wave bootstrap` (hash: TBD)
-68. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-handler.task1` Route Product Part managed review acceptance through a helper that dispatches internal lead prompts and starts first-wave cluster bootstrap when the typed signal is present (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: handle product part first wave bootstrap`).
-69. [TODO] Git Commit: `fix: handle product part first wave bootstrap` (hash: TBD)
+67. [DONE] Git Commit: `fix: signal order plan first wave bootstrap` (hash: 91229c20c)
+68. [DONE] `development-tree-cluster-contract.phase10.order-plan-wave-handler.task1` Route Product Part managed review acceptance through a helper that dispatches internal lead prompts and starts first-wave cluster bootstrap when the typed signal is present (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: handle product part first wave bootstrap`).
+69. [PENDING] Git Commit: `fix: handle product part first wave bootstrap` (hash: TBD)
 70. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-gateway.task1` Wire the Development Tree agent gateway into user-review session actions so cluster-contract worktrees and sessions can be created after order-plan acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wire order plan first wave bootstrap gateway`).
 71. [TODO] Git Commit: `fix: wire order plan first wave bootstrap gateway` (hash: TBD)
 72. [TODO] `development-tree-cluster-contract.phase10.order-plan-wave-test.task1` Add targeted regression coverage proving Product Part order-plan acceptance creates the unlocked cluster-contract session and sends the first cluster prompt (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster wave starts after order plan acceptance`).
