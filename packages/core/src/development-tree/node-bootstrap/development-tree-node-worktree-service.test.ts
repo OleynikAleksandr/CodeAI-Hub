@@ -50,6 +50,17 @@ test("DevelopmentTreeNodeWorktreeService creates a deterministic cluster contrac
       "codex/development-tree/finderwidget-test01/product-parts/finder-widget/clusters/note-selection-cluster/contract"
     );
     assert.equal(
+      result.worktreePath,
+      path.join(
+        `${workspaceRoot}.worktrees`,
+        "finderwidget-test01",
+        "product-parts",
+        "finder-widget",
+        "cluster-contracts",
+        "note-selection-cluster"
+      )
+    );
+    assert.equal(
       await runGit(result.worktreePath, ["branch", "--show-current"]),
       `${result.branchName}\n`
     );

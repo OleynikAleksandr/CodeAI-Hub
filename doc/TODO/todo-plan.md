@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "dabbf0ad0",
+  "lastRecordedCommit": "bc9cf9f3d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase14.worktree-ledger.task1",
-  "expectedCommitMessage": "fix: commit cluster contract review ledger",
+  "currentTaskId": "development-tree-cluster-contract.phase14.worktree-naming.task1",
+  "expectedCommitMessage": "fix: clarify cluster worktree root paths",
   "debt": {
-    "expectedCommitMessage": "fix: commit cluster contract review ledger",
-    "preCommitHead": "dabbf0ad0",
+    "expectedCommitMessage": "fix: clarify cluster worktree root paths",
+    "preCommitHead": "bc9cf9f3d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase14.worktree-ledger.task1"
+    "taskId": "development-tree-cluster-contract.phase14.worktree-naming.task1"
   }
 }
 ```
@@ -287,12 +287,12 @@ Release evidence:
 ### Stream: Clean Worktree Ledger Boundary
 
 123. [DONE] `development-tree-cluster-contract.phase14.worktree-ledger.task1` Ensure cluster-contract worktree draft review leaves its managed todo-plan and required coordination metadata committed or intentionally ignored, so the worktree is clean after Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract review ledger`).
-124. [PENDING] Git Commit: `fix: commit cluster contract review ledger` (hash: TBD)
+124. [DONE] Git Commit: `fix: commit cluster contract review ledger` (hash: bc9cf9f3d)
 
 ### Stream: Worktree Root Naming
 
-125. [TODO] `development-tree-cluster-contract.phase14.worktree-naming.task1` Rename new downstream worktree roots away from artifact-like `.../contract/` suffixes while keeping existing cleanup compatible with legacy paths (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/remote-bridge/handlers/product-part-worktree-cleanup.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts`; expected commit: `fix: clarify cluster worktree root paths`).
-126. [TODO] Git Commit: `fix: clarify cluster worktree root paths` (hash: TBD)
+125. [DONE] `development-tree-cluster-contract.phase14.worktree-naming.task1` Rename new downstream worktree roots away from artifact-like `.../contract/` suffixes while keeping existing Product Part cleanup compatible with legacy paths (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts`; expected commit: `fix: clarify cluster worktree root paths`).
+126. [PENDING] Git Commit: `fix: clarify cluster worktree root paths` (hash: TBD)
 
 ### Stream: Cluster And Module ClearUndo
 

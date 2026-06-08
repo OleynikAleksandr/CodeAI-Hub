@@ -54,9 +54,8 @@ const createWorktreePath = (params: {
     sanitizeSegment(params.workspaceSlug),
     "product-parts",
     sanitizeSegment(params.partId),
-    "clusters",
-    sanitizeSegment(params.clusterId),
-    "contract"
+    "cluster-contracts",
+    sanitizeSegment(params.clusterId)
   );
 
 const runGit = async (
