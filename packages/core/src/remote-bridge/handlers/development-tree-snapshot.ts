@@ -4,6 +4,8 @@ import { DevelopmentTreeStateFacade } from "../../development-tree/development-t
 import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeModuleNode,
+  DevelopmentTreeNodeLifecycle,
+  DevelopmentTreeNodeSession,
   DevelopmentTreePartNode,
   DevelopmentTreeSnapshot,
   DevelopmentTreeSnapshotRequest,
@@ -41,10 +43,16 @@ type CoordinationStatus =
   | "waiting";
 
 interface UnlockStateNode {
+  readonly branchName?: string;
   readonly id?: string;
   readonly mergeCommitHash?: string;
+  readonly providerId?: string;
   readonly reason?: string;
+  readonly sessionId?: string;
+  readonly sessionStage?: string;
+  readonly startedAt?: string;
   readonly status?: CoordinationStatus;
+  readonly worktreePath?: string;
 }
 
 interface CoordinationState {
@@ -52,7 +60,10 @@ interface CoordinationState {
   readonly lockedReason?: string;
   readonly mergeCommitHash?: string;
   readonly nodeId: string;
+  readonly providerId?: string;
   readonly reviewCommitHash?: string;
+  readonly sessionId?: string;
+  readonly sessionStage?: string;
   readonly sourceHead?: string;
   readonly status: CoordinationStatus;
   readonly worktreePath?: string;
@@ -172,6 +183,49 @@ const attachCoordination = <T extends object>(
   coordination: CoordinationState | null
 ): T => (coordination ? ({ ...node, coordination } as T) : node);
 
+const createProjectedSession = (
+  node: UnlockStateNode | undefined
+): DevelopmentTreeNodeSession | undefined => {
+  if (
+    !(node?.providerId && node.sessionId && node.sessionStage && node.startedAt)
+  ) {
+    return undefined;
+  }
+  return {
+    dialogId: node.sessionId,
+    providerId: node.providerId,
+    providerSessionId: node.sessionId,
+    rootSessionId: node.sessionId,
+    sessionId: node.sessionId,
+    updatedAt: node.startedAt,
+  };
+};
+
+const createStartedLifecycle = (
+  lifecycle: DevelopmentTreeNodeLifecycle | undefined
+): DevelopmentTreeNodeLifecycle => ({
+  ...(lifecycle?.lockedReason ? { lockedReason: lifecycle.lockedReason } : {}),
+  startable: false,
+  startState: "started",
+});
+
+const attachProjectedSession = <
+  T extends {
+    readonly lifecycle?: DevelopmentTreeNodeLifecycle;
+    readonly session?: DevelopmentTreeNodeSession;
+  },
+>(
+  node: T,
+  session: DevelopmentTreeNodeSession | undefined
+): T =>
+  session
+    ? ({
+        ...node,
+        lifecycle: createStartedLifecycle(node.lifecycle),
+        session,
+      } as T)
+    : node;
+
 const withCodeWorkspacePaths = (
   snapshot: DevelopmentTreeSnapshot,
   entries: readonly DevelopmentTreeCodeWorkspacePathEntry[]
@@ -246,13 +300,16 @@ const readClusterCoordination = async (params: {
   }
   return {
     nodeId,
-    branchName: createClusterBranchName(params),
+    branchName: node?.branchName ?? createClusterBranchName(params),
     lockedReason: node?.reason,
     mergeCommitHash: node?.mergeCommitHash,
+    providerId: node?.providerId,
     reviewCommitHash:
       typeof reviewResult?.reviewCommitHash === "string"
         ? reviewResult.reviewCommitHash
         : undefined,
+    sessionId: node?.sessionId,
+    sessionStage: node?.sessionStage,
     sourceHead:
       typeof mergeBoundary?.sourceHead === "string"
         ? mergeBoundary.sourceHead
@@ -261,7 +318,7 @@ const readClusterCoordination = async (params: {
     worktreePath:
       typeof mergeBoundary?.sourceWorkspaceRoot === "string"
         ? mergeBoundary.sourceWorkspaceRoot
-        : createClusterWorktreePath(params),
+        : (node?.worktreePath ?? createClusterWorktreePath(params)),
   };
 };
 
@@ -308,8 +365,9 @@ const withCoordinationState = async (
         ...part,
         clusters: await Promise.all(
           part.clusters.map(
-            async (cluster): Promise<DevelopmentTreeClusterNode> => ({
-              ...attachCoordination(
+            async (cluster): Promise<DevelopmentTreeClusterNode> => {
+              const node = nodes.get(createClusterNodeId(part.id, cluster.id));
+              const coordinatedCluster = attachCoordination(
                 cluster,
                 await readClusterCoordination({
                   clusterId: cluster.id,
@@ -318,20 +376,26 @@ const withCoordinationState = async (
                   workspaceRoot: params.workspaceRoot,
                   workspaceSlug: params.workspaceSlug,
                 })
-              ),
-              modules: cluster.modules.map(
-                (module): DevelopmentTreeModuleNode =>
-                  attachCoordination(
-                    module,
-                    createModuleCoordination({
-                      clusterId: cluster.id,
-                      moduleId: module.id,
-                      nodes,
-                      partId: part.id,
-                    })
-                  )
-              ),
-            })
+              );
+              return {
+                ...attachProjectedSession(
+                  coordinatedCluster,
+                  createProjectedSession(node)
+                ),
+                modules: cluster.modules.map(
+                  (module): DevelopmentTreeModuleNode =>
+                    attachCoordination(
+                      module,
+                      createModuleCoordination({
+                        clusterId: cluster.id,
+                        moduleId: module.id,
+                        nodes,
+                        partId: part.id,
+                      })
+                    )
+                ),
+              };
+            }
           )
         ),
         standaloneModules: part.standaloneModules.map(

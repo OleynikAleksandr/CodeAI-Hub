@@ -1,4 +1,4 @@
-import { readFile, stat } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -19,6 +19,18 @@ const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
 const INDEX_FILE_NAME = "index.json";
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
+
+interface ProjectedDevelopmentTreeNode {
+  readonly modelBinding?: ContinuityIndexEntry["modelBinding"];
+  readonly providerId?: string;
+  readonly sessionId?: string;
+  readonly sessionStage?: string;
+  readonly startedAt?: string;
+}
+
+interface ProjectedDevelopmentTreeUnlockState {
+  readonly nodes?: readonly ProjectedDevelopmentTreeNode[];
+}
 
 const readJson = async <T>(filePath: string): Promise<T | null> => {
   try {
@@ -41,9 +53,79 @@ const buildIndexPath = (options: {
     INDEX_FILE_NAME
   );
 
+const buildProductPartUnlockStateRoot = (options: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  path.join(
+    options.workspaceRoot,
+    CONTINUITY_ROOT,
+    options.workspaceSlug,
+    "workflow",
+    "managed",
+    "development-tree-product-parts"
+  );
+
 const hasProviderSessionId = (
   value: string | null | undefined
 ): value is string => typeof value === "string" && value.trim().length > 0;
+
+const isProjectedDevelopmentTreeNode = (
+  value: unknown
+): value is ProjectedDevelopmentTreeNode => {
+  if (!(value && typeof value === "object" && !Array.isArray(value))) {
+    return false;
+  }
+  const node = value as ProjectedDevelopmentTreeNode;
+  return Boolean(
+    node.providerId?.trim() &&
+      node.sessionId?.trim() &&
+      node.sessionStage?.startsWith("development_tree/") &&
+      node.startedAt?.trim()
+  );
+};
+
+const createProjectedDialogEntry = (
+  node: ProjectedDevelopmentTreeNode
+): ContinuityIndexEntry => ({
+  dialogId: node.sessionId ?? "",
+  latestSessionId: node.sessionId ?? null,
+  modelBinding: node.modelBinding ?? null,
+  providerId: node.providerId ?? null,
+  providerSessionId: node.sessionId ?? null,
+  rootSessionId: node.sessionId ?? "",
+  stage: node.sessionStage as ContinuityIndexEntry["stage"],
+  updatedAt: node.startedAt ?? "",
+});
+
+const readProjectedDevelopmentTreeDialogs = async (options: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<readonly ContinuityIndexEntry[]> => {
+  const root = buildProductPartUnlockStateRoot(options);
+  let entries: string[] = [];
+  try {
+    entries = await readdir(root);
+  } catch {
+    return [];
+  }
+  const projected: ContinuityIndexEntry[] = [];
+  for (const entry of entries) {
+    if (!entry.endsWith(".unlock-state.json")) {
+      continue;
+    }
+    const state = await readJson<ProjectedDevelopmentTreeUnlockState>(
+      path.join(root, entry)
+    );
+    const nodes = Array.isArray(state?.nodes) ? state.nodes : [];
+    for (const node of nodes) {
+      if (isProjectedDevelopmentTreeNode(node)) {
+        projected.push(createProjectedDialogEntry(node));
+      }
+    }
+  }
+  return projected;
+};
 
 const buildRuntimeSessionByProviderMap = (
   runtimeSessions: readonly Session[]
@@ -280,9 +362,11 @@ export class DialogListService {
       }
     }
 
+    const projectedDevelopmentTreeDialogs =
+      await readProjectedDevelopmentTreeDialogs(options);
     return await this.dedupeDialogEntries({
       entries: reconcileLatestSessionIds(
-        entries,
+        [...entries, ...projectedDevelopmentTreeDialogs],
         options.runtimeSessions ?? []
       ),
       workspaceRoot: options.workspaceRoot,
