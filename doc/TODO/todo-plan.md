@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "578bf28e7",
+  "lastRecordedCommit": "2318c01ce",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase2.unlock-state.task1",
-  "expectedCommitMessage": "feat: persist development order unlock state",
+  "currentTaskId": "development-tree-cluster-contract.phase3.worktree.task1",
+  "expectedCommitMessage": "feat: create development tree cluster worktrees",
   "debt": {
-    "expectedCommitMessage": "feat: persist development order unlock state",
-    "preCommitHead": "578bf28e7",
+    "expectedCommitMessage": "feat: create development tree cluster worktrees",
+    "preCommitHead": "2318c01ce",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase2.unlock-state.task1"
+    "taskId": "development-tree-cluster-contract.phase3.worktree.task1"
   }
 }
 ```
@@ -69,14 +69,14 @@
 7. [DONE] `development-tree-cluster-contract.phase2.lead-plan.task1` Change lead Product Part managed plan advancement so accepted `DevelopmentOrderPlan.v2` opens a downstream coordination phase and moves `User Return And Revisions` to the final assembled/paused Product Part boundary (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: keep lead product part in downstream coordination`).
 8. [DONE] Git Commit: `feat: keep lead product part in downstream coordination` (hash: 578bf28e7)
 9. [DONE] `development-tree-cluster-contract.phase2.unlock-state.task1` Persist accepted order-plan unlock state for first-wave cluster/standalone module nodes, including locked reasons for later module nodes (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: persist development order unlock state`).
-10. [PENDING] Git Commit: `feat: persist development order unlock state` (hash: TBD)
+10. [DONE] Git Commit: `feat: persist development order unlock state` (hash: 2318c01ce)
 
 ## Phase 3 - Cluster Sub-Agent Worktree Bootstrap (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Worktree And Managed Plan Scaffolding
 
-11. [TODO] `development-tree-cluster-contract.phase3.worktree.task1` Add Development Tree sub-agent worktree/branch creation support for cluster-contract nodes, with deterministic branch/worktree naming from Product Part and cluster ids (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts`; expected commit: `feat: create development tree cluster worktrees`).
-12. [TODO] Git Commit: `feat: create development tree cluster worktrees` (hash: TBD)
+11. [DONE] `development-tree-cluster-contract.phase3.worktree.task1` Add Development Tree sub-agent worktree/branch creation support for cluster-contract nodes, with deterministic branch/worktree naming from Product Part and cluster ids (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts`; expected commit: `feat: create development tree cluster worktrees`).
+12. [PENDING] Git Commit: `feat: create development tree cluster worktrees` (hash: TBD)
 13. [TODO] `development-tree-cluster-contract.phase3.cluster-plan.task1` Create the Core-owned managed plan writer for cluster-contract sub-agents, including specification/facade draft, review, merge-ready, and return/revision phases (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-plan-writer.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: write cluster contract managed plans`).
 14. [TODO] Git Commit: `feat: write cluster contract managed plans` (hash: TBD)
 15. [TODO] `development-tree-cluster-contract.phase3.bootstrap.task1` Bootstrap the first unlocked cluster-contract sub-agent from accepted order-plan unlock state, creating its worktree, managed plan, and provider session without opening module agents yet (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `feat: bootstrap cluster contract subagents`).

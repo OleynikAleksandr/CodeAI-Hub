@@ -11,6 +11,11 @@ import type {
   DevelopmentTreeDetectedNode,
   DevelopmentTreeDetectedNodeKind,
 } from "./development-tree-node-detector";
+import {
+  type DevelopmentTreeClusterWorktreeRequest,
+  type DevelopmentTreeClusterWorktreeResult,
+  DevelopmentTreeNodeWorktreeService,
+} from "./development-tree-node-worktree-service";
 import type { DevelopmentTreeWrittenDraft } from "./draft-writer";
 import { DraftWriter } from "./draft-writer";
 import {
@@ -49,6 +54,7 @@ export class DevelopmentTreeNodeBootstrapFacade {
     new ProductPartDevelopmentBriefPlanWriter();
   private readonly state = new DevelopmentTreeNodeBootstrapState();
   private readonly watcher = new DevelopmentTreeFilesystemWatcher();
+  private readonly worktreeService = new DevelopmentTreeNodeWorktreeService();
 
   constructor(options: DevelopmentTreeNodeBootstrapFacadeOptions = {}) {
     this.agentSessionOptions = options.agentSessionOptions;
@@ -106,5 +112,11 @@ export class DevelopmentTreeNodeBootstrapFacade {
       writtenProductPartPlans,
       writtenDrafts,
     };
+  }
+
+  async createClusterContractWorktree(
+    params: DevelopmentTreeClusterWorktreeRequest
+  ): Promise<DevelopmentTreeClusterWorktreeResult> {
+    return await this.worktreeService.createClusterContractWorktree(params);
   }
 }
