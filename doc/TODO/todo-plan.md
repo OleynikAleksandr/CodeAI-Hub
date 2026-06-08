@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "44dc4ff20",
+  "lastRecordedCommit": "56d5211ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase4.turn.task1",
-  "expectedCommitMessage": "feat: open cluster contract review",
+  "currentTaskId": "development-tree-cluster-contract.phase4.review.task1",
+  "expectedCommitMessage": "feat: accept cluster contract review results",
   "debt": {
-    "expectedCommitMessage": "feat: open cluster contract review",
-    "preCommitHead": "44dc4ff20",
+    "expectedCommitMessage": "feat: accept cluster contract review results",
+    "preCommitHead": "56d5211ab",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase4.turn.task1"
+    "taskId": "development-tree-cluster-contract.phase4.review.task1"
   }
 }
 ```
@@ -89,9 +89,9 @@
 17. [DONE] `development-tree-cluster-contract.phase4.prompt.task1` Add the cluster-contract first prompt builder with inline Product Part brief, accepted order-plan context, skeleton/gates constraints, and explicit artifact targets for `ClusterSpecification` and `ClusterFacadeContract` markdown/json files (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: build cluster contract subagent prompts`).
 18. [DONE] Git Commit: `feat: build cluster contract subagent prompts` (hash: 44dc4ff20)
 19. [DONE] `development-tree-cluster-contract.phase4.turn.task1` Add the cluster-contract turn controller that validates generated specification/facade artifacts, commits them inside the cluster worktree, and opens the user/lead review gate (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts`; expected commit: `feat: open cluster contract review`).
-20. [PENDING] Git Commit: `feat: open cluster contract review` (hash: TBD)
-21. [TODO] `development-tree-cluster-contract.phase4.review.task1` Add cluster-contract review handling so ordinary user/lead messages request sub-agent revisions while explicit acceptance records a merge-ready result and summary for lead Product Part coordination (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.test.ts`; expected commit: `feat: accept cluster contract review results`).
-22. [TODO] Git Commit: `feat: accept cluster contract review results` (hash: TBD)
+20. [DONE] Git Commit: `feat: open cluster contract review` (hash: 56d5211ab)
+21. [DONE] `development-tree-cluster-contract.phase4.review.task1` Add cluster-contract review handling so ordinary user/lead messages request sub-agent revisions while explicit acceptance records a merge-ready result and summary for lead Product Part coordination (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.test.ts`; expected commit: `feat: accept cluster contract review results`).
+22. [PENDING] Git Commit: `feat: accept cluster contract review results` (hash: TBD)
 
 ## Phase 5 - Lead Coordination And Merge (owner: Codex, updated: 2026-06-08)
 

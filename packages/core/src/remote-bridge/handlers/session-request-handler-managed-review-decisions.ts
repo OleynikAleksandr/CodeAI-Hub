@@ -23,6 +23,7 @@ import type { Session } from "../../session-manager";
 import { WorkflowStepCommitFacade } from "../../workflow/boundary/workflow-step-commit-facade";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { persistApplicationSkeletonManagedDecision } from "./application-skeleton-managed-decision-persister";
+import { handleClusterContractManagedReviewDecision } from "./cluster-contract-review-controller";
 import {
   isQualityGatesReviewOpen,
   readApplicationSkeletonTaskId,
@@ -38,6 +39,8 @@ import { SessionRequestHandlerPreliminaryReviewCommitter } from "./session-reque
 
 type ManagedReviewIntent = "accept" | "none" | "revision";
 type ApplicationSkeletonReviewPhase = "draft" | "final";
+type ReviewReadySession = Session &
+  Record<"initiativeSlug" | "stage" | "workspacePath", string>;
 interface ManagedReviewDecisionOptions {
   readonly content: string;
   readonly hiddenUserMessage: boolean;
@@ -68,6 +71,19 @@ const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
 const NEGATED_ACCEPT_RE =
   /(?:\b(?:do\s+not|don't|not)\s+(?:accept|approve|confirm)\b|(?:^|[\s,.;:!?])(?:не|не\s+надо|не\s+нужно)\s+(?:подтверждаю|п[іi]дтверджую)(?:$|[\s,.;:!?]))/iu;
+const hasManagedStageSession = (session: Session, stage: string): boolean =>
+  Boolean(
+    session.stage === stage && session.workspacePath && session.initiativeSlug
+  );
+const hasProductPartReviewSession = (
+  session: Session
+): session is ReviewReadySession =>
+  Boolean(
+    session.stage &&
+      PRODUCT_PART_STAGE_RE.test(session.stage) &&
+      session.workspacePath &&
+      session.initiativeSlug
+  );
 const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   const normalized = content.trim();
   if (!normalized) {
@@ -102,9 +118,11 @@ export class SessionRequestHandlerManagedReviewDecisions {
         eventMessages: deps.eventMessages,
       });
   }
+
   async handleReviewDecision(
     options: ManagedReviewDecisionOptions
   ): Promise<boolean> {
+    const managedIntent = classifyManagedReviewIntent(options.content);
     if (await this.preliminaryReviewCommitter.handle(options)) {
       return true;
     }
@@ -119,7 +137,17 @@ export class SessionRequestHandlerManagedReviewDecisions {
     if (
       await this.handleDiagramModulesReviewDecision({
         ...options,
-        intent: classifyManagedReviewIntent(options.content),
+        intent: managedIntent,
+      })
+    ) {
+      return true;
+    }
+    if (
+      await handleClusterContractManagedReviewDecision({
+        eventMessages: this.deps.eventMessages,
+        intent: managedIntent,
+        messageDispatch: this.deps.messageDispatch,
+        options,
       })
     ) {
       return true;
@@ -127,14 +155,14 @@ export class SessionRequestHandlerManagedReviewDecisions {
     if (
       await this.handleProductPartReviewDecision({
         ...options,
-        intent: classifyManagedReviewIntent(options.content),
+        intent: managedIntent,
       })
     ) {
       return true;
     }
     return this.handleQualityGatesReviewDecision({
       ...options,
-      intent: classifyManagedReviewIntent(options.content),
+      intent: managedIntent,
     });
   }
   private async handleApplicationSkeletonReviewDecision(
@@ -142,13 +170,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       readonly intent: ManagedReviewIntent;
     }
   ): Promise<boolean> {
-    if (
-      !(
-        options.session.stage === APPLICATION_SKELETON_STAGE &&
-        options.session.workspacePath &&
-        options.session.initiativeSlug
-      )
-    ) {
+    if (!hasManagedStageSession(options.session, APPLICATION_SKELETON_STAGE)) {
       return false;
     }
     const phase = await this.resolveApplicationSkeletonReviewPhase(
@@ -188,13 +210,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       readonly intent: ManagedReviewIntent;
     }
   ): Promise<boolean> {
-    if (
-      !(
-        options.session.stage === DIAGRAM_MODULES_STAGE &&
-        options.session.workspacePath &&
-        options.session.initiativeSlug
-      )
-    ) {
+    if (!hasManagedStageSession(options.session, DIAGRAM_MODULES_STAGE)) {
       return false;
     }
     if (!(await isDiagramModulesReviewOpen(options.session.workspacePath))) {
@@ -207,20 +223,12 @@ export class SessionRequestHandlerManagedReviewDecisions {
     await this.completeDiagramModulesReview(options.session);
     return true;
   }
-
   private async handleProductPartReviewDecision(
     options: ManagedReviewDecisionOptions & {
       readonly intent: ManagedReviewIntent;
     }
   ): Promise<boolean> {
-    if (
-      !(
-        options.session.stage &&
-        PRODUCT_PART_STAGE_RE.test(options.session.stage) &&
-        options.session.workspacePath &&
-        options.session.initiativeSlug
-      )
-    ) {
+    if (!hasProductPartReviewSession(options.session)) {
       return false;
     }
     if (options.intent !== "accept") {
@@ -254,13 +262,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       readonly intent: ManagedReviewIntent;
     }
   ): Promise<boolean> {
-    if (
-      !(
-        options.session.stage === QUALITY_GATES_STAGE &&
-        options.session.workspacePath &&
-        options.session.initiativeSlug
-      )
-    ) {
+    if (!hasManagedStageSession(options.session, QUALITY_GATES_STAGE)) {
       return false;
     }
     if (!(await isQualityGatesReviewOpen(options.session.workspacePath))) {
