@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "94cb9c6a9",
+  "lastRecordedCommit": "3d9bb86d1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase9.build-all.task1",
-  "expectedCommitMessage": "build: prepare cluster contract subagent unified release artifacts",
+  "currentTaskId": "development-tree-cluster-contract.phase9.vsix.task1",
+  "expectedCommitMessage": "build: package cluster contract subagent vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare cluster contract subagent unified release artifacts",
-    "preCommitHead": "94cb9c6a9",
+    "expectedCommitMessage": "build: package cluster contract subagent vsix release",
+    "preCommitHead": "3d9bb86d1",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase9.build-all.task1"
+    "taskId": "development-tree-cluster-contract.phase9.vsix.task1"
   }
 }
 ```
@@ -148,9 +148,9 @@ Verification evidence:
 42. [DONE] `development-tree-cluster-contract.phase9.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract subagent release build state`).
 43. [DONE] Git Commit: `docs: checkpoint cluster contract subagent release build state` (hash: 94cb9c6a9)
 44. [DONE] `development-tree-cluster-contract.phase9.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract subagent unified release artifacts`).
-45. [PENDING] Git Commit: `build: prepare cluster contract subagent unified release artifacts` (hash: TBD)
-46. [TODO] `development-tree-cluster-contract.phase9.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract subagent vsix release`).
-47. [TODO] Git Commit: `build: package cluster contract subagent vsix release` (hash: TBD)
+45. [DONE] Git Commit: `build: prepare cluster contract subagent unified release artifacts` (hash: 3d9bb86d1)
+46. [DONE] `development-tree-cluster-contract.phase9.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract subagent vsix release`).
+47. [PENDING] Git Commit: `build: package cluster contract subagent vsix release` (hash: TBD)
 
 ## Phase 10 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
