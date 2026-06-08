@@ -7435,14 +7435,6 @@
       }
     ),
     withCodexModelCapabilities({
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    }),
-    withCodexModelCapabilities({
       id: "gpt-5.4-mini",
       displayName: "GPT-5.4 Mini",
       description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
@@ -7490,14 +7482,6 @@
       }
     ),
     withCodexModelCapabilities({
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    }),
-    withCodexModelCapabilities({
       id: "gpt-5.4-mini",
       displayName: "GPT-5.4 Mini",
       description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
@@ -7522,7 +7506,7 @@
       tier: "general"
     })
   ];
-  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
+  var DEFAULT_CODEX_MODEL_ID = "gpt-5.4-mini";
   var CODEX_REASONING_LEVELS = [
     {
       name: "low",
