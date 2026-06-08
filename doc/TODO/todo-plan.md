@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "c34d0d2c1",
+  "lastRecordedCommit": "4b7974765",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase35.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.468 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase37.order-plan-review.task1",
+  "expectedCommitMessage": "fix: accept lead product part order plan review",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.468 vsix release",
-    "preCommitHead": "c34d0d2c1",
+    "expectedCommitMessage": "fix: accept lead product part order plan review",
+    "preCommitHead": "4b7974765",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase35.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase37.order-plan-review.task1"
   }
 }
 ```
@@ -385,17 +385,31 @@
 137. [DONE] `development-tree-product-part-review.phase35.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.468` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.468 unified release artifacts`).
 138. [DONE] Git Commit: `build: prepare 1.2.468 unified release artifacts` (hash: c34d0d2c1)
 139. [DONE] `development-tree-product-part-review.phase35.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.468` (scope: `codeai-hub-1.2.468.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.468 vsix release`).
-140. [PENDING] Git Commit: `build: package 1.2.468 vsix release` (hash: TBD)
+140. [DONE] Git Commit: `build: package 1.2.468 vsix release` (hash: 4b7974765)
 
 ## Phase 36 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: FinderWidget Lead Order Plan Retest
 
-141. [TODO] `development-tree-product-part-review.phase36.user.task1` User installs release `1.2.468` and retests lead Product Part continuation: secondary Product Part acceptance stays in `User Return And Revisions`, lead Product Part acceptance immediately dispatches Development Order Plan assignment, and after the lead agent writes `DevelopmentOrderPlan.draft.md/json`, Core commits the artifacts and opens order-plan user review (scope: user workflow; expected commit: none).
+141. [DONE] `development-tree-product-part-review.phase36.user.task1` User installs release `1.2.468` and retests lead Product Part continuation: secondary Product Part acceptance stays in `User Return And Revisions`, lead Product Part acceptance immediately dispatches Development Order Plan assignment, and after the lead agent writes `DevelopmentOrderPlan.draft.md/json`, Core commits the artifacts and opens order-plan user review (scope: user workflow; expected commit: none). Result: Phase 3 now works, but confirming Phase 4 Lead Development Order Plan User Review is not handled by Core, so the Product Part plan remains in `phase4.order-plan-review`.
+
+## Phase 37 - Lead Order Plan Review Acceptance Hotfix (owner: Codex, updated: 2026-06-08)
+
+### Stream: Order Plan Review Completion
+
+142. [DONE] `development-tree-product-part-review.phase37.order-plan-review.task1` Accept lead Product Part Development Order Plan user review and move the Product Part workflow into `User Return And Revisions` without opening downstream agents yet (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: accept lead product part order plan review`).
+143. [PENDING] Git Commit: `fix: accept lead product part order plan review` (hash: TBD)
+
+## Phase 38 - Tooling Verification (owner: Codex, updated: 2026-06-08)
+
+### Stream: Targeted Verification
+
+144. [TODO] `development-tree-product-part-review.phase38.verify.task1` Run targeted Product Part order-plan review acceptance tests and Core build/type verification (scope: `packages/core`; expected commit: `test: verify lead order plan review acceptance`).
+145. [TODO] Git Commit: `test: verify lead order plan review acceptance` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-142. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-143. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+146. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+147. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

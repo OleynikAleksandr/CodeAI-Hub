@@ -1,6 +1,7 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import { ProductPartDevelopmentOrderPlanReviewController } from "./product-part-development-order-plan-review-controller";
 
 interface ManagedPlanState {
   readonly currentTaskId: string | null;
@@ -212,6 +213,8 @@ const markBriefAccepted = (content: string): string => {
 
 export class ProductPartDevelopmentBriefReviewController {
   private readonly git = new WorkflowBoundaryGit();
+  private readonly orderPlanReview =
+    new ProductPartDevelopmentOrderPlanReviewController();
 
   async handleAccepted(params: {
     readonly sessionId: string;
@@ -232,7 +235,7 @@ export class ProductPartDevelopmentBriefReviewController {
         planState.expectedCommitMessage
       )
     ) {
-      return { handled: false };
+      return await this.orderPlanReview.handleAccepted(params);
     }
     const briefPath = createBriefPath({
       partId,

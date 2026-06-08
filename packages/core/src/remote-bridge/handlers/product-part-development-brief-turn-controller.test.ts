@@ -37,6 +37,10 @@ const LEAD_ORDER_GIT_COMMIT_RE =
 const LEAD_ORDER_LOG_COMMIT_RE = /docs: update lead development order plan/u;
 const LEAD_ORDER_REVIEW_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase4\.order-plan-review\.task1`/u;
+const LEAD_ORDER_REVIEW_DONE_RE =
+  /\[DONE\] `development-tree\.product-part\.engine\.phase4\.order-plan-review\.task1`/u;
+const LEAD_ORDER_REVIEW_GIT_COMMIT_RE =
+  /Git Commit: `docs: accept lead development order plan` \(hash: [a-f0-9]+\)/u;
 const DEVELOPMENT_ORDER_PLAN_RE = /DevelopmentOrderPlan/u;
 const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
 
@@ -391,6 +395,25 @@ test("Lead Product Part order plan handoff opens user review", async () => {
   }
 });
 
+test("Lead Product Part order plan review acceptance opens user return", async () => {
+  const workspaceRoot = await prepareOrderPlanReviewWorkspace();
+  try {
+    const result = await acceptReview(workspaceRoot);
+    assert.equal(result.handled, true);
+    const { stdout: statusOutput } = await runGit(workspaceRoot, [
+      "status",
+      "--porcelain",
+    ]);
+    assert.equal(statusOutput.trim(), "");
+    const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
+    assert.match(plan, LEAD_ORDER_REVIEW_DONE_RE);
+    assert.match(plan, LEAD_ORDER_REVIEW_GIT_COMMIT_RE);
+    assert.match(plan, RETURN_IN_PROGRESS_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "product-part-brief-review-")
@@ -410,6 +433,30 @@ const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
     "-m",
     "docs: update engine product part development brief",
   ]);
+  return workspaceRoot;
+};
+
+const prepareOrderPlanReviewWorkspace = async (): Promise<string> => {
+  const workspaceRoot = await prepareReviewWorkspace(true);
+  await acceptReview(workspaceRoot);
+  await writeWorkspaceFile(
+    workspaceRoot,
+    ORDER_PLAN_PATH,
+    createOrderPlanMarkdown()
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    ORDER_PLAN_JSON_PATH,
+    createOrderPlanJson()
+  );
+  const result =
+    await new ProductPartDevelopmentBriefTurnController().handleTurnCompleted({
+      sessionId: "product-part-session-1",
+      stage: `development_tree/materialized/product-parts/${PART_ID}`,
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+  assert.equal(result.handled, true);
   return workspaceRoot;
 };
 
