@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "6bcd2a7eb",
+  "lastRecordedCommit": "b48819d3c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase12.build-all.task1",
-  "expectedCommitMessage": "build: prepare product part restart release artifacts",
+  "currentTaskId": "development-tree-cluster-contract.phase12.vsix.task1",
+  "expectedCommitMessage": "build: package product part restart vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare product part restart release artifacts",
-    "preCommitHead": "6bcd2a7eb",
+    "expectedCommitMessage": "build: package product part restart vsix release",
+    "preCommitHead": "b48819d3c",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase12.build-all.task1"
+    "taskId": "development-tree-cluster-contract.phase12.vsix.task1"
   }
 }
 ```
@@ -250,9 +250,14 @@ Verification evidence:
 108. [DONE] `development-tree-cluster-contract.phase12.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint product part restart release build state`).
 109. [DONE] Git Commit: `docs: checkpoint product part restart release build state` (hash: 6bcd2a7eb)
 110. [DONE] `development-tree-cluster-contract.phase12.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part restart release artifacts`).
-111. [PENDING] Git Commit: `build: prepare product part restart release artifacts` (hash: TBD)
-112. [TODO] `development-tree-cluster-contract.phase12.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part restart vsix release`).
-113. [TODO] Git Commit: `build: package product part restart vsix release` (hash: TBD)
+111. [DONE] Git Commit: `build: prepare product part restart release artifacts` (hash: b48819d3c)
+112. [DONE] `development-tree-cluster-contract.phase12.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part restart vsix release`).
+113. [PENDING] Git Commit: `build: package product part restart vsix release` (hash: TBD)
+
+Release evidence:
+- `./scripts/build-release.sh --use-current-version` passed for `1.2.474`.
+- Output VSIX: `codeai-hub-1.2.474.vsix` (5.0M).
+- Required release markers observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`.
 
 ## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
