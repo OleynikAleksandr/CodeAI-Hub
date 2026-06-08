@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "2d4ba9adf",
+  "lastRecordedCommit": "c6ae4316e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase15.vsix.task1",
-  "expectedCommitMessage": "build: package cluster node rollback vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase16.projected-dialog-history.task1",
+  "expectedCommitMessage": "fix: read projected cluster dialogs from worktrees",
   "debt": {
-    "expectedCommitMessage": "build: package cluster node rollback vsix release",
-    "preCommitHead": "2d4ba9adf",
+    "expectedCommitMessage": "fix: read projected cluster dialogs from worktrees",
+    "preCommitHead": "c6ae4316e",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase15.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase16.projected-dialog-history.task1"
   }
 }
 ```
@@ -327,18 +327,27 @@ Verification evidence:
 140. [DONE] `development-tree-cluster-contract.phase15.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster node rollback release artifacts`).
 141. [DONE] Git Commit: `build: prepare cluster node rollback release artifacts` (hash: 2d4ba9adf)
 142. [DONE] `development-tree-cluster-contract.phase15.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster node rollback vsix release`).
-143. [PENDING] Git Commit: `build: package cluster node rollback vsix release` (hash: TBD)
+143. [DONE] Git Commit: `build: package cluster node rollback vsix release` (hash: c6ae4316e)
 
 ## Phase 16 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: Cluster Node Rollback Retest
 
-144. [TODO] `development-tree-cluster-contract.phase16.user-retest.task1` User installs the release and retests FinderWidget downstream cluster startup plus Cluster/Module ClearUndo: cluster sessions must show in Project Manager, cluster review must leave clean worktree Git status, new worktree roots must use `cluster-contracts/<cluster>`, and clearing a cluster node must remove the worktree and return the graph marker to empty/todo while main Git stays clean (scope: user workflow; expected commit: none).
+144. [BLOCKED] `development-tree-cluster-contract.phase16.user-retest.task1` User installs the release and retests FinderWidget downstream cluster startup plus Cluster/Module ClearUndo: cluster sessions must show in Project Manager, cluster review must leave clean worktree Git status, new worktree roots must use `cluster-contracts/<cluster>`, and clearing a cluster node must remove the worktree and return the graph marker to empty/todo while main Git stays clean (scope: user workflow; expected commit: none). Result: release `1.2.475` creates the cluster worktree and agent artifacts, but Project Manager opens the projected cluster session with empty history because Core reads dialog history only from the main workspace runtime; the cluster `todo-plan.md` also remains untracked in the worktree.
+
+### Stream: Projected Cluster Dialog Regression
+
+145. [DONE] `development-tree-cluster-contract.phase16.projected-dialog-history.task1` Route projected cluster dialog history through the node worktree runtime so Project Manager can render the sub-agent JSONL instead of an empty main-workspace projection (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-history-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: read projected cluster dialogs from worktrees`).
+146. [PENDING] Git Commit: `fix: read projected cluster dialogs from worktrees` (hash: TBD)
+147. [TODO] `development-tree-cluster-contract.phase16.cluster-plan-ledger.task1` Ensure cluster contract review ledger commits the cluster `todo-plan.md` even when the plan was newly created and still untracked in the node worktree (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract todo plan ledger`).
+148. [TODO] Git Commit: `fix: commit cluster contract todo plan ledger` (hash: TBD)
+149. [TODO] `development-tree-cluster-contract.phase16.projected-dialog-tests.task1` Add regression coverage for worktree-backed projected dialog history and untracked cluster todo-plan ledger commits, then run targeted core tests/builds (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog regression`).
+150. [TODO] Git Commit: `test: verify projected cluster dialog regression` (hash: TBD)
 
 ## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-145. [TODO] `development-tree-cluster-contract.phase17.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-146. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-147. [TODO] `development-tree-cluster-contract.phase17.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+151. [TODO] `development-tree-cluster-contract.phase17.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+152. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+153. [TODO] `development-tree-cluster-contract.phase17.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

@@ -37,23 +37,51 @@ type SessionMessageRecord = Extract<
   { readonly type: "message" }
 >;
 
+const readNonEmptyString = (value: string | null | undefined): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
 const resolveDialogHistoryLocations = (options: {
+  readonly worktreePath?: string | null;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): readonly {
   readonly rootDirectory: string;
   readonly workspaceSlug: string;
-}[] => [
-  {
-    rootDirectory:
-      resolveWorkspaceRuntimeCapsule(options).sessionsRoot.absolutePath,
-    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
-  },
-  {
-    rootDirectory: SESSION_ROOT,
-    workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
-  },
-];
+}[] => {
+  const locations = [
+    {
+      rootDirectory:
+        resolveWorkspaceRuntimeCapsule(options).sessionsRoot.absolutePath,
+      workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    },
+    {
+      rootDirectory: SESSION_ROOT,
+      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+    },
+  ];
+  const worktreePath = readNonEmptyString(options.worktreePath ?? null);
+  if (!worktreePath) {
+    return locations;
+  }
+  return [
+    {
+      rootDirectory: resolveWorkspaceRuntimeCapsule({
+        workspaceRoot: worktreePath,
+        workspaceSlug: options.workspaceSlug,
+      }).sessionsRoot.absolutePath,
+      workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    },
+    ...locations,
+  ];
+};
+
+const readDialogWorktreePath = (dialog: unknown): string | null =>
+  isRecord(dialog) && typeof dialog.worktreePath === "string"
+    ? readNonEmptyString(dialog.worktreePath)
+    : null;
 
 export class DialogHistoryService {
   private readonly logger: Logger;
@@ -184,7 +212,10 @@ export class DialogHistoryService {
       dialogId: options.dialogId,
     });
     const sessionId = sanitizeWorkspaceSlug(options.dialogId);
-    const locations = resolveDialogHistoryLocations(options);
+    const locations = resolveDialogHistoryLocations({
+      ...options,
+      worktreePath: readDialogWorktreePath(dialog),
+    });
 
     let lastError: unknown = null;
     for (const location of locations) {

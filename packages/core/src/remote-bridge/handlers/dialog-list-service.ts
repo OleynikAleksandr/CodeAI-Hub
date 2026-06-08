@@ -26,6 +26,7 @@ interface ProjectedDevelopmentTreeNode {
   readonly sessionId?: string;
   readonly sessionStage?: string;
   readonly startedAt?: string;
+  readonly worktreePath?: string;
 }
 
 interface ProjectedDevelopmentTreeUnlockState {
@@ -70,6 +71,9 @@ const hasProviderSessionId = (
   value: string | null | undefined
 ): value is string => typeof value === "string" && value.trim().length > 0;
 
+const readNonEmptyString = (value: string | null | undefined): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
 const isProjectedDevelopmentTreeNode = (
   value: unknown
 ): value is ProjectedDevelopmentTreeNode => {
@@ -87,16 +91,20 @@ const isProjectedDevelopmentTreeNode = (
 
 const createProjectedDialogEntry = (
   node: ProjectedDevelopmentTreeNode
-): ContinuityIndexEntry => ({
-  dialogId: node.sessionId ?? "",
-  latestSessionId: node.sessionId ?? null,
-  modelBinding: node.modelBinding ?? null,
-  providerId: node.providerId ?? null,
-  providerSessionId: node.sessionId ?? null,
-  rootSessionId: node.sessionId ?? "",
-  stage: node.sessionStage as ContinuityIndexEntry["stage"],
-  updatedAt: node.startedAt ?? "",
-});
+): ContinuityIndexEntry => {
+  const worktreePath = readNonEmptyString(node.worktreePath);
+  return {
+    dialogId: node.sessionId ?? "",
+    latestSessionId: node.sessionId ?? null,
+    modelBinding: node.modelBinding ?? null,
+    providerId: node.providerId ?? null,
+    providerSessionId: node.sessionId ?? null,
+    rootSessionId: node.sessionId ?? "",
+    stage: node.sessionStage as ContinuityIndexEntry["stage"],
+    updatedAt: node.startedAt ?? "",
+    ...(worktreePath ? { worktreePath } : {}),
+  };
+};
 
 const readProjectedDevelopmentTreeDialogs = async (options: {
   readonly workspaceRoot: string;
@@ -190,22 +198,48 @@ const buildDialogDeduplicationKey = (
 };
 
 const resolveDialogHistoryLocations = (options: {
+  readonly worktreePath?: string | null;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): readonly {
   readonly rootDirectory: string;
   readonly workspaceSlug: string;
-}[] => [
-  {
-    rootDirectory:
-      resolveWorkspaceRuntimeCapsule(options).sessionsRoot.absolutePath,
-    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
-  },
-  {
-    rootDirectory: SESSION_ROOT,
-    workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
-  },
-];
+}[] => {
+  const locations = [
+    {
+      rootDirectory:
+        resolveWorkspaceRuntimeCapsule(options).sessionsRoot.absolutePath,
+      workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    },
+    {
+      rootDirectory: SESSION_ROOT,
+      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+    },
+  ];
+  const worktreePath = readNonEmptyString(options.worktreePath ?? null);
+  if (!worktreePath) {
+    return locations;
+  }
+  return [
+    {
+      rootDirectory: resolveWorkspaceRuntimeCapsule({
+        workspaceRoot: worktreePath,
+        workspaceSlug: options.workspaceSlug,
+      }).sessionsRoot.absolutePath,
+      workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    },
+    ...locations,
+  ];
+};
+
+const readDialogWorktreePath = (entry: ContinuityIndexEntry): string | null => {
+  const worktreePath = (
+    entry as ContinuityIndexEntry & {
+      readonly worktreePath?: string | null;
+    }
+  ).worktreePath;
+  return readNonEmptyString(worktreePath);
+};
 
 export class DialogListService {
   private readonly logger: Logger;
@@ -217,6 +251,7 @@ export class DialogListService {
   private async hasDialogHistoryFile(options: {
     readonly dialogId: string;
     readonly providerId: string;
+    readonly worktreePath?: string | null;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<boolean> {
@@ -249,6 +284,7 @@ export class DialogListService {
       ? await this.hasDialogHistoryFile({
           dialogId: preferred.dialogId,
           providerId: preferred.providerId,
+          worktreePath: readDialogWorktreePath(preferred),
           workspaceRoot: options.workspaceRoot,
           workspaceSlug: options.workspaceSlug,
         })
@@ -260,6 +296,7 @@ export class DialogListService {
         (await this.hasDialogHistoryFile({
           dialogId: entry.dialogId,
           providerId: entry.providerId,
+          worktreePath: readDialogWorktreePath(entry),
           workspaceRoot: options.workspaceRoot,
           workspaceSlug: options.workspaceSlug,
         }));
