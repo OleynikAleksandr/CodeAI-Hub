@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4fa4ea5d9",
+  "lastRecordedCommit": "9c98674eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase14.plan.task1",
-  "expectedCommitMessage": "docs: checkpoint cluster node rollback regression plan",
+  "currentTaskId": "development-tree-cluster-contract.phase14.main-projection.task1",
+  "expectedCommitMessage": "fix: project cluster sessions into main workspace",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint cluster node rollback regression plan",
-    "preCommitHead": "4fa4ea5d9",
+    "expectedCommitMessage": "fix: project cluster sessions into main workspace",
+    "preCommitHead": "9c98674eb",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase14.plan.task1"
+    "taskId": "development-tree-cluster-contract.phase14.main-projection.task1"
   }
 }
 ```
@@ -275,12 +275,12 @@ Release evidence:
 ### Stream: Retest Failure Intake
 
 117. [DONE] `development-tree-cluster-contract.phase14.plan.task1` Add the retest failure scope for cluster session projection, cluster worktree clean Git boundaries, clearer worktree root naming, and Cluster/Module ClearUndo semantics (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster node rollback regression plan`).
-118. [PENDING] Git Commit: `docs: checkpoint cluster node rollback regression plan` (hash: TBD)
+118. [DONE] Git Commit: `docs: checkpoint cluster node rollback regression plan` (hash: 9c98674eb)
 
 ### Stream: Cluster Session Main Workspace Projection
 
-119. [TODO] `development-tree-cluster-contract.phase14.main-projection.task1` Persist cluster-contract session projection in the main workspace when Core bootstraps a downstream worktree session, including node id, stage, worktree path, branch, session id, and inherited model binding (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/product-part-workflow, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `fix: project cluster sessions into main workspace`).
-120. [TODO] Git Commit: `fix: project cluster sessions into main workspace` (hash: TBD)
+119. [DONE] `development-tree-cluster-contract.phase14.main-projection.task1` Persist cluster-contract session projection in the main workspace when Core bootstraps a downstream worktree session, including node id, stage, worktree path, branch, session id, and inherited model binding (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/product-part-workflow, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `fix: project cluster sessions into main workspace`).
+120. [PENDING] Git Commit: `fix: project cluster sessions into main workspace` (hash: TBD)
 121. [TODO] `development-tree-cluster-contract.phase14.main-projection-readmodel.task1` Expose projected downstream sessions through the Core workflow-state/dialog projection so Project Manager can show/open cluster sessions from the main Product Part coordination surface (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `fix: expose projected cluster sessions`).
 122. [TODO] Git Commit: `fix: expose projected cluster sessions` (hash: TBD)
 

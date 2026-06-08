@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { SessionModelBinding } from "../../session-model-binding";
 import {
@@ -6,7 +6,11 @@ import {
   type ClusterContractPlanWriterResult,
 } from "../cluster-workflow/cluster-contract-plan-writer";
 import { ClusterContractPromptBuilder } from "../cluster-workflow/cluster-contract-prompt-builder";
-import { createDevelopmentOrderUnlockStatePath } from "../product-part-workflow/development-order-plan-unlock-state";
+import {
+  createDevelopmentOrderUnlockStatePath,
+  type DevelopmentOrderUnlockState,
+  markDevelopmentOrderClusterSessionStarted,
+} from "../product-part-workflow/development-order-plan-unlock-state";
 import {
   type DevelopmentTreeClusterWorktreeRequest,
   type DevelopmentTreeClusterWorktreeResult,
@@ -103,7 +107,7 @@ const readUnlockState = async (params: {
   readonly partId: string;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
-}): Promise<UnlockStateFile> => {
+}): Promise<DevelopmentOrderUnlockState & UnlockStateFile> => {
   const content = await readFile(
     path.join(
       params.workspaceRoot,
@@ -111,7 +115,23 @@ const readUnlockState = async (params: {
     ),
     "utf8"
   );
-  return JSON.parse(content) as UnlockStateFile;
+  return JSON.parse(content) as DevelopmentOrderUnlockState & UnlockStateFile;
+};
+
+const writeUnlockState = async (params: {
+  readonly partId: string;
+  readonly state: DevelopmentOrderUnlockState;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  await writeFile(
+    path.join(
+      params.workspaceRoot,
+      createDevelopmentOrderUnlockStatePath(params)
+    ),
+    `${JSON.stringify(params.state, null, 2)}\n`,
+    "utf8"
+  );
 };
 
 const selectUnlockedClusterNodes = (
@@ -192,6 +212,24 @@ export class ClusterContractAgentBootstrapper {
       providerId: this.options.providerId,
       workspacePath: worktree.worktreePath,
     });
+    if (session?.id) {
+      const unlockState = await readUnlockState(request);
+      await writeUnlockState({
+        ...request,
+        state: markDevelopmentOrderClusterSessionStarted({
+          branchName: worktree.branchName,
+          clusterId: request.clusterId,
+          modelBinding: request.inheritedModelBinding ?? null,
+          partId: request.partId,
+          providerId: this.options.providerId,
+          sessionId: session.id,
+          sessionStage: stage,
+          state: unlockState,
+          updatedAt: new Date().toISOString(),
+          worktreePath: worktree.worktreePath,
+        }),
+      });
+    }
     const firstMessageSent = await this.sendFirstMessageIfPossible({
       clusterId: request.clusterId,
       partId: request.partId,

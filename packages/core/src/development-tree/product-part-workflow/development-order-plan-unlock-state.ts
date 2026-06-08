@@ -1,5 +1,15 @@
 type JsonRecord = Record<string, unknown>;
 
+export interface DevelopmentOrderNodeModelBinding {
+  readonly baseModelId?: string;
+  readonly modelId: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: string;
+  readonly source?: string;
+  readonly thinkingEnabled?: boolean;
+  readonly thinkingLevel?: string;
+}
+
 export interface DevelopmentOrderUnlockStateRequest {
   readonly acceptedOrderPlanCommitHash: string;
   readonly partId: string;
@@ -9,16 +19,23 @@ export interface DevelopmentOrderUnlockStateRequest {
 }
 
 export interface DevelopmentOrderUnlockNodeState {
+  readonly branchName?: string;
   readonly clusterId?: string;
   readonly dependsOn: readonly string[];
   readonly id: string;
   readonly kind: string;
   readonly mergeCommitHash?: string;
   readonly mergedAt?: string;
+  readonly modelBinding?: DevelopmentOrderNodeModelBinding;
   readonly moduleId?: string;
   readonly partId: string;
+  readonly providerId?: string;
   readonly reason?: string;
+  readonly sessionId?: string;
+  readonly sessionStage?: string;
+  readonly startedAt?: string;
   readonly status: "locked" | "merged" | "unlocked" | "waiting";
+  readonly worktreePath?: string;
 }
 
 export interface DevelopmentOrderUnlockState {
@@ -171,6 +188,38 @@ export const markDevelopmentOrderClusterMerged = (params: {
           mergeCommitHash: params.mergeCommitHash,
           mergedAt: params.updatedAt,
           status: "merged",
+        }
+      : node
+  ),
+  updatedAt: params.updatedAt,
+});
+
+export const markDevelopmentOrderClusterSessionStarted = (params: {
+  readonly branchName: string;
+  readonly clusterId: string;
+  readonly modelBinding?: DevelopmentOrderNodeModelBinding | null;
+  readonly partId: string;
+  readonly providerId: string;
+  readonly sessionId: string;
+  readonly sessionStage: string;
+  readonly state: DevelopmentOrderUnlockState;
+  readonly updatedAt: string;
+  readonly worktreePath: string;
+}): DevelopmentOrderUnlockState => ({
+  ...params.state,
+  nodes: params.state.nodes.map((node) =>
+    node.kind === "cluster" &&
+    node.partId === params.partId &&
+    node.clusterId === params.clusterId
+      ? {
+          ...node,
+          branchName: params.branchName,
+          modelBinding: params.modelBinding ?? undefined,
+          providerId: params.providerId,
+          sessionId: params.sessionId,
+          sessionStage: params.sessionStage,
+          startedAt: params.updatedAt,
+          worktreePath: params.worktreePath,
         }
       : node
   ),
