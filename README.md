@@ -2,7 +2,32 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.469** (Lead Order Plan Review Completion)
+**Current Release — v1.2.470** (Cluster Contract Sub-Agent Orchestration)
+
+This release opens the first real downstream Development Tree slice after lead
+Product Part order-plan acceptance. The lead agent now produces a Core-readable
+`DevelopmentOrderPlan.v2`, Core validates it, persists Product Part unlock
+state, and starts first-wave Cluster Contract sub-agents in deterministic Git
+worktrees/branches.
+
+Cluster Contract agents create `ClusterSpecification` and
+`ClusterFacadeContract` markdown/json artifacts, stop at user/lead review, and
+accept normal user text as revision feedback. When the review is confirmed, Core
+writes review-result and merge-boundary evidence, merges accepted cluster
+contract artifacts back into the main workspace, marks the cluster `merged`,
+and keeps dependent modules `locked` until the next wave is explicitly
+unlocked.
+
+Project Manager now reads the Core-owned Product Part coordination graph and
+renders Cluster/Module coordination statuses in the Development Tree sidebar.
+
+After installing this release, retest from accepted `Quality Gates Baseline`:
+accept the lead Product Part order plan, confirm that the first Cluster Contract
+session starts, let it produce the four contract artifacts, press
+`Подтверждаю`, and verify that Git stays clean while the Development Tree shows
+the cluster as merged and dependent modules as locked.
+
+**Previous Release — v1.2.469** (Lead Order Plan Review Completion)
 
 This release finishes the lead Product Part planning lifecycle opened in
 v1.2.468. After the lead agent drafts and Core commits the Development Order

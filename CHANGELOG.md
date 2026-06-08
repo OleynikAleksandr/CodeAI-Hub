@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.470] - 2026-06-08
+### Added
+- **Lead Product Part order plans now use a Core-readable `DevelopmentOrderPlan.v2` unlock contract.** Core validates Product Part briefs, node references, dependencies, first-wave unlockability, and locked-node reasons before opening downstream work.
+- **First-wave Cluster Contract sub-agents now run in dedicated Git worktrees/branches.** Core creates the worktree, writes a managed cluster plan, sends an inline-context prompt, validates `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, and opens a user/lead review gate.
+- **Accepted Cluster Contract results merge back into the main workspace through Core-owned Git boundaries.** Acceptance writes review-result and merge-boundary evidence, merges accepted artifacts, marks the cluster `merged`, and keeps dependent modules `locked`.
+- **Project Manager now renders the Product Part coordination graph from Core state.** Development Tree cluster/module rows consume optional `coordination.status` metadata from the workflow-state snapshot.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/development-tree/product-part-workflow/development-order-plan-v2-contract.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js packages/core/dist/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-review-controller.test.js packages/core/dist/development-tree/node-bootstrap/development-tree-node-merge-service.test.js packages/core/dist/remote-bridge/handlers/development-tree-snapshot.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+
 ## [1.2.469] - 2026-06-08
 ### Fixed
 - **Lead Development Order Plan review acceptance now completes the Product Part lifecycle.** Confirming the Phase 4 order-plan review commits `docs: accept lead development order plan`, marks the review task and Git Commit line done, and moves the lead Product Part plan into `User Return And Revisions`.

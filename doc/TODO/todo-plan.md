@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "5486d541c",
+  "lastRecordedCommit": "d57bfd3eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase8.verify.task1",
-  "expectedCommitMessage": "test: verify cluster contract subagent orchestration",
+  "currentTaskId": "development-tree-cluster-contract.phase9.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare cluster contract subagent release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify cluster contract subagent orchestration",
-    "preCommitHead": "5486d541c",
+    "expectedCommitMessage": "docs: prepare cluster contract subagent release notes",
+    "preCommitHead": "d57bfd3eb",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase8.verify.task1"
+    "taskId": "development-tree-cluster-contract.phase9.release-notes.task1"
   }
 }
 ```
@@ -127,7 +127,7 @@
 ### Stream: Targeted Verification
 
 37. [DONE] `development-tree-cluster-contract.phase8.verify.task1` Run targeted Core and Project Manager verification for order-plan v2 validation, first-wave cluster bootstrap, cluster artifact review, worktree merge, and coordination graph projection (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract subagent orchestration`).
-38. [PENDING] Git Commit: `test: verify cluster contract subagent orchestration` (hash: TBD)
+38. [DONE] Git Commit: `test: verify cluster contract subagent orchestration` (hash: d57bfd3eb)
 
 Verification evidence:
 - `npm run build --workspace packages/core` passed.
@@ -139,12 +139,12 @@ Verification evidence:
 
 ### Stream: Release Build Confirmation
 
-39. [TODO] `development-tree-cluster-contract.phase9.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none).
+39. [DONE] `development-tree-cluster-contract.phase9.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none). Result: release build explicitly confirmed by user request for this scope
 
 ### Stream: Release After Confirmation
 
-40. [TODO] `development-tree-cluster-contract.phase9.release-notes.task1` Prepare release notes for the next version after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract subagent release notes`).
-41. [TODO] Git Commit: `docs: prepare cluster contract subagent release notes` (hash: TBD)
+40. [DONE] `development-tree-cluster-contract.phase9.release-notes.task1` Prepare release notes for the next version after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract subagent release notes`).
+41. [PENDING] Git Commit: `docs: prepare cluster contract subagent release notes` (hash: TBD)
 42. [TODO] `development-tree-cluster-contract.phase9.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract subagent release build state`).
 43. [TODO] Git Commit: `docs: checkpoint cluster contract subagent release build state` (hash: TBD)
 44. [TODO] `development-tree-cluster-contract.phase9.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract subagent unified release artifacts`).
