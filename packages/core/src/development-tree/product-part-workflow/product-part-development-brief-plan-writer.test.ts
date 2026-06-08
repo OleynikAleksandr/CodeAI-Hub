@@ -15,6 +15,10 @@ const ORDER_PLAN_FILE_PATTERN = /DevelopmentOrderPlan\.draft\.md/;
 const ORDER_PLAN_JSON_FILE_PATTERN = /DevelopmentOrderPlan\.draft\.json/;
 const LEADERSHIP_ORDER_PATTERN =
   /Product Part leadership order: engine, web-surface/;
+const DOWNSTREAM_COORDINATION_COMMIT_PAIR_PATTERN =
+  /9\. \[TODO\] `development-tree\.product-part\.engine\.phase5\.downstream-coordination\.task1`[\s\S]*expected commit: `chore: coordinate engine downstream development`[\s\S]*10\. \[TODO\] Git Commit: `chore: coordinate engine downstream development` \(hash: TBD\)/u;
+const RETURN_PHASE_AFTER_DOWNSTREAM_PATTERN =
+  /11\. \[TODO\] `development-tree\.product-part\.engine\.phase-return\.user-return\.task1`/u;
 
 const createProductPartNode = (
   workspaceRoot: string,
@@ -72,6 +76,8 @@ test("ProductPartDevelopmentBriefPlanWriter creates an idempotent lead Product P
     assert.match(content, ORDER_PLAN_FILE_PATTERN);
     assert.match(content, ORDER_PLAN_JSON_FILE_PATTERN);
     assert.match(content, LEADERSHIP_ORDER_PATTERN);
+    assert.match(content, DOWNSTREAM_COORDINATION_COMMIT_PAIR_PATTERN);
+    assert.match(content, RETURN_PHASE_AFTER_DOWNSTREAM_PATTERN);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

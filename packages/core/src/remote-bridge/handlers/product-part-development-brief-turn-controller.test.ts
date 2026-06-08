@@ -49,9 +49,17 @@ const LEAD_ORDER_REVIEW_GIT_COMMIT_RE =
   /Git Commit: `docs: accept lead development order plan` \(hash: [a-f0-9]+\)/u;
 const DOWNSTREAM_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase5\.downstream-coordination\.task1`/u;
+const DOWNSTREAM_EXPECTED_COMMIT_RE =
+  /"expectedCommitMessage": "chore: coordinate engine downstream development"/u;
+const DOWNSTREAM_GIT_COMMIT_RE =
+  /Git Commit: `chore: coordinate engine downstream development` \(hash: TBD\)/u;
 const DEVELOPMENT_ORDER_PLAN_RE = /DevelopmentOrderPlan/u;
 const DEVELOPMENT_ORDER_PLAN_V2_RE = /codeai-development-order-plan-v2/u;
 const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
+const BRIEF_BOOTSTRAP_COMMIT =
+  "docs: bootstrap product part development briefs";
+const BRIEF_ACCEPTED_COMMIT =
+  "docs: update engine product part development brief";
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -62,6 +70,9 @@ const writeWorkspaceFile = async (
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, content, "utf8");
 };
+
+const createTempWorkspace = (prefix: string): Promise<string> =>
+  mkdtemp(path.join(os.tmpdir(), prefix));
 
 const runGit = (
   workspaceRoot: string,
@@ -86,6 +97,21 @@ const commitAll = async (
 const assertCleanGit = async (workspaceRoot: string): Promise<void> => {
   const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
   assert.equal(stdout.trim(), "");
+};
+
+const readGitLog = async (
+  workspaceRoot: string,
+  maxCount: string
+): Promise<string> =>
+  (await runGit(workspaceRoot, ["log", "--oneline", maxCount])).stdout;
+
+const writeOrderPlanArtifacts = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const markdown = createOrderPlanMarkdown();
+  const json = createOrderPlanJson();
+  await writeWorkspaceFile(workspaceRoot, ORDER_PLAN_PATH, markdown);
+  await writeWorkspaceFile(workspaceRoot, ORDER_PLAN_JSON_PATH, json);
 };
 
 const createPlanState = (params: {
@@ -242,17 +268,14 @@ const createBrief = (filled: boolean): string => {
 };
 
 test("Product Part brief handoff commits accepted draft and opens user review", async () => {
-  const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "product-part-brief-handoff-")
+  const workspaceRoot = await createTempWorkspace(
+    "product-part-brief-handoff-"
   );
   try {
     await initializeGitWorkspace(workspaceRoot);
     await writeWorkspaceFile(workspaceRoot, PLAN_PATH, createPlan());
     await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(false));
-    await commitAll(
-      workspaceRoot,
-      "docs: bootstrap product part development briefs"
-    );
+    await commitAll(workspaceRoot, BRIEF_BOOTSTRAP_COMMIT);
 
     await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
     await writeWorkspaceFile(
@@ -291,11 +314,7 @@ test("Product Part brief handoff commits accepted draft and opens user review", 
 
     assert.equal(result.handled, true);
     await assertCleanGit(workspaceRoot);
-    const { stdout: logOutput } = await runGit(workspaceRoot, [
-      "log",
-      "--oneline",
-      "-3",
-    ]);
+    const logOutput = await readGitLog(workspaceRoot, "-3");
     assert.match(logOutput, ACCEPTED_BRIEF_COMMIT_RE);
     assert.match(logOutput, LEDGER_COMMIT_RE);
 
@@ -371,16 +390,7 @@ test("Lead Product Part order plan handoff opens user review", async () => {
   const workspaceRoot = await prepareReviewWorkspace(true);
   try {
     await acceptReview(workspaceRoot);
-    await writeWorkspaceFile(
-      workspaceRoot,
-      ORDER_PLAN_PATH,
-      createOrderPlanMarkdown()
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      ORDER_PLAN_JSON_PATH,
-      createOrderPlanJson()
-    );
+    await writeOrderPlanArtifacts(workspaceRoot);
 
     const result =
       await new ProductPartDevelopmentBriefTurnController().handleTurnCompleted(
@@ -394,11 +404,7 @@ test("Lead Product Part order plan handoff opens user review", async () => {
 
     assert.equal(result.handled, true);
     await assertCleanGit(workspaceRoot);
-    const { stdout: logOutput } = await runGit(workspaceRoot, [
-      "log",
-      "--oneline",
-      "-4",
-    ]);
+    const logOutput = await readGitLog(workspaceRoot, "-4");
     assert.match(logOutput, LEAD_ORDER_LOG_COMMIT_RE);
     assert.match(logOutput, LEDGER_COMMIT_RE);
     const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
@@ -420,6 +426,8 @@ test("Lead Product Part order plan review acceptance opens downstream coordinati
     assert.match(plan, LEAD_ORDER_REVIEW_DONE_RE);
     assert.match(plan, LEAD_ORDER_REVIEW_GIT_COMMIT_RE);
     assert.match(plan, DOWNSTREAM_IN_PROGRESS_RE);
+    assert.match(plan, DOWNSTREAM_EXPECTED_COMMIT_RE);
+    assert.match(plan, DOWNSTREAM_GIT_COMMIT_RE);
     const unlockState = await readFile(
       path.join(workspaceRoot, UNLOCK_STATE_PATH),
       "utf8"
@@ -438,39 +446,22 @@ test("Lead Product Part order plan review acceptance opens downstream coordinati
 });
 
 const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
-  const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "product-part-brief-review-")
-  );
+  const workspaceRoot = await createTempWorkspace("product-part-brief-review-");
   await initializeGitWorkspace(workspaceRoot);
-  await writeWorkspaceFile(
-    workspaceRoot,
-    PLAN_PATH,
-    createReviewPlan(isLeadPart)
-  );
+  const plan = createReviewPlan(isLeadPart);
+  await writeWorkspaceFile(workspaceRoot, PLAN_PATH, plan);
   await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
   await mkdir(path.join(workspaceRoot, MATERIALIZED_MODULE_PATH), {
     recursive: true,
   });
-  await commitAll(
-    workspaceRoot,
-    "docs: update engine product part development brief"
-  );
+  await commitAll(workspaceRoot, BRIEF_ACCEPTED_COMMIT);
   return workspaceRoot;
 };
 
 const prepareOrderPlanReviewWorkspace = async (): Promise<string> => {
   const workspaceRoot = await prepareReviewWorkspace(true);
   await acceptReview(workspaceRoot);
-  await writeWorkspaceFile(
-    workspaceRoot,
-    ORDER_PLAN_PATH,
-    createOrderPlanMarkdown()
-  );
-  await writeWorkspaceFile(
-    workspaceRoot,
-    ORDER_PLAN_JSON_PATH,
-    createOrderPlanJson()
-  );
+  await writeOrderPlanArtifacts(workspaceRoot);
   const result =
     await new ProductPartDevelopmentBriefTurnController().handleTurnCompleted({
       sessionId: "product-part-session-1",

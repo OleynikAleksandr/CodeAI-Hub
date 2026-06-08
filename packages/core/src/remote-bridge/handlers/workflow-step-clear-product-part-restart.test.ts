@@ -1,15 +1,18 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import {
   access,
   mkdir,
   mkdtemp,
   readFile,
+  realpath,
   rm,
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import { SessionManager } from "../../session-manager";
 import {
   clearAndRestartProductPart,
@@ -20,6 +23,7 @@ const WORKSPACE_SLUG = "demo-workspace";
 const PRODUCT_PART_BRIEF_PLAN_RE =
   /Product Part Development Brief Managed TODO Plan/u;
 const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief/u;
+const execFileAsync = promisify(execFile);
 
 const writeText = async (filePath: string, content: string): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
@@ -35,13 +39,46 @@ const fileExists = async (filePath: string): Promise<boolean> => {
   }
 };
 
+const runGit = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", [...args], {
+    cwd: workspaceRoot,
+  });
+  return stdout;
+};
+
+const initializeGitWorkspace = async (workspaceRoot: string): Promise<void> => {
+  await runGit(workspaceRoot, ["init"]);
+  await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
+  await runGit(workspaceRoot, ["config", "user.name", "Test"]);
+  await writeText(path.join(workspaceRoot, "README.md"), "# Test\n");
+  await runGit(workspaceRoot, ["add", "."]);
+  await runGit(workspaceRoot, ["commit", "-m", "test: initial workspace"]);
+};
+
 test("Product Part root clear removes old session material and recreates agent plan/session", async () => {
+  const tempRoot = await realpath(tmpdir());
   const workspaceRoot = await mkdtemp(
-    path.join(tmpdir(), "clear-product-part-")
+    path.join(tempRoot, "clear-product-part-")
   );
   const partId = "latest-note-search";
   const siblingPartId = "widget-display";
   const workflowPath = `development_tree/materialized/product-parts/${partId}`;
+  const worktreesRoot = path.join(
+    path.dirname(workspaceRoot),
+    `${path.basename(workspaceRoot)}.worktrees`
+  );
+  const downstreamWorktreePath = path.join(
+    worktreesRoot,
+    WORKSPACE_SLUG,
+    "product-parts",
+    partId,
+    "clusters",
+    "note-selection-cluster",
+    "contract"
+  );
   const oldSessionProviderId = "old-product-part-provider-session";
   const sessionManager = new SessionManager();
   const oldSession = sessionManager.createSession(
@@ -54,6 +91,7 @@ test("Product Part root clear removes old session material and recreates agent p
       stage: workflowPath,
     }
   );
+  let downstreamSessionId = "";
   const productPartRoot = path.join(
     workspaceRoot,
     ".codeai-hub",
@@ -110,6 +148,27 @@ test("Product Part root clear removes old session material and recreates agent p
   );
 
   try {
+    await initializeGitWorkspace(workspaceRoot);
+    await mkdir(path.dirname(downstreamWorktreePath), { recursive: true });
+    await runGit(workspaceRoot, [
+      "worktree",
+      "add",
+      "-B",
+      "codex/test-downstream-worktree",
+      downstreamWorktreePath,
+      "HEAD",
+    ]);
+    const downstreamSession = sessionManager.createSession(
+      "codex",
+      downstreamWorktreePath,
+      "old-cluster-provider-session",
+      {
+        initiativeSlug: WORKSPACE_SLUG,
+        runSlug: "development-tree",
+        stage: `${workflowPath}/clusters/note-selection-cluster`,
+      }
+    );
+    downstreamSessionId = downstreamSession.id;
     await mkdir(siblingProductPartRoot, { recursive: true });
     await writeText(planPath, "old product part plan\n");
     await writeText(
@@ -185,11 +244,25 @@ test("Product Part root clear removes old session material and recreates agent p
       isProductPartRootClear({ kind: "development_tree_node", workflowPath }),
       true
     );
-    assert.deepEqual(result.clearedSessions.deletedSessionIds, [oldSession.id]);
+    assert.deepEqual(
+      [...result.clearedSessions.deletedSessionIds].sort(),
+      [downstreamSessionId, oldSession.id].sort()
+    );
     assert.equal(sessions.length, 1);
     assert.equal(siblingSessions.length, 0);
     assert.equal(sessions[0]?.stage, workflowPath);
     assert.deepEqual(result.restart.bootstrapSessionIds, [sessions[0]?.id]);
+    assert.deepEqual(result.restart.deletedWorktreePaths, [
+      path.relative(workspaceRoot, downstreamWorktreePath),
+    ]);
+    assert.equal(await fileExists(downstreamWorktreePath), false);
+    assert.equal(await fileExists(worktreesRoot), false);
+    assert.equal(
+      (
+        await runGit(workspaceRoot, ["worktree", "list", "--porcelain"])
+      ).includes(downstreamWorktreePath),
+      false
+    );
     assert.equal(await fileExists(providerNativePath), false);
     assert.equal(await fileExists(unifiedPath), false);
     assert.equal(await fileExists(continuityPath), false);
@@ -226,5 +299,6 @@ test("Product Part root clear removes old session material and recreates agent p
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
+    await rm(worktreesRoot, { force: true, recursive: true });
   }
 });

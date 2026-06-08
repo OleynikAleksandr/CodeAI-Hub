@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "d85a411ae",
+  "lastRecordedCommit": "4b3aeeb12",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.product-part-clear-worktree-root.task1",
-  "expectedCommitMessage": "fix: prune empty product part worktree roots",
+  "currentTaskId": "development-tree-cluster-contract.phase11.downstream-model-build.task1",
+  "expectedCommitMessage": "test: verify product part restart workflow",
   "debt": {
-    "expectedCommitMessage": "fix: prune empty product part worktree roots",
-    "preCommitHead": "d85a411ae",
+    "expectedCommitMessage": "test: verify product part restart workflow",
+    "preCommitHead": "4b3aeeb12",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.product-part-clear-worktree-root.task1"
+    "taskId": "development-tree-cluster-contract.phase11.downstream-model-build.task1"
   }
 }
 ```
@@ -233,9 +233,9 @@ Verification evidence:
 99. [DONE] `development-tree-cluster-contract.phase11.product-part-clear-worktrees.task1` Remove downstream Development Tree worktrees when Clear&Do restarts a Product Part root node (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/product-part-worktree-cleanup.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part downstream worktrees`).
 100. [DONE] Git Commit: `fix: clear product part downstream worktrees` (hash: d85a411ae)
 101. [DONE] `development-tree-cluster-contract.phase11.product-part-clear-worktree-root.task1` Prune the top-level workspace `.worktrees` directory when Product Part Clear&Do removes the last downstream worktree (scope: `packages/core/src/remote-bridge/handlers/product-part-worktree-cleanup.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune empty product part worktree roots`).
-102. [PENDING] Git Commit: `fix: prune empty product part worktree roots` (hash: TBD)
-103. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup, Product Part coordination plan repair, Product Part Clear&Do worktree cleanup, and downstream cluster-contract model inheritance (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify product part restart workflow`).
-104. [TODO] Git Commit: `test: verify product part restart workflow` (hash: TBD)
+102. [DONE] Git Commit: `fix: prune empty product part worktree roots` (hash: 4b3aeeb12)
+103. [DONE] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup, Product Part coordination plan repair, Product Part Clear&Do worktree cleanup, and downstream cluster-contract model inheritance (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify product part restart workflow`).
+104. [PENDING] Git Commit: `test: verify product part restart workflow` (hash: TBD)
 
 ## Phase 12 - Regression Fix Release Build (owner: Codex, updated: 2026-06-08)
 
