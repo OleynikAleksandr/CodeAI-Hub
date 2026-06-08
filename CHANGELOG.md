@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.468] - 2026-06-08
+### Added
+- **Lead Product Part acceptance now continues to Development Order Plan drafting.** After the user accepts the lead Product Part Development Brief, Core sends the next managed internal assignment into the same session for `DevelopmentOrderPlan.draft.md` and `DevelopmentOrderPlan.draft.json`.
+- **Lead Development Order Plan completion opens its own user review gate.** Core validates the markdown/JSON artifacts, commits them, advances the Product Part todo-plan to `phase4.order-plan-review`, and leaves secondary Product Parts in `User Return And Revisions`.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js`
+- `npm run plan:validate`
+
 ## [1.2.467] - 2026-06-08
 ### Fixed
 - **Product Part managed review confirmation no longer touches ignored runtime session paths.** Acceptance commits now include the Product Part brief and continuity artifacts, but not `.codeai-hub/<workspace>/runtime/sessions/`, which is local-only runtime residue.

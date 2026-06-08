@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.467** (Product Part Acceptance Button Hotfix)
+**Current Release — v1.2.468** (Lead Product Part Order Plan Continuation)
+
+This release completes the next managed step after lead Product Part brief
+acceptance. Secondary Product Parts still finish their main planning stage at
+`User Return And Revisions`, but the lead Product Part now continues
+automatically: after the user presses `Подтверждаю`, Core dispatches the
+Development Order Plan assignment into the same session.
+
+When the lead agent writes `DevelopmentOrderPlan.draft.md` and
+`DevelopmentOrderPlan.draft.json`, Core validates the tracked artifacts,
+commits them with the lead order-plan commit, advances the Product Part
+todo-plan, and opens the order-plan user review gate.
+
+After installing this release, retest the lead Product Part session: accepting
+the Product Part brief should immediately produce the next agent turn for the
+Development Order Plan instead of stopping visually at the brief review.
+
+**Previous Release — v1.2.467** (Product Part Acceptance Button Hotfix)
 
 This release fixes the Product Part managed review confirmation regression found
 in v1.2.466. Product Part brief acceptance no longer attempts to include
