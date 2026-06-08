@@ -12,14 +12,13 @@ export type CodexApprovalMode =
   | "on-failure"
   | "untrusted";
 
-export const DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
+export const DEFAULT_CODEX_MODEL_ID = "gpt-5.4-mini";
 export const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
 export const DEFAULT_CLAUDE_THINKING_EFFORT: ClaudeThinkingEffort = "medium";
 
 const CODEX_MODEL_IDS = new Set([
   "gpt-5.2",
   "gpt-5.3-codex-spark",
-  "gpt-5.3-codex",
   "gpt-5.4-mini",
   "gpt-5.4",
   "gpt-5.5",

@@ -83,15 +83,6 @@ export const CODEX_RECOMMENDED_MODELS = [
     }
   ),
   withCodexModelCapabilities({
-    id: "gpt-5.3-codex",
-    displayName: "GPT-5.3-Codex",
-    description:
-      "Most advanced agentic coding model for real-world engineering",
-    platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-    status: "active",
-    tier: "flagship",
-  }),
-  withCodexModelCapabilities({
     id: "gpt-5.4-mini",
     displayName: "GPT-5.4 Mini",
     description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
@@ -144,15 +135,6 @@ export const CODEX_SETTINGS_MODELS = [
     }
   ),
   withCodexModelCapabilities({
-    id: "gpt-5.3-codex",
-    displayName: "GPT-5.3-Codex",
-    description:
-      "Most advanced agentic coding model for real-world engineering",
-    platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-    status: "active",
-    tier: "flagship",
-  }),
-  withCodexModelCapabilities({
     id: "gpt-5.4-mini",
     displayName: "GPT-5.4 Mini",
     description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
@@ -197,7 +179,7 @@ export type CodexModelDescriptor =
   | CodexRecommendedModelDescriptor
   | CodexLegacyModelDescriptor;
 
-export const DEFAULT_CODEX_MODEL_ID: CodexRecommendedModelId = "gpt-5.3-codex";
+export const DEFAULT_CODEX_MODEL_ID: CodexRecommendedModelId = "gpt-5.4-mini";
 
 export interface CodexReasoningLevelDescriptor {
   readonly default: boolean;

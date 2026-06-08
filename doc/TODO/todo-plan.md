@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "f3d5c06d2",
+  "lastRecordedCommit": "3feaa4654",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.final-vsix.task1",
-  "expectedCommitMessage": "build: package lead order plan wave bootstrap vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase11.codex-model-registry.task1",
+  "expectedCommitMessage": "fix: remove unsupported codex model from defaults",
   "debt": {
-    "expectedCommitMessage": "build: package lead order plan wave bootstrap vsix release",
-    "preCommitHead": "f3d5c06d2",
+    "expectedCommitMessage": "fix: remove unsupported codex model from defaults",
+    "preCommitHead": "3feaa4654",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.final-vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase11.codex-model-registry.task1"
   }
 }
 ```
@@ -204,18 +204,35 @@ Verification evidence:
 78. [DONE] `development-tree-cluster-contract.phase10.final-build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the final regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan wave bootstrap release artifacts`).
 79. [DONE] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: f3d5c06d2)
 80. [DONE] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
-81. [PENDING] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: TBD)
+81. [DONE] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: 3feaa4654)
 
 ## Phase 11 - Final Release Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: Lead Order Plan First Wave Retest
 
-82. [TODO] `development-tree-cluster-contract.phase11.final-user-retest.task1` User installs release `1.2.473` and retests the FinderWidget lead Product Part workflow: after accepted `DevelopmentOrderPlan.v2`, Core must start the first unlocked cluster-contract wave, create the cluster worktree/session, show the cluster agent first prompt, and keep the main Product Part session available for coordination (scope: user workflow; expected commit: none).
+82. [BLOCKED] `development-tree-cluster-contract.phase11.final-user-retest.task1` User installs release `1.2.473` and retests the FinderWidget lead Product Part workflow: after accepted `DevelopmentOrderPlan.v2`, Core must start the first unlocked cluster-contract wave, create the cluster worktree/session, show the cluster agent first prompt, and keep the main Product Part session available for coordination (scope: user workflow; expected commit: none). Blocker: 2026-06-08 retest showed the first cluster-contract wave starts, but the new worktree session falls back to unsupported Codex model `gpt-5.3-codex` and the provider rejects the first turn.
 
-## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-08)
+### Stream: Codex Model Binding Regression Fix
+
+83. [DONE] `development-tree-cluster-contract.phase11.codex-model-registry.task1` Remove unsupported Codex model `gpt-5.3-codex` from active/default registries used by settings and runtime model resolution (scope: `src/types/codex-model-registry.ts, packages/core/src/config/provider-defaults-resolver.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; expected commit: `fix: remove unsupported codex model from defaults`).
+84. [PENDING] Git Commit: `fix: remove unsupported codex model from defaults` (hash: TBD)
+85. [TODO] `development-tree-cluster-contract.phase11.codex-model-profile.task1` Remove unsupported Codex model `gpt-5.3-codex` from model invocation compatibility profiles and alignment tests (scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts, src/client/project-manager/services/codex-model-registry-alignment.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: align codex model profiles with supported models`).
+86. [TODO] Git Commit: `test: align codex model profiles with supported models` (hash: TBD)
+87. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions inherit the accepted Product Part session model binding instead of resolving defaults from the new worktree (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
+88. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
+89. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
+90. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
+
+## Phase 12 - Regression Fix Release Build (owner: Codex, updated: 2026-06-08)
+
+### Stream: Release Build Confirmation
+
+91. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the downstream model binding regression fix (scope: user workflow; expected commit: none).
+
+## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-83. [TODO] `development-tree-cluster-contract.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-84. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-85. [TODO] `development-tree-cluster-contract.phase12.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+92. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+93. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+94. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
