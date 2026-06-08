@@ -2,7 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.473** (Lead Order Plan First Wave Bootstrap)
+**Current Release — v1.2.474** (Product Part Restart Cleanup)
+
+This regression-fix release keeps downstream Development Tree sessions on the
+same supported Codex model selected by the Product Part session. The obsolete
+`gpt-5.3-codex` model has been removed from selectable defaults, runtime
+fallbacks, capture defaults, and persisted settings migration paths.
+
+Lead Product Part coordination plans now keep Phase 5 commit-backed: when the
+accepted `DevelopmentOrderPlan.v2` advances into Downstream Product Part
+Coordination, Core also creates the paired `Git Commit` line instead of leaving
+an uncommittable in-progress microtask.
+
+Product Part `Clear&Do` now removes downstream cluster/module worktrees and
+prunes the top-level `<workspace>.worktrees` directory when it becomes empty.
+Retest by clearing the lead Product Part, confirming that old cluster sessions
+and todo-plans are recreated from scratch, and checking that stale worktree
+folders do not remain after the restart.
+
+**Previous Release — v1.2.473** (Lead Order Plan First Wave Bootstrap)
 
 This regression-fix release completes the accepted lead Product Part order-plan
 handoff. When the user confirms the accepted `DevelopmentOrderPlan.v2`, Core

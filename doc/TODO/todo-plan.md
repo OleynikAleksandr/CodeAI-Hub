@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4b3aeeb12",
+  "lastRecordedCommit": "0b11377d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.downstream-model-build.task1",
-  "expectedCommitMessage": "test: verify product part restart workflow",
+  "currentTaskId": "development-tree-cluster-contract.phase12.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare product part restart release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify product part restart workflow",
-    "preCommitHead": "4b3aeeb12",
+    "expectedCommitMessage": "docs: prepare product part restart release notes",
+    "preCommitHead": "0b11377d2",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.downstream-model-build.task1"
+    "taskId": "development-tree-cluster-contract.phase12.release-notes.task1"
   }
 }
 ```
@@ -235,18 +235,29 @@ Verification evidence:
 101. [DONE] `development-tree-cluster-contract.phase11.product-part-clear-worktree-root.task1` Prune the top-level workspace `.worktrees` directory when Product Part Clear&Do removes the last downstream worktree (scope: `packages/core/src/remote-bridge/handlers/product-part-worktree-cleanup.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune empty product part worktree roots`).
 102. [DONE] Git Commit: `fix: prune empty product part worktree roots` (hash: 4b3aeeb12)
 103. [DONE] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup, Product Part coordination plan repair, Product Part Clear&Do worktree cleanup, and downstream cluster-contract model inheritance (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify product part restart workflow`).
-104. [PENDING] Git Commit: `test: verify product part restart workflow` (hash: TBD)
+104. [DONE] Git Commit: `test: verify product part restart workflow` (hash: 0b11377d2)
 
 ## Phase 12 - Regression Fix Release Build (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Release Build Confirmation
 
-105. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` User explicitly confirmed release build for the downstream model binding, Product Part coordination plan, and Clear&Do worktree cleanup fixes; prepare release notes, bump versions, run `build-all.sh`, and package VSIX (scope: user workflow; expected commit: none).
+105. [DONE] `development-tree-cluster-contract.phase12.release-confirm.task1` User explicitly confirmed release build for the downstream model binding, Product Part coordination plan, and Clear&Do worktree cleanup fixes; prepare release notes, bump versions, run `build-all.sh`, and package VSIX (scope: user workflow; expected commit: none). Result: User explicitly confirmed the regression-fix release build in chat; release tasks will proceed.
+
+### Stream: Release After Confirmation
+
+106. [DONE] `development-tree-cluster-contract.phase12.release-notes.task1` Prepare release notes for the downstream model binding, Product Part coordination plan, and Clear&Do worktree cleanup fixes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part restart release notes`).
+107. [PENDING] Git Commit: `docs: prepare product part restart release notes` (hash: TBD)
+108. [TODO] `development-tree-cluster-contract.phase12.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint product part restart release build state`).
+109. [TODO] Git Commit: `docs: checkpoint product part restart release build state` (hash: TBD)
+110. [TODO] `development-tree-cluster-contract.phase12.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part restart release artifacts`).
+111. [TODO] Git Commit: `build: prepare product part restart release artifacts` (hash: TBD)
+112. [TODO] `development-tree-cluster-contract.phase12.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part restart vsix release`).
+113. [TODO] Git Commit: `build: package product part restart vsix release` (hash: TBD)
 
 ## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-106. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-107. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-108. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+114. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+115. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+116. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

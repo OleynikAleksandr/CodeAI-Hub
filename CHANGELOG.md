@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.474] - 2026-06-08
+### Fixed
+- **Downstream Product Part sessions now inherit the selected Codex model.** Automatically bootstrapped cluster-contract sessions receive the Product Part session model binding instead of falling back to workspace defaults.
+- **Unsupported `gpt-5.3-codex` paths are removed from active selection.** Defaults, runtime fallbacks, capture UI defaults, invocation profiles, and persisted settings migration now move away from the provider-unsupported model.
+- **Lead Product Part Phase 5 coordination is commit-backed.** New and existing accepted lead Product Part todo-plans receive the required `Git Commit: chore: coordinate <part> downstream development` line.
+- **Product Part `Clear&Do` removes downstream worktrees.** Clearing a Product Part deletes its downstream cluster/module worktrees and prunes the empty top-level `<workspace>.worktrees` directory.
+
+### Verification
+- `npm run build --workspace packages/Codex_AppServer_Module`
+- `npm run build --workspace packages/core`
+- `npm run typecheck:webview`
+- `node --test packages/core/dist/development-tree/product-part-workflow/product-part-development-brief-plan-writer.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-managed-review-decision-handler.test.js packages/core/dist/remote-bridge/handlers/settings-persistence-service.test.js`
+
 ## [1.2.473] - 2026-06-08
 ### Fixed
 - **Lead Product Part order-plan acceptance now starts the first unlocked cluster-contract wave.** Confirming the accepted `DevelopmentOrderPlan.v2` no longer stops at Downstream Product Part Coordination; Core now routes the accepted unlock-state into the cluster-contract bootstrapper, creates the first cluster worktree/session, and sends the first cluster prompt.
