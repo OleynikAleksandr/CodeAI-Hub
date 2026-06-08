@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4f65f4285",
+  "lastRecordedCommit": "e558a6f04",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase14.node-clearundo-test.task1",
-  "expectedCommitMessage": "test: verify downstream node clearundo",
+  "currentTaskId": "development-tree-cluster-contract.phase15.verify.task1",
+  "expectedCommitMessage": "test: verify cluster node rollback workflow",
   "debt": {
-    "expectedCommitMessage": "test: verify downstream node clearundo",
-    "preCommitHead": "4f65f4285",
+    "expectedCommitMessage": "test: verify cluster node rollback workflow",
+    "preCommitHead": "e558a6f04",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase14.node-clearundo-test.task1"
+    "taskId": "development-tree-cluster-contract.phase15.verify.task1"
   }
 }
 ```
@@ -301,15 +301,22 @@ Release evidence:
 129. [DONE] `development-tree-cluster-contract.phase14.node-clearundo-ui.task1` Wire Project Manager cluster/module clear targets to the Core node ClearUndo response so cleared nodes render with an empty icon instead of a stale yellow/in-progress state (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: clear downstream node markers in project manager`).
 130. [DONE] Git Commit: `fix: clear downstream node markers in project manager` (hash: 4f65f4285)
 131. [DONE] `development-tree-cluster-contract.phase14.node-clearundo-test.task1` Add targeted regression coverage for cluster/module ClearUndo removing worktrees, deleting projected sessions, pruning traces, and returning the graph node to an unstarted state (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts`; expected commit: `test: verify downstream node clearundo`).
-132. [PENDING] Git Commit: `test: verify downstream node clearundo` (hash: TBD)
+132. [DONE] Git Commit: `test: verify downstream node clearundo` (hash: e558a6f04)
 
 ## Phase 15 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Regression Verification
 
-133. [TODO] `development-tree-cluster-contract.phase15.verify.task1` Run targeted builds/tests for cluster projection visibility, clean worktree ledger boundary, renamed worktree roots, and cluster/module ClearUndo rollback behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster node rollback workflow`).
-134. [TODO] Git Commit: `test: verify cluster node rollback workflow` (hash: TBD)
+133. [DONE] `development-tree-cluster-contract.phase15.verify.task1` Run targeted builds/tests for cluster projection visibility, clean worktree ledger boundary, renamed worktree roots, and cluster/module ClearUndo rollback behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster node rollback workflow`).
+134. [PENDING] Git Commit: `test: verify cluster node rollback workflow` (hash: TBD)
 135. [TODO] `development-tree-cluster-contract.phase15.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release for cluster node visibility and ClearUndo (scope: user workflow; expected commit: none).
+
+Verification evidence:
+- `npm run build --workspace packages/core` passed.
+- `npm run typecheck:webview` passed.
+- `npm run build:project-manager` passed.
+- `node --test ...cluster-contract-agent-bootstrapper.test.js ...development-tree-projected-session.test.js ...cluster-contract-turn-controller.test.js` passed: 3/3 tests.
+- `node --test ...development-tree-node-worktree-service.test.js ...workflow-step-clear-development-tree-node.test.js ...workflow-step-clear-service.test.js` passed: 9/9 tests.
 
 ## Phase 16 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
