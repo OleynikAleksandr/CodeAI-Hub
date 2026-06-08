@@ -1,5 +1,9 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  createClusterContractSummaryPath,
+  LeadProductPartCoordinationService,
+} from "../../development-tree/product-part-workflow/lead-product-part-coordination-service";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 
 type ClusterReviewIntent = "accept" | "none" | "revision";
@@ -83,13 +87,6 @@ const createPlanPath = (params: {
 }): string =>
   `doc/TODO/stages/development-tree/product-parts/${params.partId}/clusters/${params.clusterId}/todo-plan.md`;
 
-const createResultPath = (params: {
-  readonly clusterId: string;
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): string =>
-  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-clusters/${params.partId}/${params.clusterId}.review-result.json`;
-
 const pathExists = async (
   workspaceRoot: string,
   relativePath: string
@@ -170,6 +167,7 @@ const markReviewAccepted = (params: {
 
 export class ClusterContractReviewController {
   private readonly git = new WorkflowBoundaryGit();
+  private readonly leadCoordination = new LeadProductPartCoordinationService();
 
   async handleReviewDecision(params: {
     readonly content: string;
@@ -239,19 +237,19 @@ export class ClusterContractReviewController {
     if (!params.planState.expectedCommitMessage) {
       return { handled: false };
     }
-    const resultPath = createResultPath(params);
+    const resultPath = createClusterContractSummaryPath(params);
+    const updatedAt = new Date().toISOString();
     await writeText(
       params.workspaceRoot,
       resultPath,
       `${JSON.stringify(
-        {
+        this.leadCoordination.createClusterContractSummary({
           clusterId: params.clusterId,
           partId: params.partId,
-          reviewState: "merge_ready",
-          schema: "codeai-cluster-contract-review-result-v1",
+          reviewCommitHash: params.planState.lastRecordedCommit ?? "",
           sessionId: params.sessionId,
-          updatedAt: new Date().toISOString(),
-        },
+          updatedAt,
+        }),
         null,
         2
       )}\n`

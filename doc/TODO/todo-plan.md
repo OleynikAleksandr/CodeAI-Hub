@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "56d5211ab",
+  "lastRecordedCommit": "dd6dd11bd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase4.review.task1",
-  "expectedCommitMessage": "feat: accept cluster contract review results",
+  "currentTaskId": "development-tree-cluster-contract.phase5.lead-summary.task1",
+  "expectedCommitMessage": "feat: summarize cluster contract results for lead coordination",
   "debt": {
-    "expectedCommitMessage": "feat: accept cluster contract review results",
-    "preCommitHead": "56d5211ab",
+    "expectedCommitMessage": "feat: summarize cluster contract results for lead coordination",
+    "preCommitHead": "dd6dd11bd",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase4.review.task1"
+    "taskId": "development-tree-cluster-contract.phase5.lead-summary.task1"
   }
 }
 ```
@@ -91,14 +91,14 @@
 19. [DONE] `development-tree-cluster-contract.phase4.turn.task1` Add the cluster-contract turn controller that validates generated specification/facade artifacts, commits them inside the cluster worktree, and opens the user/lead review gate (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts`; expected commit: `feat: open cluster contract review`).
 20. [DONE] Git Commit: `feat: open cluster contract review` (hash: 56d5211ab)
 21. [DONE] `development-tree-cluster-contract.phase4.review.task1` Add cluster-contract review handling so ordinary user/lead messages request sub-agent revisions while explicit acceptance records a merge-ready result and summary for lead Product Part coordination (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.test.ts`; expected commit: `feat: accept cluster contract review results`).
-22. [PENDING] Git Commit: `feat: accept cluster contract review results` (hash: TBD)
+22. [DONE] Git Commit: `feat: accept cluster contract review results` (hash: dd6dd11bd)
 
 ## Phase 5 - Lead Coordination And Merge (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Result Summary And Mainline Merge
 
-23. [TODO] `development-tree-cluster-contract.phase5.lead-summary.task1` Feed accepted cluster-contract summaries back into the lead Product Part coordination plan so the lead agent can accept, reject, or request revisions at node level (scope: `packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.test.ts`; expected commit: `feat: summarize cluster contract results for lead coordination`).
-24. [TODO] Git Commit: `feat: summarize cluster contract results for lead coordination` (hash: TBD)
+23. [DONE] `development-tree-cluster-contract.phase5.lead-summary.task1` Feed accepted cluster-contract summaries back into the lead Product Part coordination plan so the lead agent can accept, reject, or request revisions at node level (scope: `packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.test.ts`; expected commit: `feat: summarize cluster contract results for lead coordination`).
+24. [PENDING] Git Commit: `feat: summarize cluster contract results for lead coordination` (hash: TBD)
 25. [TODO] `development-tree-cluster-contract.phase5.merge.task1` Add Core-owned merge for accepted cluster-contract worktree results back into the main workspace with merge evidence, clean Git assertions, and node-level rollback boundary metadata (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts`; expected commit: `feat: merge accepted cluster contract worktrees`).
 26. [TODO] Git Commit: `feat: merge accepted cluster contract worktrees` (hash: TBD)
 27. [TODO] `development-tree-cluster-contract.phase5.advance.task1` Advance the lead Product Part coordination graph after cluster-contract merge, marking `note-selection-cluster` merged and keeping module nodes locked until the accepted cluster contract can unlock the next module-contract wave (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: advance lead coordination after cluster merge`).
