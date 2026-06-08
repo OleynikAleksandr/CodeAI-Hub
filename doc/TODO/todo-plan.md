@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "1cc0121bc",
+  "lastRecordedCommit": "6cc5cb6d4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase15.release-state.task1",
-  "expectedCommitMessage": "docs: checkpoint cluster node rollback release build state",
+  "currentTaskId": "development-tree-cluster-contract.phase15.build-all.task1",
+  "expectedCommitMessage": "build: prepare cluster node rollback release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint cluster node rollback release build state",
-    "preCommitHead": "1cc0121bc",
+    "expectedCommitMessage": "build: prepare cluster node rollback release artifacts",
+    "preCommitHead": "6cc5cb6d4",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase15.release-state.task1"
+    "taskId": "development-tree-cluster-contract.phase15.build-all.task1"
   }
 }
 ```
@@ -323,9 +323,9 @@ Verification evidence:
 136. [DONE] `development-tree-cluster-contract.phase15.release-notes.task1` Prepare release notes for the cluster node rollback regression fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster node rollback release notes`).
 137. [DONE] Git Commit: `docs: prepare cluster node rollback release notes` (hash: 1cc0121bc)
 138. [DONE] `development-tree-cluster-contract.phase15.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster node rollback release build state`).
-139. [PENDING] Git Commit: `docs: checkpoint cluster node rollback release build state` (hash: TBD)
-140. [TODO] `development-tree-cluster-contract.phase15.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster node rollback release artifacts`).
-141. [TODO] Git Commit: `build: prepare cluster node rollback release artifacts` (hash: TBD)
+139. [DONE] Git Commit: `docs: checkpoint cluster node rollback release build state` (hash: 6cc5cb6d4)
+140. [DONE] `development-tree-cluster-contract.phase15.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster node rollback release artifacts`).
+141. [PENDING] Git Commit: `build: prepare cluster node rollback release artifacts` (hash: TBD)
 142. [TODO] `development-tree-cluster-contract.phase15.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster node rollback vsix release`).
 143. [TODO] Git Commit: `build: package cluster node rollback vsix release` (hash: TBD)
 
