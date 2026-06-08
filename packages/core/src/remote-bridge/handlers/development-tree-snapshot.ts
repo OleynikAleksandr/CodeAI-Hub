@@ -1,3 +1,5 @@
+import { readFile, stat } from "node:fs/promises";
+import path from "node:path";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import type {
   DevelopmentTreeClusterNode,
@@ -30,6 +32,145 @@ const findCodeWorkspacePath = (
       entry.clusterId === match.clusterId &&
       entry.moduleId === match.moduleId
   )?.codeWorkspacePath;
+
+type CoordinationStatus =
+  | "locked"
+  | "merge_ready"
+  | "merged"
+  | "unlocked"
+  | "waiting";
+
+interface UnlockStateNode {
+  readonly id?: string;
+  readonly mergeCommitHash?: string;
+  readonly reason?: string;
+  readonly status?: CoordinationStatus;
+}
+
+interface CoordinationState {
+  readonly branchName?: string;
+  readonly lockedReason?: string;
+  readonly mergeCommitHash?: string;
+  readonly nodeId: string;
+  readonly reviewCommitHash?: string;
+  readonly sourceHead?: string;
+  readonly status: CoordinationStatus;
+  readonly worktreePath?: string;
+}
+
+const sanitizeSegment = (value: string): string =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
+
+const createClusterNodeId = (partId: string, clusterId: string): string =>
+  `cluster:${partId}/${clusterId}`;
+
+const createClusterModuleNodeId = (params: {
+  readonly clusterId: string;
+  readonly moduleId: string;
+  readonly partId: string;
+}): string => `module:${params.partId}/${params.clusterId}/${params.moduleId}`;
+
+const createStandaloneModuleNodeId = (params: {
+  readonly moduleId: string;
+  readonly partId: string;
+}): string => `standalone-module:${params.partId}/${params.moduleId}`;
+
+const createClusterBranchName = (params: {
+  readonly clusterId: string;
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  [
+    "codex",
+    "development-tree",
+    sanitizeSegment(params.workspaceSlug),
+    "product-parts",
+    sanitizeSegment(params.partId),
+    "clusters",
+    sanitizeSegment(params.clusterId),
+    "contract",
+  ].join("/");
+
+const createClusterWorktreePath = (params: {
+  readonly clusterId: string;
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  path.join(
+    path.dirname(params.workspaceRoot),
+    `${path.basename(params.workspaceRoot)}.worktrees`,
+    sanitizeSegment(params.workspaceSlug),
+    "product-parts",
+    sanitizeSegment(params.partId),
+    "clusters",
+    sanitizeSegment(params.clusterId),
+    "contract"
+  );
+
+const createUnlockStatePath = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-product-parts/${params.partId}.unlock-state.json`;
+
+const createReviewResultPath = (params: {
+  readonly clusterId: string;
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-clusters/${params.partId}/${params.clusterId}.review-result.json`;
+
+const createMergeBoundaryPath = (params: {
+  readonly clusterId: string;
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-clusters/${params.partId}/${params.clusterId}.merge-boundary.json`;
+
+const readJsonRecord = async (
+  workspaceRoot: string,
+  relativePath: string
+): Promise<Record<string, unknown> | null> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  if (!((await stat(absolutePath).catch(() => null))?.isFile() ?? false)) {
+    return null;
+  }
+  const parsed = JSON.parse(await readFile(absolutePath, "utf8")) as unknown;
+  return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+    ? (parsed as Record<string, unknown>)
+    : null;
+};
+
+const readUnlockNodes = async (params: {
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<ReadonlyMap<string, UnlockStateNode>> => {
+  const state = await readJsonRecord(
+    params.workspaceRoot,
+    createUnlockStatePath(params)
+  );
+  const nodes = Array.isArray(state?.nodes) ? state.nodes : [];
+  return new Map(
+    nodes.flatMap((node) => {
+      if (!(node && typeof node === "object" && !Array.isArray(node))) {
+        return [];
+      }
+      const record = node as UnlockStateNode;
+      return record.id ? [[record.id, record]] : [];
+    })
+  );
+};
+
+const attachCoordination = <T extends object>(
+  node: T,
+  coordination: CoordinationState | null
+): T => (coordination ? ({ ...node, coordination } as T) : node);
 
 const withCodeWorkspacePaths = (
   snapshot: DevelopmentTreeSnapshot,
@@ -77,6 +218,138 @@ const withCodeWorkspacePaths = (
   ),
 });
 
+const readClusterCoordination = async (params: {
+  readonly clusterId: string;
+  readonly nodes: ReadonlyMap<string, UnlockStateNode>;
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<CoordinationState | null> => {
+  const nodeId = createClusterNodeId(params.partId, params.clusterId);
+  const node = params.nodes.get(nodeId);
+  const reviewResultPath = createReviewResultPath(params);
+  const mergeBoundaryPath = createMergeBoundaryPath(params);
+  const reviewResult = await readJsonRecord(
+    params.workspaceRoot,
+    reviewResultPath
+  );
+  const mergeBoundary = await readJsonRecord(
+    params.workspaceRoot,
+    mergeBoundaryPath
+  );
+  const reviewState =
+    reviewResult?.reviewState === "merge_ready" ? "merge_ready" : null;
+  const boundaryStatus = mergeBoundary ? "merged" : null;
+  const status = boundaryStatus ?? reviewState ?? node?.status;
+  if (!status) {
+    return null;
+  }
+  return {
+    nodeId,
+    branchName: createClusterBranchName(params),
+    lockedReason: node?.reason,
+    mergeCommitHash: node?.mergeCommitHash,
+    reviewCommitHash:
+      typeof reviewResult?.reviewCommitHash === "string"
+        ? reviewResult.reviewCommitHash
+        : undefined,
+    sourceHead:
+      typeof mergeBoundary?.sourceHead === "string"
+        ? mergeBoundary.sourceHead
+        : undefined,
+    status,
+    worktreePath:
+      typeof mergeBoundary?.sourceWorkspaceRoot === "string"
+        ? mergeBoundary.sourceWorkspaceRoot
+        : createClusterWorktreePath(params),
+  };
+};
+
+const createModuleCoordination = (params: {
+  readonly clusterId?: string;
+  readonly moduleId: string;
+  readonly nodes: ReadonlyMap<string, UnlockStateNode>;
+  readonly partId: string;
+}): CoordinationState | null => {
+  const nodeId = params.clusterId
+    ? createClusterModuleNodeId({
+        clusterId: params.clusterId,
+        moduleId: params.moduleId,
+        partId: params.partId,
+      })
+    : createStandaloneModuleNodeId({
+        moduleId: params.moduleId,
+        partId: params.partId,
+      });
+  const node = params.nodes.get(nodeId);
+  return node?.status
+    ? {
+        nodeId,
+        lockedReason: node.reason,
+        mergeCommitHash: node.mergeCommitHash,
+        status: node.status,
+      }
+    : null;
+};
+
+const withCoordinationState = async (
+  snapshot: DevelopmentTreeSnapshot,
+  params: DevelopmentTreeSnapshotRequest
+): Promise<DevelopmentTreeSnapshot> => ({
+  ...snapshot,
+  parts: await Promise.all(
+    snapshot.parts.map(async (part): Promise<DevelopmentTreePartNode> => {
+      const nodes = await readUnlockNodes({
+        partId: part.id,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
+      return {
+        ...part,
+        clusters: await Promise.all(
+          part.clusters.map(
+            async (cluster): Promise<DevelopmentTreeClusterNode> => ({
+              ...attachCoordination(
+                cluster,
+                await readClusterCoordination({
+                  clusterId: cluster.id,
+                  nodes,
+                  partId: part.id,
+                  workspaceRoot: params.workspaceRoot,
+                  workspaceSlug: params.workspaceSlug,
+                })
+              ),
+              modules: cluster.modules.map(
+                (module): DevelopmentTreeModuleNode =>
+                  attachCoordination(
+                    module,
+                    createModuleCoordination({
+                      clusterId: cluster.id,
+                      moduleId: module.id,
+                      nodes,
+                      partId: part.id,
+                    })
+                  )
+              ),
+            })
+          )
+        ),
+        standaloneModules: part.standaloneModules.map(
+          (module): DevelopmentTreeModuleNode =>
+            attachCoordination(
+              module,
+              createModuleCoordination({
+                moduleId: module.id,
+                nodes,
+                partId: part.id,
+              })
+            )
+        ),
+      };
+    })
+  ),
+});
+
 export const readDevelopmentTreeSnapshot = async (
   params: DevelopmentTreeSnapshotRequest
 ): Promise<DevelopmentTreeSnapshot> => {
@@ -84,7 +357,8 @@ export const readDevelopmentTreeSnapshot = async (
     params
   );
   const codePathIndex = await readDevelopmentTreeCodeWorkspacePathIndex(params);
-  return codePathIndex
+  const pathAwareSnapshot = codePathIndex
     ? withCodeWorkspacePaths(snapshot, codePathIndex.entries)
     : snapshot;
+  return await withCoordinationState(pathAwareSnapshot, params);
 };

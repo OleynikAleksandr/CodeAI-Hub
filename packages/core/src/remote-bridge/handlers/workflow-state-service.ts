@@ -1,6 +1,5 @@
 import path from "node:path";
 import type { Request, Response } from "express";
-import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import { ManagedWorkflowReadModelProjector } from "../../managed-workflow-orchestration/managed-workflow-read-model-projector";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -17,6 +16,7 @@ import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types"
 import type { TechnicalStageRewriteBoundaryPayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
@@ -83,7 +83,6 @@ export class WorkflowStateService {
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
-  private readonly developmentTreeState = new DevelopmentTreeStateFacade();
   private readonly lastActiveStore = new WorkflowLastActiveStore();
   private readonly managedWorkflowReadModel =
     new ManagedWorkflowReadModelProjector();
@@ -269,82 +268,79 @@ export class WorkflowStateService {
               })
             )
             .then((validatedState) =>
-              this.developmentTreeState
-                .currentSnapshot({
+              readDevelopmentTreeSnapshot({
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
+                plannedPartIds:
+                  technicalStageProgress.diagramModulesProgress
+                    ?.plannedPartIds ?? [],
+                generatedPartIds:
+                  technicalStageProgress.diagramModulesProgress
+                    ?.generatedPartIds ?? [],
+                leadProductPartId:
+                  technicalStageProgress.diagramModulesProgress
+                    ?.leadProductPartId ?? null,
+                productPartLeadershipOrder:
+                  technicalStageProgress.diagramModulesProgress
+                    ?.productPartLeadershipOrder ?? [],
+              }).then((developmentTree) => {
+                return applyDevelopmentTreeFreshnessToState({
+                  developmentTree,
+                  state: validatedState,
                   workspaceRoot,
-                  workspaceSlug: workspaceSlugResult.value,
-                  plannedPartIds:
-                    technicalStageProgress.diagramModulesProgress
-                      ?.plannedPartIds ?? [],
-                  generatedPartIds:
-                    technicalStageProgress.diagramModulesProgress
-                      ?.generatedPartIds ?? [],
-                  leadProductPartId:
-                    technicalStageProgress.diagramModulesProgress
-                      ?.leadProductPartId ?? null,
-                  productPartLeadershipOrder:
-                    technicalStageProgress.diagramModulesProgress
-                      ?.productPartLeadershipOrder ?? [],
-                })
-                .then((developmentTree) => {
-                  return applyDevelopmentTreeFreshnessToState({
-                    developmentTree,
-                    state: validatedState,
-                    workspaceRoot,
-                  }).then((responseState) => {
-                    const canonicalLastActive = resolveCanonicalLastActive({
-                      chains,
-                      description,
-                      lastActive,
+                }).then((responseState) => {
+                  const canonicalLastActive = resolveCanonicalLastActive({
+                    chains,
+                    description,
+                    lastActive,
+                    state: responseState,
+                    workspaceSlug: workspaceSlugResult.value,
+                  });
+                  const gating = {
+                    blocked: resolveWorkflowBlockedStages({
                       state: responseState,
-                      workspaceSlug: workspaceSlugResult.value,
-                    });
-                    const gating = {
-                      blocked: resolveWorkflowBlockedStages({
-                        state: responseState,
-                        description,
-                        diagramModulesProgress:
-                          technicalStageProgress.diagramModulesProgress,
-                        applicationSkeletonProgress:
-                          technicalStageProgress.applicationSkeletonProgress,
-                        technicalStageGitClean:
-                          technicalStageProgress.technicalStageDirtyStatus
-                            .clean,
-                      }),
-                      dirtyFiles:
-                        technicalStageProgress.technicalStageDirtyStatus
-                          .dirtyFiles,
-                    };
-                    const technicalStageRewriteBoundary =
-                      resolveTechnicalStageRewriteBoundary({
-                        state: responseState,
-                        applicationSkeletonProgress:
-                          technicalStageProgress.applicationSkeletonProgress,
-                        qualityGatesProgress:
-                          technicalStageProgress.qualityGatesProgress,
-                      });
-                    res.json({
-                      state: responseState,
-                      continuity: { chains },
                       description,
-                      lastActive: canonicalLastActive,
-                      gating,
                       diagramModulesProgress:
                         technicalStageProgress.diagramModulesProgress,
                       applicationSkeletonProgress:
                         technicalStageProgress.applicationSkeletonProgress,
+                      technicalStageGitClean:
+                        technicalStageProgress.technicalStageDirtyStatus.clean,
+                    }),
+                    dirtyFiles:
+                      technicalStageProgress.technicalStageDirtyStatus
+                        .dirtyFiles,
+                  };
+                  const technicalStageRewriteBoundary =
+                    resolveTechnicalStageRewriteBoundary({
+                      state: responseState,
+                      applicationSkeletonProgress:
+                        technicalStageProgress.applicationSkeletonProgress,
                       qualityGatesProgress:
                         technicalStageProgress.qualityGatesProgress,
-                      developmentTree,
-                      technicalStageRewriteBoundary,
-                      managedWorkflowPreview:
-                        this.managedWorkflowReadModel.project({
-                          readOnlyStages:
-                            technicalStageRewriteBoundary.readOnlyStages,
-                        }),
                     });
+                  res.json({
+                    state: responseState,
+                    continuity: { chains },
+                    description,
+                    lastActive: canonicalLastActive,
+                    gating,
+                    diagramModulesProgress:
+                      technicalStageProgress.diagramModulesProgress,
+                    applicationSkeletonProgress:
+                      technicalStageProgress.applicationSkeletonProgress,
+                    qualityGatesProgress:
+                      technicalStageProgress.qualityGatesProgress,
+                    developmentTree,
+                    technicalStageRewriteBoundary,
+                    managedWorkflowPreview:
+                      this.managedWorkflowReadModel.project({
+                        readOnlyStages:
+                          technicalStageRewriteBoundary.readOnlyStages,
+                      }),
                   });
-                })
+                });
+              })
             );
         }
       )

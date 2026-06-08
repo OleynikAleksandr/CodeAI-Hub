@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "cba34ebfa",
+  "lastRecordedCommit": "83b46cae4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase5.advance.task1",
-  "expectedCommitMessage": "feat: advance lead coordination after cluster merge",
+  "currentTaskId": "development-tree-cluster-contract.phase6.core-readmodel.task1",
+  "expectedCommitMessage": "feat: expose product part coordination graph state",
   "debt": {
-    "expectedCommitMessage": "feat: advance lead coordination after cluster merge",
-    "preCommitHead": "cba34ebfa",
+    "expectedCommitMessage": "feat: expose product part coordination graph state",
+    "preCommitHead": "83b46cae4",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase5.advance.task1"
+    "taskId": "development-tree-cluster-contract.phase6.core-readmodel.task1"
   }
 }
 ```
@@ -102,14 +102,14 @@
 25. [DONE] `development-tree-cluster-contract.phase5.merge.task1` Add Core-owned merge for accepted cluster-contract worktree results back into the main workspace with merge evidence, clean Git assertions, and node-level rollback boundary metadata (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts`; expected commit: `feat: merge accepted cluster contract worktrees`).
 26. [DONE] Git Commit: `feat: merge accepted cluster contract worktrees` (hash: cba34ebfa)
 27. [DONE] `development-tree-cluster-contract.phase5.advance.task1` Advance the lead Product Part coordination graph after cluster-contract merge, marking `note-selection-cluster` merged and keeping module nodes locked until the accepted cluster contract can unlock the next module-contract wave (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts`; expected commit: `feat: advance lead coordination after cluster merge`).
-28. [PENDING] Git Commit: `feat: advance lead coordination after cluster merge` (hash: TBD)
+28. [DONE] Git Commit: `feat: advance lead coordination after cluster merge` (hash: 83b46cae4)
 
 ## Phase 6 - Project Manager Coordination Projection (owner: Codex, updated: 2026-06-08)
 
 ### Stream: One Visible Product Part Graph
 
-29. [TODO] `development-tree-cluster-contract.phase6.core-readmodel.task1` Expose Product Part coordination graph state through the Core workflow-state read model, including unlocked/running/review/merge-ready/merged/locked node statuses and worktree references (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: expose product part coordination graph state`).
-30. [TODO] Git Commit: `feat: expose product part coordination graph state` (hash: TBD)
+29. [DONE] `development-tree-cluster-contract.phase6.core-readmodel.task1` Expose Product Part coordination graph state through the Core workflow-state read model, including unlocked/running/review/merge-ready/merged/locked node statuses and worktree references (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: expose product part coordination graph state`).
+30. [PENDING] Git Commit: `feat: expose product part coordination graph state` (hash: TBD)
 31. [TODO] `development-tree-cluster-contract.phase6.pm-ui.task1` Render the Product Part coordination graph in Project Manager and route cluster-contract node actions to Core while keeping sub-agent technical state hidden by default (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/workspace-tree.test.tsx`; expected commit: `feat: show cluster contract coordination graph`).
 32. [TODO] Git Commit: `feat: show cluster contract coordination graph` (hash: TBD)
 

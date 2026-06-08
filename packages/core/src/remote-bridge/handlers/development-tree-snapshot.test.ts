@@ -6,8 +6,6 @@ import test from "node:test";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 
-// Canonical two-column module table per agent template:
-//   | `module-id` | Responsibility |
 const PART_CONTENT = `# Product Part: UI Shell
 
 ## Identity
@@ -201,6 +199,31 @@ test("readDevelopmentTreeSnapshot exposes code workspace paths only from materia
     await mkdir(partDir, { recursive: true });
     await writeFile(path.join(partDir, "ui-shell.md"), PART_CONTENT, "utf8");
     await writeApplicationSkeletonMap(tmpDir);
+    const statePath = path.join(
+      tmpDir,
+      ".codeai-hub/demo/workflow/managed/development-tree-product-parts/ui-shell.unlock-state.json"
+    );
+    await mkdir(path.dirname(statePath), { recursive: true });
+    await writeFile(
+      statePath,
+      [
+        '{"nodes":[',
+        '{"clusterId":"layout-cluster","id":"cluster:ui-shell/layout-cluster","kind":"cluster","mergeCommitHash":"merge123","partId":"ui-shell","status":"merged"},',
+        '{"clusterId":"layout-cluster","id":"module:ui-shell/layout-cluster/main-area","kind":"module","moduleId":"main-area","partId":"ui-shell","reason":"waiting_for_cluster_contract","status":"locked"}',
+        "]}\n",
+      ].join(""),
+      "utf8"
+    );
+    const boundaryPath = path.join(
+      tmpDir,
+      ".codeai-hub/demo/workflow/managed/development-tree-clusters/ui-shell/layout-cluster.merge-boundary.json"
+    );
+    await mkdir(path.dirname(boundaryPath), { recursive: true });
+    await writeFile(
+      boundaryPath,
+      '{"sourceHead":"abc123","sourceWorkspaceRoot":"/tmp/layout-cluster"}\n',
+      "utf8"
+    );
 
     const result = await readDevelopmentTreeSnapshot({
       workspaceRoot: tmpDir,
@@ -224,6 +247,19 @@ test("readDevelopmentTreeSnapshot exposes code workspace paths only from materia
       "product-parts/ui-shell/modules/theme-engine"
     );
     assert.equal(part?.clusters[0]?.modules[1]?.codeWorkspacePath, undefined);
+    const cluster = part?.clusters[0] as
+      | { readonly coordination?: Record<string, string> }
+      | undefined;
+    const module = part?.clusters[0]?.modules[0] as
+      | { readonly coordination?: Record<string, string> }
+      | undefined;
+    assert.equal(cluster?.coordination?.status, "merged");
+    assert.equal(cluster?.coordination?.worktreePath, "/tmp/layout-cluster");
+    assert.equal(module?.coordination?.status, "locked");
+    assert.equal(
+      module?.coordination?.lockedReason,
+      "waiting_for_cluster_contract"
+    );
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
   }
@@ -321,9 +357,6 @@ test("readDevelopmentTreeSnapshot does not leak Simple Relations rows as standal
     });
 
     const standalone = result.parts[0]?.standaloneModules ?? [];
-    // Only `theme-engine` is a genuine standalone module.
-    // `main-area` appears in Simple Relations as the `To` endpoint but must NOT
-    // be surfaced as a phantom standalone.
     assert.equal(standalone.length, 1);
     assert.equal(standalone[0]?.id, "theme-engine");
     assert.equal(
@@ -335,10 +368,6 @@ test("readDevelopmentTreeSnapshot does not leak Simple Relations rows as standal
   }
 });
 
-// Artifact where `From` in every Simple Relations row is a cluster module id
-// (not a standalone). Before the parser fix, the 4-column row was non-greedily
-// matched by MODULE_ROW_RE whenever the standalone-body clamp slipped, so
-// `sidebar-module` + `provider-picker` would surface as phantom standalones.
 const PART_CONTENT_CLUSTER_FROM_RELATIONS = `# Product Part: Project Shell
 
 ## Identity
@@ -400,11 +429,6 @@ test("readDevelopmentTreeSnapshot stays stable on repeated invocations (lastInde
       "utf8"
     );
 
-    // Invoke the parser 10 times on the same artifact. Prior to the fix,
-    // NEXT_SECTION_RE.lastIndex accumulated between calls in the module-level
-    // regex singleton and produced alternating hit/null results, so some
-    // invocations surfaced 3 phantom standalone modules (`sidebar-module`,
-    // `provider-picker`, `cef-launcher`) and some returned the correct one.
     const runs: string[][] = [];
     for (let i = 0; i < 10; i++) {
       const snapshot = await readDevelopmentTreeSnapshot({
