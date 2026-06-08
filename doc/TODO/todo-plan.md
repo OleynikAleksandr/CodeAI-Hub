@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "a833c4850",
+  "lastRecordedCommit": "c88dfab2e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.workflow-model-boundary.task1",
-  "expectedCommitMessage": "fix: pass inherited model through workflow session creation",
+  "currentTaskId": "development-tree-cluster-contract.phase11.downstream-model-binding.task1",
+  "expectedCommitMessage": "fix: inherit product part model for cluster contract sessions",
   "debt": {
-    "expectedCommitMessage": "fix: pass inherited model through workflow session creation",
-    "preCommitHead": "a833c4850",
+    "expectedCommitMessage": "fix: inherit product part model for cluster contract sessions",
+    "preCommitHead": "c88dfab2e",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.workflow-model-boundary.task1"
+    "taskId": "development-tree-cluster-contract.phase11.downstream-model-binding.task1"
   }
 }
 ```
@@ -223,9 +223,9 @@ Verification evidence:
 89. [DONE] `development-tree-cluster-contract.phase11.codex-capture-selection.task1` Replace Project Manager native capture defaults and typed tests that still use unsupported `gpt-5.3-codex` (scope: `src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/settings/native-request-capture-runner.test.ts`; expected commit: `fix: remove unsupported codex capture selection`).
 90. [DONE] Git Commit: `fix: remove unsupported codex capture selection` (hash: a833c4850)
 91. [DONE] `development-tree-cluster-contract.phase11.workflow-model-boundary.task1` Allow workflow-created sessions to receive an inherited model binding instead of always resolving settings from the target workspace (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-callbacks.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-types.ts`; expected commit: `fix: pass inherited model through workflow session creation`).
-92. [PENDING] Git Commit: `fix: pass inherited model through workflow session creation` (hash: TBD)
-93. [TODO] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions pass the accepted Product Part session model binding into workflow session creation (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
-94. [TODO] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
+92. [DONE] Git Commit: `fix: pass inherited model through workflow session creation` (hash: c88dfab2e)
+93. [DONE] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions pass the accepted Product Part session model binding into workflow session creation (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
+94. [PENDING] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: TBD)
 95. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance, including handler/bootstrapper regression coverage (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
 96. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
 

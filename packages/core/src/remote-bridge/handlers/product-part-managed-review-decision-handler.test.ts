@@ -13,6 +13,16 @@ const SESSION_ID = "lead-session-1";
 const STAGE = `development_tree/materialized/product-parts/${PART_ID}`;
 const ACCEPTED_MESSAGE_RE = /accepted/u;
 const CLUSTER_WAVE_STARTED_RE = /first prompt sent/u;
+const MODEL_BINDING = {
+  baseModelId: "gpt-5.4-mini",
+  boundAt: "2026-06-08T00:00:00.000Z",
+  key: "provider\u001fcodexCli\u001fsession\u001flead-session-1",
+  modelId: "gpt-5.4-mini reasoning:medium",
+  providerId: "codexCli",
+  reasoningEffort: "medium",
+  source: "settings_default",
+  updatedAt: "2026-06-08T00:00:00.000Z",
+} as const;
 
 type ProductPartReviewResult = Awaited<
   ReturnType<ProductPartDevelopmentBriefReviewController["handleAccepted"]>
@@ -25,6 +35,7 @@ const createSession = (): Session => ({
   id: SESSION_ID,
   initiativeSlug: WORKSPACE_SLUG,
   messages: [],
+  modelBinding: MODEL_BINDING,
   providerId: "codexCli",
   providerSessionStatus: "ready",
   runSlug: null,
@@ -106,6 +117,7 @@ test("Product Part order-plan review acceptance starts first cluster wave", asyn
   assert.equal(sentInternalMessages.length, 0);
   assert.deepEqual(bootstrapRequests, [
     {
+      inheritedModelBinding: MODEL_BINDING,
       partId: PART_ID,
       workspaceRoot: WORKSPACE_ROOT,
       workspaceSlug: WORKSPACE_SLUG,

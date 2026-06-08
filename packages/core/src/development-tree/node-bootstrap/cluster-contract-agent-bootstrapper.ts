@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import type { SessionModelBinding } from "../../session-model-binding";
 import {
   ClusterContractPlanWriter,
   type ClusterContractPlanWriterResult,
@@ -18,6 +19,7 @@ export interface ClusterContractAgentSessionGateway {
       readonly initiativeSlug: string;
       readonly stage: string;
     };
+    readonly inheritedModelBinding?: SessionModelBinding | null;
     readonly providerId: string;
     readonly workspacePath: string;
   }) => Promise<{ readonly id: string } | null>;
@@ -34,6 +36,7 @@ export interface ClusterContractAgentBootstrapperOptions {
 
 export interface ClusterContractAgentBootstrapRequest {
   readonly baseRef?: string;
+  readonly inheritedModelBinding?: SessionModelBinding | null;
   readonly partId: string;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -185,6 +188,7 @@ export class ClusterContractAgentBootstrapper {
         initiativeSlug: request.workspaceSlug,
         stage,
       },
+      inheritedModelBinding: request.inheritedModelBinding ?? null,
       providerId: this.options.providerId,
       workspacePath: worktree.worktreePath,
     });

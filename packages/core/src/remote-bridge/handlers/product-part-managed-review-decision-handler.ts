@@ -116,6 +116,7 @@ const startFirstClusterWave = async (
       providerId: session.providerId,
     });
   const results = await bootstrapper.bootstrapFirstWave({
+    inheritedModelBinding: session.modelBinding ?? null,
     partId,
     workspaceRoot: session.workspacePath,
     workspaceSlug: session.initiativeSlug,
