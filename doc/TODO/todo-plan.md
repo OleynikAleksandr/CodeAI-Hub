@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "dd6dd11bd",
+  "lastRecordedCommit": "8733bb0ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase5.lead-summary.task1",
-  "expectedCommitMessage": "feat: summarize cluster contract results for lead coordination",
+  "currentTaskId": "development-tree-cluster-contract.phase5.merge.task1",
+  "expectedCommitMessage": "feat: merge accepted cluster contract worktrees",
   "debt": {
-    "expectedCommitMessage": "feat: summarize cluster contract results for lead coordination",
-    "preCommitHead": "dd6dd11bd",
+    "expectedCommitMessage": "feat: merge accepted cluster contract worktrees",
+    "preCommitHead": "8733bb0ea",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase5.lead-summary.task1"
+    "taskId": "development-tree-cluster-contract.phase5.merge.task1"
   }
 }
 ```
@@ -98,9 +98,9 @@
 ### Stream: Result Summary And Mainline Merge
 
 23. [DONE] `development-tree-cluster-contract.phase5.lead-summary.task1` Feed accepted cluster-contract summaries back into the lead Product Part coordination plan so the lead agent can accept, reject, or request revisions at node level (scope: `packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.test.ts`; expected commit: `feat: summarize cluster contract results for lead coordination`).
-24. [PENDING] Git Commit: `feat: summarize cluster contract results for lead coordination` (hash: TBD)
-25. [TODO] `development-tree-cluster-contract.phase5.merge.task1` Add Core-owned merge for accepted cluster-contract worktree results back into the main workspace with merge evidence, clean Git assertions, and node-level rollback boundary metadata (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts`; expected commit: `feat: merge accepted cluster contract worktrees`).
-26. [TODO] Git Commit: `feat: merge accepted cluster contract worktrees` (hash: TBD)
+24. [DONE] Git Commit: `feat: summarize cluster contract results for lead coordination` (hash: 8733bb0ea)
+25. [DONE] `development-tree-cluster-contract.phase5.merge.task1` Add Core-owned merge for accepted cluster-contract worktree results back into the main workspace with merge evidence, clean Git assertions, and node-level rollback boundary metadata (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts`; expected commit: `feat: merge accepted cluster contract worktrees`).
+26. [PENDING] Git Commit: `feat: merge accepted cluster contract worktrees` (hash: TBD)
 27. [TODO] `development-tree-cluster-contract.phase5.advance.task1` Advance the lead Product Part coordination graph after cluster-contract merge, marking `note-selection-cluster` merged and keeping module nodes locked until the accepted cluster contract can unlock the next module-contract wave (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/development-tree/product-part-workflow/lead-product-part-coordination-service.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: advance lead coordination after cluster merge`).
 28. [TODO] Git Commit: `feat: advance lead coordination after cluster merge` (hash: TBD)
 

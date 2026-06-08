@@ -1,5 +1,6 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { DevelopmentTreeNodeMergeService } from "../../development-tree/node-bootstrap/development-tree-node-merge-service";
 import {
   createClusterContractSummaryPath,
   LeadProductPartCoordinationService,
@@ -168,6 +169,7 @@ const markReviewAccepted = (params: {
 export class ClusterContractReviewController {
   private readonly git = new WorkflowBoundaryGit();
   private readonly leadCoordination = new LeadProductPartCoordinationService();
+  private readonly nodeMerge = new DevelopmentTreeNodeMergeService();
 
   async handleReviewDecision(params: {
     readonly content: string;
@@ -286,12 +288,19 @@ export class ClusterContractReviewController {
       paths: [params.planPath],
       workspaceRoot: params.workspaceRoot,
     });
+    const mergeResult = await this.nodeMerge.mergeAcceptedClusterContract({
+      clusterId: params.clusterId,
+      partId: params.partId,
+      sourceWorkspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
     return {
       handled: true,
       message: {
         content: [
           `Core: Cluster Contract \`${params.clusterId}\` review accepted.`,
           `Commit: \`${reviewCommit.hash}\`.`,
+          `Mainline merge commit: \`${mergeResult.mergeCommitHash}\`.`,
           "Cluster Contract result is merge-ready for lead Product Part coordination.",
         ].join("\n"),
         tag: "managed-workflow-complete",
