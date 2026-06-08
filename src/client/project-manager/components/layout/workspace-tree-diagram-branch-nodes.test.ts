@@ -5,9 +5,7 @@ import {
   buildDiagramModulesBranchNodes,
   buildDevelopmentTreeNodes,
 } from "./workspace-tree-diagram-branch-nodes";
-import {
-  WORKFLOW_STAGE_OUTDATED_TITLE,
-} from "./workspace-tree-model";
+import { WORKFLOW_STAGE_OUTDATED_TITLE } from "./workspace-tree-model";
 import { shouldRefreshArtifactForWorkflowEvents } from "./main-area-utils";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import type { WorkflowEvent } from "../../services/workflow-events-client";
@@ -59,8 +57,13 @@ const createWorkflowStateWithTree = (): WorkflowStateSnapshot => ({
         clusters: [
           {
             id: "layout-cluster",
+            coordination: { nodeId: "cluster", status: "merged" },
             modules: [
-              { id: "main-area", title: "Main Area" },
+              {
+                id: "main-area",
+                title: "Main Area",
+                coordination: { nodeId: "module", status: "locked" },
+              },
               { id: "sidebar", title: "Sidebar" },
             ],
           },
@@ -157,10 +160,8 @@ test("buildDiagramModulesBranchNodes projects development tree nodes from snapsh
     clearArtifactWithTool: () => {},
   });
 
-  // 2 base nodes (artifact + session) + 2 dev tree part nodes
   assert.equal(nodes.length, 4);
 
-  // First dev tree node: materialized part with clusters and standalone modules
   const uiShellNode = nodes[2];
   assert.ok(uiShellNode);
   assert.equal(uiShellNode.id, "devtree:ui-shell");
@@ -168,22 +169,21 @@ test("buildDiagramModulesBranchNodes projects development tree nodes from snapsh
   assert.equal(uiShellNode.isCollapsible, true);
   assert.equal(uiShellNode.children?.length, 2); // 1 cluster + 1 standalone
 
-  // Cluster node with modules
   const clusterNode = uiShellNode.children?.[0];
   assert.ok(clusterNode);
   assert.equal(clusterNode.id, "devtree:ui-shell:layout-cluster");
+  assert.equal(clusterNode.status, "active");
   assert.equal(clusterNode.isCollapsible, true);
   assert.equal(clusterNode.children?.length, 2);
   assert.equal(clusterNode.children?.[0]?.label, "Main Area");
+  assert.equal(clusterNode.children?.[0]?.status, "blocked");
   assert.equal(clusterNode.children?.[1]?.label, "Sidebar");
 
-  // Standalone module node
   const standaloneNode = uiShellNode.children?.[1];
   assert.ok(standaloneNode);
   assert.equal(standaloneNode.id, "devtree:ui-shell:standalone:theme-engine");
   assert.equal(standaloneNode.label, "Theme Engine");
 
-  // Second dev tree node: skeleton part
   const coreNode = nodes[3];
   assert.ok(coreNode);
   assert.equal(coreNode.id, "devtree:core-services");

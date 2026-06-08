@@ -58,6 +58,19 @@ const resolveReadinessStatus = (
   return fallback;
 };
 
+const resolveCoordinationStatus = (
+  status?: string
+): TreeNode["status"] | undefined =>
+  status === "locked"
+    ? "blocked"
+    : status === "merged"
+      ? "active"
+      : status === "merge_ready" || status === "unlocked"
+        ? "progress"
+        : status === "waiting"
+          ? "todo"
+          : undefined;
+
 const resolveLatestDiagramChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
   stage: "diagram_modules"
@@ -209,13 +222,16 @@ const buildModuleTreeNode = (
     buildOperationTreeNode(operation, id, partId, clusterId, depth + 1)
   );
   const lockedReason = mod.lifecycle?.lockedReason;
+  const coordinationStatus = resolveCoordinationStatus(
+    mod.coordination?.status
+  );
   return {
     id,
     label: mod.title,
-    status: lockedReason
+    status: coordinationStatus ?? (lockedReason
       ? "blocked"
-      : resolveReadinessStatus(mod.readiness, "todo"),
-    title: lockedReason,
+      : resolveReadinessStatus(mod.readiness, "todo")),
+    title: lockedReason ?? mod.coordination?.lockedReason,
     visualDepth: depth,
     clearTarget: buildDevelopmentTreeClearTarget(
       mod.workflowPath,
@@ -257,13 +273,16 @@ const buildClusterTreeNode = (
     children.push(buildModuleTreeNode(mod, partId, cluster.id, depth + 1));
   }
   const lockedReason = cluster.lifecycle?.lockedReason;
+  const coordinationStatus = resolveCoordinationStatus(
+    cluster.coordination?.status
+  );
   return {
     id,
     label: cluster.id,
-    status: lockedReason
+    status: coordinationStatus ?? (lockedReason
       ? "blocked"
-      : resolveReadinessStatus(cluster.readiness, "todo"),
-    title: lockedReason,
+      : resolveReadinessStatus(cluster.readiness, "todo")),
+    title: lockedReason ?? cluster.coordination?.lockedReason,
     visualDepth: depth,
     clearTarget: buildDevelopmentTreeClearTarget(cluster.workflowPath),
     nodeType: "cluster",

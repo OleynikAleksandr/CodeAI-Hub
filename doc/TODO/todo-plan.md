@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "83b46cae4",
+  "lastRecordedCommit": "f82c427c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase6.core-readmodel.task1",
-  "expectedCommitMessage": "feat: expose product part coordination graph state",
+  "currentTaskId": "development-tree-cluster-contract.phase6.pm-ui.task1",
+  "expectedCommitMessage": "feat: show cluster contract coordination graph",
   "debt": {
-    "expectedCommitMessage": "feat: expose product part coordination graph state",
-    "preCommitHead": "83b46cae4",
+    "expectedCommitMessage": "feat: show cluster contract coordination graph",
+    "preCommitHead": "f82c427c1",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase6.core-readmodel.task1"
+    "taskId": "development-tree-cluster-contract.phase6.pm-ui.task1"
   }
 }
 ```
@@ -109,9 +109,9 @@
 ### Stream: One Visible Product Part Graph
 
 29. [DONE] `development-tree-cluster-contract.phase6.core-readmodel.task1` Expose Product Part coordination graph state through the Core workflow-state read model, including unlocked/running/review/merge-ready/merged/locked node statuses and worktree references (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: expose product part coordination graph state`).
-30. [PENDING] Git Commit: `feat: expose product part coordination graph state` (hash: TBD)
-31. [TODO] `development-tree-cluster-contract.phase6.pm-ui.task1` Render the Product Part coordination graph in Project Manager and route cluster-contract node actions to Core while keeping sub-agent technical state hidden by default (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/workspace-tree.test.tsx`; expected commit: `feat: show cluster contract coordination graph`).
-32. [TODO] Git Commit: `feat: show cluster contract coordination graph` (hash: TBD)
+30. [DONE] Git Commit: `feat: expose product part coordination graph state` (hash: f82c427c1)
+31. [DONE] `development-tree-cluster-contract.phase6.pm-ui.task1` Render the Product Part coordination graph in Project Manager and route cluster-contract node actions to Core while keeping sub-agent technical state hidden by default (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`; expected commit: `feat: show cluster contract coordination graph`).
+32. [PENDING] Git Commit: `feat: show cluster contract coordination graph` (hash: TBD)
 
 ## Phase 7 - Documentation Sync (owner: Codex, updated: 2026-06-08)
 

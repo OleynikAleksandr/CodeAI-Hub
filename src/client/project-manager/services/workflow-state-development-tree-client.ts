@@ -18,6 +18,24 @@ export type DevelopmentTreeNodeSession = {
 
 export type DevelopmentTreeNodeStartState = "not_started" | "started";
 
+export type DevelopmentTreeCoordinationStatus =
+  | "locked"
+  | "merge_ready"
+  | "merged"
+  | "unlocked"
+  | "waiting";
+
+export type DevelopmentTreeNodeCoordination = {
+  readonly branchName?: string;
+  readonly lockedReason?: string;
+  readonly mergeCommitHash?: string;
+  readonly nodeId: string;
+  readonly reviewCommitHash?: string;
+  readonly sourceHead?: string;
+  readonly status: DevelopmentTreeCoordinationStatus;
+  readonly worktreePath?: string;
+};
+
 export type DevelopmentTreeNodeLifecycle = {
   readonly lockedReason?: string;
   readonly startState: DevelopmentTreeNodeStartState;
@@ -48,6 +66,7 @@ type DevelopmentTreeNodeMetadata = {
   readonly artifactWorkspacePath?: string;
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly codeWorkspacePath?: string;
+  readonly coordination?: DevelopmentTreeNodeCoordination;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly session?: DevelopmentTreeNodeSession;
   readonly workflowPath?: string;
@@ -97,6 +116,15 @@ const isDevelopmentTreeNodeStartState = (
   value: unknown
 ): value is DevelopmentTreeNodeStartState =>
   value === "not_started" || value === "started";
+
+const isDevelopmentTreeCoordinationStatus = (
+  value: unknown
+): value is DevelopmentTreeCoordinationStatus =>
+  value === "locked" ||
+  value === "merge_ready" ||
+  value === "merged" ||
+  value === "unlocked" ||
+  value === "waiting";
 
 const isDevelopmentTreeOperationNodeKind = (
   value: unknown
@@ -161,6 +189,27 @@ const parseLifecycle = (
   return { startState, startable, lockedReason };
 };
 
+const parseCoordination = (
+  payload: unknown
+): DevelopmentTreeNodeCoordination | undefined => {
+  if (!isRecord(payload)) return undefined;
+  const nodeId = readNonEmptyString(payload.nodeId);
+  const status = isDevelopmentTreeCoordinationStatus(payload.status)
+    ? payload.status
+    : undefined;
+  if (!(nodeId && status)) return undefined;
+  return {
+    nodeId,
+    status,
+    branchName: readNonEmptyString(payload.branchName) ?? undefined,
+    lockedReason: readNonEmptyString(payload.lockedReason) ?? undefined,
+    mergeCommitHash: readNonEmptyString(payload.mergeCommitHash) ?? undefined,
+    reviewCommitHash: readNonEmptyString(payload.reviewCommitHash) ?? undefined,
+    sourceHead: readNonEmptyString(payload.sourceHead) ?? undefined,
+    worktreePath: readNonEmptyString(payload.worktreePath) ?? undefined,
+  };
+};
+
 const parseOperationNode = (
   payload: unknown
 ): DevelopmentTreeOperationNode | null => {
@@ -205,6 +254,7 @@ const parseNodeMetadata = (
       readNonEmptyString(payload.artifactWorkspacePath) ?? undefined,
     artifacts: artifacts.length > 0 ? artifacts : undefined,
     codeWorkspacePath: readNonEmptyString(payload.codeWorkspacePath) ?? undefined,
+    coordination: parseCoordination(payload.coordination),
     lifecycle: parseLifecycle(payload.lifecycle),
     session: parseSession(payload.session),
     workflowPath: readNonEmptyString(payload.workflowPath) ?? undefined,
