@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "ae02c15f1",
+  "lastRecordedCommit": "b41f0edeb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase39.vsix.task1",
-  "expectedCommitMessage": "build: package 1.2.469 vsix release",
+  "currentTaskId": "development-tree-product-part-review.phase41.subagent-planning.task1",
+  "expectedCommitMessage": "docs: document product part subagent orchestration plan",
   "debt": {
-    "expectedCommitMessage": "build: package 1.2.469 vsix release",
-    "preCommitHead": "ae02c15f1",
+    "expectedCommitMessage": "docs: document product part subagent orchestration plan",
+    "preCommitHead": "b41f0edeb",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase39.vsix.task1"
+    "taskId": "development-tree-product-part-review.phase41.subagent-planning.task1"
   }
 }
 ```
@@ -418,17 +418,24 @@
 150. [DONE] `development-tree-product-part-review.phase39.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.469` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.469 unified release artifacts`).
 151. [DONE] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: ae02c15f1)
 152. [DONE] `development-tree-product-part-review.phase39.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.469` (scope: `codeai-hub-1.2.469.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.469 vsix release`).
-153. [PENDING] Git Commit: `build: package 1.2.469 vsix release` (hash: TBD)
+153. [DONE] Git Commit: `build: package 1.2.469 vsix release` (hash: b41f0edeb)
 
 ## Phase 40 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: FinderWidget Product Part Final Retest
 
-154. [TODO] `development-tree-product-part-review.phase40.user.task1` User installs release `1.2.469` and retests Product Part logical final state: confirming Phase 4 Lead Development Order Plan User Review commits `docs: accept lead development order plan`, moves the lead Product Part plan to `User Return And Revisions`, and leaves downstream Development Order Plan v2 / agent launch design for the next discussion (scope: user workflow; expected commit: none).
+154. [DONE] `development-tree-product-part-review.phase40.user.task1` User installs release `1.2.469` and retests Product Part logical final state: confirming Phase 4 Lead Development Order Plan User Review commits `docs: accept lead development order plan`, moves the lead Product Part plan to `User Return And Revisions`, and leaves downstream Development Order Plan v2 / agent launch design for the next discussion (scope: user workflow; expected commit: none). Result: release 1.2.469 accepted for the lead Product Part logical-final hotfix; next planning scope reopens the downstream coordination design so lead Product Part `Phase Return` becomes the final assembled-product-part state instead of the immediate post-order-plan state.
+
+## Phase 41 - Product Part Sub-Agent Orchestration Planning (owner: Codex, updated: 2026-06-08)
+
+### Stream: Lead Coordination Model
+
+155. [DONE] `development-tree-product-part-review.phase41.subagent-planning.task1` Create a separate planning document for lead Product Part visible coordination, downstream cluster/module sub-agents, Git worktree execution, node-level user gates, and final Product Part return state (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document product part subagent orchestration plan`).
+156. [PENDING] Git Commit: `docs: document product part subagent orchestration plan` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-155. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-156. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+157. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+158. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
