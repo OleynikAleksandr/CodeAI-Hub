@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "31f4e0859",
+  "lastRecordedCommit": "5486d541c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase7.pm-docs.task1",
-  "expectedCommitMessage": "docs: describe product part coordination projection",
+  "currentTaskId": "development-tree-cluster-contract.phase8.verify.task1",
+  "expectedCommitMessage": "test: verify cluster contract subagent orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: describe product part coordination projection",
-    "preCommitHead": "31f4e0859",
+    "expectedCommitMessage": "test: verify cluster contract subagent orchestration",
+    "preCommitHead": "5486d541c",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase7.pm-docs.task1"
+    "taskId": "development-tree-cluster-contract.phase8.verify.task1"
   }
 }
 ```
@@ -120,14 +120,20 @@
 33. [DONE] `development-tree-cluster-contract.phase7.docs.task1` Synchronize SSOT documentation for `DevelopmentOrderPlan.v2`, lead Product Part downstream coordination, cluster-contract sub-agent worktrees, user-visible Product Part graph, and node-level rollback gates (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe cluster contract subagent orchestration`).
 34. [DONE] Git Commit: `docs: describe cluster contract subagent orchestration` (hash: 31f4e0859)
 35. [DONE] `development-tree-cluster-contract.phase7.pm-docs.task1` Document the Project Manager projection and user workflow for one Product Part coordination surface with optional sub-agent detail drill-in (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part coordination projection`).
-36. [PENDING] Git Commit: `docs: describe product part coordination projection` (hash: TBD)
+36. [DONE] Git Commit: `docs: describe product part coordination projection` (hash: 5486d541c)
 
 ## Phase 8 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Targeted Verification
 
-37. [TODO] `development-tree-cluster-contract.phase8.verify.task1` Run targeted Core and Project Manager verification for order-plan v2 validation, first-wave cluster bootstrap, cluster artifact review, worktree merge, and coordination graph projection (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract subagent orchestration`).
-38. [TODO] Git Commit: `test: verify cluster contract subagent orchestration` (hash: TBD)
+37. [DONE] `development-tree-cluster-contract.phase8.verify.task1` Run targeted Core and Project Manager verification for order-plan v2 validation, first-wave cluster bootstrap, cluster artifact review, worktree merge, and coordination graph projection (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract subagent orchestration`).
+38. [PENDING] Git Commit: `test: verify cluster contract subagent orchestration` (hash: TBD)
+
+Verification evidence:
+- `npm run build --workspace packages/core` passed.
+- `node --test ...development-order-plan-v2-contract.test.js ...product-part-development-brief-turn-controller.test.js ...cluster-contract-agent-bootstrapper.test.js ...cluster-contract-prompt-builder.test.js ...cluster-contract-turn-controller.test.js ...cluster-contract-review-controller.test.js ...development-tree-node-merge-service.test.js ...development-tree-snapshot.test.js` passed: 22/22 tests.
+- `npm run typecheck:webview` passed.
+- `npm run build:project-manager` passed.
 
 ## Phase 9 - Release Build (owner: Codex, updated: 2026-06-08)
 
