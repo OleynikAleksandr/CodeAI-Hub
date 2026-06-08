@@ -36,9 +36,12 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.match(hookSource, /target: activeMenu\.target/u);
   assert.match(hookSource, /const result = await clearWorkflowStep/u);
   assert.match(hookSource, /restore: result\.restore/u);
+  assert.match(hookSource, /deletedContinuityPaths: result\.deletedContinuityPaths/u);
   assert.match(hookSource, /deletedSessionIds: result\.deletedSessionIds/u);
+  assert.match(hookSource, /deletedWorktreePaths: result\.deletedWorktreePaths/u);
   assert.match(hookSource, /productPartRestart: result\.productPartRestart/u);
   assert.match(hookSource, /deletedProviderNativeSessionPaths/u);
+  assert.match(hookSource, /Cluster and module nodes clear their worktree/u);
   assert.match(hookSource, /pm:workflow-step:cleared/u);
   assert.match(hookSource, /pm:workflow-step:clear-failed/u);
   assert.match(clientSource, /workflow-step-clear/u);
@@ -70,6 +73,10 @@ test("development tree nodes carry Core clear targets", () => {
           clusters: [
             {
               id: "api",
+              coordination: {
+                nodeId: "cluster:core/api",
+                status: "waiting",
+              },
               workflowPath:
                 "development_tree/materialized/product-parts/core/clusters/api",
               modules: [
@@ -94,6 +101,7 @@ test("development tree nodes carry Core clear targets", () => {
   const part = nodes[0];
   const cluster = part?.children?.[0];
   const mod = cluster?.children?.[0];
+  assert.equal(cluster?.status, "todo");
   assert.deepEqual(part?.clearTarget, {
     kind: "development_tree_node",
     workflowPath: "development_tree/materialized/product-parts/core",

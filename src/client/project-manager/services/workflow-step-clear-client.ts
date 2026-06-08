@@ -23,6 +23,7 @@ export interface WorkflowStepClearProductPartRestartResult {
   readonly deletedManagedPaths: readonly string[];
   readonly deletedProductPartPlanPaths: readonly string[];
   readonly deletedUnifiedSessionPaths: readonly string[];
+  readonly deletedWorktreePaths?: readonly string[];
   readonly partId: string;
   readonly recreatedDraftPaths: readonly string[];
   readonly recreatedProductPartPlanPaths: readonly string[];
@@ -30,8 +31,10 @@ export interface WorkflowStepClearProductPartRestartResult {
 
 export interface WorkflowStepClearResult {
   readonly cleared: true;
+  readonly deletedContinuityPaths?: readonly string[];
   readonly deletedProviderNativeSessionPaths?: readonly string[];
   readonly deletedSessionIds: readonly string[];
+  readonly deletedWorktreePaths?: readonly string[];
   readonly productPartRestart?: WorkflowStepClearProductPartRestartResult;
   readonly restore: WorkflowStepClearRestoreResult;
   readonly target: WorkflowStepClearTarget;
@@ -88,6 +91,8 @@ const isProductPartRestartResult = (
     isStringArray(record.deletedManagedPaths) &&
     isStringArray(record.deletedProductPartPlanPaths) &&
     isStringArray(record.deletedUnifiedSessionPaths) &&
+    (record.deletedWorktreePaths === undefined ||
+      isStringArray(record.deletedWorktreePaths)) &&
     isStringArray(record.recreatedDraftPaths) &&
     isStringArray(record.recreatedProductPartPlanPaths)
   );
@@ -106,8 +111,12 @@ const isWorkflowStepClearResult = (
     typeof record.workspaceSlug === "string" &&
     Boolean(record.restore) &&
     Boolean(record.target) &&
+    (record.deletedContinuityPaths === undefined ||
+      isStringArray(record.deletedContinuityPaths)) &&
     (record.deletedProviderNativeSessionPaths === undefined ||
       isStringArray(record.deletedProviderNativeSessionPaths)) &&
+    (record.deletedWorktreePaths === undefined ||
+      isStringArray(record.deletedWorktreePaths)) &&
     (record.productPartRestart === undefined ||
       isProductPartRestartResult(record.productPartRestart))
   );

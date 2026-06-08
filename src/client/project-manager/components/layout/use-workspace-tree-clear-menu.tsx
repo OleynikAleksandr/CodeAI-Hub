@@ -127,9 +127,11 @@ export const useWorkspaceTreeClearMenu = (params: {
         new CustomEvent("pm:workflow-step:cleared", {
           detail: {
             target: result.target,
+            deletedContinuityPaths: result.deletedContinuityPaths ?? [],
             deletedProviderNativeSessionPaths:
               result.deletedProviderNativeSessionPaths ?? [],
             deletedSessionIds: result.deletedSessionIds,
+            deletedWorktreePaths: result.deletedWorktreePaths ?? [],
             productPartRestart: result.productPartRestart ?? null,
             restore: result.restore,
             workspacePath: params.workspacePath,
@@ -161,8 +163,9 @@ export const useWorkspaceTreeClearMenu = (params: {
         </div>
         <div className="pm-tree-menu__warning">
           Product Part nodes are cleared and restarted from current Development
-          Tree state. Top-level workflow stages use Git rollback and may remove
-          untracked workspace files.
+          Tree state. Cluster and module nodes clear their worktree and return
+          to an unstarted marker. Top-level workflow stages use Git rollback and
+          may remove untracked workspace files.
         </div>
         <div className="pm-tree-menu__actions">
           <button
