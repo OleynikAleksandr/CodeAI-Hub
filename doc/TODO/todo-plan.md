@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "f4c76d383",
+  "lastRecordedCommit": "d22bbaa47",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase29.product-part-acceptance.task1",
-  "expectedCommitMessage": "fix: keep product part acceptance out of runtime paths",
+  "currentTaskId": "development-tree-product-part-review.phase30.verify.task1",
+  "expectedCommitMessage": "test: verify product part acceptance button hotfix",
   "debt": {
-    "expectedCommitMessage": "fix: keep product part acceptance out of runtime paths",
-    "preCommitHead": "f4c76d383",
+    "expectedCommitMessage": "test: verify product part acceptance button hotfix",
+    "preCommitHead": "d22bbaa47",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase29.product-part-acceptance.task1"
+    "taskId": "development-tree-product-part-review.phase30.verify.task1"
   }
 }
 ```
@@ -327,14 +327,14 @@
 ### Stream: Runtime-Ignored Acceptance Paths
 
 114. [DONE] `development-tree-product-part-review.phase29.product-part-acceptance.task1` Keep Product Part brief acceptance commits away from ignored runtime session paths and cover acceptance with an existing ignored runtime directory (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep product part acceptance out of runtime paths`).
-115. [PENDING] Git Commit: `fix: keep product part acceptance out of runtime paths` (hash: TBD)
+115. [DONE] Git Commit: `fix: keep product part acceptance out of runtime paths` (hash: d22bbaa47)
 
 ## Phase 30 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Targeted Verification
 
-116. [TODO] `development-tree-product-part-review.phase30.verify.task1` Run targeted Product Part acceptance tests and Core build after the acceptance button hotfix (scope: `packages/core`; expected commit: `test: verify product part acceptance button hotfix`).
-117. [TODO] Git Commit: `test: verify product part acceptance button hotfix` (hash: TBD)
+116. [DONE] `development-tree-product-part-review.phase30.verify.task1` Run targeted Product Part acceptance tests and Core build after the acceptance button hotfix (scope: `packages/core`; expected commit: `test: verify product part acceptance button hotfix`).
+117. [PENDING] Git Commit: `test: verify product part acceptance button hotfix` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
