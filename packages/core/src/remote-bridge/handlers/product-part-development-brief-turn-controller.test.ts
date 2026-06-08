@@ -30,6 +30,13 @@ const RETURN_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase-return\.user-return\.task1`/u;
 const LEAD_ORDER_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase3\.order-plan\.task1`/u;
+const LEAD_ORDER_DONE_RE =
+  /\[DONE\] `development-tree\.product-part\.engine\.phase3\.order-plan\.task1`/u;
+const LEAD_ORDER_GIT_COMMIT_RE =
+  /Git Commit: `docs: update lead development order plan` \(hash: [a-f0-9]+\)/u;
+const LEAD_ORDER_LOG_COMMIT_RE = /docs: update lead development order plan/u;
+const LEAD_ORDER_REVIEW_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase4\.order-plan-review\.task1`/u;
 const DEVELOPMENT_ORDER_PLAN_RE = /DevelopmentOrderPlan/u;
 const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
 
@@ -123,11 +130,48 @@ const createReviewPlan = (isLeadPart: boolean): string => {
       ? [
           `5. [TODO] \`${taskPrefix}.phase3.order-plan.task1\` After every Product Part Development Brief is accepted, the lead Product Part agent drafts the Core-readable Development Order Plan and JSON companion (scope: order plan; expected commit: \`docs: update lead development order plan\`).`,
           "6. [TODO] Git Commit: `docs: update lead development order plan` (hash: TBD)",
+          `7. [TODO] \`${taskPrefix}.phase4.order-plan-review.task1\` User reviews the Development Order Plan before Core can open Cluster or standalone Module agents (scope: user workflow; expected commit: \`docs: accept lead development order plan\`).`,
+          "8. [TODO] Git Commit: `docs: accept lead development order plan` (hash: TBD)",
         ]
       : []),
     "",
   ].join("\n");
 };
+
+const createOrderPlanMarkdown = (): string =>
+  [
+    "# Development Order Plan",
+    "",
+    "Build the engine Product Part first, then open dependent clusters once the Product Part contract is stable.",
+  ].join("\n");
+
+const createOrderPlanJson = (): string =>
+  `${JSON.stringify(
+    {
+      developmentUnits: [
+        {
+          dependsOn: [],
+          id: "engine",
+          rationale: "Lead Product Part owns the initial execution order.",
+          title: "Engine",
+          type: "product_part",
+        },
+      ],
+      orderingAssumptions: ["No accepted dependent Product Part brief exists."],
+      phases: [
+        {
+          exitCriteria: ["Development Order Plan user review is accepted."],
+          id: "phase-1",
+          title: "Lead Product Part",
+          unitIds: ["engine"],
+        },
+      ],
+      productPartId: PART_ID,
+      schema: "codeai-development-order-plan-v1",
+    },
+    null,
+    2
+  )}\n`;
 
 const createBrief = (filled: boolean): string => {
   const block = (content: string): string =>
@@ -295,6 +339,53 @@ test("Product Part review acceptance prepares lead order plan task", async () =>
       result.nextInternalMessage ?? "",
       new RegExp(ORDER_PLAN_JSON_PATH)
     );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Lead Product Part order plan handoff opens user review", async () => {
+  const workspaceRoot = await prepareReviewWorkspace(true);
+  try {
+    await acceptReview(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ORDER_PLAN_PATH,
+      createOrderPlanMarkdown()
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ORDER_PLAN_JSON_PATH,
+      createOrderPlanJson()
+    );
+
+    const result =
+      await new ProductPartDevelopmentBriefTurnController().handleTurnCompleted(
+        {
+          sessionId: "product-part-session-1",
+          stage: `development_tree/materialized/product-parts/${PART_ID}`,
+          workspaceRoot,
+          workspaceSlug: WORKSPACE_SLUG,
+        }
+      );
+
+    assert.equal(result.handled, true);
+    const { stdout: statusOutput } = await runGit(workspaceRoot, [
+      "status",
+      "--porcelain",
+    ]);
+    assert.equal(statusOutput.trim(), "");
+    const { stdout: logOutput } = await runGit(workspaceRoot, [
+      "log",
+      "--oneline",
+      "-4",
+    ]);
+    assert.match(logOutput, LEAD_ORDER_LOG_COMMIT_RE);
+    assert.match(logOutput, LEDGER_COMMIT_RE);
+    const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
+    assert.match(plan, LEAD_ORDER_DONE_RE);
+    assert.match(plan, LEAD_ORDER_GIT_COMMIT_RE);
+    assert.match(plan, LEAD_ORDER_REVIEW_IN_PROGRESS_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

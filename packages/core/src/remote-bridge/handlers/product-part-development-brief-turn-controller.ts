@@ -2,6 +2,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { DraftReadinessClassifier } from "../../development-tree/node-bootstrap/draft-readiness-classifier";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import { ProductPartDevelopmentOrderPlanTurnController } from "./product-part-development-order-plan-turn-controller";
 
 export interface ProductPartBriefMessage {
   readonly content: string;
@@ -246,6 +247,8 @@ const createBlockedMessage = (params: {
 export class ProductPartDevelopmentBriefTurnController {
   private readonly classifier = new DraftReadinessClassifier();
   private readonly gitBoundary: ProductPartManagedGitBoundary;
+  private readonly orderPlanTurn =
+    new ProductPartDevelopmentOrderPlanTurnController();
 
   constructor(options: ProductPartBriefTurnControllerOptions = {}) {
     this.gitBoundary =
@@ -261,6 +264,11 @@ export class ProductPartDevelopmentBriefTurnController {
     const partId = parseProductPartStage(params.stage);
     if (!partId) {
       return { handled: false };
+    }
+    const orderPlanResult =
+      await this.orderPlanTurn.handleTurnCompleted(params);
+    if (orderPlanResult.handled) {
+      return orderPlanResult;
     }
 
     const briefPath = createBriefPath({

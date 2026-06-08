@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "d7d8be7a7",
+  "lastRecordedCommit": "334cf06bd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase33.lead-continuation.task1",
-  "expectedCommitMessage": "feat: continue lead product part order plan draft",
+  "currentTaskId": "development-tree-product-part-review.phase33.lead-order-completion.task1",
+  "expectedCommitMessage": "feat: open lead product part order plan review",
   "debt": {
-    "expectedCommitMessage": "feat: continue lead product part order plan draft",
-    "preCommitHead": "d7d8be7a7",
+    "expectedCommitMessage": "feat: open lead product part order plan review",
+    "preCommitHead": "334cf06bd",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase33.lead-continuation.task1"
+    "taskId": "development-tree-product-part-review.phase33.lead-order-completion.task1"
   }
 }
 ```
@@ -360,12 +360,12 @@
 ### Stream: Lead Assignment Dispatch
 
 127. [DONE] `development-tree-product-part-review.phase33.lead-continuation.task1` After lead Product Part brief acceptance, dispatch the next managed internal assignment for `DevelopmentOrderPlan.draft.md` and `DevelopmentOrderPlan.draft.json` while secondary Product Parts remain in `User Return And Revisions` (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: continue lead product part order plan draft`).
-128. [PENDING] Git Commit: `feat: continue lead product part order plan draft` (hash: TBD)
+128. [DONE] Git Commit: `feat: continue lead product part order plan draft` (hash: 334cf06bd)
 
 ### Stream: Lead Order Plan Completion
 
-129. [TODO] `development-tree-product-part-review.phase33.lead-order-completion.task1` Commit the lead agent's Development Order Plan draft artifacts and open the lead order-plan user review gate (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open lead product part order plan review`).
-130. [TODO] Git Commit: `feat: open lead product part order plan review` (hash: TBD)
+129. [DONE] `development-tree-product-part-review.phase33.lead-order-completion.task1` Commit the lead agent's Development Order Plan draft artifacts and open the lead order-plan user review gate (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `feat: open lead product part order plan review`).
+130. [PENDING] Git Commit: `feat: open lead product part order plan review` (hash: TBD)
 
 ## Phase 34 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
