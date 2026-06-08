@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.467] - 2026-06-08
+### Fixed
+- **Product Part managed review confirmation no longer touches ignored runtime session paths.** Acceptance commits now include the Product Part brief and continuity artifacts, but not `.codeai-hub/<workspace>/runtime/sessions/`, which is local-only runtime residue.
+- **The `Подтверждаю` button should no longer remain pending for Product Part reviews.** This prevents the UI from staying locked when the workspace already contains ignored runtime session files.
+
+### Verification
+- `npm run build --workspace=packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js`
+- `npm run plan:validate`
+
 ## [1.2.466] - 2026-06-07
 ### Fixed
 - **Codex workspace provider homes now share the global auth source.** Core replaces stale copied workspace `auth.json` files with a shared reference to `~/.codex/auth.json` before starting the Codex app-server, so refresh-token rotation cannot diverge between normal Codex and CodeAI Hub managed sessions.

@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.466** (Codex Shared Auth Provider Home)
+**Current Release — v1.2.467** (Product Part Acceptance Button Hotfix)
+
+This release fixes the Product Part managed review confirmation regression found
+in v1.2.466. Product Part brief acceptance no longer attempts to include
+workspace runtime session files in the acceptance commit. Runtime session data
+remains local-only, while Core commits only the Product Part brief and continuity
+artifacts that are part of workflow truth.
+
+After installing this release, retest both the lead and secondary Product Part
+sessions: pressing `Подтверждаю` should advance the Product Part todo-plan
+instead of leaving the confirmation button pending and the input field locked.
+Git should remain clean after runtime session files are recreated.
+
+**Previous Release — v1.2.466** (Codex Shared Auth Provider Home)
 
 This release fixes the reused refresh-token failure that could appear after a
 Development Tree Clear/Undo followed by a fresh managed Codex turn. Workspace
