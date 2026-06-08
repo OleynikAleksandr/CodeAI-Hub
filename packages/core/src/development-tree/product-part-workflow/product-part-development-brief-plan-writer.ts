@@ -58,6 +58,9 @@ const createPlanPaths = (params: {
 const createTaskPrefix = (partId: string): string =>
   `development-tree.product-part.${partId}`;
 
+const createDownstreamCoordinationCommitMessage = (partId: string): string =>
+  `chore: coordinate ${partId} downstream development`;
+
 const createBriefArtifactPath = (params: {
   readonly partId: string;
   readonly workspaceSlug: string;
@@ -156,14 +159,20 @@ const createReturnPhase = (params: {
 const createDownstreamCoordinationPhase = (params: {
   readonly itemNumber: number;
   readonly partId: string;
-}): string[] => [
-  "",
-  "## Phase 5 - Downstream Product Part Coordination",
-  "",
-  "### Stream: Cluster And Module Coordination",
-  "",
-  `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase5.downstream-coordination.task1\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: none).`,
-];
+}): string[] => {
+  const commitMessage = createDownstreamCoordinationCommitMessage(
+    params.partId
+  );
+  return [
+    "",
+    "## Phase 5 - Downstream Product Part Coordination",
+    "",
+    "### Stream: Cluster And Module Coordination",
+    "",
+    `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase5.downstream-coordination.task1\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: \`${commitMessage}\`).`,
+    `${params.itemNumber + 1}. [TODO] Git Commit: \`${commitMessage}\` (hash: TBD)`,
+  ];
+};
 
 const renderPlan = (params: {
   readonly isLeadPart: boolean;
@@ -219,7 +228,7 @@ const renderPlan = (params: {
         })
       : []),
     ...createReturnPhase({
-      itemNumber: params.isLeadPart ? 10 : 5,
+      itemNumber: params.isLeadPart ? 11 : 5,
       partId: params.node.partId,
     }),
     "",

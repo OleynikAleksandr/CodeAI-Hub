@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "6d1c98f0d",
+  "lastRecordedCommit": "4ed702f77",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase11.codex-settings-migration.task1",
-  "expectedCommitMessage": "fix: migrate unsupported codex model settings",
+  "currentTaskId": "development-tree-cluster-contract.phase11.product-part-coordination-commit-pair.task1",
+  "expectedCommitMessage": "fix: add product part coordination commit pair",
   "debt": {
-    "expectedCommitMessage": "fix: migrate unsupported codex model settings",
-    "preCommitHead": "6d1c98f0d",
+    "expectedCommitMessage": "fix: add product part coordination commit pair",
+    "preCommitHead": "4ed702f77",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase11.codex-settings-migration.task1"
+    "taskId": "development-tree-cluster-contract.phase11.product-part-coordination-commit-pair.task1"
   }
 }
 ```
@@ -227,20 +227,24 @@ Verification evidence:
 93. [DONE] `development-tree-cluster-contract.phase11.downstream-model-binding.task1` Make automatically bootstrapped cluster-contract sessions pass the accepted Product Part session model binding into workflow session creation (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: inherit product part model for cluster contract sessions`).
 94. [DONE] Git Commit: `fix: inherit product part model for cluster contract sessions` (hash: 6d1c98f0d)
 95. [DONE] `development-tree-cluster-contract.phase11.codex-settings-migration.task1` Migrate persisted Codex settings away from unsupported `gpt-5.3-codex` defaults and stale reasoning entries (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: migrate unsupported codex model settings`).
-96. [PENDING] Git Commit: `fix: migrate unsupported codex model settings` (hash: TBD)
-97. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup and downstream cluster-contract model inheritance, including handler/bootstrapper regression coverage (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream codex model inheritance`).
-98. [TODO] Git Commit: `test: verify downstream codex model inheritance` (hash: TBD)
+96. [DONE] Git Commit: `fix: migrate unsupported codex model settings` (hash: 4ed702f77)
+97. [DONE] `development-tree-cluster-contract.phase11.product-part-coordination-commit-pair.task1` Ensure lead Product Part Downstream Coordination todo-plan entries are commit-backed and existing accepted plans are repaired when Core advances to Phase 5 (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: add product part coordination commit pair`).
+98. [PENDING] Git Commit: `fix: add product part coordination commit pair` (hash: TBD)
+99. [TODO] `development-tree-cluster-contract.phase11.product-part-clear-worktrees.task1` Remove downstream Development Tree worktrees when Clear&Do restarts a Product Part root node (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part downstream worktrees`).
+100. [TODO] Git Commit: `fix: clear product part downstream worktrees` (hash: TBD)
+101. [TODO] `development-tree-cluster-contract.phase11.downstream-model-build.task1` Run targeted builds/tests for Codex model registry cleanup, Product Part coordination plan repair, Product Part Clear&Do worktree cleanup, and downstream cluster-contract model inheritance (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify product part restart workflow`).
+102. [TODO] Git Commit: `test: verify product part restart workflow` (hash: TBD)
 
 ## Phase 12 - Regression Fix Release Build (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Release Build Confirmation
 
-99. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the downstream model binding regression fix (scope: user workflow; expected commit: none).
+103. [TODO] `development-tree-cluster-contract.phase12.release-confirm.task1` User explicitly confirmed release build for the downstream model binding, Product Part coordination plan, and Clear&Do worktree cleanup fixes; prepare release notes, bump versions, run `build-all.sh`, and package VSIX (scope: user workflow; expected commit: none).
 
 ## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-100. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-101. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-102. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+104. [TODO] `development-tree-cluster-contract.phase13.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+105. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+106. [TODO] `development-tree-cluster-contract.phase13.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

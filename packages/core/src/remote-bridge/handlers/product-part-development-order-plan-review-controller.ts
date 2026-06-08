@@ -75,6 +75,9 @@ const createOrderPlanReviewTaskId = (partId: string): string =>
 const createDownstreamCoordinationTaskId = (partId: string): string =>
   `${createTaskPrefix(partId)}.phase5.downstream-coordination.task1`;
 
+const createDownstreamCoordinationCommitMessage = (partId: string): string =>
+  `chore: coordinate ${partId} downstream development`;
+
 const createReturnTaskId = (partId: string): string =>
   `${createTaskPrefix(partId)}.phase-return.user-return.task1`;
 
@@ -161,6 +164,39 @@ const markDownstreamCoordinationInProgress = (params: {
     "$1IN_PROGRESS$2"
   );
 
+const renumberPlanItems = (content: string): string => {
+  let itemNumber = 1;
+  return content.replace(/^\d+\. \[/gmu, () => `${itemNumber++}. [`);
+};
+
+const ensureDownstreamCoordinationCommitPair = (params: {
+  readonly content: string;
+  readonly partId: string;
+}): string => {
+  const commitMessage = createDownstreamCoordinationCommitMessage(
+    params.partId
+  );
+  const taskId = createDownstreamCoordinationTaskId(params.partId);
+  const taskLinePattern = new RegExp(
+    `^(\\d+)\\. \\[([^\\]]+)\\] \`${escapeRegExp(taskId)}\` .*$`,
+    "mu"
+  );
+  const contentWithTask = params.content.replace(
+    taskLinePattern,
+    (_line, itemNumber: string, status: string) =>
+      `${itemNumber}. [${status}] \`${taskId}\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: \`${commitMessage}\`).`
+  );
+  if (contentWithTask.includes(`Git Commit: \`${commitMessage}\``)) {
+    return renumberPlanItems(contentWithTask);
+  }
+  const withCommitLine = contentWithTask.replace(
+    taskLinePattern,
+    (line, itemNumber: string) =>
+      `${line}\n${Number(itemNumber) + 1}. [TODO] Git Commit: \`${commitMessage}\` (hash: TBD)`
+  );
+  return renumberPlanItems(withCommitLine);
+};
+
 const nextItemNumber = (content: string): number => {
   const matches = [...content.matchAll(/^(\d+)\.\s+\[/gmu)];
   const last = Number(matches.at(-1)?.[1] ?? 0);
@@ -202,7 +238,8 @@ const appendDownstreamCoordinationPhaseIfMissing = (params: {
     "",
     "### Stream: Cluster And Module Coordination",
     "",
-    `${nextItemNumber(params.content)}. [TODO] \`${createDownstreamCoordinationTaskId(params.partId)}\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: none).`,
+    `${nextItemNumber(params.content)}. [TODO] \`${createDownstreamCoordinationTaskId(params.partId)}\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: \`${createDownstreamCoordinationCommitMessage(params.partId)}\`).`,
+    `${nextItemNumber(params.content) + 1}. [TODO] Git Commit: \`${createDownstreamCoordinationCommitMessage(params.partId)}\` (hash: TBD)`,
     "",
   ].join("\n");
 };
@@ -338,11 +375,14 @@ export class ProductPartDevelopmentOrderPlanReviewController {
       replaceStateBlock(
         markDownstreamCoordinationInProgress({
           content: appendReturnPhaseIfMissing({
-            content: appendDownstreamCoordinationPhaseIfMissing({
-              content: markOrderPlanReviewAccepted({
-                commitHash: commit.hash,
-                commitMessage: planState.expectedCommitMessage,
-                content: planText,
+            content: ensureDownstreamCoordinationCommitPair({
+              content: appendDownstreamCoordinationPhaseIfMissing({
+                content: markOrderPlanReviewAccepted({
+                  commitHash: commit.hash,
+                  commitMessage: planState.expectedCommitMessage,
+                  content: planText,
+                  partId,
+                }),
                 partId,
               }),
               partId,
@@ -354,7 +394,8 @@ export class ProductPartDevelopmentOrderPlanReviewController {
         {
           ...planState,
           currentTaskId: createDownstreamCoordinationTaskId(partId),
-          expectedCommitMessage: null,
+          expectedCommitMessage:
+            createDownstreamCoordinationCommitMessage(partId),
           lastRecordedCommit: commit.hash,
         }
       )
