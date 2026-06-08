@@ -8,15 +8,15 @@
   "planId": "development-tree-product-part-review-lifecycle-2026-06-07",
   "branch": "main",
   "baseHead": "e6cd05104",
-  "lastRecordedCommit": "cc4cc0e77",
+  "lastRecordedCommit": "e105cdd9b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "development-tree-product-part-review.phase38.verify.task1",
-  "expectedCommitMessage": "test: verify lead order plan review acceptance",
+  "currentTaskId": "development-tree-product-part-review.phase39.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.469 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify lead order plan review acceptance",
-    "preCommitHead": "cc4cc0e77",
+    "expectedCommitMessage": "docs: prepare 1.2.469 release notes",
+    "preCommitHead": "e105cdd9b",
     "stage": "commit_pending",
-    "taskId": "development-tree-product-part-review.phase38.verify.task1"
+    "taskId": "development-tree-product-part-review.phase39.release-notes.task1"
   }
 }
 ```
@@ -405,11 +405,30 @@
 ### Stream: Targeted Verification
 
 144. [DONE] `development-tree-product-part-review.phase38.verify.task1` Run targeted Product Part order-plan review acceptance tests and Core build/type verification (scope: `packages/core`; expected commit: `test: verify lead order plan review acceptance`).
-145. [PENDING] Git Commit: `test: verify lead order plan review acceptance` (hash: TBD)
+145. [DONE] Git Commit: `test: verify lead order plan review acceptance` (hash: e105cdd9b)
+
+## Phase 39 - Release Build (owner: Codex, updated: 2026-06-08)
+
+### Stream: Release After Confirmation
+
+146. [DONE] `development-tree-product-part-review.phase39.release-notes.task1` Prepare release notes for future version `1.2.469` after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.469 release notes`).
+147. [PENDING] Git Commit: `docs: prepare 1.2.469 release notes` (hash: TBD)
+148. [TODO] `development-tree-product-part-review.phase39.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint 1.2.469 release build state`).
+149. [TODO] Git Commit: `docs: checkpoint 1.2.469 release build state` (hash: TBD)
+150. [TODO] `development-tree-product-part-review.phase39.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for `1.2.469` (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare 1.2.469 unified release artifacts`).
+151. [TODO] Git Commit: `build: prepare 1.2.469 unified release artifacts` (hash: TBD)
+152. [TODO] `development-tree-product-part-review.phase39.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for `1.2.469` (scope: `codeai-hub-1.2.469.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package 1.2.469 vsix release`).
+153. [TODO] Git Commit: `build: package 1.2.469 vsix release` (hash: TBD)
+
+## Phase 40 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
+
+### Stream: FinderWidget Product Part Final Retest
+
+154. [TODO] `development-tree-product-part-review.phase40.user.task1` User installs release `1.2.469` and retests Product Part logical final state: confirming Phase 4 Lead Development Order Plan User Review commits `docs: accept lead development order plan`, moves the lead Product Part plan to `User Return And Revisions`, and leaves downstream Development Order Plan v2 / agent launch design for the next discussion (scope: user workflow; expected commit: none).
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-06-07)
 
 ### Stream: Closeout After Acceptance
 
-146. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
-147. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)
+155. [TODO] `development-tree-product-part-review.phase12.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for the active planning source (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close development tree product part review lifecycle scope`).
+156. [TODO] Git Commit: `docs: close development tree product part review lifecycle scope` (hash: TBD)

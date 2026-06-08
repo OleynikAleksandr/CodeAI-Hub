@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.469] - 2026-06-08
+### Fixed
+- **Lead Development Order Plan review acceptance now completes the Product Part lifecycle.** Confirming the Phase 4 order-plan review commits `docs: accept lead development order plan`, marks the review task and Git Commit line done, and moves the lead Product Part plan into `User Return And Revisions`.
+- **Order-plan review completion does not accidentally launch downstream agents.** Cluster/module startup remains closed until the next Development Order Plan v2 orchestration contract is designed.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js`
+- `npm run plan:validate`
+
 ## [1.2.468] - 2026-06-08
 ### Added
 - **Lead Product Part acceptance now continues to Development Order Plan drafting.** After the user accepts the lead Product Part Development Brief, Core sends the next managed internal assignment into the same session for `DevelopmentOrderPlan.draft.md` and `DevelopmentOrderPlan.draft.json`.
