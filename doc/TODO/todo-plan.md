@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "b2ce4bf1e",
+  "lastRecordedCommit": "6a0074c1d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare lead order plan repair release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase10.build-all.task1",
+  "expectedCommitMessage": "build: prepare lead order plan repair release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare lead order plan repair release notes",
-    "preCommitHead": "b2ce4bf1e",
+    "expectedCommitMessage": "build: prepare lead order plan repair release artifacts",
+    "preCommitHead": "6a0074c1d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase10.build-all.task1"
   }
 }
 ```
@@ -169,9 +169,9 @@ Verification evidence:
 ### Stream: Regression Fix Release
 
 54. [DONE] `development-tree-cluster-contract.phase10.release-notes.task1` Prepare release notes for the lead order-plan repair continuation regression fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lead order plan repair release notes`).
-55. [PENDING] Git Commit: `docs: prepare lead order plan repair release notes` (hash: TBD)
-56. [TODO] `development-tree-cluster-contract.phase10.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan repair release artifacts`).
-57. [TODO] Git Commit: `build: prepare lead order plan repair release artifacts` (hash: TBD)
+55. [DONE] Git Commit: `docs: prepare lead order plan repair release notes` (hash: 6a0074c1d)
+56. [DONE] `development-tree-cluster-contract.phase10.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan repair release artifacts`).
+57. [PENDING] Git Commit: `build: prepare lead order plan repair release artifacts` (hash: TBD)
 58. [TODO] `development-tree-cluster-contract.phase10.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan repair vsix release`).
 59. [TODO] Git Commit: `build: package lead order plan repair vsix release` (hash: TBD)
 60. [TODO] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none).
