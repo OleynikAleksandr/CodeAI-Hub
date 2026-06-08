@@ -12,6 +12,8 @@ const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "engine";
 const BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/ProductPartDevelopmentBrief.draft.md`;
+const ORDER_PLAN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/DevelopmentOrderPlan.draft.md`;
+const ORDER_PLAN_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/DevelopmentOrderPlan.draft.json`;
 const CONTINUITY_INDEX_PATH = `.codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`;
 const PLAN_PATH = `doc/TODO/stages/development-tree/product-parts/${PART_ID}/todo-plan.md`;
 const ACCEPTED_BRIEF_COMMIT_RE =
@@ -28,6 +30,7 @@ const RETURN_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase-return\.user-return\.task1`/u;
 const LEAD_ORDER_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase3\.order-plan\.task1`/u;
+const DEVELOPMENT_ORDER_PLAN_RE = /DevelopmentOrderPlan/u;
 const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
 
 const writeWorkspaceFile = async (
@@ -278,9 +281,20 @@ test("Product Part review acceptance ignores local runtime session directory", a
 test("Product Part review acceptance prepares lead order plan task", async () => {
   const workspaceRoot = await prepareReviewWorkspace(true);
   try {
-    await acceptReview(workspaceRoot);
+    const result = await acceptReview(workspaceRoot);
+    if (!result.handled) {
+      assert.fail(
+        "Expected lead Product Part review acceptance to be handled."
+      );
+    }
     const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
     assert.match(plan, LEAD_ORDER_IN_PROGRESS_RE);
+    assert.match(result.nextInternalMessage ?? "", DEVELOPMENT_ORDER_PLAN_RE);
+    assert.match(result.nextInternalMessage ?? "", new RegExp(ORDER_PLAN_PATH));
+    assert.match(
+      result.nextInternalMessage ?? "",
+      new RegExp(ORDER_PLAN_JSON_PATH)
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -308,7 +322,11 @@ const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
   return workspaceRoot;
 };
 
-const acceptReview = async (workspaceRoot: string): Promise<void> => {
+const acceptReview = async (
+  workspaceRoot: string
+): ReturnType<
+  ProductPartDevelopmentBriefReviewController["handleAccepted"]
+> => {
   const result =
     await new ProductPartDevelopmentBriefReviewController().handleAccepted({
       sessionId: "product-part-session-1",
@@ -319,4 +337,5 @@ const acceptReview = async (workspaceRoot: string): Promise<void> => {
   assert.equal(result.handled, true);
   const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
   assert.equal(stdout.trim(), "");
+  return result;
 };

@@ -14,6 +14,7 @@ export type ProductPartBriefReviewResult =
   | {
       readonly handled: true;
       readonly message: { readonly content: string; readonly tag: string };
+      readonly nextInternalMessage?: string;
     };
 
 const AGENT_TOUCHED_RE = /^agentTouched:\s*(?:false|true)\s*$/im;
@@ -84,6 +85,18 @@ const createBriefPath = (params: {
   readonly workspaceSlug: string;
 }): string =>
   `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/ProductPartDevelopmentBrief.draft.md`;
+
+const createOrderPlanPath = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/DevelopmentOrderPlan.draft.md`;
+
+const createOrderPlanJsonPath = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/DevelopmentOrderPlan.draft.json`;
 
 const createManagedDecisionPath = (params: {
   readonly partId: string;
@@ -268,6 +281,7 @@ export class ProductPartDevelopmentBriefReviewController {
         2
       )}\n`
     );
+    const isLeadPart = IS_LEAD_PLAN_RE.test(planText);
     await writeText(
       params.workspaceRoot,
       planPath,
@@ -298,16 +312,88 @@ export class ProductPartDevelopmentBriefReviewController {
     return {
       handled: true,
       message: {
-        content: [
-          `Core: пользователь принял Product Part \`${partId}\` Development Brief.`,
-          `Commit: \`${commit.hash}\`.`,
-          "Product Part review закрыт; сессия остаётся доступной для будущих правок.",
-        ].join("\n"),
-        tag: "managed-workflow-complete",
+        content: createAcceptedMessage({
+          commitHash: commit.hash,
+          isLeadPart,
+          partId,
+        }),
+        tag: isLeadPart
+          ? "managed-workflow-assignment"
+          : "managed-workflow-complete",
       },
+      nextInternalMessage: isLeadPart
+        ? createLeadOrderPlanPrompt({
+            partId,
+            workspaceSlug: params.workspaceSlug,
+          })
+        : undefined,
     };
   }
 }
+
+const createAcceptedMessage = (params: {
+  readonly commitHash: string;
+  readonly isLeadPart: boolean;
+  readonly partId: string;
+}): string =>
+  [
+    `Core: пользователь принял Product Part \`${params.partId}\` Development Brief.`,
+    `Commit: \`${params.commitHash}\`.`,
+    params.isLeadPart
+      ? "Lead Product Part review закрыт; Core запускает следующий managed assignment: Development Order Plan draft."
+      : "Product Part review закрыт; сессия остаётся доступной для будущих правок.",
+  ].join("\n");
+
+const createLeadOrderPlanPrompt = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string => {
+  const orderPlanPath = createOrderPlanPath(params);
+  const orderPlanJsonPath = createOrderPlanJsonPath(params);
+  return [
+    `Core managed assignment: Product Part \`${params.partId}\` is the lead Product Part and its Development Brief was accepted by the user.`,
+    "",
+    "Continue in this same session. Create or update both lead Development Order Plan artifacts:",
+    `- \`${orderPlanPath}\``,
+    `- \`${orderPlanJsonPath}\``,
+    "",
+    "The markdown artifact must explain the recommended development order for Product Parts, clusters, and standalone modules using the accepted Product Part briefs and visible dependencies already available in the workspace.",
+    "",
+    "The JSON artifact must be valid JSON with this contract:",
+    "```json",
+    JSON.stringify(
+      {
+        developmentUnits: [
+          {
+            dependsOn: ["string"],
+            id: "string",
+            rationale: "string",
+            title: "string",
+            type: "product_part | cluster | module",
+          },
+        ],
+        orderingAssumptions: ["string"],
+        phases: [
+          {
+            exitCriteria: ["string"],
+            id: "string",
+            title: "string",
+            unitIds: ["string"],
+          },
+        ],
+        productPartId: params.partId,
+        schema: "codeai-development-order-plan-v1",
+      },
+      null,
+      2
+    ),
+    "```",
+    "",
+    "Do not leave placeholder text, sentinel values, or invalid JSON. If a critical dependency is unknowable from available artifacts, write the best conservative order and record the assumption explicitly.",
+    "",
+    "Expected commit message after the artifacts are ready: `docs: update lead development order plan`.",
+  ].join("\n");
+};
 
 const createAcceptedPlanText = (params: {
   readonly commitHash: string;

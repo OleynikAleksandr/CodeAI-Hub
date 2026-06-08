@@ -240,6 +240,12 @@ export class SessionRequestHandlerManagedReviewDecisions {
       options.sessionId,
       result.message
     );
+    if (result.nextInternalMessage) {
+      await this.deps.messageDispatch.sendInternalMessage(
+        options.sessionId,
+        result.nextInternalMessage
+      );
+    }
     return true;
   }
 
