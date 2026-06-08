@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.476] - 2026-06-08
+### Fixed
+- **Projected cluster sessions now read history from their worktree runtime.** Project Manager can open a cluster node from the lead Product Part graph and render the real sub-agent JSONL instead of an empty projected shell.
+- **Cluster Contract bootstrap commits its managed todo-plan immediately.** Newly created cluster worktrees now track the Core-owned cluster `todo-plan.md` before the provider session starts, preventing untracked plan residue after startup.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/development-tree-projected-session.test.js packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js packages/core/dist/remote-bridge/handlers/dialog-list-service.test.js`
+- `npm run plan:validate`
+
 ## [1.2.475] - 2026-06-08
 ### Fixed
 - **Cluster sessions are projected into the main Product Part workspace.** Automatically bootstrapped cluster-contract sessions now record their session id, stage, branch, worktree path, and inherited model binding in the main coordination state so Project Manager can show/open them from the lead Product Part graph.
