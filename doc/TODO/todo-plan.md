@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "b1721b877",
+  "lastRecordedCommit": "9b4a01aeb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.final-release-notes.task1",
-  "expectedCommitMessage": "docs: prepare lead order plan wave bootstrap release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase10.final-release-state.task1",
+  "expectedCommitMessage": "docs: checkpoint lead order plan wave bootstrap release build state",
   "debt": {
-    "expectedCommitMessage": "docs: prepare lead order plan wave bootstrap release notes",
-    "preCommitHead": "b1721b877",
+    "expectedCommitMessage": "docs: checkpoint lead order plan wave bootstrap release build state",
+    "preCommitHead": "9b4a01aeb",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.final-release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase10.final-release-state.task1"
   }
 }
 ```
@@ -198,16 +198,18 @@ Verification evidence:
 ### Stream: Final Regression Fix Release
 
 74. [DONE] `development-tree-cluster-contract.phase10.final-release-notes.task1` Prepare release notes for the lead order-plan initial prompt and first-wave bootstrap regression fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lead order plan wave bootstrap release notes`).
-75. [PENDING] Git Commit: `docs: prepare lead order plan wave bootstrap release notes` (hash: TBD)
-76. [TODO] `development-tree-cluster-contract.phase10.final-build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the final regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan wave bootstrap release artifacts`).
-77. [TODO] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: TBD)
-78. [TODO] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
-79. [TODO] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: TBD)
+75. [DONE] Git Commit: `docs: prepare lead order plan wave bootstrap release notes` (hash: 9b4a01aeb)
+76. [DONE] `development-tree-cluster-contract.phase10.final-release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint lead order plan wave bootstrap release build state`).
+77. [PENDING] Git Commit: `docs: checkpoint lead order plan wave bootstrap release build state` (hash: TBD)
+78. [TODO] `development-tree-cluster-contract.phase10.final-build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the final regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan wave bootstrap release artifacts`).
+79. [TODO] Git Commit: `build: prepare lead order plan wave bootstrap release artifacts` (hash: TBD)
+80. [TODO] `development-tree-cluster-contract.phase10.final-vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the final regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan wave bootstrap vsix release`).
+81. [TODO] Git Commit: `build: package lead order plan wave bootstrap vsix release` (hash: TBD)
 
 ## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-80. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-81. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-82. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+82. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+83. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+84. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
