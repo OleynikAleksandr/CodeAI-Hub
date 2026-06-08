@@ -11,6 +11,10 @@ import { ProductPartDevelopmentBriefTurnController } from "./product-part-develo
 const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "engine";
+const CLUSTER_ID = "runtime-cluster";
+const MODULE_ID = "engine-core";
+const CLUSTER_NODE_ID = `cluster:${PART_ID}/${CLUSTER_ID}`;
+const MODULE_NODE_ID = `module:${PART_ID}/${CLUSTER_ID}/${MODULE_ID}`;
 const BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/ProductPartDevelopmentBrief.draft.md`;
 const ORDER_PLAN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/DevelopmentOrderPlan.draft.md`;
 const ORDER_PLAN_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/DevelopmentOrderPlan.draft.json`;
@@ -42,6 +46,7 @@ const LEAD_ORDER_REVIEW_DONE_RE =
 const LEAD_ORDER_REVIEW_GIT_COMMIT_RE =
   /Git Commit: `docs: accept lead development order plan` \(hash: [a-f0-9]+\)/u;
 const DEVELOPMENT_ORDER_PLAN_RE = /DevelopmentOrderPlan/u;
+const DEVELOPMENT_ORDER_PLAN_V2_RE = /codeai-development-order-plan-v2/u;
 const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
 
 const writeWorkspaceFile = async (
@@ -60,33 +65,60 @@ const runGit = (
 ): Promise<{ readonly stdout: string }> =>
   execFileAsync("git", [...args], { cwd: workspaceRoot });
 
-const createPlan = (): string => {
-  const taskPrefix = `development-tree.product-part.${PART_ID}`;
-  const state = JSON.stringify(
+const initializeGitWorkspace = async (workspaceRoot: string): Promise<void> => {
+  await runGit(workspaceRoot, ["init"]);
+  await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
+  await runGit(workspaceRoot, ["config", "user.name", "Test"]);
+};
+
+const commitAll = async (
+  workspaceRoot: string,
+  message: string
+): Promise<void> => {
+  await runGit(workspaceRoot, ["add", "."]);
+  await runGit(workspaceRoot, ["commit", "-m", message]);
+};
+
+const assertCleanGit = async (workspaceRoot: string): Promise<void> => {
+  const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
+  assert.equal(stdout.trim(), "");
+};
+
+const createPlanState = (params: {
+  readonly currentTaskId: string;
+  readonly expectedCommitMessage: string;
+  readonly lastRecordedCommit: string;
+}): string =>
+  JSON.stringify(
     {
       schema: "codeai-plan-v1",
       executionScopeStatus: "ACTIVE",
       planId: `development-tree-product-part-${PART_ID}`,
       branch: "main",
       baseHead: "TBD",
-      lastRecordedCommit: "TBD",
+      lastRecordedCommit: params.lastRecordedCommit,
       planningSource: `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${PART_ID}.md`,
-      currentTaskId: `${taskPrefix}.phase1.brief.task1`,
-      expectedCommitMessage: `docs: update ${PART_ID} product part development brief`,
+      currentTaskId: params.currentTaskId,
+      expectedCommitMessage: params.expectedCommitMessage,
       debt: null,
     },
     null,
     2
   );
+
+const createPlan = (): string => {
+  const taskPrefix = `development-tree.product-part.${PART_ID}`;
+  const state = createPlanState({
+    currentTaskId: `${taskPrefix}.phase1.brief.task1`,
+    expectedCommitMessage: `docs: update ${PART_ID} product part development brief`,
+    lastRecordedCommit: "TBD",
+  });
   return [
-    "# Product Part Development Brief Managed TODO Plan",
-    "",
     "<!-- codeai-plan-state:start -->",
     "```json",
     state,
     "```",
     "<!-- codeai-plan-state:end -->",
-    "",
     `1. [IN_PROGRESS] \`${taskPrefix}.phase1.brief.task1\` Draft the Product Part Development Brief (scope: \`${BRIEF_PATH}\`; expected commit: \`docs: update ${PART_ID} product part development brief\`).`,
     `2. [TODO] Git Commit: \`docs: update ${PART_ID} product part development brief\` (hash: TBD)`,
     `3. [TODO] \`${taskPrefix}.phase2.brief-review.task1\` Review the Product Part Development Brief (scope: user workflow; expected commit: \`docs: accept ${PART_ID} product part development brief\`).`,
@@ -97,35 +129,18 @@ const createPlan = (): string => {
 
 const createReviewPlan = (isLeadPart: boolean): string => {
   const taskPrefix = `development-tree.product-part.${PART_ID}`;
-  const state = JSON.stringify(
-    {
-      schema: "codeai-plan-v1",
-      executionScopeStatus: "ACTIVE",
-      planId: `development-tree-product-part-${PART_ID}`,
-      branch: "main",
-      baseHead: "TBD",
-      lastRecordedCommit: "draft123",
-      planningSource: `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${PART_ID}.md`,
-      currentTaskId: `${taskPrefix}.phase2.brief-review.task1`,
-      expectedCommitMessage: `docs: accept ${PART_ID} product part development brief`,
-      debt: null,
-    },
-    null,
-    2
-  );
+  const state = createPlanState({
+    currentTaskId: `${taskPrefix}.phase2.brief-review.task1`,
+    expectedCommitMessage: `docs: accept ${PART_ID} product part development brief`,
+    lastRecordedCommit: "draft123",
+  });
   return [
-    "# Product Part Development Brief Managed TODO Plan",
-    "",
     "<!-- codeai-plan-state:start -->",
     "```json",
     state,
     "```",
     "<!-- codeai-plan-state:end -->",
-    "",
-    "## Managed Context",
-    "",
     `- This Product Part is lead: ${isLeadPart ? "yes" : "no"}.`,
-    "",
     `1. [DONE] \`${taskPrefix}.phase1.brief.task1\` Draft the Product Part Development Brief (scope: \`${BRIEF_PATH}\`; expected commit: \`docs: update ${PART_ID} product part development brief\`).`,
     `2. [DONE] Git Commit: \`docs: update ${PART_ID} product part development brief\` (hash: draft123)`,
     `3. [IN_PROGRESS] \`${taskPrefix}.phase2.brief-review.task1\` Review the Product Part Development Brief (scope: user workflow; expected commit: \`docs: accept ${PART_ID} product part development brief\`).`,
@@ -143,35 +158,46 @@ const createReviewPlan = (isLeadPart: boolean): string => {
 };
 
 const createOrderPlanMarkdown = (): string =>
-  [
-    "# Development Order Plan",
-    "",
-    "Build the engine Product Part first, then open dependent clusters once the Product Part contract is stable.",
-  ].join("\n");
+  "# Development Order Plan\n\nBuild the engine Product Part first, then open dependent clusters once the Product Part contract is stable.";
 
 const createOrderPlanJson = (): string =>
   `${JSON.stringify(
     {
-      developmentUnits: [
+      schema: "codeai-development-order-plan-v2",
+      leadProductPartId: PART_ID,
+      productPartLeadershipOrder: [PART_ID],
+      requiredBriefs: [{ partId: PART_ID, status: "accepted" }],
+      nodes: [
         {
+          clusterId: CLUSTER_ID,
           dependsOn: [],
-          id: "engine",
-          rationale: "Lead Product Part owns the initial execution order.",
-          title: "Engine",
-          type: "product_part",
+          id: CLUSTER_NODE_ID,
+          kind: "cluster",
+          partId: PART_ID,
         },
-      ],
-      orderingAssumptions: ["No accepted dependent Product Part brief exists."],
-      phases: [
         {
-          exitCriteria: ["Development Order Plan user review is accepted."],
-          id: "phase-1",
-          title: "Lead Product Part",
-          unitIds: ["engine"],
+          clusterId: CLUSTER_ID,
+          dependsOn: [CLUSTER_NODE_ID],
+          id: MODULE_NODE_ID,
+          kind: "module",
+          moduleId: MODULE_ID,
+          partId: PART_ID,
         },
       ],
-      productPartId: PART_ID,
-      schema: "codeai-development-order-plan-v1",
+      waves: [
+        {
+          gate: "lead_product_part_coordination_review",
+          id: "wave-1-cluster-contracts",
+          parallelGroup: "A",
+          unlockNodeIds: [CLUSTER_NODE_ID],
+        },
+      ],
+      lockedNodes: [
+        {
+          nodeId: MODULE_NODE_ID,
+          reason: "waiting_for_cluster_specification_and_facade_contract",
+        },
+      ],
     },
     null,
     2
@@ -216,17 +242,13 @@ test("Product Part brief handoff commits accepted draft and opens user review", 
     path.join(os.tmpdir(), "product-part-brief-handoff-")
   );
   try {
-    await runGit(workspaceRoot, ["init"]);
-    await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
-    await runGit(workspaceRoot, ["config", "user.name", "Test"]);
+    await initializeGitWorkspace(workspaceRoot);
     await writeWorkspaceFile(workspaceRoot, PLAN_PATH, createPlan());
     await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(false));
-    await runGit(workspaceRoot, ["add", "."]);
-    await runGit(workspaceRoot, [
-      "commit",
-      "-m",
-      "docs: bootstrap product part development briefs",
-    ]);
+    await commitAll(
+      workspaceRoot,
+      "docs: bootstrap product part development briefs"
+    );
 
     await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
     await writeWorkspaceFile(
@@ -264,11 +286,7 @@ test("Product Part brief handoff commits accepted draft and opens user review", 
       );
 
     assert.equal(result.handled, true);
-    const { stdout: statusOutput } = await runGit(workspaceRoot, [
-      "status",
-      "--porcelain",
-    ]);
-    assert.equal(statusOutput.trim(), "");
+    await assertCleanGit(workspaceRoot);
     const { stdout: logOutput } = await runGit(workspaceRoot, [
       "log",
       "--oneline",
@@ -309,8 +327,7 @@ test("Product Part review acceptance ignores local runtime session directory", a
       ".gitignore",
       `.codeai-hub/${WORKSPACE_SLUG}/runtime/\n`
     );
-    await runGit(workspaceRoot, ["add", ".gitignore"]);
-    await runGit(workspaceRoot, ["commit", "-m", "test: ignore runtime"]);
+    await commitAll(workspaceRoot, "test: ignore runtime");
     await writeWorkspaceFile(
       workspaceRoot,
       `.codeai-hub/${WORKSPACE_SLUG}/runtime/sessions/session.json`,
@@ -319,8 +336,7 @@ test("Product Part review acceptance ignores local runtime session directory", a
 
     await acceptReview(workspaceRoot);
 
-    const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
-    assert.equal(stdout.trim(), "");
+    await assertCleanGit(workspaceRoot);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -336,13 +352,12 @@ test("Product Part review acceptance prepares lead order plan task", async () =>
       );
     }
     const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
+    const nextMessage = result.nextInternalMessage ?? "";
     assert.match(plan, LEAD_ORDER_IN_PROGRESS_RE);
-    assert.match(result.nextInternalMessage ?? "", DEVELOPMENT_ORDER_PLAN_RE);
-    assert.match(result.nextInternalMessage ?? "", new RegExp(ORDER_PLAN_PATH));
-    assert.match(
-      result.nextInternalMessage ?? "",
-      new RegExp(ORDER_PLAN_JSON_PATH)
-    );
+    assert.match(nextMessage, DEVELOPMENT_ORDER_PLAN_RE);
+    assert.match(nextMessage, DEVELOPMENT_ORDER_PLAN_V2_RE);
+    assert.match(nextMessage, new RegExp(ORDER_PLAN_PATH));
+    assert.match(nextMessage, new RegExp(ORDER_PLAN_JSON_PATH));
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -374,11 +389,7 @@ test("Lead Product Part order plan handoff opens user review", async () => {
       );
 
     assert.equal(result.handled, true);
-    const { stdout: statusOutput } = await runGit(workspaceRoot, [
-      "status",
-      "--porcelain",
-    ]);
-    assert.equal(statusOutput.trim(), "");
+    await assertCleanGit(workspaceRoot);
     const { stdout: logOutput } = await runGit(workspaceRoot, [
       "log",
       "--oneline",
@@ -400,11 +411,7 @@ test("Lead Product Part order plan review acceptance opens user return", async (
   try {
     const result = await acceptReview(workspaceRoot);
     assert.equal(result.handled, true);
-    const { stdout: statusOutput } = await runGit(workspaceRoot, [
-      "status",
-      "--porcelain",
-    ]);
-    assert.equal(statusOutput.trim(), "");
+    await assertCleanGit(workspaceRoot);
     const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
     assert.match(plan, LEAD_ORDER_REVIEW_DONE_RE);
     assert.match(plan, LEAD_ORDER_REVIEW_GIT_COMMIT_RE);
@@ -418,21 +425,33 @@ const prepareReviewWorkspace = async (isLeadPart: boolean): Promise<string> => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "product-part-brief-review-")
   );
-  await runGit(workspaceRoot, ["init"]);
-  await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
-  await runGit(workspaceRoot, ["config", "user.name", "Test"]);
+  await initializeGitWorkspace(workspaceRoot);
   await writeWorkspaceFile(
     workspaceRoot,
     PLAN_PATH,
     createReviewPlan(isLeadPart)
   );
   await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
-  await runGit(workspaceRoot, ["add", "."]);
-  await runGit(workspaceRoot, [
-    "commit",
-    "-m",
-    "docs: update engine product part development brief",
-  ]);
+  await mkdir(
+    path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "development_tree",
+      "materialized",
+      "product-parts",
+      PART_ID,
+      "clusters",
+      CLUSTER_ID,
+      "modules",
+      MODULE_ID
+    ),
+    { recursive: true }
+  );
+  await commitAll(
+    workspaceRoot,
+    "docs: update engine product part development brief"
+  );
   return workspaceRoot;
 };
 
@@ -473,7 +492,6 @@ const acceptReview = async (
       workspaceSlug: WORKSPACE_SLUG,
     });
   assert.equal(result.handled, true);
-  const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
-  assert.equal(stdout.trim(), "");
+  await assertCleanGit(workspaceRoot);
   return result;
 };

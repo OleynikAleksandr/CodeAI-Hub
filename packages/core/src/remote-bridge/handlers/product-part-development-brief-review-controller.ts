@@ -360,32 +360,67 @@ const createLeadOrderPlanPrompt = (params: {
     `- \`${orderPlanPath}\``,
     `- \`${orderPlanJsonPath}\``,
     "",
-    "The markdown artifact must explain the recommended development order for Product Parts, clusters, and standalone modules using the accepted Product Part briefs and visible dependencies already available in the workspace.",
+    "The markdown artifact must explain the Core-executable downstream order for Product Parts, clusters, and standalone modules using the accepted Product Part briefs and visible dependencies already available in the workspace.",
     "",
-    "The JSON artifact must be valid JSON with this contract:",
+    "The JSON artifact must be valid JSON with this Core-readable unlock contract. Use only node ids that already exist in the materialized Development Tree; do not invent clusters or modules. The first wave may unlock only cluster nodes or standalone module nodes, never a module inside a cluster before the cluster contract exists.",
     "```json",
     JSON.stringify(
       {
-        developmentUnits: [
+        schema: "codeai-development-order-plan-v2",
+        leadProductPartId: params.partId,
+        productPartLeadershipOrder: [params.partId, "dependent-product-part"],
+        requiredBriefs: [
           {
-            dependsOn: ["string"],
-            id: "string",
-            rationale: "string",
-            title: "string",
-            type: "product_part | cluster | module",
+            partId: params.partId,
+            status: "accepted",
           },
         ],
-        orderingAssumptions: ["string"],
-        phases: [
+        nodes: [
           {
-            exitCriteria: ["string"],
-            id: "string",
-            title: "string",
-            unitIds: ["string"],
+            id: `cluster:${params.partId}/existing-cluster-id`,
+            kind: "cluster",
+            partId: params.partId,
+            clusterId: "existing-cluster-id",
+            dependsOn: [],
+            execution: {
+              mode: "subagent-worktree",
+              startPolicy: "core-unlocks-user-startable",
+            },
+            expectedArtifacts: [
+              "ClusterSpecification.draft.md",
+              "ClusterFacadeContract.draft.md",
+              "ClusterSpecification.draft.json",
+              "ClusterFacadeContract.draft.json",
+            ],
+          },
+          {
+            id: `module:${params.partId}/existing-cluster-id/existing-module-id`,
+            kind: "module",
+            partId: params.partId,
+            clusterId: "existing-cluster-id",
+            moduleId: "existing-module-id",
+            dependsOn: [`cluster:${params.partId}/existing-cluster-id`],
+            execution: {
+              mode: "subagent-worktree",
+              startPolicy: "locked",
+            },
+            expectedArtifacts: ["ModuleSpecification.draft.md"],
           },
         ],
-        productPartId: params.partId,
-        schema: "codeai-development-order-plan-v1",
+        waves: [
+          {
+            id: "wave-1-cluster-contracts",
+            unlockNodeIds: [`cluster:${params.partId}/existing-cluster-id`],
+            parallelGroup: "A",
+            gate: "lead_product_part_coordination_review",
+          },
+        ],
+        lockedNodes: [
+          {
+            nodeId: `module:${params.partId}/existing-cluster-id/existing-module-id`,
+            reason: "waiting_for_cluster_specification_and_facade_contract",
+          },
+        ],
       },
       null,
       2
