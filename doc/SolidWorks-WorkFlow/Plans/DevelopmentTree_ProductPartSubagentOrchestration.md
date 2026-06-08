@@ -1,13 +1,13 @@
 # Development Tree Product Part Sub-Agent Orchestration
 
-**Status:** Planning Draft, 2026-06-08.
+**Status:** Implementation scope active, MVP slice implemented through Cluster Contract sub-agent orchestration and Project Manager coordination projection, 2026-06-08.
 **Relationship to reference architecture:** this document extends `DevelopmentTree_BranchWorkflow_Architecture.md` for the next implementation scope. It does not replace the reference architecture.
 
 ## 1. Problem
 
-Release `1.2.469` makes the lead Product Part workflow reach a logical review boundary: the user can accept `DevelopmentOrderPlan.draft.md/json`, and Core moves the lead Product Part plan into `User Return And Revisions`.
+Release `1.2.469` made the lead Product Part workflow reach a logical review boundary: the user could accept `DevelopmentOrderPlan.draft.md/json`, and Core moved the lead Product Part plan into `User Return And Revisions`.
 
-That is correct for the hotfix, but it is not the final Development Tree model. Once `DevelopmentOrderPlan` becomes a Core-readable unlock contract, accepting it must not immediately end lead Product Part coordination. The lead Product Part should remain the visible coordinator until the Product Part is assembled from downstream cluster/module results.
+That was correct for the hotfix, but it is not the final Development Tree model. Once `DevelopmentOrderPlan` becomes a Core-readable unlock contract, accepting it must not immediately end lead Product Part coordination. The lead Product Part should remain the visible coordinator until the Product Part is assembled from downstream cluster/module results.
 
 The user should not manually supervise every cluster, module, worker, retry, provider turn, or intermediate branch. The user needs one Product Part coordination surface with node-level gates.
 
@@ -218,13 +218,15 @@ The graph may link to sub-agent details, but the default surface remains Product
 
 ## 10. MVP Implementation Boundary
 
-The next implementation scope should be intentionally narrow:
+The implemented MVP scope is intentionally narrow:
 
-1. Update lead order-plan prompt/schema to request `DevelopmentOrderPlan.v2`.
-2. Add Core validator for `DevelopmentOrderPlan.v2` shape and node references.
-3. Change order-plan acceptance so lead Product Part enters downstream coordination instead of final return.
-4. Materialize first-wave unlock state for cluster/standalone module nodes.
-5. For FinderWidget, unlock `note-selection-cluster` as the first cluster sub-agent node.
-6. Keep actual cluster worktree execution and merge as the next scope if needed, unless the validator/unlock slice remains too small to test.
+1. Lead order-plan prompt/schema requests `DevelopmentOrderPlan.v2`.
+2. Core validates `DevelopmentOrderPlan.v2` shape, node references, dependencies, first-wave unlockability, and locked nodes.
+3. Order-plan acceptance keeps the lead Product Part in downstream coordination instead of final return.
+4. Core materializes first-wave unlock state for cluster/standalone module nodes.
+5. Core bootstraps first-wave Cluster Contract sub-agents in deterministic Git worktrees/branches.
+6. Cluster Contract sub-agents create `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, stop at review, and accept revision text as provider feedback.
+7. Acceptance writes review-result and merge-boundary evidence, merges accepted cluster artifacts back to the main workspace, marks the cluster `merged`, and keeps dependent modules `locked`.
+8. Project Manager renders the resulting Product Part coordination graph from Core's `developmentTree` snapshot.
 
 This keeps the product moving without pretending that Core can design arbitrary products by script. Agents own semantic planning; Core owns deterministic execution and recovery.

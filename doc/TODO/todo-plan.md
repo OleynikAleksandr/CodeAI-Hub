@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "6bb6727b6",
+  "lastRecordedCommit": "31f4e0859",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase7.docs.task1",
-  "expectedCommitMessage": "docs: describe cluster contract subagent orchestration",
+  "currentTaskId": "development-tree-cluster-contract.phase7.pm-docs.task1",
+  "expectedCommitMessage": "docs: describe product part coordination projection",
   "debt": {
-    "expectedCommitMessage": "docs: describe cluster contract subagent orchestration",
-    "preCommitHead": "6bb6727b6",
+    "expectedCommitMessage": "docs: describe product part coordination projection",
+    "preCommitHead": "31f4e0859",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase7.docs.task1"
+    "taskId": "development-tree-cluster-contract.phase7.pm-docs.task1"
   }
 }
 ```
@@ -118,9 +118,9 @@
 ### Stream: SSOT Updates
 
 33. [DONE] `development-tree-cluster-contract.phase7.docs.task1` Synchronize SSOT documentation for `DevelopmentOrderPlan.v2`, lead Product Part downstream coordination, cluster-contract sub-agent worktrees, user-visible Product Part graph, and node-level rollback gates (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe cluster contract subagent orchestration`).
-34. [PENDING] Git Commit: `docs: describe cluster contract subagent orchestration` (hash: TBD)
-35. [TODO] `development-tree-cluster-contract.phase7.pm-docs.task1` Document the Project Manager projection and user workflow for one Product Part coordination surface with optional sub-agent detail drill-in (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part coordination projection`).
-36. [TODO] Git Commit: `docs: describe product part coordination projection` (hash: TBD)
+34. [DONE] Git Commit: `docs: describe cluster contract subagent orchestration` (hash: 31f4e0859)
+35. [DONE] `development-tree-cluster-contract.phase7.pm-docs.task1` Document the Project Manager projection and user workflow for one Product Part coordination surface with optional sub-agent detail drill-in (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part coordination projection`).
+36. [PENDING] Git Commit: `docs: describe product part coordination projection` (hash: TBD)
 
 ## Phase 8 - Tooling Verification (owner: Codex, updated: 2026-06-08)
 
