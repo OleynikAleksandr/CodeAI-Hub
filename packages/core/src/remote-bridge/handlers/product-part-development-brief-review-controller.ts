@@ -362,7 +362,9 @@ const createLeadOrderPlanPrompt = (params: {
     "",
     "The markdown artifact must explain the Core-executable downstream order for Product Parts, clusters, and standalone modules using the accepted Product Part briefs and visible dependencies already available in the workspace.",
     "",
-    "The JSON artifact must be valid JSON with this Core-readable unlock contract. Use only node ids that already exist in the materialized Development Tree; do not invent clusters or modules. The first wave may unlock only cluster nodes or standalone module nodes, never a module inside a cluster before the cluster contract exists.",
+    "The JSON artifact must be valid JSON with this Core-readable unlock contract. Use only node ids that already exist in the materialized Development Tree; do not invent clusters or modules.",
+    'Use exact node id shapes: cluster nodes are `cluster:<partId>/<clusterId>` with `kind: "cluster"`; modules inside a cluster are `module:<partId>/<clusterId>/<moduleId>` with `kind: "module"`; standalone modules are `standalone-module:<partId>/<moduleId>` with `kind: "standalone_module"` and no `clusterId`.',
+    "Do not encode standalone modules as `module:<partId>/<moduleId>`. If a node appears in `lockedNodes`, the same id must also appear in `nodes`. The first wave may unlock only dependency-free cluster or standalone_module nodes, never a module inside a cluster before the cluster contract exists.",
     "```json",
     JSON.stringify(
       {
@@ -400,6 +402,18 @@ const createLeadOrderPlanPrompt = (params: {
             clusterId: "existing-cluster-id",
             moduleId: "existing-module-id",
             dependsOn: [`cluster:${params.partId}/existing-cluster-id`],
+            execution: {
+              mode: "subagent-worktree",
+              startPolicy: "locked",
+            },
+            expectedArtifacts: ["ModuleSpecification.draft.md"],
+          },
+          {
+            id: `standalone-module:${params.partId}/existing-standalone-module-id`,
+            kind: "standalone_module",
+            partId: params.partId,
+            moduleId: "existing-standalone-module-id",
+            dependsOn: [],
             execution: {
               mode: "subagent-worktree",
               startPolicy: "locked",

@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "310b10602",
+  "lastRecordedCommit": "bd8c1e7f6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase10.vsix.task1",
-  "expectedCommitMessage": "build: package lead order plan repair vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase10.initial-prompt.task1",
+  "expectedCommitMessage": "fix: clarify lead order plan initial prompt node ids",
   "debt": {
-    "expectedCommitMessage": "build: package lead order plan repair vsix release",
-    "preCommitHead": "310b10602",
+    "expectedCommitMessage": "fix: clarify lead order plan initial prompt node ids",
+    "preCommitHead": "bd8c1e7f6",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase10.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase10.initial-prompt.task1"
   }
 }
 ```
@@ -173,13 +173,21 @@ Verification evidence:
 56. [DONE] `development-tree-cluster-contract.phase10.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the regression-fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare lead order plan repair release artifacts`).
 57. [DONE] Git Commit: `build: prepare lead order plan repair release artifacts` (hash: 310b10602)
 58. [DONE] `development-tree-cluster-contract.phase10.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for the regression-fix release (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package lead order plan repair vsix release`).
-59. [PENDING] Git Commit: `build: package lead order plan repair vsix release` (hash: TBD)
-60. [TODO] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none).
+59. [DONE] Git Commit: `build: package lead order plan repair vsix release` (hash: bd8c1e7f6)
+60. [BLOCKED] `development-tree-cluster-contract.phase10.user-retest.task1` User installs the regression-fix release and retests the FinderWidget lead order-plan repair flow through cluster-contract sub-agent startup (scope: user workflow; expected commit: none). Blocker: 2026-06-08 retest showed the repair continuation works, but the initial lead `DevelopmentOrderPlan.v2` assignment still contains an incomplete node-id example, so the agent first writes invalid standalone module ids and only succeeds after Core repair.
+
+### Stream: Lead Order Plan Initial Prompt Repair
+
+61. [DONE] `development-tree-cluster-contract.phase10.initial-prompt.task1` Clarify the initial lead `DevelopmentOrderPlan.v2` assignment prompt with exact cluster, cluster-module, and standalone-module node id shapes before repair is needed (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify lead order plan initial prompt node ids`).
+62. [PENDING] Git Commit: `fix: clarify lead order plan initial prompt node ids` (hash: TBD)
+63. [TODO] `development-tree-cluster-contract.phase10.initial-prompt-test.task1` Add targeted regression coverage proving the initial lead order-plan prompt includes standalone-module node guidance and a parseable v2 example (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify lead order plan initial prompt node ids`).
+64. [TODO] Git Commit: `test: verify lead order plan initial prompt node ids` (hash: TBD)
+65. [TODO] `development-tree-cluster-contract.phase10.next-release-confirm.task1` Ask the user for explicit confirmation before building the next initial-prompt regression-fix release (scope: user workflow; expected commit: none).
 
 ## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-61. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-62. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-63. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+66. [TODO] `development-tree-cluster-contract.phase11.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+67. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+68. [TODO] `development-tree-cluster-contract.phase11.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
