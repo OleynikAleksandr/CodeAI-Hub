@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/translation",
-  "version": "1.2.467",
+  "version": "1.2.468",
   "description": "Shared runtime translation package for CodeAI Hub",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
