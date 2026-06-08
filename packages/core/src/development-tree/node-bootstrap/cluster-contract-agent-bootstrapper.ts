@@ -1,6 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { SessionModelBinding } from "../../session-model-binding";
+import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import {
   ClusterContractPlanWriter,
   type ClusterContractPlanWriterResult,
@@ -84,6 +85,14 @@ interface ClusterPlanWriter {
   }) => Promise<ClusterContractPlanWriterResult>;
 }
 
+interface ClusterPlanCommitter {
+  readonly commit: (request: {
+    readonly commitMessage: string;
+    readonly paths: readonly string[];
+    readonly workspaceRoot: string;
+  }) => Promise<unknown>;
+}
+
 const createStage = (params: {
   readonly clusterId: string;
   readonly partId: string;
@@ -148,6 +157,7 @@ const selectUnlockedClusterNodes = (
   );
 
 export class ClusterContractAgentBootstrapper {
+  private readonly planCommitter: ClusterPlanCommitter;
   private readonly options: ClusterContractAgentBootstrapperOptions;
   private readonly planWriter: ClusterPlanWriter;
   private readonly promptBuilder = new ClusterContractPromptBuilder();
@@ -156,11 +166,14 @@ export class ClusterContractAgentBootstrapper {
   constructor(
     options: ClusterContractAgentBootstrapperOptions,
     dependencies: {
+      readonly planCommitter?: ClusterPlanCommitter;
       readonly planWriter?: ClusterPlanWriter;
       readonly worktreeCreator?: ClusterWorktreeCreator;
     } = {}
   ) {
     this.options = options;
+    this.planCommitter =
+      dependencies.planCommitter ?? new WorkflowBoundaryGit();
     this.planWriter =
       dependencies.planWriter ?? new ClusterContractPlanWriter();
     this.worktreeCreator =
@@ -201,6 +214,11 @@ export class ClusterContractAgentBootstrapper {
       partId: request.partId,
       worktreeRoot: worktree.worktreePath,
       workspaceSlug: request.workspaceSlug,
+    });
+    await this.commitInitialPlanIfCreated({
+      clusterId: request.clusterId,
+      plan,
+      worktreePath: worktree.worktreePath,
     });
     const stage = createStage(request);
     const session = await this.options.gateway.createSessionForWorkflow({
@@ -246,6 +264,21 @@ export class ClusterContractAgentBootstrapper {
       stage,
       worktreePath: worktree.worktreePath,
     };
+  }
+
+  private async commitInitialPlanIfCreated(params: {
+    readonly clusterId: string;
+    readonly plan: ClusterContractPlanWriterResult;
+    readonly worktreePath: string;
+  }): Promise<void> {
+    if (params.plan.action !== "created") {
+      return;
+    }
+    await this.planCommitter.commit({
+      commitMessage: `chore: initialize ${params.clusterId} cluster contract workflow`,
+      paths: [params.plan.relativePath],
+      workspaceRoot: params.worktreePath,
+    });
   }
 
   private async sendFirstMessageIfPossible(params: {

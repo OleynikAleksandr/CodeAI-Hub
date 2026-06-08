@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "c6ae4316e",
+  "lastRecordedCommit": "fdad471ba",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase16.projected-dialog-history.task1",
-  "expectedCommitMessage": "fix: read projected cluster dialogs from worktrees",
+  "currentTaskId": "development-tree-cluster-contract.phase16.cluster-plan-ledger.task1",
+  "expectedCommitMessage": "fix: commit cluster contract todo plan ledger",
   "debt": {
-    "expectedCommitMessage": "fix: read projected cluster dialogs from worktrees",
-    "preCommitHead": "c6ae4316e",
+    "expectedCommitMessage": "fix: commit cluster contract todo plan ledger",
+    "preCommitHead": "fdad471ba",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase16.projected-dialog-history.task1"
+    "taskId": "development-tree-cluster-contract.phase16.cluster-plan-ledger.task1"
   }
 }
 ```
@@ -338,9 +338,9 @@ Verification evidence:
 ### Stream: Projected Cluster Dialog Regression
 
 145. [DONE] `development-tree-cluster-contract.phase16.projected-dialog-history.task1` Route projected cluster dialog history through the node worktree runtime so Project Manager can render the sub-agent JSONL instead of an empty main-workspace projection (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-history-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: read projected cluster dialogs from worktrees`).
-146. [PENDING] Git Commit: `fix: read projected cluster dialogs from worktrees` (hash: TBD)
-147. [TODO] `development-tree-cluster-contract.phase16.cluster-plan-ledger.task1` Ensure cluster contract review ledger commits the cluster `todo-plan.md` even when the plan was newly created and still untracked in the node worktree (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract todo plan ledger`).
-148. [TODO] Git Commit: `fix: commit cluster contract todo plan ledger` (hash: TBD)
+146. [DONE] Git Commit: `fix: read projected cluster dialogs from worktrees` (hash: fdad471ba)
+147. [DONE] `development-tree-cluster-contract.phase16.cluster-plan-ledger.task1` Ensure cluster contract bootstrap commits the newly created cluster `todo-plan.md` before the sub-agent starts so the node worktree is tracked and clean from the first boundary (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract todo plan ledger`).
+148. [PENDING] Git Commit: `fix: commit cluster contract todo plan ledger` (hash: TBD)
 149. [TODO] `development-tree-cluster-contract.phase16.projected-dialog-tests.task1` Add regression coverage for worktree-backed projected dialog history and untracked cluster todo-plan ledger commits, then run targeted core tests/builds (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog regression`).
 150. [TODO] Git Commit: `test: verify projected cluster dialog regression` (hash: TBD)
 

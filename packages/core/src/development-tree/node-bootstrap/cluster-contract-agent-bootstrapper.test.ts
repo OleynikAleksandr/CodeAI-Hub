@@ -58,6 +58,11 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
   );
   try {
     await writeUnlockState(workspaceRoot);
+    const planCommits: {
+      readonly commitMessage: string;
+      readonly paths: readonly string[];
+      readonly workspaceRoot: string;
+    }[] = [];
     const createdSessions: {
       readonly stage: string;
       readonly workspacePath: string;
@@ -76,6 +81,12 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
         providerId: "codex",
       },
       {
+        planCommitter: {
+          commit: (request) => {
+            planCommits.push(request);
+            return Promise.resolve({});
+          },
+        },
         planWriter: {
           writePlan: (request) =>
             Promise.resolve({
@@ -113,6 +124,13 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
     assert.equal(results.length, 1);
     assert.equal(results[0]?.clusterId, CLUSTER_ID);
     assert.equal(results[0]?.sessionId, "cluster-session-1");
+    assert.deepEqual(planCommits, [
+      {
+        commitMessage: `chore: initialize ${CLUSTER_ID} cluster contract workflow`,
+        paths: ["todo-plan.md"],
+        workspaceRoot: `${workspaceRoot}.worktrees/${CLUSTER_ID}`,
+      },
+    ]);
     assert.deepEqual(createdSessions, [
       {
         stage: `development_tree/materialized/product-parts/${PART_ID}/clusters/${CLUSTER_ID}`,
