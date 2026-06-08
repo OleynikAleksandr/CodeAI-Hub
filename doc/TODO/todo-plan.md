@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "11d85f15a",
+  "lastRecordedCommit": "4fa4ea5d9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase12.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint product part restart user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase14.plan.task1",
+  "expectedCommitMessage": "docs: checkpoint cluster node rollback regression plan",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint product part restart user retest state",
-    "preCommitHead": "11d85f15a",
+    "expectedCommitMessage": "docs: checkpoint cluster node rollback regression plan",
+    "preCommitHead": "4fa4ea5d9",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase12.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase14.plan.task1"
   }
 }
 ```
@@ -262,18 +262,59 @@ Release evidence:
 ### Stream: Release Handoff
 
 114. [DONE] `development-tree-cluster-contract.phase12.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint product part restart user retest state`).
-115. [PENDING] Git Commit: `docs: checkpoint product part restart user retest state` (hash: TBD)
+115. [DONE] Git Commit: `docs: checkpoint product part restart user retest state` (hash: 4fa4ea5d9)
 
 ## Phase 13 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: Product Part Restart Retest
 
-116. [TODO] `development-tree-cluster-contract.phase13.user-retest.task1` User installs release `1.2.474` and retests Product Part Clear&Do plus downstream cluster-contract startup: unsupported `gpt-5.3-codex` must not be selected, downstream sessions must inherit the Product Part model, lead Phase 5 must include a paired Git Commit line, and clearing a Product Part must remove stale downstream worktrees before recreating sessions (scope: user workflow; expected commit: none).
+116. [BLOCKED] `development-tree-cluster-contract.phase13.user-retest.task1` User installs release `1.2.474` and retests Product Part Clear&Do plus downstream cluster-contract startup: unsupported `gpt-5.3-codex` must not be selected, downstream sessions must inherit the Product Part model, lead Phase 5 must include a paired Git Commit line, and clearing a Product Part must remove stale downstream worktrees before recreating sessions (scope: user workflow; expected commit: none). Blocker: 2026-06-08 retest showed the cluster-contract session was created inside the worktree and inherited the model, but it was not projected into the main workspace UI/session list, the cluster worktree retained dirty/untracked managed todo/continuity state after draft review, the worktree root path reads like an artifact folder (`.../contract/`) rather than an independent worktree, and Cluster/Module ClearUndo does not remove the downstream worktree/projection or reset the graph icon to empty.
 
-## Phase 14 - Scope Closeout (owner: Codex, updated: 2026-06-08)
+## Phase 14 - Cluster Node Visibility And Rollback Regression Fix (owner: Codex, updated: 2026-06-08)
+
+### Stream: Retest Failure Intake
+
+117. [DONE] `development-tree-cluster-contract.phase14.plan.task1` Add the retest failure scope for cluster session projection, cluster worktree clean Git boundaries, clearer worktree root naming, and Cluster/Module ClearUndo semantics (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster node rollback regression plan`).
+118. [PENDING] Git Commit: `docs: checkpoint cluster node rollback regression plan` (hash: TBD)
+
+### Stream: Cluster Session Main Workspace Projection
+
+119. [TODO] `development-tree-cluster-contract.phase14.main-projection.task1` Persist cluster-contract session projection in the main workspace when Core bootstraps a downstream worktree session, including node id, stage, worktree path, branch, session id, and inherited model binding (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/product-part-workflow, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `fix: project cluster sessions into main workspace`).
+120. [TODO] Git Commit: `fix: project cluster sessions into main workspace` (hash: TBD)
+121. [TODO] `development-tree-cluster-contract.phase14.main-projection-readmodel.task1` Expose projected downstream sessions through the Core workflow-state/dialog projection so Project Manager can show/open cluster sessions from the main Product Part coordination surface (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `fix: expose projected cluster sessions`).
+122. [TODO] Git Commit: `fix: expose projected cluster sessions` (hash: TBD)
+
+### Stream: Clean Worktree Ledger Boundary
+
+123. [TODO] `development-tree-cluster-contract.phase14.worktree-ledger.task1` Ensure cluster-contract worktree draft review leaves its managed todo-plan and required coordination metadata committed or intentionally ignored, so the worktree is clean after Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster contract review ledger`).
+124. [TODO] Git Commit: `fix: commit cluster contract review ledger` (hash: TBD)
+
+### Stream: Worktree Root Naming
+
+125. [TODO] `development-tree-cluster-contract.phase14.worktree-naming.task1` Rename new downstream worktree roots away from artifact-like `.../contract/` suffixes while keeping existing cleanup compatible with legacy paths (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/remote-bridge/handlers/product-part-worktree-cleanup.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts`; expected commit: `fix: clarify cluster worktree root paths`).
+126. [TODO] Git Commit: `fix: clarify cluster worktree root paths` (hash: TBD)
+
+### Stream: Cluster And Module ClearUndo
+
+127. [TODO] `development-tree-cluster-contract.phase14.node-clearundo-core.task1` Add Core-owned ClearUndo handling for downstream cluster/module Development Tree nodes: remove the node worktree through Git, delete native/unified session traces and continuity/projection records, and reset node status to empty/unstarted in the main Product Part coordination state (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts`; expected commit: `fix: clear downstream development tree nodes`).
+128. [TODO] Git Commit: `fix: clear downstream development tree nodes` (hash: TBD)
+129. [TODO] `development-tree-cluster-contract.phase14.node-clearundo-ui.task1` Wire Project Manager cluster/module clear targets to the Core node ClearUndo response so cleared nodes render with an empty icon instead of a stale yellow/in-progress state (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: clear downstream node markers in project manager`).
+130. [TODO] Git Commit: `fix: clear downstream node markers in project manager` (hash: TBD)
+131. [TODO] `development-tree-cluster-contract.phase14.node-clearundo-test.task1` Add targeted regression coverage for cluster/module ClearUndo removing worktrees, deleting projected sessions, pruning traces, and returning the graph node to an unstarted state (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify downstream node clearundo`).
+132. [TODO] Git Commit: `test: verify downstream node clearundo` (hash: TBD)
+
+## Phase 15 - Tooling Verification (owner: Codex, updated: 2026-06-08)
+
+### Stream: Regression Verification
+
+133. [TODO] `development-tree-cluster-contract.phase15.verify.task1` Run targeted builds/tests for cluster projection visibility, clean worktree ledger boundary, renamed worktree roots, and cluster/module ClearUndo rollback behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster node rollback workflow`).
+134. [TODO] Git Commit: `test: verify cluster node rollback workflow` (hash: TBD)
+135. [TODO] `development-tree-cluster-contract.phase15.release-confirm.task1` Ask the user for explicit confirmation before building the next regression-fix release for cluster node visibility and ClearUndo (scope: user workflow; expected commit: none).
+
+## Phase 16 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-117. [TODO] `development-tree-cluster-contract.phase14.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-118. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-119. [TODO] `development-tree-cluster-contract.phase14.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+136. [TODO] `development-tree-cluster-contract.phase16.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+137. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+138. [TODO] `development-tree-cluster-contract.phase16.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
