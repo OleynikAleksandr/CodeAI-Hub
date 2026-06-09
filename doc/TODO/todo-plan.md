@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "bcc9010d1",
+  "lastRecordedCommit": "e2e9437ec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1",
-  "expectedCommitMessage": "fix: commit cluster bootstrap session state",
+  "currentTaskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1",
+  "expectedCommitMessage": "test: verify cluster bootstrap session state commit",
   "debt": {
-    "expectedCommitMessage": "fix: commit cluster bootstrap session state",
-    "preCommitHead": "bcc9010d1",
+    "expectedCommitMessage": "test: verify cluster bootstrap session state commit",
+    "preCommitHead": "e2e9437ec",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1"
+    "taskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1"
   }
 }
 ```
@@ -423,7 +423,12 @@ Verification evidence:
 ### Stream: Bootstrap Session Ledger Commit
 
 187. [DONE] `development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1` Commit the main workspace unlock-state update that records cluster session/worktree metadata during downstream bootstrap so later cluster review merge starts from clean Git (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster bootstrap session state`).
-188. [PENDING] Git Commit: `fix: commit cluster bootstrap session state` (hash: TBD)
-189. [TODO] `development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1` Run targeted Core build/tests for cluster bootstrap ledger cleanliness and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster bootstrap session state commit`).
-190. [TODO] Git Commit: `test: verify cluster bootstrap session state commit` (hash: TBD)
+188. [DONE] Git Commit: `fix: commit cluster bootstrap session state` (hash: e2e9437ec)
+189. [DONE] `development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1` Run targeted Core build/tests for cluster bootstrap ledger cleanliness and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster bootstrap session state commit`).
+190. [PENDING] Git Commit: `test: verify cluster bootstrap session state commit` (hash: TBD)
 191. [TODO] `development-tree-cluster-contract.phase21.release-confirm.task1` Await explicit user confirmation before building the next regression release for cluster bootstrap and ClearUndo worktree cleanup fixes (scope: user workflow; expected commit: none).
+
+Verification evidence:
+- `npx ultracite check packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts` passed.
+- `npm run build --workspace packages/core` passed.
+- `node --test packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js` passed and verifies cluster bootstrap commits both the worktree managed plan and the main workspace unlock-state session ledger.
