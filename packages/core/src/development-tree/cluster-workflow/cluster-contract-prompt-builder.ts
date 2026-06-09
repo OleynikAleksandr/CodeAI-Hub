@@ -1,6 +1,9 @@
+import type { DevelopmentOrderContractSeed } from "../product-part-workflow/development-order-plan-unlock-state";
+
 export interface ClusterContractPromptBuilderRequest {
   readonly applicationSkeletonMap?: string | null;
   readonly clusterId: string;
+  readonly contractSeed?: DevelopmentOrderContractSeed | null;
   readonly orderPlanJson: string;
   readonly orderPlanMarkdown: string;
   readonly partId: string;
@@ -21,6 +24,9 @@ const fenced = (label: string, content: string | null | undefined): string =>
   [`### ${label}`, "", "```", content?.trim() || "Not available.", "```"].join(
     "\n"
   );
+
+const fencedJson = (label: string, content: unknown): string =>
+  fenced(label, content ? JSON.stringify(content, null, 2) : null);
 
 export class ClusterContractPromptBuilder {
   buildPrompt(request: ClusterContractPromptBuilderRequest): string {
@@ -45,9 +51,16 @@ export class ClusterContractPromptBuilder {
       "Required output artifacts:",
       ...targets.map((target) => `- \`${target}\``),
       "",
-      "The JSON artifacts must be valid JSON and mirror the markdown decisions: public facade inputs, outputs, events/errors, owned modules, dependencies, open questions, and validation gates.",
+      "The Product Part contract seed below is the parent-owned boundary. You may refine names, DTO shape, edge cases, and algorithms, but you must not silently change the consumer, required inputs, required outputs, statuses/errors, or owned-module responsibility.",
+      "If the seed is insufficient or contradictory, stop with a blocking question or revision request instead of inventing a different boundary.",
+      "",
+      "The Cluster Facade Contract is a pre-code artifact, not an architecture essay. It must define the future facade class name, facade file path, public method signatures, input DTOs, output DTOs, discriminated result union, status/error model, owned module call order, and boundary contract for each owned module.",
+      "",
+      "The JSON artifacts must be valid JSON and mirror the markdown decisions: concrete facade class/file/methods/types, public facade inputs, outputs, events/errors, owned modules, module boundary contracts, dependencies, blocking/non-blocking open questions, and validation gates.",
       "",
       "Use the following inline context as authoritative input. Do not rely on path references as hidden instructions.",
+      "",
+      fencedJson("Product Part Contract Seed", request.contractSeed),
       "",
       fenced(
         "Accepted Product Part Development Brief",

@@ -9,6 +9,7 @@ import {
 import { ClusterContractPromptBuilder } from "../cluster-workflow/cluster-contract-prompt-builder";
 import {
   createDevelopmentOrderUnlockStatePath,
+  type DevelopmentOrderContractSeed,
   type DevelopmentOrderUnlockState,
   markDevelopmentOrderClusterSessionStarted,
 } from "../product-part-workflow/development-order-plan-unlock-state";
@@ -59,6 +60,7 @@ export interface ClusterContractAgentBootstrapResult {
 
 interface UnlockStateNode {
   readonly clusterId?: string;
+  readonly contractSeed?: DevelopmentOrderContractSeed;
   readonly kind?: string;
   readonly partId?: string;
   readonly status?: string;
@@ -146,13 +148,21 @@ const writeUnlockState = async (params: {
 const selectUnlockedClusterNodes = (
   state: UnlockStateFile,
   partId: string
-): readonly Required<Pick<UnlockStateNode, "clusterId" | "partId">>[] =>
+): readonly (Required<Pick<UnlockStateNode, "clusterId" | "partId">> & {
+  readonly contractSeed?: DevelopmentOrderContractSeed;
+})[] =>
   (state.nodes ?? []).flatMap((node) =>
     node.kind === "cluster" &&
     node.status === "unlocked" &&
     node.partId === partId &&
     node.clusterId
-      ? [{ clusterId: node.clusterId, partId: node.partId }]
+      ? [
+          {
+            clusterId: node.clusterId,
+            contractSeed: node.contractSeed,
+            partId: node.partId,
+          },
+        ]
       : []
   );
 
@@ -195,6 +205,7 @@ export class ClusterContractAgentBootstrapper {
             unlockState.acceptedOrderPlanCommitHash ??
             "HEAD",
           clusterId: cluster.clusterId,
+          contractSeed: cluster.contractSeed,
         })
       );
     }
@@ -204,6 +215,7 @@ export class ClusterContractAgentBootstrapper {
   private async bootstrapCluster(
     request: ClusterContractAgentBootstrapRequest & {
       readonly clusterId: string;
+      readonly contractSeed?: DevelopmentOrderContractSeed;
     }
   ): Promise<ClusterContractAgentBootstrapResult> {
     const worktree =
@@ -251,6 +263,7 @@ export class ClusterContractAgentBootstrapper {
     }
     const firstMessageSent = await this.sendFirstMessageIfPossible({
       clusterId: request.clusterId,
+      contractSeed: request.contractSeed,
       partId: request.partId,
       sessionId: session?.id ?? null,
       worktreePath: worktree.worktreePath,
@@ -296,6 +309,7 @@ export class ClusterContractAgentBootstrapper {
 
   private async sendFirstMessageIfPossible(params: {
     readonly clusterId: string;
+    readonly contractSeed?: DevelopmentOrderContractSeed;
     readonly partId: string;
     readonly sessionId: string | null;
     readonly worktreePath: string;
@@ -310,6 +324,7 @@ export class ClusterContractAgentBootstrapper {
         `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`
       ),
       clusterId: params.clusterId,
+      contractSeed: params.contractSeed,
       orderPlanJson:
         (await readOptionalText(
           params.worktreePath,

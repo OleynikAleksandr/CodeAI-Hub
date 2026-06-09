@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "bc05d351e",
+  "lastRecordedCommit": "04972622f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase27.unlock-state-seeds.task1",
-  "expectedCommitMessage": "feat: persist downstream contract seeds",
+  "currentTaskId": "development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1",
+  "expectedCommitMessage": "feat: pass contract seeds to cluster agents",
   "debt": {
-    "expectedCommitMessage": "feat: persist downstream contract seeds",
-    "preCommitHead": "bc05d351e",
+    "expectedCommitMessage": "feat: pass contract seeds to cluster agents",
+    "preCommitHead": "04972622f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase27.unlock-state-seeds.task1"
+    "taskId": "development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1"
   }
 }
 ```
@@ -493,9 +493,9 @@ Verification evidence:
 ### Stream: Cluster Contract Sub-Agent Assignment
 
 216. [DONE] `development-tree-cluster-contract.phase27.unlock-state-seeds.task1` Persist accepted downstream contract seeds in Product Part unlock-state so Core can pass the parent-defined boundary into opened Cluster/Standalone Module worktrees (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `feat: persist downstream contract seeds`).
-217. [PENDING] Git Commit: `feat: persist downstream contract seeds` (hash: TBD)
-218. [TODO] `development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1` Update the Cluster Contract sub-agent prompt so it receives the Product Part contract seed and must produce concrete pre-code facade/module-boundary artifacts instead of abstract descriptions (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: pass contract seeds to cluster agents`).
-219. [TODO] Git Commit: `feat: pass contract seeds to cluster agents` (hash: TBD)
+217. [DONE] Git Commit: `feat: persist downstream contract seeds` (hash: 04972622f)
+218. [DONE] `development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1` Update the Cluster Contract sub-agent prompt so it receives the Product Part contract seed and must produce concrete pre-code facade/module-boundary artifacts instead of abstract descriptions (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: pass contract seeds to cluster agents`).
+219. [PENDING] Git Commit: `feat: pass contract seeds to cluster agents` (hash: TBD)
 
 ## Phase 28 - Concrete Contract Validation (owner: Codex, updated: 2026-06-09)
 
