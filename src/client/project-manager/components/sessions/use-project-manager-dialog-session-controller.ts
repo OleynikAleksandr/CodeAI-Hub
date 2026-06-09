@@ -7,43 +7,25 @@ import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { applySessionModelBindingToSnapshot, createInitialSnapshot, resolveSessionThinkingDisplayEnabled, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
-import {
-  buildProviderLabels,
-  createDialogRequestId,
-  type DialogOpenIntent,
-} from "./project-manager-dialog-session-view-helpers";
-import {
-  type ClaudeModelAliasId,
-  type ClaudeThinkingSelection,
-} from "./project-manager-dialog-model-switch-helpers";
+import { buildProviderLabels, createDialogRequestId, type DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
+import { type ClaudeModelAliasId, type ClaudeThinkingSelection } from "./project-manager-dialog-model-switch-helpers";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
-import { updateSnapshotsWithTurnState } from "./turn-state-stream";
-import {
-  seedSnapshotWithCachedUsageLimits,
-  updateSnapshotsWithUsageLimits,
-} from "./usage-limits-stream";
+import { shouldRefreshDialogHistoryForStream, updateSnapshotsWithTurnState } from "./turn-state-stream";
+import { seedSnapshotWithCachedUsageLimits, updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { appendOptimisticUserMessage } from "./session-message-dedupe";
-import {
-  shouldSuppressIdleDialogRestoreRefresh,
-  useProjectManagerDialogCoreEvents,
-} from "./use-project-manager-dialog-core-events";
+import { shouldSuppressIdleDialogRestoreRefresh, useProjectManagerDialogCoreEvents } from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
 export const useProjectManagerDialogSessionController = (
   intent: DialogOpenIntent | null
 ) => {
-  const sessionMessageLocalization = useMemo(
-    () => new SessionMessageLocalizationFacade(),
-    []
-  );
+  const sessionMessageLocalization = useMemo(() => new SessionMessageLocalizationFacade(), []);
   const [session, setSession] = useState<SessionRecord | null>(null);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [tokenDebugSummaryOverride, setTokenDebugSummaryOverride] = useState<string | undefined>(undefined);
-  const latestWorkspaceSnapshotRef = useRef<WorkspaceSnapshotPushPayload | null>(
-    null
-  );
+  const latestWorkspaceSnapshotRef = useRef<WorkspaceSnapshotPushPayload | null>(null);
 
   const loadedDialogIdsRef = useRef(new Set<string>());
   const dialogCursorRef = useRef(new Map<string, number>());
@@ -109,11 +91,7 @@ export const useProjectManagerDialogSessionController = (
         return;
       }
 
-      api.dialogs.requestDialogHistory(
-        intent.workspaceSlug,
-        dialogId,
-        resolvedCursor > 0 ? { cursor: resolvedCursor } : undefined
-      );
+      api.dialogs.requestDialogHistory(intent.workspaceSlug, dialogId, resolvedCursor > 0 ? { cursor: resolvedCursor } : undefined);
 
       pendingHistoryCursorRef.current.set(dialogId, resolvedCursor);
       if (resolvedCursor === 0 && !options?.force) {
@@ -340,6 +318,21 @@ export const useProjectManagerDialogSessionController = (
           payload
         )
       );
+      const activeIntent = pendingIntentRef.current;
+      const dialogId = dialogIdRef.current;
+      if (
+        activeIntent &&
+        dialogId &&
+        shouldRefreshDialogHistoryForStream({
+          currentSession: sessionRef.current,
+          event: payload.event,
+          sessionId: payload.sessionId,
+        })
+      ) {
+        const cursor = dialogCursorRef.current.get(dialogId) ?? 0;
+        requestDialogHistory(activeIntent, dialogId, cursor, { force: cursor <= 0 });
+        requestDialogList(activeIntent);
+      }
     },
     onWorkspaceSnapshot: (payload) => {
       const intent = pendingIntentRef.current;

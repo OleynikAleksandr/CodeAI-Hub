@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "82803b102",
+  "lastRecordedCommit": "2ae469b49",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase33.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint cluster contract repair user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase36.projected-live-refresh.task1",
+  "expectedCommitMessage": "fix: refresh projected cluster dialog live state",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint cluster contract repair user retest state",
-    "preCommitHead": "82803b102",
+    "expectedCommitMessage": "fix: refresh projected cluster dialog live state",
+    "preCommitHead": "2ae469b49",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase33.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase36.projected-live-refresh.task1"
   }
 }
 ```
@@ -568,13 +568,13 @@ Verification evidence:
 249. [DONE] `development-tree-cluster-contract.phase33.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract repair vsix release`).
 250. [DONE] Git Commit: `build: package cluster contract repair vsix release` (hash: 82803b102)
 251. [DONE] `development-tree-cluster-contract.phase33.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract repair user retest state`).
-252. [PENDING] Git Commit: `docs: checkpoint cluster contract repair user retest state` (hash: TBD)
+252. [DONE] Git Commit: `docs: checkpoint cluster contract repair user retest state` (hash: 2ae469b49)
 
 ## Phase 34 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
 
 ### Stream: Cluster Contract Repair Retest
 
-253. [TODO] `development-tree-cluster-contract.phase34.user-retest.task1` User installs release `1.2.480` and retests the FinderWidget cluster-contract flow: when Core rejects incomplete `ClusterFacadeContract.draft.json`, it must post diagnostics and automatically continue the same cluster sub-agent with a repair prompt instead of leaving Project Manager locked at a stale working input state (scope: user workflow; expected commit: none).
+253. [BLOCKED] `development-tree-cluster-contract.phase34.user-retest.task1` User installs release `1.2.480` and retests the FinderWidget cluster-contract flow: when Core rejects incomplete `ClusterFacadeContract.draft.json`, it must post diagnostics and automatically continue the same cluster sub-agent with a repair prompt instead of leaving Project Manager locked at a stale working input state (scope: user workflow; expected commit: none). Blocker: backend repair loop succeeds and accepts the cluster draft, but Project Manager keeps the projected worktree dialog on an early message slice and leaves the input in `working` because live turn-state/history refresh is not bound to the worktree-backed session identity.
 
 ## Phase 35 - Scope Closeout (owner: Codex, updated: 2026-06-09)
 
@@ -583,3 +583,15 @@ Verification evidence:
 254. [TODO] `development-tree-cluster-contract.phase35.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close top down contract orchestration scope`).
 255. [TODO] Git Commit: `docs: close top down contract orchestration scope` (hash: TBD)
 256. [TODO] `development-tree-cluster-contract.phase35.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+
+## Phase 36 - Projected Cluster Dialog Live Refresh Regression (owner: Codex, updated: 2026-06-09)
+
+### Stream: Worktree Live State Projection
+
+257. [DONE] `development-tree-cluster-contract.phase36.projected-live-refresh.task1` Refresh projected cluster dialogs from their worktree runtime identity so live `turn_state`/workspace snapshots unlock the visible dialog and tail-history updates are fetched while the sub-agent continues or settles (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-callbacks.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts, src/client/project-manager/components/sessions/turn-state-stream.ts`; expected commit: `fix: refresh projected cluster dialog live state`).
+258. [PENDING] Git Commit: `fix: refresh projected cluster dialog live state` (hash: TBD)
+259. [TODO] `development-tree-cluster-contract.phase36.projected-live-refresh-test.task1` Add targeted Project Manager/Core regression coverage for projected worktree dialog live refresh and provider-session turn-state fallback (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts, packages/core/src/remote-bridge/session-stream-contracts.ts`; expected commit: `test: verify projected cluster dialog live refresh`).
+260. [TODO] Git Commit: `test: verify projected cluster dialog live refresh` (hash: TBD)
+261. [TODO] `development-tree-cluster-contract.phase36.projected-live-refresh-verify.task1` Run targeted Project Manager and Core build/tests for projected worktree dialog live refresh before asking for release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster live state builds`).
+262. [TODO] Git Commit: `test: verify projected cluster live state builds` (hash: TBD)
+263. [TODO] `development-tree-cluster-contract.phase36.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog live refresh (scope: user workflow; expected commit: none).

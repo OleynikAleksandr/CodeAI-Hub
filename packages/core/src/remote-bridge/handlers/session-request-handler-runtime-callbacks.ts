@@ -65,6 +65,7 @@ export const createSessionRequestHandlerRuntimeCallbacks = (
       .getSessionManager()
       .getSession(turnStateOptions.sessionId);
     const providerId = session?.providerId ?? null;
+    const providerSessionId = session?.providerSessionId ?? null;
     if (session) {
       dependencies.getWorkspaceRuntime()?.notifyTurnStateChanged(
         {
@@ -87,6 +88,7 @@ export const createSessionRequestHandlerRuntimeCallbacks = (
             kind: "turn_state",
             state: turnStateOptions.state,
             ...(providerId ? { providerId } : {}),
+            ...(providerSessionId ? { providerSessionId } : {}),
           },
           uuid: `${crypto.randomUUID()}::turn_state`,
           timestamp: new Date().toISOString(),
