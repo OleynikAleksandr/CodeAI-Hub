@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "a1925214b",
+  "lastRecordedCommit": "c5be0ac6f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase32.cluster-repair-verify.task1",
-  "expectedCommitMessage": "test: verify cluster contract repair continuation",
+  "currentTaskId": "development-tree-cluster-contract.phase33.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare cluster contract repair release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify cluster contract repair continuation",
-    "preCommitHead": "a1925214b",
+    "expectedCommitMessage": "docs: prepare cluster contract repair release notes",
+    "preCommitHead": "c5be0ac6f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase32.cluster-repair-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase33.release-notes.task1"
   }
 }
 ```
@@ -547,18 +547,33 @@ Verification evidence:
 238. [DONE] `development-tree-cluster-contract.phase32.cluster-repair-continuation.task1` Dispatch an internal repair prompt when cluster-contract artifact validation fails instead of settling after the Core refusal message (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: continue cluster contract repair after validation failure`).
 239. [DONE] Git Commit: `fix: continue cluster contract repair after validation failure` (hash: a1925214b)
 240. [DONE] `development-tree-cluster-contract.phase32.cluster-repair-verify.task1` Run targeted Core tests/builds for the cluster-contract validation repair continuation and record evidence before the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract repair continuation`).
-241. [PENDING] Git Commit: `test: verify cluster contract repair continuation` (hash: TBD)
-242. [TODO] `development-tree-cluster-contract.phase32.release-confirm.task1` Await explicit user confirmation before building the next regression release for cluster-contract validation repair continuation (scope: user workflow; expected commit: none).
+241. [DONE] Git Commit: `test: verify cluster contract repair continuation` (hash: c5be0ac6f)
+242. [DONE] `development-tree-cluster-contract.phase32.release-confirm.task1` Await explicit user confirmation before building the next regression release for cluster-contract validation repair continuation (scope: user workflow; expected commit: none). Result: User explicitly requested fixing the cluster validation repair dead-end and building a new release.
 
 Verification evidence:
 - `npx ultracite check packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts` passed.
 - `npm run build --workspace packages/core` passed.
 - `node --test packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js` passed: 2/2 tests, including invalid facade JSON returning a Core repair continuation prompt.
 
-## Phase 33 - Scope Closeout (owner: Codex, updated: 2026-06-09)
+## Phase 33 - Cluster Contract Repair Release Build (owner: Codex, updated: 2026-06-09)
+
+### Stream: Release After Confirmation
+
+243. [DONE] `development-tree-cluster-contract.phase33.release-notes.task1` Prepare release notes for the cluster-contract validation repair continuation after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract repair release notes`).
+244. [PENDING] Git Commit: `docs: prepare cluster contract repair release notes` (hash: TBD)
+245. [TODO] `development-tree-cluster-contract.phase33.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract repair release build state`).
+246. [TODO] Git Commit: `docs: checkpoint cluster contract repair release build state` (hash: TBD)
+247. [TODO] `development-tree-cluster-contract.phase33.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract repair release artifacts`).
+248. [TODO] Git Commit: `build: prepare cluster contract repair release artifacts` (hash: TBD)
+249. [TODO] `development-tree-cluster-contract.phase33.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract repair vsix release`).
+250. [TODO] Git Commit: `build: package cluster contract repair vsix release` (hash: TBD)
+251. [TODO] `development-tree-cluster-contract.phase33.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract repair user retest state`).
+252. [TODO] Git Commit: `docs: checkpoint cluster contract repair user retest state` (hash: TBD)
+
+## Phase 34 - Scope Closeout (owner: Codex, updated: 2026-06-09)
 
 ### Stream: Closeout After Acceptance
 
-243. [TODO] `development-tree-cluster-contract.phase33.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close top down contract orchestration scope`).
-244. [TODO] Git Commit: `docs: close top down contract orchestration scope` (hash: TBD)
-245. [TODO] `development-tree-cluster-contract.phase33.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+253. [TODO] `development-tree-cluster-contract.phase34.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close top down contract orchestration scope`).
+254. [TODO] Git Commit: `docs: close top down contract orchestration scope` (hash: TBD)
+255. [TODO] `development-tree-cluster-contract.phase34.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

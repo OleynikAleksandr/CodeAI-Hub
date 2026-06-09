@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.480] - 2026-06-09
+### Fixed
+- **Cluster Contract validation failures now continue as repair turns.** When Core rejects incomplete `ClusterFacadeContract.draft.json` artifacts, it sends an internal repair prompt back to the same cluster-contract sub-agent instead of settling after the diagnostic system message.
+- **Cluster repair prompts now restate the concrete facade contract requirements.** The prompt names the draft artifacts, repeats validator diagnostics, and requires facade class/file, method signatures, input/output DTOs, result union, and module boundary inputs/outputs.
+
+### Verification
+- `npx ultracite check packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts`
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js`
+
 ## [1.2.479] - 2026-06-09
 ### Added
 - **Lead Product Part order plans now require downstream contract seeds.** `DevelopmentOrderPlan.v2` validates `contractSeeds` for Cluster and Standalone Module nodes so lower agents receive parent-defined consumer, input, output, status/error, and blocking-question boundaries.

@@ -2,7 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.479** (Top-Down Contract Orchestration)
+**Current Release — v1.2.480** (Cluster Contract Repair Continuation)
+
+This regression-fix release keeps the Cluster Contract sub-agent moving after
+Core rejects incomplete facade artifacts. When
+`ClusterFacadeContract.draft.json` is missing concrete facade methods, DTOs,
+result-union, or module-boundary fields, Core now sends an internal repair
+prompt back to the same cluster session instead of settling after the
+diagnostic system message.
+
+The repair prompt points the sub-agent at the exact draft artifacts, repeats
+the validator diagnostics, and restates that the Cluster Facade Contract is a
+concrete pre-code API contract: future facade class/file, public method
+signatures, input/output DTOs, discriminated result union, and module boundary
+inputs/outputs.
+
+Retest by recreating the FinderWidget lead Product Part flow until the
+`note-selection-cluster` sub-agent writes an incomplete contract. Core should
+post diagnostics and immediately continue the cluster session with a repair
+turn instead of leaving Project Manager at a stale working input state.
+
+**Previous Release — v1.2.479** (Top-Down Contract Orchestration)
 
 This release makes the lead Product Part responsible for downstream contract
 seeds. `DevelopmentOrderPlan.v2` now requires parent-defined `contractSeeds`
