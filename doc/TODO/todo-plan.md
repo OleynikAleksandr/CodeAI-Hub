@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "c9441ec1e",
+  "lastRecordedCommit": "4abf9d7d5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1",
-  "expectedCommitMessage": "test: verify managed gated review unlock",
+  "currentTaskId": "development-tree-cluster-contract.phase40.cluster-contract-final-verify.task1",
+  "expectedCommitMessage": "test: verify cluster contract review loop",
   "debt": {
-    "expectedCommitMessage": "test: verify managed gated review unlock",
-    "preCommitHead": "c9441ec1e",
+    "expectedCommitMessage": "test: verify cluster contract review loop",
+    "preCommitHead": "4abf9d7d5",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1"
+    "taskId": "development-tree-cluster-contract.phase40.cluster-contract-final-verify.task1"
   }
 }
 ```
@@ -650,4 +650,28 @@ Verification evidence:
 282. [DONE] `development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1` Release stale `managed_core_gated` locks when a replayed Core user-review message proves the managed workflow returned to user review, so missed live gate unlock events cannot leave projected dialogs externally frozen (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release managed gated review locks`).
 283. [DONE] Git Commit: `fix: release managed gated review locks` (hash: c9441ec1e)
 284. [DONE] `development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1` Add regression coverage for `managed-workflow-user-review` releasing stale `managed_core_gated` locks while preserving unrelated resume locks (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify managed gated review unlock`).
-285. [PENDING] Git Commit: `test: verify managed gated review unlock` (hash: TBD)
+285. [DONE] Git Commit: `test: verify managed gated review unlock` (hash: 4abf9d7d5)
+286. [DONE] `development-tree-cluster-contract.phase40.cluster-contract-final-verify.task1` Run targeted Project Manager and Core regression tests/builds for the full cluster-contract review loop, including full-history replay unlock, managed gate unlock recovery, cluster contract validation/repair continuation, and Project Manager build/typecheck (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract review loop`).
+287. [PENDING] Git Commit: `test: verify cluster contract review loop` (hash: TBD)
+
+Verification evidence:
+- `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts` passed: 29/29 tests.
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
+- `npm run build --workspace packages/core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-review-controller.test.js packages/core/dist/remote-bridge/handlers/product-part-managed-review-decision-handler.test.js packages/core/dist/remote-bridge/handlers/development-tree-snapshot.test.js` passed: 12/12 tests.
+
+## Phase 41 - Cluster Contract Review Unlock Release Build (owner: Codex, updated: 2026-06-09)
+
+### Stream: Release After Confirmation
+
+288. [TODO] `development-tree-cluster-contract.phase41.release-notes.task1` Prepare release notes for the projected cluster contract review unlock fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract review unlock release notes`).
+289. [TODO] Git Commit: `docs: prepare cluster contract review unlock release notes` (hash: TBD)
+290. [TODO] `development-tree-cluster-contract.phase41.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract review unlock release build state`).
+291. [TODO] Git Commit: `docs: checkpoint cluster contract review unlock release build state` (hash: TBD)
+292. [TODO] `development-tree-cluster-contract.phase41.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract review unlock release artifacts`).
+293. [TODO] Git Commit: `build: prepare cluster contract review unlock release artifacts` (hash: TBD)
+294. [TODO] `development-tree-cluster-contract.phase41.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract review unlock vsix release`).
+295. [TODO] Git Commit: `build: package cluster contract review unlock vsix release` (hash: TBD)
+296. [TODO] `development-tree-cluster-contract.phase41.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract review unlock user retest state`).
+297. [TODO] Git Commit: `docs: checkpoint cluster contract review unlock user retest state` (hash: TBD)
