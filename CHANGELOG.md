@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.482] - 2026-06-09
+### Fixed
+- **Projected Cluster review messages now unlock the visible dialog during full-history replay.** Project Manager applies managed workflow side effects when replaying JSONL history, so `managed-workflow-user-review` releases stale `running` and continuation locks even if a live idle event was missed.
+- **Stale managed Core gate locks no longer block the `Подтверждаю` action.** A replayed Core user-review handoff now also releases `managed_core_gated`, while unrelated resume locks remain protected.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-review-controller.test.js packages/core/dist/remote-bridge/handlers/product-part-managed-review-decision-handler.test.js packages/core/dist/remote-bridge/handlers/development-tree-snapshot.test.js`
+
 ## [1.2.481] - 2026-06-09
 ### Fixed
 - **Projected Cluster dialogs now refresh from worktree turn-state events.** Core includes `providerSessionId` in `turn_state`, and Project Manager uses it to connect runtime worktree events to the visible projected cluster dialog.

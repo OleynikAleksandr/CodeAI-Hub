@@ -2,7 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.481** (Projected Cluster Live Refresh)
+**Current Release — v1.2.482** (Cluster Contract Review Unlock)
+
+This regression-fix release closes the projected Cluster Contract review lock
+loop. Project Manager now applies managed workflow side effects when replaying
+full JSONL dialog history, not only when receiving live tail messages. When
+Core emits `managed-workflow-user-review`, the visible projected cluster dialog
+releases stale `running`, `managed_workflow_core_agent_turn`, and
+`managed_core_gated` input locks.
+
+This fixes the case where the cluster backend already repaired artifacts, Core
+accepted the draft for review, and the `Подтверждаю` action was visible but
+unusable because the UI still believed the agent was working.
+
+Retest by recreating the FinderWidget lead Product Part flow through the
+`note-selection-cluster` contract review. The selected cluster dialog should
+show the final Core review message without toggling sidebar steps, and the
+`Подтверждаю` action should be clickable.
+
+**Previous Release — v1.2.481** (Projected Cluster Live Refresh)
 
 This regression-fix release keeps Project Manager synchronized with
 worktree-backed Cluster Contract sessions. Core now includes provider session
@@ -20,7 +38,7 @@ Retest by recreating the FinderWidget lead Product Part flow and selecting the
 The selected cluster dialog should keep updating live without restarting
 Project Manager.
 
-**Previous Release — v1.2.480** (Cluster Contract Repair Continuation)
+**Earlier Release — v1.2.480** (Cluster Contract Repair Continuation)
 
 This regression-fix release keeps the Cluster Contract sub-agent moving after
 Core rejects incomplete facade artifacts. When

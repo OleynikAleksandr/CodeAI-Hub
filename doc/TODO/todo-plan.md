@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4abf9d7d5",
+  "lastRecordedCommit": "edd02ab90",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase40.cluster-contract-final-verify.task1",
-  "expectedCommitMessage": "test: verify cluster contract review loop",
+  "currentTaskId": "development-tree-cluster-contract.phase41.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare cluster contract review unlock release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify cluster contract review loop",
-    "preCommitHead": "4abf9d7d5",
+    "expectedCommitMessage": "docs: prepare cluster contract review unlock release notes",
+    "preCommitHead": "edd02ab90",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase40.cluster-contract-final-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase41.release-notes.task1"
   }
 }
 ```
@@ -652,7 +652,7 @@ Verification evidence:
 284. [DONE] `development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1` Add regression coverage for `managed-workflow-user-review` releasing stale `managed_core_gated` locks while preserving unrelated resume locks (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify managed gated review unlock`).
 285. [DONE] Git Commit: `test: verify managed gated review unlock` (hash: 4abf9d7d5)
 286. [DONE] `development-tree-cluster-contract.phase40.cluster-contract-final-verify.task1` Run targeted Project Manager and Core regression tests/builds for the full cluster-contract review loop, including full-history replay unlock, managed gate unlock recovery, cluster contract validation/repair continuation, and Project Manager build/typecheck (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract review loop`).
-287. [PENDING] Git Commit: `test: verify cluster contract review loop` (hash: TBD)
+287. [DONE] Git Commit: `test: verify cluster contract review loop` (hash: edd02ab90)
 
 Verification evidence:
 - `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts` passed: 29/29 tests.
@@ -665,8 +665,8 @@ Verification evidence:
 
 ### Stream: Release After Confirmation
 
-288. [TODO] `development-tree-cluster-contract.phase41.release-notes.task1` Prepare release notes for the projected cluster contract review unlock fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract review unlock release notes`).
-289. [TODO] Git Commit: `docs: prepare cluster contract review unlock release notes` (hash: TBD)
+288. [DONE] `development-tree-cluster-contract.phase41.release-notes.task1` Prepare release notes for the projected cluster contract review unlock fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract review unlock release notes`).
+289. [PENDING] Git Commit: `docs: prepare cluster contract review unlock release notes` (hash: TBD)
 290. [TODO] `development-tree-cluster-contract.phase41.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract review unlock release build state`).
 291. [TODO] Git Commit: `docs: checkpoint cluster contract review unlock release build state` (hash: TBD)
 292. [TODO] `development-tree-cluster-contract.phase41.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract review unlock release artifacts`).
