@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "d2da425b7",
+  "lastRecordedCommit": "a1925214b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase32.cluster-repair-continuation.task1",
-  "expectedCommitMessage": "fix: continue cluster contract repair after validation failure",
+  "currentTaskId": "development-tree-cluster-contract.phase32.cluster-repair-verify.task1",
+  "expectedCommitMessage": "test: verify cluster contract repair continuation",
   "debt": {
-    "expectedCommitMessage": "fix: continue cluster contract repair after validation failure",
-    "preCommitHead": "d2da425b7",
+    "expectedCommitMessage": "test: verify cluster contract repair continuation",
+    "preCommitHead": "a1925214b",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase32.cluster-repair-continuation.task1"
+    "taskId": "development-tree-cluster-contract.phase32.cluster-repair-verify.task1"
   }
 }
 ```
@@ -545,10 +545,15 @@ Verification evidence:
 ### Stream: Cluster Validation Repair Loop
 
 238. [DONE] `development-tree-cluster-contract.phase32.cluster-repair-continuation.task1` Dispatch an internal repair prompt when cluster-contract artifact validation fails instead of settling after the Core refusal message (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: continue cluster contract repair after validation failure`).
-239. [PENDING] Git Commit: `fix: continue cluster contract repair after validation failure` (hash: TBD)
-240. [TODO] `development-tree-cluster-contract.phase32.cluster-repair-verify.task1` Run targeted Core tests/builds for the cluster-contract validation repair continuation and record evidence before the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract repair continuation`).
-241. [TODO] Git Commit: `test: verify cluster contract repair continuation` (hash: TBD)
+239. [DONE] Git Commit: `fix: continue cluster contract repair after validation failure` (hash: a1925214b)
+240. [DONE] `development-tree-cluster-contract.phase32.cluster-repair-verify.task1` Run targeted Core tests/builds for the cluster-contract validation repair continuation and record evidence before the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster contract repair continuation`).
+241. [PENDING] Git Commit: `test: verify cluster contract repair continuation` (hash: TBD)
 242. [TODO] `development-tree-cluster-contract.phase32.release-confirm.task1` Await explicit user confirmation before building the next regression release for cluster-contract validation repair continuation (scope: user workflow; expected commit: none).
+
+Verification evidence:
+- `npx ultracite check packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts` passed.
+- `npm run build --workspace packages/core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js` passed: 2/2 tests, including invalid facade JSON returning a Core repair continuation prompt.
 
 ## Phase 33 - Scope Closeout (owner: Codex, updated: 2026-06-09)
 
