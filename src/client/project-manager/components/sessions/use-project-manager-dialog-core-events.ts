@@ -159,10 +159,12 @@ export const useProjectManagerDialogCoreEvents = (options: {
           resolveProviderId(match.providerId) ?? resolveProviderId(intent.providerId);
         const preferredRuntimeSessionId =
           match.latestSessionId ?? match.rootSessionId;
+        const dialogWorkspacePath = match.worktreePath ?? intent.workspacePath;
+        const dialogIntent = { ...intent, workspacePath: dialogWorkspacePath };
         const latestSnapshot = options.latestWorkspaceSnapshotRef.current;
         const runtimeSession = resolveRuntimeSessionFromWorkspaceSnapshot({
           payload:
-            latestSnapshot?.workspaceRoot === intent.workspacePath
+            latestSnapshot?.workspaceRoot === dialogWorkspacePath
               ? latestSnapshot
               : null,
           preferredSessionId: preferredRuntimeSessionId,
@@ -172,7 +174,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
         const shouldKeepIdleDialogBootstrapReady =
           shouldSuppressIdleDialogRestoreRefresh({
             latestSnapshot,
-            workspacePath: intent.workspacePath,
+            workspacePath: dialogWorkspacePath,
             dialogId: match.dialogId,
             providerSessionId: match.providerSessionId,
             preferredSessionId: preferredRuntimeSessionId,
@@ -183,7 +185,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
           modelBinding: match.modelBinding,
           providerId,
           providerSessionId: match.providerSessionId,
-          intent,
+          intent: dialogIntent,
         });
         const nextSession =
           runtimeSession.hasRuntimeSession || shouldKeepIdleDialogBootstrapReady
@@ -196,7 +198,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
               },
             };
         const restoreKey = buildDialogRestoreRequestKey({
-          workspacePath: intent.workspacePath,
+          workspacePath: dialogWorkspacePath,
           dialogId: match.dialogId,
           providerSessionId: match.providerSessionId,
         });
@@ -223,14 +225,14 @@ export const useProjectManagerDialogCoreEvents = (options: {
             seededProviderId: providerId ?? intent.providerId,
             restoreRequested: Boolean(shouldRequestRestore),
             stage: intent.stage ?? match.stage,
-            workspacePath: intent.workspacePath,
+            workspacePath: dialogWorkspacePath,
           },
         });
         if (shouldRequestRestore) {
           api.createSession({
             providerId: providerId ?? intent.providerId,
             providerSessionId: match.providerSessionId,
-            workspacePath: intent.workspacePath,
+            workspacePath: dialogWorkspacePath,
             initiativeSlug: intent.initiativeSlug ?? intent.workspaceSlug,
             stage: intent.stage ?? match.stage,
             sessionKind: intent.sessionKind,

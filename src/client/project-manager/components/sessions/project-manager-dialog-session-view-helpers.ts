@@ -31,6 +31,7 @@ export type DialogIndexEntry = {
   readonly modelBinding: SessionModelBindingInfo | null;
   readonly providerId: string | null;
   readonly providerSessionId: string | null;
+  readonly worktreePath?: string;
 };
 
 type DialogHistoryRecord = {
@@ -120,6 +121,7 @@ export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | nul
       ? (value.providerSessionId as string | null)
       : null;
   const modelBinding = sanitizeDialogModelBinding(value.modelBinding);
+  const worktreePath = readOptionalString(value.worktreePath);
   return {
     stage: value.stage,
     rootSessionId: value.rootSessionId,
@@ -129,6 +131,7 @@ export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | nul
     modelBinding,
     providerId,
     providerSessionId,
+    ...(worktreePath ? { worktreePath } : {}),
   };
 };
 

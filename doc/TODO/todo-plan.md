@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "e2e9437ec",
+  "lastRecordedCommit": "05cc2343b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1",
-  "expectedCommitMessage": "test: verify cluster bootstrap session state commit",
+  "currentTaskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree.task1",
+  "expectedCommitMessage": "fix: open projected cluster dialogs in worktrees",
   "debt": {
-    "expectedCommitMessage": "test: verify cluster bootstrap session state commit",
-    "preCommitHead": "e2e9437ec",
+    "expectedCommitMessage": "fix: open projected cluster dialogs in worktrees",
+    "preCommitHead": "05cc2343b",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree.task1"
   }
 }
 ```
@@ -425,10 +425,22 @@ Verification evidence:
 187. [DONE] `development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1` Commit the main workspace unlock-state update that records cluster session/worktree metadata during downstream bootstrap so later cluster review merge starts from clean Git (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster bootstrap session state`).
 188. [DONE] Git Commit: `fix: commit cluster bootstrap session state` (hash: e2e9437ec)
 189. [DONE] `development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1` Run targeted Core build/tests for cluster bootstrap ledger cleanliness and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster bootstrap session state commit`).
-190. [PENDING] Git Commit: `test: verify cluster bootstrap session state commit` (hash: TBD)
+190. [DONE] Git Commit: `test: verify cluster bootstrap session state commit` (hash: 05cc2343b)
 191. [TODO] `development-tree-cluster-contract.phase21.release-confirm.task1` Await explicit user confirmation before building the next regression release for cluster bootstrap and ClearUndo worktree cleanup fixes (scope: user workflow; expected commit: none).
 
 Verification evidence:
 - `npx ultracite check packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts` passed.
 - `npm run build --workspace packages/core` passed.
 - `node --test packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js` passed and verifies cluster bootstrap commits both the worktree managed plan and the main workspace unlock-state session ledger.
+
+## Phase 22 - Projected Cluster Dialog Review Gate Regression (owner: Codex, updated: 2026-06-09)
+
+### Stream: Worktree-Scoped Projected Dialog Hydration
+
+192. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-worktree.task1` Preserve projected cluster dialog `worktreePath` in Project Manager and open/restore the dialog against the node worktree instead of the main workspace so review history and input state hydrate correctly (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix: open projected cluster dialogs in worktrees`).
+193. [PENDING] Git Commit: `fix: open projected cluster dialogs in worktrees` (hash: TBD)
+194. [TODO] `development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1` Add targeted Project Manager regression coverage for worktree-backed projected dialog bootstrap/restore and active review gate rendering (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog worktree hydration`).
+195. [TODO] Git Commit: `test: verify projected cluster dialog worktree hydration` (hash: TBD)
+196. [TODO] `development-tree-cluster-contract.phase22.projected-dialog-verify.task1` Run targeted Project Manager/Core build checks for projected cluster dialog hydration before release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog review gate`).
+197. [TODO] Git Commit: `test: verify projected cluster dialog review gate` (hash: TBD)
+198. [TODO] `development-tree-cluster-contract.phase22.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog review gates, bootstrap ledger commits, and Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).

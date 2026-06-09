@@ -228,7 +228,9 @@ export const useProjectManagerDialogSessionController = (
           return current;
         }
 
-        const isSameWorkspace = created.workspacePath === intent.workspacePath;
+        const isSameWorkspace =
+          created.workspacePath === intent.workspacePath ||
+          created.workspacePath === current.workspacePath;
         const isSameStage = created.stage === current.stage;
         const isSameRun = created.runSlug === current.runSlug;
         const isSameProvider = created.providerIds[0] === current.providerIds[0];
