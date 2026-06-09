@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "3f5b9eafd",
+  "lastRecordedCommit": "ec10a5831",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase33.release-state.task1",
-  "expectedCommitMessage": "docs: checkpoint cluster contract repair release build state",
+  "currentTaskId": "development-tree-cluster-contract.phase33.build-all.task1",
+  "expectedCommitMessage": "build: prepare cluster contract repair release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint cluster contract repair release build state",
-    "preCommitHead": "3f5b9eafd",
+    "expectedCommitMessage": "build: prepare cluster contract repair release artifacts",
+    "preCommitHead": "ec10a5831",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase33.release-state.task1"
+    "taskId": "development-tree-cluster-contract.phase33.build-all.task1"
   }
 }
 ```
@@ -562,9 +562,9 @@ Verification evidence:
 243. [DONE] `development-tree-cluster-contract.phase33.release-notes.task1` Prepare release notes for the cluster-contract validation repair continuation after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract repair release notes`).
 244. [DONE] Git Commit: `docs: prepare cluster contract repair release notes` (hash: 3f5b9eafd)
 245. [DONE] `development-tree-cluster-contract.phase33.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract repair release build state`).
-246. [PENDING] Git Commit: `docs: checkpoint cluster contract repair release build state` (hash: TBD)
-247. [TODO] `development-tree-cluster-contract.phase33.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract repair release artifacts`).
-248. [TODO] Git Commit: `build: prepare cluster contract repair release artifacts` (hash: TBD)
+246. [DONE] Git Commit: `docs: checkpoint cluster contract repair release build state` (hash: ec10a5831)
+247. [DONE] `development-tree-cluster-contract.phase33.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract repair release artifacts`).
+248. [PENDING] Git Commit: `build: prepare cluster contract repair release artifacts` (hash: TBD)
 249. [TODO] `development-tree-cluster-contract.phase33.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract repair vsix release`).
 250. [TODO] Git Commit: `build: package cluster contract repair vsix release` (hash: TBD)
 251. [TODO] `development-tree-cluster-contract.phase33.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract repair user retest state`).
