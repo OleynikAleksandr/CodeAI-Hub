@@ -365,6 +365,7 @@ const createLeadOrderPlanPrompt = (params: {
     "The JSON artifact must be valid JSON with this Core-readable unlock contract. Use only node ids that already exist in the materialized Development Tree; do not invent clusters or modules.",
     'Use exact node id shapes: cluster nodes are `cluster:<partId>/<clusterId>` with `kind: "cluster"`; modules inside a cluster are `module:<partId>/<clusterId>/<moduleId>` with `kind: "module"`; standalone modules are `standalone-module:<partId>/<moduleId>` with `kind: "standalone_module"` and no `clusterId`.',
     "Do not encode standalone modules as `module:<partId>/<moduleId>`. If a node appears in `lockedNodes`, the same id must also appear in `nodes`. The first wave may unlock only dependency-free cluster or standalone_module nodes, never a module inside a cluster before the cluster contract exists.",
+    "For every cluster and standalone_module node, include `contractSeeds`. These are parent-owned boundaries for lower agents: consumer, required inputs, required outputs, statuses/errors, blocking questions, and for clusters the required owned modules. Lower agents may refine these seeds but must not invent a different boundary.",
     "```json",
     JSON.stringify(
       {
@@ -384,10 +385,6 @@ const createLeadOrderPlanPrompt = (params: {
             partId: params.partId,
             clusterId: "existing-cluster-id",
             dependsOn: [],
-            execution: {
-              mode: "subagent-worktree",
-              startPolicy: "core-unlocks-user-startable",
-            },
             expectedArtifacts: [
               "ClusterSpecification.draft.md",
               "ClusterFacadeContract.draft.md",
@@ -402,10 +399,6 @@ const createLeadOrderPlanPrompt = (params: {
             clusterId: "existing-cluster-id",
             moduleId: "existing-module-id",
             dependsOn: [`cluster:${params.partId}/existing-cluster-id`],
-            execution: {
-              mode: "subagent-worktree",
-              startPolicy: "locked",
-            },
             expectedArtifacts: ["ModuleSpecification.draft.md"],
           },
           {
@@ -414,11 +407,26 @@ const createLeadOrderPlanPrompt = (params: {
             partId: params.partId,
             moduleId: "existing-standalone-module-id",
             dependsOn: [],
-            execution: {
-              mode: "subagent-worktree",
-              startPolicy: "locked",
-            },
             expectedArtifacts: ["ModuleSpecification.draft.md"],
+          },
+        ],
+        contractSeeds: [
+          {
+            nodeId: `cluster:${params.partId}/existing-cluster-id`,
+            consumer: "dependent-product-part-or-shell",
+            requiredInputs: ["parent-defined input context"],
+            requiredOutputs: ["parent-defined normalized result"],
+            requiredStatuses: ["success", "empty", "error"],
+            requiredOwnedModules: ["existing-module-id"],
+            blockingQuestions: [],
+          },
+          {
+            nodeId: `standalone-module:${params.partId}/existing-standalone-module-id`,
+            consumer: "dependent-product-part-or-shell",
+            requiredInputs: ["parent-defined input context"],
+            requiredOutputs: ["parent-defined standalone module result"],
+            requiredStatuses: ["success", "error"],
+            blockingQuestions: [],
           },
         ],
         waves: [

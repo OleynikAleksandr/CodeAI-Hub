@@ -12,6 +12,7 @@ const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "engine";
 const CLUSTER_ID = "existing-cluster-id";
+const CLUSTER_NODE_ID = `cluster:${PART_ID}/${CLUSTER_ID}`;
 const CLUSTER_MODULE_ID = "existing-module-id";
 const STANDALONE_MODULE_ID = "existing-standalone-module-id";
 const STANDALONE_NODE_ID = `standalone-module:${PART_ID}/${STANDALONE_MODULE_ID}`;
@@ -20,6 +21,7 @@ const BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/
 const CLUSTER_MODULE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/clusters/${CLUSTER_ID}/modules/${CLUSTER_MODULE_ID}`;
 const STANDALONE_MODULE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/modules/${STANDALONE_MODULE_ID}`;
 const FENCED_JSON_BLOCK_RE = /```json\n([\s\S]*?)\n```/u;
+const PARENT_OWNED_BOUNDARIES_RE = /parent-owned boundaries for lower agents/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -140,6 +142,9 @@ test("lead order-plan assignment prompt includes a valid standalone-module v2 ex
 
     const promptPlan = extractPromptPlan(result.nextInternalMessage);
     const nodes = Array.isArray(promptPlan.nodes) ? promptPlan.nodes : [];
+    const contractSeeds = Array.isArray(promptPlan.contractSeeds)
+      ? promptPlan.contractSeeds
+      : [];
     assert.equal(
       nodes.some((node) => {
         const record = asRecord(node);
@@ -151,6 +156,17 @@ test("lead order-plan assignment prompt includes a valid standalone-module v2 ex
       }),
       true
     );
+    assert.equal(
+      contractSeeds.some((seed) => asRecord(seed).nodeId === CLUSTER_NODE_ID),
+      true
+    );
+    assert.equal(
+      contractSeeds.some(
+        (seed) => asRecord(seed).nodeId === STANDALONE_NODE_ID
+      ),
+      true
+    );
+    assert.match(result.nextInternalMessage, PARENT_OWNED_BOUNDARIES_RE);
 
     const validation = await validateDevelopmentOrderPlanV2({
       leadProductPartId: PART_ID,

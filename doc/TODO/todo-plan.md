@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "f7ca93af8",
+  "lastRecordedCommit": "e505fd4d0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase26.order-plan-seeds.task1",
-  "expectedCommitMessage": "feat: validate development order contract seeds",
+  "currentTaskId": "development-tree-cluster-contract.phase26.lead-prompt-seeds.task1",
+  "expectedCommitMessage": "feat: request downstream contract seeds",
   "debt": {
-    "expectedCommitMessage": "feat: validate development order contract seeds",
-    "preCommitHead": "f7ca93af8",
+    "expectedCommitMessage": "feat: request downstream contract seeds",
+    "preCommitHead": "e505fd4d0",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase26.order-plan-seeds.task1"
+    "taskId": "development-tree-cluster-contract.phase26.lead-prompt-seeds.task1"
   }
 }
 ```
@@ -484,9 +484,9 @@ Verification evidence:
 ### Stream: Lead Product Part Contract Seeds
 
 212. [DONE] `development-tree-cluster-contract.phase26.order-plan-seeds.task1` Extend `DevelopmentOrderPlan.v2` parser/validator with downstream `contractSeeds` for cluster and standalone-module nodes, including required consumer, input, output, status/error, and blocking question fields (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.ts, packages/core/src/development-tree/product-part-workflow/development-order-plan-v2-contract.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: validate development order contract seeds`).
-213. [PENDING] Git Commit: `feat: validate development order contract seeds` (hash: TBD)
-214. [TODO] `development-tree-cluster-contract.phase26.lead-prompt-seeds.task1` Update the lead Product Part `DevelopmentOrderPlan.v2` assignment prompt and regression tests so the lead agent must write concrete downstream contract seeds for clusters and standalone modules (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: request downstream contract seeds`).
-215. [TODO] Git Commit: `feat: request downstream contract seeds` (hash: TBD)
+213. [DONE] Git Commit: `feat: validate development order contract seeds` (hash: e505fd4d0)
+214. [DONE] `development-tree-cluster-contract.phase26.lead-prompt-seeds.task1` Update the lead Product Part `DevelopmentOrderPlan.v2` assignment prompt and regression tests so the lead agent must write concrete downstream contract seeds for clusters and standalone modules (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: request downstream contract seeds`).
+215. [PENDING] Git Commit: `feat: request downstream contract seeds` (hash: TBD)
 
 ## Phase 27 - Downstream Contract Seed Propagation (owner: Codex, updated: 2026-06-09)
 
