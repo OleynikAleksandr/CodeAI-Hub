@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "73e3c3d6a",
+  "lastRecordedCommit": "463f63641",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase44.projected-dialog-routing.task1",
-  "expectedCommitMessage": "fix: route projected cluster dialogs through worktree roots",
+  "currentTaskId": "development-tree-cluster-contract.phase44.managed-review-dialog-send.task1",
+  "expectedCommitMessage": "fix: confirm projected cluster reviews through dialog sends",
   "debt": {
-    "expectedCommitMessage": "fix: route projected cluster dialogs through worktree roots",
-    "preCommitHead": "73e3c3d6a",
+    "expectedCommitMessage": "fix: confirm projected cluster reviews through dialog sends",
+    "preCommitHead": "463f63641",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase44.projected-dialog-routing.task1"
+    "taskId": "development-tree-cluster-contract.phase44.managed-review-dialog-send.task1"
   }
 }
 ```
@@ -687,9 +687,9 @@ Verification evidence:
 ### Stream: Worktree Dialog Command Routing
 
 299. [DONE] `development-tree-cluster-contract.phase44.projected-dialog-routing.task1` Route projected cluster dialog list/history/send commands through the resolved worktree workspace root instead of the main workspace scope, while keeping main workspace scope validation for allowed worktree paths (scope: `src/client/project-manager, packages/core/src/remote-bridge, doc/TODO/todo-plan.md`; expected commit: `fix: route projected cluster dialogs through worktree roots`).
-300. [PENDING] Git Commit: `fix: route projected cluster dialogs through worktree roots` (hash: TBD)
-301. [TODO] `development-tree-cluster-contract.phase44.managed-review-dialog-send.task1` Send projected cluster `Подтверждаю` actions through `dialog:send` with managed review metadata so Core resolves the correct worktree-backed session before applying review decisions (scope: `src/client/project-manager/core-stream-message-types.ts, packages/core/src/remote-bridge/types.ts, packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, doc/TODO/todo-plan.md`; expected commit: `fix: confirm projected cluster reviews through dialog sends`).
-302. [TODO] Git Commit: `fix: confirm projected cluster reviews through dialog sends` (hash: TBD)
+300. [DONE] Git Commit: `fix: route projected cluster dialogs through worktree roots` (hash: 463f63641)
+301. [DONE] `development-tree-cluster-contract.phase44.managed-review-dialog-send.task1` Keep projected cluster `Подтверждаю` actions visibly gated while `dialog:send` resolves the worktree-backed session and Core applies the managed review decision (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts, src/client/project-manager/components/sessions/dialog-managed-review-lock.ts, doc/TODO/todo-plan.md`; expected commit: `fix: confirm projected cluster reviews through dialog sends`).
+302. [PENDING] Git Commit: `fix: confirm projected cluster reviews through dialog sends` (hash: TBD)
 303. [TODO] `development-tree-cluster-contract.phase44.projected-dialog-routing-test.task1` Add targeted regression coverage for projected worktree history refresh and managed review dialog sends, then run focused Project Manager/Core tests (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog routing`).
 304. [TODO] Git Commit: `test: verify projected cluster dialog routing` (hash: TBD)
 

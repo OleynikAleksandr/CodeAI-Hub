@@ -15,6 +15,7 @@ import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { shouldRefreshDialogHistoryForStream, updateSnapshotsWithTurnState } from "./turn-state-stream";
 import { seedSnapshotWithCachedUsageLimits, updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { appendOptimisticUserMessage } from "./session-message-dedupe";
+import { applyDialogManagedReviewPendingLock } from "./dialog-managed-review-lock";
 import { shouldSuppressIdleDialogRestoreRefresh, useProjectManagerDialogCoreEvents } from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
@@ -131,7 +132,6 @@ export const useProjectManagerDialogSessionController = (
       return;
     }
 
-    // Ensure Core scope is selected for this workspace so dialog commands are accepted.
     api.selectWorkspace({
       requestId: createDialogRequestId(),
       workspaceRoot: intent.workspacePath,
@@ -304,15 +304,9 @@ export const useProjectManagerDialogSessionController = (
         return created;
       });
     },
-    onSessionDeleted: () => {
-      // Dialog UI is keyed by dialog history; session lifecycle is tracked via dialog list.
-    },
-    onSessionHistory: () => {
-      // Dialog messages are sourced from dialog history (JSONL), not runtime session history.
-    },
-    onSessionMessage: () => {
-      // Dialog messages are sourced from dialog history (JSONL), not runtime session messages.
-    },
+    onSessionDeleted: () => {},
+    onSessionHistory: () => {},
+    onSessionMessage: () => {},
     onSessionStream: (payload) => {
       setSnapshots((previous) =>
         updateSnapshotsWithUsageLimits(
@@ -423,6 +417,11 @@ export const useProjectManagerDialogSessionController = (
     }
     reload();
     const currentSessionId = sessionRef.current?.id ?? currentDialogId;
+    if (turnOptions?.managedReviewAction) {
+      setSnapshots((previous) =>
+        applyDialogManagedReviewPendingLock(previous, currentSessionId)
+      );
+    }
     api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content, {
       workspacePath: intent.workspacePath,
       ...(turnOptions ? { turnOptions } : {}),
@@ -430,7 +429,6 @@ export const useProjectManagerDialogSessionController = (
     if (turnOptions?.managedReviewAction) {
       return;
     }
-    // Optimistic: render user message immediately instead of waiting for dialog:history:result
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
   const requestCodexModelSwitch = useCallback((modelId: string) => {
