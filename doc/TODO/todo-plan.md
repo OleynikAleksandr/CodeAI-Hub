@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "430fbed94",
+  "lastRecordedCommit": "c9441ec1e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1",
-  "expectedCommitMessage": "fix: release managed gated review locks",
+  "currentTaskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1",
+  "expectedCommitMessage": "test: verify managed gated review unlock",
   "debt": {
-    "expectedCommitMessage": "fix: release managed gated review locks",
-    "preCommitHead": "430fbed94",
+    "expectedCommitMessage": "test: verify managed gated review unlock",
+    "preCommitHead": "c9441ec1e",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1"
+    "taskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1"
   }
 }
 ```
@@ -648,6 +648,6 @@ Verification evidence:
 ### Stream: Missed Gate Unlock Recovery
 
 282. [DONE] `development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1` Release stale `managed_core_gated` locks when a replayed Core user-review message proves the managed workflow returned to user review, so missed live gate unlock events cannot leave projected dialogs externally frozen (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release managed gated review locks`).
-283. [PENDING] Git Commit: `fix: release managed gated review locks` (hash: TBD)
-284. [TODO] `development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1` Add regression coverage for `managed-workflow-user-review` releasing stale `managed_core_gated` locks while preserving unrelated resume locks (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify managed gated review unlock`).
-285. [TODO] Git Commit: `test: verify managed gated review unlock` (hash: TBD)
+283. [DONE] Git Commit: `fix: release managed gated review locks` (hash: c9441ec1e)
+284. [DONE] `development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1` Add regression coverage for `managed-workflow-user-review` releasing stale `managed_core_gated` locks while preserving unrelated resume locks (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify managed gated review unlock`).
+285. [PENDING] Git Commit: `test: verify managed gated review unlock` (hash: TBD)

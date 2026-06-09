@@ -139,6 +139,28 @@ test("managed workflow user review releases initial workflow running state", () 
   assert.equal(next.session.status.continuityLock?.active, false);
 });
 
+test("managed workflow user review releases stale managed core gate lock", () => {
+  const snapshots = {
+    session: createSnapshot({
+      connectionState: "blocked",
+      lockActive: true,
+      lockReason: "managed_core_gated",
+    }),
+  };
+
+  const next = appendDedupedSessionMessageToSnapshots(snapshots, {
+    message: createSystemMessage(
+      "review-1",
+      "managed-workflow-user-review",
+      "Core hands control back to the user."
+    ),
+    sessionId: "session",
+  });
+
+  assert.equal(next.session.status.connectionState, "idle");
+  assert.equal(next.session.status.continuityLock?.active, false);
+});
+
 test("managed workflow user review does not release an unrelated continuity lock", () => {
   const snapshots = {
     session: createSnapshot({
