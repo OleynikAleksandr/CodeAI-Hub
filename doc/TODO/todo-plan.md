@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "f3cfcb156",
+  "lastRecordedCommit": "a6527ad72",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase23.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare projected cluster review release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase23.release-state.task1",
+  "expectedCommitMessage": "docs: checkpoint projected cluster review release build state",
   "debt": {
-    "expectedCommitMessage": "docs: prepare projected cluster review release notes",
-    "preCommitHead": "f3cfcb156",
+    "expectedCommitMessage": "docs: checkpoint projected cluster review release build state",
+    "preCommitHead": "a6527ad72",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase23.release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase23.release-state.task1"
   }
 }
 ```
@@ -456,9 +456,9 @@ Verification evidence:
 ### Stream: Release After Confirmation
 
 199. [DONE] `development-tree-cluster-contract.phase23.release-notes.task1` Prepare release notes for projected cluster review gate, bootstrap ledger, and Cluster ClearUndo worktree cleanup fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster review release notes`).
-200. [PENDING] Git Commit: `docs: prepare projected cluster review release notes` (hash: TBD)
-201. [TODO] `development-tree-cluster-contract.phase23.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster review release build state`).
-202. [TODO] Git Commit: `docs: checkpoint projected cluster review release build state` (hash: TBD)
+200. [DONE] Git Commit: `docs: prepare projected cluster review release notes` (hash: a6527ad72)
+201. [DONE] `development-tree-cluster-contract.phase23.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster review release build state`).
+202. [PENDING] Git Commit: `docs: checkpoint projected cluster review release build state` (hash: TBD)
 203. [TODO] `development-tree-cluster-contract.phase23.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster review release artifacts`).
 204. [TODO] Git Commit: `build: prepare projected cluster review release artifacts` (hash: TBD)
 205. [TODO] `development-tree-cluster-contract.phase23.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster review vsix release`).
