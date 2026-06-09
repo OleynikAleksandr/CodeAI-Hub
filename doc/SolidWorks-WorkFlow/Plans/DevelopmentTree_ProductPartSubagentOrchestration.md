@@ -255,7 +255,44 @@ finder-widget
 
 The graph may link to sub-agent details, but the default surface remains Product Part-level.
 
-## 10. MVP Implementation Boundary
+## 10. Projected Sub-Agent Dialog Routing Lessons
+
+The 2026-06-09 cluster-contract regression exposed a concrete class of bugs that must be treated as architectural, not cosmetic UI defects.
+
+Observed symptoms:
+
+- selecting `note-selection-cluster` in Project Manager showed only an old reasoning message while the worktree JSONL already contained later agent and Core/System messages;
+- toggling the left sidebar away and back made the missing messages appear because a full history reload happened on reselection;
+- the `Подтверждаю` review button was visible after reselection, but clicking it could leave the input blocked with the normal free-text placeholder instead of a managed review wait state.
+
+Root causes:
+
+- Project Manager selected the cluster node from the main workspace graph, but the actual cluster session lived in a separate worktree runtime.
+- `dialog:list` could resolve the projected entry and return `worktreePath`, but the client kept using the original main-workspace dialog intent for live history refresh.
+- `dialog:history` and some follow-up commands therefore read the main workspace runtime instead of the worktree JSONL.
+- the review confirmation path used a direct runtime session message for the visible cluster dialog instead of `dialog:send`, so Core did not always resolve the correct worktree-backed continuity chain.
+- the UI did not apply a local managed-review lock after the button click, so the visible input state contradicted the actual blocked Core transition.
+
+Required invariants for every cluster/module projected dialog:
+
+1. Once Core resolves a projected dialog, the client must replace its active and pending dialog intent with the resolved intent that includes `worktreePath`.
+2. Every `dialog:list`, `dialog:history`, `dialog:open` and `dialog:send` command for a projected node must carry the explicit `workspacePath` of the worktree.
+3. Core may accept that requested `workspacePath` only when it equals the selected workspace root or is under the allowed sibling worktree root `<workspace>.worktrees/...`.
+4. `dialog:history` must read provider-neutral JSONL from the resolved worktree root, not from the main workspace projection.
+5. `Подтверждаю` and later managed review actions must be sent through `dialog:send` with `turnOptions.managedReviewAction`; direct `session:message` is only valid for non-projected runtime sessions.
+6. After a managed review click, Project Manager may optimistically show a local `managed_core_gated` lock, but Core/System messages remain the source of truth for releasing or advancing the gate.
+
+Regression checks for future fixes:
+
+- keep the cluster node selected without toggling the sidebar; new agent and Core/System messages must stream into the visible dialog from the worktree JSONL;
+- click `Подтверждаю`; the input must switch into a managed wait/locked state and then advance or unlock after Core handles the review decision;
+- inspect the command path: `dialog:list/history/send` must include `workspacePath` for projected cluster/module nodes;
+- verify that Core rejects arbitrary `workspacePath` values outside the selected root and the corresponding `.worktrees` root;
+- run targeted client/source tests for pending intent replacement and managed review lock behavior, plus Core dialog-send tests proving that `turnOptions` survive worktree-root session resolution.
+
+This regression is a warning for all future sub-agent surfaces: the left tree projection identity and the right dialog runtime identity are different objects. The projection can be owned by the main Product Part graph, but the chat history, provider continuity, review button, and native session binding belong to the node worktree.
+
+## 11. MVP Implementation Boundary
 
 The implemented MVP scope is intentionally narrow:
 
@@ -270,7 +307,7 @@ The implemented MVP scope is intentionally narrow:
 
 This keeps the product moving without pretending that Core can design arbitrary products by script. Agents own semantic planning; Core owns deterministic execution and recovery.
 
-## 11. Pre-code artifact ladder
+## 12. Pre-code artifact ladder
 
 Every Development Tree node below Product Part must move from contract to code through explicit pre-code artifacts:
 

@@ -124,6 +124,39 @@ Product Part agents are the last Development Tree sessions that run in the main 
 
 After restart, Core must not rely on stale in-memory state. It rehydrates Development Tree by comparing current Git/filesystem truth with accepted artifacts and existing Git worktrees/branches. Branches/worktrees not described by current accepted artifacts are reported as stale/orphaned refactoring outcomes; branches/worktrees required by current artifacts but missing are `not_started` and may be created by the orchestrator.
 
+### 4.1.2. Projected worktree session/dialog invariant
+
+Product Part sessions run in the main workspace. Cluster and Module sessions run in separate Git worktrees/branches. That creates two identities for one visible Development Tree node:
+
+- graph/projection identity in the main workspace, owned by the Product Part coordination read-model;
+- runtime/dialog identity in the node worktree, owned by the sub-agent session, JSONL history, provider-native binding, and local managed plan.
+
+Project Manager may select the node from the main workspace graph, but the right dialog panel must route session history and user actions to the resolved worktree root. The client must not infer the dialog runtime root from the selected main workspace after Core has returned a projected worktree dialog.
+
+Required Core/client contract:
+
+1. Core projection entries for cluster/module sessions must include enough runtime identity to route commands: `worktreePath`, dialog/session id, root/provider session id, model binding, and node ids.
+2. The client must store the resolved projected dialog intent and use it for live refresh, history reload, review actions, and user messages.
+3. Every projected `dialog:list`, `dialog:history`, `dialog:open`, and `dialog:send` command must carry the explicit target `workspacePath`.
+4. Core must validate requested `workspacePath`: allowed values are the selected workspace root or a descendant of the sibling worktree root `<selectedWorkspace>.worktrees/...`.
+5. Core must read/write dialog history in the requested root after validation. A projected cluster/module dialog must never silently fall back to main-workspace JSONL.
+6. Clear/Undo for a cluster/module node must remove both identities: the main-workspace projection/coordination state and the worktree runtime/session/native traces. Rebootstrap starts from a fresh session; stale root/session ids must not survive.
+
+Managed review actions are part of the dialog protocol, not a side channel. For projected cluster/module dialogs:
+
+- `Подтверждаю`, revision text, and future accept/reject controls must go through `dialog:send`;
+- `turnOptions.managedReviewAction` must survive the Core session-resolution path into the provider turn handler;
+- direct `session:message` may be used only for ordinary non-projected runtime sessions;
+- the UI may set a temporary local managed-review lock after a click, but Core/System review state is authoritative.
+
+Concrete regression signals:
+
+- if the visible dialog appears stuck on an old reasoning message until the user toggles the sidebar, the live refresh/history path is reading the wrong root or not tailing the resolved worktree JSONL;
+- if the `Подтверждаю` button appears but clicking it only blocks the input, the review action is probably bypassing `dialog:send`, losing `turnOptions`, or using the wrong workspace root;
+- if Clear/Undo leaves a node worktree or session traces behind, Core is treating Git/worktree state and projection state as separate cleanup problems instead of one node rollback boundary.
+
+These bugs are Core/Project Manager integration bugs. They must not be fixed by prompt changes, provider retries, or manual sidebar refresh assumptions.
+
 ### 4.2. Product Part Development Brief remains the branch root
 
 Для каждого `Product Part` нужен короткий branch-root artifact:
