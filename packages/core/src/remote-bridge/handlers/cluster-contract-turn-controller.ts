@@ -14,6 +14,7 @@ export type ClusterContractTurnResult =
   | {
       readonly handled: true;
       readonly message: { readonly content: string; readonly tag: string };
+      readonly nextInternalMessage?: string;
     };
 
 const FENCED_JSON_END_RE = /\s*```$/u;
@@ -251,7 +252,8 @@ const validateArtifacts = async (params: {
 };
 
 const blocked = (
-  diagnostics: readonly string[]
+  diagnostics: readonly string[],
+  nextInternalMessage?: string
 ): ClusterContractTurnResult => ({
   handled: true,
   message: {
@@ -262,7 +264,31 @@ const blocked = (
     ].join("\n"),
     tag: "managed-workflow-validation",
   },
+  nextInternalMessage,
 });
+
+const createRepairPrompt = (params: {
+  readonly artifactPaths: readonly string[];
+  readonly clusterId: string;
+  readonly diagnostics: readonly string[];
+  readonly partId: string;
+}): string =>
+  [
+    `Core managed repair: Cluster Contract artifacts for \`${params.partId}/${params.clusterId}\` were rejected by the Core validator.`,
+    "",
+    "Continue in this same cluster-contract session. Repair the draft artifacts in place:",
+    ...params.artifactPaths.map((artifactPath) => `- \`${artifactPath}\``),
+    "",
+    "Diagnostics to fix:",
+    ...params.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+    "",
+    "The Cluster Facade Contract is a concrete pre-code API contract, not a narrative architecture note.",
+    "The JSON must define the future facade class/file, public method signatures, named input DTOs, named output DTOs, a discriminated result union, and module boundary inputs/outputs.",
+    "Use the Product Part Contract Seed as the parent-owned source of required inputs, outputs, statuses/errors, consumers, and owned modules; only refine it where the cluster boundary requires more precision.",
+    "If a required boundary is genuinely ambiguous, add a blocking question in the markdown and JSON instead of inventing an implementation detail.",
+    "",
+    "After editing, respond briefly that the repaired Cluster Contract artifacts are ready for Core validation.",
+  ].join("\n");
 
 export class ClusterContractTurnController {
   private readonly git = new WorkflowBoundaryGit();
@@ -300,7 +326,10 @@ export class ClusterContractTurnController {
       error instanceof Error ? error.message : String(error),
     ]);
     if (diagnostics.length > 0) {
-      return blocked(diagnostics);
+      return blocked(
+        diagnostics,
+        createRepairPrompt({ artifactPaths, clusterId, diagnostics, partId })
+      );
     }
     const draftCommit = await this.git.commit({
       commitMessage: planState.expectedCommitMessage,

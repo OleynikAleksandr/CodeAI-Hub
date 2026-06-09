@@ -18,6 +18,8 @@ const REVIEW_IN_PROGRESS_RE =
 const DRAFT_COMMIT_RE = /docs: draft note-selection-cluster cluster contract/u;
 const LEDGER_COMMIT_RE = /chore: advance managed workflow ledger/u;
 const FACADE_CLASS_DIAGNOSTIC_RE = /facade\.className is required/u;
+const FACADE_CONTRACT_JSON_RE = /ClusterFacadeContract\.draft\.json/u;
+const REPAIR_PROMPT_RE = /Core managed repair: Cluster Contract artifacts/u;
 
 const runGit = async (
   workspaceRoot: string,
@@ -222,6 +224,18 @@ test("ClusterContractTurnController blocks abstract facade contract JSON", async
     assert.match(
       result.handled ? result.message.content : "",
       FACADE_CLASS_DIAGNOSTIC_RE
+    );
+    assert.match(
+      result.handled ? (result.nextInternalMessage ?? "") : "",
+      REPAIR_PROMPT_RE
+    );
+    assert.match(
+      result.handled ? (result.nextInternalMessage ?? "") : "",
+      FACADE_CLASS_DIAGNOSTIC_RE
+    );
+    assert.match(
+      result.handled ? (result.nextInternalMessage ?? "") : "",
+      FACADE_CONTRACT_JSON_RE
     );
     assert.equal(
       (await runGit(workspaceRoot, ["log", "--oneline", "--all"])).includes(
