@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "c0d99882d",
+  "lastRecordedCommit": "ba9020bbc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase20.worktree-container-cleanup.task1",
-  "expectedCommitMessage": "fix: remove cleared node worktree containers",
+  "currentTaskId": "development-tree-cluster-contract.phase20.worktree-container-verify.task1",
+  "expectedCommitMessage": "test: verify cleared node worktree cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: remove cleared node worktree containers",
-    "preCommitHead": "c0d99882d",
+    "expectedCommitMessage": "test: verify cleared node worktree cleanup",
+    "preCommitHead": "ba9020bbc",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase20.worktree-container-cleanup.task1"
+    "taskId": "development-tree-cluster-contract.phase20.worktree-container-verify.task1"
   }
 }
 ```
@@ -408,7 +408,12 @@ Verification evidence:
 ### Stream: Git Worktree Container Cleanup
 
 182. [DONE] `development-tree-cluster-contract.phase20.worktree-container-cleanup.task1` Ensure downstream Cluster/Module ClearUndo removes the selected node worktree through Git and cleans the `*.worktrees` container when no registered worktrees remain (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: remove cleared node worktree containers`).
-183. [PENDING] Git Commit: `fix: remove cleared node worktree containers` (hash: TBD)
-184. [TODO] `development-tree-cluster-contract.phase20.worktree-container-verify.task1` Run targeted Core build/tests for downstream node ClearUndo worktree cleanup and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cleared node worktree cleanup`).
-185. [TODO] Git Commit: `test: verify cleared node worktree cleanup` (hash: TBD)
+183. [DONE] Git Commit: `fix: remove cleared node worktree containers` (hash: ba9020bbc)
+184. [DONE] `development-tree-cluster-contract.phase20.worktree-container-verify.task1` Run targeted Core build/tests for downstream node ClearUndo worktree cleanup and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cleared node worktree cleanup`).
+185. [PENDING] Git Commit: `test: verify cleared node worktree cleanup` (hash: TBD)
 186. [TODO] `development-tree-cluster-contract.phase20.release-confirm.task1` Await explicit user confirmation before building the next regression release for Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).
+
+Verification evidence:
+- `npx ultracite check packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts` passed.
+- `npm run build --workspace packages/core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.js` passed and verifies `*.worktrees` is removed after cluster ClearUndo when no registered worktrees remain.
