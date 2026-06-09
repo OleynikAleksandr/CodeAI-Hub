@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "dcf64c36f",
+  "lastRecordedCommit": "4cbfc0046",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase30.release-state.task1",
-  "expectedCommitMessage": "docs: checkpoint top down contract orchestration release build state",
+  "currentTaskId": "development-tree-cluster-contract.phase30.build-all.task1",
+  "expectedCommitMessage": "build: prepare top down contract orchestration release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint top down contract orchestration release build state",
-    "preCommitHead": "dcf64c36f",
+    "expectedCommitMessage": "build: prepare top down contract orchestration release artifacts",
+    "preCommitHead": "4cbfc0046",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase30.release-state.task1"
+    "taskId": "development-tree-cluster-contract.phase30.build-all.task1"
   }
 }
 ```
@@ -524,9 +524,9 @@ Verification evidence:
 225. [DONE] `development-tree-cluster-contract.phase30.release-notes.task1` Prepare release notes for top-down contract seeds, concrete Cluster Facade Contract validation, and cluster prompt propagation after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare top down contract orchestration release notes`).
 226. [DONE] Git Commit: `docs: prepare top down contract orchestration release notes` (hash: dcf64c36f)
 227. [DONE] `development-tree-cluster-contract.phase30.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint top down contract orchestration release build state`).
-228. [PENDING] Git Commit: `docs: checkpoint top down contract orchestration release build state` (hash: TBD)
-229. [TODO] `development-tree-cluster-contract.phase30.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare top down contract orchestration release artifacts`).
-230. [TODO] Git Commit: `build: prepare top down contract orchestration release artifacts` (hash: TBD)
+228. [DONE] Git Commit: `docs: checkpoint top down contract orchestration release build state` (hash: 4cbfc0046)
+229. [DONE] `development-tree-cluster-contract.phase30.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare top down contract orchestration release artifacts`).
+230. [PENDING] Git Commit: `build: prepare top down contract orchestration release artifacts` (hash: TBD)
 231. [TODO] `development-tree-cluster-contract.phase30.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package top down contract orchestration vsix release`).
 232. [TODO] Git Commit: `build: package top down contract orchestration vsix release` (hash: TBD)
 233. [TODO] `development-tree-cluster-contract.phase30.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint top down contract orchestration user retest state`).
