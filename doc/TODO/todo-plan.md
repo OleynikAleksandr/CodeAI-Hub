@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "659fd61fd",
+  "lastRecordedCommit": "ab32078d1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase37.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare projected cluster live refresh release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase37.release-state.task1",
+  "expectedCommitMessage": "docs: checkpoint projected cluster live refresh release build state",
   "debt": {
-    "expectedCommitMessage": "docs: prepare projected cluster live refresh release notes",
-    "preCommitHead": "659fd61fd",
+    "expectedCommitMessage": "docs: checkpoint projected cluster live refresh release build state",
+    "preCommitHead": "ab32078d1",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase37.release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase37.release-state.task1"
   }
 }
 ```
@@ -607,9 +607,9 @@ Verification evidence:
 ### Stream: Release After Confirmation
 
 264. [DONE] `development-tree-cluster-contract.phase37.release-notes.task1` Prepare release notes for projected cluster dialog live refresh after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster live refresh release notes`).
-265. [PENDING] Git Commit: `docs: prepare projected cluster live refresh release notes` (hash: TBD)
-266. [TODO] `development-tree-cluster-contract.phase37.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh release build state`).
-267. [TODO] Git Commit: `docs: checkpoint projected cluster live refresh release build state` (hash: TBD)
+265. [DONE] Git Commit: `docs: prepare projected cluster live refresh release notes` (hash: ab32078d1)
+266. [DONE] `development-tree-cluster-contract.phase37.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh release build state`).
+267. [PENDING] Git Commit: `docs: checkpoint projected cluster live refresh release build state` (hash: TBD)
 268. [TODO] `development-tree-cluster-contract.phase37.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for release `1.2.481` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster live refresh release artifacts`).
 269. [TODO] Git Commit: `build: prepare projected cluster live refresh release artifacts` (hash: TBD)
 270. [TODO] `development-tree-cluster-contract.phase37.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for release `1.2.481` (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster live refresh vsix release`).
