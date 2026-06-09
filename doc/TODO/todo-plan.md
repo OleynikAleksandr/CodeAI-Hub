@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "ec84bb899",
+  "lastRecordedCommit": "6e31b734f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase23.vsix.task1",
-  "expectedCommitMessage": "build: package projected cluster review vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase23.release-handoff.task1",
+  "expectedCommitMessage": "docs: checkpoint projected cluster review user retest state",
   "debt": {
-    "expectedCommitMessage": "build: package projected cluster review vsix release",
-    "preCommitHead": "ec84bb899",
+    "expectedCommitMessage": "docs: checkpoint projected cluster review user retest state",
+    "preCommitHead": "6e31b734f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase23.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase23.release-handoff.task1"
   }
 }
 ```
@@ -462,6 +462,6 @@ Verification evidence:
 203. [DONE] `development-tree-cluster-contract.phase23.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster review release artifacts`).
 204. [DONE] Git Commit: `build: prepare projected cluster review release artifacts` (hash: ec84bb899)
 205. [DONE] `development-tree-cluster-contract.phase23.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster review vsix release`).
-206. [PENDING] Git Commit: `build: package projected cluster review vsix release` (hash: TBD)
-207. [TODO] `development-tree-cluster-contract.phase23.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster review user retest state`).
-208. [TODO] Git Commit: `docs: checkpoint projected cluster review user retest state` (hash: TBD)
+206. [DONE] Git Commit: `build: package projected cluster review vsix release` (hash: 6e31b734f)
+207. [DONE] `development-tree-cluster-contract.phase23.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster review user retest state`).
+208. [PENDING] Git Commit: `docs: checkpoint projected cluster review user retest state` (hash: TBD)
