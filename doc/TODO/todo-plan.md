@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "67de16e7a",
+  "lastRecordedCommit": "c0d99882d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase18.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint projected cluster identity user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase20.worktree-container-cleanup.task1",
+  "expectedCommitMessage": "fix: remove cleared node worktree containers",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint projected cluster identity user retest state",
-    "preCommitHead": "67de16e7a",
+    "expectedCommitMessage": "fix: remove cleared node worktree containers",
+    "preCommitHead": "c0d99882d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase18.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase20.worktree-container-cleanup.task1"
   }
 }
 ```
@@ -393,7 +393,7 @@ Verification evidence:
 175. [DONE] `development-tree-cluster-contract.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster identity vsix release`).
 176. [DONE] Git Commit: `build: package projected cluster identity vsix release` (hash: 67de16e7a)
 177. [DONE] `development-tree-cluster-contract.phase18.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster identity user retest state`).
-178. [PENDING] Git Commit: `docs: checkpoint projected cluster identity user retest state` (hash: TBD)
+178. [DONE] Git Commit: `docs: checkpoint projected cluster identity user retest state` (hash: c0d99882d)
 
 ## Phase 19 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
@@ -402,3 +402,13 @@ Verification evidence:
 179. [TODO] `development-tree-cluster-contract.phase19.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
 180. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
 181. [TODO] `development-tree-cluster-contract.phase19.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+
+## Phase 20 - Cluster ClearUndo Worktree Cleanup Regression (owner: Codex, updated: 2026-06-09)
+
+### Stream: Git Worktree Container Cleanup
+
+182. [DONE] `development-tree-cluster-contract.phase20.worktree-container-cleanup.task1` Ensure downstream Cluster/Module ClearUndo removes the selected node worktree through Git and cleans the `*.worktrees` container when no registered worktrees remain (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: remove cleared node worktree containers`).
+183. [PENDING] Git Commit: `fix: remove cleared node worktree containers` (hash: TBD)
+184. [TODO] `development-tree-cluster-contract.phase20.worktree-container-verify.task1` Run targeted Core build/tests for downstream node ClearUndo worktree cleanup and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cleared node worktree cleanup`).
+185. [TODO] Git Commit: `test: verify cleared node worktree cleanup` (hash: TBD)
+186. [TODO] `development-tree-cluster-contract.phase20.release-confirm.task1` Await explicit user confirmation before building the next regression release for Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).

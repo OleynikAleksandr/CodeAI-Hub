@@ -270,6 +270,41 @@ const removeEmptyParents = async (params: {
   }
 };
 
+const runGitWorktreeRemove = async (params: {
+  readonly registeredPath: string;
+  readonly workspacePath: string;
+}): Promise<void> => {
+  try {
+    await execFileAsync(
+      "git",
+      ["worktree", "remove", "--force", params.registeredPath],
+      { cwd: params.workspacePath }
+    );
+    return;
+  } catch {
+    await execFileAsync(
+      "git",
+      ["worktree", "remove", "--force", "--force", params.registeredPath],
+      { cwd: params.workspacePath }
+    );
+  }
+};
+
+const cleanupWorktreesRoot = async (params: {
+  readonly workspacePath: string;
+  readonly worktreesRoot: string;
+}): Promise<void> => {
+  await execFileAsync("git", ["worktree", "prune"], {
+    cwd: params.workspacePath,
+  }).catch(() => null);
+  const hasRegisteredWorktree = (
+    await listGitWorktreePaths(params.workspacePath)
+  ).some((worktreePath) => isWithinPath(params.worktreesRoot, worktreePath));
+  if (!hasRegisteredWorktree) {
+    await rm(params.worktreesRoot, { force: true, recursive: true });
+  }
+};
+
 const removeNodeWorktrees = async (params: {
   readonly parsedNode: ParsedDevelopmentTreeNode;
   readonly recordedWorktreePaths: readonly string[];
@@ -291,11 +326,10 @@ const removeNodeWorktrees = async (params: {
       (worktreePath) => path.resolve(worktreePath) === path.resolve(candidate)
     );
     if (registeredPath) {
-      await execFileAsync(
-        "git",
-        ["worktree", "remove", "--force", registeredPath],
-        { cwd: params.workspacePath }
-      ).catch(async () => {
+      await runGitWorktreeRemove({
+        registeredPath,
+        workspacePath: params.workspacePath,
+      }).catch(async () => {
         await rm(registeredPath, { force: true, recursive: true });
       });
     } else if (await pathExists(candidate)) {
@@ -309,6 +343,10 @@ const removeNodeWorktrees = async (params: {
       stopPath: worktreesRoot,
     });
   }
+  await cleanupWorktreesRoot({
+    workspacePath: params.workspacePath,
+    worktreesRoot,
+  });
   return removed;
 };
 

@@ -178,6 +178,8 @@ test("clearDevelopmentTreeNode removes cluster worktree and resets projection", 
   try {
     await initializeMainWorkspace(workspaceRoot);
     const worktreePath = await createClusterWorktree(workspaceRoot);
+    const worktreesRoot = `${workspaceRoot}.worktrees`;
+    await writeFile(path.join(worktreesRoot, ".DS_Store"), "stale", "utf8");
     await writeProjectedState(workspaceRoot, worktreePath);
     const sessionManager = new SessionManager();
     const session = sessionManager.createSession(
@@ -202,6 +204,7 @@ test("clearDevelopmentTreeNode removes cluster worktree and resets projection", 
     assert.equal(result.nodeId, `cluster:${PART_ID}/${CLUSTER_ID}`);
     assert.deepEqual(result.deletedSessionIds, [session.id]);
     assert.equal(await exists(worktreePath), false);
+    assert.equal(await exists(worktreesRoot), false);
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
 
     const rawState = await readFile(
