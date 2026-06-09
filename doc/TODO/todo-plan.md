@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "0b6a26a50",
+  "lastRecordedCommit": "fd49b11f7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase48.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare projected cluster dialog routing release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase48.release-state.task1",
+  "expectedCommitMessage": "docs: checkpoint projected cluster dialog release build state",
   "debt": {
-    "expectedCommitMessage": "docs: prepare projected cluster dialog routing release notes",
-    "preCommitHead": "0b6a26a50",
+    "expectedCommitMessage": "docs: checkpoint projected cluster dialog release build state",
+    "preCommitHead": "fd49b11f7",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase48.release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase48.release-state.task1"
   }
 }
 ```
@@ -722,9 +722,9 @@ Verification evidence:
 ### Stream: Release After Confirmation
 
 309. [DONE] `development-tree-cluster-contract.phase48.release-notes.task1` Prepare release notes for the projected cluster dialog routing and documentation fixes before bumping versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster dialog routing release notes`).
-310. [PENDING] Git Commit: `docs: prepare projected cluster dialog routing release notes` (hash: TBD)
-311. [TODO] `development-tree-cluster-contract.phase48.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster dialog release build state`).
-312. [TODO] Git Commit: `docs: checkpoint projected cluster dialog release build state` (hash: TBD)
+310. [DONE] Git Commit: `docs: prepare projected cluster dialog routing release notes` (hash: fd49b11f7)
+311. [DONE] `development-tree-cluster-contract.phase48.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster dialog release build state`).
+312. [PENDING] Git Commit: `docs: checkpoint projected cluster dialog release build state` (hash: TBD)
 313. [TODO] `development-tree-cluster-contract.phase48.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster dialog release artifacts`).
 314. [TODO] Git Commit: `build: prepare projected cluster dialog release artifacts` (hash: TBD)
 315. [TODO] `development-tree-cluster-contract.phase48.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster dialog vsix release`).
