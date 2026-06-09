@@ -192,6 +192,17 @@ test("dialog controller retries stalled cold-open history request after timeout"
   assertIncludes(source, "requestDialogHistory(activeIntent, dialogId, 0, { force: true });", "watchdog must issue a forced full-history retry for stalled cold-open");
 });
 
+test("projected dialog restore uses worktree workspace identity", async () => {
+  const [controllerSource, coreEventsSource] = await Promise.all([
+    readFile(CONTROLLER_SOURCE_PATH, "utf8"),
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+  ]);
+
+  assertIncludes(coreEventsSource, "const dialogWorkspacePath = match.worktreePath ?? intent.workspacePath;", "projected dialogs must prefer worktree path over main workspace for runtime restore");
+  assertIncludes(coreEventsSource, "workspacePath: dialogWorkspacePath,", "dialog restore must create or resume sessions inside the node worktree");
+  assertIncludes(controllerSource, "created.workspacePath === current.workspacePath", "controller must adopt restored projected runtime sessions from their worktree");
+});
+
 test("dialog restore refresh suppression treats snapshot-confirmed idle dialog as terminally hydrated", async () => {
   const shouldSuppressIdleDialogRestoreRefresh =
     await loadShouldSuppressIdleDialogRestoreRefresh();

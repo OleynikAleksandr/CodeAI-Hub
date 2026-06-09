@@ -88,6 +88,25 @@ test("dialog bootstrap preserves model binding from dialog index", () => {
   );
 });
 
+test("dialog index preserves projected worktree path", () => {
+  const entry = sanitizeDialogIndexEntry({
+    stage: "development_tree/materialized/product-parts/finder-widget/clusters/note-selection-cluster",
+    rootSessionId: "dialog-root",
+    dialogId: "codex-dialog-root",
+    updatedAt: "2026-06-09T07:10:00.000Z",
+    latestSessionId: "runtime-session",
+    providerId: "codexCli",
+    providerSessionId: "provider-session",
+    modelBinding: null,
+    worktreePath: "/workspace.worktrees/finder-widget/note-selection-cluster",
+  });
+
+  assert.equal(
+    entry?.worktreePath,
+    "/workspace.worktrees/finder-widget/note-selection-cluster"
+  );
+});
+
 test("dialog match prefers selected development-tree node identity", () => {
   const olderNodeDialog = sanitizeDialogIndexEntry({
     stage: "development_tree/materialized/product-parts/project-manager/modules/workflow-orchestration-ui",

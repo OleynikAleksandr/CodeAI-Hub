@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "05cc2343b",
+  "lastRecordedCommit": "e792e18a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree.task1",
-  "expectedCommitMessage": "fix: open projected cluster dialogs in worktrees",
+  "currentTaskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1",
+  "expectedCommitMessage": "test: verify projected cluster dialog worktree hydration",
   "debt": {
-    "expectedCommitMessage": "fix: open projected cluster dialogs in worktrees",
-    "preCommitHead": "05cc2343b",
+    "expectedCommitMessage": "test: verify projected cluster dialog worktree hydration",
+    "preCommitHead": "e792e18a5",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree.task1"
+    "taskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1"
   }
 }
 ```
@@ -438,9 +438,9 @@ Verification evidence:
 ### Stream: Worktree-Scoped Projected Dialog Hydration
 
 192. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-worktree.task1` Preserve projected cluster dialog `worktreePath` in Project Manager and open/restore the dialog against the node worktree instead of the main workspace so review history and input state hydrate correctly (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix: open projected cluster dialogs in worktrees`).
-193. [PENDING] Git Commit: `fix: open projected cluster dialogs in worktrees` (hash: TBD)
-194. [TODO] `development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1` Add targeted Project Manager regression coverage for worktree-backed projected dialog bootstrap/restore and active review gate rendering (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog worktree hydration`).
-195. [TODO] Git Commit: `test: verify projected cluster dialog worktree hydration` (hash: TBD)
+193. [DONE] Git Commit: `fix: open projected cluster dialogs in worktrees` (hash: e792e18a5)
+194. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1` Add targeted Project Manager regression coverage for worktree-backed projected dialog bootstrap/restore and active review gate rendering (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog worktree hydration`).
+195. [PENDING] Git Commit: `test: verify projected cluster dialog worktree hydration` (hash: TBD)
 196. [TODO] `development-tree-cluster-contract.phase22.projected-dialog-verify.task1` Run targeted Project Manager/Core build checks for projected cluster dialog hydration before release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog review gate`).
 197. [TODO] Git Commit: `test: verify projected cluster dialog review gate` (hash: TBD)
 198. [TODO] `development-tree-cluster-contract.phase22.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog review gates, bootstrap ledger commits, and Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).
