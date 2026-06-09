@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "0931c5305",
+  "lastRecordedCommit": "31dbe2a3d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase37.build-all.task1",
-  "expectedCommitMessage": "build: prepare projected cluster live refresh release artifacts",
+  "currentTaskId": "development-tree-cluster-contract.phase37.vsix.task1",
+  "expectedCommitMessage": "build: package projected cluster live refresh vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare projected cluster live refresh release artifacts",
-    "preCommitHead": "0931c5305",
+    "expectedCommitMessage": "build: package projected cluster live refresh vsix release",
+    "preCommitHead": "31dbe2a3d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase37.build-all.task1"
+    "taskId": "development-tree-cluster-contract.phase37.vsix.task1"
   }
 }
 ```
@@ -611,8 +611,8 @@ Verification evidence:
 266. [DONE] `development-tree-cluster-contract.phase37.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh release build state`).
 267. [DONE] Git Commit: `docs: checkpoint projected cluster live refresh release build state` (hash: 0931c5305)
 268. [DONE] `development-tree-cluster-contract.phase37.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for release `1.2.481` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster live refresh release artifacts`).
-269. [PENDING] Git Commit: `build: prepare projected cluster live refresh release artifacts` (hash: TBD)
-270. [TODO] `development-tree-cluster-contract.phase37.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for release `1.2.481` (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster live refresh vsix release`).
-271. [TODO] Git Commit: `build: package projected cluster live refresh vsix release` (hash: TBD)
+269. [DONE] Git Commit: `build: prepare projected cluster live refresh release artifacts` (hash: 31dbe2a3d)
+270. [DONE] `development-tree-cluster-contract.phase37.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for release `1.2.481` (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster live refresh vsix release`).
+271. [PENDING] Git Commit: `build: package projected cluster live refresh vsix release` (hash: TBD)
 272. [TODO] `development-tree-cluster-contract.phase37.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh user retest state`).
 273. [TODO] Git Commit: `docs: checkpoint projected cluster live refresh user retest state` (hash: TBD)
