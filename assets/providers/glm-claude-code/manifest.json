@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.2.476",
-    "package": "glm-claude-code-module-1.2.476.tar.bz2",
-    "size": 136653,
-    "sha1": "2c2c935f474b96b78910923954ad924f2648c6ef"
+    "version": "1.2.477",
+    "package": "glm-claude-code-module-1.2.477.tar.bz2",
+    "size": 136644,
+    "sha1": "6094cf9e280357fb8d6b9728b43841bed6d42ba1"
   }
 }
