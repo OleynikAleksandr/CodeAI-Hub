@@ -2,7 +2,29 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.482** (Cluster Contract Review Unlock)
+**Current Release — v1.2.483** (Projected Cluster Dialog Routing)
+
+This regression-fix release routes projected Cluster/Module dialogs through the
+actual node worktree root. Project Manager now keeps the Core-resolved
+`worktreePath` as the active dialog intent, and `dialog:list`, `dialog:history`,
+and `dialog:send` commands carry that explicit workspace root instead of
+silently falling back to the main workspace runtime.
+
+The `Подтверждаю` action for a projected cluster review now goes through
+`dialog:send` with the managed review action preserved, so Core resolves the
+same worktree-backed dialog chain that the user sees. The UI also shows a local
+managed-review wait lock while Core processes the confirmation.
+
+The related Development Tree planning documents now record the exact symptoms,
+root causes, invariants, and regression checks for this class of bugs.
+
+Retest by recreating the FinderWidget lead Product Part flow through
+`note-selection-cluster`. Keep the cluster node selected: new agent and
+Core/System messages should live-refresh without toggling the sidebar, and
+clicking `Подтверждаю` should advance through the visible cluster dialog without
+leaving the input blocked.
+
+**Previous Release — v1.2.482** (Cluster Contract Review Unlock)
 
 This regression-fix release closes the projected Cluster Contract review lock
 loop. Project Manager now applies managed workflow side effects when replaying
@@ -20,7 +42,7 @@ Retest by recreating the FinderWidget lead Product Part flow through the
 show the final Core review message without toggling sidebar steps, and the
 `Подтверждаю` action should be clickable.
 
-**Previous Release — v1.2.481** (Projected Cluster Live Refresh)
+**Earlier Release — v1.2.481** (Projected Cluster Live Refresh)
 
 This regression-fix release keeps Project Manager synchronized with
 worktree-backed Cluster Contract sessions. Core now includes provider session

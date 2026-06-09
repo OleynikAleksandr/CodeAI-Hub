@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.483] - 2026-06-09
+### Fixed
+- **Projected Cluster dialogs now keep the resolved worktree root.** Project Manager replaces the active dialog intent with the Core-resolved `worktreePath`, so live history refresh reads the cluster worktree JSONL instead of falling back to the main workspace runtime.
+- **Projected Cluster review confirmations now use `dialog:send`.** The `Подтверждаю` action carries `turnOptions.managedReviewAction` through the worktree-backed dialog chain instead of bypassing it with a direct runtime session message.
+- **Managed review clicks now show the correct wait state.** Project Manager applies a local managed-review lock while Core processes the confirmation, avoiding the contradictory free-text placeholder on a blocked input.
+
+### Documentation
+- **Development Tree planning docs now record the regression contract.** The branch workflow and sub-agent orchestration plans describe the symptoms, root causes, required Core/client invariants, and manual regression checks for projected worktree dialogs.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-codex-model-switch.test.js`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.482] - 2026-06-09
 ### Fixed
 - **Projected Cluster review messages now unlock the visible dialog during full-history replay.** Project Manager applies managed workflow side effects when replaying JSONL history, so `managed-workflow-user-review` releases stale `running` and continuation locks even if a live idle event was missed.

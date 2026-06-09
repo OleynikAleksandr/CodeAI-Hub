@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "2f92d90fd",
+  "lastRecordedCommit": "0b6a26a50",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase47.projected-dialog-lessons-docs.task1",
-  "expectedCommitMessage": "docs: record projected cluster dialog routing lessons",
+  "currentTaskId": "development-tree-cluster-contract.phase48.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare projected cluster dialog routing release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record projected cluster dialog routing lessons",
-    "preCommitHead": "2f92d90fd",
+    "expectedCommitMessage": "docs: prepare projected cluster dialog routing release notes",
+    "preCommitHead": "0b6a26a50",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase47.projected-dialog-lessons-docs.task1"
+    "taskId": "development-tree-cluster-contract.phase48.release-notes.task1"
   }
 }
 ```
@@ -711,18 +711,35 @@ Verification evidence:
 ### Stream: Architecture Postmortem Notes
 
 306. [DONE] `development-tree-cluster-contract.phase47.projected-dialog-lessons-docs.task1` Add concrete bug/fix/nuance notes for projected cluster sub-agent dialogs, worktree-root routing, dialog send managed review actions, and regression requirements to the Development Tree planning documents (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: record projected cluster dialog routing lessons`).
-307. [PENDING] Git Commit: `docs: record projected cluster dialog routing lessons` (hash: TBD)
+307. [DONE] Git Commit: `docs: record projected cluster dialog routing lessons` (hash: 0b6a26a50)
 
 ## Phase 48 - Release Build Confirmation (owner: Codex, updated: 2026-06-09)
 
 ### Stream: Explicit Release Gate
 
-308. [TODO] `development-tree-cluster-contract.phase48.release-confirm.task1` Ask the user for explicit confirmation before building the next release that includes the projected cluster dialog routing and documentation fixes (scope: user workflow; expected commit: none).
+308. [DONE] `development-tree-cluster-contract.phase48.release-confirm.task1` Ask the user for explicit confirmation before building the next release that includes the projected cluster dialog routing and documentation fixes (scope: user workflow; expected commit: none). Result: user explicitly confirmed release build after the concrete architecture/postmortem documentation was added.
 
-## Phase 49 - Scope Closeout (owner: Codex, updated: 2026-06-09)
+### Stream: Release After Confirmation
+
+309. [DONE] `development-tree-cluster-contract.phase48.release-notes.task1` Prepare release notes for the projected cluster dialog routing and documentation fixes before bumping versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster dialog routing release notes`).
+310. [PENDING] Git Commit: `docs: prepare projected cluster dialog routing release notes` (hash: TBD)
+311. [TODO] `development-tree-cluster-contract.phase48.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster dialog release build state`).
+312. [TODO] Git Commit: `docs: checkpoint projected cluster dialog release build state` (hash: TBD)
+313. [TODO] `development-tree-cluster-contract.phase48.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster dialog release artifacts`).
+314. [TODO] Git Commit: `build: prepare projected cluster dialog release artifacts` (hash: TBD)
+315. [TODO] `development-tree-cluster-contract.phase48.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster dialog vsix release`).
+316. [TODO] Git Commit: `build: package projected cluster dialog vsix release` (hash: TBD)
+
+## Phase 49 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
+
+### Stream: Projected Cluster Dialog Release Retest
+
+317. [TODO] `development-tree-cluster-contract.phase49.user-retest.task1` User installs the next release and retests the FinderWidget cluster-contract flow: projected cluster dialog must live-refresh from worktree JSONL without sidebar toggling, `Подтверждаю` must route through the visible cluster dialog, and the input must not remain blocked with a free-text placeholder (scope: user workflow; expected commit: none).
+
+## Phase 50 - Scope Closeout (owner: Codex, updated: 2026-06-09)
 
 ### Stream: Closeout After Acceptance
 
-309. [TODO] `development-tree-cluster-contract.phase49.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-310. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-311. [TODO] `development-tree-cluster-contract.phase49.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+318. [TODO] `development-tree-cluster-contract.phase50.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+319. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+320. [TODO] `development-tree-cluster-contract.phase50.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
