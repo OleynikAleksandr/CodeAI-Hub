@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "21c1450e8",
+  "lastRecordedCommit": "2a90a7f9f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase41.vsix.task1",
-  "expectedCommitMessage": "build: package cluster contract review unlock vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase41.release-handoff.task1",
+  "expectedCommitMessage": "docs: checkpoint cluster contract review unlock user retest state",
   "debt": {
-    "expectedCommitMessage": "build: package cluster contract review unlock vsix release",
-    "preCommitHead": "21c1450e8",
+    "expectedCommitMessage": "docs: checkpoint cluster contract review unlock user retest state",
+    "preCommitHead": "2a90a7f9f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase41.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase41.release-handoff.task1"
   }
 }
 ```
@@ -672,6 +672,20 @@ Verification evidence:
 292. [DONE] `development-tree-cluster-contract.phase41.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract review unlock release artifacts`).
 293. [DONE] Git Commit: `build: prepare cluster contract review unlock release artifacts` (hash: 21c1450e8)
 294. [DONE] `development-tree-cluster-contract.phase41.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract review unlock vsix release`).
-295. [PENDING] Git Commit: `build: package cluster contract review unlock vsix release` (hash: TBD)
-296. [TODO] `development-tree-cluster-contract.phase41.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract review unlock user retest state`).
-297. [TODO] Git Commit: `docs: checkpoint cluster contract review unlock user retest state` (hash: TBD)
+295. [DONE] Git Commit: `build: package cluster contract review unlock vsix release` (hash: 2a90a7f9f)
+296. [DONE] `development-tree-cluster-contract.phase41.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract review unlock user retest state`).
+297. [PENDING] Git Commit: `docs: checkpoint cluster contract review unlock user retest state` (hash: TBD)
+
+## Phase 42 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
+
+### Stream: Cluster Contract Review Unlock Retest
+
+298. [TODO] `development-tree-cluster-contract.phase42.user-retest.task1` User installs release `1.2.482` and retests the FinderWidget cluster-contract flow: accepted cluster contract review must refresh in the visible projected cluster dialog without sidebar toggling, release stale `Agent is working`/managed gate locks, and make the `Подтверждаю` action clickable when Core emits `managed-workflow-user-review` (scope: user workflow; expected commit: none).
+
+## Phase 43 - Scope Closeout (owner: Codex, updated: 2026-06-09)
+
+### Stream: Closeout After Acceptance
+
+299. [TODO] `development-tree-cluster-contract.phase43.closeout.task1` After explicit user acceptance of release `1.2.482`, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+300. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+301. [TODO] `development-tree-cluster-contract.phase43.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
