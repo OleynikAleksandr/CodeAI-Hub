@@ -2,30 +2,33 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.478** (Projected Cluster Review Gate)
+**Current Release — v1.2.479** (Top-Down Contract Orchestration)
 
-This regression-fix release makes projected Cluster Contract review gates open
-from the correct worktree context. Project Manager now preserves the
-worktree-backed dialog path from Core, restores the cluster session inside that
-node worktree, and hydrates the final `managed-workflow-user-review` message so
-the `Подтверждаю` button appears instead of leaving the input locked on
-`Agent is working...`.
+This release makes the lead Product Part responsible for downstream contract
+seeds. `DevelopmentOrderPlan.v2` now requires parent-defined `contractSeeds`
+for Cluster and Standalone Module nodes, including consumer, required inputs,
+required outputs, statuses/errors, blocking questions, and cluster-owned
+modules.
 
-Cluster Contract bootstrap now commits the main Product Part unlock-state
-ledger after recording the created cluster session, branch, and worktree path.
-That keeps the main workspace clean before later review/merge boundaries.
+Core persists accepted contract seeds into Product Part unlock-state and passes
+the selected seed into the first Cluster Contract sub-agent prompt. Cluster
+agents now receive a concrete parent boundary and are instructed to produce
+pre-code facade artifacts, not abstract design notes.
 
-Downstream Cluster/Module ClearUndo cleanup also removes the selected Git
-worktree and prunes the top-level `<workspace>.worktrees` container when the
-last registered downstream worktree is gone.
+Cluster Contract review now rejects abstract `ClusterFacadeContract.draft.json`
+files. The facade contract must define the future facade class, file path,
+method signatures, input/output DTOs, result union, and module boundary
+contracts before Core opens the review gate.
 
-Retest by clearing and recreating the FinderWidget Product Part or cluster
-node, selecting `note-selection-cluster`, and confirming that the existing
-cluster conversation reaches the Core review message with an active
-`Подтверждаю` button. Git status in both the main workspace and cluster
-worktree should stay clean at managed boundaries.
+Retest by recreating the FinderWidget lead Product Part flow from the accepted
+Development Order Plan. The lead agent should write `contractSeeds`, the
+cluster agent should receive the seed in its first prompt, and Core should
+block any Cluster Facade Contract JSON that does not describe concrete future
+code.
 
-**Previous Release — v1.2.477** (Projected Cluster Dialog Identity)
+**Previous Release — v1.2.478** (Projected Cluster Review Gate)
+
+**Earlier Release — v1.2.477** (Projected Cluster Dialog Identity)
 
 This regression-fix release resolves the remaining empty-dialog case for
 downstream Cluster Contract sessions. Project Manager now receives the real

@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.479] - 2026-06-09
+### Added
+- **Lead Product Part order plans now require downstream contract seeds.** `DevelopmentOrderPlan.v2` validates `contractSeeds` for Cluster and Standalone Module nodes so lower agents receive parent-defined consumer, input, output, status/error, and blocking-question boundaries.
+- **Cluster Contract sub-agents receive the accepted parent seed.** Core persists contract seeds in Product Part unlock-state and includes the selected seed in the first Cluster Contract prompt.
+
+### Changed
+- **Cluster Contract prompts now require concrete pre-code facade contracts.** Cluster agents are instructed to write facade class names, file paths, method signatures, DTOs, result unions, and module boundary contracts instead of abstract descriptions.
+- **Cluster Contract review validates concrete facade JSON.** Core blocks `ClusterFacadeContract.draft.json` until it includes facade class/file/method/type/result/module-boundary fields.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/development-tree/product-part-workflow/development-order-plan-v2-contract.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.js packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js packages/core/dist/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js`
+
 ## [1.2.478] - 2026-06-09
 ### Fixed
 - **Projected cluster dialogs now hydrate from the node worktree context.** Project Manager preserves the Core-provided `worktreePath`, restores the cluster runtime session inside that worktree, and can render the final `managed-workflow-user-review` message with the `Подтверждаю` action instead of staying locked as running.

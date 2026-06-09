@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "d2f612158",
+  "lastRecordedCommit": "6459d8358",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase28.verification.task1",
-  "expectedCommitMessage": "test: verify top down contract orchestration",
+  "currentTaskId": "development-tree-cluster-contract.phase30.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare top down contract orchestration release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify top down contract orchestration",
-    "preCommitHead": "d2f612158",
+    "expectedCommitMessage": "docs: prepare top down contract orchestration release notes",
+    "preCommitHead": "6459d8358",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase28.verification.task1"
+    "taskId": "development-tree-cluster-contract.phase30.release-notes.task1"
   }
 }
 ```
@@ -504,9 +504,30 @@ Verification evidence:
 220. [DONE] `development-tree-cluster-contract.phase28.cluster-contract-validation.task1` Strengthen cluster contract review validation so `ClusterFacadeContract.draft.json` must contain concrete facade class/file/method/DTO/result-union/module-boundary fields before Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: validate concrete cluster facade contracts`).
 221. [DONE] Git Commit: `feat: validate concrete cluster facade contracts` (hash: d2f612158)
 222. [DONE] `development-tree-cluster-contract.phase28.verification.task1` Run targeted Core tests/builds for contract seeds, lead prompt requirements, downstream seed propagation, cluster prompt requirements, and concrete contract validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify top down contract orchestration`).
-223. [PENDING] Git Commit: `test: verify top down contract orchestration` (hash: TBD)
+223. [DONE] Git Commit: `test: verify top down contract orchestration` (hash: 6459d8358)
 
 Verification evidence:
 - `npx ultracite check ...development-order-plan-v2-contract.ts ...product-part-development-brief-review-controller.ts ...development-order-plan-unlock-state.ts ...cluster-contract-agent-bootstrapper.ts ...cluster-contract-prompt-builder.ts ...cluster-contract-turn-controller.ts` passed for the targeted files.
 - `npm run build --workspace packages/core` passed.
 - `node --test ...development-order-plan-v2-contract.test.js ...product-part-development-brief-review-controller.prompt.test.js ...cluster-contract-agent-bootstrapper.test.js ...cluster-contract-prompt-builder.test.js ...cluster-contract-turn-controller.test.js` passed: 11/11 tests.
+
+## Phase 29 - Release Build Confirmation (owner: user, updated: 2026-06-09)
+
+### Stream: Release Decision
+
+224. [DONE] `development-tree-cluster-contract.phase29.release-confirm.task1` Await explicit user confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging a VSIX for the top-down contract orchestration fixes (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for top-down contract orchestration fixes.
+
+## Phase 30 - Top-Down Contract Orchestration Release Build (owner: Codex, updated: 2026-06-09)
+
+### Stream: Release After Confirmation
+
+225. [DONE] `development-tree-cluster-contract.phase30.release-notes.task1` Prepare release notes for top-down contract seeds, concrete Cluster Facade Contract validation, and cluster prompt propagation after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare top down contract orchestration release notes`).
+226. [PENDING] Git Commit: `docs: prepare top down contract orchestration release notes` (hash: TBD)
+227. [TODO] `development-tree-cluster-contract.phase30.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint top down contract orchestration release build state`).
+228. [TODO] Git Commit: `docs: checkpoint top down contract orchestration release build state` (hash: TBD)
+229. [TODO] `development-tree-cluster-contract.phase30.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare top down contract orchestration release artifacts`).
+230. [TODO] Git Commit: `build: prepare top down contract orchestration release artifacts` (hash: TBD)
+231. [TODO] `development-tree-cluster-contract.phase30.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package top down contract orchestration vsix release`).
+232. [TODO] Git Commit: `build: package top down contract orchestration vsix release` (hash: TBD)
+233. [TODO] `development-tree-cluster-contract.phase30.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint top down contract orchestration user retest state`).
+234. [TODO] Git Commit: `docs: checkpoint top down contract orchestration user retest state` (hash: TBD)
