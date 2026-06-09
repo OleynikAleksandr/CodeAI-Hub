@@ -203,6 +203,17 @@ test("projected dialog restore uses worktree workspace identity", async () => {
   assertIncludes(controllerSource, "created.workspacePath === current.workspacePath", "controller must adopt restored projected runtime sessions from their worktree");
 });
 
+test("projected dialog stream events request tail history refresh", async () => {
+  const [controllerSource, turnStateSource] = await Promise.all([
+    readFile(CONTROLLER_SOURCE_PATH, "utf8"),
+    readFile(path.resolve(process.cwd(), "src/client/project-manager/components/sessions/turn-state-stream.ts"), "utf8"),
+  ]);
+
+  assertIncludes(controllerSource, "shouldRefreshDialogHistoryForStream", "controller must route projected worktree stream events into dialog history refresh");
+  assertIncludes(controllerSource, "requestDialogHistory(activeIntent, dialogId, cursor, { force: cursor <= 0 });", "controller must refresh the active dialog tail after matching turn-state events");
+  assertIncludes(turnStateSource, "turnState.providerSessionId ===", "turn-state matching must support projected dialogs whose visible id differs from runtime session id");
+});
+
 test("dialog restore refresh suppression treats snapshot-confirmed idle dialog as terminally hydrated", async () => {
   const shouldSuppressIdleDialogRestoreRefresh =
     await loadShouldSuppressIdleDialogRestoreRefresh();

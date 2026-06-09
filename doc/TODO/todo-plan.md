@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "2ae469b49",
+  "lastRecordedCommit": "b56cb513c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase36.projected-live-refresh.task1",
-  "expectedCommitMessage": "fix: refresh projected cluster dialog live state",
+  "currentTaskId": "development-tree-cluster-contract.phase36.projected-live-refresh-test.task1",
+  "expectedCommitMessage": "test: verify projected cluster dialog live refresh",
   "debt": {
-    "expectedCommitMessage": "fix: refresh projected cluster dialog live state",
-    "preCommitHead": "2ae469b49",
+    "expectedCommitMessage": "test: verify projected cluster dialog live refresh",
+    "preCommitHead": "b56cb513c",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase36.projected-live-refresh.task1"
+    "taskId": "development-tree-cluster-contract.phase36.projected-live-refresh-test.task1"
   }
 }
 ```
@@ -589,9 +589,9 @@ Verification evidence:
 ### Stream: Worktree Live State Projection
 
 257. [DONE] `development-tree-cluster-contract.phase36.projected-live-refresh.task1` Refresh projected cluster dialogs from their worktree runtime identity so live `turn_state`/workspace snapshots unlock the visible dialog and tail-history updates are fetched while the sub-agent continues or settles (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-callbacks.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts, src/client/project-manager/components/sessions/turn-state-stream.ts`; expected commit: `fix: refresh projected cluster dialog live state`).
-258. [PENDING] Git Commit: `fix: refresh projected cluster dialog live state` (hash: TBD)
-259. [TODO] `development-tree-cluster-contract.phase36.projected-live-refresh-test.task1` Add targeted Project Manager/Core regression coverage for projected worktree dialog live refresh and provider-session turn-state fallback (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts, packages/core/src/remote-bridge/session-stream-contracts.ts`; expected commit: `test: verify projected cluster dialog live refresh`).
-260. [TODO] Git Commit: `test: verify projected cluster dialog live refresh` (hash: TBD)
+258. [DONE] Git Commit: `fix: refresh projected cluster dialog live state` (hash: b56cb513c)
+259. [DONE] `development-tree-cluster-contract.phase36.projected-live-refresh-test.task1` Add targeted Project Manager/Core regression coverage for projected worktree dialog live refresh and provider-session turn-state fallback (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts, packages/core/src/remote-bridge/session-stream-contracts.ts`; expected commit: `test: verify projected cluster dialog live refresh`).
+260. [PENDING] Git Commit: `test: verify projected cluster dialog live refresh` (hash: TBD)
 261. [TODO] `development-tree-cluster-contract.phase36.projected-live-refresh-verify.task1` Run targeted Project Manager and Core build/tests for projected worktree dialog live refresh before asking for release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster live state builds`).
 262. [TODO] Git Commit: `test: verify projected cluster live state builds` (hash: TBD)
 263. [TODO] `development-tree-cluster-contract.phase36.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog live refresh (scope: user workflow; expected commit: none).

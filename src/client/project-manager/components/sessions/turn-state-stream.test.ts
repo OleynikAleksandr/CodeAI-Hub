@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
-import { updateSnapshotsWithTurnState } from "./turn-state-stream";
+import {
+  shouldRefreshDialogHistoryForStream,
+  updateSnapshotsWithTurnState,
+} from "./turn-state-stream";
 
 const createSnapshot = (
   connectionState: "idle" | "running" | "blocked" = "idle",
@@ -196,4 +199,58 @@ test("managed input gate forced unlock releases a stale managed lock reason", ()
 
   assert.equal(next["dialog-visible"].status.connectionState, "idle");
   assert.equal(next["dialog-visible"].status.continuityLock?.active, false);
+});
+
+test("turn state targets projected dialog snapshots by provider session id", () => {
+  const snapshots = {
+    "dialog-visible": createSnapshot("idle", "provider-session-1"),
+  };
+
+  const running = updateSnapshotsWithTurnState(snapshots, {
+    sessionId: "runtime-session-1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "turn_state",
+        providerSessionId: "provider-session-1",
+        state: "running",
+      },
+    },
+  });
+  const idle = updateSnapshotsWithTurnState(running, {
+    sessionId: "runtime-session-1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "turn_state",
+        providerSessionId: "provider-session-1",
+        state: "idle",
+      },
+    },
+  });
+
+  assert.equal(running["dialog-visible"].status.connectionState, "running");
+  assert.equal(idle["dialog-visible"].status.connectionState, "idle");
+  assert.equal(idle["dialog-visible"].status.continuityLock?.active, false);
+});
+
+test("dialog history refresh matches projected stream by provider session id", () => {
+  assert.equal(
+    shouldRefreshDialogHistoryForStream({
+      currentSession: {
+        id: "dialog-visible",
+        binding: { providerSessionId: "provider-session-1", status: "ready" },
+      },
+      event: {
+        type: "stream_event",
+        data: {
+          kind: "turn_state",
+          providerSessionId: "provider-session-1",
+          state: "idle",
+        },
+      },
+      sessionId: "runtime-session-1",
+    }),
+    true
+  );
 });

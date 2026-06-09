@@ -71,6 +71,7 @@ export const serializeSession = (session: Session): SerializedSession => ({
 export interface TurnStateStreamData {
   readonly kind: "turn_state";
   readonly providerId?: string;
+  readonly providerSessionId?: string;
   readonly state: "running" | "idle";
 }
 
