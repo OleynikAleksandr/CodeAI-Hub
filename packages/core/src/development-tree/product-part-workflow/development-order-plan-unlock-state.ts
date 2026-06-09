@@ -10,6 +10,17 @@ export interface DevelopmentOrderNodeModelBinding {
   readonly thinkingLevel?: string;
 }
 
+export interface DevelopmentOrderContractSeed {
+  readonly blockingQuestions: readonly string[];
+  readonly consumer: string;
+  readonly nodeId: string;
+  readonly requiredErrors?: readonly string[];
+  readonly requiredInputs: readonly string[];
+  readonly requiredOutputs: readonly string[];
+  readonly requiredOwnedModules?: readonly string[];
+  readonly requiredStatuses: readonly string[];
+}
+
 export interface DevelopmentOrderUnlockStateRequest {
   readonly acceptedOrderPlanCommitHash: string;
   readonly partId: string;
@@ -21,6 +32,7 @@ export interface DevelopmentOrderUnlockStateRequest {
 export interface DevelopmentOrderUnlockNodeState {
   readonly branchName?: string;
   readonly clusterId?: string;
+  readonly contractSeed?: DevelopmentOrderContractSeed;
   readonly dependsOn: readonly string[];
   readonly id: string;
   readonly kind: string;
@@ -90,6 +102,44 @@ const readLockedReasons = (plan: JsonRecord): ReadonlyMap<string, string> => {
   return reasons;
 };
 
+const readContractSeeds = (
+  plan: JsonRecord
+): ReadonlyMap<string, DevelopmentOrderContractSeed> => {
+  const seeds = new Map<string, DevelopmentOrderContractSeed>();
+  const contractSeeds = Array.isArray(plan.contractSeeds)
+    ? plan.contractSeeds
+    : [];
+  for (const value of contractSeeds) {
+    const seed = asRecord(value);
+    const nodeId = asString(seed?.nodeId);
+    const consumer = asString(seed?.consumer);
+    const requiredInputs = asStringArray(seed?.requiredInputs);
+    const requiredOutputs = asStringArray(seed?.requiredOutputs);
+    const requiredStatuses = asStringArray(seed?.requiredStatuses);
+    const blockingQuestions = asStringArray(seed?.blockingQuestions);
+    if (
+      !(nodeId && consumer && requiredInputs.length && requiredOutputs.length)
+    ) {
+      continue;
+    }
+    seeds.set(nodeId, {
+      blockingQuestions,
+      consumer,
+      nodeId,
+      requiredInputs,
+      requiredOutputs,
+      requiredStatuses,
+      ...(asStringArray(seed?.requiredErrors).length
+        ? { requiredErrors: asStringArray(seed?.requiredErrors) }
+        : {}),
+      ...(asStringArray(seed?.requiredOwnedModules).length
+        ? { requiredOwnedModules: asStringArray(seed?.requiredOwnedModules) }
+        : {}),
+    });
+  }
+  return seeds;
+};
+
 const resolveNodeStatus = (params: {
   readonly firstWaveUnlockNodeIds: ReadonlySet<string>;
   readonly id: string;
@@ -102,6 +152,7 @@ const resolveNodeStatus = (params: {
 };
 
 const createNodeState = (params: {
+  readonly contractSeeds: ReadonlyMap<string, DevelopmentOrderContractSeed>;
   readonly firstWaveUnlockNodeIds: ReadonlySet<string>;
   readonly lockedReasons: ReadonlyMap<string, string>;
   readonly node: JsonRecord;
@@ -113,6 +164,7 @@ const createNodeState = (params: {
     return null;
   }
   const reason = params.lockedReasons.get(id);
+  const contractSeed = params.contractSeeds.get(id);
   return {
     id,
     kind,
@@ -130,6 +182,7 @@ const createNodeState = (params: {
       ? { moduleId: asString(params.node.moduleId) ?? undefined }
       : {}),
     ...(reason ? { reason } : {}),
+    ...(contractSeed ? { contractSeed } : {}),
   };
 };
 
@@ -144,6 +197,7 @@ export const createDevelopmentOrderUnlockState = (
 ): DevelopmentOrderUnlockState => {
   const firstWave = readFirstWave(request.plan);
   const firstWaveUnlockNodeIds = new Set(firstWave.unlockNodeIds);
+  const contractSeeds = readContractSeeds(request.plan);
   const lockedReasons = readLockedReasons(request.plan);
   const nodes = (Array.isArray(request.plan.nodes) ? request.plan.nodes : [])
     .flatMap((node) => {
@@ -151,6 +205,7 @@ export const createDevelopmentOrderUnlockState = (
       return record
         ? [
             createNodeState({
+              contractSeeds,
               firstWaveUnlockNodeIds,
               lockedReasons,
               node: record,

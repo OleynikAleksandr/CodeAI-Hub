@@ -3,7 +3,10 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { createDevelopmentOrderUnlockStatePath } from "../product-part-workflow/development-order-plan-unlock-state";
+import {
+  createDevelopmentOrderUnlockState,
+  createDevelopmentOrderUnlockStatePath,
+} from "../product-part-workflow/development-order-plan-unlock-state";
 import { ClusterContractAgentBootstrapper } from "./cluster-contract-agent-bootstrapper";
 
 const WORKSPACE_SLUG = "demo-workspace";
@@ -26,6 +29,15 @@ const writeUnlockState = async (workspaceRoot: string): Promise<void> => {
         firstWaveUnlockNodeIds: [`cluster:${PART_ID}/${CLUSTER_ID}`],
         nodes: [
           {
+            contractSeed: {
+              blockingQuestions: ["snippet policy"],
+              consumer: "finder-widget-shell",
+              nodeId: `cluster:${PART_ID}/${CLUSTER_ID}`,
+              requiredInputs: ["notes folder context"],
+              requiredOutputs: ["normalized note payload"],
+              requiredOwnedModules: ["latest-note-resolver"],
+              requiredStatuses: ["data-found", "no-data", "access-error"],
+            },
             clusterId: CLUSTER_ID,
             id: `cluster:${PART_ID}/${CLUSTER_ID}`,
             kind: "cluster",
@@ -162,6 +174,7 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
       readonly nodes: readonly {
         readonly branchName?: string;
         readonly clusterId?: string;
+        readonly contractSeed?: { readonly consumer?: string };
         readonly modelBinding?: { readonly modelId?: string };
         readonly sessionId?: string;
         readonly sessionStage?: string;
@@ -172,6 +185,7 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
       (node) => node.clusterId === CLUSTER_ID
     );
     assert.equal(clusterNode?.branchName, `codex/${PART_ID}/${CLUSTER_ID}`);
+    assert.equal(clusterNode?.contractSeed?.consumer, "finder-widget-shell");
     assert.equal(clusterNode?.modelBinding?.modelId, "gpt-5.4-mini");
     assert.equal(clusterNode?.sessionId, "cluster-session-1");
     assert.equal(
@@ -185,4 +199,47 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
+});
+
+test("createDevelopmentOrderUnlockState carries accepted contract seeds", () => {
+  const state = createDevelopmentOrderUnlockState({
+    acceptedOrderPlanCommitHash: "abc123",
+    partId: PART_ID,
+    plan: {
+      contractSeeds: [
+        {
+          blockingQuestions: [],
+          consumer: "finder-widget-shell",
+          nodeId: `cluster:${PART_ID}/${CLUSTER_ID}`,
+          requiredInputs: ["notes folder context"],
+          requiredOutputs: ["normalized note payload"],
+          requiredOwnedModules: ["latest-note-resolver"],
+          requiredStatuses: ["data-found", "no-data"],
+        },
+      ],
+      firstWaveId: "wave-1",
+      nodes: [
+        {
+          clusterId: CLUSTER_ID,
+          dependsOn: [],
+          id: `cluster:${PART_ID}/${CLUSTER_ID}`,
+          kind: "cluster",
+          partId: PART_ID,
+        },
+      ],
+      waves: [
+        {
+          id: "wave-1",
+          unlockNodeIds: [`cluster:${PART_ID}/${CLUSTER_ID}`],
+        },
+      ],
+    },
+    updatedAt: "2026-06-09T00:00:00.000Z",
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  const clusterNode = state.nodes[0];
+  assert.equal(clusterNode?.contractSeed?.consumer, "finder-widget-shell");
+  assert.deepEqual(clusterNode?.contractSeed?.requiredOwnedModules, [
+    "latest-note-resolver",
+  ]);
 });
