@@ -22,12 +22,6 @@ const GENERATED_OUTPUT_SEGMENTS = new Set([
 ]);
 const GIT_AUTHOR_EMAIL = "codeai-hub@example.local";
 const GIT_AUTHOR_NAME = "CodeAI Hub";
-const GIT_EXCLUDED_PATHS = [
-  ":(exclude,glob)**/node_modules/**",
-  ":(exclude,glob)**/dist/**",
-  ":(exclude,glob)**/build/**",
-  ":(exclude,glob)**/coverage/**",
-] as const;
 const GIT_INDEX_LOCK_RE =
   /index\.lock|Unable to create .*\.git\/index\.lock|Another git process seems to be running/iu;
 const BACKSLASH_RE = /\\/gu;
@@ -280,13 +274,7 @@ export class WorkflowBoundaryGit {
       await this.git(workspaceRoot, ["add", "-A", "--", ...dotPrefixedPaths]);
     }
     if (regularPaths.length > 0) {
-      await this.git(workspaceRoot, [
-        "add",
-        "-A",
-        "--",
-        ...regularPaths,
-        ...GIT_EXCLUDED_PATHS,
-      ]);
+      await this.git(workspaceRoot, ["add", "-A", "--", ...regularPaths]);
     }
   }
 
