@@ -106,6 +106,56 @@ const createProjectedDialogEntry = (
   };
 };
 
+const readWorktreeContinuityDialogEntry = async (options: {
+  readonly node: ProjectedDevelopmentTreeNode;
+  readonly workspaceSlug: string;
+}): Promise<ContinuityIndexEntry | null> => {
+  const worktreePath = readNonEmptyString(options.node.worktreePath);
+  const stage = readNonEmptyString(options.node.sessionStage);
+  if (!(worktreePath && stage)) {
+    return null;
+  }
+  const index = await readJson<ContinuityIndex>(
+    buildIndexPath({
+      workspaceRoot: worktreePath,
+      workspaceSlug: options.workspaceSlug,
+    })
+  );
+  const candidates =
+    index?.workspaceSlug === options.workspaceSlug
+      ? index.entries.filter((entry) => entry.stage === stage)
+      : [];
+  if (candidates.length === 0) {
+    return null;
+  }
+  const sessionId = readNonEmptyString(options.node.sessionId);
+  const matchingRuntimeSession = candidates.find(
+    (entry) => sessionId && entry.latestSessionId === sessionId
+  );
+  const matchingDialogId = candidates.find(
+    (entry) =>
+      sessionId &&
+      (entry.dialogId === sessionId ||
+        entry.rootSessionId === sessionId ||
+        entry.dialogId.includes(sessionId) ||
+        entry.rootSessionId.includes(sessionId))
+  );
+  const selected =
+    matchingRuntimeSession ??
+    matchingDialogId ??
+    [...candidates].sort((left, right) =>
+      right.updatedAt.localeCompare(left.updatedAt)
+    )[0];
+  if (!selected) {
+    return null;
+  }
+  return {
+    ...selected,
+    modelBinding: selected.modelBinding ?? options.node.modelBinding ?? null,
+    ...(worktreePath ? { worktreePath } : {}),
+  };
+};
+
 const readProjectedDevelopmentTreeDialogs = async (options: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -128,7 +178,12 @@ const readProjectedDevelopmentTreeDialogs = async (options: {
     const nodes = Array.isArray(state?.nodes) ? state.nodes : [];
     for (const node of nodes) {
       if (isProjectedDevelopmentTreeNode(node)) {
-        projected.push(createProjectedDialogEntry(node));
+        projected.push(
+          (await readWorktreeContinuityDialogEntry({
+            node,
+            workspaceSlug: options.workspaceSlug,
+          })) ?? createProjectedDialogEntry(node)
+        );
       }
     }
   }

@@ -60,10 +60,7 @@ interface CoordinationState {
   readonly lockedReason?: string;
   readonly mergeCommitHash?: string;
   readonly nodeId: string;
-  readonly providerId?: string;
   readonly reviewCommitHash?: string;
-  readonly sessionId?: string;
-  readonly sessionStage?: string;
   readonly sourceHead?: string;
   readonly status: CoordinationStatus;
   readonly worktreePath?: string;
@@ -182,21 +179,92 @@ const attachCoordination = <T extends object>(
   coordination: CoordinationState | null
 ): T => (coordination ? ({ ...node, coordination } as T) : node);
 
-const createProjectedSession = (
-  node: UnlockStateNode | undefined
-): DevelopmentTreeNodeSession | undefined => {
+const readNonEmptyString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const readWorktreeContinuityEntry = async (params: {
+  readonly node: UnlockStateNode | undefined;
+  readonly workspaceSlug: string;
+}): Promise<Record<string, unknown> | null> => {
+  const worktreePath = readNonEmptyString(params.node?.worktreePath);
+  const stage = readNonEmptyString(params.node?.sessionStage);
+  if (!(worktreePath && stage)) {
+    return null;
+  }
+  const index = await readJsonRecord(
+    worktreePath,
+    `.codeai-hub/${params.workspaceSlug}/continuity/index.json`
+  );
+  if (
+    index?.workspaceSlug !== params.workspaceSlug ||
+    !Array.isArray(index.entries)
+  ) {
+    return null;
+  }
+  const candidates = index.entries.filter(
+    (entry): entry is Record<string, unknown> => {
+      if (!(entry && typeof entry === "object" && !Array.isArray(entry))) {
+        return false;
+      }
+      return (
+        readNonEmptyString((entry as Record<string, unknown>).stage) === stage
+      );
+    }
+  );
+  const sessionId = readNonEmptyString(params.node?.sessionId);
+  const matchingRuntimeSession = candidates.find(
+    (entry) =>
+      sessionId && readNonEmptyString(entry.latestSessionId) === sessionId
+  );
+  const matchingDialogId = candidates.find(
+    (entry) =>
+      sessionId &&
+      (readNonEmptyString(entry.dialogId)?.includes(sessionId) ||
+        readNonEmptyString(entry.rootSessionId)?.includes(sessionId))
+  );
+  return (
+    matchingRuntimeSession ??
+    matchingDialogId ??
+    [...candidates].sort(
+      (left, right) =>
+        readNonEmptyString(right.updatedAt)?.localeCompare(
+          readNonEmptyString(left.updatedAt) ?? ""
+        ) ?? 0
+    )[0] ??
+    null
+  );
+};
+
+const createProjectedSession = async (params: {
+  readonly node: UnlockStateNode | undefined;
+  readonly workspaceSlug: string;
+}): Promise<DevelopmentTreeNodeSession | undefined> => {
+  const { node } = params;
   if (
     !(node?.providerId && node.sessionId && node.sessionStage && node.startedAt)
   ) {
     return undefined;
   }
+  const worktreeEntry = await readWorktreeContinuityEntry(params);
+  const dialogId =
+    readNonEmptyString(worktreeEntry?.dialogId) ?? node.sessionId;
+  const providerId =
+    readNonEmptyString(worktreeEntry?.providerId) ?? node.providerId;
+  const providerSessionId =
+    readNonEmptyString(worktreeEntry?.providerSessionId) ?? node.sessionId;
+  const rootSessionId =
+    readNonEmptyString(worktreeEntry?.rootSessionId) ?? node.sessionId;
+  const sessionId =
+    readNonEmptyString(worktreeEntry?.latestSessionId) ?? node.sessionId;
+  const updatedAt =
+    readNonEmptyString(worktreeEntry?.updatedAt) ?? node.startedAt;
   return {
-    dialogId: node.sessionId,
-    providerId: node.providerId,
-    providerSessionId: node.sessionId,
-    rootSessionId: node.sessionId,
-    sessionId: node.sessionId,
-    updatedAt: node.startedAt,
+    dialogId,
+    providerId,
+    providerSessionId,
+    rootSessionId,
+    sessionId,
+    updatedAt,
   };
 };
 
@@ -302,13 +370,10 @@ const readClusterCoordination = async (params: {
     branchName: node?.branchName ?? createClusterBranchName(params),
     lockedReason: node?.reason,
     mergeCommitHash: node?.mergeCommitHash,
-    providerId: node?.providerId,
     reviewCommitHash:
       typeof reviewResult?.reviewCommitHash === "string"
         ? reviewResult.reviewCommitHash
         : undefined,
-    sessionId: node?.sessionId,
-    sessionStage: node?.sessionStage,
     sourceHead:
       typeof mergeBoundary?.sourceHead === "string"
         ? mergeBoundary.sourceHead
@@ -379,7 +444,10 @@ const withCoordinationState = async (
               return {
                 ...attachProjectedSession(
                   coordinatedCluster,
-                  createProjectedSession(node)
+                  await createProjectedSession({
+                    node,
+                    workspaceSlug: params.workspaceSlug,
+                  })
                 ),
                 modules: cluster.modules.map(
                   (module): DevelopmentTreeModuleNode =>

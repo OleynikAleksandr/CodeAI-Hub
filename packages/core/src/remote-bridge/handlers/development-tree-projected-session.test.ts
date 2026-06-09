@@ -67,7 +67,7 @@ const writeProjectedUnlockState = async (
             },
             partId: "ui-shell",
             providerId: "codex",
-            sessionId: "cluster-session-1",
+            sessionId: "runtime-session-1",
             sessionStage:
               "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster",
             startedAt: "2026-06-08T12:00:00.000Z",
@@ -75,6 +75,49 @@ const writeProjectedUnlockState = async (
             worktreePath,
           },
         ],
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
+const writeWorktreeContinuityIndex = async (params: {
+  readonly dialogId: string;
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly runtimeSessionId: string;
+  readonly workspaceSlug: string;
+  readonly worktreePath: string;
+}): Promise<void> => {
+  const indexPath = path.join(
+    params.worktreePath,
+    ".codeai-hub",
+    params.workspaceSlug,
+    "continuity",
+    "index.json"
+  );
+  await mkdir(path.dirname(indexPath), { recursive: true });
+  await writeFile(
+    indexPath,
+    `${JSON.stringify(
+      {
+        entries: [
+          {
+            dialogId: params.dialogId,
+            latestSessionId: params.runtimeSessionId,
+            providerId: params.providerId,
+            providerSessionId: params.providerSessionId,
+            rootSessionId: params.dialogId,
+            stage:
+              "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster",
+            updatedAt: "2026-06-08T12:01:00.000Z",
+          },
+        ],
+        updatedAt: "2026-06-08T12:01:00.000Z",
+        version: 1,
+        workspaceSlug: params.workspaceSlug,
       },
       null,
       2
@@ -130,8 +173,16 @@ test("projected cluster sessions are visible from the main workspace", async () 
   try {
     await writePart(workspaceRoot);
     await writeProjectedUnlockState(workspaceRoot, worktreePath);
+    await writeWorktreeContinuityIndex({
+      dialogId: "codex-runtime-session-1-layout-cluster",
+      providerId: "codex",
+      providerSessionId: "provider-session-1",
+      runtimeSessionId: "runtime-session-1",
+      workspaceSlug: "demo",
+      worktreePath,
+    });
     await writeWorktreeCapsuleHistory({
-      dialogId: "cluster-session-1",
+      dialogId: "codex-runtime-session-1-layout-cluster",
       providerId: "codex",
       workspaceSlug: "demo",
       worktreePath,
@@ -144,7 +195,12 @@ test("projected cluster sessions are visible from the main workspace", async () 
       workspaceSlug: "demo",
     });
     const cluster = snapshot.parts[0]?.clusters[0];
-    assert.equal(cluster?.session?.sessionId, "cluster-session-1");
+    assert.equal(
+      cluster?.session?.dialogId,
+      "codex-runtime-session-1-layout-cluster"
+    );
+    assert.equal(cluster?.session?.providerSessionId, "provider-session-1");
+    assert.equal(cluster?.session?.sessionId, "runtime-session-1");
     assert.equal(cluster?.session?.providerId, "codex");
     assert.equal(cluster?.lifecycle?.startState, "started");
     assert.equal(cluster?.lifecycle?.startable, false);
@@ -166,7 +222,11 @@ test("projected cluster sessions are visible from the main workspace", async () 
       logger: new Logger("error"),
     }).listDialogs({ workspaceRoot, workspaceSlug: "demo" });
     assert.equal(dialogs.length, 1);
-    assert.equal(dialogs[0]?.dialogId, "cluster-session-1");
+    assert.equal(
+      dialogs[0]?.dialogId,
+      "codex-runtime-session-1-layout-cluster"
+    );
+    assert.equal(dialogs[0]?.providerSessionId, "provider-session-1");
     assert.equal(dialogs[0]?.stage, cluster?.workflowPath);
     assert.equal(dialogs[0]?.modelBinding?.modelId, "gpt-5.4-mini");
     assert.equal(
@@ -183,7 +243,7 @@ test("projected cluster sessions are visible from the main workspace", async () 
     const history = await new DialogHistoryService({
       logger: new Logger("error"),
     }).readHistory({
-      dialogId: "cluster-session-1",
+      dialogId: "codex-runtime-session-1-layout-cluster",
       workspaceRoot,
       workspaceSlug: "demo",
     });

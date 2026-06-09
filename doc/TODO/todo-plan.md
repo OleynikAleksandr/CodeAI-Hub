@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "66a1df000",
+  "lastRecordedCommit": "597db2526",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase17.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint projected cluster dialog user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase18.projected-dialog-identity.task1",
+  "expectedCommitMessage": "fix: resolve projected cluster dialog identity",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint projected cluster dialog user retest state",
-    "preCommitHead": "66a1df000",
+    "expectedCommitMessage": "fix: resolve projected cluster dialog identity",
+    "preCommitHead": "597db2526",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase17.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase18.projected-dialog-identity.task1"
   }
 }
 ```
@@ -361,18 +361,40 @@ Verification evidence:
 158. [DONE] `development-tree-cluster-contract.phase17.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster dialog vsix release`).
 159. [DONE] Git Commit: `build: package projected cluster dialog vsix release` (hash: 66a1df000)
 160. [DONE] `development-tree-cluster-contract.phase17.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster dialog user retest state`).
-161. [PENDING] Git Commit: `docs: checkpoint projected cluster dialog user retest state` (hash: TBD)
+161. [DONE] Git Commit: `docs: checkpoint projected cluster dialog user retest state` (hash: 597db2526)
 
 ## Phase 18 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-08)
 
 ### Stream: Projected Cluster Dialog Retest
 
-162. [TODO] `development-tree-cluster-contract.phase18.user-retest.task1` User installs the release and retests FinderWidget downstream cluster startup: selecting `note-selection-cluster` must open the real worktree-backed cluster session history instead of an empty projected shell, cluster bootstrap must track its managed `todo-plan.md`, and Product Part/Cluster ClearUndo must keep main and worktree Git status clean (scope: user workflow; expected commit: none).
+162. [BLOCKED] `development-tree-cluster-contract.phase18.user-retest.task1` User installs the release and retests FinderWidget downstream cluster startup: selecting `note-selection-cluster` must open the real worktree-backed cluster session history instead of an empty projected shell, cluster bootstrap must track its managed `todo-plan.md`, and Product Part/Cluster ClearUndo must keep main and worktree Git status clean (scope: user workflow; expected commit: none). Result: release `1.2.476` starts the cluster sub-agent and writes artifacts, but Project Manager opens the cluster node with an empty dialog because the main projection uses the runtime session UUID while the real worktree continuity dialog id is provider-prefixed; the cluster managed `todo-plan.md` also remains untracked because Git boundary staging drops deep explicit paths when global exclude pathspecs are appended.
+
+### Stream: Projected Dialog Identity Regression
+
+163. [DONE] `development-tree-cluster-contract.phase18.projected-dialog-identity.task1` Resolve projected cluster dialog identity from the worktree continuity index so Project Manager opens the real provider-backed dialog id and history file (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`; expected commit: `fix: resolve projected cluster dialog identity`).
+164. [PENDING] Git Commit: `fix: resolve projected cluster dialog identity` (hash: TBD)
+165. [TODO] `development-tree-cluster-contract.phase18.git-boundary-pathspec.task1` Fix WorkflowBoundaryGit staging for deep explicit managed-plan paths so cluster worktree ledger commits include `doc/TODO/.../clusters/.../todo-plan.md` (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: stage explicit workflow boundary paths`).
+166. [TODO] Git Commit: `fix: stage explicit workflow boundary paths` (hash: TBD)
+167. [TODO] `development-tree-cluster-contract.phase18.projected-dialog-verify.task1` Run targeted Core tests/builds for projected cluster dialog identity and workflow boundary path staging (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog identity`).
+168. [TODO] Git Commit: `test: verify projected cluster dialog identity` (hash: TBD)
+
+### Stream: Release After Confirmation
+
+169. [TODO] `development-tree-cluster-contract.phase18.release-notes.task1` Prepare release notes for the projected cluster dialog identity and explicit path staging fixes after the user's explicit release request (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster identity release notes`).
+170. [TODO] Git Commit: `docs: prepare projected cluster identity release notes` (hash: TBD)
+171. [TODO] `development-tree-cluster-contract.phase18.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster identity release build state`).
+172. [TODO] Git Commit: `docs: checkpoint projected cluster identity release build state` (hash: TBD)
+173. [TODO] `development-tree-cluster-contract.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster identity release artifacts`).
+174. [TODO] Git Commit: `build: prepare projected cluster identity release artifacts` (hash: TBD)
+175. [TODO] `development-tree-cluster-contract.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster identity vsix release`).
+176. [TODO] Git Commit: `build: package projected cluster identity vsix release` (hash: TBD)
+177. [TODO] `development-tree-cluster-contract.phase18.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster identity user retest state`).
+178. [TODO] Git Commit: `docs: checkpoint projected cluster identity user retest state` (hash: TBD)
 
 ## Phase 19 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
 ### Stream: Closeout After Acceptance
 
-163. [TODO] `development-tree-cluster-contract.phase19.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-164. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-165. [TODO] `development-tree-cluster-contract.phase19.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+179. [TODO] `development-tree-cluster-contract.phase19.closeout.task1` After explicit user acceptance, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md` and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+180. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+181. [TODO] `development-tree-cluster-contract.phase19.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
