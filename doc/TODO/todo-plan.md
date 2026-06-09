@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "c852b522b",
+  "lastRecordedCommit": "659fd61fd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase36.projected-live-refresh-verify.task1",
-  "expectedCommitMessage": "test: verify projected cluster live state builds",
+  "currentTaskId": "development-tree-cluster-contract.phase37.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare projected cluster live refresh release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify projected cluster live state builds",
-    "preCommitHead": "c852b522b",
+    "expectedCommitMessage": "docs: prepare projected cluster live refresh release notes",
+    "preCommitHead": "659fd61fd",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase36.projected-live-refresh-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase37.release-notes.task1"
   }
 }
 ```
@@ -593,11 +593,26 @@ Verification evidence:
 259. [DONE] `development-tree-cluster-contract.phase36.projected-live-refresh-test.task1` Add targeted Project Manager/Core regression coverage for projected worktree dialog live refresh and provider-session turn-state fallback (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts, packages/core/src/remote-bridge/session-stream-contracts.ts`; expected commit: `test: verify projected cluster dialog live refresh`).
 260. [DONE] Git Commit: `test: verify projected cluster dialog live refresh` (hash: c852b522b)
 261. [DONE] `development-tree-cluster-contract.phase36.projected-live-refresh-verify.task1` Run targeted Project Manager and Core build/tests for projected worktree dialog live refresh before asking for release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster live state builds`).
-262. [PENDING] Git Commit: `test: verify projected cluster live state builds` (hash: TBD)
-263. [TODO] `development-tree-cluster-contract.phase36.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog live refresh (scope: user workflow; expected commit: none).
+262. [DONE] Git Commit: `test: verify projected cluster live state builds` (hash: 659fd61fd)
+263. [DONE] `development-tree-cluster-contract.phase36.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog live refresh (scope: user workflow; expected commit: none). Result: User explicitly requested a new release for projected cluster dialog live refresh in chat on 2026-06-09.
 
 Verification evidence:
 - `npm run build --workspace packages/core` passed.
 - `npm run build:project-manager` passed.
 - `npm run typecheck:webview` passed.
 - `npx tsx --test src/client/project-manager/components/sessions/turn-state-stream.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts` passed: 23/23 tests, including projected provider-session turn-state targeting and dialog tail-history refresh.
+
+## Phase 37 - Projected Cluster Live Refresh Release Build (owner: Codex, updated: 2026-06-09)
+
+### Stream: Release After Confirmation
+
+264. [DONE] `development-tree-cluster-contract.phase37.release-notes.task1` Prepare release notes for projected cluster dialog live refresh after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster live refresh release notes`).
+265. [PENDING] Git Commit: `docs: prepare projected cluster live refresh release notes` (hash: TBD)
+266. [TODO] `development-tree-cluster-contract.phase37.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh release build state`).
+267. [TODO] Git Commit: `docs: checkpoint projected cluster live refresh release build state` (hash: TBD)
+268. [TODO] `development-tree-cluster-contract.phase37.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for release `1.2.481` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster live refresh release artifacts`).
+269. [TODO] Git Commit: `build: prepare projected cluster live refresh release artifacts` (hash: TBD)
+270. [TODO] `development-tree-cluster-contract.phase37.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for release `1.2.481` (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster live refresh vsix release`).
+271. [TODO] Git Commit: `build: package projected cluster live refresh vsix release` (hash: TBD)
+272. [TODO] `development-tree-cluster-contract.phase37.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh user retest state`).
+273. [TODO] Git Commit: `docs: checkpoint projected cluster live refresh user retest state` (hash: TBD)

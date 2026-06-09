@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.481] - 2026-06-09
+### Fixed
+- **Projected Cluster dialogs now refresh from worktree turn-state events.** Core includes `providerSessionId` in `turn_state`, and Project Manager uses it to connect runtime worktree events to the visible projected cluster dialog.
+- **Cluster dialog history now tails JSONL after matching stream events.** When the cluster sub-agent continues or settles, Project Manager requests the active dialog tail instead of staying on the early bootstrap message slice.
+- **Turn-state idle now releases the stale working lock for projected dialogs.** The UI unlocks when the underlying turn settles unless a separate managed/resume gate is still active.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `npx tsx --test src/client/project-manager/components/sessions/turn-state-stream.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+
 ## [1.2.480] - 2026-06-09
 ### Fixed
 - **Cluster Contract validation failures now continue as repair turns.** When Core rejects incomplete `ClusterFacadeContract.draft.json` artifacts, it sends an internal repair prompt back to the same cluster-contract sub-agent instead of settling after the diagnostic system message.
