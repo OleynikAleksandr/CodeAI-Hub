@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "6b2cb12ae",
+  "lastRecordedCommit": "f3cfcb156",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase22.projected-dialog-verify.task1",
-  "expectedCommitMessage": "test: verify projected cluster dialog review gate",
+  "currentTaskId": "development-tree-cluster-contract.phase23.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare projected cluster review release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify projected cluster dialog review gate",
-    "preCommitHead": "6b2cb12ae",
+    "expectedCommitMessage": "docs: prepare projected cluster review release notes",
+    "preCommitHead": "f3cfcb156",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase22.projected-dialog-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase23.release-notes.task1"
   }
 }
 ```
@@ -442,11 +442,26 @@ Verification evidence:
 194. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1` Add targeted Project Manager regression coverage for worktree-backed projected dialog bootstrap/restore and active review gate rendering (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog worktree hydration`).
 195. [DONE] Git Commit: `test: verify projected cluster dialog worktree hydration` (hash: 6b2cb12ae)
 196. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-verify.task1` Run targeted Project Manager/Core build checks for projected cluster dialog hydration before release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog review gate`).
-197. [PENDING] Git Commit: `test: verify projected cluster dialog review gate` (hash: TBD)
-198. [TODO] `development-tree-cluster-contract.phase22.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog review gates, bootstrap ledger commits, and Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).
+197. [DONE] Git Commit: `test: verify projected cluster dialog review gate` (hash: f3cfcb156)
+198. [DONE] `development-tree-cluster-contract.phase22.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog review gates, bootstrap ledger commits, and Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none). Result: user explicitly requested the fix and a new release in chat on 2026-06-09.
 
 Verification evidence:
 - `npm run build --workspace packages/core` passed.
 - `npm run typecheck:webview` passed.
 - `npm run build:project-manager` passed.
 - `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts` passed: 23/23 tests, including projected worktree dialog identity and managed review confirm rendering.
+
+## Phase 23 - Regression Fix Release Build (owner: Codex, updated: 2026-06-09)
+
+### Stream: Release After Confirmation
+
+199. [DONE] `development-tree-cluster-contract.phase23.release-notes.task1` Prepare release notes for projected cluster review gate, bootstrap ledger, and Cluster ClearUndo worktree cleanup fixes after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster review release notes`).
+200. [PENDING] Git Commit: `docs: prepare projected cluster review release notes` (hash: TBD)
+201. [TODO] `development-tree-cluster-contract.phase23.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster review release build state`).
+202. [TODO] Git Commit: `docs: checkpoint projected cluster review release build state` (hash: TBD)
+203. [TODO] `development-tree-cluster-contract.phase23.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster review release artifacts`).
+204. [TODO] Git Commit: `build: prepare projected cluster review release artifacts` (hash: TBD)
+205. [TODO] `development-tree-cluster-contract.phase23.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster review vsix release`).
+206. [TODO] Git Commit: `build: package projected cluster review vsix release` (hash: TBD)
+207. [TODO] `development-tree-cluster-contract.phase23.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster review user retest state`).
+208. [TODO] Git Commit: `docs: checkpoint projected cluster review user retest state` (hash: TBD)

@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.478] - 2026-06-09
+### Fixed
+- **Projected cluster dialogs now hydrate from the node worktree context.** Project Manager preserves the Core-provided `worktreePath`, restores the cluster runtime session inside that worktree, and can render the final `managed-workflow-user-review` message with the `Подтверждаю` action instead of staying locked as running.
+- **Cluster bootstrap commits the main unlock-state session ledger.** Recording the cluster `sessionId`, branch, and worktree path no longer leaves the main Product Part workspace dirty before later review/merge boundaries.
+- **Cluster/Module ClearUndo prunes empty worktree containers.** Removing the last downstream node worktree also removes the top-level `<workspace>.worktrees` folder.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- `node --test packages/core/dist/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.js`
+
 ## [1.2.477] - 2026-06-09
 ### Fixed
 - **Projected cluster dialogs now use the real worktree continuity identity.** Core resolves the cluster node `dialogId`, `rootSessionId`, and `providerSessionId` from the worktree continuity index, so Project Manager opens the existing provider-backed JSONL instead of an empty runtime-UUID shell.
