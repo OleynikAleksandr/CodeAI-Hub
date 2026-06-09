@@ -76,6 +76,40 @@ const readText = (
   relativePath: string
 ): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
 
+const asRecord = (value: unknown): Record<string, unknown> | null =>
+  value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+
+const asString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim() ? value : null;
+
+const hasNonEmptyArray = (value: unknown): boolean =>
+  Array.isArray(value) && value.length > 0;
+
+const hasConcreteMethod = (value: unknown): boolean =>
+  Array.isArray(value) &&
+  value.some((item) => {
+    const method = asRecord(item);
+    return Boolean(
+      asString(method?.name) &&
+        asString(method?.signature) &&
+        asString(method?.inputType) &&
+        asString(method?.outputType)
+    );
+  });
+
+const hasConcreteModuleBoundary = (value: unknown): boolean =>
+  Array.isArray(value) &&
+  value.some((item) => {
+    const boundary = asRecord(item);
+    return Boolean(
+      asString(boundary?.moduleId) &&
+        hasNonEmptyArray(boundary?.inputs) &&
+        hasNonEmptyArray(boundary?.outputs)
+    );
+  });
+
 const writeText = async (
   workspaceRoot: string,
   relativePath: string,
@@ -151,6 +185,41 @@ const fileExists = async (
     await stat(path.join(workspaceRoot, relativePath)).catch(() => null)
   )?.isFile() ?? false;
 
+const validateConcreteFacadeContract = (
+  artifactPath: string,
+  parsed: unknown
+): readonly string[] => {
+  const diagnostics: string[] = [];
+  const root = asRecord(parsed);
+  const facade = asRecord(root?.facade);
+  if (!asString(facade?.className)) {
+    diagnostics.push(`${artifactPath}: facade.className is required.`);
+  }
+  if (!asString(facade?.filePath)) {
+    diagnostics.push(`${artifactPath}: facade.filePath is required.`);
+  }
+  if (!hasConcreteMethod(facade?.methods)) {
+    diagnostics.push(
+      `${artifactPath}: facade.methods must include name, signature, inputType, and outputType.`
+    );
+  }
+  if (!hasNonEmptyArray(root?.inputTypes)) {
+    diagnostics.push(`${artifactPath}: inputTypes must be non-empty.`);
+  }
+  if (!hasNonEmptyArray(root?.outputTypes)) {
+    diagnostics.push(`${artifactPath}: outputTypes must be non-empty.`);
+  }
+  if (!asRecord(root?.resultUnion)) {
+    diagnostics.push(`${artifactPath}: resultUnion object is required.`);
+  }
+  if (!hasConcreteModuleBoundary(root?.moduleBoundaries)) {
+    diagnostics.push(
+      `${artifactPath}: moduleBoundaries must include moduleId, inputs, and outputs.`
+    );
+  }
+  return diagnostics;
+};
+
 const validateArtifacts = async (params: {
   readonly artifactPaths: readonly string[];
   readonly workspaceRoot: string;
@@ -169,6 +238,12 @@ const validateArtifacts = async (params: {
       const parsed = JSON.parse(content) as unknown;
       if (!(parsed && typeof parsed === "object" && !Array.isArray(parsed))) {
         diagnostics.push(`${artifactPath}: JSON root must be an object.`);
+        continue;
+      }
+      if (artifactPath.endsWith("ClusterFacadeContract.draft.json")) {
+        diagnostics.push(
+          ...validateConcreteFacadeContract(artifactPath, parsed)
+        );
       }
     }
   }

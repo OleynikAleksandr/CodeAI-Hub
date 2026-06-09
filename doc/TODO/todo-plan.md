@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "04972622f",
+  "lastRecordedCommit": "15766618f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1",
-  "expectedCommitMessage": "feat: pass contract seeds to cluster agents",
+  "currentTaskId": "development-tree-cluster-contract.phase28.cluster-contract-validation.task1",
+  "expectedCommitMessage": "feat: validate concrete cluster facade contracts",
   "debt": {
-    "expectedCommitMessage": "feat: pass contract seeds to cluster agents",
-    "preCommitHead": "04972622f",
+    "expectedCommitMessage": "feat: validate concrete cluster facade contracts",
+    "preCommitHead": "15766618f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1"
+    "taskId": "development-tree-cluster-contract.phase28.cluster-contract-validation.task1"
   }
 }
 ```
@@ -495,13 +495,13 @@ Verification evidence:
 216. [DONE] `development-tree-cluster-contract.phase27.unlock-state-seeds.task1` Persist accepted downstream contract seeds in Product Part unlock-state so Core can pass the parent-defined boundary into opened Cluster/Standalone Module worktrees (scope: `packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `feat: persist downstream contract seeds`).
 217. [DONE] Git Commit: `feat: persist downstream contract seeds` (hash: 04972622f)
 218. [DONE] `development-tree-cluster-contract.phase27.cluster-prompt-seeds.task1` Update the Cluster Contract sub-agent prompt so it receives the Product Part contract seed and must produce concrete pre-code facade/module-boundary artifacts instead of abstract descriptions (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`; expected commit: `feat: pass contract seeds to cluster agents`).
-219. [PENDING] Git Commit: `feat: pass contract seeds to cluster agents` (hash: TBD)
+219. [DONE] Git Commit: `feat: pass contract seeds to cluster agents` (hash: 15766618f)
 
 ## Phase 28 - Concrete Contract Validation (owner: Codex, updated: 2026-06-09)
 
 ### Stream: Pre-Code Artifact Gates
 
-220. [TODO] `development-tree-cluster-contract.phase28.cluster-contract-validation.task1` Strengthen cluster contract review validation so `ClusterFacadeContract.draft.json` must contain concrete facade class/file/method/DTO/result-union/module-boundary fields before Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: validate concrete cluster facade contracts`).
-221. [TODO] Git Commit: `feat: validate concrete cluster facade contracts` (hash: TBD)
+220. [DONE] `development-tree-cluster-contract.phase28.cluster-contract-validation.task1` Strengthen cluster contract review validation so `ClusterFacadeContract.draft.json` must contain concrete facade class/file/method/DTO/result-union/module-boundary fields before Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: validate concrete cluster facade contracts`).
+221. [PENDING] Git Commit: `feat: validate concrete cluster facade contracts` (hash: TBD)
 222. [TODO] `development-tree-cluster-contract.phase28.verification.task1` Run targeted Core tests/builds for contract seeds, lead prompt requirements, downstream seed propagation, cluster prompt requirements, and concrete contract validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify top down contract orchestration`).
 223. [TODO] Git Commit: `test: verify top down contract orchestration` (hash: TBD)
