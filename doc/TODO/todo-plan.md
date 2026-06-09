@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "463f63641",
+  "lastRecordedCommit": "b42801483",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase44.managed-review-dialog-send.task1",
-  "expectedCommitMessage": "fix: confirm projected cluster reviews through dialog sends",
+  "currentTaskId": "development-tree-cluster-contract.phase44.projected-dialog-routing-test.task1",
+  "expectedCommitMessage": "test: verify projected cluster dialog routing",
   "debt": {
-    "expectedCommitMessage": "fix: confirm projected cluster reviews through dialog sends",
-    "preCommitHead": "463f63641",
+    "expectedCommitMessage": "test: verify projected cluster dialog routing",
+    "preCommitHead": "b42801483",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase44.managed-review-dialog-send.task1"
+    "taskId": "development-tree-cluster-contract.phase44.projected-dialog-routing-test.task1"
   }
 }
 ```
@@ -689,9 +689,16 @@ Verification evidence:
 299. [DONE] `development-tree-cluster-contract.phase44.projected-dialog-routing.task1` Route projected cluster dialog list/history/send commands through the resolved worktree workspace root instead of the main workspace scope, while keeping main workspace scope validation for allowed worktree paths (scope: `src/client/project-manager, packages/core/src/remote-bridge, doc/TODO/todo-plan.md`; expected commit: `fix: route projected cluster dialogs through worktree roots`).
 300. [DONE] Git Commit: `fix: route projected cluster dialogs through worktree roots` (hash: 463f63641)
 301. [DONE] `development-tree-cluster-contract.phase44.managed-review-dialog-send.task1` Keep projected cluster `Подтверждаю` actions visibly gated while `dialog:send` resolves the worktree-backed session and Core applies the managed review decision (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts, src/client/project-manager/components/sessions/dialog-managed-review-lock.ts, doc/TODO/todo-plan.md`; expected commit: `fix: confirm projected cluster reviews through dialog sends`).
-302. [PENDING] Git Commit: `fix: confirm projected cluster reviews through dialog sends` (hash: TBD)
-303. [TODO] `development-tree-cluster-contract.phase44.projected-dialog-routing-test.task1` Add targeted regression coverage for projected worktree history refresh and managed review dialog sends, then run focused Project Manager/Core tests (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog routing`).
-304. [TODO] Git Commit: `test: verify projected cluster dialog routing` (hash: TBD)
+302. [DONE] Git Commit: `fix: confirm projected cluster reviews through dialog sends` (hash: b42801483)
+303. [DONE] `development-tree-cluster-contract.phase44.projected-dialog-routing-test.task1` Add targeted regression coverage for projected worktree history refresh and managed review dialog sends, then run focused Project Manager/Core tests (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog routing`).
+304. [PENDING] Git Commit: `test: verify projected cluster dialog routing` (hash: TBD)
+
+Verification evidence:
+- `npx tsx --test src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts` passed: 15/15 tests.
+- `npm run build --workspace packages/core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-codex-model-switch.test.js` passed: 7/7 tests.
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
 
 ## Phase 45 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
 

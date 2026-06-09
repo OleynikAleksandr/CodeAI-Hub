@@ -166,7 +166,7 @@ test("dialog first-open hydration binds session identity before requesting histo
     "options.sessionRef.current = nextSession;"
   );
   const firstHistoryRequestIndex = coreEventsSource.indexOf(
-    "options.requestDialogHistory(intent, match.dialogId);"
+    "options.requestDialogHistory(dialogIntent, match.dialogId);"
   );
   assert.equal(
     sessionRefBindIndex >= 0 && firstHistoryRequestIndex > sessionRefBindIndex,
@@ -199,8 +199,11 @@ test("projected dialog restore uses worktree workspace identity", async () => {
   ]);
 
   assertIncludes(coreEventsSource, "const dialogWorkspacePath = match.worktreePath ?? intent.workspacePath;", "projected dialogs must prefer worktree path over main workspace for runtime restore");
+  assertIncludes(coreEventsSource, "options.pendingIntentRef.current = dialogIntent;", "projected dialogs must keep the resolved worktree intent for later live refreshes");
   assertIncludes(coreEventsSource, "workspacePath: dialogWorkspacePath,", "dialog restore must create or resume sessions inside the node worktree");
+  assertIncludes(coreEventsSource, "options.requestDialogHistory(dialogIntent, match.dialogId);", "projected dialogs must request initial history from the worktree intent");
   assertIncludes(controllerSource, "created.workspacePath === current.workspacePath", "controller must adopt restored projected runtime sessions from their worktree");
+  assertIncludes(controllerSource, "workspacePath: intent.workspacePath,", "dialog commands must carry the resolved workspace root to Core");
 });
 
 test("projected dialog stream events request tail history refresh", async () => {
@@ -211,6 +214,7 @@ test("projected dialog stream events request tail history refresh", async () => 
 
   assertIncludes(controllerSource, "shouldRefreshDialogHistoryForStream", "controller must route projected worktree stream events into dialog history refresh");
   assertIncludes(controllerSource, "requestDialogHistory(activeIntent, dialogId, cursor, { force: cursor <= 0 });", "controller must refresh the active dialog tail after matching turn-state events");
+  assertIncludes(controllerSource, "applyDialogManagedReviewPendingLock", "managed review confirmation must visibly lock the projected dialog while Core processes the action");
   assertIncludes(turnStateSource, "turnState.providerSessionId ===", "turn-state matching must support projected dialogs whose visible id differs from runtime session id");
 });
 

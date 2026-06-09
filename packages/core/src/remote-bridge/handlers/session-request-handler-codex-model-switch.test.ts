@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -237,6 +237,93 @@ test("dialog send hydrates contextless restored Codex runtime sessions", async (
     });
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("dialog send can target scoped worktree dialogs with turn options", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codex-dialog-worktree-send-")
+  );
+  try {
+    const worktreeRoot = path.join(`${workspaceRoot}.worktrees`, "cluster");
+    await mkdir(worktreeRoot, { recursive: true });
+    const harness = createHarness({
+      claudeSettingsPath: path.join(workspaceRoot, "claude-settings.json"),
+    });
+    const workspaceSlug = "finderwidget-test01";
+    const dialogId = "dialog-note-selection-cluster";
+    const session = harness.sessionManager.createSession(
+      "codexCli",
+      worktreeRoot,
+      "provider-session-worktree"
+    );
+    await new ContinuityChainStore({
+      workspaceRoot: worktreeRoot,
+      workspaceSlug,
+      rootSessionId: dialogId,
+      stage: "cluster_contract",
+      clock: () => "2026-06-09T08:30:00.000Z",
+    }).appendSegment({
+      sessionId: session.id,
+      providerId: "codexCli",
+      providerSessionId: "provider-session-worktree",
+      createdAt: "2026-06-09T08:30:00.000Z",
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-worktree",
+      unsubscribe: noop,
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+    const clientMessages: unknown[] = [];
+    const router = createRouter(harness, () => ({
+      getWorkspaceScope: () => ({
+        enabled: true,
+        workspacePath: workspaceRoot,
+      }),
+      sendToClient: (_clientId: string, message: unknown) => {
+        clientMessages.push(message);
+      },
+    }));
+
+    await router.handleIncomingMessage("client-1", {
+      type: "dialog:send",
+      payload: {
+        requestId: "request-worktree-dialog-send",
+        workspacePath: worktreeRoot,
+        workspaceSlug,
+        dialogId,
+        content: "confirm from projected cluster",
+        turnOptions: { projectedDialogAction: { type: "confirm" } },
+      },
+    });
+
+    assert.deepEqual(sentTurnOptions[0]?.projectedDialogAction, {
+      type: "confirm",
+    });
+    assert.deepEqual(clientMessages.at(-1), {
+      type: "dialog:send:ack",
+      payload: {
+        requestId: "request-worktree-dialog-send",
+        workspaceSlug,
+        dialogId,
+        status: "sent",
+        error: null,
+      },
+    });
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+    await rm(`${workspaceRoot}.worktrees`, { force: true, recursive: true });
   }
 });
 
