@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "73d1271d1",
+  "lastRecordedCommit": "42792d46e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase18.git-boundary-pathspec.task1",
-  "expectedCommitMessage": "fix: stage explicit workflow boundary paths",
+  "currentTaskId": "development-tree-cluster-contract.phase18.projected-dialog-verify.task1",
+  "expectedCommitMessage": "test: verify projected cluster dialog identity",
   "debt": {
-    "expectedCommitMessage": "fix: stage explicit workflow boundary paths",
-    "preCommitHead": "73d1271d1",
+    "expectedCommitMessage": "test: verify projected cluster dialog identity",
+    "preCommitHead": "42792d46e",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase18.git-boundary-pathspec.task1"
+    "taskId": "development-tree-cluster-contract.phase18.projected-dialog-verify.task1"
   }
 }
 ```
@@ -374,9 +374,13 @@ Verification evidence:
 163. [DONE] `development-tree-cluster-contract.phase18.projected-dialog-identity.task1` Resolve projected cluster dialog identity from the worktree continuity index so Project Manager opens the real provider-backed dialog id and history file (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`; expected commit: `fix: resolve projected cluster dialog identity`).
 164. [DONE] Git Commit: `fix: resolve projected cluster dialog identity` (hash: 73d1271d1)
 165. [DONE] `development-tree-cluster-contract.phase18.git-boundary-pathspec.task1` Fix WorkflowBoundaryGit staging for deep explicit managed-plan paths so cluster worktree ledger commits include `doc/TODO/.../clusters/.../todo-plan.md` (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-git.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: stage explicit workflow boundary paths`).
-166. [PENDING] Git Commit: `fix: stage explicit workflow boundary paths` (hash: TBD)
-167. [TODO] `development-tree-cluster-contract.phase18.projected-dialog-verify.task1` Run targeted Core tests/builds for projected cluster dialog identity and workflow boundary path staging (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog identity`).
-168. [TODO] Git Commit: `test: verify projected cluster dialog identity` (hash: TBD)
+166. [DONE] Git Commit: `fix: stage explicit workflow boundary paths` (hash: 42792d46e)
+167. [DONE] `development-tree-cluster-contract.phase18.projected-dialog-verify.task1` Run targeted Core tests/builds for projected cluster dialog identity and workflow boundary path staging (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog identity`).
+168. [PENDING] Git Commit: `test: verify projected cluster dialog identity` (hash: TBD)
+
+Verification evidence:
+- `npm run build --workspace packages/core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/development-tree-projected-session.test.js packages/core/dist/workflow/boundary/workflow-boundary-git.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js` passed: 3/3 tests.
 
 ### Stream: Release After Confirmation
 
