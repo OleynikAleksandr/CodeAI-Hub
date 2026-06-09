@@ -1,23 +1,39 @@
 import type { OutgoingMessage } from "../core-stream-message-types";
 
 export type DialogApi = {
-  readonly listDialogs: (workspaceSlug: string, requestId?: string) => string;
+  readonly listDialogs: (
+    workspaceSlug: string,
+    options?: DialogRequestOptions | string
+  ) => string;
   readonly openDialog: (
     workspaceSlug: string,
     dialogId: string,
-    requestId?: string
+    options?: DialogRequestOptions | string
   ) => string;
   readonly requestDialogHistory: (
     workspaceSlug: string,
     dialogId: string,
-    options?: { readonly cursor?: number; readonly requestId?: string } | string
+    options?: DialogHistoryRequestOptions | string
   ) => string;
   readonly sendDialogMessage: (
     workspaceSlug: string,
     dialogId: string,
     content: string,
-    requestId?: string
+    options?: DialogSendRequestOptions | string
   ) => string | null;
+};
+
+type DialogRequestOptions = {
+  readonly requestId?: string;
+  readonly workspacePath?: string;
+};
+
+type DialogHistoryRequestOptions = DialogRequestOptions & {
+  readonly cursor?: number;
+};
+
+type DialogSendRequestOptions = DialogRequestOptions & {
+  readonly turnOptions?: Record<string, unknown>;
 };
 
 const createRequestId = (prefix: string): string => {
@@ -33,19 +49,36 @@ const createRequestId = (prefix: string): string => {
 export const createDialogApi = (
   send: (message: OutgoingMessage) => void
 ): DialogApi => ({
-  listDialogs: (workspaceSlug, requestId) => {
+  listDialogs: (workspaceSlug, options) => {
+    const requestId =
+      typeof options === "string" ? options : options?.requestId ?? undefined;
     const resolvedRequestId = requestId ?? createRequestId("dialog-list");
     send({
       type: "dialog:list",
-      payload: { requestId: resolvedRequestId, workspaceSlug },
+      payload: {
+        requestId: resolvedRequestId,
+        workspaceSlug,
+        ...(typeof options === "object" && options?.workspacePath
+          ? { workspacePath: options.workspacePath }
+          : {}),
+      },
     });
     return resolvedRequestId;
   },
-  openDialog: (workspaceSlug, dialogId, requestId) => {
+  openDialog: (workspaceSlug, dialogId, options) => {
+    const requestId =
+      typeof options === "string" ? options : options?.requestId ?? undefined;
     const resolvedRequestId = requestId ?? createRequestId("dialog-open");
     send({
       type: "dialog:open",
-      payload: { requestId: resolvedRequestId, workspaceSlug, dialogId },
+      payload: {
+        requestId: resolvedRequestId,
+        workspaceSlug,
+        dialogId,
+        ...(typeof options === "object" && options?.workspacePath
+          ? { workspacePath: options.workspacePath }
+          : {}),
+      },
     });
     return resolvedRequestId;
   },
@@ -67,18 +100,34 @@ export const createDialogApi = (
         workspaceSlug,
         dialogId,
         ...(cursor !== undefined ? { cursor } : {}),
+        ...(typeof options === "object" && options?.workspacePath
+          ? { workspacePath: options.workspacePath }
+          : {}),
       },
     });
     return resolvedRequestId;
   },
-  sendDialogMessage: (workspaceSlug, dialogId, content, requestId) => {
+  sendDialogMessage: (workspaceSlug, dialogId, content, options) => {
     if (!content.trim()) {
       return null;
     }
+    const requestId =
+      typeof options === "string" ? options : options?.requestId ?? undefined;
     const resolvedRequestId = requestId ?? createRequestId("dialog-send");
     send({
       type: "dialog:send",
-      payload: { requestId: resolvedRequestId, workspaceSlug, dialogId, content },
+      payload: {
+        requestId: resolvedRequestId,
+        workspaceSlug,
+        dialogId,
+        content,
+        ...(typeof options === "object" && options?.workspacePath
+          ? { workspacePath: options.workspacePath }
+          : {}),
+        ...(typeof options === "object" && options?.turnOptions
+          ? { turnOptions: options.turnOptions }
+          : {}),
+      },
     });
     return resolvedRequestId;
   },

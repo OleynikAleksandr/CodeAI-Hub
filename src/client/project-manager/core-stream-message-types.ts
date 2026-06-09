@@ -130,29 +130,27 @@ export type CommandErrorPayload = {
   readonly details?: unknown;
 };
 
-export type DialogListRequestPayload = {
+type DialogScopedRequestPayload = {
   readonly requestId: string;
+  readonly workspacePath?: string;
   readonly workspaceSlug: string;
 };
 
-export type DialogOpenRequestPayload = {
-  readonly requestId: string;
-  readonly workspaceSlug: string;
+export type DialogListRequestPayload = DialogScopedRequestPayload;
+
+export type DialogOpenRequestPayload = DialogScopedRequestPayload & {
   readonly dialogId: string;
 };
 
-export type DialogHistoryRequestPayload = {
-  readonly requestId: string;
-  readonly workspaceSlug: string;
+export type DialogHistoryRequestPayload = DialogScopedRequestPayload & {
   readonly dialogId: string;
   readonly cursor?: number;
 };
 
-export type DialogSendRequestPayload = {
-  readonly requestId: string;
-  readonly workspaceSlug: string;
+export type DialogSendRequestPayload = DialogScopedRequestPayload & {
   readonly dialogId: string;
   readonly content: string;
+  readonly turnOptions?: Record<string, unknown>;
 };
 
 export type ProjectManagerDiagnosticLogPayload = {

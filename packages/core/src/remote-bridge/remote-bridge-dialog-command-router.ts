@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { SessionManager } from "../session-manager";
 import type { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
 import type { DialogHistoryService } from "./handlers/dialog-history-service";
@@ -70,8 +71,17 @@ export class RemoteBridgeDialogCommandRouter {
       });
       return;
     }
+    const dialogWorkspaceRoot = this.resolveDialogWorkspaceRoot(
+      scoped,
+      payload.workspacePath,
+      clientId,
+      "dialog:history"
+    );
+    if (!dialogWorkspaceRoot) {
+      return;
+    }
     const result = await this.deps.dialogHistoryService.readHistory({
-      workspaceRoot: scoped.workspaceRoot,
+      workspaceRoot: dialogWorkspaceRoot,
       workspaceSlug,
       dialogId,
       cursor,
@@ -112,12 +122,22 @@ export class RemoteBridgeDialogCommandRouter {
       );
       return;
     }
+    const dialogWorkspaceRoot = this.resolveDialogWorkspaceRoot(
+      scoped,
+      payload.workspacePath,
+      clientId,
+      "dialog:list"
+    );
+    if (!dialogWorkspaceRoot) {
+      return;
+    }
     const dialogs = await this.deps.dialogListService.listDialogs({
-      workspaceRoot: scoped.workspaceRoot,
+      workspaceRoot: dialogWorkspaceRoot,
       workspaceSlug,
-      runtimeSessions: this.deps.sessionManager.getSessionsByWorkspacePath(
-        scoped.workspaceRoot
-      ),
+      runtimeSessions:
+        this.deps.sessionManager.getSessionsByWorkspacePath(
+          dialogWorkspaceRoot
+        ),
     });
     materializeContinuityEntries({
       deps: {
@@ -126,7 +146,7 @@ export class RemoteBridgeDialogCommandRouter {
         workspaceRuntime: this.deps.workspaceRuntime,
       },
       entries: dialogs,
-      workspaceRoot: scoped.workspaceRoot,
+      workspaceRoot: dialogWorkspaceRoot,
       workspaceSlug,
     });
     scoped.wsManager.sendToClient(clientId, {
@@ -170,8 +190,17 @@ export class RemoteBridgeDialogCommandRouter {
       });
       return;
     }
+    const dialogWorkspaceRoot = this.resolveDialogWorkspaceRoot(
+      scoped,
+      payload.workspacePath,
+      clientId,
+      "dialog:open"
+    );
+    if (!dialogWorkspaceRoot) {
+      return;
+    }
     const dialog = await this.deps.dialogOpenService.openDialog({
-      workspaceRoot: scoped.workspaceRoot,
+      workspaceRoot: dialogWorkspaceRoot,
       workspaceSlug,
       dialogId,
     });
@@ -220,11 +249,21 @@ export class RemoteBridgeDialogCommandRouter {
       });
       return;
     }
+    const dialogWorkspaceRoot = this.resolveDialogWorkspaceRoot(
+      scoped,
+      payload.workspacePath,
+      clientId,
+      "dialog:send"
+    );
+    if (!dialogWorkspaceRoot) {
+      return;
+    }
     const result = await this.deps.sessionHandler.handleDialogSend({
-      workspaceRoot: scoped.workspaceRoot,
+      workspaceRoot: dialogWorkspaceRoot,
       workspaceSlug,
       dialogId,
       content,
+      turnOptions: payload.turnOptions,
     });
     scoped.wsManager.sendToClient(clientId, {
       type: "dialog:send:ack",
@@ -256,6 +295,36 @@ export class RemoteBridgeDialogCommandRouter {
       return null;
     }
     return { workspaceRoot, wsManager };
+  }
+
+  private resolveDialogWorkspaceRoot(
+    scoped: ScopedWorkspace,
+    requestedWorkspacePath: string | undefined,
+    clientId: string,
+    command: string
+  ): string | null {
+    const requested = requestedWorkspacePath?.trim();
+    if (!requested) {
+      return scoped.workspaceRoot;
+    }
+    const scopedRoot = path.resolve(scoped.workspaceRoot);
+    const requestedRoot = path.resolve(requested);
+    const scopedWorktreesRoot = path.resolve(
+      `${scoped.workspaceRoot}.worktrees`
+    );
+    const isScopedRoot = requestedRoot === scopedRoot;
+    const isScopedWorktree =
+      requestedRoot === scopedWorktreesRoot ||
+      requestedRoot.startsWith(`${scopedWorktreesRoot}${path.sep}`);
+    if (isScopedRoot || isScopedWorktree) {
+      return requestedRoot;
+    }
+    this.deps.sendScopeViolation(
+      clientId,
+      command,
+      "dialog command rejected for out-of-scope workspace"
+    );
+    return null;
   }
 
   private sendCommandError(

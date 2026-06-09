@@ -64,7 +64,9 @@ export const useProjectManagerDialogSessionController = (
   }, [session]);
 
   const requestDialogList = useCallback((intent: DialogOpenIntent) => {
-    api.dialogs.listDialogs(intent.workspaceSlug);
+    api.dialogs.listDialogs(intent.workspaceSlug, {
+      workspacePath: intent.workspacePath,
+    });
   }, []);
 
   const requestDialogHistory = useCallback(
@@ -91,7 +93,10 @@ export const useProjectManagerDialogSessionController = (
         return;
       }
 
-      api.dialogs.requestDialogHistory(intent.workspaceSlug, dialogId, resolvedCursor > 0 ? { cursor: resolvedCursor } : undefined);
+      api.dialogs.requestDialogHistory(intent.workspaceSlug, dialogId, {
+        ...(resolvedCursor > 0 ? { cursor: resolvedCursor } : {}),
+        workspacePath: intent.workspacePath,
+      });
 
       pendingHistoryCursorRef.current.set(dialogId, resolvedCursor);
       if (resolvedCursor === 0 && !options?.force) {
@@ -418,11 +423,13 @@ export const useProjectManagerDialogSessionController = (
     }
     reload();
     const currentSessionId = sessionRef.current?.id ?? currentDialogId;
+    api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content, {
+      workspacePath: intent.workspacePath,
+      ...(turnOptions ? { turnOptions } : {}),
+    });
     if (turnOptions?.managedReviewAction) {
-      api.sendSessionMessage(currentSessionId, content, turnOptions);
       return;
     }
-    api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content);
     // Optimistic: render user message immediately instead of waiting for dialog:history:result
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);

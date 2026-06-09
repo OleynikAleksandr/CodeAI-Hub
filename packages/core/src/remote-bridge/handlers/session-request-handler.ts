@@ -387,6 +387,7 @@ export class SessionRequestHandler {
     readonly workspaceSlug: string;
     readonly dialogId: string;
     readonly content: string;
+    readonly turnOptions?: Record<string, unknown>;
   }): Promise<
     { readonly ok: true } | { readonly ok: false; readonly error: string }
   > {

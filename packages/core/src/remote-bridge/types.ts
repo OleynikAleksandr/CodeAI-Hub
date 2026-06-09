@@ -441,38 +441,36 @@ interface ProjectManagerDiagnosticLogIncomingMessage {
   readonly type: "pm:diag:log";
 }
 
+interface DialogScopedIncomingPayload {
+  readonly requestId: string;
+  readonly workspacePath?: string;
+  readonly workspaceSlug: string;
+}
+
 type DialogIncomingMessage =
   | {
       readonly type: "dialog:list";
-      readonly payload: {
-        readonly requestId: string;
-        readonly workspaceSlug: string;
-      };
+      readonly payload: DialogScopedIncomingPayload;
     }
   | {
       readonly type: "dialog:open";
-      readonly payload: {
-        readonly requestId: string;
-        readonly workspaceSlug: string;
+      readonly payload: DialogScopedIncomingPayload & {
         readonly dialogId: string;
       };
     }
   | {
       readonly type: "dialog:history";
-      readonly payload: {
-        readonly requestId: string;
-        readonly workspaceSlug: string;
+      readonly payload: DialogScopedIncomingPayload & {
         readonly dialogId: string;
         readonly cursor?: number;
       };
     }
   | {
       readonly type: "dialog:send";
-      readonly payload: {
-        readonly requestId: string;
-        readonly workspaceSlug: string;
+      readonly payload: DialogScopedIncomingPayload & {
         readonly dialogId: string;
         readonly content: string;
+        readonly turnOptions?: Record<string, unknown>;
       };
     };
 

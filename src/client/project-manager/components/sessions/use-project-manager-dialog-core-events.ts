@@ -158,6 +158,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
           match.latestSessionId ?? match.rootSessionId;
         const dialogWorkspacePath = match.worktreePath ?? intent.workspacePath;
         const dialogIntent = { ...intent, workspacePath: dialogWorkspacePath };
+        options.pendingIntentRef.current = dialogIntent;
         const latestSnapshot = options.latestWorkspaceSnapshotRef.current;
         const runtimeSession = resolveRuntimeSessionFromWorkspaceSnapshot({
           payload:
@@ -256,7 +257,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
             sessionId: nextSession.id,
           });
         }
-        options.requestDialogHistory(intent, match.dialogId);
+        options.requestDialogHistory(dialogIntent, match.dialogId);
         return;
       }
 

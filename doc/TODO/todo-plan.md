@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "2a90a7f9f",
+  "lastRecordedCommit": "73e3c3d6a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase41.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint cluster contract review unlock user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase44.projected-dialog-routing.task1",
+  "expectedCommitMessage": "fix: route projected cluster dialogs through worktree roots",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint cluster contract review unlock user retest state",
-    "preCommitHead": "2a90a7f9f",
+    "expectedCommitMessage": "fix: route projected cluster dialogs through worktree roots",
+    "preCommitHead": "73e3c3d6a",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase41.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase44.projected-dialog-routing.task1"
   }
 }
 ```
@@ -674,18 +674,35 @@ Verification evidence:
 294. [DONE] `development-tree-cluster-contract.phase41.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract review unlock vsix release`).
 295. [DONE] Git Commit: `build: package cluster contract review unlock vsix release` (hash: 2a90a7f9f)
 296. [DONE] `development-tree-cluster-contract.phase41.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint cluster contract review unlock user retest state`).
-297. [PENDING] Git Commit: `docs: checkpoint cluster contract review unlock user retest state` (hash: TBD)
+297. [DONE] Git Commit: `docs: checkpoint cluster contract review unlock user retest state` (hash: 73e3c3d6a)
 
 ## Phase 42 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
 
 ### Stream: Cluster Contract Review Unlock Retest
 
-298. [TODO] `development-tree-cluster-contract.phase42.user-retest.task1` User installs release `1.2.482` and retests the FinderWidget cluster-contract flow: accepted cluster contract review must refresh in the visible projected cluster dialog without sidebar toggling, release stale `Agent is working`/managed gate locks, and make the `Подтверждаю` action clickable when Core emits `managed-workflow-user-review` (scope: user workflow; expected commit: none).
+298. [BLOCKED] `development-tree-cluster-contract.phase42.user-retest.task1` User installs release `1.2.482` and retests the FinderWidget cluster-contract flow: accepted cluster contract review must refresh in the visible projected cluster dialog without sidebar toggling, release stale `Agent is working`/managed gate locks, and make the `Подтверждаю` action clickable when Core emits `managed-workflow-user-review` (scope: user workflow; expected commit: none). Blocker: 2026-06-09 retest showed projected cluster dialogs still stop visually on stale reasoning until the sidebar selection is toggled, and clicking `Подтверждаю` routes the action through the runtime session path, leaving the visible dialog input blocked with a normal text placeholder.
 
-## Phase 43 - Scope Closeout (owner: Codex, updated: 2026-06-09)
+## Phase 44 - Projected Cluster Dialog Routing Regression (owner: Codex, updated: 2026-06-09)
+
+### Stream: Worktree Dialog Command Routing
+
+299. [DONE] `development-tree-cluster-contract.phase44.projected-dialog-routing.task1` Route projected cluster dialog list/history/send commands through the resolved worktree workspace root instead of the main workspace scope, while keeping main workspace scope validation for allowed worktree paths (scope: `src/client/project-manager, packages/core/src/remote-bridge, doc/TODO/todo-plan.md`; expected commit: `fix: route projected cluster dialogs through worktree roots`).
+300. [PENDING] Git Commit: `fix: route projected cluster dialogs through worktree roots` (hash: TBD)
+301. [TODO] `development-tree-cluster-contract.phase44.managed-review-dialog-send.task1` Send projected cluster `Подтверждаю` actions through `dialog:send` with managed review metadata so Core resolves the correct worktree-backed session before applying review decisions (scope: `src/client/project-manager/core-stream-message-types.ts, packages/core/src/remote-bridge/types.ts, packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, doc/TODO/todo-plan.md`; expected commit: `fix: confirm projected cluster reviews through dialog sends`).
+302. [TODO] Git Commit: `fix: confirm projected cluster reviews through dialog sends` (hash: TBD)
+303. [TODO] `development-tree-cluster-contract.phase44.projected-dialog-routing-test.task1` Add targeted regression coverage for projected worktree history refresh and managed review dialog sends, then run focused Project Manager/Core tests (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog routing`).
+304. [TODO] Git Commit: `test: verify projected cluster dialog routing` (hash: TBD)
+
+## Phase 45 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
+
+### Stream: Projected Cluster Dialog Routing Retest
+
+305. [TODO] `development-tree-cluster-contract.phase45.user-retest.task1` User installs the next release and retests the FinderWidget cluster-contract flow: projected cluster dialog must live-refresh from worktree JSONL without sidebar toggling, and `Подтверждаю` must route through the visible cluster dialog without leaving the input blocked (scope: user workflow; expected commit: none).
+
+## Phase 46 - Scope Closeout (owner: Codex, updated: 2026-06-09)
 
 ### Stream: Closeout After Acceptance
 
-299. [TODO] `development-tree-cluster-contract.phase43.closeout.task1` After explicit user acceptance of release `1.2.482`, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-300. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-301. [TODO] `development-tree-cluster-contract.phase43.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+306. [TODO] `development-tree-cluster-contract.phase46.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+307. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+308. [TODO] `development-tree-cluster-contract.phase46.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

@@ -12,6 +12,7 @@ import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import { isWorkflowBoundaryStage } from "../../workflow/boundary/workflow-boundary-model";
 import { type BridgeEvent, serializeSession } from "../types";
+import type { MessageContentPayload } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 
 const defaultManagedWorkflowOrchestration =
@@ -36,7 +37,10 @@ interface SessionRequestHandlerSessionResolutionDependencies {
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly broadcastSessionBinding: (sessionId: string) => void;
   readonly getDefaultProviderId: () => string;
-  readonly handleMessage: (sessionId: string, payload: string) => Promise<void>;
+  readonly handleMessage: (
+    sessionId: string,
+    payload: MessageContentPayload
+  ) => Promise<void>;
   readonly handleProviderFailure: (
     providerId: string,
     error: unknown,
@@ -194,6 +198,7 @@ export class SessionRequestHandlerSessionResolution {
     readonly workspaceSlug: string;
     readonly dialogId: string;
     readonly content: string;
+    readonly turnOptions?: Record<string, unknown>;
   }): Promise<
     { readonly ok: true } | { readonly ok: false; readonly error: string }
   > {
@@ -263,7 +268,12 @@ export class SessionRequestHandlerSessionResolution {
     if (!resolvedSession) {
       return { ok: false, error: "Failed to resume dialog session" };
     }
-    await this.deps.handleMessage(resolvedSession.id, options.content);
+    await this.deps.handleMessage(
+      resolvedSession.id,
+      options.turnOptions
+        ? { content: options.content, turnOptions: options.turnOptions }
+        : options.content
+    );
     return { ok: true };
   }
 

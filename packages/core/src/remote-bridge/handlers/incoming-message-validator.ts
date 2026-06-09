@@ -167,7 +167,8 @@ const isUsageRefreshPayload = (payload: unknown): boolean =>
 const isDialogListPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.requestId === "string" &&
-  typeof payload.workspaceSlug === "string";
+  typeof payload.workspaceSlug === "string" &&
+  isOptionalString(payload.workspacePath);
 
 const isDialogOpenPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
@@ -182,7 +183,8 @@ const isDialogHistoryPayload = (payload: unknown): boolean =>
 const isDialogSendPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   isDialogOpenPayload(payload) &&
-  typeof payload.content === "string";
+  typeof payload.content === "string" &&
+  (payload.turnOptions === undefined || isRecord(payload.turnOptions));
 
 const isDialogSwitchRequestPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
