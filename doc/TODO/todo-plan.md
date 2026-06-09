@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "15766618f",
+  "lastRecordedCommit": "d2f612158",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase28.cluster-contract-validation.task1",
-  "expectedCommitMessage": "feat: validate concrete cluster facade contracts",
+  "currentTaskId": "development-tree-cluster-contract.phase28.verification.task1",
+  "expectedCommitMessage": "test: verify top down contract orchestration",
   "debt": {
-    "expectedCommitMessage": "feat: validate concrete cluster facade contracts",
-    "preCommitHead": "15766618f",
+    "expectedCommitMessage": "test: verify top down contract orchestration",
+    "preCommitHead": "d2f612158",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase28.cluster-contract-validation.task1"
+    "taskId": "development-tree-cluster-contract.phase28.verification.task1"
   }
 }
 ```
@@ -502,6 +502,11 @@ Verification evidence:
 ### Stream: Pre-Code Artifact Gates
 
 220. [DONE] `development-tree-cluster-contract.phase28.cluster-contract-validation.task1` Strengthen cluster contract review validation so `ClusterFacadeContract.draft.json` must contain concrete facade class/file/method/DTO/result-union/module-boundary fields before Core opens review (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: validate concrete cluster facade contracts`).
-221. [PENDING] Git Commit: `feat: validate concrete cluster facade contracts` (hash: TBD)
-222. [TODO] `development-tree-cluster-contract.phase28.verification.task1` Run targeted Core tests/builds for contract seeds, lead prompt requirements, downstream seed propagation, cluster prompt requirements, and concrete contract validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify top down contract orchestration`).
-223. [TODO] Git Commit: `test: verify top down contract orchestration` (hash: TBD)
+221. [DONE] Git Commit: `feat: validate concrete cluster facade contracts` (hash: d2f612158)
+222. [DONE] `development-tree-cluster-contract.phase28.verification.task1` Run targeted Core tests/builds for contract seeds, lead prompt requirements, downstream seed propagation, cluster prompt requirements, and concrete contract validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify top down contract orchestration`).
+223. [PENDING] Git Commit: `test: verify top down contract orchestration` (hash: TBD)
+
+Verification evidence:
+- `npx ultracite check ...development-order-plan-v2-contract.ts ...product-part-development-brief-review-controller.ts ...development-order-plan-unlock-state.ts ...cluster-contract-agent-bootstrapper.ts ...cluster-contract-prompt-builder.ts ...cluster-contract-turn-controller.ts` passed for the targeted files.
+- `npm run build --workspace packages/core` passed.
+- `node --test ...development-order-plan-v2-contract.test.js ...product-part-development-brief-review-controller.prompt.test.js ...cluster-contract-agent-bootstrapper.test.js ...cluster-contract-prompt-builder.test.js ...cluster-contract-turn-controller.test.js` passed: 11/11 tests.
