@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.476** (Projected Cluster Session Recovery)
+**Current Release — v1.2.477** (Projected Cluster Dialog Identity)
+
+This regression-fix release resolves the remaining empty-dialog case for
+downstream Cluster Contract sessions. Project Manager now receives the real
+worktree continuity dialog identity, including the provider-backed `dialogId`,
+`rootSessionId`, and `providerSessionId`, instead of opening the cluster node
+with only the runtime UUID stored in the Product Part unlock-state.
+
+Workflow Git boundary staging now treats explicit pathspecs as explicit user
+intent. Deep managed-plan files such as
+`doc/TODO/stages/development-tree/product-parts/<part>/clusters/<cluster>/todo-plan.md`
+are staged directly, so cluster worktree ledger commits include the managed
+todo-plan instead of leaving it untracked.
+
+Retest by starting the FinderWidget lead Product Part cluster wave, selecting
+`note-selection-cluster`, and confirming that the existing sub-agent messages
+render immediately. After draft review, the cluster worktree Git status should
+not contain an untracked cluster `todo-plan.md`.
+
+**Previous Release — v1.2.476** (Projected Cluster Session Recovery)
 
 This regression-fix release makes projected Cluster Contract sessions usable
 from the lead Product Part graph. When Project Manager opens a cluster node

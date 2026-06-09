@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "42792d46e",
+  "lastRecordedCommit": "8221a7981",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase18.projected-dialog-verify.task1",
-  "expectedCommitMessage": "test: verify projected cluster dialog identity",
+  "currentTaskId": "development-tree-cluster-contract.phase18.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare projected cluster identity release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify projected cluster dialog identity",
-    "preCommitHead": "42792d46e",
+    "expectedCommitMessage": "docs: prepare projected cluster identity release notes",
+    "preCommitHead": "8221a7981",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase18.projected-dialog-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase18.release-notes.task1"
   }
 }
 ```
@@ -376,7 +376,7 @@ Verification evidence:
 165. [DONE] `development-tree-cluster-contract.phase18.git-boundary-pathspec.task1` Fix WorkflowBoundaryGit staging for deep explicit managed-plan paths so cluster worktree ledger commits include `doc/TODO/.../clusters/.../todo-plan.md` (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-git.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: stage explicit workflow boundary paths`).
 166. [DONE] Git Commit: `fix: stage explicit workflow boundary paths` (hash: 42792d46e)
 167. [DONE] `development-tree-cluster-contract.phase18.projected-dialog-verify.task1` Run targeted Core tests/builds for projected cluster dialog identity and workflow boundary path staging (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog identity`).
-168. [PENDING] Git Commit: `test: verify projected cluster dialog identity` (hash: TBD)
+168. [DONE] Git Commit: `test: verify projected cluster dialog identity` (hash: 8221a7981)
 
 Verification evidence:
 - `npm run build --workspace packages/core` passed.
@@ -384,8 +384,8 @@ Verification evidence:
 
 ### Stream: Release After Confirmation
 
-169. [TODO] `development-tree-cluster-contract.phase18.release-notes.task1` Prepare release notes for the projected cluster dialog identity and explicit path staging fixes after the user's explicit release request (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster identity release notes`).
-170. [TODO] Git Commit: `docs: prepare projected cluster identity release notes` (hash: TBD)
+169. [DONE] `development-tree-cluster-contract.phase18.release-notes.task1` Prepare release notes for the projected cluster dialog identity and explicit path staging fixes after the user's explicit release request (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare projected cluster identity release notes`).
+170. [PENDING] Git Commit: `docs: prepare projected cluster identity release notes` (hash: TBD)
 171. [TODO] `development-tree-cluster-contract.phase18.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running the release script (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster identity release build state`).
 172. [TODO] Git Commit: `docs: checkpoint projected cluster identity release build state` (hash: TBD)
 173. [TODO] `development-tree-cluster-contract.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster identity release artifacts`).

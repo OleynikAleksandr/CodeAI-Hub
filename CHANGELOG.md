@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.477] - 2026-06-09
+### Fixed
+- **Projected cluster dialogs now use the real worktree continuity identity.** Core resolves the cluster node `dialogId`, `rootSessionId`, and `providerSessionId` from the worktree continuity index, so Project Manager opens the existing provider-backed JSONL instead of an empty runtime-UUID shell.
+- **WorkflowBoundaryGit stages explicit managed-plan paths directly.** Deep `doc/TODO/.../clusters/.../todo-plan.md` paths now enter ledger commits correctly instead of being dropped by global exclude pathspecs.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/development-tree-projected-session.test.js packages/core/dist/workflow/boundary/workflow-boundary-git.test.js packages/core/dist/remote-bridge/handlers/cluster-contract-turn-controller.test.js`
+- `npm run plan:validate`
+
 ## [1.2.476] - 2026-06-08
 ### Fixed
 - **Projected cluster sessions now read history from their worktree runtime.** Project Manager can open a cluster node from the lead Product Part graph and render the real sub-agent JSONL instead of an empty projected shell.
