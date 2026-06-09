@@ -135,7 +135,20 @@ After restart, Core must not rely on stale in-memory state. It rehydrates Develo
 - очевидные зависимости из `Diagram Modules`;
 - что важно помнить следующим cluster/module agents.
 
-Это не facade contract и не самостоятельная спецификация входов/выходов. `Product Part` является формальной веткой продукта, а реальные контракты создаются ниже: у cluster-ов, standalone module-ов и module-ов.
+Это не полный facade contract и не самостоятельная спецификация алгоритмов. `Product Part` является формальной веткой продукта, но он обязан задать contract envelope для нижних узлов: кто потребитель, какие входы/выходы ожидаются, какие статусы/ошибки обязательны, какие ограничения нельзя нарушать и какие вопросы блокируют дальнейший спуск.
+
+Реальные pre-code контракты создаются ниже: у cluster-ов, standalone module-ов и module-ов. Но нижний агент не должен изобретать смысл публичной boundary заново. Он получает верхнеуровневый seed и уточняет его до конкретного будущего кода.
+
+### 4.2.1. Top-down contract ownership
+
+Development Tree проектируется сверху вниз:
+
+1. `Product Part` определяет contract seeds для своих Cluster и Standalone Module узлов.
+2. `Cluster` уточняет свой Product Part seed до Cluster Facade Contract и задаёт boundary contracts для owned modules.
+3. `Standalone Module` уточняет Product Part seed до Module Facade Contract, Function Specification и Implementation TODO Plan.
+4. `Cluster Module` уточняет Cluster-owned module boundary contract до Module Specification, Function Specification и Implementation TODO Plan.
+
+Нижний агент может уточнять имена, DTO, edge cases, алгоритмические детали и тестовые сценарии. Он не может молча менять смысл входов/выходов, потребителя, статусную модель или ответственность узла. Если seed недостаточен или противоречив, агент должен остановиться на blocking question / revision request, а не заполнять пробелы догадками.
 
 ### 4.3. Cluster Design keeps one session and two artifacts
 
@@ -145,6 +158,20 @@ After restart, Core must not rely on stale in-memory state. It rehydrates Develo
 - `Cluster Facade Contract`.
 
 Спецификация отвечает за внутреннюю роль cluster-а. Facade contract отвечает за его публичную boundary.
+
+`Cluster Facade Contract` является pre-code artifact, а не архитектурным эссе. Он обязан указывать будущий кодовый surface:
+
+- имя facade class;
+- путь будущего facade-файла;
+- public method signatures;
+- input DTOs;
+- output DTOs и discriminated result union;
+- status/error model;
+- owned module call order;
+- boundary contract каждого owned module;
+- blocking и non-blocking open questions.
+
+Если в контракте нет будущего класса, файла, методов и DTO, Core должен считать такой контракт недостаточным для запуска module agents.
 
 ### 4.4. Module uses one module-agent session
 
@@ -172,6 +199,8 @@ Module agent последовательно ведёт пользователя 
 - тот же агент составил implementation plan;
 - поэтому он лучше всех может понять, принять ли результат worker-ов и как собрать модуль.
 
+Module agent не придумывает внешний контракт из пустоты. Для standalone module он получает seed от Product Part. Для cluster module он получает boundary contract от Cluster agent. Его задача — уточнить этот контракт до code-ready module artifacts.
+
 ### 4.5. Facade Contract goes before Module Specification
 
 Для модуля первой проектируется публичная boundary:
@@ -181,7 +210,9 @@ Module agent последовательно ведёт пользователя 
 - какие ошибки/статусы видит внешний мир;
 - что запрещено обходить напрямую.
 
-После этого пишется `Module Specification`: что модуль делает внутри, какие алгоритмы использует, какие данные держит и какие ограничения соблюдает.
+Facade Contract должен быть конкретным описанием будущего кода: class/file path, method signatures, DTO/interfaces, result union and error model. После этого пишется `Module Specification`: что модуль делает внутри, какие алгоритмы использует, какие функции нужны, какие данные держит и какие ограничения соблюдает.
+
+После `Module Specification` module agent создаёт `Function Specification`: function names, inputs, outputs, preconditions, processing steps, edge cases, failure handling and tests. Только после этих двух принятых документов создаётся `Implementation TODO Plan` для разработки конкретного кода.
 
 ### 4.6. Implementation TODO Plan is an interactive right-panel artifact
 

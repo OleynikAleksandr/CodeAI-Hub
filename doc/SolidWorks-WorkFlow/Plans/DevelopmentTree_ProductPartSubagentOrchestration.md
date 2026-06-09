@@ -104,6 +104,33 @@ Minimum machine shape:
 
 The exact field names may evolve during implementation, but the contract must remain machine-readable and validator-owned by Core.
 
+### 4.1. Top-down contract seeds
+
+Development Tree orchestration is top-down. A lower-level agent must not invent the public boundary of its node from scratch.
+
+Responsibility is split this way:
+
+- Product Part agent defines the downstream node contract seeds: expected consumer, required inputs, required outputs, status/error vocabulary, sequencing assumptions, and blocking open questions for each Cluster or Standalone Module node.
+- Cluster agent receives its Product Part contract seed and turns it into a concrete pre-code Cluster Facade Contract plus module boundary contracts for the modules it owns.
+- Standalone Module agent receives its Product Part contract seed and turns it into a concrete pre-code Module Facade Contract and Function Specification.
+- Cluster Module agent receives its Cluster-owned module boundary contract and turns it into a concrete Module Specification, Function Specification, and Implementation TODO Plan.
+
+Lower agents may refine names, DTO shape, edge cases, and algorithmic details. They may not silently change the semantic boundary. If the seed is insufficient or inconsistent, the agent must produce a blocking question or revision request instead of filling the gap with speculation.
+
+The `DevelopmentOrderPlan.v2` machine contract should evolve from a pure wave/unlock graph into an unlock graph plus `contractSeeds` for downstream nodes. A seed does not need to be final code, but it must be specific enough to constrain the next agent:
+
+```json
+{
+  "nodeId": "cluster:finder-widget/note-selection-cluster",
+  "consumer": "finder-widget-shell",
+  "requiredInputs": ["local notes folder context"],
+  "requiredOutputs": ["normalized note-selection result"],
+  "requiredStatuses": ["data-found", "no-data", "access-error", "invalid-input"],
+  "requiredOwnedModules": ["latest-note-resolver", "note-payload-builder"],
+  "blockingQuestions": ["snippet policy must be resolved before implementation"]
+}
+```
+
 ## 5. First FinderWidget Downstream Step
 
 For the current FinderWidget tree, the first downstream node should be cluster-level:
@@ -118,6 +145,18 @@ The first sub-agent should create:
 - `Cluster Specification`;
 - `Cluster Facade Contract`;
 - machine-readable JSON companions for Core validation.
+
+The cluster contract is not an abstract design note. It is a pre-code artifact. It must describe the future code surface concretely enough that module agents and implementation agents can work without re-inventing the boundary:
+
+- facade class name;
+- facade file path;
+- public method signatures;
+- input DTOs;
+- output DTOs and discriminated result union;
+- error/status model;
+- owned module call order;
+- module boundary contracts for `latest-note-resolver` and `note-payload-builder`;
+- blocking and non-blocking open questions.
 
 The first wave should not open `latest-note-resolver` or `note-payload-builder` directly. Those modules need the cluster contract first, otherwise module agents may invent incompatible input/output contracts.
 
@@ -230,3 +269,15 @@ The implemented MVP scope is intentionally narrow:
 8. Project Manager renders the resulting Product Part coordination graph from Core's `developmentTree` snapshot.
 
 This keeps the product moving without pretending that Core can design arbitrary products by script. Agents own semantic planning; Core owns deterministic execution and recovery.
+
+## 11. Pre-code artifact ladder
+
+Every Development Tree node below Product Part must move from contract to code through explicit pre-code artifacts:
+
+1. `FacadeContract` defines the exact future facade code surface: class, file path, public methods, DTOs, result union, errors, and dependency boundary.
+2. `FunctionSpecification` defines the concrete algorithms/functions needed behind that facade: function names, inputs, outputs, preconditions, processing steps, edge cases, failure handling, and test cases.
+3. `ImplementationTodoPlan` turns the accepted contract and function specification into microtasks with file targets, tests, gates, and paired Git Commit items.
+
+For Cluster nodes, the Cluster agent owns this ladder for the cluster facade and additionally defines module boundary contracts for each owned module. For Standalone Module and Module nodes, the module agent owns the ladder for its own facade/functions/implementation plan.
+
+Core validation should reject artifacts that remain at essay level. A valid contract must be close enough to code that the next agent can identify the exact future files, classes, methods, DTOs, and function specifications it must produce.
