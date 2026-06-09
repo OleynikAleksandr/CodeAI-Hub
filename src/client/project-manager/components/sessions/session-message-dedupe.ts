@@ -180,6 +180,7 @@ const shouldReleaseManagedWorkflowLock = (
   }
   const reason = snapshot.status.continuityLock?.reason;
   return (
+    reason === "managed_core_gated" ||
     reason === MANAGED_WORKFLOW_CONTINUATION_LOCK_REASON ||
     reason === "diagram_modules_sequence"
   );

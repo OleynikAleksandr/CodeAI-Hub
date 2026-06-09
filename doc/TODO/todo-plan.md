@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "6f9bba741",
+  "lastRecordedCommit": "430fbed94",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase39.review-lock-replay-verify.task1",
-  "expectedCommitMessage": "test: verify projected dialog review unlock builds",
+  "currentTaskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1",
+  "expectedCommitMessage": "fix: release managed gated review locks",
   "debt": {
-    "expectedCommitMessage": "test: verify projected dialog review unlock builds",
-    "preCommitHead": "6f9bba741",
+    "expectedCommitMessage": "fix: release managed gated review locks",
+    "preCommitHead": "430fbed94",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase39.review-lock-replay-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1"
   }
 }
 ```
@@ -632,9 +632,22 @@ Verification evidence:
 277. [DONE] `development-tree-cluster-contract.phase39.review-lock-replay-test.task1` Add regression coverage for full-history `managed-workflow-user-review` replay unlocking projected dialogs and keeping the review action clickable after missed live idle events (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock replay`).
 278. [DONE] Git Commit: `test: verify projected dialog review unlock replay` (hash: 6f9bba741)
 279. [DONE] `development-tree-cluster-contract.phase39.review-lock-replay-verify.task1` Run targeted Project Manager tests/builds for projected dialog full-history side effects before asking for the next release build confirmation (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock builds`).
-280. [PENDING] Git Commit: `test: verify projected dialog review unlock builds` (hash: TBD)
+280. [DONE] Git Commit: `test: verify projected dialog review unlock builds` (hash: 430fbed94)
 
 Verification evidence:
 - `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts` passed: 28/28 tests.
 - `npm run build:project-manager` passed.
 - `npm run typecheck:webview` passed.
+
+### Stream: Release Build Confirmation
+
+281. [DONE] `development-tree-cluster-contract.phase39.release-confirm.task1` Await explicit user confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging a VSIX for the projected dialog review unlock fix (scope: user workflow; expected commit: none). Result: User explicitly requested final verification, remaining fixes, and a new release build for the cluster-contract flow.
+
+## Phase 40 - Managed Gate Review Unlock Hardening (owner: Codex, updated: 2026-06-09)
+
+### Stream: Missed Gate Unlock Recovery
+
+282. [DONE] `development-tree-cluster-contract.phase40.managed-gate-review-unlock.task1` Release stale `managed_core_gated` locks when a replayed Core user-review message proves the managed workflow returned to user review, so missed live gate unlock events cannot leave projected dialogs externally frozen (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release managed gated review locks`).
+283. [PENDING] Git Commit: `fix: release managed gated review locks` (hash: TBD)
+284. [TODO] `development-tree-cluster-contract.phase40.managed-gate-review-unlock-test.task1` Add regression coverage for `managed-workflow-user-review` releasing stale `managed_core_gated` locks while preserving unrelated resume locks (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify managed gated review unlock`).
+285. [TODO] Git Commit: `test: verify managed gated review unlock` (hash: TBD)
