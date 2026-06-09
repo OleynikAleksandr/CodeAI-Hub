@@ -26,6 +26,7 @@ interface OrderPlanNode {
 }
 
 const FIRST_WAVE_NODE_KINDS = new Set(["cluster", "standalone_module"]);
+const SEEDED_NODE_KINDS = new Set(["cluster", "standalone_module"]);
 const NODE_ID_RE = /^(cluster|module|standalone-module):([^/]+)\/(.+)$/u;
 
 const asRecord = (value: unknown): JsonRecord | null =>
@@ -249,6 +250,101 @@ const collectLockedNodeIds = (
   return lockedNodeIds;
 };
 
+const validateContractSeed = (params: {
+  readonly diagnostics: string[];
+  readonly index: number;
+  readonly nodesById: ReadonlyMap<string, OrderPlanNode>;
+  readonly seededNodeIds: Set<string>;
+  readonly value: unknown;
+}): void => {
+  const seed = asRecord(params.value);
+  if (!seed) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] must be an object.`
+    );
+    return;
+  }
+
+  const nodeId = asString(seed.nodeId);
+  const consumer = asString(seed.consumer);
+  const requiredInputs = asStringArray(seed.requiredInputs);
+  const requiredOutputs = asStringArray(seed.requiredOutputs);
+  const requiredStatuses = asStringArray(seed.requiredStatuses);
+  const blockingQuestions = asStringArray(seed.blockingQuestions);
+  if (!nodeId) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] must include nodeId.`
+    );
+    return;
+  }
+  const node = params.nodesById.get(nodeId);
+  if (!node) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] references unknown node ${nodeId}.`
+    );
+    return;
+  }
+  if (!SEEDED_NODE_KINDS.has(node.kind)) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] may target only cluster or standalone_module nodes: ${nodeId}.`
+    );
+  }
+  if (!(consumer && requiredInputs?.length && requiredOutputs?.length)) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] for ${nodeId} must include consumer, requiredInputs, and requiredOutputs.`
+    );
+  }
+  if (!requiredStatuses?.length) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] for ${nodeId} must define requiredStatuses.`
+    );
+  }
+  if (!blockingQuestions) {
+    params.diagnostics.push(
+      `contractSeeds[${params.index}] for ${nodeId} must include blockingQuestions, even when empty.`
+    );
+  }
+  if (node.kind === "cluster") {
+    const requiredOwnedModules = asStringArray(seed.requiredOwnedModules);
+    if (!requiredOwnedModules?.length) {
+      params.diagnostics.push(
+        `contractSeeds[${params.index}] for cluster ${nodeId} must define requiredOwnedModules.`
+      );
+    }
+  }
+  params.seededNodeIds.add(nodeId);
+};
+
+const validateContractSeeds = (
+  plan: JsonRecord,
+  nodes: readonly OrderPlanNode[],
+  nodesById: ReadonlyMap<string, OrderPlanNode>,
+  diagnostics: string[]
+): void => {
+  const seeds = Array.isArray(plan.contractSeeds) ? plan.contractSeeds : [];
+  if (seeds.length === 0) {
+    diagnostics.push(
+      "contractSeeds must define parent-owned boundaries for cluster and standalone_module nodes."
+    );
+    return;
+  }
+  const seededNodeIds = new Set<string>();
+  for (const [index, value] of seeds.entries()) {
+    validateContractSeed({
+      diagnostics,
+      index,
+      nodesById,
+      seededNodeIds,
+      value,
+    });
+  }
+  for (const node of nodes) {
+    if (SEEDED_NODE_KINDS.has(node.kind) && !seededNodeIds.has(node.id)) {
+      diagnostics.push(`contractSeeds must include a seed for ${node.id}.`);
+    }
+  }
+};
+
 const validatePlanIdentity = (
   plan: JsonRecord,
   leadProductPartId: string,
@@ -329,6 +425,7 @@ export const validateDevelopmentOrderPlanV2 = async (
     nodes,
     nodesById,
   });
+  validateContractSeeds(plan, nodes, nodesById, diagnostics);
   const lockedNodeIds = collectLockedNodeIds(plan, nodesById, diagnostics);
   validateWaves(plan, nodesById, lockedNodeIds, diagnostics);
   return { diagnostics };
