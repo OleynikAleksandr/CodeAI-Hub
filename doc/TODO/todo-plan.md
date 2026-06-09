@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "bcc74830a",
+  "lastRecordedCommit": "67de16e7a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase18.vsix.task1",
-  "expectedCommitMessage": "build: package projected cluster identity vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase18.release-handoff.task1",
+  "expectedCommitMessage": "docs: checkpoint projected cluster identity user retest state",
   "debt": {
-    "expectedCommitMessage": "build: package projected cluster identity vsix release",
-    "preCommitHead": "bcc74830a",
+    "expectedCommitMessage": "docs: checkpoint projected cluster identity user retest state",
+    "preCommitHead": "67de16e7a",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase18.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase18.release-handoff.task1"
   }
 }
 ```
@@ -391,9 +391,9 @@ Verification evidence:
 173. [DONE] `development-tree-cluster-contract.phase18.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster identity release artifacts`).
 174. [DONE] Git Commit: `build: prepare projected cluster identity release artifacts` (hash: bcc74830a)
 175. [DONE] `development-tree-cluster-contract.phase18.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster identity vsix release`).
-176. [PENDING] Git Commit: `build: package projected cluster identity vsix release` (hash: TBD)
-177. [TODO] `development-tree-cluster-contract.phase18.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster identity user retest state`).
-178. [TODO] Git Commit: `docs: checkpoint projected cluster identity user retest state` (hash: TBD)
+176. [DONE] Git Commit: `build: package projected cluster identity vsix release` (hash: 67de16e7a)
+177. [DONE] `development-tree-cluster-contract.phase18.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster identity user retest state`).
+178. [PENDING] Git Commit: `docs: checkpoint projected cluster identity user retest state` (hash: TBD)
 
 ## Phase 19 - Scope Closeout (owner: Codex, updated: 2026-06-08)
 
