@@ -172,6 +172,12 @@ const updateSnapshotForMessageSideEffects = (options: {
 const shouldReleaseManagedWorkflowLock = (
   snapshot: SessionSnapshot
 ): boolean => {
+  if (
+    snapshot.status.connectionState === "running" &&
+    snapshot.status.continuityLock?.active !== true
+  ) {
+    return true;
+  }
   const reason = snapshot.status.continuityLock?.reason;
   return (
     reason === MANAGED_WORKFLOW_CONTINUATION_LOCK_REASON ||
@@ -236,7 +242,8 @@ const applyManagedWorkflowInputLock = (options: {
     status: {
       ...options.snapshot.status,
       connectionState:
-        options.snapshot.status.connectionState === "blocked"
+        options.snapshot.status.connectionState === "blocked" ||
+        options.snapshot.status.connectionState === "running"
           ? "idle"
           : options.snapshot.status.connectionState,
       continuityLock: {

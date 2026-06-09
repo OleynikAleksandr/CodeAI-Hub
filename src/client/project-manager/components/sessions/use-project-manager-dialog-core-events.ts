@@ -5,10 +5,7 @@ import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import type { CoreBridgeSessionMessageTranslationPayload } from "../../../ui/src/core-bridge/types";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
-import {
-  mergeHistoryIntoSnapshots,
-  type SessionSnapshots,
-} from "../../../ui/src/session/helpers";
+import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
 import {
   buildDialogRestoreRequestKey,
@@ -299,12 +296,16 @@ export const useProjectManagerDialogCoreEvents = (options: {
           options.setTokenDebugSummaryOverride(undefined);
         }
         if (!isTail) {
-          options.setSnapshots((previous) =>
-            mergeHistoryIntoSnapshots(previous, {
-              sessionId: currentSession.id,
-              messages: normalizedMessages,
-            })
-          );
+          options.setSnapshots((previous) => {
+            let updated = previous;
+            for (const normalized of normalizedMessages) {
+              updated = appendDedupedSessionMessageToSnapshots(updated, {
+                sessionId: currentSession.id,
+                message: normalized,
+              });
+            }
+            return updated;
+          });
         } else {
           options.setSnapshots((previous) => {
             let updated = previous;

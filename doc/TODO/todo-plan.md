@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "cf772c332",
+  "lastRecordedCommit": "723e81f2f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase37.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint projected cluster live refresh user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase39.review-lock-replay.task1",
+  "expectedCommitMessage": "fix: release projected dialog review locks",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint projected cluster live refresh user retest state",
-    "preCommitHead": "cf772c332",
+    "expectedCommitMessage": "fix: release projected dialog review locks",
+    "preCommitHead": "723e81f2f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase37.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase39.review-lock-replay.task1"
   }
 }
 ```
@@ -615,10 +615,21 @@ Verification evidence:
 270. [DONE] `development-tree-cluster-contract.phase37.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output for release `1.2.481` (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster live refresh vsix release`).
 271. [DONE] Git Commit: `build: package projected cluster live refresh vsix release` (hash: cf772c332)
 272. [DONE] `development-tree-cluster-contract.phase37.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint projected cluster live refresh user retest state`).
-273. [PENDING] Git Commit: `docs: checkpoint projected cluster live refresh user retest state` (hash: TBD)
+273. [DONE] Git Commit: `docs: checkpoint projected cluster live refresh user retest state` (hash: 723e81f2f)
 
 ## Phase 38 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
 
 ### Stream: Projected Cluster Live Refresh Retest
 
-274. [TODO] `development-tree-cluster-contract.phase38.user-retest.task1` User installs release `1.2.481` and retests the FinderWidget cluster-contract flow: selecting `note-selection-cluster` during/after worktree sub-agent repair must show the latest JSONL dialog tail and must release the Project Manager input lock when the underlying provider turn settles (scope: user workflow; expected commit: none).
+274. [BLOCKED] `development-tree-cluster-contract.phase38.user-retest.task1` User installs release `1.2.481` and retests the FinderWidget cluster-contract flow: selecting `note-selection-cluster` during/after worktree sub-agent repair must show the latest JSONL dialog tail and must release the Project Manager input lock when the underlying provider turn settles (scope: user workflow; expected commit: none). Blocker: 2026-06-09 retest showed backend cluster repair succeeds and Core emits `managed-workflow-user-review`, but Project Manager full-history replay displays the review message without applying managed-message side effects, leaving the visible projected dialog in stale `running` state and making the "Подтверждаю" action unreachable.
+
+## Phase 39 - Projected Dialog Review Lock Replay Regression (owner: Codex, updated: 2026-06-09)
+
+### Stream: Full History Review Unlock
+
+275. [DONE] `development-tree-cluster-contract.phase39.review-lock-replay.task1` Apply managed-message side effects during projected dialog full-history replay and release initial workflow `running` state when a Core user-review message is replayed (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release projected dialog review locks`).
+276. [PENDING] Git Commit: `fix: release projected dialog review locks` (hash: TBD)
+277. [TODO] `development-tree-cluster-contract.phase39.review-lock-replay-test.task1` Add regression coverage for full-history `managed-workflow-user-review` replay unlocking projected dialogs and keeping the review action clickable after missed live idle events (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock replay`).
+278. [TODO] Git Commit: `test: verify projected dialog review unlock replay` (hash: TBD)
+279. [TODO] `development-tree-cluster-contract.phase39.review-lock-replay-verify.task1` Run targeted Project Manager tests/builds for projected dialog full-history side effects before asking for the next release build confirmation (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock builds`).
+280. [TODO] Git Commit: `test: verify projected dialog review unlock builds` (hash: TBD)
