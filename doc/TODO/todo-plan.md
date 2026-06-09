@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "fb882d523",
+  "lastRecordedCommit": "61f5d8d5f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase30.release-handoff.task1",
-  "expectedCommitMessage": "docs: checkpoint top down contract orchestration user retest state",
+  "currentTaskId": "development-tree-cluster-contract.phase31.retest-state-repair.task1",
+  "expectedCommitMessage": "docs: repair top down contract release retest state",
   "debt": {
-    "expectedCommitMessage": "docs: checkpoint top down contract orchestration user retest state",
-    "preCommitHead": "fb882d523",
+    "expectedCommitMessage": "docs: repair top down contract release retest state",
+    "preCommitHead": "61f5d8d5f",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase30.release-handoff.task1"
+    "taskId": "development-tree-cluster-contract.phase31.retest-state-repair.task1"
   }
 }
 ```
@@ -530,4 +530,20 @@ Verification evidence:
 231. [DONE] `development-tree-cluster-contract.phase30.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package top down contract orchestration vsix release`).
 232. [DONE] Git Commit: `build: package top down contract orchestration vsix release` (hash: fb882d523)
 233. [DONE] `development-tree-cluster-contract.phase30.release-handoff.task1` Commit the active plan transition from release packaging to user retest before scope closeout can begin (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint top down contract orchestration user retest state`).
-234. [PENDING] Git Commit: `docs: checkpoint top down contract orchestration user retest state` (hash: TBD)
+234. [DONE] Git Commit: `docs: checkpoint top down contract orchestration user retest state` (hash: 61f5d8d5f)
+
+## Phase 31 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
+
+### Stream: Top-Down Contract Orchestration Retest
+
+235. [DONE] `development-tree-cluster-contract.phase31.retest-state-repair.task1` Repair the release handoff plan-state after the post-commit closeout-boundary guard blocked automatic advancement, keeping the scope active for user retest instead of terminal closeout (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: repair top down contract release retest state`).
+236. [PENDING] Git Commit: `docs: repair top down contract release retest state` (hash: TBD)
+237. [TODO] `development-tree-cluster-contract.phase31.user-retest.task1` User installs release `1.2.479` and retests the FinderWidget lead Product Part flow: accepted `DevelopmentOrderPlan.v2` must contain downstream `contractSeeds`, the first cluster sub-agent prompt must receive the Product Part contract seed, and Core must reject abstract cluster contracts until concrete facade class/file/method/DTO/result-union/module-boundary fields are present (scope: user workflow; expected commit: none).
+
+## Phase 32 - Scope Closeout (owner: Codex, updated: 2026-06-09)
+
+### Stream: Closeout After Acceptance
+
+238. [TODO] `development-tree-cluster-contract.phase32.closeout.task1` After explicit user acceptance of release `1.2.479`, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close top down contract orchestration scope`).
+239. [TODO] Git Commit: `docs: close top down contract orchestration scope` (hash: TBD)
+240. [TODO] `development-tree-cluster-contract.phase32.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
