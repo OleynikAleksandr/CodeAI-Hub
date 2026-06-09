@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "e792e18a5",
+  "lastRecordedCommit": "6b2cb12ae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1",
-  "expectedCommitMessage": "test: verify projected cluster dialog worktree hydration",
+  "currentTaskId": "development-tree-cluster-contract.phase22.projected-dialog-verify.task1",
+  "expectedCommitMessage": "test: verify projected cluster dialog review gate",
   "debt": {
-    "expectedCommitMessage": "test: verify projected cluster dialog worktree hydration",
-    "preCommitHead": "e792e18a5",
+    "expectedCommitMessage": "test: verify projected cluster dialog review gate",
+    "preCommitHead": "6b2cb12ae",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1"
+    "taskId": "development-tree-cluster-contract.phase22.projected-dialog-verify.task1"
   }
 }
 ```
@@ -440,7 +440,13 @@ Verification evidence:
 192. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-worktree.task1` Preserve projected cluster dialog `worktreePath` in Project Manager and open/restore the dialog against the node worktree instead of the main workspace so review history and input state hydrate correctly (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix: open projected cluster dialogs in worktrees`).
 193. [DONE] Git Commit: `fix: open projected cluster dialogs in worktrees` (hash: e792e18a5)
 194. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-worktree-test.task1` Add targeted Project Manager regression coverage for worktree-backed projected dialog bootstrap/restore and active review gate rendering (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog worktree hydration`).
-195. [PENDING] Git Commit: `test: verify projected cluster dialog worktree hydration` (hash: TBD)
-196. [TODO] `development-tree-cluster-contract.phase22.projected-dialog-verify.task1` Run targeted Project Manager/Core build checks for projected cluster dialog hydration before release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog review gate`).
-197. [TODO] Git Commit: `test: verify projected cluster dialog review gate` (hash: TBD)
+195. [DONE] Git Commit: `test: verify projected cluster dialog worktree hydration` (hash: 6b2cb12ae)
+196. [DONE] `development-tree-cluster-contract.phase22.projected-dialog-verify.task1` Run targeted Project Manager/Core build checks for projected cluster dialog hydration before release confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify projected cluster dialog review gate`).
+197. [PENDING] Git Commit: `test: verify projected cluster dialog review gate` (hash: TBD)
 198. [TODO] `development-tree-cluster-contract.phase22.release-confirm.task1` Await explicit user confirmation before building the next regression release for projected cluster dialog review gates, bootstrap ledger commits, and Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).
+
+Verification evidence:
+- `npm run build --workspace packages/core` passed.
+- `npm run typecheck:webview` passed.
+- `npm run build:project-manager` passed.
+- `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts` passed: 23/23 tests, including projected worktree dialog identity and managed review confirm rendering.
