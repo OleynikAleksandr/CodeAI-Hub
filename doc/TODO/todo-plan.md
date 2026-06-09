@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "723e81f2f",
+  "lastRecordedCommit": "9bb75656d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase39.review-lock-replay.task1",
-  "expectedCommitMessage": "fix: release projected dialog review locks",
+  "currentTaskId": "development-tree-cluster-contract.phase39.review-lock-replay-test.task1",
+  "expectedCommitMessage": "test: verify projected dialog review unlock replay",
   "debt": {
-    "expectedCommitMessage": "fix: release projected dialog review locks",
-    "preCommitHead": "723e81f2f",
+    "expectedCommitMessage": "test: verify projected dialog review unlock replay",
+    "preCommitHead": "9bb75656d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase39.review-lock-replay.task1"
+    "taskId": "development-tree-cluster-contract.phase39.review-lock-replay-test.task1"
   }
 }
 ```
@@ -628,8 +628,8 @@ Verification evidence:
 ### Stream: Full History Review Unlock
 
 275. [DONE] `development-tree-cluster-contract.phase39.review-lock-replay.task1` Apply managed-message side effects during projected dialog full-history replay and release initial workflow `running` state when a Core user-review message is replayed (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release projected dialog review locks`).
-276. [PENDING] Git Commit: `fix: release projected dialog review locks` (hash: TBD)
-277. [TODO] `development-tree-cluster-contract.phase39.review-lock-replay-test.task1` Add regression coverage for full-history `managed-workflow-user-review` replay unlocking projected dialogs and keeping the review action clickable after missed live idle events (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock replay`).
-278. [TODO] Git Commit: `test: verify projected dialog review unlock replay` (hash: TBD)
+276. [DONE] Git Commit: `fix: release projected dialog review locks` (hash: 9bb75656d)
+277. [DONE] `development-tree-cluster-contract.phase39.review-lock-replay-test.task1` Add regression coverage for full-history `managed-workflow-user-review` replay unlocking projected dialogs and keeping the review action clickable after missed live idle events (scope: `src/client/project-manager/components/sessions/session-message-dedupe.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock replay`).
+278. [PENDING] Git Commit: `test: verify projected dialog review unlock replay` (hash: TBD)
 279. [TODO] `development-tree-cluster-contract.phase39.review-lock-replay-verify.task1` Run targeted Project Manager tests/builds for projected dialog full-history side effects before asking for the next release build confirmation (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify projected dialog review unlock builds`).
 280. [TODO] Git Commit: `test: verify projected dialog review unlock builds` (hash: TBD)

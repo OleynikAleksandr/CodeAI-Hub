@@ -118,6 +118,27 @@ test("managed workflow user review releases only the managed continuation lock",
   assert.equal(next.session.status.continuityLock?.active, false);
 });
 
+test("managed workflow user review releases initial workflow running state", () => {
+  const snapshots = {
+    session: createSnapshot({
+      connectionState: "running",
+      lockActive: false,
+    }),
+  };
+
+  const next = appendDedupedSessionMessageToSnapshots(snapshots, {
+    message: createSystemMessage(
+      "review-1",
+      "managed-workflow-user-review",
+      "Core hands control back to the user."
+    ),
+    sessionId: "session",
+  });
+
+  assert.equal(next.session.status.connectionState, "idle");
+  assert.equal(next.session.status.continuityLock?.active, false);
+});
+
 test("managed workflow user review does not release an unrelated continuity lock", () => {
   const snapshots = {
     session: createSnapshot({

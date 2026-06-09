@@ -379,14 +379,16 @@ test("dialog tail replay keeps optimistic reconciliation separate from full-hist
     "dialog history handler must continue to distinguish tail refresh from full rebuild"
   );
   assert.equal(
-    coreEventsSource.includes("mergeHistoryIntoSnapshots(previous, {"),
+    coreEventsSource.includes(
+      "let updated = previous;\n            for (const normalized of normalizedMessages) {"
+    ),
     true,
-    "full rebuild path must continue to replace from canonical history"
+    "full replay path must apply canonical history through message side effects"
   );
   assert.equal(
     coreEventsSource.includes("updated = appendDedupedSessionMessageToSnapshots(updated, {"),
     true,
-    "tail refresh path must continue to flow through dedupe reconciliation"
+    "dialog history refresh must flow through dedupe reconciliation for both full and tail replay"
   );
   assert.equal(
     dedupeSource.includes("const optimisticCandidateIndex = findOptimisticUserCandidateIndex("),
