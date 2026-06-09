@@ -247,6 +247,7 @@ export class ClusterContractAgentBootstrapper {
           worktreePath: worktree.worktreePath,
         }),
       });
+      await this.commitStartedSessionState(request);
     }
     const firstMessageSent = await this.sendFirstMessageIfPossible({
       clusterId: request.clusterId,
@@ -278,6 +279,18 @@ export class ClusterContractAgentBootstrapper {
       commitMessage: `chore: initialize ${params.clusterId} cluster contract workflow`,
       paths: [params.plan.relativePath],
       workspaceRoot: params.worktreePath,
+    });
+  }
+
+  private async commitStartedSessionState(
+    request: ClusterContractAgentBootstrapRequest & {
+      readonly clusterId: string;
+    }
+  ): Promise<void> {
+    await this.planCommitter.commit({
+      commitMessage: `chore: record ${request.clusterId} cluster contract session`,
+      paths: [createDevelopmentOrderUnlockStatePath(request)],
+      workspaceRoot: request.workspaceRoot,
     });
   }
 

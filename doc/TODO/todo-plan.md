@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "ba9020bbc",
+  "lastRecordedCommit": "bcc9010d1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase20.worktree-container-verify.task1",
-  "expectedCommitMessage": "test: verify cleared node worktree cleanup",
+  "currentTaskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1",
+  "expectedCommitMessage": "fix: commit cluster bootstrap session state",
   "debt": {
-    "expectedCommitMessage": "test: verify cleared node worktree cleanup",
-    "preCommitHead": "ba9020bbc",
+    "expectedCommitMessage": "fix: commit cluster bootstrap session state",
+    "preCommitHead": "bcc9010d1",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase20.worktree-container-verify.task1"
+    "taskId": "development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1"
   }
 }
 ```
@@ -410,10 +410,20 @@ Verification evidence:
 182. [DONE] `development-tree-cluster-contract.phase20.worktree-container-cleanup.task1` Ensure downstream Cluster/Module ClearUndo removes the selected node worktree through Git and cleans the `*.worktrees` container when no registered worktrees remain (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: remove cleared node worktree containers`).
 183. [DONE] Git Commit: `fix: remove cleared node worktree containers` (hash: ba9020bbc)
 184. [DONE] `development-tree-cluster-contract.phase20.worktree-container-verify.task1` Run targeted Core build/tests for downstream node ClearUndo worktree cleanup and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cleared node worktree cleanup`).
-185. [PENDING] Git Commit: `test: verify cleared node worktree cleanup` (hash: TBD)
+185. [DONE] Git Commit: `test: verify cleared node worktree cleanup` (hash: bcc9010d1)
 186. [TODO] `development-tree-cluster-contract.phase20.release-confirm.task1` Await explicit user confirmation before building the next regression release for Cluster ClearUndo worktree cleanup (scope: user workflow; expected commit: none).
 
 Verification evidence:
 - `npx ultracite check packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts` passed.
 - `npm run build --workspace packages/core` passed.
 - `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.js` passed and verifies `*.worktrees` is removed after cluster ClearUndo when no registered worktrees remain.
+
+## Phase 21 - Cluster Bootstrap Main Ledger Cleanliness Regression (owner: Codex, updated: 2026-06-09)
+
+### Stream: Bootstrap Session Ledger Commit
+
+187. [DONE] `development-tree-cluster-contract.phase21.bootstrap-session-ledger.task1` Commit the main workspace unlock-state update that records cluster session/worktree metadata during downstream bootstrap so later cluster review merge starts from clean Git (scope: `packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit cluster bootstrap session state`).
+188. [PENDING] Git Commit: `fix: commit cluster bootstrap session state` (hash: TBD)
+189. [TODO] `development-tree-cluster-contract.phase21.bootstrap-session-ledger-verify.task1` Run targeted Core build/tests for cluster bootstrap ledger cleanliness and record evidence before release confirmation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify cluster bootstrap session state commit`).
+190. [TODO] Git Commit: `test: verify cluster bootstrap session state commit` (hash: TBD)
+191. [TODO] `development-tree-cluster-contract.phase21.release-confirm.task1` Await explicit user confirmation before building the next regression release for cluster bootstrap and ClearUndo worktree cleanup fixes (scope: user workflow; expected commit: none).

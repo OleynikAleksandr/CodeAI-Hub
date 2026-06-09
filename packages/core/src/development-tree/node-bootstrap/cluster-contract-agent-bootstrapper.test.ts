@@ -130,6 +130,16 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
         paths: ["todo-plan.md"],
         workspaceRoot: `${workspaceRoot}.worktrees/${CLUSTER_ID}`,
       },
+      {
+        commitMessage: `chore: record ${CLUSTER_ID} cluster contract session`,
+        paths: [
+          createDevelopmentOrderUnlockStatePath({
+            partId: PART_ID,
+            workspaceSlug: WORKSPACE_SLUG,
+          }),
+        ],
+        workspaceRoot,
+      },
     ]);
     assert.deepEqual(createdSessions, [
       {
