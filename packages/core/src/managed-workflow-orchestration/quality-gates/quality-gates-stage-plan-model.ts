@@ -22,18 +22,21 @@ export const REVIEW_TASK_PREFIX = "quality-gates.phase2.review.task";
 const INTEGRATE_TASK_PREFIX = "quality-gates.phase3.integrate.task";
 export const INTEGRATE_COMMIT_MESSAGE =
   "feat: integrate quality gates baseline attempt 1";
-const FORMAL_VERIFY_TASK_ID = "quality-gates.phase4.verify.task1";
-const FORMAL_VERIFY_COMMIT_MESSAGE = "chore: verify quality gates enforcement";
+export const FORMAL_VERIFY_TASK_ID = "quality-gates.phase4.verify.task1";
+export const FORMAL_VERIFY_COMMIT_MESSAGE =
+  "chore: verify quality gates enforcement";
 export const PHASE5_TASK_ID = "quality-gates.phase5.user-return.task1";
 
 const BOOTSTRAP_TASK_ID = "quality-gates.phase1.bootstrap.task1";
 const BOOTSTRAP_COMMIT_MESSAGE = "docs: bootstrap quality gates managed stage";
-const DRAFT_REPAIR_TASK_PREFIX = "quality-gates.phase1.repair.task";
+export const DRAFT_REPAIR_TASK_PREFIX = "quality-gates.phase1.repair.task";
 const DRAFT_REPAIR_COMMIT_PREFIX = "docs: repair quality gates draft attempt";
-const INTEGRATION_REPAIR_TASK_PREFIX = "quality-gates.phase3.repair.task";
+export const INTEGRATION_REPAIR_TASK_PREFIX =
+  "quality-gates.phase3.repair.task";
 const INTEGRATION_REPAIR_COMMIT_PREFIX =
   "feat: repair quality gates integration attempt";
-const VERIFICATION_REPAIR_TASK_PREFIX = "quality-gates.phase4.repair.task";
+export const VERIFICATION_REPAIR_TASK_PREFIX =
+  "quality-gates.phase4.repair.task";
 const VERIFICATION_REPAIR_COMMIT_PREFIX =
   "chore: repair quality gates verification attempt";
 const NO_REVISION_DISPOSITION =
@@ -128,9 +131,9 @@ export const buildContractArtifactPaths = (
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
 ];
-const buildReviewCommitMessage = (reviewNumber: number): string =>
+export const buildReviewCommitMessage = (reviewNumber: number): string =>
   `docs: revise quality gates contract revision ${reviewNumber}`;
-const buildReviewTaskId = (reviewNumber: number): string =>
+export const buildReviewTaskId = (reviewNumber: number): string =>
   `${REVIEW_TASK_PREFIX}${reviewNumber}`;
 const buildDraftRepairTaskId = (attemptNumber: number): string =>
   `${DRAFT_REPAIR_TASK_PREFIX}${attemptNumber}`;

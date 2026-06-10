@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "8655f2c09",
+  "lastRecordedCommit": "1892b3dd8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase8.vsix.task1",
-  "expectedCommitMessage": "build: package stop gate simplification vsix release",
+  "currentTaskId": "orchestrator-stop-gate.phase9a.fix.task1",
+  "expectedCommitMessage": "fix: continue quality gates after repair limit accept",
   "debt": {
-    "expectedCommitMessage": "build: package stop gate simplification vsix release",
-    "preCommitHead": "8655f2c09",
+    "expectedCommitMessage": "fix: continue quality gates after repair limit accept",
+    "preCommitHead": "1892b3dd8",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase8.vsix.task1"
+    "taskId": "orchestrator-stop-gate.phase9a.fix.task1"
   }
 }
 ```
@@ -59,6 +59,15 @@
 - **Dirty Git is never a stop and never a question:** Core always auto-commits with two-basket classification — workflow/step-owned paths go into the managed step commit, everything else goes into a separate `chore: preserve workspace changes` commit. Destructive operations (rollback, Clear/Undo) are always preceded by an auto-commit so user work cannot be lost by construction.
 - **Bounded repair loops:** repair dispatch attempts per artifact are limited (3); on exhaustion, agent-readable artifacts are accepted with a recorded warning and the workflow continues, while Core-required machine fields surface a button gate (retry / continue as is / roll back step).
 - Release build is not automatic. Ask the user before release notes, version bump, `build-all.sh`, or `build-release.sh`.
+
+## Session Handoff Notes (2026-06-10, release 1.2.485 built and delivered)
+
+- Release `codeai-hub-1.2.485.vsix` is in the repository root; the full 1.2.485 tarball set is in `doc/tmp/releases/` and `~/.codeai-hub/releases/`. The release build was explicitly pre-authorized by the user in this session; the plan now waits on Phase 9 user retest feedback.
+- Phase 9 retest focus: FinderWidget flow from Quality Gates Baseline through Product Part and `note-selection-cluster`. Expected behavior: dirty Git auto-commits (managed step commit + `chore: preserve workspace changes`) and never stops; no "Core cannot continue" cards anywhere; the input never stays on "agent is working" after a Core gate (arbitration time box 120s, optimistic review lock TTL 60s); repair loops open the review gate after 3 attempts instead of looping.
+- Known pre-existing red tests, NOT regressions of this scope (verified present on pre-implementation commit `88fb8e621`): `Application Skeleton validator accepts materialized scaffold when declared paths exist`, `DiagramModulesManagedGitBoundary excludes generated outputs from managed commits`, `managed workflow facade accepts valid Diagram Modules provider turns`, `Diagram Modules validation accepts an index-only subturn and requests the first Product Part` (managed-orchestration suite), plus 3 model-binding emission tests in `session-request-handler.test.js`. Candidates for `doc/BugRegistry.md` through a future plan task.
+- Build procedure note: `build-all.sh` and `build-release.sh` require a clean tree while the active plan's machine advance keeps `doc/TODO/todo-plan.md` dirty. This cycle used `git stash push doc/TODO/todo-plan.md` -> build -> `git stash pop` -> `npm run plan:commit`. Direct `git commit` remains blocked by the plan pre-commit guard.
+- On user acceptance: complete Phase 9 via `npm run plan:complete -- "<result>"`, then run Phase 10 closeout (archive the todo plan, decide the stop-gate planning doc disposition, keep both Development Tree planning documents active). On reported failures: keep the scope ACTIVE and add an investigation stream before any fixes.
+- **Phase 9 retest result (2026-06-10): defect found — repair-limit accept gate is a dead end.** Quality Gates integration exhausted 3 repair attempts, Core correctly raised the repair-limit review gate (`buildRepairLimitReviewMessage`, tag `managed-workflow-user-review`), but the user's Confirm produced no continuation. Root cause: the limit branch in `session-request-handler-managed-workflow-turn.ts` only appends the gate message and settles; the stage plan stays on the open repair task (`quality-gates.phase3.repair.task4` after advance-past-limit), so `isQualityGatesReviewOpen` (review-task-prefix check in `managed-review-state-readers.ts`) returns false, every review-decision handler declines, and `handleManagedReviewConfirmAction` falls through to a silent `managed_review_gate_unhandled` session error. The same gap exists for Diagram Modules and Application Skeleton repair-limit gates. Evidence: FinderWidget-Test01 stage plan stuck on `quality-gates.phase3.repair.task4` / expected commit "attempt 4", session transcript ends at the gate message with no post-confirm events. Fix scope is Phase 9A below.
 
 ## Phase 1 - Stop-Gate Audit (owner: Codex, updated: 2026-06-10)
 
@@ -167,17 +176,52 @@
 48. [DONE] `orchestrator-stop-gate.phase8.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare stop gate simplification release artifacts`).
 49. [DONE] Git Commit: `build: prepare stop gate simplification release artifacts` (hash: 8655f2c09)
 50. [DONE] `orchestrator-stop-gate.phase8.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package stop gate simplification vsix release`).
-51. [PENDING] Git Commit: `build: package stop gate simplification vsix release` (hash: TBD)
+51. [DONE] Git Commit: `build: package stop gate simplification vsix release` (hash: 1892b3dd8)
 
 ## Phase 9 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-10)
 
 ### Stream: FinderWidget Retest
 
-52. [TODO] `orchestrator-stop-gate.phase9.user-retest.task1` User installs the release and retests the workflow from Quality Gates Baseline through Product Part, cluster-contract sub-agent creation, Clear/Undo rebootstrap, dirty Git auto-commit, and Project Manager dialog/input behavior (scope: user workflow; expected commit: none).
+52. [DONE] `orchestrator-stop-gate.phase9.user-retest.task1` User installs the release and retests the workflow from Quality Gates Baseline through Product Part, cluster-contract sub-agent creation, Clear/Undo rebootstrap, dirty Git auto-commit, and Project Manager dialog/input behavior (scope: user workflow; expected commit: none). Result: Retest on 1.2.485 found a defect: Quality Gates repair-limit gate appeared correctly after 3 attempts, but user Confirm produced no continuation (stage plan stuck on quality-gates.phase3.repair.task4, review handlers declined, silent managed_review_gate_unhandled). Fix scope opened as Phase 9A.
+
+## Phase 9A - Repair-Limit Accept Continuation (owner: Codex, updated: 2026-06-10)
+
+Investigation summary: the repair-limit review gate violates the no-stop dual outcome invariant — it presents a user action (Confirm / describe corrections) that no handler can apply, because the stage plan is still on the open repair task instead of a recognizable review state. Accept must close the open repair task as accepted-as-is, advance the stage plan, commit, and dispatch the next-phase continuation; revision text must dispatch the open repair attempt with the user corrections.
+
+### Stream: Repair-Limit Accept Continuation Fix
+
+53. [DONE] `orchestrator-stop-gate.phase9a.fix.task1` Add the Quality Gates repair-limit acceptance module: parse the open repair attempt from the stage plan state, accept-as-is closes the open repair task with an accepted-as-is disposition, advances the stage plan to the next phase task (contract review after draft, formal verification after integration, persistent return after verification) and commits the managed ledger; expose the user-corrections repair prompt builder; covered by a module test (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-repair-limit-acceptance.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-repair-limit-acceptance.test.ts`; expected commit: `fix: continue quality gates after repair limit accept`).
+54. [PENDING] Git Commit: `fix: continue quality gates after repair limit accept` (hash: TBD)
+55. [TODO] `orchestrator-stop-gate.phase9a.fix.task1b` Route the repair-limit review decision through the new continuation: when the Quality Gates review prefix is closed but the stage plan sits on a repair attempt above the limit, accept triggers the accept-as-is continuation (review handoff after draft, verification dispatch after integration, persistent return after verification) and revision text dispatches the user-corrections repair prompt; widen the review-decision gateway type to the Development Tree gateway required by the persistent-return handoff (scope: `packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: route repair limit confirm to continuation`).
+56. [TODO] Git Commit: `fix: route repair limit confirm to continuation` (hash: TBD)
+57. [TODO] `orchestrator-stop-gate.phase9a.fix.task2` Add the same repair-limit acceptance continuation for Diagram Modules: accept closes the open repair task as accepted-as-is, advances the stage plan, commits, and continues the stage; revision dispatches the open repair attempt with user corrections (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-repair-limit-acceptance.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `fix: continue diagram modules after repair limit accept`).
+58. [TODO] Git Commit: `fix: continue diagram modules after repair limit accept` (hash: TBD)
+59. [TODO] `orchestrator-stop-gate.phase9a.fix.task3` Add the same repair-limit acceptance continuation for Application Skeleton draft and materialization repair cycles (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-repair-limit-acceptance.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `fix: continue application skeleton after repair limit accept`).
+60. [TODO] Git Commit: `fix: continue application skeleton after repair limit accept` (hash: TBD)
+61. [TODO] `orchestrator-stop-gate.phase9a.fix.task4` Replace the silent `managed_review_gate_unhandled` session error with a released-input Core message that names the unmatched state and offers the concrete recovery action, so an unmatched review confirm can never end as an invisible dead end (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `fix: release input on unhandled review confirm`).
+62. [TODO] Git Commit: `fix: release input on unhandled review confirm` (hash: TBD)
+63. [TODO] `orchestrator-stop-gate.phase9a.fix.task5` Add targeted regression tests proving repair-limit accept continues the workflow for the three managed stages and that revision feedback dispatches the open repair attempt (scope: up to 3 test files under `packages/core/src/managed-workflow-orchestration/**` and `packages/core/src/remote-bridge/handlers/**`; expected commit: `test: verify repair limit acceptance continuation`).
+64. [TODO] Git Commit: `test: verify repair limit acceptance continuation` (hash: TBD)
+65. [TODO] `orchestrator-stop-gate.phase9a.fix.task6` Sync the repair-limit acceptance continuation behavior into the Core SSOT invariants and the stop-gate planning document blocker matrix (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe repair limit acceptance continuation`).
+66. [TODO] Git Commit: `docs: describe repair limit acceptance continuation` (hash: TBD)
+
+### Stream: Release Rebuild Confirmation
+
+67. [TODO] `orchestrator-stop-gate.phase9a.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the repair-limit fix release (scope: user workflow; expected commit: none).
+68. [TODO] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
+69. [TODO] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: TBD)
+70. [TODO] `orchestrator-stop-gate.phase9a.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare repair limit acceptance release artifacts`).
+71. [TODO] Git Commit: `build: prepare repair limit acceptance release artifacts` (hash: TBD)
+72. [TODO] `orchestrator-stop-gate.phase9a.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `build: package repair limit acceptance vsix release`).
+73. [TODO] Git Commit: `build: package repair limit acceptance vsix release` (hash: TBD)
+
+### Stream: FinderWidget Retest Round 2
+
+74. [TODO] `orchestrator-stop-gate.phase9a.user-retest.task1` User installs the rebuilt release and retests the Quality Gates repair-limit flow: after 3 rejected repair attempts the gate appears, Confirm commits the accepted-as-is state and the workflow continues to the next phase without manual intervention (scope: user workflow; expected commit: none).
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Plan And Planning Doc Disposition
 
-53. [TODO] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
-54. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
+75. [TODO] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
+76. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
