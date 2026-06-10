@@ -51,6 +51,8 @@ An endless repair loop is a hidden stop. Repair dispatch attempts per artifact a
 - **agent-readable artifacts** are accepted with a recorded warning in the managed plan, and the workflow continues ("fix it later" is the accepted trade-off);
 - **Core-required machine fields** (the fields Core must read to compute the next workflow action) raise a button gate: retry repair / continue as is / roll back the step.
 
+The repair-limit gate must obey the dual outcome itself (2026-06-10 FinderWidget retest defect: Confirm on the gate produced no continuation because the stage plan still sat on the open repair task and every review handler declined). Implemented behavior: a managed-stage repair-limit dispatcher runs ahead of the per-stage review handlers whenever the stage plan points at a repair attempt above the limit. Confirm = accept-as-is (auto-commit residue, close the open repair task with an accepted-as-is disposition, advance the stage plan to the next phase task, commit the managed ledger, dispatch the continuation). Revision text = a user-corrections repair prompt executing the already-open repair attempt. An unmatched review confirmation appends a released-input Core message instead of ending as a silent session error.
+
 ### 2.3. Validation pressure matches the consumer
 
 - Hard validation (agent dispatch, bounded) is reserved for fields Core reads to compute the next workflow action.

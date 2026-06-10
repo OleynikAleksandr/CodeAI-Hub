@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "477d9d3d7",
+  "lastRecordedCommit": "bf18b759d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9a.fix.task5",
-  "expectedCommitMessage": "test: verify repair limit acceptance continuation",
+  "currentTaskId": "orchestrator-stop-gate.phase9a.fix.task6",
+  "expectedCommitMessage": "docs: describe repair limit acceptance continuation",
   "debt": {
-    "expectedCommitMessage": "test: verify repair limit acceptance continuation",
-    "preCommitHead": "477d9d3d7",
+    "expectedCommitMessage": "docs: describe repair limit acceptance continuation",
+    "preCommitHead": "bf18b759d",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9a.fix.task5"
+    "taskId": "orchestrator-stop-gate.phase9a.fix.task6"
   }
 }
 ```
@@ -201,9 +201,9 @@ Investigation summary: the repair-limit review gate violates the no-stop dual ou
 61. [DONE] `orchestrator-stop-gate.phase9a.fix.task4` Replace the silent `managed_review_gate_unhandled` session error with a released-input Core message that names the unmatched state and offers the concrete recovery action, so an unmatched review confirm can never end as an invisible dead end (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.managed-review.test.ts`; expected commit: `fix: release input on unhandled review confirm`).
 62. [DONE] Git Commit: `fix: release input on unhandled review confirm` (hash: 477d9d3d7)
 63. [DONE] `orchestrator-stop-gate.phase9a.fix.task5` Add targeted regression tests proving repair-limit accept continues the workflow for the three managed stages and that revision feedback dispatches the open repair attempt (scope: `packages/core/src/remote-bridge/handlers/managed-stage-repair-limit-review.test.ts`; expected commit: `test: verify repair limit acceptance continuation`).
-64. [PENDING] Git Commit: `test: verify repair limit acceptance continuation` (hash: TBD)
-65. [TODO] `orchestrator-stop-gate.phase9a.fix.task6` Sync the repair-limit acceptance continuation behavior into the Core SSOT invariants and the stop-gate planning document blocker matrix (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe repair limit acceptance continuation`).
-66. [TODO] Git Commit: `docs: describe repair limit acceptance continuation` (hash: TBD)
+64. [DONE] Git Commit: `test: verify repair limit acceptance continuation` (hash: bf18b759d)
+65. [DONE] `orchestrator-stop-gate.phase9a.fix.task6` Sync the repair-limit acceptance continuation behavior into the Core SSOT invariants and the stop-gate planning document blocker matrix (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe repair limit acceptance continuation`).
+66. [PENDING] Git Commit: `docs: describe repair limit acceptance continuation` (hash: TBD)
 
 ### Stream: Release Rebuild Confirmation
 
