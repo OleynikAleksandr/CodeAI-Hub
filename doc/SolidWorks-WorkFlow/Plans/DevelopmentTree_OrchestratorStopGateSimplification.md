@@ -1,146 +1,155 @@
 # Development Tree Orchestrator Stop-Gate Simplification
 
-**Status:** Active planning source for the next implementation scope, 2026-06-10.
-**Relationship to active architecture docs:** this document does not replace `DevelopmentTree_BranchWorkflow_Architecture.md` or `DevelopmentTree_ProductPartSubagentOrchestration.md`. It narrows the next implementation cycle to blocker audit and simplification.
+**Status:** Active planning source for the current implementation scope. No-stop dual-outcome policy accepted by the user on 2026-06-10.
+**Relationship to active architecture docs:** this document does not replace `DevelopmentTree_BranchWorkflow_Architecture.md` or `DevelopmentTree_ProductPartSubagentOrchestration.md`. It narrows the current implementation cycle to blocker elimination.
 
 ## 1. Problem
 
-Recent Development Tree testing exposed a repeated workflow failure pattern: Core correctly detects non-ideal intermediate state, but then turns it into a user-facing stop even when the problem is technical and recoverable.
+Recent Development Tree testing exposed a repeated workflow failure pattern: Core correctly detects non-ideal intermediate state, but then turns it into a development stop even when the problem is technical and recoverable.
 
 The visible symptoms are:
 
 - managed steps stop on dirty Git instead of committing workflow-owned changes;
 - Core emits "cannot continue" messages for stage-plan or commit-boundary problems that the user cannot reasonably fix from chat;
+- Core writes messages that are addressed to nobody: not sent to the agent, and carrying no instruction the user could follow;
 - Project Manager sometimes keeps the input locked with an "agent is working" state after Core has already reached a user/action gate;
-- validators reject usable agent-readable artifacts because of formal shape issues that do not yet affect generated code or the next agent's ability to continue.
+- validators reject usable agent-readable artifacts because of formal shape issues that do not yet affect generated code or the next agent's ability to continue;
+- a code audit additionally found silent stop paths where errors are swallowed and the turn settles without sending anything to the agent and without any user-visible state at all.
 
-This makes the script orchestrator behave like an over-strict gatekeeper. The goal is not to remove Core authority. The goal is to keep only blockers that protect final product correctness, Git safety, or irreversible user intent.
+This makes the script orchestrator behave like an over-strict gatekeeper. The goal is not to remove Core authority. The goal is to make a development stop without an attached action impossible.
 
-## 2. New Principle
+## 2. Accepted Policy: No-Stop Dual Outcome
 
-Core stop-gates are allowed only when continuing would materially risk one of these outcomes:
+Every Core settlement of a managed turn, validation, commit boundary, or internal error must end in exactly one of two outcomes:
 
-1. loss of user-authored work or an ambiguous overwrite;
-2. a Git operation that cannot be safely completed or rolled back;
-3. starting the next agent with missing machine-readable inputs that Core actually needs;
-4. merging code or artifacts that fail required quality gates;
-5. irreversible workflow/refactoring intent that requires explicit user choice.
+1. **Agent dispatch (~99% of cases).** A repair or continuation prompt is sent to the agent with full inline context: what is broken, where, and what exactly to fix. The cycle continues without the user.
+2. **Button gate (~1% of cases).** A concrete user action rendered as a button (such as the existing review confirmation). Never a free-text explanation of a problem.
 
-Everything else should be handled by Core as automation:
+An informational message that stops development without an attached action is a defect in every case. The legacy "Core cannot continue" card class is removed entirely.
 
-- workflow-owned dirty Git is committed automatically at the step boundary;
-- harmless residual docs are committed or classified without asking the user;
-- non-critical artifact shape issues become warnings or repair prompts, not hard stops;
-- agent-readable prose that is imperfect but usable is accepted;
-- managed plan/commit bookkeeping is repaired by Core or by a targeted internal repair prompt;
-- UI locks are released whenever the provider turn is no longer running.
+Outcome selection hierarchy:
 
-## 3. Initial Blocker Audit
+1. **Silent self-repair first.** Core fixes deterministically what it can fix (auto-commit, retry, reconciliation) without emitting anything.
+2. **Agent dispatch second.** Anything Core cannot fix deterministically becomes an instruction to the agent.
+3. **Button gate last.** Reserved for user acceptance/confirmation of agent work, irreversible intent (Clear/Undo, refactoring deletions), provider unavailability, and repair-limit exhaustion on Core-required machine fields.
 
-### Dirty Git Boundaries
+It is explicitly accepted that Core may commit or let pass an imperfection that will be fixed later. Missing a recoverable error is cheaper than stopping development in a state the user cannot continue from.
 
-Current risk:
+### 2.1. Dirty Git is eliminated as a stop class
 
-- `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts` commits accepted runtime capsule paths and neutral documents, then throws if any dirty paths remain.
-- Managed stage controllers for Diagram Modules, Application Skeleton, and Quality Gates can convert commit-boundary failures into user-visible "Core cannot continue" messages.
-- Quality Gates testing showed this exact stop with `scripts/quality-gates/ci-restore.mjs` and `scripts/quality-gates/dependency-direction.mjs`.
+`git commit` is a preserving operation: it cannot lose work. Only rollback operations (`reset --hard`, `checkout`, `clean`) can. Therefore:
 
-Decision:
+- Dirty Git is never a user stop and never a user question, on any boundary (stage start, accepted-step commit, terminal boundary, before rollback).
+- Core always auto-commits with **two-basket classification**: workflow/step-owned paths go into the managed step commit; everything else (unclassified, possibly user-authored) goes into a separate `chore: preserve workspace changes` commit. The separate basket keeps step rollback from ever carrying away user work and keeps history revertable per-concern.
+- Every destructive operation (workflow rollback, Clear/Undo) is preceded by an auto-commit of the current tree, so losing uncommitted work becomes impossible by construction.
+- The only remaining git-related failure is a physically broken repository operation (for example a stale `index.lock` that survives retries). That is handled by the hierarchy like everything else: retry silently, then dispatch the agent to repair the repository state, and only as a last resort raise a button gate.
 
-- Dirty Git created by the active managed step is not a user gate.
-- Core must attempt a deterministic commit for step-owned changes before asking the user anything.
-- The user should only be asked when dirty files are outside the active workflow ownership boundary and would be overwritten, deleted, or merged ambiguously.
+### 2.2. Bounded repair loops
 
-### Artifact Validators
+An endless repair loop is a hidden stop. Repair dispatch attempts per artifact are limited (3). On exhaustion:
 
-Current risk:
+- **agent-readable artifacts** are accepted with a recorded warning in the managed plan, and the workflow continues ("fix it later" is the accepted trade-off);
+- **Core-required machine fields** (the fields Core must read to compute the next workflow action) raise a button gate: retry repair / continue as is / roll back the step.
 
-- Core validators sometimes require exact JSON/prose shape even when the next consumer is another agent and not Core code.
-- Cluster contract validation already showed repeated repair loops around missing formal fields.
+### 2.3. Validation pressure matches the consumer
 
-Decision:
+- Hard validation (agent dispatch, bounded) is reserved for fields Core reads to compute the next workflow action.
+- Agent-readable prose, naming polish, and recoverable detail gaps become warnings recorded in the managed plan while the workflow continues, or revision prompts to the agent. They are never rendered as stopping cards.
+- When a lower-level agent receives insufficient contract seed information, the correct outcome is a semantic question/revision request routed through the normal session, not a schema-format rejection.
 
-- Hard validation is reserved for fields Core reads to compute the next workflow action.
-- Agent-readable artifact quality should be warnings or revision prompts unless it prevents the next step.
-- When a lower-level agent receives insufficient contract seed information, the correct blocker is a semantic question/revision request, not a schema-format rejection.
+### 2.4. Honest exceptions
 
-### Managed Plan And Commit State
+- **Provider unavailable / authentication failure:** the agent physically cannot receive a dispatch. This is the one case where the first outcome is impossible, and it must still be rendered as a button gate (retry / switch provider / re-authenticate), never as text-only.
+- **User review gates** (artifact acceptance) are the legitimate planned button gates and remain unchanged.
 
-Current risk:
+## 3. Audited Stop Classes
 
-- Stage-plan debt and expected-commit mismatches can stop the user-facing workflow even though the user cannot resolve them directly.
+### Class A: silent stops (no message anywhere)
 
-Decision:
+Found by the 2026-06-10 code audit. These violate the dual-outcome invariant in the most severe way: the turn settles, the agent receives nothing, the user sees nothing.
 
-- Core must repair managed plan state when the safe transition can be inferred from Git and the plan state.
-- If inference is unsafe, the user-facing message must be actionable and the input must not remain locked as if an agent is still running.
+- fire-and-forget agent continuation dispatch swallows send failures (`managed-internal-continuation-dispatch`), so a failed repair prompt send is invisible;
+- managed turn-completion handler failures in the provider event router are logged as warnings and the turn settles, losing the prepared repair dispatch;
+- quality gates `repair_integration`/`repair_verification` decisions can settle without dispatching the prepared repair prompt;
+- unprotected managed plan parsing (`parseStateBlock`) and file I/O in Development Tree turn controllers crash the handler with no resulting message;
+- `ensureBoundary`/`commitAcceptedStep` call sites in session handlers let dirty-git errors escape as unhandled exceptions.
 
-### Project Manager Locks
+Required behavior: dispatch delivery is awaited and failure-handled; any exception on the turn-completion path is converted into an agent repair dispatch (or button gate when dispatch is impossible).
 
-Current risk:
+### Class B: stop cards without an action
 
-- A Core/system gate can leave Project Manager in a provider-working visual state.
+`plan_mismatch`, `invalid_decision`, `commit_failed`, and similar bookkeeping failures currently produce "Core cannot continue" cards. The user cannot act on them. Required behavior: Core repairs managed plan state when Git plus managed state make the safe transition inferable; otherwise the repair becomes an agent dispatch. The card class is removed.
 
-Decision:
+### Class C: unbounded loops
 
-- `Agent is working` is valid only during an active provider/native turn.
-- Core validation, waiting for user acceptance, repair prompt readiness, and blocked bookkeeping states must release the input and render the actual available action.
+Repair attempt counters grow without a limit, and terminal residue auto-commit retries are fixed-count without degradation. Required behavior: bounded attempts with the degradation rules from section 2.2.
 
-## 4. Stop-Gate Classification Matrix
+### Class D: stale UI locks
 
-This audit intentionally treats blocker reduction as a product-quality requirement, not as a convenience fix. A stop that the user cannot resolve from the visible workflow is a Core defect unless it protects code correctness, Git safety, or irreversible intent.
+- a local managed-review pending lock has no expiry, so a lost Core ack blocks input forever;
+- unlock events are filtered by a known-reason list, so an unknown reason silently keeps the lock;
+- the managed turn-completion arbitration has no time box, so a hung handler holds "agent is working" indefinitely.
 
-| Surface | Current hard stop | Classification | Required behavior |
+Required behavior: `Agent is working` is derived only from an active provider/native turn; pending locks expire; `active: false` unlocks regardless of reason; arbitration is time-boxed; lock state reconciles from Core snapshots on reconnect.
+
+## 4. Stop-Gate Outcome Matrix
+
+Target outcome vocabulary: `auto` (silent self-repair), `agent-dispatch` (repair/continuation prompt), `button-gate` (concrete user action). There is no "informational stop" category.
+
+| Surface | Legacy hard stop | Target outcome | Required behavior |
 | --- | --- | --- | --- |
-| `WorkflowBoundaryFacade.ensureBoundary` | Dirty Git before creating a pre-step rollback anchor throws `Workflow boundary cannot be created...` | Keep only for user-owned ambiguous changes | Core may keep this stop before a new stage starts if files are not attributable to the workflow. If files are known Core/runtime residue, classify and commit/ignore automatically. |
-| `WorkflowStepCommitFacade.commitAcceptedStep` | Accepted step commits capsule/gitignore/doc residue, then throws if any dirty path remains | Auto-fix first | Expand deterministic ownership classification. Step-owned generated scripts, configs, accepted artifacts, ledgers, and runtime ignore updates must be committed by Core. User-facing dirty stop remains only for unclassified user-authored files. |
-| `ensureManagedTerminalGitClean` | Unclassified terminal residue becomes `choose how to handle files still open in Git` | Auto-fix or repair-prompt | Stage-owned and gate/formatter residue should be auto-committed. Unknown paths should produce a specific repair/action message and release UI input, not a provider-working lock. |
-| Diagram/Application/Quality stage plan controllers | `plan_mismatch`, `invalid_decision`, `commit_failed` become "Core cannot continue" cards | Repair-prompt first | If Git + managed state make the next task inferable, Core repairs the stage plan. If the artifact is invalid, Core sends an internal repair prompt. Hard stop only when plan state cannot be inferred safely. |
-| `session-request-handler-managed-workflow-turn` | When plan advance is blocked, Core appends validation message and settles | Repair-prompt or released user gate | Settled is acceptable only if the user has a concrete action. Technical plan/commit blockers must either be repaired internally or shown as Core maintenance state with input released. |
-| Product Part order-plan review | Acceptance can be blocked by missing/no staged changes or invalid machine JSON | Mixed | Core-required unlock fields remain hard. Missing/no staged changes for already materialized acceptance should be auto-reconciled where possible. Prose quality is warning/revision, not a hard stop. |
-| Cluster contract turn controller | Missing formal JSON fields blocks review and sends repair loop | Soften | Hard fields are only the fields Core needs to unlock next module wave: node identity, facade identity, method boundary, input/output type names, module boundary ids. Narrative completeness and extra detail become warning/revision. |
-| Project Manager dialog controller | Managed review click can locally lock input while Core waits, rejects, or misses worktree events | Fix UI state | Local pending lock must expire or be cleared by ack/history/core gate. `Agent is working` must be derived from active runtime turn state, not from any unresolved managed review click. |
-| Attached worktree runtime events | Missing attachment or wrong root makes the dialog appear frozen until sidebar toggle | Keep as hard integration invariant | This is not a user blocker. Core must attach all created worktree roots to the main workspace observation graph at bootstrap/reconciliation time. |
-| `scripts/plan-orchestrator` commit scope | Developer plan commits reject out-of-scope files | Keep for this repository's own development process | This guard protects human/agent repository edits and is separate from product workflow stop-gates. Do not weaken it as part of Project Manager workflow simplification. |
+| `WorkflowBoundaryFacade.ensureBoundary` | Dirty Git before a pre-step rollback anchor throws | `auto` | Two-basket auto-commit (step commit + preserve commit), then create the boundary. No user stop for any dirty state. |
+| `WorkflowStepCommitFacade.commitAcceptedStep` | Throws if dirty paths remain after the accepted-step commit | `auto` | Commit step-owned paths into the step commit; commit the rest as `chore: preserve workspace changes`. |
+| `ensureManagedTerminalGitClean` | Unclassified residue becomes "choose how to handle files" | `auto` | Same two-basket auto-commit; the unclassified-blocker message is removed. |
+| Boundary git `index.lock` exhaustion | Text error asking the user to remove the lock | `agent-dispatch`, then `button-gate` | Retry silently; dispatch the agent to repair repository state; gate only if the agent cannot. |
+| Diagram/Application/Quality stage plan controllers | `plan_mismatch`, `invalid_decision`, `commit_failed` become "Core cannot continue" cards | `auto`, then `agent-dispatch` | Repair the stage plan when inferable from Git + managed state; otherwise dispatch the agent with the bookkeeping repair instruction. Cards removed. |
+| `session-request-handler-managed-workflow-turn` settle paths | Settles with a validation message or with nothing | `agent-dispatch` | Every non-review `nextAction` dispatches its prepared repair prompt. Settling without dispatch is allowed only when a user review gate was opened. |
+| Managed continuation dispatch | Fire-and-forget, errors swallowed | `agent-dispatch` (delivery guaranteed) | Await sends; on failure retry, then surface a button gate (retry / switch provider). |
+| Turn controllers plan parsing (`parseStateBlock`, file I/O) | Unhandled crash, dialog hangs | `auto`, then `agent-dispatch` | Re-bootstrap or repair plan state deterministically; otherwise dispatch the agent; never crash silently. |
+| Artifact validators (managed + Development Tree contracts) | Formal shape issues block review and loop repairs | split per section 2.3 | Core-required machine fields: bounded agent dispatch. Prose/recoverable detail: warning + continue, or revision prompt. |
+| Repair loops | Unbounded attempts | bounded + degradation | Section 2.2 rules. |
+| Product Part order-plan review | Acceptance blocked by missing/no staged changes or invalid machine JSON | `auto` / `agent-dispatch` / `button-gate` | Auto-reconcile materialized acceptance; machine JSON repairs are bounded agent dispatches; gates only per section 2.2/2.4. |
+| Cluster contract turn controller | Missing formal JSON fields send repair loop / block review | `agent-dispatch` (bounded) | Hard fields are only those Core needs to unlock the next module wave: node identity, facade identity, method boundary, input/output type names, module boundary ids. Everything else: warning/revision. |
+| Project Manager dialog controller | Managed review click can lock input forever | fix UI state (Class D) | Pending lock expires; unlock on `active: false` regardless of reason; arbitration time-boxed; reconcile on reconnect. |
+| Attached worktree runtime events | Missing attachment freezes the dialog until sidebar toggle | keep as hard integration invariant | Core attaches all created worktree roots to the main workspace observation graph at bootstrap/reconciliation. Not a user gate. |
+| Provider failure (timeout, stream break, auth) | `session:error` broadcast, possibly without an action | `auto`, then `button-gate` | Retry/recover silently where possible; otherwise a button gate (retry / switch provider / re-authenticate). |
+| `scripts/plan-orchestrator` commit scope | Developer plan commits reject out-of-scope files | keep | This guard protects this repository's own development process and is separate from product workflow stop-gates. Do not weaken it. |
 
 ## 5. Immediate Fix Order
 
-1. Dirty Git terminal boundary for managed steps, especially Quality Gates, because it currently stops the user with files Core can classify and commit.
-2. UI-lock semantics for Core gates, because a released or actionable gate must never look like an active provider turn.
-3. Validator severity split, starting with Development Tree cluster contracts and then applying the same policy to Diagram/Application/Quality managed validators.
-4. Documentation sync into the two active Development Tree planning documents and Core/Project Manager SSOT documents.
+1. Dirty Git elimination (two-basket auto-commit) at all managed boundaries, because it currently stops the user with files Core can preserve and commit.
+2. Silent stop elimination: guaranteed continuation delivery, repair dispatch on settled turns, error containment around boundary calls and plan parsing.
+3. Managed plan state auto-repair and removal of the "Core cannot continue" card class.
+4. Bounded repair loops with accept-with-warning degradation.
+5. Validator severity split (managed validators, then Development Tree contracts).
+6. UI lock truthfulness: expiry, reason-agnostic unlock, time-boxed arbitration, reconnect reconciliation.
+7. Documentation sync into the two active Development Tree planning documents and Core/Project Manager SSOT documents.
 
-## 6. Hard Blockers That Remain Valid
+## 6. Button Gates That Remain Valid
 
-The simplification does not mean "accept everything." These blockers remain valid:
+The simplification does not mean "no user gates." These button gates remain valid — each is a concrete action, never a text-only stop:
 
-- merge or release quality gates fail;
-- Core cannot identify which user-authored file would be overwritten or committed;
-- accepted artifact lacks the machine fields Core needs to compute the next step;
-- Clear/Undo or refactoring would delete a node/session/worktree without an accepted upstream truth;
-- Git repository operations fail in a way that cannot be retried or repaired without user-visible risk;
-- provider credentials/session authentication fail and Core has no local recovery path.
+- user review/acceptance of agent-produced artifacts (the planned review gates, including `Подтверждаю`);
+- Clear/Undo or refactoring that would delete a node/session/worktree not derivable from accepted upstream truth (explicit confirmation);
+- provider credentials/session authentication failures with no local recovery path (retry / switch provider / re-authenticate);
+- repair-limit exhaustion on Core-required machine fields (retry repair / continue as is / roll back step);
+- a Git repository operation that stays broken after silent retries and an agent repair dispatch.
 
-## 7. Implementation Direction
+Notably removed from the legacy list:
 
-The next implementation cycle should proceed in this order:
+- "merge or release quality gates fail" is an agent dispatch (fixing gate failures is agent work), not a stop;
+- "Core cannot identify which user-authored file would be overwritten" is eliminated by the preserve commit: Core never needs to identify ownership to keep work safe.
 
-1. audit all current hard blockers in managed workflow controllers, boundary commit code, Development Tree sub-agent flow, and Project Manager lock handling;
-2. classify each blocker as `keep`, `auto-fix`, `warning`, or `repair-prompt`;
-3. implement dirty Git auto-commit for workflow-owned changes first, because it caused the current Quality Gates stop;
-4. downgrade non-critical artifact/schema validators after identifying which fields Core actually reads;
-5. fix UI lock semantics so every Core gate leaves the panel in a truthful state;
-6. add regression tests around Quality Gates restart, Product Part/Cluster sub-agent flow, projected worktree sessions, and clear/undo rebootstrap.
-
-## 8. Non-Goals
+## 7. Non-Goals
 
 - Do not remove Git-first workflow truth.
 - Do not replace Core with a conversational top-level agent.
-- Do not accept generated production code that fails quality gates.
+- Do not merge or release generated production code that fails required quality gates (the agent must fix it; the merge gate itself stays).
 - Do not weaken irreversible refactoring or deletion confirmations.
 - Do not remove node-level Clear/Undo semantics.
+- Do not weaken the `scripts/plan-orchestrator` development-process commit scope guard.
 
-## 9. Required References
+## 8. Required References
 
 - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`
