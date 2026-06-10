@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "68185d4e7",
+  "lastRecordedCommit": "147c439ed",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase3.delivery.task2",
-  "expectedCommitMessage": "fix: dispatch repair prompts on settled turns",
+  "currentTaskId": "orchestrator-stop-gate.phase3.containment.task1",
+  "expectedCommitMessage": "fix: contain boundary errors into agent repair",
   "debt": {
-    "expectedCommitMessage": "fix: dispatch repair prompts on settled turns",
-    "preCommitHead": "68185d4e7",
+    "expectedCommitMessage": "fix: contain boundary errors into agent repair",
+    "preCommitHead": "147c439ed",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase3.delivery.task2"
+    "taskId": "orchestrator-stop-gate.phase3.containment.task1"
   }
 }
 ```
@@ -99,12 +99,12 @@
 17. [DONE] `orchestrator-stop-gate.phase3.delivery.task1` Make agent continuation dispatch awaited and failure-handled: remove the fire-and-forget swallow in managed internal continuation dispatch and convert managed turn-completion handler failures in the provider event router into an agent repair dispatch or button gate instead of a silently settled turn (scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-provider-event-*`; expected commit: `fix: guarantee agent continuation delivery`).
 18. [DONE] Git Commit: `fix: guarantee agent continuation delivery` (hash: 68185d4e7)
 19. [DONE] `orchestrator-stop-gate.phase3.delivery.task2` Dispatch repair prompts on settled managed turns: every non-review `nextAction` (including quality gates `repair_integration`/`repair_verification` paths) must send the prepared repair prompt to the agent instead of settling without dispatch (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workflow-orchestration/quality-gates`; expected commit: `fix: dispatch repair prompts on settled turns`).
-20. [PENDING] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: TBD)
+20. [DONE] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: 147c439ed)
 
 ### Stream: Error Containment
 
-21. [TODO] `orchestrator-stop-gate.phase3.containment.task1` Contain workflow boundary errors in session handlers: wrap `ensureBoundary`/`commitAcceptedStep` call sites in workflow session creation, session resolution, and managed review decision handlers so thrown errors become agent repair dispatches instead of unhandled crashes (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: contain boundary errors into agent repair`).
-22. [TODO] Git Commit: `fix: contain boundary errors into agent repair` (hash: TBD)
+21. [DONE] `orchestrator-stop-gate.phase3.containment.task1` Contain workflow boundary errors in session handlers: wrap the managed stage preparation (`ensureBoundary`/scaffold/draft-open) in workflow session creation so thrown errors produce a session with a released-input Core message instead of an unhandled crash; session resolution and managed review decision handlers were verified already contained (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts`; expected commit: `fix: contain boundary errors into agent repair`).
+22. [PENDING] Git Commit: `fix: contain boundary errors into agent repair` (hash: TBD)
 23. [TODO] `orchestrator-stop-gate.phase3.containment.task2` Contain managed plan parse and file I/O failures in Development Tree turn controllers (cluster contract, product part brief, development order plan, review controllers): corrupted or missing plan state must produce an agent repair dispatch or deterministic plan re-bootstrap, never an unhandled crash that leaves the dialog hanging (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `fix: contain plan parse failures in turn controllers`).
 24. [TODO] Git Commit: `fix: contain plan parse failures in turn controllers` (hash: TBD)
 

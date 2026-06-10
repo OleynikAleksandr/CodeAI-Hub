@@ -85,6 +85,90 @@ export class SessionRequestHandlerWorkflowSession {
       deps.scaffoldInstaller ?? new ManagedWorkflowScaffoldInstaller();
   }
 
+  private async prepareManagedStage(options: {
+    readonly workspacePath: string;
+    readonly context: {
+      readonly initiativeSlug: string;
+      readonly stage: string;
+    };
+  }): Promise<void> {
+    if (isWorkflowBoundaryStage(options.context.stage)) {
+      await (
+        this.deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+      ).ensureBoundary({
+        stage: options.context.stage,
+        workspaceRoot: options.workspacePath,
+        workspaceSlug: options.context.initiativeSlug,
+      });
+    }
+    await this.scaffoldInstaller.installDiagramModulesScaffold({
+      workspaceRoot: options.workspacePath,
+    });
+    if (options.context.stage === DIAGRAM_MODULES_STAGE) {
+      await this.scaffoldInstaller.checkpointDiagramModulesInputs({
+        workspaceRoot: options.workspacePath,
+        workspaceSlug: options.context.initiativeSlug,
+      });
+    }
+    if (
+      options.context.stage === APPLICATION_SKELETON_STAGE &&
+      (await this.shouldOpenApplicationSkeletonDraft(options.workspacePath))
+    ) {
+      await this.applicationSkeletonStagePlan.openDraftPhase({
+        workspaceRoot: options.workspacePath,
+      });
+    }
+    if (
+      options.context.stage === QUALITY_GATES_STAGE &&
+      (await this.shouldOpenQualityGatesDraft(options.workspacePath))
+    ) {
+      await this.qualityGatesStagePlan.openDraftPhase({
+        workspaceRoot: options.workspacePath,
+      });
+    }
+  }
+
+  private createStagePreparationFailureSession(
+    options: {
+      readonly providerId: string;
+      readonly workspacePath: string;
+      readonly context: {
+        readonly initiativeSlug: string;
+        readonly stage: string;
+        readonly runSlug?: string | null;
+      };
+    },
+    error: unknown
+  ): Session {
+    const message = error instanceof Error ? error.message : String(error);
+    const session = this.deps.sessionManager.createSession(
+      options.providerId,
+      options.workspacePath,
+      undefined,
+      {
+        initiativeSlug: options.context.initiativeSlug,
+        runSlug: options.context.runSlug ?? null,
+        stage: options.context.stage,
+      }
+    );
+    this.deps.eventMessages.appendCoreMessage(session.id, {
+      content: [
+        `Core could not prepare the managed workflow stage: ${message}`,
+        "The input is released. Send any message and Core will retry the stage preparation.",
+      ].join("\n"),
+      tag: "managed-workflow-validation",
+    });
+    this.deps.logger.error(
+      "Managed workflow stage preparation failed",
+      error instanceof Error ? error : new Error(message),
+      {
+        stage: options.context.stage,
+        workspaceRoot: options.workspacePath,
+      }
+    );
+    return session;
+  }
+
   async createSessionForWorkflow(options: {
     readonly inheritedModelBinding?: SessionModelBinding | null;
     readonly providerId: string;
@@ -133,39 +217,10 @@ export class SessionRequestHandlerWorkflowSession {
       return session;
     }
     if (managedDecision?.mode === "managed_dispatch") {
-      if (isWorkflowBoundaryStage(options.context.stage)) {
-        await (
-          this.deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
-        ).ensureBoundary({
-          stage: options.context.stage,
-          workspaceRoot: options.workspacePath,
-          workspaceSlug: options.context.initiativeSlug,
-        });
-      }
-      await this.scaffoldInstaller.installDiagramModulesScaffold({
-        workspaceRoot: options.workspacePath,
-      });
-      if (options.context.stage === DIAGRAM_MODULES_STAGE) {
-        await this.scaffoldInstaller.checkpointDiagramModulesInputs({
-          workspaceRoot: options.workspacePath,
-          workspaceSlug: options.context.initiativeSlug,
-        });
-      }
-      if (
-        options.context.stage === APPLICATION_SKELETON_STAGE &&
-        (await this.shouldOpenApplicationSkeletonDraft(options.workspacePath))
-      ) {
-        await this.applicationSkeletonStagePlan.openDraftPhase({
-          workspaceRoot: options.workspacePath,
-        });
-      }
-      if (
-        options.context.stage === QUALITY_GATES_STAGE &&
-        (await this.shouldOpenQualityGatesDraft(options.workspacePath))
-      ) {
-        await this.qualityGatesStagePlan.openDraftPhase({
-          workspaceRoot: options.workspacePath,
-        });
+      try {
+        await this.prepareManagedStage(options);
+      } catch (error) {
+        return this.createStagePreparationFailureSession(options, error);
       }
     }
 
