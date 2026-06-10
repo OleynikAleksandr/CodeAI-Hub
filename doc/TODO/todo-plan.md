@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "fb549e4a8",
+  "lastRecordedCommit": "844ecffc5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase5.build-all.task1",
-  "expectedCommitMessage": "build: prepare quality gates restore isolation release artifacts",
+  "currentTaskId": "qg-restore-isolation.phase5.vsix.task1",
+  "expectedCommitMessage": "build: package quality gates restore isolation vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare quality gates restore isolation release artifacts",
-    "preCommitHead": "fb549e4a8",
+    "expectedCommitMessage": "build: package quality gates restore isolation vsix release",
+    "preCommitHead": "844ecffc5",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase5.build-all.task1"
+    "taskId": "qg-restore-isolation.phase5.vsix.task1"
   }
 }
 ```
@@ -98,9 +98,9 @@
 ### Stream: Release Artifacts
 
 17. [DONE] `qg-restore-isolation.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare quality gates restore isolation release artifacts`). Result: `./scripts/build-all.sh` completed successfully for 1.2.487; provider, Core, VS Code webview, Project Manager, and CEF launcher tarballs were generated.
-18. [PENDING] Git Commit: `build: prepare quality gates restore isolation release artifacts` (hash: TBD)
-19. [TODO] `qg-restore-isolation.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package quality gates restore isolation vsix release`).
-20. [TODO] Git Commit: `build: package quality gates restore isolation vsix release` (hash: TBD)
+18. [DONE] Git Commit: `build: prepare quality gates restore isolation release artifacts` (hash: 844ecffc5)
+19. [DONE] `qg-restore-isolation.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package quality gates restore isolation vsix release`). Result: `./scripts/build-release.sh --use-current-version` completed for 1.2.487; SDK exclusions, local artifact validation, markdown links, duplication check, dev dependency pruning/restoration, VSIX surface verification, and package-size verification passed. VSIX: `codeai-hub-1.2.487.vsix` (5.1M); release tarballs are present in `doc/tmp/releases/`.
+20. [PENDING] Git Commit: `build: package quality gates restore isolation vsix release` (hash: TBD)
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
