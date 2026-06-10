@@ -187,12 +187,11 @@ export const buildApplicationSkeletonBoundaryBlockedMessage = (
   details: string
 ): string =>
   [
-    "CodeAI Core cannot continue the `Application Skeleton` step yet.",
+    "Core paused the `Application Skeleton` step on a plan-state boundary.",
     "",
     `Reason: ${explainBoundaryDetails(details)}`,
     "",
-    "This is an orchestrator plan-state problem, not an agent artifact problem. Do not ask Project Manager or the agent to bypass it.",
-    "Core must repair the managed stage plan or finish the blocked Git commit boundary, then retry Application Skeleton validation.",
+    "The input is released. Send any message and Core will re-validate the stage and repair the managed plan from the current Git state.",
   ].join("\n");
 
 export const buildApplicationSkeletonPersistentReturnMessage = (): string =>

@@ -288,9 +288,9 @@ export class QualityGatesStagePlanController {
         managedPaths: await this.collectManagedPaths(params),
         workspaceRoot: params.workspaceRoot,
       });
-      if (gitCommit.noStagedChanges || !gitCommit.hash) {
+      if (!gitCommit.hash) {
         return this.blockCommitFailed(
-          `No staged managed changes for commit "${stageState.expectedCommitMessage}".`
+          `No reachable Git commit for "${stageState.expectedCommitMessage}".`
         );
       }
       await this.recordCommit({

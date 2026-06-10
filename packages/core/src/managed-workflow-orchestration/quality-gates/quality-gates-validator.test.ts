@@ -16,7 +16,7 @@ const FORMAL_VERIFICATION_ACCEPTED_RE =
   /Core accepted Quality Gates formal verification/u;
 const INTEGRATION_OPEN_RE = /Core opens Phase 3 Quality Gates Integration/u;
 const INTEGRATION_REJECTED_RE = /Core rejected Quality Gates integration/u;
-const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
+const PLAN_STATE_PROBLEM_RE = /The input is released/u;
 const QUALITY_GATES_BASELINE_HEADING_RE =
   /Set the first Markdown heading to exactly `# Quality Gates Baseline`/u;
 const REVIEW_CORRECTIONS_RE = /review corrections/u;

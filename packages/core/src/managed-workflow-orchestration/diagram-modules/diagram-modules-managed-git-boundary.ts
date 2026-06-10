@@ -29,7 +29,7 @@ export class DiagramModulesManagedGitBoundary {
       workspaceRoot: params.workspaceRoot,
     });
     return {
-      hash: commit.noStagedChanges ? null : commit.hash,
+      hash: commit.hash || null,
       noStagedChanges: commit.noStagedChanges,
     };
   }

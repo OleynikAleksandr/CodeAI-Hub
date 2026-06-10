@@ -237,9 +237,9 @@ export class ApplicationSkeletonStagePlanController {
         managedPaths,
         workspaceRoot: params.workspaceRoot,
       });
-      if (gitCommit.noStagedChanges || !gitCommit.hash) {
+      if (!gitCommit.hash) {
         return this.blockCommitFailed(
-          `No staged managed changes for commit "${commitMessage}".`
+          `No reachable Git commit for "${commitMessage}".`
         );
       }
       await this.recordCommit({
@@ -295,9 +295,9 @@ export class ApplicationSkeletonStagePlanController {
         managedPaths,
         workspaceRoot: params.workspaceRoot,
       });
-      if (gitCommit.noStagedChanges || !gitCommit.hash) {
+      if (!gitCommit.hash) {
         return this.blockCommitFailed(
-          `No staged managed changes for commit "${stageState.expectedCommitMessage}".`
+          `No reachable Git commit for "${stageState.expectedCommitMessage}".`
         );
       }
       return await this.recordRejectedTurn({

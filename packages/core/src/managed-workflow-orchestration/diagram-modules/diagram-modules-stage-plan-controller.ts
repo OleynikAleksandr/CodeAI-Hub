@@ -377,10 +377,10 @@ export class DiagramModulesStagePlanController {
         managedPaths,
         workspaceRoot: params.workspaceRoot,
       });
-      if (gitCommit.noStagedChanges || !gitCommit.hash) {
+      if (!gitCommit.hash) {
         return {
           blocked: {
-            message: `No staged managed changes for commit "${commitMessage}".`,
+            message: `No reachable Git commit for "${commitMessage}".`,
             reason: "commit_failed",
           },
           commit: null,

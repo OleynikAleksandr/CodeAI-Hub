@@ -19,8 +19,8 @@ const USER_RETURN_STREAM_RE = /### Stream: User Return And Revisions/u;
 const DIAGRAM_COMPLETED_RE = /"completedStages": \[\n {4}"diagram_modules"/u;
 const APP_UNLOCKED_RE = /"application_skeleton"/u;
 const APP_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
-const DIRTY_BLOCKED_RE = /Commit and finish step/u;
-const MANUAL_NOTES_DIRTY_RE = /manual-notes\.md/u;
+const PRESERVE_COMMIT_RE = /chore: preserve workspace changes/u;
+const MANUAL_NOTES_TRACKED_RE = /manual-notes\.md/u;
 const REVIEW_DISPOSITION_RE =
   /Git Commit: `docs: open diagram modules user review` \(hash: [0-9a-f]{7,}\)/u;
 const WORKSPACE_SLUG = "demo-workspace";
@@ -125,7 +125,7 @@ test("Diagram Modules review acceptance opens persistent return and unlocks Appl
   }
 });
 
-test("Diagram Modules review acceptance blocks unclassified dirty files before opening persistent return", async () => {
+test("Diagram Modules review acceptance preserves unclassified dirty files and opens persistent return", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "diagram-review-dirty-block-")
   );
@@ -138,19 +138,21 @@ test("Diagram Modules review acceptance blocks unclassified dirty files before o
     );
     await writeWorkspaceFile(workspaceRoot, "manual-notes.md", "# notes\n");
 
-    await assert.rejects(
-      () => acceptDiagramModulesReviewWithoutRevision({ workspaceRoot }),
-      DIRTY_BLOCKED_RE
-    );
+    await acceptDiagramModulesReviewWithoutRevision({ workspaceRoot });
 
     const stagePlan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/stages/diagram-modules/todo-plan.md"
     );
-    assert.doesNotMatch(stagePlan, USER_RETURN_STREAM_RE);
+    assert.match(stagePlan, USER_RETURN_STREAM_RE);
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
     assert.match(
-      await git(workspaceRoot, ["status", "--short"]),
-      MANUAL_NOTES_DIRTY_RE
+      await git(workspaceRoot, ["log", "--pretty=%s"]),
+      PRESERVE_COMMIT_RE
+    );
+    assert.match(
+      await git(workspaceRoot, ["ls-files"]),
+      MANUAL_NOTES_TRACKED_RE
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

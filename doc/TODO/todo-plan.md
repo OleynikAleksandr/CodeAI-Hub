@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "951206e3a",
+  "lastRecordedCommit": "d65e968bd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase3.containment.task2",
-  "expectedCommitMessage": "fix: contain plan parse failures in turn controllers",
+  "currentTaskId": "orchestrator-stop-gate.phase3.plan-repair.task1",
+  "expectedCommitMessage": "fix: auto repair managed stage plan state",
   "debt": {
-    "expectedCommitMessage": "fix: contain plan parse failures in turn controllers",
-    "preCommitHead": "951206e3a",
+    "expectedCommitMessage": "fix: auto repair managed stage plan state",
+    "preCommitHead": "d65e968bd",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase3.containment.task2"
+    "taskId": "orchestrator-stop-gate.phase3.plan-repair.task1"
   }
 }
 ```
@@ -106,12 +106,12 @@
 21. [DONE] `orchestrator-stop-gate.phase3.containment.task1` Contain workflow boundary errors in session handlers: wrap the managed stage preparation (`ensureBoundary`/scaffold/draft-open) in workflow session creation so thrown errors produce a session with a released-input Core message instead of an unhandled crash; session resolution and managed review decision handlers were verified already contained (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts`; expected commit: `fix: contain boundary errors into agent repair`).
 22. [DONE] Git Commit: `fix: contain boundary errors into agent repair` (hash: 951206e3a)
 23. [DONE] `orchestrator-stop-gate.phase3.containment.task2` Contain managed plan parse and file I/O failures in Development Tree turn controllers (cluster contract, product part brief, development order plan, review controllers): corrupted or missing plan state must produce an agent repair dispatch or deterministic plan re-bootstrap, never an unhandled crash that leaves the dialog hanging (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `fix: contain plan parse failures in turn controllers`).
-24. [PENDING] Git Commit: `fix: contain plan parse failures in turn controllers` (hash: TBD)
+24. [DONE] Git Commit: `fix: contain plan parse failures in turn controllers` (hash: d65e968bd)
 
 ### Stream: Managed Plan State Auto-Repair
 
-25. [TODO] `orchestrator-stop-gate.phase3.plan-repair.task1` Auto-repair managed stage plan state on `plan_mismatch`, expected-commit drift, and `commit_failed` when Git plus managed state make the safe transition inferable, and replace the remaining "Core cannot continue" cards with agent repair dispatch (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: auto repair managed stage plan state`).
-26. [TODO] Git Commit: `fix: auto repair managed stage plan state` (hash: TBD)
+25. [DONE] `orchestrator-stop-gate.phase3.plan-repair.task1` Auto-repair managed stage plan state on `plan_mismatch`, expected-commit drift, and `commit_failed` when Git plus managed state make the safe transition inferable, and replace the remaining "Core cannot continue" cards with agent repair dispatch (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: auto repair managed stage plan state`).
+26. [PENDING] Git Commit: `fix: auto repair managed stage plan state` (hash: TBD)
 
 ### Stream: Bounded Repair Loops
 

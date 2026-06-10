@@ -200,9 +200,9 @@ export const commitDiagramModulesRejectedTurn = async (params: {
       managedPaths,
       workspaceRoot: params.workspaceRoot,
     });
-    if (gitCommit.noStagedChanges || !gitCommit.hash) {
+    if (!gitCommit.hash) {
       return block(
-        `No staged managed changes for commit "${stageState.expectedCommitMessage}".`,
+        `No reachable Git commit for "${stageState.expectedCommitMessage}".`,
         "commit_failed"
       );
     }

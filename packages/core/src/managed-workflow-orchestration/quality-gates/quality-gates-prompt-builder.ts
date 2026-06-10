@@ -472,12 +472,11 @@ export const buildQualityGatesBoundaryBlockedMessage = (
   details: string
 ): string =>
   [
-    "CodeAI Core cannot continue the `Quality Gates Baseline` step yet.",
+    "Core paused the `Quality Gates Baseline` step on a plan-state boundary.",
     "",
     `Reason: ${explainBoundaryDetails(details)}`,
     "",
-    "This is an orchestrator plan-state problem, not an agent artifact problem. Do not ask Project Manager or the agent to bypass it.",
-    "Core must repair the managed stage plan or finish the blocked Git commit boundary, then retry Quality Gates validation.",
+    "The input is released. Send any message and Core will re-validate the stage and repair the managed plan from the current Git state.",
   ].join("\n");
 
 export const buildQualityGatesPersistentReturnMessage = (): string =>

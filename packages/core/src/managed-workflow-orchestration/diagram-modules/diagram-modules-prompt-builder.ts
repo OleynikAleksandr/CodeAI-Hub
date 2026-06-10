@@ -214,9 +214,11 @@ export const buildDiagramModulesManagedCommitBoundaryBlockedMessage = (
   details: string
 ): string =>
   [
-    "Core blocked Diagram Modules continuation before the managed commit boundary completed.",
+    "Core paused Diagram Modules continuation before the managed commit boundary completed.",
     "",
     details,
+    "",
+    "The input is released. Send any message and Core will re-validate and continue from the current plan state.",
   ].join("\n");
 
 export const buildDiagramModulesManagedContinuationMessage = (
