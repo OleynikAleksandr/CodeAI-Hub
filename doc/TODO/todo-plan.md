@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "992690261",
+  "lastRecordedCommit": "65a124aea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase6.pm-docs.task1",
-  "expectedCommitMessage": "docs: describe truthful core gate ui state",
+  "currentTaskId": "orchestrator-stop-gate.phase7.verify.task1",
+  "expectedCommitMessage": "test: verify orchestrator stop gate simplification",
   "debt": {
-    "expectedCommitMessage": "docs: describe truthful core gate ui state",
-    "preCommitHead": "992690261",
+    "expectedCommitMessage": "test: verify orchestrator stop gate simplification",
+    "preCommitHead": "65a124aea",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase6.pm-docs.task1"
+    "taskId": "orchestrator-stop-gate.phase7.verify.task1"
   }
 }
 ```
@@ -145,14 +145,14 @@
 39. [DONE] `orchestrator-stop-gate.phase6.docs.task1` Synchronize the implemented no-stop policy into the Core SSOT invariants (dual outcome, awaited dispatch with retry, 120s arbitration time box, bounded repair with review-gate degradation, two-basket dirty Git auto-commit); both Development Tree planning documents were already synchronized by the Phase 2 policy commits and verified unchanged (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe simplified orchestrator stop gates`).
 40. [DONE] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: 992690261)
 41. [DONE] `orchestrator-stop-gate.phase6.pm-docs.task1` Document Project Manager lock/projection behavior for Core gates and attached worktree runtime roots (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe truthful core gate ui state`).
-42. [PENDING] Git Commit: `docs: describe truthful core gate ui state` (hash: TBD)
+42. [DONE] Git Commit: `docs: describe truthful core gate ui state` (hash: 65a124aea)
 
 ## Phase 7 - Tooling Verification (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Targeted Verification
 
-43. [TODO] `orchestrator-stop-gate.phase7.verify.task1` Run targeted Core and Project Manager tests/builds for dirty Git auto-commit (step + preserve), guaranteed continuation delivery, contained errors, softened validators, Development Tree sub-agent flow, projected worktree sessions, and UI lock release/expiry, including silent-path tests where a failing handler must still produce an agent dispatch or button gate (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify orchestrator stop gate simplification`).
-44. [TODO] Git Commit: `test: verify orchestrator stop gate simplification` (hash: TBD)
+43. [DONE] `orchestrator-stop-gate.phase7.verify.task1` Run targeted Core and Project Manager tests/builds for dirty Git auto-commit (step + preserve), guaranteed continuation delivery, contained errors, softened validators, Development Tree sub-agent flow, projected worktree sessions, and UI lock release/expiry, including silent-path tests where a failing handler must still produce an agent dispatch or button gate. Result: core build green; 133/137 core suite tests green with 4 pre-existing failures outside this scope (model-binding emission, diagram facade validation, dist exclusion) verified present before this scope on commit 88fb8e621; webview typecheck and bundle green; PM gate lock tests 9/9 (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify orchestrator stop gate simplification`).
+44. [PENDING] Git Commit: `test: verify orchestrator stop gate simplification` (hash: TBD)
 
 ## Phase 8 - Release Build Confirmation (owner: Codex, updated: 2026-06-10)
 
