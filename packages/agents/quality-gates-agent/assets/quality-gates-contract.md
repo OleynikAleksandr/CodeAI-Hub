@@ -11,7 +11,7 @@
 - Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, `quality-gates.json` manifest fields, and the Quality Gates hook wiring required by accepted `requiredBeforeCommit` / `requiredBeforePush` arrays.
 - Preserve existing project hook commands such as `plan:validate`. Append Quality Gates hook wiring instead of replacing the hook.
 - During Phase 3, required Quality Gates hook calls are agent-owned materialization. They must not be left as deferred to another actor.
-- Hook wiring evidence must include direct `npm run qg:<gate>` calls for every gate id in the accepted `requiredBeforeCommit` / `requiredBeforePush` arrays. Aggregate commands such as `npm run qg:before-commit` / `npm run qg:before-push` may exist as convenience commands, but they are not sufficient evidence by themselves.
+- Hook wiring evidence must show that the command of every gate in the accepted `requiredBeforeCommit` / `requiredBeforePush` arrays is reachable from the matching hook, directly or through package scripts the hook calls (aggregate commands count as wiring).
 
 ## JSON Shape
 

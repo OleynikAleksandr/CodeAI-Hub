@@ -33,9 +33,11 @@ const QUALITY_GATES_HANDOFF_RE =
   /runtime prompt must explicitly identify the Quality Gates stage and target artifact/;
 const NO_LIFECYCLE_RESTORE_RE =
   /must not rewrite, restore, revert, checkout, or replace git setup, existing hooks, plan scripts/;
-const HOOK_WIRING_RE = /must explicitly call every gate id/u;
+const HOOK_WIRING_RE = /must reach the command of every gate listed/u;
+const NAME_AGNOSTIC_SCRIPT_RULE_RE =
+  /Script names are the agent's choice; a `qg:` prefix is only a recommended naming style/u;
 const MATERIALIZATION_COMPLETE_RE =
-  /Materialization is not complete until all accepted required gates have executable package scripts/u;
+  /resolvable command reachable from the matching hook/u;
 const AGENT_OWNS_PHASE3_HOOK_RE =
   /During Phase 3, the Quality Gates hook section is agent-owned integration work/u;
 const NO_CORE_PENDING_HOOK_RE =
@@ -61,7 +63,7 @@ const PHASE3_NOT_TERMINAL_RE =
 const VERIFY_HOOK_SCRIPT_RESOLUTION_RE =
   /Resolve every `npm run <script>` command referenced by `\.husky\/pre-commit` and `\.husky\/pre-push` against `package\.json\.scripts`/u;
 const VERIFY_REQUIRED_COMMANDS_RE =
-  /npm run qg:before-module-execution[\s\S]*npm run qg:before-commit[\s\S]*npm run qg:before-push[\s\S]*sh \.husky\/pre-commit[\s\S]*sh \.husky\/pre-push[\s\S]*npm run qg:all/u;
+  /sh \.husky\/pre-commit[\s\S]*sh \.husky\/pre-push[\s\S]*requiredBeforeModuleExecution[\s\S]*npm run qg:all[\s\S]*npm run qg:before-commit[\s\S]*npm run qg:before-push/u;
 const VERIFIED_STATE_RE = /verificationState: "verified"/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
@@ -105,9 +107,9 @@ const CONTRACT_HOOK_BOUNDARY_RE = /Project Hook Boundary/;
 const CONTRACT_CHILD_PLAN_RE =
   /orchestration rewrite boundary does not provide automatic commit ownership or child-plan handoff/;
 const CONTRACT_HOOK_DIRECT_EVIDENCE_RE =
-  /Hook wiring evidence must include direct `npm run qg:<gate>` calls/s;
+  /Hook wiring evidence must show that the command of every gate/s;
 const CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE =
-  /Aggregate commands .* are not sufficient evidence by themselves/s;
+  /aggregate commands count as wiring/s;
 const CONTRACT_INTEGRATED_HOOK_RE =
   /`integrated: true` requires explicit lifecycle hook wiring/;
 const CONTRACT_NO_CORE_PENDING_HOOK_RE =
@@ -160,6 +162,7 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, QUALITY_GATES_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, HOOK_WIRING_RE);
+  assert.match(prompt, NAME_AGNOSTIC_SCRIPT_RULE_RE);
   assert.match(prompt, MATERIALIZATION_COMPLETE_RE);
   assert.match(prompt, AGENT_OWNS_PHASE3_HOOK_RE);
   assert.match(prompt, NO_CORE_PENDING_HOOK_RE);

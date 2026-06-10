@@ -150,7 +150,7 @@ Mandatory size policy contract rule: the required gate that enforces `source fil
 }
 ```
 
-Keep the same gate id in `commands`, `requiredBeforeCommit` or `requiredBeforePush`, `package.json` script `qg:<gate-id>`, and the matching Husky hook call. Do not rely only on prose, file names, or aliases to identify this mandatory size policy gate.
+Keep the same gate id in `commands` and the required arrays, and make its `proposedCommand` reachable from the matching Husky hook (directly or through an aggregate script). Do not rely only on prose, file names, or aliases to identify this mandatory size policy gate.
 
 Required `quality-gates.md` contract template:
 
@@ -253,11 +253,11 @@ Discussion-only review turns do not change canonical artifacts. When the user re
 
 Integration begins only when the runtime prompt explicitly assigns post-acceptance integration for an accepted Quality Gates contract. Do not ask whether to proceed and do not hand integration to another step.
 
-Materialization is not complete until all accepted required gates have concrete runner evidence for the selected stack adapter, updated contract state, and smoke evidence. For the npm/Husky adapter this means executable package scripts, real gate runner/config files where needed, and explicit Husky hook calls. A Markdown/JSON update without equivalent runner evidence is an incomplete integration and must be repaired before the final response.
-For npm/Husky projects, Materialization is not complete until all accepted required gates have executable package scripts, real gate runner/config files where needed, explicit Husky hook calls, updated contract state, and smoke evidence.
+Materialization is not complete until all accepted required gates have concrete runner evidence for the selected stack adapter, updated contract state, and smoke evidence. For the npm/Husky adapter this means resolvable gate commands, real gate runner/config files where needed, and Husky hook wiring that reaches every required gate command. A Markdown/JSON update without equivalent runner evidence is an incomplete integration and must be repaired before the final response.
+For npm/Husky projects, Materialization is not complete until every accepted required gate has a resolvable command reachable from the matching hook, real gate runner/config files where needed, updated contract state, and smoke evidence.
 
 During Phase 3, the Quality Gates enforcement section is agent-owned integration work. Do not describe selected stack-adapter enforcement wiring as deferred to another actor, and do not finish while required runner evidence is absent. For npm/Husky projects this includes `.husky/pre-commit` and `.husky/pre-push` updates.
-During Phase 3, the Quality Gates hook section is agent-owned integration work for npm/Husky projects. Do not describe `.husky/pre-commit` or `.husky/pre-push` updates as deferred to another actor, and do not finish while required hook calls are absent.
+During Phase 3, the Quality Gates hook section is agent-owned integration work for npm/Husky projects. Do not describe `.husky/pre-commit` or `.husky/pre-push` updates as deferred to another actor, and do not finish while a required gate command is not reachable from its hook.
 
 Integration algorithm:
 
@@ -266,10 +266,10 @@ Integration algorithm:
 3. Mark acceptance in the contract, then set integration state to `in_progress`.
 4. Create or update only accepted gate infrastructure: package scripts/devDependencies or equivalent stack files, selected lint/format/static-analysis config, architecture/layout/size scripts, gate manifest entries, lifecycle hook wiring, and CI/update files selected by the contract.
    - The contract is product-agnostic: choose runner evidence appropriate to the accepted stack, such as npm/Husky, Make, Gradle, Cargo, Go, Python, .NET, CI-only, or another explicit adapter.
-   - For npm/Husky, `package.json` must expose an exact script key `qg:<gate-id>` for every gate id listed in `requiredBeforeCommit` or `requiredBeforePush`.
-   - For npm/Husky, `.husky/pre-commit` must explicitly call every gate id listed in `requiredBeforeCommit` as `npm run qg:<gate-id>`.
-   - For npm/Husky, `.husky/pre-push` must explicitly call every gate id listed in `requiredBeforePush` as `npm run qg:<gate-id>`.
-   - Aggregate scripts such as `qg:before-commit` or `qg:before-push` are allowed only as additional convenience commands; they are not sufficient hook wiring evidence by themselves.
+   - Every gate id listed in `requiredBeforeCommit` or `requiredBeforePush` must have `commands.<gate-id>.proposedCommand` set to a working command; every `npm run <script>` it uses must exist in `package.json.scripts`. Script names are the agent's choice; a `qg:` prefix is only a recommended naming style, never a validation requirement.
+   - `.husky/pre-commit` must reach the command of every gate listed in `requiredBeforeCommit`, either by calling it directly or through package scripts it already calls.
+   - `.husky/pre-push` must reach the command of every gate listed in `requiredBeforePush`, either by calling it directly or through package scripts it already calls.
+   - Aggregate scripts such as `qg:all`, `qg:before-commit`, or `qg:before-push` are welcome convenience commands; a hook wired through an aggregate that runs the gate commands is valid enforcement wiring.
    - Preserve existing project hook commands such as `plan:validate`; append the Quality Gates wiring instead of replacing the hook.
    - If a required hook call is missing, repair `.husky/pre-commit` / `.husky/pre-push` directly; do not defer hook regeneration to Core.
 5. Avoid feature or business implementation code.
@@ -291,12 +291,10 @@ Verification algorithm:
 1. Re-read `quality-gates.json`, `package.json`, `.husky/pre-commit`, `.husky/pre-push`, and every integrated path listed in the contract.
 2. Resolve every `npm run <script>` command referenced by `.husky/pre-commit` and `.husky/pre-push` against `package.json.scripts`. Missing scripts are verification failures even if Markdown evidence claims they exist.
 3. Run all required formal verification commands that exist in this workspace:
-   - `npm run qg:before-module-execution`
-   - `npm run qg:before-commit`
-   - `npm run qg:before-push`
    - `sh .husky/pre-commit`
    - `sh .husky/pre-push`
-   - `npm run qg:all`
+   - the `proposedCommand` of every gate listed in `requiredBeforeModuleExecution`
+   - aggregate commands such as `npm run qg:all`, `npm run qg:before-commit`, `npm run qg:before-push` when those scripts exist (optional convenience evidence)
 4. Confirm that no gate id still listed in `plannedRequiredAfterIntegration` is also required for enforcement.
 5. Confirm that every path in `integratedPaths` still exists.
 6. Update `quality-gates.json` with `verificationState: "verified"` and command evidence only after every required command and hook check succeeds.
@@ -345,7 +343,7 @@ Before each final response, verify:
 - user-selected tools and policies are reflected in both artifacts;
 - concrete tools are selected only from user preference, project evidence, or stack-specific research;
 - every required gate exists in `commands`;
-- each non-empty hook scope is actually wired into `.husky/pre-commit` / `.husky/pre-push` with explicit `npm run qg:<gate-id>` calls before `integrated: true`;
+- each non-empty hook scope is actually wired so every required gate command is reachable from `.husky/pre-commit` / `.husky/pre-push` before `integrated: true`;
 - every required hook gate id has a matching exact `package.json` script key and matching `proposedCommand` in `quality-gates.json`;
 - `integrated: true` is never used when required hook wiring is described as deferred to another actor;
 - advisory gates have no blocking phases;
