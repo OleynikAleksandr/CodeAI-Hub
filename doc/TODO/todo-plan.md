@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "7815382aa",
+  "lastRecordedCommit": "23544b3dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase3.red-tests.task1",
-  "expectedCommitMessage": "fix: repair legacy red boundary tests",
+  "currentTaskId": "orchestrator-stop-gate.phase3.delivery.task1",
+  "expectedCommitMessage": "fix: guarantee agent continuation delivery",
   "debt": {
-    "expectedCommitMessage": "fix: repair legacy red boundary tests",
-    "preCommitHead": "7815382aa",
+    "expectedCommitMessage": "fix: guarantee agent continuation delivery",
+    "preCommitHead": "23544b3dc",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase3.red-tests.task1"
+    "taskId": "orchestrator-stop-gate.phase3.delivery.task1"
   }
 }
 ```
@@ -92,12 +92,12 @@
 ### Stream: Legacy Red Boundary Tests
 
 15. [DONE] `orchestrator-stop-gate.phase3.red-tests.task1` Diagnose and repair the three legacy red boundary tests on main: rewrite "refuses dirty provider session transcripts" to the no-stop preserve-commit behavior, and fix or rewrite the failing rollback coordinator expectations ("preserves mutable settings outside Clear rollback", "removes future workflow session histories through Git"), fixing rollback code if the tests expose real defects (scope: `packages/core/src/workflow/boundary`; expected commit: `fix: repair legacy red boundary tests`).
-16. [PENDING] Git Commit: `fix: repair legacy red boundary tests` (hash: TBD)
+16. [DONE] Git Commit: `fix: repair legacy red boundary tests` (hash: 23544b3dc)
 
 ### Stream: Guaranteed Continuation Delivery
 
-17. [TODO] `orchestrator-stop-gate.phase3.delivery.task1` Make agent continuation dispatch awaited and failure-handled: remove the fire-and-forget swallow in managed internal continuation dispatch and convert managed turn-completion handler failures in the provider event router into an agent repair dispatch or button gate instead of a silently settled turn (scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: guarantee agent continuation delivery`).
-18. [TODO] Git Commit: `fix: guarantee agent continuation delivery` (hash: TBD)
+17. [DONE] `orchestrator-stop-gate.phase3.delivery.task1` Make agent continuation dispatch awaited and failure-handled: remove the fire-and-forget swallow in managed internal continuation dispatch and convert managed turn-completion handler failures in the provider event router into an agent repair dispatch or button gate instead of a silently settled turn (scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-provider-event-*`; expected commit: `fix: guarantee agent continuation delivery`).
+18. [PENDING] Git Commit: `fix: guarantee agent continuation delivery` (hash: TBD)
 19. [TODO] `orchestrator-stop-gate.phase3.delivery.task2` Dispatch repair prompts on settled managed turns: every non-review `nextAction` (including quality gates `repair_integration`/`repair_verification` paths) must send the prepared repair prompt to the agent instead of settling without dispatch (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/quality-gates`; expected commit: `fix: dispatch repair prompts on settled turns`).
 20. [TODO] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: TBD)
 

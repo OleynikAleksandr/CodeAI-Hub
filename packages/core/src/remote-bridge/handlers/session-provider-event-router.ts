@@ -3,6 +3,11 @@ import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, serializeSessionModelBinding } from "../types";
 import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
+import {
+  isRecord,
+  readProviderEventStableId,
+  readStringField,
+} from "./session-provider-event-identity";
 import type { ManagedWorkflowTurnCompletionResult } from "./session-request-handler-managed-workflow-turn";
 import { recordSessionStreamHeartbeat } from "./session-stream-heartbeat";
 
@@ -83,36 +88,6 @@ interface SessionProviderEventRouterDependencies {
 }
 
 const TERMINAL_EVENT_TYPES = new Set(["turn_completed", "turn_failed"]);
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const readStringField = (
-  record: Record<string, unknown> | null,
-  key: string
-): string | null => {
-  const value = record?.[key];
-  return typeof value === "string" ? value : null;
-};
-
-const readProviderEventStableId = (
-  event: ProviderEventEnvelope
-): string | null => {
-  const record = event as unknown as Record<string, unknown>;
-  for (const key of ["id", "eventId", "sequence", "sequenceNumber"]) {
-    const value = record[key];
-    if (typeof value === "string" && value.trim().length > 0) {
-      return `${key}:${value.trim()}`;
-    }
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return `${key}:${value}`;
-    }
-  }
-  const timestamp = readStringField(record, "timestamp");
-  return timestamp && timestamp.trim().length > 0
-    ? `timestamp:${timestamp.trim()}`
-    : null;
-};
 
 export class SessionProviderEventRouter {
   private readonly deps: SessionProviderEventRouterDependencies;
@@ -324,13 +299,19 @@ export class SessionProviderEventRouter {
           )
         )
           .catch((error: unknown) => {
-            this.deps.logger.warn(
+            const message =
+              error instanceof Error ? error.message : String(error);
+            this.deps.logger.error(
               "Managed workflow turn completion handler failed",
-              {
-                sessionId,
-                error: error instanceof Error ? error.message : String(error),
-              }
+              error instanceof Error ? error : new Error(message),
+              { sessionId }
             );
+            this.deps.appendProviderMessage(sessionId, "system", {
+              content: [
+                `Core could not finish processing this turn: ${message}`,
+                "The input is released. Send any message to continue; Core will re-validate the workflow state and dispatch the next step.",
+              ].join("\n"),
+            });
             return "settled" as const;
           })
           .then((managedResult) => {

@@ -68,3 +68,54 @@ test("managed continuation dispatch falls back to internal send without a sessio
 
   assert.deepEqual(internalMessages, ["session-1:Fallback prompt"]);
 });
+
+test("managed continuation dispatch retries a failed send once before succeeding", async () => {
+  let attempts = 0;
+  const failures: unknown[] = [];
+
+  dispatchManagedInternalContinuation(
+    {
+      sendInternalMessage: () => {
+        attempts += 1;
+        return attempts === 1
+          ? Promise.reject(new Error("transient send failure"))
+          : Promise.resolve();
+      },
+    },
+    {
+      content: "Retry prompt",
+      onDeliveryFailure: (error) => failures.push(error),
+      session: null,
+      sessionId: "session-1",
+    }
+  );
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.equal(attempts, 2);
+  assert.deepEqual(failures, []);
+});
+
+test("managed continuation dispatch reports delivery failure after retry exhaustion", async () => {
+  let attempts = 0;
+  const failures: string[] = [];
+
+  dispatchManagedInternalContinuation(
+    {
+      sendInternalMessage: () => {
+        attempts += 1;
+        return Promise.reject(new Error("provider unavailable"));
+      },
+    },
+    {
+      content: "Failing prompt",
+      onDeliveryFailure: (error) =>
+        failures.push(error instanceof Error ? error.message : String(error)),
+      session: null,
+      sessionId: "session-1",
+    }
+  );
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.equal(attempts, 2);
+  assert.deepEqual(failures, ["provider unavailable"]);
+});

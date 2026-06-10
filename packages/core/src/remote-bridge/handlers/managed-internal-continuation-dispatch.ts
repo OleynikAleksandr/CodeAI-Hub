@@ -11,15 +11,18 @@ export interface ManagedInternalContinuationDispatch {
   sendInternalMessage(sessionId: string, content: string): Promise<void>;
 }
 
+export interface ManagedInternalContinuationDispatchOptions {
+  readonly content: string;
+  readonly onDeliveryFailure?: (error: unknown) => void;
+  readonly session: Session | null | undefined;
+  readonly sessionId: string;
+}
+
 export const dispatchManagedInternalContinuation = (
   dispatch: ManagedInternalContinuationDispatch,
-  options: {
-    readonly content: string;
-    readonly session: Session | null | undefined;
-    readonly sessionId: string;
-  }
+  options: ManagedInternalContinuationDispatchOptions
 ): void => {
-  const task =
+  const send = (): Promise<void> =>
     options.session && dispatch.dispatchUserMessage
       ? dispatch.dispatchUserMessage({
           content: options.content,
@@ -29,5 +32,9 @@ export const dispatchManagedInternalContinuation = (
           sessionId: options.sessionId,
         })
       : dispatch.sendInternalMessage(options.sessionId, options.content);
-  task.catch(() => undefined);
+  send()
+    .catch(() => send())
+    .catch((error: unknown) => {
+      options.onDeliveryFailure?.(error);
+    });
 };
