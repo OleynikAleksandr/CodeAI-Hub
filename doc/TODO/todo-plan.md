@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "e8ea45310",
+  "lastRecordedCommit": "b138bd446",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task3",
-  "expectedCommitMessage": "fix: teach prompts name agnostic gate wiring",
+  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task4",
+  "expectedCommitMessage": "test: verify name agnostic gate validation",
   "debt": {
-    "expectedCommitMessage": "fix: teach prompts name agnostic gate wiring",
-    "preCommitHead": "e8ea45310",
+    "expectedCommitMessage": "test: verify name agnostic gate validation",
+    "preCommitHead": "b138bd446",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9b.fix.task3"
+    "taskId": "orchestrator-stop-gate.phase9b.fix.task4"
   }
 }
 ```
@@ -222,9 +222,9 @@ Accepted model: the orchestrator validates only what affects downstream quality 
 72. [DONE] `orchestrator-stop-gate.phase9b.fix.task2` Make verification evidence and planned-gate runner evidence contract-driven: verification requirements become hook runs (`sh .husky/pre-commit`, `sh .husky/pre-push`) plus contract commands for module-execution gates, with aggregate scripts accepted only as optional alternatives; planned-gate runner evidence detection uses the contract command instead of canonical script names (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-command-reachability.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts`; expected commit: `fix: verify gates by contract commands`).
 73. [DONE] Git Commit: `fix: verify gates by contract commands` (hash: e8ea45310)
 74. [DONE] `orchestrator-stop-gate.phase9b.fix.task3` Rewrite the stage prompts and diagnostics texts to the name-agnostic contract: integration prompt requires a working reachable command per required gate and downgrades `qg:*` naming to a style recommendation, the size-policy hint stops prescribing same-name scripts, and the new entity diagnostics name the exact unreachable command (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/templates, packages/agents/quality-gates-agent/assets`; expected commit: `fix: teach prompts name agnostic gate wiring`).
-75. [PENDING] Git Commit: `fix: teach prompts name agnostic gate wiring` (hash: TBD)
-76. [TODO] `orchestrator-stop-gate.phase9b.fix.task4` Add the run-1 regression test: a contract whose gate ids carry a `qg-` prefix and whose package scripts use arbitrary names must pass integration validation when commands are reachable, and verification must accept hook-run evidence without aggregate scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-name-agnostic-validation.test.ts`; expected commit: `test: verify name agnostic gate validation`).
-77. [TODO] Git Commit: `test: verify name agnostic gate validation` (hash: TBD)
+75. [DONE] Git Commit: `fix: teach prompts name agnostic gate wiring` (hash: b138bd446)
+76. [DONE] `orchestrator-stop-gate.phase9b.fix.task4` Add the run-1 regression test: a contract whose gate ids carry a `qg-` prefix and whose package scripts use arbitrary names must pass integration validation when commands are reachable, and verification must accept hook-run evidence without aggregate scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-name-agnostic-validation.test.ts`; expected commit: `test: verify name agnostic gate validation`).
+77. [PENDING] Git Commit: `test: verify name agnostic gate validation` (hash: TBD)
 78. [TODO] `orchestrator-stop-gate.phase9b.fix.task5` Sync the name-agnostic validation model into the Core SSOT invariants and the stop-gate planning document validation-pressure section (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe name agnostic gate validation`).
 79. [TODO] Git Commit: `docs: describe name agnostic gate validation` (hash: TBD)
 80. [TODO] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
