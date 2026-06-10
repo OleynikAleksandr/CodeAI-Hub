@@ -351,6 +351,13 @@ export class SessionRequestHandlerSessionActions {
     ) {
       return;
     }
+    this.deps.eventMessages.appendCoreMessage(options.sessionId, {
+      content: [
+        "Core could not match the review confirmation to an open managed gate.",
+        "The input is released. Send any message and Core will re-validate the workflow state and reopen the correct gate.",
+      ].join("\n"),
+      tag: "managed-workflow-validation",
+    });
     this.deps.broadcaster({
       type: "session:error",
       payload: {

@@ -21,6 +21,7 @@ const MATERIALIZATION_REPAIR_PROMPT_RE =
   /Core rejected Application Skeleton materialization attempt 1/u;
 const INVALID_PACKAGE_MANAGER_INSTALL_RE = /invalidpm install/u;
 const DIAGNOSTICS_LABEL_RE = /Diagnostics:/u;
+const INPUT_RELEASED_RE = /The input is released\./u;
 const APPLICATION_MATERIALIZATION_REPAIR_TASK_RE =
   /application-skeleton\.phase3\.repair\.task1/u;
 
@@ -316,6 +317,43 @@ test("Application Skeleton review confirmation dispatches materialization repair
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
+});
+
+test("unhandled review confirm releases the input with a Core message", async () => {
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    "codexCli",
+    "/tmp/workspace",
+    "provider-session-1",
+    {
+      stage: "development",
+    }
+  );
+  const reviewMessage = sessionManager.appendMessage(
+    session.id,
+    "system",
+    "Core opened a managed review gate.",
+    { tag: "managed-workflow-user-review" }
+  );
+  const harness = createActions(sessionManager);
+
+  await harness.actions.handleMessage(session.id, {
+    content: "ignored visible label",
+    turnOptions: {
+      managedReviewAction: {
+        reviewMessageId: reviewMessage?.id,
+        type: "confirm",
+      },
+    },
+  });
+
+  assert.deepEqual(harness.dispatchedUserMessages, []);
+  assert.equal(
+    eventsErrorCode(harness.events),
+    "managed_review_gate_unhandled"
+  );
+  assert.equal(harness.coreMessages.at(-1)?.tag, "managed-workflow-validation");
+  assert.match(String(harness.coreMessages.at(-1)?.content), INPUT_RELEASED_RE);
 });
 
 test("managed review confirm action rejects stale gates without provider dispatch", async () => {
