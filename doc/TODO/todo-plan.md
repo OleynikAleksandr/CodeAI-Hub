@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "6d6016896",
+  "lastRecordedCommit": "30fa09ba0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6e.dev-tree-downstream-planning.task1",
-  "expectedCommitMessage": "docs: capture development tree downstream execution refactor",
+  "currentTaskId": "qg-restore-isolation.phase6f.downstream-strategy.task1",
+  "expectedCommitMessage": "docs: update downstream merge prevention strategy",
   "debt": {
-    "expectedCommitMessage": "docs: capture development tree downstream execution refactor",
-    "preCommitHead": "6d6016896",
+    "expectedCommitMessage": "docs: update downstream merge prevention strategy",
+    "preCommitHead": "30fa09ba0",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6e.dev-tree-downstream-planning.task1"
+    "taskId": "qg-restore-isolation.phase6f.downstream-strategy.task1"
   }
 }
 ```
@@ -151,12 +151,44 @@
 ### Stream: Downstream Execution Refactor Intake
 
 34. [DONE] `qg-restore-isolation.phase6e.dev-tree-downstream-planning.task1` Create the active Development Tree downstream execution refactor planning document and capture the first agreed architecture topic: no downstream cluster tree merge before code exists, lead Product Part order plans must drive executable waves, and cluster worktrees should own cluster facade/module boundary/code assembly before mainline integration (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: capture development tree downstream execution refactor`).
-35. [PENDING] Git Commit: `docs: capture development tree downstream execution refactor` (hash: TBD)
+35. [DONE] Git Commit: `docs: capture development tree downstream execution refactor` (hash: 30fa09ba0)
+
+## Phase 6F - Development Tree Doc-only Merge Prevention (owner: Codex, updated: 2026-06-10)
+
+### Stream: Strategy Capture
+
+36. [DONE] `qg-restore-isolation.phase6f.downstream-strategy.task1` Update the active downstream execution refactor planning document with the immediate protective strategy: accepted cluster contracts become boundary-accepted checkpoints, not mainline merges; cluster worktrees stay alive until facade/module code exists; full cluster and standalone module contents merge only after code-ready evidence (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: update downstream merge prevention strategy`).
+37. [PENDING] Git Commit: `docs: update downstream merge prevention strategy` (hash: TBD)
+
+### Stream: Boundary Accepted Without Mainline Doc Merge
+
+38. [TODO] `qg-restore-isolation.phase6f.boundary-accepted.task1` Stop cluster contract review acceptance from copying draft documentation artifacts into the main workspace or marking the cluster as merged; record a boundary-accepted checkpoint instead while leaving the downstream worktree active for future facade/module code work (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts`; expected commit: `fix: stop cluster contract doc-only main merge`).
+39. [TODO] Git Commit: `fix: stop cluster contract doc-only main merge` (hash: TBD)
+
+## Phase 6G - Release Build (owner: Codex, updated: 2026-06-10)
+
+### Stream: Release Notes
+
+40. [TODO] `qg-restore-isolation.phase6g.release-notes.task1` Prepare release notes for the user-authorized downstream doc-only merge prevention release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare downstream merge prevention release notes`).
+41. [TODO] Git Commit: `docs: prepare downstream merge prevention release notes` (hash: TBD)
+
+### Stream: Release Artifacts
+
+42. [TODO] `qg-restore-isolation.phase6g.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare downstream merge prevention release artifacts`).
+43. [TODO] Git Commit: `build: prepare downstream merge prevention release artifacts` (hash: TBD)
+44. [TODO] `qg-restore-isolation.phase6g.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package downstream merge prevention vsix release`).
+45. [TODO] Git Commit: `build: package downstream merge prevention vsix release` (hash: TBD)
+
+## Phase 6H - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
+
+### Stream: Retest After Downstream Merge Prevention
+
+46. [TODO] `qg-restore-isolation.phase6h.user-retest.task1` User installs the new release and retests Product Part / cluster-contract acceptance: accepting a cluster contract should leave the worktree active, record boundary acceptance, and avoid main-workspace draft-document copy or merged status until code-ready downstream content exists (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Archive And Dispose
 
-36. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-37. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
-38. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+47. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+48. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+49. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

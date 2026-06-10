@@ -94,7 +94,46 @@ This document will collect several refactor topics. The first known stages are:
 5. Add downstream node executors for standalone modules, cluster module specifications, cluster facade code, and later implementation work.
 6. Add merge-ready gates that require code artifacts and validation evidence before downstream work returns to the main workspace.
 
-## 7. Open Questions
+## 7. Immediate Protective Step
+
+The first implementation step should stop the current doc-only cluster contract acceptance from behaving like a mainline merge.
+
+Required behavior now:
+
+1. User/lead accepts the cluster facade boundary in the cluster worktree.
+2. Core records that review decision as a boundary checkpoint.
+3. Core may write a main-workspace coordination artifact with an explicit name such as `boundary-accepted`, but it must not copy draft cluster documentation into the main workspace as an integration result.
+4. Core must not mark the cluster node as `merged`.
+5. The cluster worktree remains the active downstream execution tree for the next phases.
+
+This is intentionally smaller than the final wave runner. It prevents false `merged` state while leaving room for the later execution graph:
+
+```text
+cluster worktree opened
+  -> cluster facade boundary accepted
+  -> cluster facade class created
+  -> owned module specifications created
+  -> owned module facade contracts/classes created
+  -> owned module code created
+  -> cluster gates pass
+  -> cluster tree code-ready
+  -> merge complete cluster contents to main
+```
+
+Standalone modules should follow the same rule. A standalone module should not return to main as a final result until its specification, facade boundary/class where needed, code, and validation evidence are present. The difference is only the shape of the subtree: a cluster returns all owned cluster contents together; a standalone module returns its standalone contents.
+
+## 8. Merge Vocabulary
+
+The refactor should reserve `merged` for a real mainline integration of code-ready downstream content.
+
+Intermediate terms should be explicit:
+
+- `boundary_accepted`: the user/lead accepted the facade boundary, but code is not ready.
+- `worktree_active`: downstream execution continues in the node worktree.
+- `code_ready`: the downstream tree has the required code artifacts and local validation evidence.
+- `merged`: Core integrated the downstream code-ready result into the main workspace.
+
+## 9. Open Questions
 
 - Should the accepted cluster facade contract be copied to main as a visible review snapshot, or should it remain only inside the cluster worktree until code exists?
 - What is the minimum code artifact that makes a cluster worktree merge-ready: facade class stub, facade plus module facade stubs, or fully implemented cluster slice?
