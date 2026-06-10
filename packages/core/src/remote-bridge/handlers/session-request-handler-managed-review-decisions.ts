@@ -26,6 +26,10 @@ import { completeApplicationSkeletonMaterializedHandoff } from "./application-sk
 import { persistApplicationSkeletonManagedDecision } from "./application-skeleton-managed-decision-persister";
 import { handleClusterContractManagedReviewDecision } from "./cluster-contract-review-controller";
 import {
+  buildDevelopmentTreeTurnFailureMessage,
+  runGuardedDevelopmentTreeTurn,
+} from "./development-tree-turn-guard";
+import {
   isQualityGatesReviewOpen,
   readApplicationSkeletonTaskId,
 } from "./managed-review-state-readers";
@@ -129,24 +133,39 @@ export class SessionRequestHandlerManagedReviewDecisions {
     ) {
       return true;
     }
+    const reportDevelopmentTreeReviewFailure = (error: unknown): boolean => {
+      this.deps.eventMessages.appendCoreMessage(
+        options.session.id,
+        buildDevelopmentTreeTurnFailureMessage(error)
+      );
+      return true;
+    };
     if (
-      await handleClusterContractManagedReviewDecision({
-        eventMessages: this.deps.eventMessages,
-        intent: managedIntent,
-        messageDispatch: this.deps.messageDispatch,
-        options,
-      })
+      await runGuardedDevelopmentTreeTurn(
+        () =>
+          handleClusterContractManagedReviewDecision({
+            eventMessages: this.deps.eventMessages,
+            intent: managedIntent,
+            messageDispatch: this.deps.messageDispatch,
+            options,
+          }),
+        reportDevelopmentTreeReviewFailure
+      )
     ) {
       return true;
     }
     if (
-      await handleProductPartManagedReviewDecision({
-        developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
-        eventMessages: this.deps.eventMessages,
-        intent: managedIntent,
-        messageDispatch: this.deps.messageDispatch,
-        options,
-      })
+      await runGuardedDevelopmentTreeTurn(
+        () =>
+          handleProductPartManagedReviewDecision({
+            developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
+            eventMessages: this.deps.eventMessages,
+            intent: managedIntent,
+            messageDispatch: this.deps.messageDispatch,
+            options,
+          }),
+        reportDevelopmentTreeReviewFailure
+      )
     ) {
       return true;
     }

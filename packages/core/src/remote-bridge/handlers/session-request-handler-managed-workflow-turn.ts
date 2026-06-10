@@ -16,7 +16,6 @@ import {
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
 import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
 import { commitDiagramModulesRejectedTurn } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller";
-import { parseDiagramModulesRepairTaskNumber } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-model";
 import { validateDiagramModulesManagedArtifacts } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import {
   buildApplicationSkeletonReviewHandoffMessage,
@@ -34,10 +33,18 @@ import { completeApplicationSkeletonMaterializedHandoff } from "./application-sk
 import { ClusterContractTurnController } from "./cluster-contract-turn-controller";
 import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import {
+  buildDevelopmentTreeTurnFailureMessage,
+  runGuardedDevelopmentTreeTurn,
+} from "./development-tree-turn-guard";
+import {
   buildContinuationDeliveryFailureMessage as buildDeliveryFailureMessage,
   dispatchManagedInternalContinuation as dispatchContinuation,
 } from "./managed-internal-continuation-dispatch";
 import { persistManagedDecision } from "./managed-workflow-decision-persister";
+import {
+  resolveDiagramModulesRepairAttemptNumber,
+  resolveMaterializationRepairAttemptNumber,
+} from "./managed-workflow-repair-attempts";
 import { ProductPartDevelopmentBriefTurnController } from "./product-part-development-brief-turn-controller";
 import {
   buildQualityGatesRepairDispatch,
@@ -52,8 +59,6 @@ const DESCRIPTION_STAGE = "description";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const QUALITY_GATES_STAGE = "quality_gates";
 const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
-const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
-  /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
 const QUALITY_GATES_VERIFY_TASK_ID = "quality-gates.phase4.verify.task1";
 export type ManagedWorkflowTurnCompletionResult =
   | "continued"
@@ -72,18 +77,6 @@ interface SessionRequestHandlerManagedWorkflowTurnOptions {
   readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly sessionManager: Pick<SessionManager, "getSession">;
 }
-const resolveMaterializationRepairAttemptNumber = (
-  taskId: string | null
-): number => {
-  const match = taskId?.match(
-    APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE
-  );
-  const value = Number(match?.[1]);
-  return Number.isInteger(value) && value > 0 ? value : 1;
-};
-const resolveDiagramModulesRepairAttemptNumber = (
-  taskId: string | null
-): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
 export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
   private readonly clusterContractTurn = new ClusterContractTurnController();
@@ -149,8 +142,13 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       this.clusterContractTurn,
       this.productPartBriefTurn,
     ]) {
-      const result =
-        await developmentTreeTurn.handleTurnCompleted(managedParams);
+      const result = await runGuardedDevelopmentTreeTurn(
+        () => developmentTreeTurn.handleTurnCompleted(managedParams),
+        (error) => ({
+          handled: true as const,
+          message: buildDevelopmentTreeTurnFailureMessage(error),
+        })
+      );
       if (result.handled) {
         this.appendCoreMessage(sessionId, result.message);
         const nextInternalMessage =
