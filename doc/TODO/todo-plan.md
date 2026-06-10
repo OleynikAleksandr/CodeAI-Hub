@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "c417a1ea6",
+  "lastRecordedCommit": "f294f6693",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6g.build-all.task1",
-  "expectedCommitMessage": "build: prepare downstream merge prevention release artifacts",
+  "currentTaskId": "qg-restore-isolation.phase6g.vsix.task1",
+  "expectedCommitMessage": "build: package downstream merge prevention vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare downstream merge prevention release artifacts",
-    "preCommitHead": "c417a1ea6",
+    "expectedCommitMessage": "build: package downstream merge prevention vsix release",
+    "preCommitHead": "f294f6693",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6g.build-all.task1"
+    "taskId": "qg-restore-isolation.phase6g.vsix.task1"
   }
 }
 ```
@@ -175,9 +175,9 @@
 ### Stream: Release Artifacts
 
 42. [DONE] `qg-restore-isolation.phase6g.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare downstream merge prevention release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.488`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
-43. [PENDING] Git Commit: `build: prepare downstream merge prevention release artifacts` (hash: TBD)
-44. [TODO] `qg-restore-isolation.phase6g.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package downstream merge prevention vsix release`).
-45. [TODO] Git Commit: `build: package downstream merge prevention vsix release` (hash: TBD)
+43. [DONE] Git Commit: `build: prepare downstream merge prevention release artifacts` (hash: f294f6693)
+44. [DONE] `qg-restore-isolation.phase6g.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package downstream merge prevention vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for `1.2.488`; Step 7 SDK exclusions, local artifact validation, markdown links, duplication check, production dependency pruning, VSIX package creation, runtime package surface verification, and dev dependency restore passed. VSIX: `codeai-hub-1.2.488.vsix` (5.1M).
+45. [PENDING] Git Commit: `build: package downstream merge prevention vsix release` (hash: TBD)
 
 ## Phase 6H - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
