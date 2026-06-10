@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "5551fd75d",
+  "lastRecordedCommit": "992690261",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase6.docs.task1",
-  "expectedCommitMessage": "docs: describe simplified orchestrator stop gates",
+  "currentTaskId": "orchestrator-stop-gate.phase6.pm-docs.task1",
+  "expectedCommitMessage": "docs: describe truthful core gate ui state",
   "debt": {
-    "expectedCommitMessage": "docs: describe simplified orchestrator stop gates",
-    "preCommitHead": "5551fd75d",
+    "expectedCommitMessage": "docs: describe truthful core gate ui state",
+    "preCommitHead": "992690261",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase6.docs.task1"
+    "taskId": "orchestrator-stop-gate.phase6.pm-docs.task1"
   }
 }
 ```
@@ -143,9 +143,9 @@
 ### Stream: Architecture Update
 
 39. [DONE] `orchestrator-stop-gate.phase6.docs.task1` Synchronize the implemented no-stop policy into the Core SSOT invariants (dual outcome, awaited dispatch with retry, 120s arbitration time box, bounded repair with review-gate degradation, two-basket dirty Git auto-commit); both Development Tree planning documents were already synchronized by the Phase 2 policy commits and verified unchanged (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe simplified orchestrator stop gates`).
-40. [PENDING] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: TBD)
-41. [TODO] `orchestrator-stop-gate.phase6.pm-docs.task1` Document Project Manager lock/projection behavior for Core gates and attached worktree runtime roots (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe truthful core gate ui state`).
-42. [TODO] Git Commit: `docs: describe truthful core gate ui state` (hash: TBD)
+40. [DONE] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: 992690261)
+41. [DONE] `orchestrator-stop-gate.phase6.pm-docs.task1` Document Project Manager lock/projection behavior for Core gates and attached worktree runtime roots (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe truthful core gate ui state`).
+42. [PENDING] Git Commit: `docs: describe truthful core gate ui state` (hash: TBD)
 
 ## Phase 7 - Tooling Verification (owner: Codex, updated: 2026-06-10)
 

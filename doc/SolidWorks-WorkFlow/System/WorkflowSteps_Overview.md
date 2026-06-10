@@ -386,6 +386,8 @@ Provider-visible instructions for this step stay content-scoped: write/update th
 - Quality Gates bundled prompt/contract является единственным владельцем research/draft/review/integration/formal-verification lifecycle instruction; runtime prompt pack не добавляет отдельный `Work phases` narrative для этого шага.
 - только после materialized skeleton + verified gates Core может создавать Development Tree sessions.
 
+Managed steps follow the no-stop dual-outcome policy: every Core settlement ends as an agent repair/continuation dispatch or as a button gate with a concrete user action. Dirty Git at managed boundaries is auto-committed (step-owned residue into the step commit, everything else into `chore: preserve workspace changes`), repair loops are bounded (3 attempts, then the review gate opens with the artifact as is), and Project Manager releases the input on every Core gate event.
+
 Workflow prompt/runtime contracts:
 - Core Runtime pre-creates stage directories before provider prompt: `description/`, `virtual_simulation/`, `diagram_modules/`, `diagram_modules/product-parts/`, `application_skeleton/`, and `quality_gates/`.
 - First prompts and rollover prompts must carry required source artifact text inline. They should not include extra user-facing links/paths for the same sources unless a bounded fallback/truncation mode explicitly says why the agent may read from disk.

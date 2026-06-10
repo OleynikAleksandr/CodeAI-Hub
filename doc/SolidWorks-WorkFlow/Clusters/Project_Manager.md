@@ -53,6 +53,8 @@ while that review action is in flight.
 ## 3) Ключевой UX контракт (коротко)
 
 - Input lock — snapshot-first (не вычисляется из stream сообщений).
+- **Managed gate unlock is reason-agnostic**: a `managed_input_gate` event with `active: false` releases every managed lock (any `managed*`-prefixed reason, including reasons added after the client build); only non-managed bootstrap locks stay protected. `Agent is working` is valid only during an active provider/native turn.
+- **Optimistic review lock expires**: the local pending lock set by a managed review click is released automatically after 60s if no Core gate event confirms it, so a lost ack can never freeze the input.
 - До `Submit questionnaire` в стадии `Description` runtime-сессии нет:
   - левая панель показывает Description Help,
   - правая панель показывает редактор `questionnaire.md`.
