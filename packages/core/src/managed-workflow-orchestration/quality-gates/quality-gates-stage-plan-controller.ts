@@ -2,6 +2,7 @@ import { DiagramModulesManagedGitBoundary } from "../diagram-modules/diagram-mod
 import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow-ledger-git-boundary";
 import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import { cleanQualityGatesDraftScope } from "./quality-gates-draft-scope-cleaner";
+import { acceptQualityGatesRepairLimitAsIs } from "./quality-gates-repair-limit-acceptance";
 import {
   addUnique,
   appendIntegrationStep,
@@ -147,6 +148,13 @@ export class QualityGatesStagePlanController {
       workspaceRoot: params.workspaceRoot,
     });
     return INTEGRATE_COMMIT_MESSAGE;
+  }
+
+  acceptRepairLimitAsIs(params: { readonly workspaceRoot: string }) {
+    return acceptQualityGatesRepairLimitAsIs({
+      gitBoundary: this.gitBoundary,
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   commitManagedTurn(params: {

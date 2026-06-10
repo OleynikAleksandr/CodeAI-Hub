@@ -1,4 +1,4 @@
-import type { ClusterContractAgentSessionGateway } from "../../development-tree/node-bootstrap/cluster-contract-agent-bootstrapper";
+import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { ApplicationSkeletonCoreMaterializer } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
@@ -36,6 +36,7 @@ import {
 import { handleProductPartManagedReviewDecision } from "./product-part-managed-review-decision-handler";
 import {
   dispatchQualityGatesReviewRevision,
+  handleQualityGatesRepairLimitReviewDecision,
   openQualityGatesNextAcceptedReviewPhase,
 } from "./quality-gates-review-decision-flow";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
@@ -52,7 +53,7 @@ interface ManagedReviewDecisionOptions {
 }
 interface ManagedReviewDecisionDeps {
   readonly broadcaster: (event: unknown) => void;
-  readonly developmentTreeAgentGateway?: ClusterContractAgentSessionGateway;
+  readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage" | "waitForMessagePersistence"
@@ -241,7 +242,18 @@ export class SessionRequestHandlerManagedReviewDecisions {
       return false;
     }
     if (!(await isQualityGatesReviewOpen(options.session.workspacePath))) {
-      return false;
+      return handleQualityGatesRepairLimitReviewDecision({
+        content: options.content,
+        deps: {
+          developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
+          eventMessages: this.deps.eventMessages,
+          messageDispatch: this.deps.messageDispatch,
+          stagePlan: this.qualityGatesStagePlan,
+        },
+        hiddenUserMessage: options.hiddenUserMessage,
+        intent: options.intent,
+        session: options.session,
+      });
     }
     if (options.intent === "none") {
       return false;
