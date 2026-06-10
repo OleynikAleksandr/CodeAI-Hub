@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "f1ea4cb4b",
+  "lastRecordedCommit": "cccea3487",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase51.runtime-attachment-tests.task1",
-  "expectedCommitMessage": "test: verify attached worktree runtime streaming",
+  "currentTaskId": "development-tree-cluster-contract.phase52.verify.task1",
+  "expectedCommitMessage": "test: verify worktree runtime attachment workflow",
   "debt": {
-    "expectedCommitMessage": "test: verify attached worktree runtime streaming",
-    "preCommitHead": "f1ea4cb4b",
+    "expectedCommitMessage": "test: verify worktree runtime attachment workflow",
+    "preCommitHead": "cccea3487",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase51.runtime-attachment-tests.task1"
+    "taskId": "development-tree-cluster-contract.phase52.verify.task1"
   }
 }
 ```
@@ -748,14 +748,14 @@ Verification evidence:
 323. [DONE] `development-tree-cluster-contract.phase51.runtime-attachment-core.task1` Add a focused Core runtime attachment helper and use it in WebSocket scoped delivery so sessions under `<mainWorkspace>.worktrees/...` live-stream to the main Project Manager client without changing the selected workspace scope (scope: `packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.ts, packages/core/src/remote-bridge/handlers/websocket-session-scope.ts, packages/core/src/remote-bridge/remote-bridge-workspace-command-router.ts`; expected commit: `fix: stream attached worktree runtime events`).
 324. [DONE] Git Commit: `fix: stream attached worktree runtime events` (hash: f1ea4cb4b)
 325. [DONE] `development-tree-cluster-contract.phase51.runtime-attachment-tests.task1` Add regression tests for main-workspace clients receiving live session/dialog events from attached worktree runtime roots while still rejecting unrelated workspaces (scope: `packages/core/src/remote-bridge/handlers/websocket-attached-worktree-streaming.test.ts, packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify attached worktree runtime streaming`).
-326. [PENDING] Git Commit: `test: verify attached worktree runtime streaming` (hash: TBD)
+326. [DONE] Git Commit: `test: verify attached worktree runtime streaming` (hash: cccea3487)
 
 ## Phase 52 - Tooling Verification (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Regression Verification
 
-327. [TODO] `development-tree-cluster-contract.phase52.verify.task1` Run targeted Core WebSocket tests plus affected builds/typechecks for attached worktree runtime streaming (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify worktree runtime attachment workflow`).
-328. [TODO] Git Commit: `test: verify worktree runtime attachment workflow` (hash: TBD)
+327. [DONE] `development-tree-cluster-contract.phase52.verify.task1` Run targeted Core WebSocket tests plus affected builds/typechecks for attached worktree runtime streaming (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify worktree runtime attachment workflow`).
+328. [PENDING] Git Commit: `test: verify worktree runtime attachment workflow` (hash: TBD)
 
 ## Phase 53 - Release Build Confirmation (owner: Codex, updated: 2026-06-10)
 
