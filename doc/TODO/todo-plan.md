@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "38460f7af",
+  "lastRecordedCommit": "e254b81ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase8.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare stop gate simplification release notes",
+  "currentTaskId": "orchestrator-stop-gate.phase8.build-all.task1",
+  "expectedCommitMessage": "build: prepare stop gate simplification release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare stop gate simplification release notes",
-    "preCommitHead": "38460f7af",
+    "expectedCommitMessage": "build: prepare stop gate simplification release artifacts",
+    "preCommitHead": "e254b81ab",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase8.release-notes.task1"
+    "taskId": "orchestrator-stop-gate.phase8.build-all.task1"
   }
 }
 ```
@@ -163,9 +163,9 @@
 ### Stream: Release After Confirmation
 
 46. [DONE] `orchestrator-stop-gate.phase8.release-notes.task1` Prepare release notes for the stop-gate simplification release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare stop gate simplification release notes`).
-47. [PENDING] Git Commit: `docs: prepare stop gate simplification release notes` (hash: TBD)
-48. [TODO] `orchestrator-stop-gate.phase8.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare stop gate simplification release artifacts`).
-49. [TODO] Git Commit: `build: prepare stop gate simplification release artifacts` (hash: TBD)
+47. [DONE] Git Commit: `docs: prepare stop gate simplification release notes` (hash: e254b81ab)
+48. [DONE] `orchestrator-stop-gate.phase8.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare stop gate simplification release artifacts`).
+49. [PENDING] Git Commit: `build: prepare stop gate simplification release artifacts` (hash: TBD)
 50. [TODO] `orchestrator-stop-gate.phase8.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package stop gate simplification vsix release`).
 51. [TODO] Git Commit: `build: package stop gate simplification vsix release` (hash: TBD)
 
