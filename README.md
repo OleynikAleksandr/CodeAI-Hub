@@ -2,7 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.486** (Entity-Level Quality Gates)
+**Current Release — v1.2.487** (Sequential Quality Gates Verification)
+
+This release hardens Quality Gates Phase 4 formal verification for
+restore/install-style commands. Core now accepts a `verified` Quality Gates
+state only when the artifact records sequential verification evidence:
+`verificationEvidence.executionMode: "sequential"` and ordered command entries
+with `sequence` and `exitCode: 0`.
+
+Quality Gates repair prompts, continuation prompts, and the bundled agent
+template now carry the same contract. Dependency restore/install/clean/delete
+commands, plus hooks or aggregate scripts that may invoke them, are treated as
+exclusive workspace mutation commands, so agents must build one ordered
+verification plan instead of launching parallel checks while dependencies are
+being restored.
+
+Retest focus: Quality Gates Baseline Phase 4 with a restore/delete/install-style
+gate command, then continue through the next workflow steps. The agent should
+run formal verification sequentially, the orchestrator should reject missing
+sequential evidence, and the workflow should continue without manual recovery.
+
+**Previous Release — v1.2.486** (Entity-Level Quality Gates)
 
 This release closes the two defects found in the 1.2.485 retest.
 

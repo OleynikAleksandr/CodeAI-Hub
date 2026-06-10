@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.487] - 2026-06-10
+### Fixed
+- **Quality Gates Phase 4 restore races are rejected.** A `verified` Quality Gates state now requires explicit sequential verification evidence (`verificationEvidence.executionMode: "sequential"` plus ordered command entries with `sequence` and `exitCode: 0`), so restore/install/delete-style formal verification cannot be accepted as a parallel or ambiguous run.
+
+### Changed
+- **Quality Gates verification prompts now serialize mutating commands.** Core continuation prompts, repair prompts, and the bundled Quality Gates agent template instruct agents to resolve scripts first, build one ordered verification plan, and run dependency restore/install/clean/delete commands plus hooks or aggregates that may invoke them as exclusive workspace mutation commands.
+- **Sequential evidence is documented as the SSOT contract.** Managed workflow orchestration docs describe Phase 4 verification as an ordered workspace transaction before persistent return or Development Tree unlock.
+
+### Verification
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts` - 19/19 green.
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.486] - 2026-06-10
 ### Fixed
 - **Repair-limit gate continues the workflow.** Confirming the "repair attempt limit (3)" review gate now performs accept-as-is: workspace residue is auto-committed, the open repair task closes with an accepted-as-is disposition, the stage plan advances to its next phase (Quality Gates: review/verification/persistent return; Diagram Modules: user review; Application Skeleton: contract/final review), and the matching continuation is dispatched. Revision text dispatches a user-corrections repair prompt. Previously the confirmation died in a silent `managed_review_gate_unhandled` error and development stopped.

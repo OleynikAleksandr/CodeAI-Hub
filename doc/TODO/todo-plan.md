@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "591ed5b3c",
+  "lastRecordedCommit": "f278320fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase4.verify.task1",
-  "expectedCommitMessage": "test: verify quality gates restore isolation",
+  "currentTaskId": "qg-restore-isolation.phase5.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare quality gates restore isolation release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify quality gates restore isolation",
-    "preCommitHead": "591ed5b3c",
+    "expectedCommitMessage": "docs: prepare quality gates restore isolation release notes",
+    "preCommitHead": "f278320fe",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase4.verify.task1"
+    "taskId": "qg-restore-isolation.phase5.release-notes.task1"
   }
 }
 ```
@@ -86,18 +86,32 @@
 ### Stream: Targeted Verification
 
 13. [DONE] `qg-restore-isolation.phase4.verify.task1` Run targeted Quality Gates tests and package build/typecheck needed for the changed Core/template surfaces; record results in the plan (scope: `packages/core, packages/agents/quality-gates-agent, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates restore isolation`). Result: targeted Quality Gates tests (`npx tsx --test ...formal-verification-runner.test.ts ...validator-runner-evidence.test.ts ...prompt-builder.phase-envelope.test.ts ...quality-gates-bundled-templates.test.ts`) passed 19/19; `npm run build --workspace=@codeai-hub/core` passed.
-14. [PENDING] Git Commit: `test: verify quality gates restore isolation` (hash: TBD)
+14. [DONE] Git Commit: `test: verify quality gates restore isolation` (hash: f278320fe)
 
-## Phase 5 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
+## Phase 5 - Release Build (owner: Codex, updated: 2026-06-10)
+
+### Stream: Release Notes
+
+15. [DONE] `qg-restore-isolation.phase5.release-notes.task1` Prepare release notes for the user-authorized Quality Gates restore-isolation release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates restore isolation release notes`).
+16. [PENDING] Git Commit: `docs: prepare quality gates restore isolation release notes` (hash: TBD)
+
+### Stream: Release Artifacts
+
+17. [TODO] `qg-restore-isolation.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare quality gates restore isolation release artifacts`).
+18. [TODO] Git Commit: `build: prepare quality gates restore isolation release artifacts` (hash: TBD)
+19. [TODO] `qg-restore-isolation.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package quality gates restore isolation vsix release`).
+20. [TODO] Git Commit: `build: package quality gates restore isolation vsix release` (hash: TBD)
+
+## Phase 6 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest
 
-15. [TODO] `qg-restore-isolation.phase5.user-retest.task1` User retests Quality Gates Baseline Phase 4 with a restore/delete/install-style gate command and confirms the agent no longer creates parallel workspace verification races (scope: `manual retest`; no commit expected).
+21. [TODO] `qg-restore-isolation.phase6.user-retest.task1` User installs the release and retests Quality Gates Baseline Phase 4 with a restore/delete/install-style gate command, then continues through several workflow steps to confirm the agent and orchestrator behavior (scope: `manual retest`; no commit expected).
 
-## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-10)
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Archive And Dispose
 
-16. [TODO] `qg-restore-isolation.phase6.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-17. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
-18. [TODO] `qg-restore-isolation.phase6.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+22. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+23. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+24. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
