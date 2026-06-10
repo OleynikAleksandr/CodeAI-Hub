@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "4d650fbd3",
+  "lastRecordedCommit": "220a46e2d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase51.runtime-attachment-docs.task1",
-  "expectedCommitMessage": "docs: specify core-owned worktree runtime attachments",
+  "currentTaskId": "development-tree-cluster-contract.phase51.runtime-attachment-core.task1",
+  "expectedCommitMessage": "fix: stream attached worktree runtime events",
   "debt": {
-    "expectedCommitMessage": "docs: specify core-owned worktree runtime attachments",
-    "preCommitHead": "4d650fbd3",
+    "expectedCommitMessage": "fix: stream attached worktree runtime events",
+    "preCommitHead": "220a46e2d",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase51.runtime-attachment-docs.task1"
+    "taskId": "development-tree-cluster-contract.phase51.runtime-attachment-core.task1"
   }
 }
 ```
@@ -741,12 +741,12 @@ Verification evidence:
 ### Stream: Runtime Attachment Architecture
 
 321. [DONE] `development-tree-cluster-contract.phase51.runtime-attachment-docs.task1` Record that Core, not the UI selection event, owns attachment of cluster/module worktree runtime roots to the main workspace observation graph (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify core-owned worktree runtime attachments`).
-322. [PENDING] Git Commit: `docs: specify core-owned worktree runtime attachments` (hash: TBD)
+322. [DONE] Git Commit: `docs: specify core-owned worktree runtime attachments` (hash: 220a46e2d)
 
 ### Stream: Runtime Attachment Delivery
 
-323. [TODO] `development-tree-cluster-contract.phase51.runtime-attachment-core.task1` Add a focused Core runtime attachment helper and use it in WebSocket scoped delivery so sessions under `<mainWorkspace>.worktrees/...` live-stream to the main Project Manager client without changing the selected workspace scope (scope: `packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.ts, packages/core/src/remote-bridge/handlers/websocket-session-scope.ts, packages/core/src/remote-bridge/handlers/websocket-manager.ts`; expected commit: `fix: stream attached worktree runtime events`).
-324. [TODO] Git Commit: `fix: stream attached worktree runtime events` (hash: TBD)
+323. [DONE] `development-tree-cluster-contract.phase51.runtime-attachment-core.task1` Add a focused Core runtime attachment helper and use it in WebSocket scoped delivery so sessions under `<mainWorkspace>.worktrees/...` live-stream to the main Project Manager client without changing the selected workspace scope (scope: `packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.ts, packages/core/src/remote-bridge/handlers/websocket-session-scope.ts, packages/core/src/remote-bridge/remote-bridge-workspace-command-router.ts`; expected commit: `fix: stream attached worktree runtime events`).
+324. [PENDING] Git Commit: `fix: stream attached worktree runtime events` (hash: TBD)
 325. [TODO] `development-tree-cluster-contract.phase51.runtime-attachment-tests.task1` Add regression tests for main-workspace clients receiving live session/dialog events from attached worktree runtime roots while still rejecting unrelated workspaces (scope: `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts, packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify attached worktree runtime streaming`).
 326. [TODO] Git Commit: `test: verify attached worktree runtime streaming` (hash: TBD)
 

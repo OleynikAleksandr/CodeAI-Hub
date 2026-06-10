@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { SessionManager } from "../session-manager";
 import type { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
 import type { WebSocketManager } from "./handlers/websocket-manager";
+import { isWorkspaceRuntimeRootObservable } from "./handlers/workspace-runtime-attachment-scope";
 import type { IncomingMessage } from "./types";
 
 interface RemoteBridgeWorkspaceCommandRouterDependencies {
@@ -77,13 +78,24 @@ export class RemoteBridgeWorkspaceCommandRouter {
       return;
     }
     wsManager.setWorkspaceScopeForClient(clientId, ack.workspaceRoot);
-    const scopedSessionIds = this.deps.sessionManager
-      .getSessionsByWorkspacePath(ack.workspaceRoot)
-      .map((session) => session.id);
-    wsManager.populateSessionWorkspaceScope(
-      ack.workspaceRoot,
-      scopedSessionIds
-    );
+    const sessionIdsByWorkspaceRoot = new Map<string, string[]>();
+    for (const session of this.deps.sessionManager.listSessions()) {
+      if (
+        !isWorkspaceRuntimeRootObservable({
+          candidateWorkspaceRoot: session.workspacePath,
+          mainWorkspaceRoot: ack.workspaceRoot,
+        })
+      ) {
+        continue;
+      }
+      const sessionIds =
+        sessionIdsByWorkspaceRoot.get(session.workspacePath) ?? [];
+      sessionIds.push(session.id);
+      sessionIdsByWorkspaceRoot.set(session.workspacePath, sessionIds);
+    }
+    for (const [workspacePath, sessionIds] of sessionIdsByWorkspaceRoot) {
+      wsManager.populateSessionWorkspaceScope(workspacePath, sessionIds);
+    }
   }
 
   handleWorkspaceSnapshotRequest(

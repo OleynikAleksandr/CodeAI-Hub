@@ -1,5 +1,6 @@
 import { isAbsolute } from "node:path";
 import type { BridgeEvent } from "../types";
+import { isWorkspaceRuntimeRootObservable } from "./workspace-runtime-attachment-scope";
 
 export interface ClientScopeState {
   readonly enabled: boolean;
@@ -126,7 +127,12 @@ export const shouldDeliverEventForScope = (params: {
     params.event,
     params.sessionWorkspaceById
   );
-  return workspacePath === params.scope.workspacePath;
+  return workspacePath
+    ? isWorkspaceRuntimeRootObservable({
+        candidateWorkspaceRoot: workspacePath,
+        mainWorkspaceRoot: params.scope.workspacePath,
+      })
+    : false;
 };
 
 export const shouldDeliverTokenUsageForScope = (params: {
@@ -140,10 +146,13 @@ export const shouldDeliverTokenUsageForScope = (params: {
   if (!params.scope.workspacePath) {
     return false;
   }
-  return (
-    params.sessionWorkspaceById.get(params.sessionId) ===
-    params.scope.workspacePath
-  );
+  const workspacePath = params.sessionWorkspaceById.get(params.sessionId);
+  return workspacePath
+    ? isWorkspaceRuntimeRootObservable({
+        candidateWorkspaceRoot: workspacePath,
+        mainWorkspaceRoot: params.scope.workspacePath,
+      })
+    : false;
 };
 
 /**
