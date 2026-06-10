@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "16a870b66",
+  "lastRecordedCommit": "f22f27204",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6j.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare cluster contract language release notes",
+  "currentTaskId": "qg-restore-isolation.phase6j.build-all.task1",
+  "expectedCommitMessage": "build: prepare cluster contract language release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare cluster contract language release notes",
-    "preCommitHead": "16a870b66",
+    "expectedCommitMessage": "build: prepare cluster contract language release artifacts",
+    "preCommitHead": "f22f27204",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6j.release-notes.task1"
+    "taskId": "qg-restore-isolation.phase6j.build-all.task1"
   }
 }
 ```
@@ -197,12 +197,12 @@
 ### Stream: Release Notes
 
 52. [DONE] `qg-restore-isolation.phase6j.release-notes.task1` Prepare release notes for the user-authorized cluster-contract language fix release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract language release notes`). Result: README announces future release `v1.2.489` as Cluster Contract Language, and CHANGELOG records the downstream cluster-contract first prompt language contract fix and verification commands.
-53. [PENDING] Git Commit: `docs: prepare cluster contract language release notes` (hash: TBD)
+53. [DONE] Git Commit: `docs: prepare cluster contract language release notes` (hash: f22f27204)
 
 ### Stream: Release Artifacts
 
-54. [TODO] `qg-restore-isolation.phase6j.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract language release artifacts`).
-55. [TODO] Git Commit: `build: prepare cluster contract language release artifacts` (hash: TBD)
+54. [DONE] `qg-restore-isolation.phase6j.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract language release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.489`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
+55. [PENDING] Git Commit: `build: prepare cluster contract language release artifacts` (hash: TBD)
 56. [TODO] `qg-restore-isolation.phase6j.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract language vsix release`).
 57. [TODO] Git Commit: `build: package cluster contract language vsix release` (hash: TBD)
 
