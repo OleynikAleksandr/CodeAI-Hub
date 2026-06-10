@@ -178,6 +178,29 @@ The mechanism must support any number of attached runtime roots. It must stay bo
 
 Regression signal: if `dialog:history` can manually load the final worktree JSONL but `session:stream`, `dialog:message`, `turn_state`, or managed review events do not arrive live, the runtime root is not attached to the main workspace observation graph.
 
+### 4.1.4. Stop-gate simplification policy
+
+Development Tree orchestration must not turn recoverable technical housekeeping into a user-facing dead end. Core remains the authority for Git, validation, state, sessions and merges, but its hard stops must be reserved for problems that materially affect final product correctness, Git safety, data loss, merge quality, or irreversible user intent.
+
+Required policy:
+
+1. Dirty Git created by the active workflow is a Core responsibility. Core should classify, commit, ignore, or internally repair workflow-owned residue before asking the user anything.
+2. Dirty Git remains a user gate only when files are outside the active workflow ownership boundary and Core cannot safely decide whether they are user-authored changes.
+3. Artifact validation is hard only for fields Core must read to compute the next step. Agent-readable prose, naming polish, and recoverable detail gaps should become warnings or revision prompts.
+4. Managed plan/commit bookkeeping failures should be repaired by Core when Git and plan state make the safe transition inferable.
+5. Project Manager must not show `Agent is working` unless a provider/native turn is actually running. Core validation, review gates, repair readiness and bookkeeping blockers must release the input and show the real available action.
+6. Attached worktree runtime roots are a Core delivery/read-model responsibility. A projected cluster/module dialog freezing until sidebar refresh is an integration defect, not a prompt problem.
+
+Examples of valid hard stops:
+
+- a merge or release quality gate fails;
+- Core cannot identify whether a dirty file is user-authored and committing it would be unsafe;
+- a machine-readable artifact lacks the exact fields Core needs to unlock the next wave;
+- Clear/Undo would delete a node, session or worktree that is no longer derivable from accepted upstream truth;
+- provider authentication fails and Core has no local recovery path.
+
+This policy is implemented by the active planning scope `DevelopmentTree_OrchestratorStopGateSimplification.md`.
+
 ### 4.2. Product Part Development Brief remains the branch root
 
 Для каждого `Product Part` нужен короткий branch-root artifact:

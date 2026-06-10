@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "8be648655",
+  "lastRecordedCommit": "ef6767245",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase1.audit.task1",
-  "expectedCommitMessage": "docs: audit orchestrator stop gates",
+  "currentTaskId": "orchestrator-stop-gate.phase1.audit.task2",
+  "expectedCommitMessage": "docs: classify orchestrator blocker policy",
   "debt": {
-    "expectedCommitMessage": "docs: audit orchestrator stop gates",
-    "preCommitHead": "8be648655",
+    "expectedCommitMessage": "docs: classify orchestrator blocker policy",
+    "preCommitHead": "ef6767245",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase1.audit.task1"
+    "taskId": "orchestrator-stop-gate.phase1.audit.task2"
   }
 }
 ```
@@ -62,9 +62,9 @@
 ### Stream: Orchestrator Blocker Inventory
 
 1. [DONE] `orchestrator-stop-gate.phase1.audit.task1` Record the new stop-gate policy, archive the superseded cluster-contract retest plan snapshot, and open the active blocker audit plan with links to all influencing planning/system documents (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/Archive/todo-plan-superseded-development-tree-cluster-contract-subagent-orchestration-2026-06-10.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit orchestrator stop gates`).
-2. [PENDING] Git Commit: `docs: audit orchestrator stop gates` (hash: TBD)
-3. [TODO] `orchestrator-stop-gate.phase1.audit.task2` Audit hard blocker call sites across managed workflow controllers, workflow boundary Git, Development Tree sub-agent controllers, Project Manager lock state, and plan-orchestrator commit boundaries; classify each blocker as keep, auto-fix, warning, or repair-prompt (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: classify orchestrator blocker policy`).
-4. [TODO] Git Commit: `docs: classify orchestrator blocker policy` (hash: TBD)
+2. [DONE] Git Commit: `docs: audit orchestrator stop gates` (hash: ef6767245)
+3. [DONE] `orchestrator-stop-gate.phase1.audit.task2` Audit hard blocker call sites across managed workflow controllers, workflow boundary Git, Development Tree sub-agent controllers, Project Manager lock state, and plan-orchestrator commit boundaries; classify each blocker as keep, auto-fix, warning, or repair-prompt (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: classify orchestrator blocker policy`).
+4. [PENDING] Git Commit: `docs: classify orchestrator blocker policy` (hash: TBD)
 
 ## Phase 2 - Dirty Git Boundary Simplification (owner: Codex, updated: 2026-06-10)
 

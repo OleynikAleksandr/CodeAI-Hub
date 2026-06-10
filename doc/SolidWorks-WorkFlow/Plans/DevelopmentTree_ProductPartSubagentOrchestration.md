@@ -218,6 +218,32 @@ Lead Product Part agent responsibilities:
 
 The lead Product Part agent does not perform raw Git operations. Core executes Git operations.
 
+## 8. Stop-Gate Policy For Product Part Sub-Agents
+
+Product Part, Cluster and Module sub-agent orchestration follows the same stop-gate simplification policy as the broader Development Tree workflow.
+
+Core should not stop the user for technical residue that Core created or can safely classify:
+
+- created worktrees, attached runtime roots, local runtime ignores, continuity ledgers and managed plan files are Core-owned state;
+- workflow-owned dirty Git in the relevant main workspace or sub-agent worktree should be committed by Core at the node boundary;
+- stale projected session ids, missing live stream attachment, and worktree dialog root mismatches are Core/Project Manager integration defects and must be repaired by reconciliation, not by user refresh rituals.
+
+Hard stops remain valid only when they protect product correctness or Git safety:
+
+- the lead Product Part order plan lacks the machine-readable fields Core needs to unlock the next wave;
+- a cluster/module contract lacks the machine fields required to identify node, facade, input/output type names, result union, or owned module boundaries;
+- a merge would apply unverified work or fail quality gates;
+- Clear/Undo or refactoring would delete a node/worktree that is not supported by accepted upstream artifacts;
+- Core cannot safely classify dirty files as workflow-owned.
+
+Validation pressure should match the consumer:
+
+- Core-readable unlock fields are strict.
+- Agent-readable prose, explanatory sections, and non-critical formatting are warnings or revision prompts.
+- If a lower agent cannot refine a boundary because the parent seed is insufficient, it should ask a blocking semantic question instead of inventing a contract.
+
+Project Manager must render these states truthfully. `Agent is working` belongs only to an active provider/native turn. Review gates, warnings, repair-ready states and Core bookkeeping messages must release user input and show the available action.
+
 ## 8. User Gates And Rollback
 
 The user should see node-level gates, not internal worker noise.
