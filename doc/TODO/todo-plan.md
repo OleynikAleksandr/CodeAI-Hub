@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "4ff8da9b5",
+  "lastRecordedCommit": "5551fd75d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase5.ui-lock-test.task1",
-  "expectedCommitMessage": "test: verify core gate input release",
+  "currentTaskId": "orchestrator-stop-gate.phase6.docs.task1",
+  "expectedCommitMessage": "docs: describe simplified orchestrator stop gates",
   "debt": {
-    "expectedCommitMessage": "test: verify core gate input release",
-    "preCommitHead": "4ff8da9b5",
+    "expectedCommitMessage": "docs: describe simplified orchestrator stop gates",
+    "preCommitHead": "5551fd75d",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase5.ui-lock-test.task1"
+    "taskId": "orchestrator-stop-gate.phase6.docs.task1"
   }
 }
 ```
@@ -136,14 +136,14 @@
 35. [DONE] `orchestrator-stop-gate.phase5.ui-lock.task2` Eliminate stale lock dead ends: expire the local managed-review pending lock when no Core ack arrives, unlock on `active: false` gate events regardless of reason, time-box the managed turn-completion arbitration so a hung handler cannot hold "agent is working" forever, and reconcile lock state from Core snapshots on reconnect (scope: `src/client/project-manager/components/sessions, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: expire stale managed input locks`).
 36. [DONE] Git Commit: `fix: expire stale managed input locks` (hash: 4ff8da9b5)
 37. [DONE] `orchestrator-stop-gate.phase5.ui-lock-test.task1` Add a targeted Project Manager stream regression test proving that a managed input gate `active: false` event releases unknown managed lock reasons without force, so stale working locks cannot regress; cluster worktree and review-flow lock behavior is covered by the existing gate tests in the same suite (scope: `src/client/project-manager/components/sessions/turn-state-stream.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify core gate input release`).
-38. [PENDING] Git Commit: `test: verify core gate input release` (hash: TBD)
+38. [DONE] Git Commit: `test: verify core gate input release` (hash: 5551fd75d)
 
 ## Phase 6 - Documentation Sync (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Architecture Update
 
-39. [TODO] `orchestrator-stop-gate.phase6.docs.task1` Synchronize the implemented no-stop policy into the active Development Tree architecture documents and Core/Project Manager SSOT docs (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe simplified orchestrator stop gates`).
-40. [TODO] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: TBD)
+39. [DONE] `orchestrator-stop-gate.phase6.docs.task1` Synchronize the implemented no-stop policy into the Core SSOT invariants (dual outcome, awaited dispatch with retry, 120s arbitration time box, bounded repair with review-gate degradation, two-basket dirty Git auto-commit); both Development Tree planning documents were already synchronized by the Phase 2 policy commits and verified unchanged (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe simplified orchestrator stop gates`).
+40. [PENDING] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: TBD)
 41. [TODO] `orchestrator-stop-gate.phase6.pm-docs.task1` Document Project Manager lock/projection behavior for Core gates and attached worktree runtime roots (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe truthful core gate ui state`).
 42. [TODO] Git Commit: `docs: describe truthful core gate ui state` (hash: TBD)
 
