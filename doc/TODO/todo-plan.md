@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "e167c48d4",
+  "lastRecordedCommit": "f3a3973ac",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6c.clear-devtree-node.task1",
-  "expectedCommitMessage": "fix: prune development tree node clear runtime sessions",
+  "currentTaskId": "qg-restore-isolation.phase6c.worktree-preflight.task1",
+  "expectedCommitMessage": "fix: self-heal stale development tree worktree paths",
   "debt": {
-    "expectedCommitMessage": "fix: prune development tree node clear runtime sessions",
-    "preCommitHead": "e167c48d4",
+    "expectedCommitMessage": "fix: self-heal stale development tree worktree paths",
+    "preCommitHead": "f3a3973ac",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6c.clear-devtree-node.task1"
+    "taskId": "qg-restore-isolation.phase6c.worktree-preflight.task1"
   }
 }
 ```
@@ -128,12 +128,12 @@
 25. [DONE] `qg-restore-isolation.phase6c.clear-runtime.task1` Add a shared Clear/Undo runtime-session cleanup helper and wire workflow-stage clears to prune matching unified session files and provider-native session files without deleting unrelated sessions (scope: `packages/core/src/remote-bridge/handlers/workflow-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts`; expected commit: `fix: prune workflow stage clear runtime sessions`).
 26. [DONE] Git Commit: `fix: prune workflow stage clear runtime sessions` (hash: e167c48d4)
 27. [DONE] `qg-restore-isolation.phase6c.clear-devtree-node.task1` Wire downstream Development Tree node Clear to the shared runtime-session cleanup helper so cluster/module clears remove matching unified and provider-native session files together with in-memory sessions, continuity, and worktrees (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune development tree node clear runtime sessions`).
-28. [PENDING] Git Commit: `fix: prune development tree node clear runtime sessions` (hash: TBD)
+28. [DONE] Git Commit: `fix: prune development tree node clear runtime sessions` (hash: f3a3973ac)
 
 ### Stream: Development Tree Worktree Bootstrap Preflight
 
-29. [TODO] `qg-restore-isolation.phase6c.worktree-preflight.task1` Make Development Tree cluster-contract worktree bootstrap idempotent against stale Core runtime-only directories while blocking non-runtime path collisions before `git worktree add -B` mutates branch refs (scope: `packages/core/src/development-tree/node-bootstrap, doc/TODO/todo-plan.md`; expected commit: `fix: self-heal stale development tree worktree paths`).
-30. [TODO] Git Commit: `fix: self-heal stale development tree worktree paths` (hash: TBD)
+29. [DONE] `qg-restore-isolation.phase6c.worktree-preflight.task1` Make Development Tree cluster-contract worktree bootstrap idempotent against stale Core runtime-only directories while blocking non-runtime path collisions before `git worktree add -B` mutates branch refs (scope: `packages/core/src/development-tree/node-bootstrap, doc/TODO/todo-plan.md`; expected commit: `fix: self-heal stale development tree worktree paths`).
+30. [PENDING] Git Commit: `fix: self-heal stale development tree worktree paths` (hash: TBD)
 
 ## Phase 6D - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
