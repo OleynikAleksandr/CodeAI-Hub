@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "90f771ec6",
+  "lastRecordedCommit": "4f330636a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase2.evidence.task1",
-  "expectedCommitMessage": "fix: require sequential quality gates verification evidence",
+  "currentTaskId": "qg-restore-isolation.phase2.diagnostics.task1",
+  "expectedCommitMessage": "fix: explain sequential quality gates evidence",
   "debt": {
-    "expectedCommitMessage": "fix: require sequential quality gates verification evidence",
-    "preCommitHead": "90f771ec6",
+    "expectedCommitMessage": "fix: explain sequential quality gates evidence",
+    "preCommitHead": "4f330636a",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase2.evidence.task1"
+    "taskId": "qg-restore-isolation.phase2.diagnostics.task1"
   }
 }
 ```
@@ -63,9 +63,9 @@
 ### Stream: Core Evidence Contract
 
 3. [DONE] `qg-restore-isolation.phase2.evidence.task1` Require sequential execution metadata for verified Quality Gates Phase 4 evidence and add regression tests for missing/accepted sequential evidence (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts`; expected commit: `fix: require sequential quality gates verification evidence`). Result: targeted Quality Gates tests (`npx tsx --test ...formal-verification-runner.test.ts ...validator-runner-evidence.test.ts`) passed 13/13; `npm run build --workspace=@codeai-hub/core` passed.
-4. [PENDING] Git Commit: `fix: require sequential quality gates verification evidence` (hash: TBD)
-5. [TODO] `qg-restore-isolation.phase2.diagnostics.task1` Update Quality Gates verification repair diagnostics to explain the sequential execution evidence contract and preferred JSON shape (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-diagnostics-explainer.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain sequential quality gates evidence`).
-6. [TODO] Git Commit: `fix: explain sequential quality gates evidence` (hash: TBD)
+4. [DONE] Git Commit: `fix: require sequential quality gates verification evidence` (hash: 4f330636a)
+5. [DONE] `qg-restore-isolation.phase2.diagnostics.task1` Update Quality Gates verification repair diagnostics to explain the sequential execution evidence contract and preferred JSON shape (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-diagnostics-explainer.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain sequential quality gates evidence`). Result: targeted prompt diagnostics test (`npx tsx --test ...quality-gates-prompt-builder.phase-envelope.test.ts`) passed 2/2; Ultracite check passed for changed diagnostics files.
+6. [PENDING] Git Commit: `fix: explain sequential quality gates evidence` (hash: TBD)
 
 ### Stream: Provider Prompt Contract
 

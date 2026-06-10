@@ -66,11 +66,14 @@ const explainDiagnostic = (
     const command = diagnostic
       .replace("missing_verification_command_evidence:", "")
       .trim();
-    return `Core did not find passed formal verification evidence for \`${command}\` in \`quality-gates.json\`. Record it under \`verificationEvidence.commands[]\` as \`{ "command": "${command}", "status": "passed", "exitCode": 0 }\`. Core also accepts \`verificationEvidence.commandRuns[]\`, \`verificationEvidence.verificationCommandEvidence[]\`, \`verificationEvidence.commandEvidence["${command}"]\`, and top-level \`verificationCommandEvidence[]\`, but \`verificationEvidence.commands[]\` is the preferred repair target.`;
+    return `Core did not find passed formal verification evidence for \`${command}\` in \`quality-gates.json\`. Record it under \`verificationEvidence.commands[]\` as \`{ "sequence": 1, "command": "${command}", "status": "passed", "exitCode": 0 }\` and set \`verificationEvidence.executionMode: "sequential"\`. Core also accepts \`verificationEvidence.commandRuns[]\`, \`verificationEvidence.verificationCommandEvidence[]\`, and \`verificationEvidence.commandEvidence["${command}"]\` when they carry the same sequential execution metadata, but \`verificationEvidence.commands[]\` is the preferred repair target.`;
+  }
+  if (diagnostic === "missing_sequential_verification_evidence") {
+    return 'Formal verification evidence must prove a sequential workspace transaction. Run the required commands one at a time, then record `verificationEvidence.executionMode: "sequential"` and a positive integer `sequence` on every command evidence entry before setting `verificationState: "verified"`.';
   }
   if (diagnostic.startsWith("verification_command_not_passed:")) {
     const [, command = "", status = "unknown"] = diagnostic.split(":");
-    return `Core found formal verification evidence for \`${command}\`, but its status is \`${status}\` instead of \`passed\`. Re-run the command, fix any failure, then record \`status: "passed"\` and the exit code.`;
+    return `Core found formal verification evidence for \`${command}\`, but its status is \`${status}\` instead of \`passed\`. Re-run the command sequentially, fix any failure, then record \`status: "passed"\`, \`exitCode: 0\`, and its \`sequence\` number.`;
   }
   if (diagnostic.startsWith("verification_state_not_verified:")) {
     const state = diagnostic
@@ -155,9 +158,9 @@ const explainDiagnostic = (
     missing_required_size_policy_gate:
       'Add one required gate to `requiredBeforeCommit` or `requiredBeforePush` whose `commands.<gate-id>.policy` is exactly `{ "type": "source_size_limit", "maxLines": 500, "appliesTo": ["source_files", "classes"] }`. Wire its command into the matching lifecycle hook directly or through an aggregate script.',
     missing_verification_evidence:
-      'Record formal verification evidence in `quality-gates.json`. Preferred shape: `{ "verificationState": "verified", "verificationEvidence": { "commands": [{ "command": "sh .husky/pre-commit", "status": "passed", "exitCode": 0 }] } }`.',
+      'Record formal verification evidence in `quality-gates.json`. Preferred shape: `{ "verificationState": "verified", "verificationEvidence": { "executionMode": "sequential", "commands": [{ "sequence": 1, "command": "sh .husky/pre-commit", "status": "passed", "exitCode": 0 }] } }`.',
     missing_verification_state:
-      'Set `verificationState: "verified"` in `quality-gates.json` after the required formal verification commands and Husky hook scripts pass.',
+      'Set `verificationState: "verified"` in `quality-gates.json` only after the required formal verification commands and Husky hook scripts pass sequentially.',
   };
   return knownDiagnostics[diagnostic] ?? diagnostic;
 };
@@ -177,15 +180,17 @@ export const buildVerificationEvidenceRepairContract = (
     .filter((command): command is string => Boolean(command));
   const commandEntries =
     commands.length > 0
-      ? commands.map((command) => ({
+      ? commands.map((command, index) => ({
           command,
           exitCode: 0,
+          sequence: index + 1,
           status: "passed",
         }))
       : [
           {
             command: "npm run qg:before-commit",
             exitCode: 0,
+            sequence: 1,
             status: "passed",
           },
         ];
@@ -193,7 +198,9 @@ export const buildVerificationEvidenceRepairContract = (
     "Core verification evidence read contract:",
     "- Source of truth: `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`.",
     "- Preferred repair path: `verificationEvidence.commands[]`.",
-    "- Also accepted: `verificationEvidence.commandRuns[]`, `verificationEvidence.verificationCommandEvidence[]`, `verificationEvidence.commandEvidence[command]`, and top-level `verificationCommandEvidence[]`.",
+    '- Required execution marker: `verificationEvidence.executionMode` must be `"sequential"`.',
+    '- Every command evidence entry must include a positive integer `sequence`, `status: "passed"`, and `exitCode: 0`.',
+    "- Also accepted: `verificationEvidence.commandRuns[]`, `verificationEvidence.verificationCommandEvidence[]`, and `verificationEvidence.commandEvidence[command]` when they carry the same sequential metadata.",
     "- Do not rely on `.codeai-hub/<workspaceSlug>/workflow/managed/quality_gates.json`; Core validates the canonical Quality Gates artifact.",
     "- If evidence was already recorded in another shape, duplicate the passing entries into `verificationEvidence.commands[]` instead of adding new field names.",
     "",
@@ -203,6 +210,7 @@ export const buildVerificationEvidenceRepairContract = (
       {
         verificationEvidence: {
           commands: commandEntries,
+          executionMode: "sequential",
         },
         verificationState: "verified",
       },

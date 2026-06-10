@@ -17,6 +17,10 @@ const EVIDENCE_MISSING_EXPLANATION_RE =
   /Core did not find passed formal verification evidence/u;
 const PREFERRED_EVIDENCE_PATH_RE = /verificationEvidence\.commands\[\]/u;
 const NESTED_EVIDENCE_PATH_RE = /verificationEvidence\.commandRuns\[\]/u;
+const SEQUENTIAL_EVIDENCE_MODE_RE =
+  /verificationEvidence\.executionMode[\s\S]*"sequential"/u;
+const SEQUENTIAL_DIAGNOSTIC_RE = /sequential workspace transaction/u;
+const SEQUENCE_FIELD_RE = /"sequence": 1/u;
 const QUALITY_GATES_JSON_PATH_RE = /quality_gates\/quality-gates\.json/u;
 const BEFORE_COMMIT_COMMAND_RE = /"command": "npm run qg:before-commit"/u;
 const PRE_COMMIT_HOOK_RE = /"command": "sh \.husky\/pre-commit"/u;
@@ -71,6 +75,7 @@ test("Quality Gates verification repair prompt explains evidence shape", () => {
     diagnostics: [
       "missing_verification_command_evidence:npm run qg:before-commit",
       "missing_verification_command_evidence:sh .husky/pre-commit",
+      "missing_sequential_verification_evidence",
     ],
     workspaceSlug: WORKSPACE_SLUG,
   });
@@ -78,6 +83,9 @@ test("Quality Gates verification repair prompt explains evidence shape", () => {
   assert.match(prompt, EVIDENCE_MISSING_EXPLANATION_RE);
   assert.match(prompt, PREFERRED_EVIDENCE_PATH_RE);
   assert.match(prompt, NESTED_EVIDENCE_PATH_RE);
+  assert.match(prompt, SEQUENTIAL_EVIDENCE_MODE_RE);
+  assert.match(prompt, SEQUENTIAL_DIAGNOSTIC_RE);
+  assert.match(prompt, SEQUENCE_FIELD_RE);
   assert.match(prompt, QUALITY_GATES_JSON_PATH_RE);
   assert.match(prompt, BEFORE_COMMIT_COMMAND_RE);
   assert.match(prompt, PRE_COMMIT_HOOK_RE);
