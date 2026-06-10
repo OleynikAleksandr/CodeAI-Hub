@@ -1,3 +1,18 @@
+# Plan Closeout: orchestrator-stop-gate-simplification-2026-06-10
+
+**Created:** 2026-06-10T15:06:21.038Z
+**Acceptance:** User accepted release 1.2.486 retest and closeout: Quality Gates Baseline reached Persistent User Return; no-stop dual outcome, repair-limit continuation, and name-agnostic gate validation passed the workflow retest.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** orchestrator-stop-gate.phase10.closeout.task1
+**Expected Commit:** docs: close orchestrator stop gate simplification plan
+**Last Recorded Commit:** d026a9da4
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_OrchestratorStopGateSimplification.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_OrchestratorStopGateSimplification.md",
   "currentTaskId": "orchestrator-stop-gate.phase10.closeout.task1",
   "expectedCommitMessage": "docs: close orchestrator stop gate simplification plan",
-  "debt": {
-    "expectedCommitMessage": "docs: close orchestrator stop gate simplification plan",
-    "preCommitHead": "d026a9da4",
-    "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase10.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -247,5 +257,6 @@ Accepted model: the orchestrator validates only what affects downstream quality 
 
 ### Stream: Plan And Planning Doc Disposition
 
-87. [DONE] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
-88. [PENDING] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
+87. [IN_PROGRESS] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
+88. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
+````
