@@ -1,4 +1,9 @@
 import {
+  collectNpmRunScripts,
+  evaluateGateCommandReachability,
+  readGateCommand,
+} from "./quality-gates-command-reachability";
+import {
   readHookText,
   readPackageScripts,
 } from "./quality-gates-workspace-files";
@@ -16,8 +21,8 @@ const REQUIRED_HOOK_SPECS = [
 
 type QualityGateHookName = (typeof REQUIRED_HOOK_SPECS)[number]["hookName"];
 
-const NPM_RUN_SCRIPT_RE =
-  /(?:^|[\s;&|()])npm\s+run\s+(?:(?:--silent|--if-present|--foreground-scripts|--ignore-scripts)\s+)*([^\s;&|()]+)/gmu;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const readStringArray = (
   value: Record<string, unknown>,
@@ -29,33 +34,12 @@ const readStringArray = (
     : [];
 };
 
-const toPackageScriptName = (gateId: string): string => {
-  if (gateId.startsWith("qg:")) {
-    return gateId;
-  }
-  if (gateId.startsWith("qg-")) {
-    return `qg:${gateId.slice("qg-".length)}`;
-  }
-  return `qg:${gateId}`;
-};
-
-const collectHookNpmRunScripts = (hookText: string): readonly string[] => {
-  const scripts = new Set<string>();
-  for (const match of hookText.matchAll(NPM_RUN_SCRIPT_RE)) {
-    const scriptName = match[1]?.trim();
-    if (scriptName && scriptName !== "--") {
-      scripts.add(scriptName);
-    }
-  }
-  return [...scripts];
-};
-
 const collectMissingReferencedHookScripts = (params: {
   readonly hookName: QualityGateHookName;
   readonly hookText: string;
   readonly packageScripts: Record<string, string>;
 }): readonly string[] =>
-  collectHookNpmRunScripts(params.hookText)
+  collectNpmRunScripts(params.hookText)
     .filter((scriptName) => !(scriptName in params.packageScripts))
     .map(
       (scriptName) =>
@@ -71,9 +55,11 @@ export const collectQualityGatesHookCommandDiagnostics = async (params: {
   if (!packageScripts) {
     errors.push("missing_package_json");
   }
+  const commands = isRecord(params.contract.commands)
+    ? params.contract.commands
+    : {};
   for (const spec of REQUIRED_HOOK_SPECS) {
     const hookText = await readHookText(params.workspaceRoot, spec.hookName);
-    const hookScripts = collectHookNpmRunScripts(hookText);
     if (packageScripts) {
       errors.push(
         ...collectMissingReferencedHookScripts({
@@ -84,12 +70,24 @@ export const collectQualityGatesHookCommandDiagnostics = async (params: {
       );
     }
     for (const gateId of readStringArray(params.contract, spec.contractKey)) {
-      const scriptName = toPackageScriptName(gateId);
-      if (packageScripts && !(scriptName in packageScripts)) {
-        errors.push(`missing_package_script:${gateId}`);
+      const command = readGateCommand(commands, gateId);
+      if (!command) {
+        errors.push(`gate_command_missing:${gateId}`);
+        continue;
       }
-      if (!hookScripts.includes(scriptName)) {
-        errors.push(`missing_hook_gate:${gateId} in .husky/${spec.hookName}`);
+      const reachability = evaluateGateCommandReachability({
+        command,
+        hookText,
+        packageScripts: packageScripts ?? {},
+      });
+      if (reachability.unresolvedScripts.length > 0) {
+        errors.push(`gate_command_unresolved:${gateId}:${command}`);
+        continue;
+      }
+      if (!reachability.reachableFromHook) {
+        errors.push(
+          `gate_command_not_reachable:${gateId}:${command} in .husky/${spec.hookName}`
+        );
       }
     }
   }

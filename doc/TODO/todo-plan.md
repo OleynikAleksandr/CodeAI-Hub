@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "bf18b759d",
+  "lastRecordedCommit": "4ce55c5d4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9a.fix.task6",
-  "expectedCommitMessage": "docs: describe repair limit acceptance continuation",
+  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task1",
+  "expectedCommitMessage": "fix: validate gate commands name agnostically",
   "debt": {
-    "expectedCommitMessage": "docs: describe repair limit acceptance continuation",
-    "preCommitHead": "bf18b759d",
+    "expectedCommitMessage": "fix: validate gate commands name agnostically",
+    "preCommitHead": "4ce55c5d4",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9a.fix.task6"
+    "taskId": "orchestrator-stop-gate.phase9b.fix.task1"
   }
 }
 ```
@@ -203,25 +203,44 @@ Investigation summary: the repair-limit review gate violates the no-stop dual ou
 63. [DONE] `orchestrator-stop-gate.phase9a.fix.task5` Add targeted regression tests proving repair-limit accept continues the workflow for the three managed stages and that revision feedback dispatches the open repair attempt (scope: `packages/core/src/remote-bridge/handlers/managed-stage-repair-limit-review.test.ts`; expected commit: `test: verify repair limit acceptance continuation`).
 64. [DONE] Git Commit: `test: verify repair limit acceptance continuation` (hash: bf18b759d)
 65. [DONE] `orchestrator-stop-gate.phase9a.fix.task6` Sync the repair-limit acceptance continuation behavior into the Core SSOT invariants and the stop-gate planning document blocker matrix (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe repair limit acceptance continuation`).
-66. [PENDING] Git Commit: `docs: describe repair limit acceptance continuation` (hash: TBD)
+66. [DONE] Git Commit: `docs: describe repair limit acceptance continuation` (hash: 4ce55c5d4)
 
 ### Stream: Release Rebuild Confirmation
 
-67. [TODO] `orchestrator-stop-gate.phase9a.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the repair-limit fix release (scope: user workflow; expected commit: none).
-68. [TODO] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
-69. [TODO] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: TBD)
-70. [TODO] `orchestrator-stop-gate.phase9a.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare repair limit acceptance release artifacts`).
-71. [TODO] Git Commit: `build: prepare repair limit acceptance release artifacts` (hash: TBD)
-72. [TODO] `orchestrator-stop-gate.phase9a.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `build: package repair limit acceptance vsix release`).
-73. [TODO] Git Commit: `build: package repair limit acceptance vsix release` (hash: TBD)
+67. [DONE] `orchestrator-stop-gate.phase9a.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX for the repair-limit fix release (scope: user workflow; expected commit: none). Result: User accepted the name-agnostic validation model and explicitly approved the release build after the Phase 9B fixes (message: 'Принимаем эту модель, делай соответствующий фикс и после этого собери новый релиз для моих тестов').
+
+## Phase 9B - Name-Agnostic Quality Gates Validation (owner: Codex, updated: 2026-06-10)
+
+Accepted model: the orchestrator validates only what affects downstream quality - every required gate has an executable command, the command resolves, and it is reachable from the matching lifecycle hook (directly or transitively through package scripts). Script names, qg:* prefixes, aggregate scripts, and direct-vs-transitive hook wiring stop being rejection reasons; verification proves enforcement by running the hooks themselves. Root cause: run 1 named gates `qg-*`, the template formula `qg:<gate-id>` and the validator canonicalization (`qg-` stripped) could never agree, and diagnostics never named the expected key - three blind repairs, guaranteed limit.
+
+### Stream: Name-Agnostic Gate Validation
+
+68. [DONE] `orchestrator-stop-gate.phase9b.fix.task1` Add the gate command reachability module and rewrite hook diagnostics name-agnostically: read each required gate command from the contract (`commands[gateId].proposedCommand`/`command`), require a non-empty command, resolve `npm run X` references against `package.json` transitively, and report gate commands not reachable from the matching `.husky` hook instead of reconstructing canonical script names (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-command-reachability.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts`; expected commit: `fix: validate gate commands name agnostically`).
+69. [PENDING] Git Commit: `fix: validate gate commands name agnostically` (hash: TBD)
+70. [TODO] `orchestrator-stop-gate.phase9b.fix.task1b` Align the existing validator integration expectations with the new entity diagnostics so the suite stays green between micro-commits (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `test: align validator expectations with entity diagnostics`).
+71. [TODO] Git Commit: `test: align validator expectations with entity diagnostics` (hash: TBD)
+72. [TODO] `orchestrator-stop-gate.phase9b.fix.task2` Make verification evidence and planned-gate runner evidence contract-driven: verification requirements become hook runs (`sh .husky/pre-commit`, `sh .husky/pre-push`) plus contract commands for module-execution gates, with aggregate scripts accepted only as optional alternatives; planned-gate runner evidence detection uses the contract command instead of canonical script names (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-command-reachability.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts`; expected commit: `fix: verify gates by contract commands`).
+73. [TODO] Git Commit: `fix: verify gates by contract commands` (hash: TBD)
+74. [TODO] `orchestrator-stop-gate.phase9b.fix.task3` Rewrite the stage prompts and diagnostics texts to the name-agnostic contract: integration prompt requires a working reachable command per required gate and downgrades `qg:*` naming to a style recommendation, the size-policy hint stops prescribing same-name scripts, and the new entity diagnostics name the exact unreachable command (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `fix: teach prompts name agnostic gate wiring`).
+75. [TODO] Git Commit: `fix: teach prompts name agnostic gate wiring` (hash: TBD)
+76. [TODO] `orchestrator-stop-gate.phase9b.fix.task4` Add the run-1 regression test: a contract whose gate ids carry a `qg-` prefix and whose package scripts use arbitrary names must pass integration validation when commands are reachable, and verification must accept hook-run evidence without aggregate scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-name-agnostic-validation.test.ts`; expected commit: `test: verify name agnostic gate validation`).
+77. [TODO] Git Commit: `test: verify name agnostic gate validation` (hash: TBD)
+78. [TODO] `orchestrator-stop-gate.phase9b.fix.task5` Sync the name-agnostic validation model into the Core SSOT invariants and the stop-gate planning document validation-pressure section (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe name agnostic gate validation`).
+79. [TODO] Git Commit: `docs: describe name agnostic gate validation` (hash: TBD)
+80. [TODO] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
+81. [TODO] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: TBD)
+82. [TODO] `orchestrator-stop-gate.phase9a.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare repair limit acceptance release artifacts`).
+83. [TODO] Git Commit: `build: prepare repair limit acceptance release artifacts` (hash: TBD)
+84. [TODO] `orchestrator-stop-gate.phase9a.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `build: package repair limit acceptance vsix release`).
+85. [TODO] Git Commit: `build: package repair limit acceptance vsix release` (hash: TBD)
 
 ### Stream: FinderWidget Retest Round 2
 
-74. [TODO] `orchestrator-stop-gate.phase9a.user-retest.task1` User installs the rebuilt release and retests the Quality Gates repair-limit flow: after 3 rejected repair attempts the gate appears, Confirm commits the accepted-as-is state and the workflow continues to the next phase without manual intervention (scope: user workflow; expected commit: none).
+86. [TODO] `orchestrator-stop-gate.phase9a.user-retest.task1` User installs the rebuilt release and retests the Quality Gates flow end to end: integration passes with agent-chosen script names as long as gate commands are reachable from hooks, and if the repair limit is ever reached, Confirm commits the accepted-as-is state and the workflow continues to the next phase without manual intervention (scope: user workflow; expected commit: none).
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Plan And Planning Doc Disposition
 
-75. [TODO] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
-76. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
+87. [TODO] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
+88. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
