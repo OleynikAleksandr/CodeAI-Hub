@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "08b2f372f",
+  "lastRecordedCommit": "e77f1e0f7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9a.fix.task2",
-  "expectedCommitMessage": "fix: continue diagram modules after repair limit accept",
+  "currentTaskId": "orchestrator-stop-gate.phase9a.fix.task3",
+  "expectedCommitMessage": "fix: continue application skeleton after repair limit accept",
   "debt": {
-    "expectedCommitMessage": "fix: continue diagram modules after repair limit accept",
-    "preCommitHead": "08b2f372f",
+    "expectedCommitMessage": "fix: continue application skeleton after repair limit accept",
+    "preCommitHead": "e77f1e0f7",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9a.fix.task2"
+    "taskId": "orchestrator-stop-gate.phase9a.fix.task3"
   }
 }
 ```
@@ -195,9 +195,9 @@ Investigation summary: the repair-limit review gate violates the no-stop dual ou
 55. [DONE] `orchestrator-stop-gate.phase9a.fix.task1b` Route the repair-limit review decision through the new continuation: when the Quality Gates review prefix is closed but the stage plan sits on a repair attempt above the limit, accept triggers the accept-as-is continuation (review handoff after draft, verification dispatch after integration, persistent return after verification) and revision text dispatches the user-corrections repair prompt; widen the review-decision gateway type to the Development Tree gateway required by the persistent-return handoff, and expose the controller-owned git boundary through a thin accept-as-is delegate (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: route repair limit confirm to continuation`).
 56. [DONE] Git Commit: `fix: route repair limit confirm to continuation` (hash: 08b2f372f)
 57. [DONE] `orchestrator-stop-gate.phase9a.fix.task2` Add the same repair-limit acceptance continuation for Diagram Modules: accept commits residue, closes the open repair task as accepted-as-is, advances the stage plan to user review, and commits the ledger; revision dispatches the user-corrections repair prompt; route all managed-stage repair-limit confirms through a single dispatcher ahead of the per-stage review handlers (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts, packages/core/src/remote-bridge/handlers/managed-stage-repair-limit-review.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: continue diagram modules after repair limit accept`).
-58. [PENDING] Git Commit: `fix: continue diagram modules after repair limit accept` (hash: TBD)
-59. [TODO] `orchestrator-stop-gate.phase9a.fix.task3` Add the same repair-limit acceptance continuation for Application Skeleton draft and materialization repair cycles (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-repair-limit-acceptance.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `fix: continue application skeleton after repair limit accept`).
-60. [TODO] Git Commit: `fix: continue application skeleton after repair limit accept` (hash: TBD)
+58. [DONE] Git Commit: `fix: continue diagram modules after repair limit accept` (hash: e77f1e0f7)
+59. [DONE] `orchestrator-stop-gate.phase9a.fix.task3` Add the same repair-limit acceptance continuation for Application Skeleton draft and materialization repair cycles: accept commits residue, closes the open repair task as accepted-as-is, advances to contract review (draft) or the final user review (materialization), and routes through the managed-stage dispatcher; the ledger git boundary is obtained through the allowlisted factory (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-repair-limit-acceptance.ts, packages/core/src/remote-bridge/handlers/managed-stage-repair-limit-review.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `fix: continue application skeleton after repair limit accept`).
+60. [PENDING] Git Commit: `fix: continue application skeleton after repair limit accept` (hash: TBD)
 61. [TODO] `orchestrator-stop-gate.phase9a.fix.task4` Replace the silent `managed_review_gate_unhandled` session error with a released-input Core message that names the unmatched state and offers the concrete recovery action, so an unmatched review confirm can never end as an invisible dead end (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `fix: release input on unhandled review confirm`).
 62. [TODO] Git Commit: `fix: release input on unhandled review confirm` (hash: TBD)
 63. [TODO] `orchestrator-stop-gate.phase9a.fix.task5` Add targeted regression tests proving repair-limit accept continues the workflow for the three managed stages and that revision feedback dispatches the open repair attempt (scope: up to 3 test files under `packages/core/src/managed-workflow-orchestration/**` and `packages/core/src/remote-bridge/handlers/**`; expected commit: `test: verify repair limit acceptance continuation`).

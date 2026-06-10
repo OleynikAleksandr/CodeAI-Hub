@@ -34,6 +34,10 @@ const asManagedGitBoundary = (
 ): DiagramModulesManagedGitBoundary =>
   gitBoundary as DiagramModulesManagedGitBoundary;
 
+export const createManagedLedgerGitBoundary =
+  (): DiagramModulesManagedGitBoundary =>
+    new DiagramModulesManagedGitBoundary();
+
 interface ManagedPlanState {
   currentTaskId: string | null;
   expectedCommitMessage: string | null;

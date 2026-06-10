@@ -1,5 +1,10 @@
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import {
+  acceptApplicationSkeletonRepairLimitAsIs,
+  buildApplicationSkeletonRepairLimitRevisionPrompt,
+  readApplicationSkeletonRepairLimitTask,
+} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-repair-limit-acceptance";
+import {
   acceptDiagramModulesRepairLimitAsIs,
   buildDiagramModulesRepairLimitRevisionPrompt,
   readDiagramModulesRepairLimitAttempt,
@@ -114,6 +119,63 @@ const handleDiagramModulesRepairLimitReviewDecision = async (
   return true;
 };
 
+const handleApplicationSkeletonRepairLimitReviewDecision = async (
+  params: ManagedStageRepairLimitReviewParams
+): Promise<boolean> => {
+  const { deps, session } = params;
+  if (!(session.workspacePath && session.initiativeSlug)) {
+    return false;
+  }
+  const repairTask = await readApplicationSkeletonRepairLimitTask(
+    session.workspacePath
+  );
+  if (!(repairTask && isRepairAttemptLimitReached(repairTask.attemptNumber))) {
+    return false;
+  }
+  if (params.intent === "none") {
+    return false;
+  }
+  appendUserReviewMessage(params);
+  if (params.intent === "revision") {
+    deps.eventMessages.appendCoreMessage(session.id, {
+      content:
+        "Core dispatched the user corrections to the agent as a repair continuation.",
+      tag: "managed-workflow-validation",
+    });
+    dispatchWithDeliveryGuard(
+      params,
+      buildApplicationSkeletonRepairLimitRevisionPrompt({
+        userFeedback: params.content,
+        workspaceSlug: session.initiativeSlug,
+      })
+    );
+    return true;
+  }
+  try {
+    const accepted = await acceptApplicationSkeletonRepairLimitAsIs({
+      workspaceRoot: session.workspacePath,
+    });
+    deps.eventMessages.appendCoreMessage(session.id, {
+      content:
+        accepted.phase === "draft"
+          ? buildManagedUserLedReviewHandoffMessage("Application Skeleton")
+          : [
+              "Application Skeleton materialization is accepted as is; the remaining diagnostics are recorded as warnings.",
+              "Core opens the final user review. Accept it to unlock Quality Gates or describe further corrections.",
+            ].join("\n"),
+      tag: "managed-workflow-user-review",
+    });
+  } catch (error) {
+    deps.eventMessages.appendCoreMessage(session.id, {
+      content: `Core could not accept the Application Skeleton artifact as is:\n${
+        error instanceof Error ? error.message : String(error)
+      }\nThe input is released. Send any message and Core will re-validate the workflow state.`,
+      tag: "managed-workflow-validation",
+    });
+  }
+  return true;
+};
+
 export const handleManagedStageRepairLimitReviewDecision = (
   params: ManagedStageRepairLimitReviewParams
 ): Promise<boolean> => {
@@ -137,6 +199,9 @@ export const handleManagedStageRepairLimitReviewDecision = (
   }
   if (session.stage === "diagram_modules") {
     return handleDiagramModulesRepairLimitReviewDecision(params);
+  }
+  if (session.stage === "application_skeleton") {
+    return handleApplicationSkeletonRepairLimitReviewDecision(params);
   }
   return Promise.resolve(false);
 };
