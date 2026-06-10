@@ -185,6 +185,50 @@ test("verification accepts hook-run evidence without aggregate scripts", async (
         beforeCommit: [{ command: "npm run check:types", id: "typecheck" }],
       }),
       verificationEvidence: {
+        executionMode: "sequential",
+        commands: [
+          {
+            command: "sh .husky/pre-commit",
+            exitCode: 0,
+            sequence: 1,
+            status: "passed",
+          },
+        ],
+      },
+      verificationState: "verified",
+    };
+
+    const diagnostics =
+      await collectQualityGatesVerificationEvidenceDiagnostics({
+        contractJson,
+        workspaceRoot,
+      });
+
+    assert.deepEqual(diagnostics, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("verification rejects passed evidence without sequential execution metadata", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-verify-nonsequential-")
+  );
+  try {
+    await writePackageJson(workspaceRoot, {
+      "check:types": "tsc -p tsconfig.json",
+    });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run check:types\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".husky/pre-push", "#!/bin/sh\n");
+    const contractJson = {
+      ...buildContract({
+        beforeCommit: [{ command: "npm run check:types", id: "typecheck" }],
+      }),
+      verificationEvidence: {
         commands: [
           { command: "sh .husky/pre-commit", exitCode: 0, status: "passed" },
         ],
@@ -198,7 +242,7 @@ test("verification accepts hook-run evidence without aggregate scripts", async (
         workspaceRoot,
       });
 
-    assert.deepEqual(diagnostics, []);
+    assert.ok(diagnostics.includes("missing_sequential_verification_evidence"));
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -222,7 +266,7 @@ test("verification names the hook run when no enforcement evidence passed", asyn
       ...buildContract({
         beforeCommit: [{ command: "npm run check:types", id: "typecheck" }],
       }),
-      verificationEvidence: { commands: [] },
+      verificationEvidence: { commands: [], executionMode: "sequential" },
       verificationState: "verified",
     };
 

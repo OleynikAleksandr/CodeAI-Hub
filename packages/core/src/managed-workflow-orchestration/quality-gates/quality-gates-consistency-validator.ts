@@ -75,7 +75,8 @@ const fileExists = async (
 };
 
 interface VerificationEvidence {
-  readonly commands: ReadonlyMap<string, string>;
+  readonly commands: ReadonlyMap<string, VerificationCommandStatus>;
+  readonly sequentialExecution: boolean;
 }
 
 interface VerificationRequirement {
@@ -83,54 +84,88 @@ interface VerificationRequirement {
   readonly diagnosticCommand: string;
 }
 
+interface VerificationCommandStatus {
+  readonly status: string;
+}
+
+const isSequentialExecutionMode = (rawEvidence: unknown): boolean =>
+  isRecord(rawEvidence) && rawEvidence.executionMode === "sequential";
+
+const hasSequentialCommandOrder = (entry: Record<string, unknown>): boolean =>
+  typeof entry.sequence === "number" &&
+  Number.isInteger(entry.sequence) &&
+  entry.sequence > 0;
+
+const readCommandStatus = (entry: Record<string, unknown>): string => {
+  const status = typeof entry.status === "string" ? entry.status : "unknown";
+  if (status !== "passed") {
+    return status;
+  }
+  return entry.exitCode === 0 ? "passed" : "unknown";
+};
+
 const appendVerificationCommands = (
-  commands: Map<string, string>,
-  rawCommands: readonly unknown[]
+  commands: Map<string, VerificationCommandStatus>,
+  rawCommands: readonly unknown[],
+  options: {
+    readonly sequentialMode: boolean;
+    readonly sequenceFlags: boolean[];
+  }
 ): void => {
   for (const entry of rawCommands) {
     if (typeof entry === "string") {
-      commands.set(entry, "passed");
+      commands.set(entry, { status: "passed" });
+      options.sequenceFlags.push(false);
       continue;
     }
     if (!isRecord(entry) || typeof entry.command !== "string") {
       continue;
     }
-    commands.set(
-      entry.command,
-      typeof entry.status === "string" ? entry.status : "unknown"
-    );
+    const hasSequentialOrder =
+      options.sequentialMode && hasSequentialCommandOrder(entry);
+    commands.set(entry.command, { status: readCommandStatus(entry) });
+    options.sequenceFlags.push(hasSequentialOrder);
   }
 };
 
 const appendVerificationCommandEvidence = (
-  commands: Map<string, string>,
-  rawEvidence: unknown
+  commands: Map<string, VerificationCommandStatus>,
+  rawEvidence: unknown,
+  options: {
+    readonly sequentialMode: boolean;
+    readonly sequenceFlags: boolean[];
+  }
 ): void => {
   if (!isRecord(rawEvidence)) {
     return;
   }
   for (const [command, rawStatus] of Object.entries(rawEvidence)) {
     if (typeof rawStatus === "string") {
-      commands.set(command, rawStatus);
+      commands.set(command, { status: rawStatus });
+      options.sequenceFlags.push(false);
       continue;
     }
     if (!isRecord(rawStatus)) {
       continue;
     }
-    commands.set(
-      command,
-      typeof rawStatus.status === "string" ? rawStatus.status : "unknown"
-    );
+    const hasSequentialOrder =
+      options.sequentialMode && hasSequentialCommandOrder(rawStatus);
+    commands.set(command, { status: readCommandStatus(rawStatus) });
+    options.sequenceFlags.push(hasSequentialOrder);
   }
 };
 
 const readVerificationCommandStatuses = (
   contractJson: Record<string, unknown>
 ): VerificationEvidence | null => {
-  const commands = new Map<string, string>();
+  const commands = new Map<string, VerificationCommandStatus>();
   const rawEvidence = contractJson.verificationEvidence;
+  const options = {
+    sequentialMode: isSequentialExecutionMode(rawEvidence),
+    sequenceFlags: [] as boolean[],
+  };
   if (Array.isArray(rawEvidence)) {
-    appendVerificationCommands(commands, rawEvidence);
+    appendVerificationCommands(commands, rawEvidence, options);
   } else if (isRecord(rawEvidence)) {
     for (const key of [
       "commands",
@@ -139,27 +174,45 @@ const readVerificationCommandStatuses = (
     ]) {
       const rawCommands = rawEvidence[key];
       if (Array.isArray(rawCommands)) {
-        appendVerificationCommands(commands, rawCommands);
+        appendVerificationCommands(commands, rawCommands, options);
       }
     }
-    appendVerificationCommandEvidence(commands, rawEvidence.commandEvidence);
+    appendVerificationCommandEvidence(
+      commands,
+      rawEvidence.commandEvidence,
+      options
+    );
   }
   const rawVerificationCommandEvidence =
     contractJson.verificationCommandEvidence;
   if (Array.isArray(rawVerificationCommandEvidence)) {
-    appendVerificationCommands(commands, rawVerificationCommandEvidence);
+    appendVerificationCommands(
+      commands,
+      rawVerificationCommandEvidence,
+      options
+    );
   }
-  appendVerificationCommandEvidence(commands, contractJson.commandEvidence);
+  appendVerificationCommandEvidence(
+    commands,
+    contractJson.commandEvidence,
+    options
+  );
   if (!rawEvidence && commands.size === 0) {
     return null;
   }
-  return { commands };
+  return {
+    commands,
+    sequentialExecution:
+      options.sequentialMode &&
+      options.sequenceFlags.length > 0 &&
+      options.sequenceFlags.every(Boolean),
+  };
 };
 
 const hasPassedCommand = (
   evidence: VerificationEvidence,
   command: string
-): boolean => evidence.commands.get(command) === "passed";
+): boolean => evidence.commands.get(command)?.status === "passed";
 
 const hasPassedCommandGroup = (
   evidence: VerificationEvidence,
@@ -250,7 +303,7 @@ const collectMissingVerificationRequirementDiagnostics = (
     ) {
       continue;
     }
-    const status = evidence.commands.get(requirement.diagnosticCommand);
+    const status = evidence.commands.get(requirement.diagnosticCommand)?.status;
     if (status && status !== "passed") {
       errors.push(
         `verification_command_not_passed:${requirement.diagnosticCommand}:${status}`
@@ -372,6 +425,9 @@ export const collectQualityGatesVerificationEvidenceDiagnostics =
     if (!evidence) {
       errors.push("missing_verification_evidence");
       return errors;
+    }
+    if (!evidence.sequentialExecution) {
+      errors.push("missing_sequential_verification_evidence");
     }
     errors.push(
       ...collectMissingVerificationRequirementDiagnostics(

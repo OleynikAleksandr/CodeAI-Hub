@@ -326,10 +326,26 @@ test("Quality Gates verification phase accepts recorded command evidence", async
       ...buildVerifiedContract(),
       verificationEvidence: {
         checkedAt: "2026-06-05T00:00:00.000Z",
+        executionMode: "sequential",
         commands: [
-          { command: "sh .husky/pre-commit", status: "passed" },
-          { command: "npm run qg:max-file-lines", status: "passed" },
-          { command: "npm run qg:secret-scan", status: "passed" },
+          {
+            command: "sh .husky/pre-commit",
+            exitCode: 0,
+            sequence: 1,
+            status: "passed",
+          },
+          {
+            command: "npm run qg:max-file-lines",
+            exitCode: 0,
+            sequence: 2,
+            status: "passed",
+          },
+          {
+            command: "npm run qg:secret-scan",
+            exitCode: 0,
+            sequence: 3,
+            status: "passed",
+          },
         ],
       },
       verificationState: "verified",
@@ -351,7 +367,7 @@ test("Quality Gates verification phase accepts recorded command evidence", async
   }
 });
 
-test("Quality Gates verification phase accepts aggregate array evidence", async () => {
+test("Quality Gates verification phase accepts aggregate command evidence", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-verified-array-")
   );
@@ -378,11 +394,29 @@ test("Quality Gates verification phase accepts aggregate array evidence", async 
       },
       requiredBeforeModuleExecution: ["qg-smoke"],
       requiredBeforePush: ["qg-secret-scan"],
-      verificationEvidence: [
-        "npm run qg:all",
-        "sh .husky/pre-commit",
-        "sh .husky/pre-push",
-      ],
+      verificationEvidence: {
+        commands: [
+          {
+            command: "npm run qg:all",
+            exitCode: 0,
+            sequence: 1,
+            status: "passed",
+          },
+          {
+            command: "sh .husky/pre-commit",
+            exitCode: 0,
+            sequence: 2,
+            status: "passed",
+          },
+          {
+            command: "sh .husky/pre-push",
+            exitCode: 0,
+            sequence: 3,
+            status: "passed",
+          },
+        ],
+        executionMode: "sequential",
+      },
       verificationState: "verified",
     });
     await writeAggregateRunnerEvidence(workspaceRoot);
@@ -416,10 +450,12 @@ test("Quality Gates verification phase accepts nested command evidence", async (
         commandEvidence: {
           "npm run qg:before-commit": {
             exitCode: 0,
+            sequence: 1,
             status: "passed",
           },
           "sh .husky/pre-commit": {
             exitCode: 0,
+            sequence: 2,
             status: "passed",
           },
         },
@@ -427,14 +463,17 @@ test("Quality Gates verification phase accepts nested command evidence", async (
           {
             command: "npm run qg:before-push",
             exitCode: 0,
+            sequence: 3,
             status: "passed",
           },
           {
             command: "sh .husky/pre-push",
             exitCode: 0,
+            sequence: 4,
             status: "passed",
           },
         ],
+        executionMode: "sequential",
       },
       verificationState: "verified",
     });
