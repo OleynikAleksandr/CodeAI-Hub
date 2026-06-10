@@ -33,10 +33,16 @@ import type { Session, SessionManager } from "../../session-manager";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { ClusterContractTurnController } from "./cluster-contract-turn-controller";
 import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
-import { dispatchManagedInternalContinuation as dispatchContinuation } from "./managed-internal-continuation-dispatch";
+import {
+  buildContinuationDeliveryFailureMessage as buildDeliveryFailureMessage,
+  dispatchManagedInternalContinuation as dispatchContinuation,
+} from "./managed-internal-continuation-dispatch";
 import { persistManagedDecision } from "./managed-workflow-decision-persister";
 import { ProductPartDevelopmentBriefTurnController } from "./product-part-development-brief-turn-controller";
-import { buildQualityGatesRepairDispatch } from "./quality-gates-repair-prompt-dispatch";
+import {
+  buildQualityGatesRepairDispatch,
+  buildQualityGatesVerificationContinuation,
+} from "./quality-gates-repair-prompt-dispatch";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import { resolvePreliminaryArtifactGate } from "./session-request-handler-preliminary-artifact-gate";
@@ -75,15 +81,6 @@ const resolveMaterializationRepairAttemptNumber = (
   const value = Number(match?.[1]);
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
-const buildQualityGatesVerificationContinuation = (
-  workspaceSlug: string
-): string =>
-  [
-    "Core opens Phase 4 Formal Quality Gates Verification.",
-    `Verify \`.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json\` and the integrated enforcement surface before persistent return.`,
-    'Resolve hook `npm run <script>` calls against `package.json`, run available `qg:*` aggregate commands and Husky hook scripts, then record `verificationState: "verified"` with command evidence.',
-    "Do not run Git commands or edit stage todo files.",
-  ].join("\n");
 const resolveDiagramModulesRepairAttemptNumber = (
   taskId: string | null
 ): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
@@ -430,7 +427,8 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       decision.phase === "verification" &&
       decision.nextAction === "open_persistent_return";
     if (decision.nextAction !== "open_user_review" && !completesStage) {
-      return "settled";
+      this.dispatchQualityGatesRepairPrompt(params, decision, null);
+      return "continued";
     }
     this.appendCoreMessage(params.sessionId, {
       content: completesStage
@@ -483,6 +481,12 @@ export class SessionRequestHandlerManagedWorkflowTurn {
   private dispatchAgentContinuation(sessionId: string, content: string): void {
     dispatchContinuation(this.options.getMessageDispatch(), {
       content,
+      onDeliveryFailure: (error) => {
+        this.appendCoreMessage(sessionId, {
+          content: buildDeliveryFailureMessage(error),
+          tag: "managed-workflow-validation",
+        });
+      },
       session: this.options.sessionManager.getSession(sessionId),
       sessionId,
     });

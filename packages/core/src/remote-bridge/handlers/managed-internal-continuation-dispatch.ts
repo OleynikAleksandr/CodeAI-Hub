@@ -18,6 +18,16 @@ export interface ManagedInternalContinuationDispatchOptions {
   readonly sessionId: string;
 }
 
+export const buildContinuationDeliveryFailureMessage = (
+  error: unknown
+): string =>
+  [
+    `Core could not deliver the continuation prompt to the agent after a retry: ${
+      error instanceof Error ? error.message : String(error)
+    }`,
+    "The input is released. Send any message and Core will re-validate the workflow state and re-dispatch the next step.",
+  ].join("\n");
+
 export const dispatchManagedInternalContinuation = (
   dispatch: ManagedInternalContinuationDispatch,
   options: ManagedInternalContinuationDispatchOptions

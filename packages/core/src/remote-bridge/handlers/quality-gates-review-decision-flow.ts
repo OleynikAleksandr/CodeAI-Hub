@@ -10,6 +10,7 @@ import {
 import type { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import type { Session } from "../../session-manager";
 import {
+  buildContinuationDeliveryFailureMessage,
   dispatchManagedInternalContinuation,
   type ManagedInternalContinuationDispatch,
 } from "./managed-internal-continuation-dispatch";
@@ -42,6 +43,24 @@ const hasQualityGatesContract = async (session: Session): Promise<boolean> => {
     : false;
 };
 
+const dispatchWithDeliveryGuard = (
+  session: Session,
+  content: string,
+  deps: QualityGatesReviewFlowDeps
+): void => {
+  dispatchManagedInternalContinuation(deps.messageDispatch, {
+    content,
+    onDeliveryFailure: (error) => {
+      deps.eventMessages.appendCoreMessage(session.id, {
+        content: buildContinuationDeliveryFailureMessage(error),
+        tag: "managed-workflow-validation",
+      });
+    },
+    session,
+    sessionId: session.id,
+  });
+};
+
 export const openQualityGatesNextAcceptedReviewPhase = async (
   session: Session,
   deps: QualityGatesReviewFlowDeps
@@ -53,11 +72,7 @@ export const openQualityGatesNextAcceptedReviewPhase = async (
     const prompt = buildQualityGatesContractDraftPrompt({
       workspaceSlug: session.initiativeSlug,
     });
-    dispatchManagedInternalContinuation(deps.messageDispatch, {
-      content: prompt,
-      session,
-      sessionId: session.id,
-    });
+    dispatchWithDeliveryGuard(session, prompt, deps);
     return;
   }
   try {
@@ -76,11 +91,7 @@ export const openQualityGatesNextAcceptedReviewPhase = async (
   const prompt = buildQualityGatesIntegrationPrompt({
     workspaceSlug: session.initiativeSlug,
   });
-  dispatchManagedInternalContinuation(deps.messageDispatch, {
-    content: prompt,
-    session,
-    sessionId: session.id,
-  });
+  dispatchWithDeliveryGuard(session, prompt, deps);
 };
 
 export const dispatchQualityGatesReviewRevision = async (
@@ -98,9 +109,5 @@ export const dispatchQualityGatesReviewRevision = async (
     userFeedback: content,
     workspaceSlug: session.initiativeSlug,
   });
-  dispatchManagedInternalContinuation(deps.messageDispatch, {
-    content: prompt,
-    session,
-    sessionId: session.id,
-  });
+  dispatchWithDeliveryGuard(session, prompt, deps);
 };

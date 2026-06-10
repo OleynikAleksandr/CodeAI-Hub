@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "23544b3dc",
+  "lastRecordedCommit": "68185d4e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase3.delivery.task1",
-  "expectedCommitMessage": "fix: guarantee agent continuation delivery",
+  "currentTaskId": "orchestrator-stop-gate.phase3.delivery.task2",
+  "expectedCommitMessage": "fix: dispatch repair prompts on settled turns",
   "debt": {
-    "expectedCommitMessage": "fix: guarantee agent continuation delivery",
-    "preCommitHead": "23544b3dc",
+    "expectedCommitMessage": "fix: dispatch repair prompts on settled turns",
+    "preCommitHead": "68185d4e7",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase3.delivery.task1"
+    "taskId": "orchestrator-stop-gate.phase3.delivery.task2"
   }
 }
 ```
@@ -97,9 +97,9 @@
 ### Stream: Guaranteed Continuation Delivery
 
 17. [DONE] `orchestrator-stop-gate.phase3.delivery.task1` Make agent continuation dispatch awaited and failure-handled: remove the fire-and-forget swallow in managed internal continuation dispatch and convert managed turn-completion handler failures in the provider event router into an agent repair dispatch or button gate instead of a silently settled turn (scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-provider-event-*`; expected commit: `fix: guarantee agent continuation delivery`).
-18. [PENDING] Git Commit: `fix: guarantee agent continuation delivery` (hash: TBD)
-19. [TODO] `orchestrator-stop-gate.phase3.delivery.task2` Dispatch repair prompts on settled managed turns: every non-review `nextAction` (including quality gates `repair_integration`/`repair_verification` paths) must send the prepared repair prompt to the agent instead of settling without dispatch (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/quality-gates`; expected commit: `fix: dispatch repair prompts on settled turns`).
-20. [TODO] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: TBD)
+18. [DONE] Git Commit: `fix: guarantee agent continuation delivery` (hash: 68185d4e7)
+19. [DONE] `orchestrator-stop-gate.phase3.delivery.task2` Dispatch repair prompts on settled managed turns: every non-review `nextAction` (including quality gates `repair_integration`/`repair_verification` paths) must send the prepared repair prompt to the agent instead of settling without dispatch (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workflow-orchestration/quality-gates`; expected commit: `fix: dispatch repair prompts on settled turns`).
+20. [PENDING] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: TBD)
 
 ### Stream: Error Containment
 
