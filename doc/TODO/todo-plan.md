@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "ca151e1bf",
+  "lastRecordedCommit": "acd132702",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase2.policy-docs.task1",
-  "expectedCommitMessage": "docs: adopt no-stop dual outcome policy",
+  "currentTaskId": "orchestrator-stop-gate.phase2.policy-docs.task2",
+  "expectedCommitMessage": "docs: sync no-stop policy into development tree plans",
   "debt": {
-    "expectedCommitMessage": "docs: adopt no-stop dual outcome policy",
-    "preCommitHead": "ca151e1bf",
+    "expectedCommitMessage": "docs: sync no-stop policy into development tree plans",
+    "preCommitHead": "acd132702",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase2.policy-docs.task1"
+    "taskId": "orchestrator-stop-gate.phase2.policy-docs.task2"
   }
 }
 ```
@@ -74,9 +74,9 @@
 ### Stream: No-Stop Policy Documentation
 
 5. [DONE] `orchestrator-stop-gate.phase2.policy-docs.task1` Rewrite the stop-gate planning source to the accepted no-stop dual-outcome policy: every Core settlement ends as agent repair/continuation dispatch or as a button gate, informational stop cards are forbidden, dirty Git is always auto-committed with two-basket classification and preserve commits, destructive operations are preceded by auto-commit, repair loops are bounded with accept-with-warning degradation, and the silent-stop audit findings (swallowed dispatch errors, settled turns without dispatch, unprotected plan parsing, unbounded repair attempts, stale UI locks) are recorded in the blocker matrix (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: adopt no-stop dual outcome policy`).
-6. [PENDING] Git Commit: `docs: adopt no-stop dual outcome policy` (hash: TBD)
-7. [TODO] `orchestrator-stop-gate.phase2.policy-docs.task2` Synchronize the no-stop dual-outcome policy into both active Development Tree planning documents: rewrite their stop-gate sections to the two allowed outcomes, replace dirty-git user-stop language with two-basket auto-commit, and fix the duplicated section numbering in the sub-agent orchestration document (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: sync no-stop policy into development tree plans`).
-8. [TODO] Git Commit: `docs: sync no-stop policy into development tree plans` (hash: TBD)
+6. [DONE] Git Commit: `docs: adopt no-stop dual outcome policy` (hash: acd132702)
+7. [DONE] `orchestrator-stop-gate.phase2.policy-docs.task2` Synchronize the no-stop dual-outcome policy into both active Development Tree planning documents: rewrite their stop-gate sections to the two allowed outcomes, replace dirty-git user-stop language with two-basket auto-commit, and fix the duplicated section numbering in the sub-agent orchestration document (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: sync no-stop policy into development tree plans`).
+8. [PENDING] Git Commit: `docs: sync no-stop policy into development tree plans` (hash: TBD)
 
 ### Stream: Workflow-Owned Auto Commit
 

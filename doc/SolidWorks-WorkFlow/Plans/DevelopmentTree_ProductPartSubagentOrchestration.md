@@ -220,31 +220,34 @@ The lead Product Part agent does not perform raw Git operations. Core executes G
 
 ## 8. Stop-Gate Policy For Product Part Sub-Agents
 
-Product Part, Cluster and Module sub-agent orchestration follows the same stop-gate simplification policy as the broader Development Tree workflow.
+Product Part, Cluster and Module sub-agent orchestration follows the no-stop dual-outcome policy of the broader Development Tree workflow: every Core settlement ends either as an agent repair/continuation dispatch or as a button gate with a concrete user action. An informational message that stops development without an attached action is a defect.
 
-Core should not stop the user for technical residue that Core created or can safely classify:
+Core never stops the user for technical residue that Core created or can preserve:
 
 - created worktrees, attached runtime roots, local runtime ignores, continuity ledgers and managed plan files are Core-owned state;
-- workflow-owned dirty Git in the relevant main workspace or sub-agent worktree should be committed by Core at the node boundary;
-- stale projected session ids, missing live stream attachment, and worktree dialog root mismatches are Core/Project Manager integration defects and must be repaired by reconciliation, not by user refresh rituals.
+- dirty Git in the relevant main workspace or sub-agent worktree is always auto-committed at the node boundary with two-basket classification: workflow-owned paths join the managed step commit, everything else is preserved in a separate `chore: preserve workspace changes` commit;
+- stale projected session ids, missing live stream attachment, and worktree dialog root mismatches are Core/Project Manager integration defects and must be repaired by reconciliation, not by user refresh rituals;
+- corrupted or missing managed plan state in a sub-agent worktree is repaired deterministically or via an agent repair dispatch, never surfaced as a crash or a hanging dialog.
 
-Hard stops remain valid only when they protect product correctness or Git safety:
+Validation pressure matches the consumer:
 
-- the lead Product Part order plan lacks the machine-readable fields Core needs to unlock the next wave;
-- a cluster/module contract lacks the machine fields required to identify node, facade, input/output type names, result union, or owned module boundaries;
-- a merge would apply unverified work or fail quality gates;
-- Clear/Undo or refactoring would delete a node/worktree that is not supported by accepted upstream artifacts;
-- Core cannot safely classify dirty files as workflow-owned.
+- Core-readable unlock fields (node identity, facade identity, method boundary, input/output type names, result union, owned module boundaries) are repaired through bounded agent dispatches (3 attempts per artifact);
+- on exhaustion, agent-readable prose is accepted with a recorded warning, while missing Core-required fields raise a button gate (retry / continue as is / roll back node);
+- agent-readable prose, explanatory sections, and non-critical formatting are warnings or revision prompts and never block the workflow;
+- if a lower agent cannot refine a boundary because the parent seed is insufficient, it asks a blocking semantic question through its session instead of inventing a contract.
 
-Validation pressure should match the consumer:
+Valid button gates for sub-agent flows:
 
-- Core-readable unlock fields are strict.
-- Agent-readable prose, explanatory sections, and non-critical formatting are warnings or revision prompts.
-- If a lower agent cannot refine a boundary because the parent seed is insufficient, it should ask a blocking semantic question instead of inventing a contract.
+- accept/revise gates on node artifacts (the planned review gates);
+- Clear/Undo or refactoring that would delete a node/worktree not supported by accepted upstream artifacts;
+- provider authentication/availability failures with no local recovery path (retry / switch provider / re-authenticate);
+- repair-limit exhaustion on Core-required machine fields.
+
+A merge that would apply unverified work or fail quality gates is not a user stop: the failure summary is dispatched to the responsible agent for repair, and the merge stays closed until the gates pass.
 
 Project Manager must render these states truthfully. `Agent is working` belongs only to an active provider/native turn. Review gates, warnings, repair-ready states and Core bookkeeping messages must release user input and show the available action.
 
-## 8. User Gates And Rollback
+## 9. User Gates And Rollback
 
 The user should see node-level gates, not internal worker noise.
 
@@ -263,7 +266,7 @@ Rollback/Clear Undo should be node-level:
 - clearing a module result removes that module worktree/session/result and reopens the module from the current accepted cluster/module contract state;
 - internal retries and worker corrections remain automated and hidden unless they produce a semantic blocker.
 
-## 9. Project Manager Projection
+## 10. Project Manager Projection
 
 Project Manager should show one Product Part coordination graph:
 
@@ -281,7 +284,7 @@ finder-widget
 
 The graph may link to sub-agent details, but the default surface remains Product Part-level.
 
-## 10. Projected Sub-Agent Dialog Routing Lessons
+## 11. Projected Sub-Agent Dialog Routing Lessons
 
 The 2026-06-09 cluster-contract regression exposed a concrete class of bugs that must be treated as architectural, not cosmetic UI defects.
 
@@ -318,7 +321,7 @@ Regression checks for future fixes:
 
 This regression is a warning for all future sub-agent surfaces: the left tree projection identity and the right dialog runtime identity are different objects. The projection can be owned by the main Product Part graph, but the chat history, provider continuity, review button, and native session binding belong to the node worktree.
 
-### 10.1. Core-owned runtime attachments
+### 11.1. Core-owned runtime attachments
 
 The follow-up 2026-06-10 retest showed that routing explicit `dialog:history` requests to a worktree is not enough. The backend can complete the cluster session and write the final JSONL, while Project Manager remains visually stuck because live WebSocket delivery is still scoped only to the main workspace.
 
@@ -337,7 +340,7 @@ This must scale to any number of Core-created worktrees. Project Manager should 
 
 Regression signal: if a cluster/module dialog updates only after sidebar toggling, the explicit history path may be correct, but the Core-owned runtime attachment stream is missing or filtered out.
 
-## 11. MVP Implementation Boundary
+## 12. MVP Implementation Boundary
 
 The implemented MVP scope is intentionally narrow:
 
@@ -352,7 +355,7 @@ The implemented MVP scope is intentionally narrow:
 
 This keeps the product moving without pretending that Core can design arbitrary products by script. Agents own semantic planning; Core owns deterministic execution and recovery.
 
-## 12. Pre-code artifact ladder
+## 13. Pre-code artifact ladder
 
 Every Development Tree node below Product Part must move from contract to code through explicit pre-code artifacts:
 
