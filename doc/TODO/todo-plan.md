@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "ab3c43750",
+  "lastRecordedCommit": "591ed5b3c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase3.docs.task1",
-  "expectedCommitMessage": "docs: describe sequential quality gates verification",
+  "currentTaskId": "qg-restore-isolation.phase4.verify.task1",
+  "expectedCommitMessage": "test: verify quality gates restore isolation",
   "debt": {
-    "expectedCommitMessage": "docs: describe sequential quality gates verification",
-    "preCommitHead": "ab3c43750",
+    "expectedCommitMessage": "test: verify quality gates restore isolation",
+    "preCommitHead": "591ed5b3c",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase3.docs.task1"
+    "taskId": "qg-restore-isolation.phase4.verify.task1"
   }
 }
 ```
@@ -79,14 +79,14 @@
 ### Stream: SSOT Update
 
 11. [DONE] `qg-restore-isolation.phase3.docs.task1` Synchronize the implemented sequential Quality Gates verification contract into managed workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe sequential quality gates verification`). Result: ManagedWorkflowOrchestration and WorkflowSteps Overview now describe Phase 4 as a sequential workspace transaction with exclusive mutation commands and ordered evidence.
-12. [PENDING] Git Commit: `docs: describe sequential quality gates verification` (hash: TBD)
+12. [DONE] Git Commit: `docs: describe sequential quality gates verification` (hash: 591ed5b3c)
 
 ## Phase 4 - Tooling Verification (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Targeted Verification
 
-13. [TODO] `qg-restore-isolation.phase4.verify.task1` Run targeted Quality Gates tests and package build/typecheck needed for the changed Core/template surfaces; record results in the plan (scope: `packages/core, packages/agents/quality-gates-agent, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates restore isolation`).
-14. [TODO] Git Commit: `test: verify quality gates restore isolation` (hash: TBD)
+13. [DONE] `qg-restore-isolation.phase4.verify.task1` Run targeted Quality Gates tests and package build/typecheck needed for the changed Core/template surfaces; record results in the plan (scope: `packages/core, packages/agents/quality-gates-agent, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates restore isolation`). Result: targeted Quality Gates tests (`npx tsx --test ...formal-verification-runner.test.ts ...validator-runner-evidence.test.ts ...prompt-builder.phase-envelope.test.ts ...quality-gates-bundled-templates.test.ts`) passed 19/19; `npm run build --workspace=@codeai-hub/core` passed.
+14. [PENDING] Git Commit: `test: verify quality gates restore isolation` (hash: TBD)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
