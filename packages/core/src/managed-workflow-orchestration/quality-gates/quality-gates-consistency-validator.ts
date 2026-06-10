@@ -1,6 +1,11 @@
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import {
+  collectNpmRunScripts,
+  evaluateGateCommandReachability,
+  readGateCommand,
+} from "./quality-gates-command-reachability";
+import {
   readHookText,
   readPackageScripts,
 } from "./quality-gates-workspace-files";
@@ -11,8 +16,6 @@ const REQUIRED_ARRAY_KEYS = [
   "requiredBeforePush",
   "requiredBeforeRelease",
 ] as const;
-const NPM_RUN_SCRIPT_RE =
-  /(?:^|[\s;&|()])npm\s+run\s+(?:(?:--silent|--if-present|--foreground-scripts|--ignore-scripts)\s+)*([^\s;&|()]+)/gmu;
 const NON_BLOCKING_ARRAY_KEYS = [
   "advisory",
   "deferred",
@@ -30,27 +33,6 @@ const readStringArray = (
   return Array.isArray(raw) && raw.every((entry) => typeof entry === "string")
     ? (raw as readonly string[])
     : [];
-};
-
-const toPackageScriptName = (gateId: string): string => {
-  if (gateId.startsWith("qg:")) {
-    return gateId;
-  }
-  if (gateId.startsWith("qg-")) {
-    return `qg:${gateId.slice("qg-".length)}`;
-  }
-  return `qg:${gateId}`;
-};
-
-const collectHookNpmRunScripts = (hookText: string): readonly string[] => {
-  const scripts = new Set<string>();
-  for (const match of hookText.matchAll(NPM_RUN_SCRIPT_RE)) {
-    const scriptName = match[1]?.trim();
-    if (scriptName && scriptName !== "--") {
-      scripts.add(scriptName);
-    }
-  }
-  return [...scripts];
 };
 
 const collectNonBlockingGateIds = (
@@ -191,9 +173,33 @@ const collectVerificationEvidenceRequirements = async (params: {
   readonly workspaceRoot: string;
 }): Promise<readonly VerificationRequirement[]> => {
   const requirements: VerificationRequirement[] = [];
-  const packageScripts = await readPackageScripts(params.workspaceRoot);
-  const allAlternative =
-    packageScripts && "qg:all" in packageScripts ? ["npm run qg:all"] : null;
+  const packageScripts = (await readPackageScripts(params.workspaceRoot)) ?? {};
+  const contractCommands = isRecord(params.contractJson.commands)
+    ? params.contractJson.commands
+    : {};
+  const aggregateAlternatives = (aggregateScript: string): string[][] => {
+    const alternatives: string[][] = [];
+    if ("qg:all" in packageScripts) {
+      alternatives.push(["npm run qg:all"]);
+    }
+    if (aggregateScript in packageScripts) {
+      alternatives.push([`npm run ${aggregateScript}`]);
+    }
+    return alternatives;
+  };
+  for (const gateId of readStringArray(
+    params.contractJson,
+    "requiredBeforeModuleExecution"
+  )) {
+    const command = readGateCommand(contractCommands, gateId);
+    requirements.push({
+      alternatives: [
+        ...(command ? [[command]] : []),
+        ...aggregateAlternatives("qg:before-module-execution"),
+      ],
+      diagnosticCommand: command ?? "npm run qg:before-module-execution",
+    });
+  }
   const hookSpecs = [
     {
       aggregateScript: "qg:before-commit",
@@ -206,41 +212,25 @@ const collectVerificationEvidenceRequirements = async (params: {
       hookName: "pre-push" as const,
     },
   ];
-  if (
-    readStringArray(params.contractJson, "requiredBeforeModuleExecution")
-      .length > 0
-  ) {
-    const alternatives = [
-      ...(allAlternative ? [allAlternative] : []),
-      ["npm run qg:before-module-execution"],
-    ];
-    requirements.push({
-      alternatives,
-      diagnosticCommand: "npm run qg:before-module-execution",
-    });
-  }
   for (const spec of hookSpecs) {
     const gateIds = readStringArray(params.contractJson, spec.contractKey);
     if (gateIds.length === 0) {
       continue;
     }
-    const alternatives: string[][] = allAlternative ? [allAlternative] : [];
-    if (packageScripts && spec.aggregateScript in packageScripts) {
-      alternatives.push([`npm run ${spec.aggregateScript}`]);
-    }
     const hookText = await readHookText(params.workspaceRoot, spec.hookName);
-    const hookCommands = collectHookNpmRunScripts(hookText).map(
+    const hookCommands = collectNpmRunScripts(hookText).map(
       (scriptName) => `npm run ${scriptName}`
     );
-    if (hookCommands.length > 0) {
-      alternatives.push(hookCommands);
-    }
+    const gateCommands = gateIds
+      .map((gateId) => readGateCommand(contractCommands, gateId))
+      .filter((command): command is string => Boolean(command));
     requirements.push({
-      alternatives,
-      diagnosticCommand: `npm run ${spec.aggregateScript}`,
-    });
-    requirements.push({
-      alternatives: [[`sh .husky/${spec.hookName}`]],
+      alternatives: [
+        [`sh .husky/${spec.hookName}`],
+        ...aggregateAlternatives(spec.aggregateScript),
+        ...(hookCommands.length > 0 ? [hookCommands] : []),
+        ...(gateCommands.length > 0 ? [gateCommands] : []),
+      ],
       diagnosticCommand: `sh .husky/${spec.hookName}`,
     });
   }
@@ -282,6 +272,9 @@ const collectPlannedGateRunnerEvidenceDiagnostics = async (params: {
   if (!packageScripts) {
     return [];
   }
+  const contractCommands = isRecord(params.contractJson.commands)
+    ? params.contractJson.commands
+    : {};
   const hooks = [
     {
       name: ".husky/pre-commit",
@@ -297,21 +290,25 @@ const collectPlannedGateRunnerEvidenceDiagnostics = async (params: {
     params.contractJson,
     "plannedRequiredAfterIntegration"
   )) {
-    const scriptName = toPackageScriptName(gateId);
-    if (!(scriptName in packageScripts)) {
+    const command = readGateCommand(contractCommands, gateId);
+    if (!command) {
       continue;
     }
     const hookEvidence = hooks
-      .filter((hook) => hook.text.includes(`npm run ${scriptName}`))
+      .filter(
+        (hook) =>
+          evaluateGateCommandReachability({
+            command,
+            hookText: hook.text,
+            packageScripts,
+          }).reachableFromHook
+      )
       .map((hook) => hook.name);
     if (hookEvidence.length === 0) {
       continue;
     }
     errors.push(
-      `planned_gate_has_runner_evidence_after_integration:${gateId}:${[
-        `package.json:${scriptName}`,
-        ...hookEvidence,
-      ].join(",")}`
+      `planned_gate_has_runner_evidence_after_integration:${gateId}:${hookEvidence.join(",")}`
     );
   }
   return errors;

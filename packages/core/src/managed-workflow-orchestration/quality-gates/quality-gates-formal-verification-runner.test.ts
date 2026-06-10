@@ -7,6 +7,10 @@ import {
   collectReachableScripts,
   evaluateGateCommandReachability,
 } from "./quality-gates-command-reachability";
+import {
+  collectQualityGatesIntegrationConsistencyDiagnostics,
+  collectQualityGatesVerificationEvidenceDiagnostics,
+} from "./quality-gates-consistency-validator";
 import { collectQualityGatesHookCommandDiagnostics } from "./quality-gates-formal-verification-runner";
 
 const writeWorkspaceFile = async (
@@ -155,6 +159,121 @@ test("reports entity diagnostics for missing, unresolved, and unreachable gate c
     assert.ok(
       diagnostics.includes(
         "gate_command_not_reachable:secret-scan:npm run qg:secret-scan in .husky/pre-commit"
+      )
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("verification accepts hook-run evidence without aggregate scripts", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-verify-hook-run-")
+  );
+  try {
+    await writePackageJson(workspaceRoot, {
+      "check:types": "tsc -p tsconfig.json",
+    });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run check:types\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".husky/pre-push", "#!/bin/sh\n");
+    const contractJson = {
+      ...buildContract({
+        beforeCommit: [{ command: "npm run check:types", id: "typecheck" }],
+      }),
+      verificationEvidence: {
+        commands: [
+          { command: "sh .husky/pre-commit", exitCode: 0, status: "passed" },
+        ],
+      },
+      verificationState: "verified",
+    };
+
+    const diagnostics =
+      await collectQualityGatesVerificationEvidenceDiagnostics({
+        contractJson,
+        workspaceRoot,
+      });
+
+    assert.deepEqual(diagnostics, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("verification names the hook run when no enforcement evidence passed", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-verify-missing-")
+  );
+  try {
+    await writePackageJson(workspaceRoot, {
+      "check:types": "tsc -p tsconfig.json",
+    });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run check:types\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".husky/pre-push", "#!/bin/sh\n");
+    const contractJson = {
+      ...buildContract({
+        beforeCommit: [{ command: "npm run check:types", id: "typecheck" }],
+      }),
+      verificationEvidence: { commands: [] },
+      verificationState: "verified",
+    };
+
+    const diagnostics =
+      await collectQualityGatesVerificationEvidenceDiagnostics({
+        contractJson,
+        workspaceRoot,
+      });
+
+    assert.ok(
+      diagnostics.includes(
+        "missing_verification_command_evidence:sh .husky/pre-commit"
+      )
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("planned gate runner evidence uses the contract command", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-planned-evidence-")
+  );
+  try {
+    await writePackageJson(workspaceRoot, {
+      "qg:all": "npm run sast",
+      sast: "node scripts/quality-gates/sast.mjs",
+    });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run qg:all\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".husky/pre-push", "#!/bin/sh\n");
+    const contractJson = {
+      commands: {
+        sast: { id: "sast", proposedCommand: "npm run sast" },
+      },
+      integratedPaths: ["package.json"],
+      plannedRequiredAfterIntegration: ["sast"],
+    };
+
+    const diagnostics =
+      await collectQualityGatesIntegrationConsistencyDiagnostics({
+        contractJson,
+        workspaceRoot,
+      });
+
+    assert.ok(
+      diagnostics.includes(
+        "planned_gate_has_runner_evidence_after_integration:sast:.husky/pre-commit"
       )
     );
   } finally {
