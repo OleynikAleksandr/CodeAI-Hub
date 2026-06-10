@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "11839a871",
+  "lastRecordedCommit": "c417a1ea6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6g.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare downstream merge prevention release notes",
+  "currentTaskId": "qg-restore-isolation.phase6g.build-all.task1",
+  "expectedCommitMessage": "build: prepare downstream merge prevention release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare downstream merge prevention release notes",
-    "preCommitHead": "11839a871",
+    "expectedCommitMessage": "build: prepare downstream merge prevention release artifacts",
+    "preCommitHead": "c417a1ea6",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6g.release-notes.task1"
+    "taskId": "qg-restore-isolation.phase6g.build-all.task1"
   }
 }
 ```
@@ -170,12 +170,12 @@
 ### Stream: Release Notes
 
 40. [DONE] `qg-restore-isolation.phase6g.release-notes.task1` Prepare release notes for the user-authorized downstream doc-only merge prevention release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare downstream merge prevention release notes`). Result: README now announces future release `v1.2.488` as Downstream Boundary Acceptance, and CHANGELOG records that cluster contract acceptance writes a boundary checkpoint instead of performing a draft-only mainline merge.
-41. [PENDING] Git Commit: `docs: prepare downstream merge prevention release notes` (hash: TBD)
+41. [DONE] Git Commit: `docs: prepare downstream merge prevention release notes` (hash: c417a1ea6)
 
 ### Stream: Release Artifacts
 
-42. [TODO] `qg-restore-isolation.phase6g.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare downstream merge prevention release artifacts`).
-43. [TODO] Git Commit: `build: prepare downstream merge prevention release artifacts` (hash: TBD)
+42. [DONE] `qg-restore-isolation.phase6g.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare downstream merge prevention release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.488`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
+43. [PENDING] Git Commit: `build: prepare downstream merge prevention release artifacts` (hash: TBD)
 44. [TODO] `qg-restore-isolation.phase6g.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package downstream merge prevention vsix release`).
 45. [TODO] Git Commit: `build: package downstream merge prevention vsix release` (hash: TBD)
 
