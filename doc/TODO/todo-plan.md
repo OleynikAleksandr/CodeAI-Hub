@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "971cab3ab",
+  "lastRecordedCommit": "8d28d06bd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task5",
-  "expectedCommitMessage": "docs: describe name agnostic gate validation",
+  "currentTaskId": "orchestrator-stop-gate.phase9a.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare repair limit acceptance release notes",
   "debt": {
-    "expectedCommitMessage": "docs: describe name agnostic gate validation",
-    "preCommitHead": "971cab3ab",
+    "expectedCommitMessage": "docs: prepare repair limit acceptance release notes",
+    "preCommitHead": "8d28d06bd",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9b.fix.task5"
+    "taskId": "orchestrator-stop-gate.phase9a.release-notes.task1"
   }
 }
 ```
@@ -226,9 +226,9 @@ Accepted model: the orchestrator validates only what affects downstream quality 
 76. [DONE] `orchestrator-stop-gate.phase9b.fix.task4` Add the run-1 regression test: a contract whose gate ids carry a `qg-` prefix and whose package scripts use arbitrary names must pass integration validation when commands are reachable, and verification must accept hook-run evidence without aggregate scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-name-agnostic-validation.test.ts`; expected commit: `test: verify name agnostic gate validation`).
 77. [DONE] Git Commit: `test: verify name agnostic gate validation` (hash: 971cab3ab)
 78. [DONE] `orchestrator-stop-gate.phase9b.fix.task5` Sync the name-agnostic validation model into the Core SSOT invariants and the stop-gate planning document validation-pressure section (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe name agnostic gate validation`).
-79. [PENDING] Git Commit: `docs: describe name agnostic gate validation` (hash: TBD)
-80. [TODO] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
-81. [TODO] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: TBD)
+79. [DONE] Git Commit: `docs: describe name agnostic gate validation` (hash: 8d28d06bd)
+80. [DONE] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
+81. [PENDING] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: TBD)
 82. [TODO] `orchestrator-stop-gate.phase9a.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare repair limit acceptance release artifacts`).
 83. [TODO] Git Commit: `build: prepare repair limit acceptance release artifacts` (hash: TBD)
 84. [TODO] `orchestrator-stop-gate.phase9a.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `build: package repair limit acceptance vsix release`).

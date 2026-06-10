@@ -2,7 +2,30 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.485** (No-Stop Orchestrator Gates)
+**Current Release — v1.2.486** (Entity-Level Quality Gates)
+
+This release closes the two defects found in the 1.2.485 retest.
+
+The repair-limit review gate now obeys the dual-outcome policy itself:
+confirming "accept as is" auto-commits residue, closes the open repair task,
+advances the stage plan to its next phase, and dispatches the continuation —
+for Quality Gates, Diagram Modules, and Application Skeleton alike. Revision
+text dispatches a user-corrections repair prompt, and a confirmation no
+handler can match releases the input with a concrete recovery message.
+
+Quality Gates integration validation became name-agnostic: the orchestrator
+validates that every required gate has a working contract command reachable
+from its lifecycle hook (directly or through aggregates), and never rejects
+script names. `qg:*` naming is now a style recommendation; verification
+accepts hook runs themselves as enforcement proof. Diagnostics name the exact
+unreachable command, so a single repair pass is enough.
+
+Retest focus: Quality Gates Baseline end to end — integration must pass with
+agent-chosen script names, and if the repair limit is ever reached, Confirm
+must commit the accepted state and continue to formal verification without
+manual intervention.
+
+**Previous Release — v1.2.485** (No-Stop Orchestrator Gates)
 
 This release adopts the no-stop dual-outcome policy for the Core orchestrator:
 every managed settlement ends either as an agent repair/continuation dispatch

@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.486] - 2026-06-10
+### Fixed
+- **Repair-limit gate continues the workflow.** Confirming the "repair attempt limit (3)" review gate now performs accept-as-is: workspace residue is auto-committed, the open repair task closes with an accepted-as-is disposition, the stage plan advances to its next phase (Quality Gates: review/verification/persistent return; Diagram Modules: user review; Application Skeleton: contract/final review), and the matching continuation is dispatched. Revision text dispatches a user-corrections repair prompt. Previously the confirmation died in a silent `managed_review_gate_unhandled` error and development stopped.
+- **Unmatched review confirmations release the input.** A confirm that no handler can apply now appends a Core message naming the unmatched state with a concrete recovery action instead of an invisible session error.
+
+### Changed
+- **Name-agnostic Quality Gates validation.** Integration now validates entities, not names: each required gate must have `commands.<gate-id>.proposedCommand` as the single source of truth, the command must resolve through `package.json` (transitively), and it must be reachable from the matching `.husky` hook directly or through aggregate scripts. Script names and `qg:*` prefixes are a style recommendation, never a rejection reason. Verification accepts hook runs (`sh .husky/pre-commit` / `sh .husky/pre-push`) as enforcement proof without requiring aggregate script names. Diagnostics name the exact missing/unresolved/unreachable command, and the stage templates teach the same contract.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test` over the Quality Gates suite (validator, runner, reachability, name-agnostic regression, templates), repair-limit acceptance and dispatcher suites, and managed review session actions — 65/65 green.
+
 ## [1.2.485] - 2026-06-10
 ### Changed
 - **No-stop dual-outcome policy for the orchestrator.** Every Core settlement of a managed turn, validation, or commit boundary now ends either as an agent repair/continuation dispatch or as a button gate with a concrete user action; informational "Core cannot continue" stop cards are removed as a class.
