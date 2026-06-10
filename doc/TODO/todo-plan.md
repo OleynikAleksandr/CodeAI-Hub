@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "b2e16641a",
+  "lastRecordedCommit": "16a870b66",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6i.cluster-language.task1",
-  "expectedCommitMessage": "fix: localize cluster contract prompts",
+  "currentTaskId": "qg-restore-isolation.phase6j.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare cluster contract language release notes",
   "debt": {
-    "expectedCommitMessage": "fix: localize cluster contract prompts",
-    "preCommitHead": "b2e16641a",
+    "expectedCommitMessage": "docs: prepare cluster contract language release notes",
+    "preCommitHead": "16a870b66",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6i.cluster-language.task1"
+    "taskId": "qg-restore-isolation.phase6j.release-notes.task1"
   }
 }
 ```
@@ -190,14 +190,14 @@
 ### Stream: Localized Cluster Contract First Prompt
 
 50. [DONE] `qg-restore-isolation.phase6i.cluster-language.task1` Add the runtime language contract to downstream Cluster Contract first prompts and resolve chat/artifact languages from global localization settings through the cluster-contract bootstrap path (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `fix: localize cluster contract prompts`). Result: Cluster Contract first prompts now start with a runtime language contract, including a Russian reinforcement block when `reasoning=ru`; bootstrap resolves chat/artifact languages through existing global localization settings loaders before sending the first prompt. Regression test verifies a global `CODEAI_GLOBAL_SETTINGS_PATH` with `reasoning=ru` and `artifactsForTheUser=ru` produces a Russian language contract in the first prompt. Targeted tests passed 3/3; Ultracite check passed for changed files; `npm run build --workspace=@codeai-hub/core` passed.
-51. [PENDING] Git Commit: `fix: localize cluster contract prompts` (hash: TBD)
+51. [DONE] Git Commit: `fix: localize cluster contract prompts` (hash: 16a870b66)
 
 ## Phase 6J - Release Build (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Release Notes
 
-52. [TODO] `qg-restore-isolation.phase6j.release-notes.task1` Prepare release notes for the user-authorized cluster-contract language fix release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract language release notes`).
-53. [TODO] Git Commit: `docs: prepare cluster contract language release notes` (hash: TBD)
+52. [DONE] `qg-restore-isolation.phase6j.release-notes.task1` Prepare release notes for the user-authorized cluster-contract language fix release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract language release notes`). Result: README announces future release `v1.2.489` as Cluster Contract Language, and CHANGELOG records the downstream cluster-contract first prompt language contract fix and verification commands.
+53. [PENDING] Git Commit: `docs: prepare cluster contract language release notes` (hash: TBD)
 
 ### Stream: Release Artifacts
 

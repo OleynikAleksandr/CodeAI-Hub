@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.488** (Downstream Boundary Acceptance)
+**Current Release — v1.2.489** (Cluster Contract Language)
+
+This release fixes the downstream Cluster Contract first prompt language
+contract. Core now resolves the chat language from global localization settings
+before sending the first cluster-contract assignment, so agents receive the same
+runtime language rule as the rest of Development Tree.
+
+When global settings use `reasoning=ru`, the first Cluster Contract prompt now
+starts with a Russian reinforcement block and the explicit
+`Chat language code: ru` contract. Artifact prose language is resolved from
+`artifactsForTheUser`, while canonical file names, ids, JSON keys,
+method/event names, structural headings, and status tokens remain in English.
+
+Retest focus: start the first downstream Cluster Contract from Product Part.
+The agent's progress updates and final chat response should be in Russian, but
+technical identifiers and artifact structure must remain canonical English.
+
+**Previous Release — v1.2.488** (Downstream Boundary Acceptance)
 
 This release stops the first downstream Cluster Contract acceptance from acting
 like a documentation merge into the main workspace. When a cluster contract is

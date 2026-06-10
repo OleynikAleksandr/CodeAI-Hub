@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.489] - 2026-06-10
+### Fixed
+- **Cluster Contract first prompts now carry the runtime language contract.** The downstream cluster-contract bootstrap path resolves chat and artifact prose languages through the existing global localization settings loaders before sending the first prompt, so `reasoning=ru` no longer falls back to English agent progress/final chat.
+
+### Changed
+- **Russian language settings get an explicit reinforcement block.** Cluster Contract prompts now start with both the generic workflow language contract and a Russian reminder when the chat language is `ru`, while keeping canonical file names, ids, JSON keys, method/event names, structural headings, and status tokens in English.
+
+### Verification
+- `npx tsx --test packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.test.ts`
+- `npx ultracite check packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.488] - 2026-06-10
 ### Fixed
 - **Cluster Contract acceptance no longer performs a draft-only mainline merge.** Accepting a downstream Cluster Contract now writes a Core-owned `.boundary-accepted.json` coordination checkpoint instead of copying `ClusterSpecification` / `ClusterFacadeContract` draft artifacts into the main workspace.
