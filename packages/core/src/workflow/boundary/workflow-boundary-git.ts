@@ -126,8 +126,12 @@ export class WorkflowBoundaryGit {
     return await this.runExclusive(params.workspaceRoot, async () => {
       await this.ensureRepositoryUnlocked(params.workspaceRoot);
       await removeMacMetadata(params.workspaceRoot);
-      const paths =
+      const pathSpecs =
         params.paths === undefined ? [] : filterPathSpecs(params.paths);
+      const paths = await this.filterIgnoredPathSpecs(
+        params.workspaceRoot,
+        pathSpecs
+      );
       if (paths.length === 0 && !params.allowEmpty) {
         return {
           hash: await this.revParseHeadOrEmpty(params.workspaceRoot),
@@ -276,6 +280,48 @@ export class WorkflowBoundaryGit {
     if (regularPaths.length > 0) {
       await this.git(workspaceRoot, ["add", "-A", "--", ...regularPaths]);
     }
+  }
+
+  private async filterIgnoredPathSpecs(
+    workspaceRoot: string,
+    paths: readonly string[]
+  ): Promise<readonly string[]> {
+    const filteredPaths: string[] = [];
+    for (const pathSpec of paths) {
+      if (await this.hasTrackedMatches(workspaceRoot, pathSpec)) {
+        filteredPaths.push(pathSpec);
+        continue;
+      }
+      if (await this.isIgnoredPathSpec(workspaceRoot, pathSpec)) {
+        continue;
+      }
+      filteredPaths.push(pathSpec);
+    }
+    return filteredPaths;
+  }
+
+  private async hasTrackedMatches(
+    workspaceRoot: string,
+    pathSpec: string
+  ): Promise<boolean> {
+    const result = await this.runGitCommand(
+      workspaceRoot,
+      ["ls-files", "--", pathSpec],
+      { allowedExitCodes: [1] }
+    );
+    return result.stdout.length > 0;
+  }
+
+  private async isIgnoredPathSpec(
+    workspaceRoot: string,
+    pathSpec: string
+  ): Promise<boolean> {
+    const result = await this.runGitCommand(
+      workspaceRoot,
+      ["check-ignore", "-q", "--", pathSpec],
+      { allowedExitCodes: [1] }
+    );
+    return result.exitCode === 0;
   }
 
   private async git(

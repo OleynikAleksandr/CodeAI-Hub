@@ -56,3 +56,33 @@ test("WorkflowBoundaryGit stages deep explicit managed plan paths", async () => 
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("WorkflowBoundaryGit skips explicit ignored runtime path specs", async () => {
+  const workspaceRoot = await createWorkspace();
+  const continuityPath = ".codeai-hub/demo/continuity/index.json";
+  const runtimePath = ".codeai-hub/demo/runtime/sessions/session.jsonl";
+  try {
+    await writeText(workspaceRoot, ".gitignore", ".codeai-hub/*/runtime/\n");
+    await writeText(workspaceRoot, continuityPath, "{}\n");
+    await writeText(workspaceRoot, runtimePath, '{"event":"local"}\n');
+
+    const result = await new WorkflowBoundaryGit().commit({
+      commitMessage: "docs: bootstrap product part development briefs",
+      paths: [".gitignore", continuityPath, runtimePath],
+      workspaceRoot,
+    });
+
+    assert.equal(result.noStagedChanges, false);
+    assert.equal(
+      await git(workspaceRoot, ["ls-files", "--", continuityPath]),
+      continuityPath
+    );
+    assert.equal(await git(workspaceRoot, ["ls-files", "--", runtimePath]), "");
+    assert.deepEqual(
+      await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot),
+      []
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});

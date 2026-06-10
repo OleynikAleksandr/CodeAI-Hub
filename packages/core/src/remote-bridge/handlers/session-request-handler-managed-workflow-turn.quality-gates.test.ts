@@ -105,6 +105,13 @@ const qualityIntegratedDecision = (): QualityGatesManagedValidationResult => ({
   valid: true,
 });
 
+const passedVerificationCommand = (sequence: number, command: string) => ({
+  command,
+  exitCode: 0,
+  sequence,
+  status: "passed",
+});
+
 const qualityVerifiedDecision = (): QualityGatesManagedValidationResult => {
   const integrated = qualityIntegratedDecision();
   return {
@@ -113,10 +120,11 @@ const qualityVerifiedDecision = (): QualityGatesManagedValidationResult => {
       ...integrated.contractJson,
       verificationEvidence: {
         checkedAt: "2026-06-05T00:00:00.000Z",
+        executionMode: "sequential",
         commands: [
-          { command: "sh .husky/pre-commit", status: "passed" },
-          { command: "npm run qg:secret-scan", status: "passed" },
-          { command: "npm run qg:max-file-lines", status: "passed" },
+          passedVerificationCommand(1, "sh .husky/pre-commit"),
+          passedVerificationCommand(2, "npm run qg:secret-scan"),
+          passedVerificationCommand(3, "npm run qg:max-file-lines"),
         ],
       },
       verificationState: "verified",

@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "844ecffc5",
+  "lastRecordedCommit": "f6313f800",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase5.vsix.task1",
-  "expectedCommitMessage": "build: package quality gates restore isolation vsix release",
+  "currentTaskId": "qg-restore-isolation.phase6a.ignored-runtime.task1",
+  "expectedCommitMessage": "fix: skip ignored runtime paths in workflow handoff commits",
   "debt": {
-    "expectedCommitMessage": "build: package quality gates restore isolation vsix release",
-    "preCommitHead": "844ecffc5",
+    "expectedCommitMessage": "fix: skip ignored runtime paths in workflow handoff commits",
+    "preCommitHead": "f6313f800",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase5.vsix.task1"
+    "taskId": "qg-restore-isolation.phase6a.ignored-runtime.task1"
   }
 }
 ```
@@ -100,18 +100,31 @@
 17. [DONE] `qg-restore-isolation.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare quality gates restore isolation release artifacts`). Result: `./scripts/build-all.sh` completed successfully for 1.2.487; provider, Core, VS Code webview, Project Manager, and CEF launcher tarballs were generated.
 18. [DONE] Git Commit: `build: prepare quality gates restore isolation release artifacts` (hash: 844ecffc5)
 19. [DONE] `qg-restore-isolation.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package quality gates restore isolation vsix release`). Result: `./scripts/build-release.sh --use-current-version` completed for 1.2.487; SDK exclusions, local artifact validation, markdown links, duplication check, dev dependency pruning/restoration, VSIX surface verification, and package-size verification passed. VSIX: `codeai-hub-1.2.487.vsix` (5.1M); release tarballs are present in `doc/tmp/releases/`.
-20. [PENDING] Git Commit: `build: package quality gates restore isolation vsix release` (hash: TBD)
+20. [DONE] Git Commit: `build: package quality gates restore isolation vsix release` (hash: f6313f800)
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest
 
-21. [TODO] `qg-restore-isolation.phase6.user-retest.task1` User installs the release and retests Quality Gates Baseline Phase 4 with a restore/delete/install-style gate command, then continues through several workflow steps to confirm the agent and orchestrator behavior (scope: `manual retest`; no commit expected).
+21. [DONE] `qg-restore-isolation.phase6.user-retest.task1` User installs the release and retests Quality Gates Baseline Phase 4 with a restore/delete/install-style gate command, then continues through several workflow steps to confirm the agent and orchestrator behavior (scope: `manual retest`; no commit expected). Result: v1.2.487 Quality Gates Phase 4 behaved correctly: sequential evidence was recorded and Core completed the step. Follow-up defect found after QG completion: the post-QG handoff/continuity commit attempted `git add -A` on ignored runtime session paths and released the input.
+
+## Phase 6A - Post-QG Handoff Commit Boundary (owner: Codex, updated: 2026-06-10)
+
+### Stream: Ignored Runtime Path Filtering
+
+22. [DONE] `qg-restore-isolation.phase6a.ignored-runtime.task1` Prevent workflow handoff/continuity commits after Quality Gates completion from attempting to stage ignored runtime session paths while still committing trackable continuity and handoff artifacts; add focused regression coverage for ignored `.codeai-hub/**/runtime` paths (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/workflow/boundary, doc/TODO/todo-plan.md`; expected commit: `fix: skip ignored runtime paths in workflow handoff commits`). Result: `WorkflowBoundaryGit` now filters explicit ignored pathspecs before staging while preserving tracked matches; regression covers ignored `.codeai-hub/**/runtime/sessions` alongside trackable continuity paths. Targeted tests passed 5/5 (`workflow-boundary-git.test.ts`, `session-request-handler-managed-workflow-turn.quality-gates.test.ts`); Ultracite check passed for changed files; `npm run build --workspace=@codeai-hub/core` passed.
+23. [PENDING] Git Commit: `fix: skip ignored runtime paths in workflow handoff commits` (hash: TBD)
+
+## Phase 6B - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
+
+### Stream: Retest After Handoff Fix
+
+24. [TODO] `qg-restore-isolation.phase6b.user-retest.task1` User retests post-Quality-Gates handoff after the ignored-runtime staging fix: Quality Gates completion should advance into the next workflow step without a Core-side ignored-path git add error (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Archive And Dispose
 
-22. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-23. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
-24. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+25. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+26. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+27. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
