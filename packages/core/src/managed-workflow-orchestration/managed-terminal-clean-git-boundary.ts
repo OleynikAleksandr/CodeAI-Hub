@@ -11,6 +11,7 @@ import {
 const execFileAsync = promisify(execFile);
 const TERMINAL_RESIDUE_COMMIT_MESSAGE =
   "chore: commit managed terminal residue";
+const PRESERVE_COMMIT_MESSAGE = "chore: preserve workspace changes";
 const TERMINAL_RESIDUE_COMMIT_ATTEMPTS = 3;
 const UNKNOWN_WORKSPACE_SLUG = "__unknown_workspace__";
 const GITIGNORE_PATH = ".gitignore";
@@ -95,17 +96,6 @@ const untrackLocalVolatileRuntimePaths = async (
   return trackedPaths;
 };
 
-export const formatManagedTerminalDirtyBlocker = (
-  paths: readonly string[]
-): string =>
-  [
-    "To finish this step, choose how to handle the files still open in Git.",
-    'Select "Commit and finish step" to save them and complete the step, or "Show files" to review them first.',
-    "",
-    "Files:",
-    ...formatPathList(paths),
-  ].join("\n");
-
 export const formatManagedTerminalAutoCommitFailure = (
   paths: readonly string[]
 ): string =>
@@ -148,22 +138,26 @@ export const ensureManagedTerminalGitClean = async (params: {
     if (classification.clean && localVolatileCleanupPaths.length === 0) {
       return;
     }
-    if (classification.unclassifiedPaths.length > 0) {
-      throw new Error(
-        formatManagedTerminalDirtyBlocker(classification.unclassifiedPaths)
-      );
-    }
     const managedPaths = [
       ...new Set([
         ...classification.committablePaths,
         ...(localVolatileCleanupPaths.length > 0 ? [GITIGNORE_PATH] : []),
       ]),
     ];
-    await params.gitBoundary.commitManagedChanges({
-      commitMessage: TERMINAL_RESIDUE_COMMIT_MESSAGE,
-      managedPaths,
-      workspaceRoot: params.workspaceRoot,
-    });
+    if (managedPaths.length > 0) {
+      await params.gitBoundary.commitManagedChanges({
+        commitMessage: TERMINAL_RESIDUE_COMMIT_MESSAGE,
+        managedPaths,
+        workspaceRoot: params.workspaceRoot,
+      });
+    }
+    if (classification.unclassifiedPaths.length > 0) {
+      await params.gitBoundary.commitManagedChanges({
+        commitMessage: PRESERVE_COMMIT_MESSAGE,
+        managedPaths: classification.unclassifiedPaths,
+        workspaceRoot: params.workspaceRoot,
+      });
+    }
     localVolatileCleanupPaths = [];
     classification = await classifyManagedTerminalDirtyTree({
       stage: params.stage,
@@ -175,12 +169,10 @@ export const ensureManagedTerminalGitClean = async (params: {
   if (classification.clean) {
     return;
   }
-  if (classification.unclassifiedPaths.length > 0) {
-    throw new Error(
-      formatManagedTerminalDirtyBlocker(classification.unclassifiedPaths)
-    );
-  }
   throw new Error(
-    formatManagedTerminalAutoCommitFailure(classification.committablePaths)
+    formatManagedTerminalAutoCommitFailure([
+      ...classification.committablePaths,
+      ...classification.unclassifiedPaths,
+    ])
   );
 };

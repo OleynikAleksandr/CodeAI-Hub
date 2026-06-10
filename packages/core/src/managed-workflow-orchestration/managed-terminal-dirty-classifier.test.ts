@@ -9,7 +9,6 @@ import { DiagramModulesManagedGitBoundary } from "./diagram-modules/diagram-modu
 import {
   ensureManagedTerminalGitClean,
   formatManagedTerminalAutoCommitFailure,
-  formatManagedTerminalDirtyBlocker,
 } from "./managed-terminal-clean-git-boundary";
 import {
   classifyManagedTerminalDirtyEntries,
@@ -22,7 +21,6 @@ const CONFIRM_AGAIN_RE = /Confirm the step again/u;
 const GENERATED_FILES_NOT_SAVED_RE =
   /generated files were not saved automatically/u;
 const SHOW_FILES_RE = /Show files/u;
-const MANUAL_NOTES_RE = /manual-notes\.md/u;
 const NO_FILE_PATH_RE = /No file path was reported/u;
 const CORE_INTERNALS_RE =
   /Core|classified|unclassified|managed terminal|dirty-tree/u;
@@ -109,15 +107,6 @@ test("terminal dirty classifier accepts Diagram Modules sidecars when workspace 
     `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`,
   ]);
   assert.deepEqual(result.unclassifiedPaths, []);
-});
-
-test("terminal dirty blocker text gives user actions without core internals", () => {
-  const message = formatManagedTerminalDirtyBlocker(["manual-notes.md"]);
-
-  assert.match(message, COMMIT_AND_FINISH_RE);
-  assert.match(message, SHOW_FILES_RE);
-  assert.match(message, MANUAL_NOTES_RE);
-  assert.doesNotMatch(message, CORE_INTERNALS_RE);
 });
 
 test("terminal auto-commit failure text avoids empty file lists and user commit choices", () => {
@@ -280,6 +269,56 @@ test("terminal clean boundary untracks local runtime and commits metadata gitign
     assert.equal(
       await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
       "chore: commit managed terminal residue"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("terminal clean boundary preserves unclassified files in a separate commit instead of stopping", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-terminal-preserve-commit-")
+  );
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await writeWorkspaceFile(workspaceRoot, "README.md", "# demo\n");
+    await git(workspaceRoot, ["add", "."]);
+    await git(workspaceRoot, ["commit", "-m", "test: initial"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-contract.json`,
+      '{"stage":"quality_gates"}\n'
+    );
+    await writeWorkspaceFile(workspaceRoot, "manual-notes.md", "# notes\n");
+
+    await ensureManagedTerminalGitClean({
+      gitBoundary: new DiagramModulesManagedGitBoundary(),
+      stage: "quality_gates",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(
+      await git(workspaceRoot, ["status", "--short", "--untracked-files=all"]),
+      ""
+    );
+    assert.deepEqual(
+      (await git(workspaceRoot, ["log", "-2", "--pretty=%s"])).split("\n"),
+      [
+        "chore: preserve workspace changes",
+        "chore: commit managed terminal residue",
+      ]
+    );
+    assert.equal(
+      await git(workspaceRoot, [
+        "show",
+        "--name-only",
+        "--pretty=format:",
+        "HEAD",
+      ]),
+      "manual-notes.md"
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

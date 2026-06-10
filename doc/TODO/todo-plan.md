@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "acd132702",
+  "lastRecordedCommit": "88fb8e621",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase2.policy-docs.task2",
-  "expectedCommitMessage": "docs: sync no-stop policy into development tree plans",
+  "currentTaskId": "orchestrator-stop-gate.phase2.dirty-git.task1",
+  "expectedCommitMessage": "fix: preserve commit unclassified dirty files",
   "debt": {
-    "expectedCommitMessage": "docs: sync no-stop policy into development tree plans",
-    "preCommitHead": "acd132702",
+    "expectedCommitMessage": "fix: preserve commit unclassified dirty files",
+    "preCommitHead": "88fb8e621",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase2.policy-docs.task2"
+    "taskId": "orchestrator-stop-gate.phase2.dirty-git.task1"
   }
 }
 ```
@@ -76,12 +76,12 @@
 5. [DONE] `orchestrator-stop-gate.phase2.policy-docs.task1` Rewrite the stop-gate planning source to the accepted no-stop dual-outcome policy: every Core settlement ends as agent repair/continuation dispatch or as a button gate, informational stop cards are forbidden, dirty Git is always auto-committed with two-basket classification and preserve commits, destructive operations are preceded by auto-commit, repair loops are bounded with accept-with-warning degradation, and the silent-stop audit findings (swallowed dispatch errors, settled turns without dispatch, unprotected plan parsing, unbounded repair attempts, stale UI locks) are recorded in the blocker matrix (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: adopt no-stop dual outcome policy`).
 6. [DONE] Git Commit: `docs: adopt no-stop dual outcome policy` (hash: acd132702)
 7. [DONE] `orchestrator-stop-gate.phase2.policy-docs.task2` Synchronize the no-stop dual-outcome policy into both active Development Tree planning documents: rewrite their stop-gate sections to the two allowed outcomes, replace dirty-git user-stop language with two-basket auto-commit, and fix the duplicated section numbering in the sub-agent orchestration document (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md`; expected commit: `docs: sync no-stop policy into development tree plans`).
-8. [PENDING] Git Commit: `docs: sync no-stop policy into development tree plans` (hash: TBD)
+8. [DONE] Git Commit: `docs: sync no-stop policy into development tree plans` (hash: 88fb8e621)
 
 ### Stream: Workflow-Owned Auto Commit
 
-9. [TODO] `orchestrator-stop-gate.phase2.dirty-git.task1` Replace the unclassified dirty-file blocker in the managed terminal boundary with two-basket auto-commit: stage/Core-owned residue stays in the managed step commit while unclassified paths are committed separately as `chore: preserve workspace changes` instead of stopping the user (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`; expected commit: `fix: preserve commit unclassified dirty files`).
-10. [TODO] Git Commit: `fix: preserve commit unclassified dirty files` (hash: TBD)
+9. [DONE] `orchestrator-stop-gate.phase2.dirty-git.task1` Replace the unclassified dirty-file blocker in the managed terminal boundary with two-basket auto-commit: stage/Core-owned residue stays in the managed step commit while unclassified paths are committed separately as `chore: preserve workspace changes` instead of stopping the user (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts`; expected commit: `fix: preserve commit unclassified dirty files`).
+10. [PENDING] Git Commit: `fix: preserve commit unclassified dirty files` (hash: TBD)
 11. [TODO] `orchestrator-stop-gate.phase2.dirty-git.task2` Remove user-facing dirty Git stops from workflow boundary creation and accepted-step commits: run the two-basket auto-commit before boundary anchors and after accepted steps so no dirty-tree state surfaces as a user stop (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `fix: auto-close workflow dirty git boundaries`).
 12. [TODO] Git Commit: `fix: auto-close workflow dirty git boundaries` (hash: TBD)
 13. [TODO] `orchestrator-stop-gate.phase2.dirty-git.task3` Add regression coverage for Quality Gates restart with workflow-owned script changes and for unclassified user files so Core commits (step + preserve) and continues instead of asking the user how to handle dirty files (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/workflow/boundary, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow dirty git auto commit`).
