@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "88fb8e621",
+  "lastRecordedCommit": "6b5184648",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase2.dirty-git.task1",
-  "expectedCommitMessage": "fix: preserve commit unclassified dirty files",
+  "currentTaskId": "orchestrator-stop-gate.phase2.dirty-git.task2",
+  "expectedCommitMessage": "fix: auto-close workflow dirty git boundaries",
   "debt": {
-    "expectedCommitMessage": "fix: preserve commit unclassified dirty files",
-    "preCommitHead": "88fb8e621",
+    "expectedCommitMessage": "fix: auto-close workflow dirty git boundaries",
+    "preCommitHead": "6b5184648",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase2.dirty-git.task1"
+    "taskId": "orchestrator-stop-gate.phase2.dirty-git.task2"
   }
 }
 ```
@@ -81,9 +81,9 @@
 ### Stream: Workflow-Owned Auto Commit
 
 9. [DONE] `orchestrator-stop-gate.phase2.dirty-git.task1` Replace the unclassified dirty-file blocker in the managed terminal boundary with two-basket auto-commit: stage/Core-owned residue stays in the managed step commit while unclassified paths are committed separately as `chore: preserve workspace changes` instead of stopping the user (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts`; expected commit: `fix: preserve commit unclassified dirty files`).
-10. [PENDING] Git Commit: `fix: preserve commit unclassified dirty files` (hash: TBD)
-11. [TODO] `orchestrator-stop-gate.phase2.dirty-git.task2` Remove user-facing dirty Git stops from workflow boundary creation and accepted-step commits: run the two-basket auto-commit before boundary anchors and after accepted steps so no dirty-tree state surfaces as a user stop (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `fix: auto-close workflow dirty git boundaries`).
-12. [TODO] Git Commit: `fix: auto-close workflow dirty git boundaries` (hash: TBD)
+10. [DONE] Git Commit: `fix: preserve commit unclassified dirty files` (hash: 6b5184648)
+11. [DONE] `orchestrator-stop-gate.phase2.dirty-git.task2` Remove user-facing dirty Git stops from workflow boundary creation and accepted-step commits: run the two-basket auto-commit before boundary anchors and after accepted steps so no dirty-tree state surfaces as a user stop (scope: `packages/core/src/workflow/boundary`; expected commit: `fix: auto-close workflow dirty git boundaries`).
+12. [PENDING] Git Commit: `fix: auto-close workflow dirty git boundaries` (hash: TBD)
 13. [TODO] `orchestrator-stop-gate.phase2.dirty-git.task3` Add regression coverage for Quality Gates restart with workflow-owned script changes and for unclassified user files so Core commits (step + preserve) and continues instead of asking the user how to handle dirty files (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/workflow/boundary, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow dirty git auto commit`).
 14. [TODO] Git Commit: `test: verify workflow dirty git auto commit` (hash: TBD)
 

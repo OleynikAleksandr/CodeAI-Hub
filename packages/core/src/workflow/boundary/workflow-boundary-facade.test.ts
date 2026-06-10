@@ -14,7 +14,6 @@ import { WorkflowRollbackCoordinator } from "./workflow-rollback-coordinator";
 
 const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
-const PRE_STEP_ROLLBACK_ANCHOR_RE = /pre-step rollback anchor/u;
 const DESCRIPTION_BOUNDARY_STAGE = "description";
 const SETTINGS_RELATIVE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/settings\/settings\.json/u;
@@ -263,35 +262,6 @@ test("WorkflowRollbackCoordinator preserves mutable settings outside Clear rollb
     assert.doesNotMatch(headTreeFiles, SETTINGS_RELATIVE_RE);
     assert.doesNotMatch(headTreeFiles, LOCALIZATION_RELATIVE_RE);
     assert.match(headTreeFiles, PROVIDER_CONFIG_RELATIVE_RE);
-  } finally {
-    await rm(workspaceRoot, { force: true, recursive: true });
-  }
-});
-
-test("WorkflowBoundaryFacade refuses to create a boundary on a dirty tree", async () => {
-  const workspaceRoot = await createWorkspace();
-  try {
-    const facade = new WorkflowBoundaryFacade({
-      clock: () => "2026-05-25T00:00:00.000Z",
-    });
-    await facade.ensureBoundary({
-      stage: "description",
-      workspaceRoot,
-      workspaceSlug: WORKSPACE_SLUG,
-    });
-    await writeText(
-      path.join(workspaceRoot, "doc", "TODO", "stages", "diagram.md"),
-      "stage bootstrap\n"
-    );
-
-    await assert.rejects(
-      facade.ensureBoundary({
-        stage: "diagram_modules",
-        workspaceRoot,
-        workspaceSlug: WORKSPACE_SLUG,
-      }),
-      PRE_STEP_ROLLBACK_ANCHOR_RE
-    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

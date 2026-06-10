@@ -38,21 +38,20 @@ export interface WorkflowBoundaryRestoreParams {
   readonly workspaceSlug: string;
 }
 
-const formatDirtyBoundaryError = (paths: readonly string[]): string =>
-  [
-    "Workflow boundary cannot be created because the workspace Git tree is dirty.",
-    "A boundary is a pre-step rollback anchor, so Core must create it before any stage bootstrap or provider output is written.",
-    "Commit, restore, or classify these paths before starting the workflow stage:",
-    ...paths.map((value) => `- ${value}`),
-  ].join("\n");
+const PRESERVE_COMMIT_MESSAGE = "chore: preserve workspace changes";
+const GIT_STATUS_PATH_OFFSET = 3;
+const RENAME_SEPARATOR = " -> ";
+const CODEAI_HUB_PREFIX = ".codeai-hub";
 
-const isRecoverableDescriptionBootstrap = (params: {
-  readonly dirtyPaths: readonly string[];
-  readonly stage: WorkflowStageId;
-}): boolean =>
-  params.stage === "description" &&
-  params.dirtyPaths.length === 1 &&
-  params.dirtyPaths[0] === "?? .codeai-hub/";
+const extractGitStatusPath = (entry: string): string => {
+  const value = entry.slice(GIT_STATUS_PATH_OFFSET).trim();
+  return value.includes(RENAME_SEPARATOR)
+    ? (value.split(RENAME_SEPARATOR).at(-1) ?? value).trim()
+    : value;
+};
+
+const isWorkspaceCapsulePath = (value: string): boolean =>
+  value === CODEAI_HUB_PREFIX || value.startsWith(`${CODEAI_HUB_PREFIX}/`);
 
 export class WorkflowBoundaryFacade {
   private static readonly workspaceQueues = new Map<string, Promise<void>>();
@@ -116,21 +115,26 @@ export class WorkflowBoundaryFacade {
       capsule,
       entries: nonSettingsDirtyPaths,
     });
-    if (
-      blockingDirtyPaths.length > 0 &&
-      !isRecoverableDescriptionBootstrap({
-        dirtyPaths: blockingDirtyPaths,
-        stage: params.stage,
-      })
-    ) {
-      throw new Error(formatDirtyBoundaryError(blockingDirtyPaths));
+    const dirtyFilePaths = blockingDirtyPaths.map(extractGitStatusPath);
+    const capsuleDirty = dirtyFilePaths.some(isWorkspaceCapsulePath);
+    const preservePaths = [
+      ...new Set(
+        dirtyFilePaths.filter((value) => !isWorkspaceCapsulePath(value))
+      ),
+    ];
+    if (preservePaths.length > 0) {
+      await this.#git.commit({
+        commitMessage: PRESERVE_COMMIT_MESSAGE,
+        paths: preservePaths,
+        workspaceRoot: params.workspaceRoot,
+      });
     }
 
     const commitMessage = buildWorkflowBoundaryCommitMessage(params.stage);
     const boundaryCommit = await this.#git.commit({
       allowEmpty: true,
       commitMessage,
-      paths: blockingDirtyPaths.length > 0 ? [".codeai-hub"] : undefined,
+      paths: capsuleDirty ? [CODEAI_HUB_PREFIX] : undefined,
       workspaceRoot: params.workspaceRoot,
     });
     await this.#registryStore.recordBoundary({

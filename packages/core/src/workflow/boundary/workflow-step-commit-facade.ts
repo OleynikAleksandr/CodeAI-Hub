@@ -75,12 +75,7 @@ const buildAcceptedStepCommitMessage = (stage: WorkflowStageId): string =>
 const buildResidualDocumentsCommitMessage = (stage: WorkflowStageId): string =>
   `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} residual documents`;
 
-const formatDirtyTreeError = (paths: readonly string[]): string =>
-  [
-    "Workflow step accepted, but Git is still dirty after the Core commit.",
-    "The next workflow step cannot start until these paths are classified, committed, or ignored:",
-    ...paths.map((value) => `- ${value}`),
-  ].join("\n");
+const PRESERVE_COMMIT_MESSAGE = "chore: preserve workspace changes";
 
 const splitGitPath = (value: string): readonly string[] => value.split("/");
 
@@ -230,7 +225,11 @@ export class WorkflowStepCommitFacade {
       params.workspaceRoot
     );
     if (remainingDirtyPaths.length > 0) {
-      throw new Error(formatDirtyTreeError(remainingDirtyPaths));
+      await this.#git.commit({
+        commitMessage: PRESERVE_COMMIT_MESSAGE,
+        paths: [...new Set(remainingDirtyPaths.map(extractGitStatusPath))],
+        workspaceRoot: params.workspaceRoot,
+      });
     }
     return {
       commit,
