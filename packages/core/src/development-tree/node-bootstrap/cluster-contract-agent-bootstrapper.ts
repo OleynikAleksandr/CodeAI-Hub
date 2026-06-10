@@ -1,7 +1,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  loadArtifactsForTheUserLanguage,
+  loadReasoningLanguage,
+} from "../../config/provider-settings-snapshot";
 import type { SessionModelBinding } from "../../session-model-binding";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import {
   ClusterContractPlanWriter,
   type ClusterContractPlanWriterResult,
@@ -113,6 +118,15 @@ const readOptionalText = (
   relativePath: string
 ): Promise<string | null> =>
   readFile(path.join(workspaceRoot, relativePath), "utf8").catch(() => null);
+
+const resolveSettingsPath = (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  }).settingsFile.absolutePath;
 
 const readUnlockState = async (params: {
   readonly partId: string;
@@ -318,11 +332,16 @@ export class ClusterContractAgentBootstrapper {
     if (!(params.sessionId && this.options.gateway.handleMessage)) {
       return false;
     }
+    const settingsPath = resolveSettingsPath({
+      workspaceRoot: params.worktreePath,
+      workspaceSlug: params.workspaceSlug,
+    });
     const prompt = this.promptBuilder.buildPrompt({
       applicationSkeletonMap: await readOptionalText(
         params.worktreePath,
         `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`
       ),
+      artifactLanguage: loadArtifactsForTheUserLanguage(settingsPath),
       clusterId: params.clusterId,
       contractSeed: params.contractSeed,
       orderPlanJson:
@@ -357,6 +376,7 @@ export class ClusterContractAgentBootstrapper {
         params.worktreePath,
         `.codeai-hub/${params.workspaceSlug}/quality_gates/quality-gates.json`
       ),
+      responseLanguage: loadReasoningLanguage(settingsPath),
       workspaceSlug: params.workspaceSlug,
     });
     await this.options.gateway.handleMessage(params.sessionId, prompt);

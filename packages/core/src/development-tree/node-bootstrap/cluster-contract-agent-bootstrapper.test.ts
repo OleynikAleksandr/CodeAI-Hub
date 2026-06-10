@@ -12,6 +12,39 @@ import { ClusterContractAgentBootstrapper } from "./cluster-contract-agent-boots
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "finder-widget";
 const CLUSTER_ID = "note-selection-cluster";
+const RUSSIAN_CHAT_LANGUAGE_RE = /Chat language code: `ru`/u;
+const RUSSIAN_ARTIFACT_LANGUAGE_RE = /Artifact prose language code: `ru`/u;
+const RUSSIAN_LOCALIZED_INSTRUCTION_RE =
+  /Общайся с пользователем на языке `ru`/u;
+
+const writeGlobalLocalizationSettings = async (
+  workspaceRoot: string
+): Promise<string> => {
+  const settingsPath = path.join(workspaceRoot, "global", "settings.json");
+  await mkdir(path.dirname(settingsPath), { recursive: true });
+  await writeFile(
+    settingsPath,
+    `${JSON.stringify(
+      {
+        general: {
+          localization: {
+            categories: {
+              artifactsForTheUser: "ru",
+              messagesForTheUser: "ru",
+              reasoning: "ru",
+              systemFeedback: "ru",
+            },
+            defaultLanguage: "en",
+          },
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+  return settingsPath;
+};
 
 const writeUnlockState = async (workspaceRoot: string): Promise<void> => {
   const relativePath = createDevelopmentOrderUnlockStatePath({
@@ -68,7 +101,10 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "cluster-contract-bootstrap-")
   );
+  const previousGlobalSettingsPath = process.env.CODEAI_GLOBAL_SETTINGS_PATH;
   try {
+    process.env.CODEAI_GLOBAL_SETTINGS_PATH =
+      await writeGlobalLocalizationSettings(workspaceRoot);
     await writeUnlockState(workspaceRoot);
     const planCommits: {
       readonly commitMessage: string;
@@ -79,6 +115,7 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
       readonly stage: string;
       readonly workspacePath: string;
     }[] = [];
+    const sentPrompts: string[] = [];
     const bootstrapper = new ClusterContractAgentBootstrapper(
       {
         gateway: {
@@ -88,6 +125,10 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
               workspacePath: options.workspacePath,
             });
             return Promise.resolve({ id: "cluster-session-1" });
+          },
+          handleMessage: (_sessionId, content) => {
+            sentPrompts.push(content);
+            return Promise.resolve();
           },
         },
         providerId: "codex",
@@ -135,7 +176,12 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
 
     assert.equal(results.length, 1);
     assert.equal(results[0]?.clusterId, CLUSTER_ID);
+    assert.equal(results[0]?.firstMessageSent, true);
     assert.equal(results[0]?.sessionId, "cluster-session-1");
+    assert.equal(sentPrompts.length, 1);
+    assert.match(sentPrompts[0] ?? "", RUSSIAN_CHAT_LANGUAGE_RE);
+    assert.match(sentPrompts[0] ?? "", RUSSIAN_ARTIFACT_LANGUAGE_RE);
+    assert.match(sentPrompts[0] ?? "", RUSSIAN_LOCALIZED_INSTRUCTION_RE);
     assert.deepEqual(planCommits, [
       {
         commitMessage: `chore: initialize ${CLUSTER_ID} cluster contract workflow`,
@@ -197,6 +243,11 @@ test("ClusterContractAgentBootstrapper opens only unlocked cluster contract sess
       `${workspaceRoot}.worktrees/${CLUSTER_ID}`
     );
   } finally {
+    if (previousGlobalSettingsPath === undefined) {
+      process.env.CODEAI_GLOBAL_SETTINGS_PATH = undefined;
+    } else {
+      process.env.CODEAI_GLOBAL_SETTINGS_PATH = previousGlobalSettingsPath;
+    }
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });

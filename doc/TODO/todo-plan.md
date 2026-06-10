@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "f294f6693",
+  "lastRecordedCommit": "b2e16641a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6g.vsix.task1",
-  "expectedCommitMessage": "build: package downstream merge prevention vsix release",
+  "currentTaskId": "qg-restore-isolation.phase6i.cluster-language.task1",
+  "expectedCommitMessage": "fix: localize cluster contract prompts",
   "debt": {
-    "expectedCommitMessage": "build: package downstream merge prevention vsix release",
-    "preCommitHead": "f294f6693",
+    "expectedCommitMessage": "fix: localize cluster contract prompts",
+    "preCommitHead": "b2e16641a",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6g.vsix.task1"
+    "taskId": "qg-restore-isolation.phase6i.cluster-language.task1"
   }
 }
 ```
@@ -177,13 +177,40 @@
 42. [DONE] `qg-restore-isolation.phase6g.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare downstream merge prevention release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.488`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
 43. [DONE] Git Commit: `build: prepare downstream merge prevention release artifacts` (hash: f294f6693)
 44. [DONE] `qg-restore-isolation.phase6g.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package downstream merge prevention vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for `1.2.488`; Step 7 SDK exclusions, local artifact validation, markdown links, duplication check, production dependency pruning, VSIX package creation, runtime package surface verification, and dev dependency restore passed. VSIX: `codeai-hub-1.2.488.vsix` (5.1M).
-45. [PENDING] Git Commit: `build: package downstream merge prevention vsix release` (hash: TBD)
+45. [DONE] Git Commit: `build: package downstream merge prevention vsix release` (hash: b2e16641a)
 
 ## Phase 6H - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest After Downstream Merge Prevention
 
-46. [TODO] `qg-restore-isolation.phase6h.user-retest.task1` User installs the new release and retests Product Part / cluster-contract acceptance: accepting a cluster contract should leave the worktree active, record boundary acceptance, and avoid main-workspace draft-document copy or merged status until code-ready downstream content exists (scope: `manual retest`; no commit expected).
+46. [DONE] `qg-restore-isolation.phase6h.user-retest.task1` User installs the new release and retests Product Part / cluster-contract acceptance: accepting a cluster contract should leave the worktree active, record boundary acceptance, and avoid main-workspace draft-document copy or merged status until code-ready downstream content exists (scope: `manual retest`; no commit expected). Result: v1.2.488 exposed a downstream Cluster Contract language regression: the first managed assignment bypassed the shared Development Tree node language contract, so the Codex sub-agent inferred English for user-facing chat despite global settings using `reasoning=ru` and `artifactsForTheUser=ru`.
+
+## Phase 6I - Cluster Contract Language Contract Fix (owner: Codex, updated: 2026-06-10)
+
+### Stream: Localized Cluster Contract First Prompt
+
+50. [DONE] `qg-restore-isolation.phase6i.cluster-language.task1` Add the runtime language contract to downstream Cluster Contract first prompts and resolve chat/artifact languages from global localization settings through the cluster-contract bootstrap path (scope: `packages/core/src/development-tree/cluster-workflow/cluster-contract-prompt-builder.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/cluster-contract-agent-bootstrapper.test.ts`; expected commit: `fix: localize cluster contract prompts`). Result: Cluster Contract first prompts now start with a runtime language contract, including a Russian reinforcement block when `reasoning=ru`; bootstrap resolves chat/artifact languages through existing global localization settings loaders before sending the first prompt. Regression test verifies a global `CODEAI_GLOBAL_SETTINGS_PATH` with `reasoning=ru` and `artifactsForTheUser=ru` produces a Russian language contract in the first prompt. Targeted tests passed 3/3; Ultracite check passed for changed files; `npm run build --workspace=@codeai-hub/core` passed.
+51. [PENDING] Git Commit: `fix: localize cluster contract prompts` (hash: TBD)
+
+## Phase 6J - Release Build (owner: Codex, updated: 2026-06-10)
+
+### Stream: Release Notes
+
+52. [TODO] `qg-restore-isolation.phase6j.release-notes.task1` Prepare release notes for the user-authorized cluster-contract language fix release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster contract language release notes`).
+53. [TODO] Git Commit: `docs: prepare cluster contract language release notes` (hash: TBD)
+
+### Stream: Release Artifacts
+
+54. [TODO] `qg-restore-isolation.phase6j.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract language release artifacts`).
+55. [TODO] Git Commit: `build: prepare cluster contract language release artifacts` (hash: TBD)
+56. [TODO] `qg-restore-isolation.phase6j.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract language vsix release`).
+57. [TODO] Git Commit: `build: package cluster contract language vsix release` (hash: TBD)
+
+## Phase 6K - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
+
+### Stream: Retest After Cluster Contract Language Fix
+
+58. [TODO] `qg-restore-isolation.phase6k.user-retest.task1` User installs the new release and retests downstream Cluster Contract startup: the first agent progress/final chat should be in Russian while canonical file names, ids, JSON keys, method/event names, and status tokens remain English (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 

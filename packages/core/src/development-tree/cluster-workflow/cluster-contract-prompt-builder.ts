@@ -2,6 +2,7 @@ import type { DevelopmentOrderContractSeed } from "../product-part-workflow/deve
 
 export interface ClusterContractPromptBuilderRequest {
   readonly applicationSkeletonMap?: string | null;
+  readonly artifactLanguage?: string;
   readonly clusterId: string;
   readonly contractSeed?: DevelopmentOrderContractSeed | null;
   readonly orderPlanJson: string;
@@ -9,8 +10,17 @@ export interface ClusterContractPromptBuilderRequest {
   readonly partId: string;
   readonly productPartBrief: string;
   readonly qualityGatesContract?: string | null;
+  readonly responseLanguage?: string;
   readonly workspaceSlug: string;
 }
+
+const RUSSIAN_LANGUAGE_CODES = new Set(["ru", "ru-ru"]);
+
+const normalizeLanguage = (value: string | undefined): string =>
+  value?.trim() || "en";
+
+const isRussianLanguage = (value: string): boolean =>
+  RUSSIAN_LANGUAGE_CODES.has(value.toLowerCase());
 
 const createArtifactPath = (params: {
   readonly clusterId: string;
@@ -28,6 +38,31 @@ const fenced = (label: string, content: string | null | undefined): string =>
 const fencedJson = (label: string, content: unknown): string =>
   fenced(label, content ? JSON.stringify(content, null, 2) : null);
 
+const createLanguageContractLines = (request: {
+  readonly artifactLanguage?: string;
+  readonly responseLanguage?: string;
+}): readonly string[] => {
+  const chatLanguage = normalizeLanguage(request.responseLanguage);
+  const artifactLanguage = normalizeLanguage(request.artifactLanguage);
+  const localizedLines = isRussianLanguage(chatLanguage)
+    ? [
+        "Локализованный пакет инструкций CodeAI Hub (ru):",
+        `- Общайся с пользователем на языке \`${chatLanguage}\`; progress updates и финальный ответ должны быть на русском языке.`,
+        `- Описательный текст в draft-артефактах пиши на языке \`${artifactLanguage}\`.`,
+        "- Английские file names, ids, JSON keys, method/event names, status tokens, YAML keys, HTML comments и structural headings являются protected canonical tokens; не переводи их.",
+        "",
+      ]
+    : [];
+  return [
+    ...localizedLines,
+    "Workflow runtime language contract:",
+    `- Chat language code: \`${chatLanguage}\` (from Settings > General > Reasoning). Use this language for user-facing progress updates and final chat responses.`,
+    `- Artifact prose language code: \`${artifactLanguage}\` (from Settings > General > Artifacts for the User). Use this language for explanatory prose in Markdown draft artifacts.`,
+    "- English instructions, examples, file names, ids, JSON keys, method/event names, status tokens, YAML keys, HTML comments, and structural headings are format-only canonical tokens; do not infer English chat or artifact prose from them.",
+    "- Keep canonical technical tokens in English, but write descriptions, assumptions, open questions, and user-facing notes in the artifact prose language.",
+  ];
+};
+
 export class ClusterContractPromptBuilder {
   buildPrompt(request: ClusterContractPromptBuilderRequest): string {
     const targets = [
@@ -44,6 +79,8 @@ export class ClusterContractPromptBuilder {
       })
     );
     return [
+      ...createLanguageContractLines(request),
+      "",
       `Core managed assignment: create the cluster contract for Product Part \`${request.partId}\`, Cluster \`${request.clusterId}\`.`,
       "",
       "You are a scoped cluster-contract sub-agent. Do not implement code and do not open module agents. Produce the cluster-level specification and facade contract that downstream module agents will use.",
