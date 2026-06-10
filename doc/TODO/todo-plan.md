@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "daf5eb48b",
+  "lastRecordedCommit": "fd521863b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase53.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare worktree runtime attachment release notes",
+  "currentTaskId": "development-tree-cluster-contract.phase53.release-state.task1",
+  "expectedCommitMessage": "docs: checkpoint worktree runtime attachment release build state",
   "debt": {
-    "expectedCommitMessage": "docs: prepare worktree runtime attachment release notes",
-    "preCommitHead": "daf5eb48b",
+    "expectedCommitMessage": "docs: checkpoint worktree runtime attachment release build state",
+    "preCommitHead": "fd521863b",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase53.release-notes.task1"
+    "taskId": "development-tree-cluster-contract.phase53.release-state.task1"
   }
 }
 ```
@@ -763,9 +763,9 @@ Verification evidence:
 
 329. [DONE] `development-tree-cluster-contract.phase53.release-confirm.task1` User explicitly requested building a new release after the Core-owned worktree runtime attachment fix (scope: user workflow; expected commit: none).
 330. [DONE] `development-tree-cluster-contract.phase53.release-notes.task1` Prepare release notes for the attached worktree runtime streaming fix before bumping versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare worktree runtime attachment release notes`).
-331. [PENDING] Git Commit: `docs: prepare worktree runtime attachment release notes` (hash: TBD)
-332. [TODO] `development-tree-cluster-contract.phase53.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint worktree runtime attachment release build state`).
-333. [TODO] Git Commit: `docs: checkpoint worktree runtime attachment release build state` (hash: TBD)
+331. [DONE] Git Commit: `docs: prepare worktree runtime attachment release notes` (hash: fd521863b)
+332. [DONE] `development-tree-cluster-contract.phase53.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint worktree runtime attachment release build state`).
+333. [PENDING] Git Commit: `docs: checkpoint worktree runtime attachment release build state` (hash: TBD)
 334. [TODO] `development-tree-cluster-contract.phase53.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare worktree runtime attachment release artifacts`).
 335. [TODO] Git Commit: `build: prepare worktree runtime attachment release artifacts` (hash: TBD)
 336. [TODO] `development-tree-cluster-contract.phase53.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package worktree runtime attachment vsix release`).
