@@ -290,15 +290,17 @@ Verification algorithm:
 
 1. Re-read `quality-gates.json`, `package.json`, `.husky/pre-commit`, `.husky/pre-push`, and every integrated path listed in the contract.
 2. Resolve every `npm run <script>` command referenced by `.husky/pre-commit` and `.husky/pre-push` against `package.json.scripts`. Missing scripts are verification failures even if Markdown evidence claims they exist.
-3. Run all required formal verification commands that exist in this workspace:
+3. Build one ordered verification plan. Run formal verification commands sequentially in that order; do not run these commands in parallel tool calls.
+4. Treat dependency restore, install, clean, delete, and any hook or aggregate command that may invoke them as exclusive workspace mutation commands. Do not start the next command until the previous command exits and dependency/install side effects have settled.
+5. Run all required formal verification commands that exist in this workspace:
    - `sh .husky/pre-commit`
    - `sh .husky/pre-push`
    - the `proposedCommand` of every gate listed in `requiredBeforeModuleExecution`
    - aggregate commands such as `npm run qg:all`, `npm run qg:before-commit`, `npm run qg:before-push` when those scripts exist (optional convenience evidence)
-4. Confirm that no gate id still listed in `plannedRequiredAfterIntegration` is also required for enforcement.
-5. Confirm that every path in `integratedPaths` still exists.
-6. Update `quality-gates.json` with `verificationState: "verified"` and command evidence only after every required command and hook check succeeds.
-7. If any command fails or any required script/path/hook evidence is missing, repair the accepted gate infrastructure and rerun the formal verification commands before reporting readiness.
+6. Confirm that no gate id still listed in `plannedRequiredAfterIntegration` is also required for enforcement.
+7. Confirm that every path in `integratedPaths` still exists.
+8. Update `quality-gates.json` with `verificationState: "verified"`, `verificationEvidence.executionMode: "sequential"`, and per-command evidence entries containing positive integer `sequence`, `command`, `status: "passed"`, and `exitCode: 0` only after every required command and hook check succeeds.
+9. If any command fails or any required script/path/hook evidence is missing, repair the accepted gate infrastructure and rerun the formal verification commands sequentially before reporting readiness.
 
 Final verification response: summarize command results, repaired paths if any, and readiness for Core validation. Do not run Git commands or edit stage todo files.
 
@@ -355,5 +357,5 @@ Before each final response, verify:
 - Contract-draft-pass final response is allowed only after the four canonical draft artifacts are ready for runtime structural validation and user review;
 - Phase 2 review revisions only touch the canonical Quality Gates research/contract artifacts; never integrate or self-accept;
 - Phase 3 final response is allowed only after the accepted gate infrastructure is ready for runtime/user review; `unlocked` language is not allowed;
-- Phase 4 final response is allowed only after formal gate commands and hook scripts have been run or explicitly proven absent/not applicable by the runtime prompt;
+- Phase 4 final response is allowed only after formal gate commands and hook scripts have been run sequentially or explicitly proven absent/not applicable by the runtime prompt, with `verificationEvidence.executionMode: "sequential"` and ordered command evidence recorded;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

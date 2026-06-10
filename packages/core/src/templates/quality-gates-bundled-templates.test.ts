@@ -64,6 +64,13 @@ const VERIFY_HOOK_SCRIPT_RESOLUTION_RE =
   /Resolve every `npm run <script>` command referenced by `\.husky\/pre-commit` and `\.husky\/pre-push` against `package\.json\.scripts`/u;
 const VERIFY_REQUIRED_COMMANDS_RE =
   /sh \.husky\/pre-commit[\s\S]*sh \.husky\/pre-push[\s\S]*requiredBeforeModuleExecution[\s\S]*npm run qg:all[\s\S]*npm run qg:before-commit[\s\S]*npm run qg:before-push/u;
+const VERIFY_SEQUENTIAL_PLAN_RE = /Build one ordered verification plan/u;
+const VERIFY_NO_PARALLEL_RE =
+  /do not run these commands in parallel tool calls/u;
+const VERIFY_EXCLUSIVE_MUTATION_RE = /exclusive workspace mutation commands/u;
+const VERIFY_SEQUENTIAL_EVIDENCE_RE =
+  /verificationEvidence\.executionMode: "sequential"/u;
+const VERIFY_SEQUENCE_EVIDENCE_RE = /positive integer `sequence`/u;
 const VERIFIED_STATE_RE = /verificationState: "verified"/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
@@ -180,6 +187,11 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, PHASE3_NOT_TERMINAL_RE);
   assert.match(prompt, VERIFY_HOOK_SCRIPT_RESOLUTION_RE);
   assert.match(prompt, VERIFY_REQUIRED_COMMANDS_RE);
+  assert.match(prompt, VERIFY_SEQUENTIAL_PLAN_RE);
+  assert.match(prompt, VERIFY_NO_PARALLEL_RE);
+  assert.match(prompt, VERIFY_EXCLUSIVE_MUTATION_RE);
+  assert.match(prompt, VERIFY_SEQUENTIAL_EVIDENCE_RE);
+  assert.match(prompt, VERIFY_SEQUENCE_EVIDENCE_RE);
   assert.match(prompt, VERIFIED_STATE_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.match(prompt, PLANNED_REQUIRED_ACTIVE_RE);

@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "3d13b207c",
+  "lastRecordedCommit": "edfb5a605",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase2.prompts.task1",
-  "expectedCommitMessage": "fix: serialize quality gates verification prompts",
+  "currentTaskId": "qg-restore-isolation.phase2.assets.task1",
+  "expectedCommitMessage": "fix: sync quality gates sequential verification asset",
   "debt": {
-    "expectedCommitMessage": "fix: serialize quality gates verification prompts",
-    "preCommitHead": "3d13b207c",
+    "expectedCommitMessage": "fix: sync quality gates sequential verification asset",
+    "preCommitHead": "edfb5a605",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase2.prompts.task1"
+    "taskId": "qg-restore-isolation.phase2.assets.task1"
   }
 }
 ```
@@ -70,9 +70,9 @@
 ### Stream: Provider Prompt Contract
 
 7. [DONE] `qg-restore-isolation.phase2.prompts.task1` Embed the sequential formal verification contract into Core Phase 4 continuation/repair prompts and cover it with prompt tests (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-prompt-dispatch.ts`; expected commit: `fix: serialize quality gates verification prompts`). Result: Phase 4 repair and initial continuation prompts now share the sequential verification contract; targeted prompt test passed 3/3; Ultracite check passed for changed prompt files.
-8. [PENDING] Git Commit: `fix: serialize quality gates verification prompts` (hash: TBD)
-9. [TODO] `qg-restore-isolation.phase2.assets.task1` Sync the bundled Quality Gates agent asset/template contract so generated Phase 4 prompts forbid parallel verification command execution (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/source/model-invocation-templates.json, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `fix: sync quality gates sequential verification asset`).
-10. [TODO] Git Commit: `fix: sync quality gates sequential verification asset` (hash: TBD)
+8. [DONE] Git Commit: `fix: serialize quality gates verification prompts` (hash: edfb5a605)
+9. [DONE] `qg-restore-isolation.phase2.assets.task1` Sync the bundled Quality Gates agent asset/template contract so generated Phase 4 prompts forbid parallel verification command execution (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `fix: sync quality gates sequential verification asset`). Result: `node scripts/generate-bundled-templates.js` regenerated `bundled-templates.ts`; bundled Quality Gates template test passed 3/3; Ultracite check passed for changed asset/template files.
+10. [PENDING] Git Commit: `fix: sync quality gates sequential verification asset` (hash: TBD)
 
 ## Phase 3 - Documentation Sync (owner: Codex, updated: 2026-06-10)
 
