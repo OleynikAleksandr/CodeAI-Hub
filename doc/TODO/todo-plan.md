@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "8fd7868b3",
+  "lastRecordedCommit": "348ac1027",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9a.build-all.task1",
-  "expectedCommitMessage": "build: prepare repair limit acceptance release artifacts",
+  "currentTaskId": "orchestrator-stop-gate.phase9a.vsix.task1",
+  "expectedCommitMessage": "build: package repair limit acceptance vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare repair limit acceptance release artifacts",
-    "preCommitHead": "8fd7868b3",
+    "expectedCommitMessage": "build: package repair limit acceptance vsix release",
+    "preCommitHead": "348ac1027",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9a.build-all.task1"
+    "taskId": "orchestrator-stop-gate.phase9a.vsix.task1"
   }
 }
 ```
@@ -230,9 +230,9 @@ Accepted model: the orchestrator validates only what affects downstream quality 
 80. [DONE] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
 81. [DONE] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: 8fd7868b3)
 82. [DONE] `orchestrator-stop-gate.phase9a.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare repair limit acceptance release artifacts`).
-83. [PENDING] Git Commit: `build: prepare repair limit acceptance release artifacts` (hash: TBD)
-84. [TODO] `orchestrator-stop-gate.phase9a.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `build: package repair limit acceptance vsix release`).
-85. [TODO] Git Commit: `build: package repair limit acceptance vsix release` (hash: TBD)
+83. [DONE] Git Commit: `build: prepare repair limit acceptance release artifacts` (hash: 348ac1027)
+84. [DONE] `orchestrator-stop-gate.phase9a.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `build: package repair limit acceptance vsix release`).
+85. [PENDING] Git Commit: `build: package repair limit acceptance vsix release` (hash: TBD)
 
 ### Stream: FinderWidget Retest Round 2
 
