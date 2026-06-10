@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.487** (Sequential Quality Gates Verification)
+**Current Release — v1.2.488** (Downstream Boundary Acceptance)
+
+This release stops the first downstream Cluster Contract acceptance from acting
+like a documentation merge into the main workspace. When a cluster contract is
+accepted, Core now records a `.boundary-accepted.json` coordination checkpoint
+in the main workspace and leaves the downstream worktree active for the next
+cluster facade and module implementation work.
+
+Accepted cluster drafts are no longer copied into mainline materialized
+Development Tree folders, and the Product Part unlock state is not marked
+`merged` at this stage. The `merged` state is reserved for a later code-ready
+integration of the cluster facade plus module contents, matching the standalone
+module merge boundary.
+
+Retest focus: continue from Product Part into the first Cluster Contract. After
+accepting the cluster contract, main should contain only the boundary-accepted
+coordination artifact, the cluster worktree should remain available, and no
+draft-only cluster documentation should appear as a completed mainline merge.
+
+**Previous Release — v1.2.487** (Sequential Quality Gates Verification)
 
 This release hardens Quality Gates Phase 4 formal verification for
 restore/install-style commands. Core now accepts a `verified` Quality Gates

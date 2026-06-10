@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.488] - 2026-06-10
+### Fixed
+- **Cluster Contract acceptance no longer performs a draft-only mainline merge.** Accepting a downstream Cluster Contract now writes a Core-owned `.boundary-accepted.json` coordination checkpoint instead of copying `ClusterSpecification` / `ClusterFacadeContract` draft artifacts into the main workspace.
+- **Cluster unlock state is no longer marked `merged` before code exists.** The downstream cluster worktree remains active after contract acceptance, and the `merged` state is reserved for a later code-ready integration that includes the cluster facade and module contents.
+
+### Changed
+- **Development Tree planning now distinguishes boundary acceptance from merge.** The downstream refactor plan defines `boundary_accepted`, `worktree_active`, `code_ready`, and `merged` as separate lifecycle states so future Cluster and Standalone Module work can share the same code-ready merge rule.
+
+### Verification
+- `npx tsx --test packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.test.ts`
+- `npx ultracite check packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.487] - 2026-06-10
 ### Fixed
 - **Quality Gates Phase 4 restore races are rejected.** A `verified` Quality Gates state now requires explicit sequential verification evidence (`verificationEvidence.executionMode: "sequential"` plus ordered command entries with `sequence` and `exitCode: 0`), so restore/install/delete-style formal verification cannot be accepted as a parallel or ambiguous run.

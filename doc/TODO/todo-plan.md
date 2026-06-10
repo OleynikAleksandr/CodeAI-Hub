@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "8866e758c",
+  "lastRecordedCommit": "11839a871",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6f.boundary-accepted.task1",
-  "expectedCommitMessage": "fix: stop cluster contract doc-only main merge",
+  "currentTaskId": "qg-restore-isolation.phase6g.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare downstream merge prevention release notes",
   "debt": {
-    "expectedCommitMessage": "fix: stop cluster contract doc-only main merge",
-    "preCommitHead": "8866e758c",
+    "expectedCommitMessage": "docs: prepare downstream merge prevention release notes",
+    "preCommitHead": "11839a871",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6f.boundary-accepted.task1"
+    "taskId": "qg-restore-isolation.phase6g.release-notes.task1"
   }
 }
 ```
@@ -163,14 +163,14 @@
 ### Stream: Boundary Accepted Without Mainline Doc Merge
 
 38. [DONE] `qg-restore-isolation.phase6f.boundary-accepted.task1` Stop cluster contract review acceptance from copying draft documentation artifacts into the main workspace or marking the cluster as merged; record a boundary-accepted checkpoint instead while leaving the downstream worktree active for future facade/module code work, including removal of the now-dead merged-state helper export required by `check:knip` (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts`; expected commit: `fix: stop cluster contract doc-only main merge`). Result: cluster review acceptance now writes `.boundary-accepted.json`, does not copy cluster draft artifacts into main, does not mutate unlock-state to `merged`, and tells the user that no mainline documentation merge was performed. Targeted tests passed 2/2 (`development-tree-node-merge-service.test.ts`, `cluster-contract-review-controller.test.ts`); Ultracite check passed for changed files; `npm run build --workspace=@codeai-hub/core` passed.
-39. [PENDING] Git Commit: `fix: stop cluster contract doc-only main merge` (hash: TBD)
+39. [DONE] Git Commit: `fix: stop cluster contract doc-only main merge` (hash: 11839a871)
 
 ## Phase 6G - Release Build (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Release Notes
 
-40. [TODO] `qg-restore-isolation.phase6g.release-notes.task1` Prepare release notes for the user-authorized downstream doc-only merge prevention release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare downstream merge prevention release notes`).
-41. [TODO] Git Commit: `docs: prepare downstream merge prevention release notes` (hash: TBD)
+40. [DONE] `qg-restore-isolation.phase6g.release-notes.task1` Prepare release notes for the user-authorized downstream doc-only merge prevention release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare downstream merge prevention release notes`). Result: README now announces future release `v1.2.488` as Downstream Boundary Acceptance, and CHANGELOG records that cluster contract acceptance writes a boundary checkpoint instead of performing a draft-only mainline merge.
+41. [PENDING] Git Commit: `docs: prepare downstream merge prevention release notes` (hash: TBD)
 
 ### Stream: Release Artifacts
 
