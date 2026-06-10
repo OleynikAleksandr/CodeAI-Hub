@@ -18,8 +18,8 @@ const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "finder-widget";
 const CLUSTER_ID = "note-selection-cluster";
-const MERGE_BOUNDARY_SCHEMA_RE =
-  /codeai-development-tree-node-merge-boundary-v1/u;
+const BOUNDARY_ACCEPTED_SCHEMA_RE =
+  /codeai-development-tree-node-boundary-accepted-v1/u;
 const MERGED_STATUS_RE = /"status": "merged"/u;
 const LOCKED_STATUS_RE = /"status": "locked"/u;
 const UNLOCK_STATE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${PART_ID}.unlock-state.json`;
@@ -128,7 +128,7 @@ const writeClusterArtifacts = async (worktreeRoot: string): Promise<void> => {
   );
 };
 
-test("DevelopmentTreeNodeMergeService merges accepted cluster contract files into main workspace", async () => {
+test("DevelopmentTreeNodeMergeService records boundary acceptance without main doc merge", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "development-tree-merge-main-")
   );
@@ -152,42 +152,39 @@ test("DevelopmentTreeNodeMergeService merges accepted cluster contract files int
     ]);
 
     const result =
-      await new DevelopmentTreeNodeMergeService().mergeAcceptedClusterContract({
-        clusterId: CLUSTER_ID,
-        partId: PART_ID,
-        sourceWorkspaceRoot: worktreeRoot,
-        workspaceSlug: WORKSPACE_SLUG,
-      });
+      await new DevelopmentTreeNodeMergeService().recordAcceptedClusterBoundary(
+        {
+          clusterId: CLUSTER_ID,
+          partId: PART_ID,
+          sourceWorkspaceRoot: worktreeRoot,
+          workspaceSlug: WORKSPACE_SLUG,
+        }
+      );
 
     assert.equal(
       await realpath(result.targetWorkspaceRoot),
       await realpath(workspaceRoot)
     );
-    assert.ok(
-      result.copiedPaths.includes(
-        clusterArtifactPath("ClusterSpecification.draft.md")
-      )
-    );
-    assert.equal(
-      await readFile(
+    assert.deepEqual(result.copiedPaths, []);
+    await assert.rejects(
+      readFile(
         path.join(
           workspaceRoot,
           clusterArtifactPath("ClusterSpecification.draft.md")
         ),
         "utf8"
-      ),
-      "# Cluster Specification\n\nAccepted contract.\n"
+      )
     );
     assert.match(
       await readFile(path.join(workspaceRoot, result.boundaryPath), "utf8"),
-      MERGE_BOUNDARY_SCHEMA_RE
+      BOUNDARY_ACCEPTED_SCHEMA_RE
     );
-    assert.ok(result.coordinationCommitHash);
+    assert.ok(result.boundaryCommitHash);
     const unlockState = await readFile(
       path.join(workspaceRoot, UNLOCK_STATE_PATH),
       "utf8"
     );
-    assert.match(unlockState, MERGED_STATUS_RE);
+    assert.doesNotMatch(unlockState, MERGED_STATUS_RE);
     assert.match(unlockState, LOCKED_STATUS_RE);
     assert.equal(await runGit(workspaceRoot, ["status", "--porcelain"]), "");
     assert.equal(await runGit(worktreeRoot, ["status", "--porcelain"]), "");

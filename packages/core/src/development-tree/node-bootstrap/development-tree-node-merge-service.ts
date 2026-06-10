@@ -1,20 +1,8 @@
 import { execFile } from "node:child_process";
-import {
-  copyFile,
-  mkdir,
-  readFile,
-  realpath,
-  stat,
-  writeFile,
-} from "node:fs/promises";
+import { mkdir, realpath, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
-import {
-  createDevelopmentOrderUnlockStatePath,
-  type DevelopmentOrderUnlockState,
-  markDevelopmentOrderClusterMerged,
-} from "../product-part-workflow/development-order-plan-unlock-state";
 
 const execFileAsync = promisify(execFile);
 const WORKTREE_BLOCK_RE = /\n\s*\n/u;
@@ -32,53 +20,19 @@ export interface ClusterContractMergeRequest {
 }
 
 export interface ClusterContractMergeResult {
+  readonly boundaryCommitHash: string;
   readonly boundaryPath: string;
-  readonly coordinationCommitHash: string | null;
   readonly copiedPaths: readonly string[];
-  readonly mergeCommitHash: string;
   readonly sourceHead: string;
   readonly targetWorkspaceRoot: string;
 }
-
-const createArtifactPath = (params: {
-  readonly clusterId: string;
-  readonly fileName: string;
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): string =>
-  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/clusters/${params.clusterId}/${params.fileName}`;
-
-const createReviewResultPath = (params: {
-  readonly clusterId: string;
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): string =>
-  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-clusters/${params.partId}/${params.clusterId}.review-result.json`;
 
 const createBoundaryPath = (params: {
   readonly clusterId: string;
   readonly partId: string;
   readonly workspaceSlug: string;
 }): string =>
-  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-clusters/${params.partId}/${params.clusterId}.merge-boundary.json`;
-
-const requiredCopyPaths = (params: {
-  readonly clusterId: string;
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): readonly string[] => [
-  createArtifactPath({ ...params, fileName: "ClusterSpecification.draft.md" }),
-  createArtifactPath({
-    ...params,
-    fileName: "ClusterSpecification.draft.json",
-  }),
-  createArtifactPath({ ...params, fileName: "ClusterFacadeContract.draft.md" }),
-  createArtifactPath({
-    ...params,
-    fileName: "ClusterFacadeContract.draft.json",
-  }),
-  createReviewResultPath(params),
-];
+  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-clusters/${params.partId}/${params.clusterId}.boundary-accepted.json`;
 
 const parseWorktreeEntries = (output: string): readonly WorktreeEntry[] =>
   output
@@ -125,9 +79,6 @@ const assertClean = async (
   }
 };
 
-const pathExists = async (absolutePath: string): Promise<boolean> =>
-  Boolean(await stat(absolutePath).catch(() => null));
-
 const canonicalPath = async (value: string): Promise<string> =>
   await realpath(value).catch(() => path.resolve(value));
 
@@ -154,7 +105,7 @@ const resolveTargetWorkspaceRoot = async (
 export class DevelopmentTreeNodeMergeService {
   private readonly git = new WorkflowBoundaryGit();
 
-  async mergeAcceptedClusterContract(
+  async recordAcceptedClusterBoundary(
     request: ClusterContractMergeRequest
   ): Promise<ClusterContractMergeResult> {
     const targetWorkspaceRoot = await resolveTargetWorkspaceRoot(
@@ -165,65 +116,32 @@ export class DevelopmentTreeNodeMergeService {
       "--short",
       "HEAD",
     ]);
-    const sourceRoot = await canonicalPath(request.sourceWorkspaceRoot);
-    const targetRoot = await canonicalPath(targetWorkspaceRoot);
     await assertClean(this.git, request.sourceWorkspaceRoot);
     await assertClean(this.git, targetWorkspaceRoot);
-    const copiedPaths =
-      sourceRoot === targetRoot
-        ? []
-        : await this.copyManagedNodeFiles(request, targetWorkspaceRoot);
     const boundaryPath = createBoundaryPath(request);
-    await this.writeMergeBoundary({
+    await this.writeBoundaryAccepted({
       ...request,
       boundaryPath,
-      copiedPaths,
       sourceHead,
       targetWorkspaceRoot,
     });
-    const mergeCommit = await this.git.commit({
-      commitMessage: `docs: merge ${request.clusterId} cluster contract`,
-      paths: [...copiedPaths, boundaryPath],
+    const boundaryCommit = await this.git.commit({
+      commitMessage: `docs: record ${request.clusterId} boundary acceptance`,
+      paths: [boundaryPath],
       workspaceRoot: targetWorkspaceRoot,
     });
-    const coordinationCommitHash = await this.markClusterMerged({
-      ...request,
-      mergeCommitHash: mergeCommit.hash,
-      targetWorkspaceRoot,
-    });
     return {
+      boundaryCommitHash: boundaryCommit.hash,
       boundaryPath,
-      coordinationCommitHash,
-      copiedPaths,
-      mergeCommitHash: mergeCommit.hash,
+      copiedPaths: [],
       sourceHead,
       targetWorkspaceRoot,
     };
   }
 
-  private async copyManagedNodeFiles(
-    request: ClusterContractMergeRequest,
-    targetWorkspaceRoot: string
-  ): Promise<readonly string[]> {
-    const paths = requiredCopyPaths(request);
-    for (const relativePath of paths) {
-      const sourcePath = path.join(request.sourceWorkspaceRoot, relativePath);
-      if (!(await pathExists(sourcePath))) {
-        throw new Error(
-          `Development Tree node merge missing source artifact: ${relativePath}`
-        );
-      }
-      const targetPath = path.join(targetWorkspaceRoot, relativePath);
-      await mkdir(path.dirname(targetPath), { recursive: true });
-      await copyFile(sourcePath, targetPath);
-    }
-    return paths;
-  }
-
-  private async writeMergeBoundary(
+  private async writeBoundaryAccepted(
     request: ClusterContractMergeRequest & {
       readonly boundaryPath: string;
-      readonly copiedPaths: readonly string[];
       readonly sourceHead: string;
       readonly targetWorkspaceRoot: string;
     }
@@ -237,55 +155,21 @@ export class DevelopmentTreeNodeMergeService {
       absolutePath,
       `${JSON.stringify(
         {
-          schema: "codeai-development-tree-node-merge-boundary-v1",
+          schema: "codeai-development-tree-node-boundary-accepted-v1",
+          acceptedAt: new Date().toISOString(),
           clusterId: request.clusterId,
-          copiedPaths: request.copiedPaths,
-          mergedAt: new Date().toISOString(),
+          copiedPaths: [],
           nodeId: `cluster:${request.partId}/${request.clusterId}`,
           partId: request.partId,
           sourceHead: request.sourceHead,
           sourceWorkspaceRoot: request.sourceWorkspaceRoot,
           targetWorkspaceRoot: request.targetWorkspaceRoot,
+          worktreeRemainsActive: true,
         },
         null,
         2
       )}\n`,
       "utf8"
     );
-  }
-
-  private async markClusterMerged(
-    request: ClusterContractMergeRequest & {
-      readonly mergeCommitHash: string;
-      readonly targetWorkspaceRoot: string;
-    }
-  ): Promise<string | null> {
-    const unlockStatePath = createDevelopmentOrderUnlockStatePath(request);
-    const absolutePath = path.join(
-      request.targetWorkspaceRoot,
-      unlockStatePath
-    );
-    const content = await readFile(absolutePath, "utf8").catch(() => null);
-    if (!content) {
-      return null;
-    }
-    const state = markDevelopmentOrderClusterMerged({
-      clusterId: request.clusterId,
-      mergeCommitHash: request.mergeCommitHash,
-      partId: request.partId,
-      state: JSON.parse(content) as DevelopmentOrderUnlockState,
-      updatedAt: new Date().toISOString(),
-    });
-    await writeFile(
-      absolutePath,
-      `${JSON.stringify(state, null, 2)}\n`,
-      "utf8"
-    );
-    const commit = await this.git.commit({
-      commitMessage: `chore: advance ${request.clusterId} coordination state`,
-      paths: [unlockStatePath],
-      workspaceRoot: request.targetWorkspaceRoot,
-    });
-    return commit.noStagedChanges ? null : commit.hash;
   }
 }

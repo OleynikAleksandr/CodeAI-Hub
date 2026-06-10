@@ -288,7 +288,7 @@ export class ClusterContractReviewController {
       paths: [params.planPath],
       workspaceRoot: params.workspaceRoot,
     });
-    const mergeResult = await this.nodeMerge.mergeAcceptedClusterContract({
+    const boundaryResult = await this.nodeMerge.recordAcceptedClusterBoundary({
       clusterId: params.clusterId,
       partId: params.partId,
       sourceWorkspaceRoot: params.workspaceRoot,
@@ -300,8 +300,8 @@ export class ClusterContractReviewController {
         content: [
           `Core: Cluster Contract \`${params.clusterId}\` review accepted.`,
           `Commit: \`${reviewCommit.hash}\`.`,
-          `Mainline merge commit: \`${mergeResult.mergeCommitHash}\`.`,
-          "Cluster Contract result is merge-ready for lead Product Part coordination.",
+          `Boundary acceptance commit: \`${boundaryResult.boundaryCommitHash}\`.`,
+          "No mainline documentation merge was performed; the cluster worktree remains active for facade/module code work.",
         ].join("\n"),
         tag: "managed-workflow-complete",
       },

@@ -226,29 +226,6 @@ export const createDevelopmentOrderUnlockState = (
   };
 };
 
-export const markDevelopmentOrderClusterMerged = (params: {
-  readonly clusterId: string;
-  readonly mergeCommitHash: string;
-  readonly partId: string;
-  readonly state: DevelopmentOrderUnlockState;
-  readonly updatedAt: string;
-}): DevelopmentOrderUnlockState => ({
-  ...params.state,
-  nodes: params.state.nodes.map((node) =>
-    node.kind === "cluster" &&
-    node.partId === params.partId &&
-    node.clusterId === params.clusterId
-      ? {
-          ...node,
-          mergeCommitHash: params.mergeCommitHash,
-          mergedAt: params.updatedAt,
-          status: "merged",
-        }
-      : node
-  ),
-  updatedAt: params.updatedAt,
-});
-
 export const markDevelopmentOrderClusterSessionStarted = (params: {
   readonly branchName: string;
   readonly clusterId: string;

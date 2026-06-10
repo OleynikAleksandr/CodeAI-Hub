@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "30fa09ba0",
+  "lastRecordedCommit": "8866e758c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6f.downstream-strategy.task1",
-  "expectedCommitMessage": "docs: update downstream merge prevention strategy",
+  "currentTaskId": "qg-restore-isolation.phase6f.boundary-accepted.task1",
+  "expectedCommitMessage": "fix: stop cluster contract doc-only main merge",
   "debt": {
-    "expectedCommitMessage": "docs: update downstream merge prevention strategy",
-    "preCommitHead": "30fa09ba0",
+    "expectedCommitMessage": "fix: stop cluster contract doc-only main merge",
+    "preCommitHead": "8866e758c",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6f.downstream-strategy.task1"
+    "taskId": "qg-restore-isolation.phase6f.boundary-accepted.task1"
   }
 }
 ```
@@ -158,12 +158,12 @@
 ### Stream: Strategy Capture
 
 36. [DONE] `qg-restore-isolation.phase6f.downstream-strategy.task1` Update the active downstream execution refactor planning document with the immediate protective strategy: accepted cluster contracts become boundary-accepted checkpoints, not mainline merges; cluster worktrees stay alive until facade/module code exists; full cluster and standalone module contents merge only after code-ready evidence (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: update downstream merge prevention strategy`).
-37. [PENDING] Git Commit: `docs: update downstream merge prevention strategy` (hash: TBD)
+37. [DONE] Git Commit: `docs: update downstream merge prevention strategy` (hash: 8866e758c)
 
 ### Stream: Boundary Accepted Without Mainline Doc Merge
 
-38. [TODO] `qg-restore-isolation.phase6f.boundary-accepted.task1` Stop cluster contract review acceptance from copying draft documentation artifacts into the main workspace or marking the cluster as merged; record a boundary-accepted checkpoint instead while leaving the downstream worktree active for future facade/module code work (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts`; expected commit: `fix: stop cluster contract doc-only main merge`).
-39. [TODO] Git Commit: `fix: stop cluster contract doc-only main merge` (hash: TBD)
+38. [DONE] `qg-restore-isolation.phase6f.boundary-accepted.task1` Stop cluster contract review acceptance from copying draft documentation artifacts into the main workspace or marking the cluster as merged; record a boundary-accepted checkpoint instead while leaving the downstream worktree active for future facade/module code work, including removal of the now-dead merged-state helper export required by `check:knip` (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-merge-service.test.ts, packages/core/src/remote-bridge/handlers/cluster-contract-review-controller.ts, packages/core/src/development-tree/product-part-workflow/development-order-plan-unlock-state.ts`; expected commit: `fix: stop cluster contract doc-only main merge`). Result: cluster review acceptance now writes `.boundary-accepted.json`, does not copy cluster draft artifacts into main, does not mutate unlock-state to `merged`, and tells the user that no mainline documentation merge was performed. Targeted tests passed 2/2 (`development-tree-node-merge-service.test.ts`, `cluster-contract-review-controller.test.ts`); Ultracite check passed for changed files; `npm run build --workspace=@codeai-hub/core` passed.
+39. [PENDING] Git Commit: `fix: stop cluster contract doc-only main merge` (hash: TBD)
 
 ## Phase 6G - Release Build (owner: Codex, updated: 2026-06-10)
 
