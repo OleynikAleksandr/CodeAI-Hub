@@ -32,7 +32,7 @@ const runGit = async (
   return stdout.trim();
 };
 
-test("WorkflowRollbackCoordinator removes future workflow session histories through Git", async () => {
+test("WorkflowRollbackCoordinator keeps session histories on disk while removing them from Git", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     const capsule = resolveWorkspaceRuntimeCapsule({
@@ -78,8 +78,14 @@ test("WorkflowRollbackCoordinator removes future workflow session histories thro
       workspaceSlug: WORKSPACE_SLUG,
     });
 
-    await assert.rejects(readFile(providerSessionPath, "utf8"));
-    await assert.rejects(readFile(unifiedSessionPath, "utf8"));
+    assert.equal(
+      await readFile(providerSessionPath, "utf8"),
+      "future native session\n"
+    );
+    assert.equal(
+      await readFile(unifiedSessionPath, "utf8"),
+      "future unified session\n"
+    );
     assert.deepEqual(await git.statusPorcelain(workspaceRoot), []);
     const headTreeFiles = await runGit(workspaceRoot, [
       "ls-tree",

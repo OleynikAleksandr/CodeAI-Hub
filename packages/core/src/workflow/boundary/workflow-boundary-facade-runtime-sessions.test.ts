@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -16,7 +16,6 @@ const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PROVIDER_SESSION_LOG_RE =
   /runtime\/sessions\/unified\/glmClaudeCode\/glmclaudecode-description\.jsonl/u;
-const DIRTY_BOUNDARY_RE = /Workflow boundary cannot be created/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-runtime-"));
@@ -34,7 +33,7 @@ const runGit = async (
   return stdout.trim();
 };
 
-test("WorkflowBoundaryFacade refuses dirty provider session transcripts before the next boundary", async () => {
+test("WorkflowBoundaryFacade untracks dirty provider session transcripts and still creates the boundary", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     const facade = new WorkflowBoundaryFacade({
@@ -80,19 +79,24 @@ test("WorkflowBoundaryFacade refuses dirty provider session transcripts before t
     await writeText(sessionLogPath, '{"message":"changed"}\n');
     await writeText(translationsLogPath, '{"message":"changed"}\n');
 
-    await assert.rejects(
-      facade.ensureBoundary({
-        stage: "virtual_simulation",
-        workspaceRoot,
-        workspaceSlug: WORKSPACE_SLUG,
-      }),
-      DIRTY_BOUNDARY_RE
+    const result = await facade.ensureBoundary({
+      stage: "virtual_simulation",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.created, true);
+    assert.equal(
+      await readFile(sessionLogPath, "utf8"),
+      '{"message":"changed"}\n'
     );
-    assert.match(
-      (await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot)).join(
-        "\n"
-      ),
+    assert.doesNotMatch(
+      await runGit(workspaceRoot, ["ls-files"]),
       PROVIDER_SESSION_LOG_RE
+    );
+    assert.deepEqual(
+      await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot),
+      []
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

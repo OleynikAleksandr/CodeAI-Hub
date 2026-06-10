@@ -186,7 +186,7 @@ test("WorkflowRollbackCoordinator quiesces before Git rollback and asserts clean
   }
 });
 
-test("WorkflowRollbackCoordinator preserves mutable settings outside Clear rollback", async () => {
+test("WorkflowRollbackCoordinator preserves living runtime state outside Clear rollback", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     const capsule = resolveWorkspaceRuntimeCapsule({
@@ -239,7 +239,7 @@ test("WorkflowRollbackCoordinator preserves mutable settings outside Clear rollb
     );
     assert.equal(
       await readFile(providerConfigPath, "utf8"),
-      'model = "legacy"\n'
+      currentProviderConfig
     );
     assert.equal(
       await readFile(capsule.gitignoreFile.absolutePath, "utf8"),
@@ -252,7 +252,7 @@ test("WorkflowRollbackCoordinator preserves mutable settings outside Clear rollb
     const trackedFiles = await runGit(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, SETTINGS_RELATIVE_RE);
     assert.doesNotMatch(trackedFiles, LOCALIZATION_RELATIVE_RE);
-    assert.match(trackedFiles, PROVIDER_CONFIG_RELATIVE_RE);
+    assert.doesNotMatch(trackedFiles, PROVIDER_CONFIG_RELATIVE_RE);
     const headTreeFiles = await runGit(workspaceRoot, [
       "ls-tree",
       "-r",
@@ -261,7 +261,7 @@ test("WorkflowRollbackCoordinator preserves mutable settings outside Clear rollb
     ]);
     assert.doesNotMatch(headTreeFiles, SETTINGS_RELATIVE_RE);
     assert.doesNotMatch(headTreeFiles, LOCALIZATION_RELATIVE_RE);
-    assert.match(headTreeFiles, PROVIDER_CONFIG_RELATIVE_RE);
+    assert.doesNotMatch(headTreeFiles, PROVIDER_CONFIG_RELATIVE_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "f66b7eb31",
+  "lastRecordedCommit": "7815382aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase2.dirty-git.task3",
-  "expectedCommitMessage": "test: verify workflow dirty git auto commit",
+  "currentTaskId": "orchestrator-stop-gate.phase3.red-tests.task1",
+  "expectedCommitMessage": "fix: repair legacy red boundary tests",
   "debt": {
-    "expectedCommitMessage": "test: verify workflow dirty git auto commit",
-    "preCommitHead": "f66b7eb31",
+    "expectedCommitMessage": "fix: repair legacy red boundary tests",
+    "preCommitHead": "7815382aa",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase2.dirty-git.task3"
+    "taskId": "orchestrator-stop-gate.phase3.red-tests.task1"
   }
 }
 ```
@@ -85,94 +85,99 @@
 11. [DONE] `orchestrator-stop-gate.phase2.dirty-git.task2` Remove user-facing dirty Git stops from workflow boundary creation and accepted-step commits: run the two-basket auto-commit before boundary anchors and after accepted steps so no dirty-tree state surfaces as a user stop (scope: `packages/core/src/workflow/boundary`; expected commit: `fix: auto-close workflow dirty git boundaries`).
 12. [DONE] Git Commit: `fix: auto-close workflow dirty git boundaries` (hash: f66b7eb31)
 13. [DONE] `orchestrator-stop-gate.phase2.dirty-git.task3` Add regression coverage for Quality Gates restart with workflow-owned script changes and for unclassified user files so Core commits (step + preserve) and continues instead of asking the user how to handle dirty files (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/workflow/boundary, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow dirty git auto commit`).
-14. [PENDING] Git Commit: `test: verify workflow dirty git auto commit` (hash: TBD)
+14. [DONE] Git Commit: `test: verify workflow dirty git auto commit` (hash: 7815382aa)
 
 ## Phase 3 - Silent Stop Elimination (owner: Codex, updated: 2026-06-10)
 
+### Stream: Legacy Red Boundary Tests
+
+15. [DONE] `orchestrator-stop-gate.phase3.red-tests.task1` Diagnose and repair the three legacy red boundary tests on main: rewrite "refuses dirty provider session transcripts" to the no-stop preserve-commit behavior, and fix or rewrite the failing rollback coordinator expectations ("preserves mutable settings outside Clear rollback", "removes future workflow session histories through Git"), fixing rollback code if the tests expose real defects (scope: `packages/core/src/workflow/boundary`; expected commit: `fix: repair legacy red boundary tests`).
+16. [PENDING] Git Commit: `fix: repair legacy red boundary tests` (hash: TBD)
+
 ### Stream: Guaranteed Continuation Delivery
 
-15. [TODO] `orchestrator-stop-gate.phase3.delivery.task1` Make agent continuation dispatch awaited and failure-handled: remove the fire-and-forget swallow in managed internal continuation dispatch and convert managed turn-completion handler failures in the provider event router into an agent repair dispatch or button gate instead of a silently settled turn (scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: guarantee agent continuation delivery`).
-16. [TODO] Git Commit: `fix: guarantee agent continuation delivery` (hash: TBD)
-17. [TODO] `orchestrator-stop-gate.phase3.delivery.task2` Dispatch repair prompts on settled managed turns: every non-review `nextAction` (including quality gates `repair_integration`/`repair_verification` paths) must send the prepared repair prompt to the agent instead of settling without dispatch (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/quality-gates`; expected commit: `fix: dispatch repair prompts on settled turns`).
-18. [TODO] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: TBD)
+17. [TODO] `orchestrator-stop-gate.phase3.delivery.task1` Make agent continuation dispatch awaited and failure-handled: remove the fire-and-forget swallow in managed internal continuation dispatch and convert managed turn-completion handler failures in the provider event router into an agent repair dispatch or button gate instead of a silently settled turn (scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: guarantee agent continuation delivery`).
+18. [TODO] Git Commit: `fix: guarantee agent continuation delivery` (hash: TBD)
+19. [TODO] `orchestrator-stop-gate.phase3.delivery.task2` Dispatch repair prompts on settled managed turns: every non-review `nextAction` (including quality gates `repair_integration`/`repair_verification` paths) must send the prepared repair prompt to the agent instead of settling without dispatch (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/quality-gates`; expected commit: `fix: dispatch repair prompts on settled turns`).
+20. [TODO] Git Commit: `fix: dispatch repair prompts on settled turns` (hash: TBD)
 
 ### Stream: Error Containment
 
-19. [TODO] `orchestrator-stop-gate.phase3.containment.task1` Contain workflow boundary errors in session handlers: wrap `ensureBoundary`/`commitAcceptedStep` call sites in workflow session creation, session resolution, and managed review decision handlers so thrown errors become agent repair dispatches instead of unhandled crashes (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: contain boundary errors into agent repair`).
-20. [TODO] Git Commit: `fix: contain boundary errors into agent repair` (hash: TBD)
-21. [TODO] `orchestrator-stop-gate.phase3.containment.task2` Contain managed plan parse and file I/O failures in Development Tree turn controllers (cluster contract, product part brief, development order plan, review controllers): corrupted or missing plan state must produce an agent repair dispatch or deterministic plan re-bootstrap, never an unhandled crash that leaves the dialog hanging (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `fix: contain plan parse failures in turn controllers`).
-22. [TODO] Git Commit: `fix: contain plan parse failures in turn controllers` (hash: TBD)
+21. [TODO] `orchestrator-stop-gate.phase3.containment.task1` Contain workflow boundary errors in session handlers: wrap `ensureBoundary`/`commitAcceptedStep` call sites in workflow session creation, session resolution, and managed review decision handlers so thrown errors become agent repair dispatches instead of unhandled crashes (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: contain boundary errors into agent repair`).
+22. [TODO] Git Commit: `fix: contain boundary errors into agent repair` (hash: TBD)
+23. [TODO] `orchestrator-stop-gate.phase3.containment.task2` Contain managed plan parse and file I/O failures in Development Tree turn controllers (cluster contract, product part brief, development order plan, review controllers): corrupted or missing plan state must produce an agent repair dispatch or deterministic plan re-bootstrap, never an unhandled crash that leaves the dialog hanging (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `fix: contain plan parse failures in turn controllers`).
+24. [TODO] Git Commit: `fix: contain plan parse failures in turn controllers` (hash: TBD)
 
 ### Stream: Managed Plan State Auto-Repair
 
-23. [TODO] `orchestrator-stop-gate.phase3.plan-repair.task1` Auto-repair managed stage plan state on `plan_mismatch`, expected-commit drift, and `commit_failed` when Git plus managed state make the safe transition inferable, and replace the remaining "Core cannot continue" cards with agent repair dispatch (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: auto repair managed stage plan state`).
-24. [TODO] Git Commit: `fix: auto repair managed stage plan state` (hash: TBD)
+25. [TODO] `orchestrator-stop-gate.phase3.plan-repair.task1` Auto-repair managed stage plan state on `plan_mismatch`, expected-commit drift, and `commit_failed` when Git plus managed state make the safe transition inferable, and replace the remaining "Core cannot continue" cards with agent repair dispatch (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: auto repair managed stage plan state`).
+26. [TODO] Git Commit: `fix: auto repair managed stage plan state` (hash: TBD)
 
 ### Stream: Bounded Repair Loops
 
-25. [TODO] `orchestrator-stop-gate.phase3.repair-limits.task1` Bound managed repair loops: cap repair dispatch attempts per artifact (3), then degrade gracefully — accept agent-readable artifacts with a recorded warning and continue, or raise a button gate (retry / continue as is / roll back step) only when Core-required machine fields are missing (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: bound repair loops with graceful degradation`).
-26. [TODO] Git Commit: `fix: bound repair loops with graceful degradation` (hash: TBD)
+27. [TODO] `orchestrator-stop-gate.phase3.repair-limits.task1` Bound managed repair loops: cap repair dispatch attempts per artifact (3), then degrade gracefully — accept agent-readable artifacts with a recorded warning and continue, or raise a button gate (retry / continue as is / roll back step) only when Core-required machine fields are missing (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: bound repair loops with graceful degradation`).
+28. [TODO] Git Commit: `fix: bound repair loops with graceful degradation` (hash: TBD)
 
 ## Phase 4 - Validation Pressure Reduction (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Hard Gate To Warning Conversion
 
-27. [TODO] `orchestrator-stop-gate.phase4.validators.task1` Downgrade non-critical managed artifact validation failures to continuation-with-warning where Core does not need the rejected field to compute the next workflow action; warnings are recorded in the managed plan and never rendered as stopping cards (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/managed-workflow-orchestration/application-skeleton, packages/core/src/managed-workflow-orchestration/diagram-modules`; expected commit: `fix: downgrade noncritical managed validators`).
-28. [TODO] Git Commit: `fix: downgrade noncritical managed validators` (hash: TBD)
-29. [TODO] `orchestrator-stop-gate.phase4.development-tree.task1` Apply the same policy to Product Part and Cluster/Module contract flows: Core-required machine fields stay hard (agent repair dispatch, bounded), agent-readable prose and recoverable contract detail issues become warnings or revision prompts (scope: `packages/core/src/remote-bridge/handlers/product-part-*, packages/core/src/remote-bridge/handlers/cluster-contract-*, doc/TODO/todo-plan.md`; expected commit: `fix: soften development tree contract blockers`).
-30. [TODO] Git Commit: `fix: soften development tree contract blockers` (hash: TBD)
+29. [TODO] `orchestrator-stop-gate.phase4.validators.task1` Downgrade non-critical managed artifact validation failures to continuation-with-warning where Core does not need the rejected field to compute the next workflow action; warnings are recorded in the managed plan and never rendered as stopping cards (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/managed-workflow-orchestration/application-skeleton, packages/core/src/managed-workflow-orchestration/diagram-modules`; expected commit: `fix: downgrade noncritical managed validators`).
+30. [TODO] Git Commit: `fix: downgrade noncritical managed validators` (hash: TBD)
+31. [TODO] `orchestrator-stop-gate.phase4.development-tree.task1` Apply the same policy to Product Part and Cluster/Module contract flows: Core-required machine fields stay hard (agent repair dispatch, bounded), agent-readable prose and recoverable contract detail issues become warnings or revision prompts (scope: `packages/core/src/remote-bridge/handlers/product-part-*, packages/core/src/remote-bridge/handlers/cluster-contract-*, doc/TODO/todo-plan.md`; expected commit: `fix: soften development tree contract blockers`).
+32. [TODO] Git Commit: `fix: soften development tree contract blockers` (hash: TBD)
 
 ## Phase 5 - Project Manager Lock Semantics (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Truthful User Input State
 
-31. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task1` Ensure Project Manager shows "agent is working" only during an active provider/native turn and releases the input for Core validation, review, warning, repair-ready, and blocked bookkeeping states (scope: `src/client/project-manager/components/layout, src/client/project-manager/services, packages/core/src/remote-bridge/handlers`; expected commit: `fix: release input on core gates`).
-32. [TODO] Git Commit: `fix: release input on core gates` (hash: TBD)
-33. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task2` Eliminate stale lock dead ends: expire the local managed-review pending lock when no Core ack arrives, unlock on `active: false` gate events regardless of reason, time-box the managed turn-completion arbitration so a hung handler cannot hold "agent is working" forever, and reconcile lock state from Core snapshots on reconnect (scope: `src/client/project-manager/components/sessions, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, doc/TODO/todo-plan.md`; expected commit: `fix: expire stale managed input locks`).
-34. [TODO] Git Commit: `fix: expire stale managed input locks` (hash: TBD)
-35. [TODO] `orchestrator-stop-gate.phase5.ui-lock-test.task1` Add targeted Project Manager/Core stream tests for cluster worktree sessions, managed review acceptance, and Quality Gates boundary messages so stale working locks cannot regress (scope: `src/client/project-manager, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `test: verify core gate input release`).
-36. [TODO] Git Commit: `test: verify core gate input release` (hash: TBD)
+33. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task1` Ensure Project Manager shows "agent is working" only during an active provider/native turn and releases the input for Core validation, review, warning, repair-ready, and blocked bookkeeping states (scope: `src/client/project-manager/components/layout, src/client/project-manager/services, packages/core/src/remote-bridge/handlers`; expected commit: `fix: release input on core gates`).
+34. [TODO] Git Commit: `fix: release input on core gates` (hash: TBD)
+35. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task2` Eliminate stale lock dead ends: expire the local managed-review pending lock when no Core ack arrives, unlock on `active: false` gate events regardless of reason, time-box the managed turn-completion arbitration so a hung handler cannot hold "agent is working" forever, and reconcile lock state from Core snapshots on reconnect (scope: `src/client/project-manager/components/sessions, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, doc/TODO/todo-plan.md`; expected commit: `fix: expire stale managed input locks`).
+36. [TODO] Git Commit: `fix: expire stale managed input locks` (hash: TBD)
+37. [TODO] `orchestrator-stop-gate.phase5.ui-lock-test.task1` Add targeted Project Manager/Core stream tests for cluster worktree sessions, managed review acceptance, and Quality Gates boundary messages so stale working locks cannot regress (scope: `src/client/project-manager, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `test: verify core gate input release`).
+38. [TODO] Git Commit: `test: verify core gate input release` (hash: TBD)
 
 ## Phase 6 - Documentation Sync (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Architecture Update
 
-37. [TODO] `orchestrator-stop-gate.phase6.docs.task1` Synchronize the implemented no-stop policy into the active Development Tree architecture documents and Core/Project Manager SSOT docs (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe simplified orchestrator stop gates`).
-38. [TODO] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: TBD)
-39. [TODO] `orchestrator-stop-gate.phase6.pm-docs.task1` Document Project Manager lock/projection behavior for Core gates and attached worktree runtime roots (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe truthful core gate ui state`).
-40. [TODO] Git Commit: `docs: describe truthful core gate ui state` (hash: TBD)
+39. [TODO] `orchestrator-stop-gate.phase6.docs.task1` Synchronize the implemented no-stop policy into the active Development Tree architecture documents and Core/Project Manager SSOT docs (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit: `docs: describe simplified orchestrator stop gates`).
+40. [TODO] Git Commit: `docs: describe simplified orchestrator stop gates` (hash: TBD)
+41. [TODO] `orchestrator-stop-gate.phase6.pm-docs.task1` Document Project Manager lock/projection behavior for Core gates and attached worktree runtime roots (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe truthful core gate ui state`).
+42. [TODO] Git Commit: `docs: describe truthful core gate ui state` (hash: TBD)
 
 ## Phase 7 - Tooling Verification (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Targeted Verification
 
-41. [TODO] `orchestrator-stop-gate.phase7.verify.task1` Run targeted Core and Project Manager tests/builds for dirty Git auto-commit (step + preserve), guaranteed continuation delivery, contained errors, softened validators, Development Tree sub-agent flow, projected worktree sessions, and UI lock release/expiry, including silent-path tests where a failing handler must still produce an agent dispatch or button gate (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify orchestrator stop gate simplification`).
-42. [TODO] Git Commit: `test: verify orchestrator stop gate simplification` (hash: TBD)
+43. [TODO] `orchestrator-stop-gate.phase7.verify.task1` Run targeted Core and Project Manager tests/builds for dirty Git auto-commit (step + preserve), guaranteed continuation delivery, contained errors, softened validators, Development Tree sub-agent flow, projected worktree sessions, and UI lock release/expiry, including silent-path tests where a failing handler must still produce an agent dispatch or button gate (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify orchestrator stop gate simplification`).
+44. [TODO] Git Commit: `test: verify orchestrator stop gate simplification` (hash: TBD)
 
 ## Phase 8 - Release Build Confirmation (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Release Permission
 
-43. [TODO] `orchestrator-stop-gate.phase8.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none).
+45. [TODO] `orchestrator-stop-gate.phase8.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none).
 
 ### Stream: Release After Confirmation
 
-44. [TODO] `orchestrator-stop-gate.phase8.release-notes.task1` Prepare release notes for the stop-gate simplification release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare stop gate simplification release notes`).
-45. [TODO] Git Commit: `docs: prepare stop gate simplification release notes` (hash: TBD)
-46. [TODO] `orchestrator-stop-gate.phase8.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare stop gate simplification release artifacts`).
-47. [TODO] Git Commit: `build: prepare stop gate simplification release artifacts` (hash: TBD)
-48. [TODO] `orchestrator-stop-gate.phase8.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package stop gate simplification vsix release`).
-49. [TODO] Git Commit: `build: package stop gate simplification vsix release` (hash: TBD)
+46. [TODO] `orchestrator-stop-gate.phase8.release-notes.task1` Prepare release notes for the stop-gate simplification release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare stop gate simplification release notes`).
+47. [TODO] Git Commit: `docs: prepare stop gate simplification release notes` (hash: TBD)
+48. [TODO] `orchestrator-stop-gate.phase8.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare stop gate simplification release artifacts`).
+49. [TODO] Git Commit: `build: prepare stop gate simplification release artifacts` (hash: TBD)
+50. [TODO] `orchestrator-stop-gate.phase8.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package stop gate simplification vsix release`).
+51. [TODO] Git Commit: `build: package stop gate simplification vsix release` (hash: TBD)
 
 ## Phase 9 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-10)
 
 ### Stream: FinderWidget Retest
 
-50. [TODO] `orchestrator-stop-gate.phase9.user-retest.task1` User installs the release and retests the workflow from Quality Gates Baseline through Product Part, cluster-contract sub-agent creation, Clear/Undo rebootstrap, dirty Git auto-commit, and Project Manager dialog/input behavior (scope: user workflow; expected commit: none).
+52. [TODO] `orchestrator-stop-gate.phase9.user-retest.task1` User installs the release and retests the workflow from Quality Gates Baseline through Product Part, cluster-contract sub-agent creation, Clear/Undo rebootstrap, dirty Git auto-commit, and Project Manager dialog/input behavior (scope: user workflow; expected commit: none).
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Plan And Planning Doc Disposition
 
-51. [TODO] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
-52. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
+53. [TODO] `orchestrator-stop-gate.phase10.closeout.task1` After explicit user acceptance, archive the completed todo plan and decide final disposition for the stop-gate planning document without archiving the two active Development Tree planning documents (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md`; expected commit: `docs: close orchestrator stop gate simplification plan`).
+54. [TODO] Git Commit: `docs: close orchestrator stop gate simplification plan` (hash: TBD)
