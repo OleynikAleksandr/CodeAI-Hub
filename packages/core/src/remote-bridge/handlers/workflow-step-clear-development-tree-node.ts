@@ -13,6 +13,10 @@ import { promisify } from "node:util";
 import type { Session } from "../../session-manager";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import { isWithinPath } from "./product-part-worktree-cleanup";
+import {
+  pruneWorkflowRuntimeSessionFiles,
+  type WorkflowProviderNativeSessionRef,
+} from "./workflow-clear-session-cleanup";
 import type { ProductPartClearDeps } from "./workflow-step-clear-product-part-restart";
 
 const execFileAsync = promisify(execFile);
@@ -22,9 +26,7 @@ const CLUSTER_MODULE_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)\/clusters\/([^/]+)\/modules\/([^/]+)$/u;
 const STANDALONE_MODULE_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)\/modules\/([^/]+)$/u;
-
 export interface DevelopmentTreeNodeClearTarget {
-  readonly codeWorkspacePath?: string | null;
   readonly kind: "development_tree_node";
   readonly workflowPath: string;
 }
@@ -34,7 +36,6 @@ export interface DevelopmentTreeNodeClearRequest {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }
-
 export interface DevelopmentTreeNodeClearResult {
   readonly clearCommitHash: string;
   readonly deletedContinuityPaths: readonly string[];
@@ -42,7 +43,6 @@ export interface DevelopmentTreeNodeClearResult {
   readonly deletedWorktreePaths: readonly string[];
   readonly nodeId: string;
 }
-
 interface ParsedDevelopmentTreeNode {
   readonly clusterId?: string;
   readonly moduleId?: string;
@@ -50,7 +50,6 @@ interface ParsedDevelopmentTreeNode {
   readonly partId: string;
   readonly subtreePrefix: string;
 }
-
 interface UnlockStateNode {
   readonly branchName?: string;
   readonly clusterId?: string;
@@ -68,14 +67,10 @@ interface UnlockStateNode {
   readonly startedAt?: string;
   readonly status?: string;
   readonly worktreePath?: string;
-  readonly [key: string]: unknown;
 }
-
 interface UnlockStateFile {
   readonly nodes?: readonly UnlockStateNode[];
-  readonly [key: string]: unknown;
 }
-
 const parseDevelopmentTreeNode = (
   workflowPath: string
 ): ParsedDevelopmentTreeNode | null => {
@@ -113,7 +108,6 @@ const parseDevelopmentTreeNode = (
   }
   return null;
 };
-
 const createWorktreesRoot = (workspacePath: string): string =>
   path.join(
     path.dirname(workspacePath),
@@ -139,7 +133,6 @@ const readUnlockState = async (filePath: string): Promise<UnlockStateFile> => {
   const raw = await readFile(filePath, "utf8").catch(() => null);
   return raw ? (JSON.parse(raw) as UnlockStateFile) : { nodes: [] };
 };
-
 const clearNodeProjection = (node: UnlockStateNode): UnlockStateNode => {
   const {
     branchName: _branchName,
@@ -156,14 +149,12 @@ const clearNodeProjection = (node: UnlockStateNode): UnlockStateNode => {
   } = node;
   return { ...rest, status: "waiting" };
 };
-
 const nodeMatchesTarget = (
   node: UnlockStateNode,
   target: ParsedDevelopmentTreeNode
 ): boolean =>
   node.id === target.nodeId ||
   Boolean(target.subtreePrefix && node.id?.startsWith(target.subtreePrefix));
-
 const writeClearedUnlockState = async (params: {
   readonly parsedNode: ParsedDevelopmentTreeNode;
   readonly workspacePath: string;
@@ -222,7 +213,6 @@ const pathExists = async (absolutePath: string): Promise<boolean> => {
     return false;
   }
 };
-
 const createFallbackWorktreePaths = (params: {
   readonly parsedNode: ParsedDevelopmentTreeNode;
   readonly workspacePath: string;
@@ -251,7 +241,6 @@ const createFallbackWorktreePaths = (params: {
     ),
   ];
 };
-
 const removeEmptyParents = async (params: {
   readonly startPath: string;
   readonly stopPath: string;
@@ -269,7 +258,6 @@ const removeEmptyParents = async (params: {
     currentPath = path.dirname(currentPath);
   }
 };
-
 const runGitWorktreeRemove = async (params: {
   readonly registeredPath: string;
   readonly workspacePath: string;
@@ -353,7 +341,6 @@ const removeNodeWorktrees = async (params: {
 const sessionMatchesTarget = (
   session: Session,
   params: {
-    readonly parsedNode: ParsedDevelopmentTreeNode;
     readonly target: DevelopmentTreeNodeClearTarget;
     readonly worktreePaths: readonly string[];
     readonly workspaceSlug: string;
@@ -372,25 +359,33 @@ const sessionMatchesTarget = (
 
 const clearRuntimeSessions = (
   request: DevelopmentTreeNodeClearRequest,
-  parsedNode: ParsedDevelopmentTreeNode,
   worktreePaths: readonly string[],
   deps: ProductPartClearDeps
-): readonly string[] => {
+): {
+  readonly deletedSessionIds: readonly string[];
+  readonly providerNativeSessions: readonly WorkflowProviderNativeSessionRef[];
+} => {
   const deletedSessionIds: string[] = [];
+  const providerNativeSessions: WorkflowProviderNativeSessionRef[] = [];
   for (const session of deps.sessionManager.listSessions()) {
     if (
       sessionMatchesTarget(session, {
-        parsedNode,
         target: request.target,
         worktreePaths,
         workspaceSlug: request.workspaceSlug,
       }) &&
       deps.sessionManager.deleteSession(session.id)
     ) {
+      if (session.providerSessionId) {
+        providerNativeSessions.push({
+          providerId: session.providerId,
+          providerSessionId: session.providerSessionId,
+        });
+      }
       deletedSessionIds.push(session.id);
     }
   }
-  return deletedSessionIds;
+  return { deletedSessionIds, providerNativeSessions };
 };
 
 const clearContinuity = async (params: {
@@ -451,12 +446,20 @@ export const clearDevelopmentTreeNode = async (
       workspaceSlug: request.workspaceSlug,
     }),
   ];
-  const deletedSessionIds = clearRuntimeSessions(
-    request,
-    parsedNode,
-    worktreePaths,
-    deps
-  );
+  const clearedSessions = clearRuntimeSessions(request, worktreePaths, deps);
+  await pruneWorkflowRuntimeSessionFiles({
+    deletedSessionIds: clearedSessions.deletedSessionIds,
+    providerNativeSessions: clearedSessions.providerNativeSessions,
+    unifiedSessionFileNameFragments: [
+      request.target.workflowPath,
+      parsedNode.nodeId,
+      parsedNode.partId,
+      parsedNode.clusterId ?? "",
+      parsedNode.moduleId ?? "",
+    ],
+    workspacePath: request.workspacePath,
+    workspaceSlug: request.workspaceSlug,
+  });
   const deletedContinuityPaths = await clearContinuity({
     target: request.target,
     workspacePath: request.workspacePath,
@@ -480,7 +483,7 @@ export const clearDevelopmentTreeNode = async (
   return {
     clearCommitHash: commit.hash,
     deletedContinuityPaths,
-    deletedSessionIds,
+    deletedSessionIds: clearedSessions.deletedSessionIds,
     deletedWorktreePaths,
     nodeId: parsedNode.nodeId,
   };

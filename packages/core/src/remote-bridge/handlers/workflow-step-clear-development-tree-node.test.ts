@@ -83,6 +83,11 @@ const initializeMainWorkspace = async (
     `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${PART_ID}.md`,
     PART_CONTENT
   );
+  await writeText(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/.gitignore`,
+    "runtime/\n"
+  );
   await git(workspaceRoot, ["add", "."]);
   await git(workspaceRoot, ["commit", "-m", "test: initial"]);
 };
@@ -191,6 +196,40 @@ test("clearDevelopmentTreeNode removes cluster worktree and resets projection", 
         stage: STAGE,
       }
     );
+    const providerSessionPath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "runtime/providers/codex/home/sessions/2026/06/10",
+      "rollout-cluster-session-1.jsonl"
+    );
+    const unifiedSessionPath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "runtime/sessions/unified/codex",
+      "cluster-session-1-note-selection-cluster.jsonl"
+    );
+    const unifiedTranslationPath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "runtime/sessions/unified/codex",
+      "cluster-session-1-note-selection-cluster.translations.jsonl"
+    );
+    const unrelatedUnifiedPath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "runtime/sessions/unified/codex",
+      "other-product-part.jsonl"
+    );
+    await mkdir(path.dirname(providerSessionPath), { recursive: true });
+    await mkdir(path.dirname(unifiedSessionPath), { recursive: true });
+    await writeFile(providerSessionPath, "native session\n", "utf8");
+    await writeFile(unifiedSessionPath, "unified session\n", "utf8");
+    await writeFile(unifiedTranslationPath, "translation\n", "utf8");
+    await writeFile(unrelatedUnifiedPath, "unrelated\n", "utf8");
 
     const result = await clearDevelopmentTreeNode(
       {
@@ -205,6 +244,10 @@ test("clearDevelopmentTreeNode removes cluster worktree and resets projection", 
     assert.deepEqual(result.deletedSessionIds, [session.id]);
     assert.equal(await exists(worktreePath), false);
     assert.equal(await exists(worktreesRoot), false);
+    assert.equal(await exists(providerSessionPath), false);
+    assert.equal(await exists(unifiedSessionPath), false);
+    assert.equal(await exists(unifiedTranslationPath), false);
+    assert.equal(await exists(unrelatedUnifiedPath), true);
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
 
     const rawState = await readFile(

@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "b9e5dc924",
+  "lastRecordedCommit": "e167c48d4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6c.clear-runtime.task1",
-  "expectedCommitMessage": "fix: prune workflow stage clear runtime sessions",
+  "currentTaskId": "qg-restore-isolation.phase6c.clear-devtree-node.task1",
+  "expectedCommitMessage": "fix: prune development tree node clear runtime sessions",
   "debt": {
-    "expectedCommitMessage": "fix: prune workflow stage clear runtime sessions",
-    "preCommitHead": "b9e5dc924",
+    "expectedCommitMessage": "fix: prune development tree node clear runtime sessions",
+    "preCommitHead": "e167c48d4",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6c.clear-runtime.task1"
+    "taskId": "qg-restore-isolation.phase6c.clear-devtree-node.task1"
   }
 }
 ```
@@ -126,9 +126,9 @@
 ### Stream: Runtime Session Pruning
 
 25. [DONE] `qg-restore-isolation.phase6c.clear-runtime.task1` Add a shared Clear/Undo runtime-session cleanup helper and wire workflow-stage clears to prune matching unified session files and provider-native session files without deleting unrelated sessions (scope: `packages/core/src/remote-bridge/handlers/workflow-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts`; expected commit: `fix: prune workflow stage clear runtime sessions`).
-26. [PENDING] Git Commit: `fix: prune workflow stage clear runtime sessions` (hash: TBD)
-27. [TODO] `qg-restore-isolation.phase6c.clear-devtree-node.task1` Wire downstream Development Tree node Clear to the shared runtime-session cleanup helper so cluster/module clears remove matching unified and provider-native session files together with in-memory sessions, continuity, and worktrees (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune development tree node clear runtime sessions`).
-28. [TODO] Git Commit: `fix: prune development tree node clear runtime sessions` (hash: TBD)
+26. [DONE] Git Commit: `fix: prune workflow stage clear runtime sessions` (hash: e167c48d4)
+27. [DONE] `qg-restore-isolation.phase6c.clear-devtree-node.task1` Wire downstream Development Tree node Clear to the shared runtime-session cleanup helper so cluster/module clears remove matching unified and provider-native session files together with in-memory sessions, continuity, and worktrees (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune development tree node clear runtime sessions`).
+28. [PENDING] Git Commit: `fix: prune development tree node clear runtime sessions` (hash: TBD)
 
 ### Stream: Development Tree Worktree Bootstrap Preflight
 
