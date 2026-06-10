@@ -45,7 +45,9 @@ test("Application Skeleton validator carries markdown structure issues as review
         accepted: false,
         materialized: false,
         materializationState: "not_started",
+        openQuestions: [],
         packageManager: "npm",
+        repoShape: "monorepo",
         projectFoundation: {
           configFiles: [".gitignore", "package-lock.json", "tsconfig.json"],
           firstWaveEntrypoints: ["product-parts/core-runtime/src/index.ts"],

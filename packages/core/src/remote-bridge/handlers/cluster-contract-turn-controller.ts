@@ -261,6 +261,12 @@ const blocked = (
       "Core: Cluster Contract artifacts are not ready for review.",
       "Diagnostics:",
       ...diagnostics.map((diagnostic) => `- ${diagnostic}`),
+      ...(nextInternalMessage
+        ? ["", "Полный repair prompt отправлен агенту внутренним сообщением."]
+        : [
+            "",
+            "The input is released. Send any message and Core will re-validate the cluster contract from the current state.",
+          ]),
     ].join("\n"),
     tag: "managed-workflow-validation",
   },
@@ -336,8 +342,8 @@ export class ClusterContractTurnController {
       paths: artifactPaths,
       workspaceRoot: params.workspaceRoot,
     });
-    if (draftCommit.noStagedChanges) {
-      return blocked(["No staged Cluster Contract artifact changes."]);
+    if (!draftCommit.hash) {
+      return blocked(["No reachable Git commit for the cluster contract."]);
     }
     await writeText(
       params.workspaceRoot,

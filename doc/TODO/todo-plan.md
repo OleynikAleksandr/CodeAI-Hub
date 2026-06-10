@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "6104a6817",
+  "lastRecordedCommit": "9ca918275",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase4.validators.task1",
-  "expectedCommitMessage": "fix: downgrade noncritical managed validators",
+  "currentTaskId": "orchestrator-stop-gate.phase4.development-tree.task1",
+  "expectedCommitMessage": "fix: soften development tree contract blockers",
   "debt": {
-    "expectedCommitMessage": "fix: downgrade noncritical managed validators",
-    "preCommitHead": "6104a6817",
+    "expectedCommitMessage": "fix: soften development tree contract blockers",
+    "preCommitHead": "9ca918275",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase4.validators.task1"
+    "taskId": "orchestrator-stop-gate.phase4.development-tree.task1"
   }
 }
 ```
@@ -123,9 +123,9 @@
 ### Stream: Hard Gate To Warning Conversion
 
 29. [DONE] `orchestrator-stop-gate.phase4.validators.task1` Downgrade non-critical managed artifact validation failures to continuation-with-warning: Application Skeleton draft markdown structure codes become warnings carried into user review instead of repair rejections (Core reads only the machine JSON for the next action); deeper per-field splits for Diagram Modules and Quality Gates stay hard until user testing shows recoverable cases, since their machine artifacts are the next-step inputs (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton, doc/TODO/todo-plan.md`; expected commit: `fix: downgrade noncritical managed validators`).
-30. [PENDING] Git Commit: `fix: downgrade noncritical managed validators` (hash: TBD)
-31. [TODO] `orchestrator-stop-gate.phase4.development-tree.task1` Apply the same policy to Product Part and Cluster/Module contract flows: Core-required machine fields stay hard (agent repair dispatch, bounded), agent-readable prose and recoverable contract detail issues become warnings or revision prompts (scope: `packages/core/src/remote-bridge/handlers/product-part-*, packages/core/src/remote-bridge/handlers/cluster-contract-*, doc/TODO/todo-plan.md`; expected commit: `fix: soften development tree contract blockers`).
-32. [TODO] Git Commit: `fix: soften development tree contract blockers` (hash: TBD)
+30. [DONE] Git Commit: `fix: downgrade noncritical managed validators` (hash: 9ca918275)
+31. [DONE] `orchestrator-stop-gate.phase4.development-tree.task1` Apply the no-stop policy to the Cluster Contract flow: idempotent no-staged turns advance to review instead of blocking, blocked messages either confirm the dispatched repair prompt or release the input with a re-validate instruction, and the Application Skeleton warning regression test is stabilized; Product Part order-plan softening is deferred until user testing shows a recoverable case (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator-warnings.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: soften development tree contract blockers`).
+32. [PENDING] Git Commit: `fix: soften development tree contract blockers` (hash: TBD)
 
 ## Phase 5 - Project Manager Lock Semantics (owner: Codex, updated: 2026-06-10)
 
