@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import { DiagramModulesManagedGitBoundary } from "./diagram-modules-managed-git-boundary";
+import { parseDiagramModulesRepairTaskNumber } from "./diagram-modules-stage-plan-repair-model";
 import { commitManagedWorkflowLedger } from "./managed-workflow-ledger-git-boundary";
 
 const PLAN_START = "<!-- codeai-plan-state:start -->";
@@ -13,8 +14,10 @@ const APPLICATION_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const REVIEW_TASK_PREFIX = "diagram-modules.phase2.review.";
+const REVIEW_TASK_ID = "diagram-modules.phase2.review.task1";
 const REVIEW_COMMIT_MESSAGE = "docs: open diagram modules user review";
 const PHASE3_TASK_ID = "diagram-modules.phase3.user-return.task1";
+const REPAIR_LIMIT_DISPOSITION = "not-created-user-accepted-repair-limit-as-is";
 const NO_REVISION_DISPOSITION =
   "not-created-user-accepted-without-review-revision";
 const PERSISTENT_RETURN_DISPOSITION = "not-created-persistent-user-return-open";
@@ -198,6 +201,137 @@ export const isDiagramModulesReviewOpen = async (
   );
   return state.currentTaskId?.startsWith(REVIEW_TASK_PREFIX) ?? false;
 };
+
+export const readDiagramModulesRepairLimitAttempt = async (
+  workspaceRoot: string
+): Promise<number | null> => {
+  const planText = await readText(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH).catch(
+    () => null
+  );
+  if (!planText) {
+    return null;
+  }
+  try {
+    const state = parseStateBlock<ManagedPlanState>(
+      planText,
+      PLAN_START,
+      PLAN_END
+    );
+    return state.currentTaskId
+      ? parseDiagramModulesRepairTaskNumber(state.currentTaskId)
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const markRepairLimitAccepted = (params: {
+  readonly content: string;
+  readonly expectedCommitMessage: string;
+  readonly taskId: string;
+}): string => {
+  const taskPattern = new RegExp(
+    `^(\\d+\\. \\[)(?:TODO|IN_PROGRESS|BLOCKED)(\\] \`${escapeRegExp(
+      params.taskId
+    )}\` .*)$`,
+    "mu"
+  );
+  const commitPattern = new RegExp(
+    `^(\\d+\\. \\[)(?:TODO|PENDING|IN_PROGRESS|BLOCKED)(\\] Git Commit: \`${escapeRegExp(
+      params.expectedCommitMessage
+    )}\` \\(hash: )(?:TBD|[^)]+)(\\))$`,
+    "mu"
+  );
+  return params.content
+    .replace(taskPattern, "$1DONE$2")
+    .replace(commitPattern, `$1DONE$2${REPAIR_LIMIT_DISPOSITION}$3`);
+};
+
+const appendUserReviewStep = (content: string): string => {
+  if (content.includes(`\`${REVIEW_TASK_ID}\``)) {
+    return content;
+  }
+  const nextNumber = maxListNumber(content) + 1;
+  return [
+    content.trimEnd(),
+    "",
+    "## Phase 2 — Diagram Modules User Review",
+    "",
+    "### Stream: User-Led Review",
+    "",
+    `${nextNumber}. [IN_PROGRESS] \`${REVIEW_TASK_ID}\` User reviews the accepted Diagram Modules Product Part artifacts before the stage can be completed (scope: user workflow; expected commit: \`${REVIEW_COMMIT_MESSAGE}\`).`,
+    `${nextNumber + 1}. [TODO] Git Commit: \`${REVIEW_COMMIT_MESSAGE}\` (hash: TBD)`,
+    "",
+  ].join("\n");
+};
+
+export const acceptDiagramModulesRepairLimitAsIs = async (params: {
+  readonly gitBoundary?: DiagramModulesGitBoundaryDependency;
+  readonly workspaceRoot: string;
+}): Promise<void> => {
+  const gitBoundary =
+    params.gitBoundary ?? new DiagramModulesManagedGitBoundary();
+  const stagePlanText = await readText(
+    params.workspaceRoot,
+    DIAGRAM_STAGE_PLAN_PATH
+  );
+  const stageState = parseStateBlock<ManagedPlanState>(
+    stagePlanText,
+    PLAN_START,
+    PLAN_END
+  );
+  const currentTaskId = stageState.currentTaskId;
+  const attemptNumber = currentTaskId
+    ? parseDiagramModulesRepairTaskNumber(currentTaskId)
+    : null;
+  if (!(currentTaskId && attemptNumber && stageState.expectedCommitMessage)) {
+    throw new Error(
+      "Diagram Modules stage plan is not on an open repair attempt."
+    );
+  }
+  await ensureManagedTerminalGitClean({
+    gitBoundary: asManagedGitBoundary(gitBoundary),
+    stage: "diagram_modules",
+    workspaceRoot: params.workspaceRoot,
+  });
+  const nextStageState: ManagedPlanState = {
+    ...stageState,
+    currentTaskId: REVIEW_TASK_ID,
+    expectedCommitMessage: REVIEW_COMMIT_MESSAGE,
+  };
+  const nextStagePlan = appendUserReviewStep(
+    markRepairLimitAccepted({
+      content: stagePlanText,
+      expectedCommitMessage: stageState.expectedCommitMessage,
+      taskId: currentTaskId,
+    })
+  );
+  await writeText(
+    params.workspaceRoot,
+    DIAGRAM_STAGE_PLAN_PATH,
+    replaceStateBlock(nextStagePlan, PLAN_START, PLAN_END, nextStageState)
+  );
+  await commitManagedWorkflowLedger({
+    gitBoundary: asManagedGitBoundary(gitBoundary),
+    ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
+    workspaceRoot: params.workspaceRoot,
+  });
+};
+
+export const buildDiagramModulesRepairLimitRevisionPrompt = (params: {
+  readonly userFeedback: string;
+  readonly workspaceSlug: string;
+}): string =>
+  [
+    "Core reopened the Diagram Modules repair after the user reviewed the repair-limit gate.",
+    "Apply exactly the corrections the user requested below, then stop for Core validation.",
+    "",
+    "User corrections:",
+    params.userFeedback,
+    "",
+    `Update the staged Markdown artifacts under \`.codeai-hub/${params.workspaceSlug}/diagram_modules/\` (product-parts.index.md and product-parts/*.md).`,
+    "Do not run Git commands or edit stage todo files.",
+  ].join("\n");
 
 export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   readonly gitBoundary?: DiagramModulesGitBoundaryDependency;

@@ -33,10 +33,10 @@ import {
   isQualityGatesReviewOpen,
   readApplicationSkeletonTaskId,
 } from "./managed-review-state-readers";
+import { handleManagedStageRepairLimitReviewDecision } from "./managed-stage-repair-limit-review";
 import { handleProductPartManagedReviewDecision } from "./product-part-managed-review-decision-handler";
 import {
   dispatchQualityGatesReviewRevision,
-  handleQualityGatesRepairLimitReviewDecision,
   openQualityGatesNextAcceptedReviewPhase,
 } from "./quality-gates-review-decision-flow";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
@@ -116,6 +116,22 @@ export class SessionRequestHandlerManagedReviewDecisions {
   ): Promise<boolean> {
     const managedIntent = classifyManagedReviewIntent(options.content);
     if (await this.preliminaryReviewCommitter.handle(options)) {
+      return true;
+    }
+    if (
+      await handleManagedStageRepairLimitReviewDecision({
+        content: options.content,
+        deps: {
+          developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
+          eventMessages: this.deps.eventMessages,
+          messageDispatch: this.deps.messageDispatch,
+          qualityGatesStagePlan: this.qualityGatesStagePlan,
+        },
+        hiddenUserMessage: options.hiddenUserMessage,
+        intent: managedIntent,
+        session: options.session,
+      })
+    ) {
       return true;
     }
     if (
@@ -242,18 +258,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       return false;
     }
     if (!(await isQualityGatesReviewOpen(options.session.workspacePath))) {
-      return handleQualityGatesRepairLimitReviewDecision({
-        content: options.content,
-        deps: {
-          developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
-          eventMessages: this.deps.eventMessages,
-          messageDispatch: this.deps.messageDispatch,
-          stagePlan: this.qualityGatesStagePlan,
-        },
-        hiddenUserMessage: options.hiddenUserMessage,
-        intent: options.intent,
-        session: options.session,
-      });
+      return false;
     }
     if (options.intent === "none") {
       return false;
