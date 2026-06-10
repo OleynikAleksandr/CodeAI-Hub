@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "b30b7fafb",
+  "lastRecordedCommit": "6d6016896",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6c.clear-product-part-root.task1",
-  "expectedCommitMessage": "fix: align product part clear runtime cleanup",
+  "currentTaskId": "qg-restore-isolation.phase6e.dev-tree-downstream-planning.task1",
+  "expectedCommitMessage": "docs: capture development tree downstream execution refactor",
   "debt": {
-    "expectedCommitMessage": "fix: align product part clear runtime cleanup",
-    "preCommitHead": "b30b7fafb",
+    "expectedCommitMessage": "docs: capture development tree downstream execution refactor",
+    "preCommitHead": "6d6016896",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6c.clear-product-part-root.task1"
+    "taskId": "qg-restore-isolation.phase6e.dev-tree-downstream-planning.task1"
   }
 }
 ```
@@ -138,18 +138,25 @@
 ### Stream: Product Part Root Cleanup Alignment
 
 31. [DONE] `qg-restore-isolation.phase6c.clear-product-part-root.task1` Wire Product Part root Clear to the shared runtime-session cleanup helper so root Product Part restarts prune stale unified session files by stage/part fragments in addition to live session ids (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align product part clear runtime cleanup`).
-32. [PENDING] Git Commit: `fix: align product part clear runtime cleanup` (hash: TBD)
+32. [DONE] Git Commit: `fix: align product part clear runtime cleanup` (hash: 6d6016896)
 
 ## Phase 6D - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest After Clear/Undo Fix
 
-33. [TODO] `qg-restore-isolation.phase6d.user-retest.task1` User retests Clear/Undo across workflow stages, Product Part root nodes, and downstream Development Tree nodes, then retries the downstream cluster-contract wave that previously failed on an existing worktree path (scope: `manual retest`; no commit expected).
+33. [DONE] `qg-restore-isolation.phase6d.user-retest.task1` User retests Clear/Undo across workflow stages, Product Part root nodes, and downstream Development Tree nodes, then retries the downstream cluster-contract wave that previously failed on an existing worktree path (scope: `manual retest`; no commit expected). Result: Product Part and cluster-contract restart path worked after the Clear/Undo cleanup fix. Follow-up architectural issues were identified for a separate Development Tree refactor planning capture: empty downstream TODO scaffolds in the main workspace, doc-only cluster-contract merge semantics, missing executable wave runner, and cluster/module artifact boundary mismatch.
+
+## Phase 6E - Development Tree Follow-up Planning Capture (owner: Codex, updated: 2026-06-10)
+
+### Stream: Downstream Execution Refactor Intake
+
+34. [DONE] `qg-restore-isolation.phase6e.dev-tree-downstream-planning.task1` Create the active Development Tree downstream execution refactor planning document and capture the first agreed architecture topic: no downstream cluster tree merge before code exists, lead Product Part order plans must drive executable waves, and cluster worktrees should own cluster facade/module boundary/code assembly before mainline integration (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: capture development tree downstream execution refactor`).
+35. [PENDING] Git Commit: `docs: capture development tree downstream execution refactor` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Archive And Dispose
 
-34. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-35. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
-36. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+36. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+37. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+38. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
