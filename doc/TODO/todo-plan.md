@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "f22f27204",
+  "lastRecordedCommit": "4f07d7bd4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6j.build-all.task1",
-  "expectedCommitMessage": "build: prepare cluster contract language release artifacts",
+  "currentTaskId": "qg-restore-isolation.phase6j.vsix.task1",
+  "expectedCommitMessage": "build: package cluster contract language vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare cluster contract language release artifacts",
-    "preCommitHead": "f22f27204",
+    "expectedCommitMessage": "build: package cluster contract language vsix release",
+    "preCommitHead": "4f07d7bd4",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6j.build-all.task1"
+    "taskId": "qg-restore-isolation.phase6j.vsix.task1"
   }
 }
 ```
@@ -202,9 +202,9 @@
 ### Stream: Release Artifacts
 
 54. [DONE] `qg-restore-isolation.phase6j.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract language release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.489`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
-55. [PENDING] Git Commit: `build: prepare cluster contract language release artifacts` (hash: TBD)
-56. [TODO] `qg-restore-isolation.phase6j.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract language vsix release`).
-57. [TODO] Git Commit: `build: package cluster contract language vsix release` (hash: TBD)
+55. [DONE] Git Commit: `build: prepare cluster contract language release artifacts` (hash: 4f07d7bd4)
+56. [DONE] `qg-restore-isolation.phase6j.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract language vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for `1.2.489`; Step 7 SDK exclusions, local artifact validation, markdown links, duplication check, production dependency pruning, VSIX package creation, runtime package surface verification, and dev dependency restore passed. VSIX: `codeai-hub-1.2.489.vsix` (`5.1M`).
+57. [PENDING] Git Commit: `build: package cluster contract language vsix release` (hash: TBD)
 
 ## Phase 6K - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
