@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "9ca918275",
+  "lastRecordedCommit": "c407dd833",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase4.development-tree.task1",
-  "expectedCommitMessage": "fix: soften development tree contract blockers",
+  "currentTaskId": "orchestrator-stop-gate.phase5.ui-lock.task1",
+  "expectedCommitMessage": "fix: release input on core gates",
   "debt": {
-    "expectedCommitMessage": "fix: soften development tree contract blockers",
-    "preCommitHead": "9ca918275",
+    "expectedCommitMessage": "fix: release input on core gates",
+    "preCommitHead": "c407dd833",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase4.development-tree.task1"
+    "taskId": "orchestrator-stop-gate.phase5.ui-lock.task1"
   }
 }
 ```
@@ -125,14 +125,14 @@
 29. [DONE] `orchestrator-stop-gate.phase4.validators.task1` Downgrade non-critical managed artifact validation failures to continuation-with-warning: Application Skeleton draft markdown structure codes become warnings carried into user review instead of repair rejections (Core reads only the machine JSON for the next action); deeper per-field splits for Diagram Modules and Quality Gates stay hard until user testing shows recoverable cases, since their machine artifacts are the next-step inputs (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton, doc/TODO/todo-plan.md`; expected commit: `fix: downgrade noncritical managed validators`).
 30. [DONE] Git Commit: `fix: downgrade noncritical managed validators` (hash: 9ca918275)
 31. [DONE] `orchestrator-stop-gate.phase4.development-tree.task1` Apply the no-stop policy to the Cluster Contract flow: idempotent no-staged turns advance to review instead of blocking, blocked messages either confirm the dispatched repair prompt or release the input with a re-validate instruction, and the Application Skeleton warning regression test is stabilized; Product Part order-plan softening is deferred until user testing shows a recoverable case (scope: `packages/core/src/remote-bridge/handlers/cluster-contract-turn-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator-warnings.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: soften development tree contract blockers`).
-32. [PENDING] Git Commit: `fix: soften development tree contract blockers` (hash: TBD)
+32. [DONE] Git Commit: `fix: soften development tree contract blockers` (hash: c407dd833)
 
 ## Phase 5 - Project Manager Lock Semantics (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Truthful User Input State
 
-33. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task1` Ensure Project Manager shows "agent is working" only during an active provider/native turn and releases the input for Core validation, review, warning, repair-ready, and blocked bookkeeping states (scope: `src/client/project-manager/components/layout, src/client/project-manager/services, packages/core/src/remote-bridge/handlers`; expected commit: `fix: release input on core gates`).
-34. [TODO] Git Commit: `fix: release input on core gates` (hash: TBD)
+33. [DONE] `orchestrator-stop-gate.phase5.ui-lock.task1` Ensure Project Manager releases the input on every Core gate event: managed input gate `active: false` unlocks regardless of the lock reason (prefix-based managed-lock detection protects only non-managed bootstrap locks), so Core validation, review, warning, repair-ready, and bookkeeping states never leave a stale "agent is working" lock (scope: `src/client/project-manager/components/sessions/turn-state-stream.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release input on core gates`).
+34. [PENDING] Git Commit: `fix: release input on core gates` (hash: TBD)
 35. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task2` Eliminate stale lock dead ends: expire the local managed-review pending lock when no Core ack arrives, unlock on `active: false` gate events regardless of reason, time-box the managed turn-completion arbitration so a hung handler cannot hold "agent is working" forever, and reconcile lock state from Core snapshots on reconnect (scope: `src/client/project-manager/components/sessions, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, doc/TODO/todo-plan.md`; expected commit: `fix: expire stale managed input locks`).
 36. [TODO] Git Commit: `fix: expire stale managed input locks` (hash: TBD)
 37. [TODO] `orchestrator-stop-gate.phase5.ui-lock-test.task1` Add targeted Project Manager/Core stream tests for cluster worktree sessions, managed review acceptance, and Quality Gates boundary messages so stale working locks cannot regress (scope: `src/client/project-manager, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `test: verify core gate input release`).

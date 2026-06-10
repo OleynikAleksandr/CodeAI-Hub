@@ -42,6 +42,14 @@ const MANAGED_INPUT_GATE_UNLOCK_REASONS = new Set([
   "managed_workflow_core_agent_turn",
 ] as const);
 
+// Core is authoritative for managed gate state: an `active: false` event must
+// release every managed lock, including reasons added after this client build.
+// Only non-managed locks (e.g. bootstrap continuity) stay protected.
+const isManagedGateLockReason = (reason: string | undefined): boolean =>
+  reason === undefined ||
+  reason.startsWith("managed") ||
+  MANAGED_INPUT_GATE_UNLOCK_REASONS.has(reason as never);
+
 const readManagedInputGate = (event: unknown): ManagedInputGate | null => {
   if (!isRecord(event) || event.type !== "stream_event") {
     return null;
@@ -108,9 +116,8 @@ const updateSnapshotsWithManagedInputGate = (
     }
     const currentReason = snapshot.status.continuityLock?.reason;
     if (
-      !gate.active &&
-      !gate.force &&
-      !MANAGED_INPUT_GATE_UNLOCK_REASONS.has(currentReason as never)
+      !(gate.active || gate.force) &&
+      !isManagedGateLockReason(currentReason)
     ) {
       continue;
     }
