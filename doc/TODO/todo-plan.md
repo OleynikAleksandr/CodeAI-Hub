@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "f278320fe",
+  "lastRecordedCommit": "fb549e4a8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase5.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare quality gates restore isolation release notes",
+  "currentTaskId": "qg-restore-isolation.phase5.build-all.task1",
+  "expectedCommitMessage": "build: prepare quality gates restore isolation release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates restore isolation release notes",
-    "preCommitHead": "f278320fe",
+    "expectedCommitMessage": "build: prepare quality gates restore isolation release artifacts",
+    "preCommitHead": "fb549e4a8",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase5.release-notes.task1"
+    "taskId": "qg-restore-isolation.phase5.build-all.task1"
   }
 }
 ```
@@ -93,12 +93,12 @@
 ### Stream: Release Notes
 
 15. [DONE] `qg-restore-isolation.phase5.release-notes.task1` Prepare release notes for the user-authorized Quality Gates restore-isolation release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates restore isolation release notes`).
-16. [PENDING] Git Commit: `docs: prepare quality gates restore isolation release notes` (hash: TBD)
+16. [DONE] Git Commit: `docs: prepare quality gates restore isolation release notes` (hash: fb549e4a8)
 
 ### Stream: Release Artifacts
 
-17. [TODO] `qg-restore-isolation.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare quality gates restore isolation release artifacts`).
-18. [TODO] Git Commit: `build: prepare quality gates restore isolation release artifacts` (hash: TBD)
+17. [DONE] `qg-restore-isolation.phase5.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare quality gates restore isolation release artifacts`). Result: `./scripts/build-all.sh` completed successfully for 1.2.487; provider, Core, VS Code webview, Project Manager, and CEF launcher tarballs were generated.
+18. [PENDING] Git Commit: `build: prepare quality gates restore isolation release artifacts` (hash: TBD)
 19. [TODO] `qg-restore-isolation.phase5.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package quality gates restore isolation vsix release`).
 20. [TODO] Git Commit: `build: package quality gates restore isolation vsix release` (hash: TBD)
 
