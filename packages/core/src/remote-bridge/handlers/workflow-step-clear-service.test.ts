@@ -270,6 +270,7 @@ test("workflow step clear restores workflow stages from Git boundary", async () 
     cleared: true,
     deletedProviderNativeSessionPaths: [],
     deletedSessionIds: [virtual.id, diagram.id],
+    deletedUnifiedSessionPaths: [],
     restore: {
       boundaryHash: "abc123",
       clearCommitHash: "def456",
@@ -334,11 +335,43 @@ test("workflow step clear prunes provider-native workflow sessions only", async 
     "runtime/providers/claude/home/.claude/projects/demo",
     "claude-workflow-provider-session.jsonl"
   );
+  const codexUnifiedPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/sessions/unified/codex",
+    "codex-workflow-provider-session-virtual-simulation.jsonl"
+  );
+  const codexUnifiedTranslationsPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/sessions/unified/codex",
+    "codex-workflow-provider-session-virtual-simulation.translations.jsonl"
+  );
+  const staleDiagramUnifiedPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/sessions/unified/codex",
+    "codex-stale-diagram-modules.jsonl"
+  );
+  const unrelatedUnifiedPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/sessions/unified/codex",
+    "codex-description.jsonl"
+  );
 
   try {
     await writeText(codexWorkflowPath, "{}\n");
     await writeText(codexTranslationPath, "{}\n");
     await writeText(claudeWorkflowPath, "{}\n");
+    await writeText(codexUnifiedPath, "{}\n");
+    await writeText(codexUnifiedTranslationsPath, "{}\n");
+    await writeText(staleDiagramUnifiedPath, "{}\n");
+    await writeText(unrelatedUnifiedPath, "{}\n");
 
     const result = await runClear(
       {
@@ -353,6 +386,10 @@ test("workflow step clear prunes provider-native workflow sessions only", async 
     assert.equal(await fileExists(codexWorkflowPath), false);
     assert.equal(await fileExists(claudeWorkflowPath), false);
     assert.equal(await fileExists(codexTranslationPath), true);
+    assert.equal(await fileExists(codexUnifiedPath), false);
+    assert.equal(await fileExists(codexUnifiedTranslationsPath), false);
+    assert.equal(await fileExists(staleDiagramUnifiedPath), false);
+    assert.equal(await fileExists(unrelatedUnifiedPath), true);
     assert.deepEqual(
       (result.payload as { readonly deletedSessionIds: readonly string[] })
         .deletedSessionIds,

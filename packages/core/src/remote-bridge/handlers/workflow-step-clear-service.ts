@@ -1,10 +1,13 @@
-import { readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import { isStageAtOrAfter } from "../../workflow/boundary/workflow-boundary-model";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
+import {
+  pruneWorkflowRuntimeSessionFiles,
+  type WorkflowProviderNativeSessionRef,
+} from "./workflow-clear-session-cleanup";
 import { clearDevelopmentTreeNode } from "./workflow-step-clear-development-tree-node";
 import {
   clearAndRestartProductPart,
@@ -22,7 +25,6 @@ const WORKFLOW_STAGES = [
   "quality_gates",
 ] as const satisfies readonly WorkflowStageId[];
 const WORKSPACE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
-const PROVIDER_NATIVE_SESSION_EXTENSIONS = new Set([".json", ".jsonl"]);
 
 type ClearTarget =
   | { readonly kind: "workflow_stage"; readonly stage: WorkflowStageId }
@@ -47,14 +49,9 @@ interface ParsedClearRequest {
   readonly workspaceSlug: string;
 }
 
-interface ProviderNativeSessionRef {
-  readonly providerId: string;
-  readonly providerSessionId: string;
-}
-
 interface ClearedRuntimeSessions {
   readonly deletedSessionIds: readonly string[];
-  readonly providerNativeSessions: readonly ProviderNativeSessionRef[];
+  readonly providerNativeSessions: readonly WorkflowProviderNativeSessionRef[];
 }
 
 const readString = (value: unknown): string | null =>
@@ -135,7 +132,7 @@ const clearRuntimeSessions = (
     return { deletedSessionIds: [], providerNativeSessions: [] };
   }
   const deletedSessionIds: string[] = [];
-  const providerNativeSessions: ProviderNativeSessionRef[] = [];
+  const providerNativeSessions: WorkflowProviderNativeSessionRef[] = [];
   for (const session of deps.sessionManager.getSessionsByWorkspacePath(
     parsed.workspacePath
   )) {
@@ -159,90 +156,11 @@ const clearRuntimeSessions = (
   return { deletedSessionIds, providerNativeSessions };
 };
 
-const providerHomeRoot = (params: {
-  readonly providerId: string;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): string =>
-  path.join(
-    params.workspacePath,
-    ".codeai-hub",
-    params.workspaceSlug,
-    "runtime",
-    "providers",
-    params.providerId,
-    "home"
-  );
-
-const walkProviderSessionFiles = async (
-  root: string
-): Promise<readonly string[]> => {
-  const entries = await readdir(root, { withFileTypes: true }).catch(() => []);
-  const files: string[] = [];
-  for (const entry of entries) {
-    const absolutePath = path.join(root, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...(await walkProviderSessionFiles(absolutePath)));
-      continue;
-    }
-    if (
-      entry.isFile() &&
-      PROVIDER_NATIVE_SESSION_EXTENSIONS.has(path.extname(entry.name))
-    ) {
-      files.push(absolutePath);
-    }
-  }
-  return files;
-};
-
-const isProviderNativeSessionPath = (params: {
-  readonly filePath: string;
-  readonly providerId: string;
-}): boolean => {
-  const normalized = params.filePath.replace(/\\/gu, "/");
-  if (params.providerId === "codex") {
-    return normalized.includes("/sessions/");
-  }
-  if (params.providerId === "claude") {
-    return normalized.includes("/.claude/projects/");
-  }
-  return false;
-};
-
-const pruneProviderNativeWorkflowSessions = async (params: {
-  readonly sessions: readonly ProviderNativeSessionRef[];
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<readonly string[]> => {
-  const removedPaths: string[] = [];
-  const uniqueSessions = new Map<string, ProviderNativeSessionRef>();
-  for (const session of params.sessions) {
-    uniqueSessions.set(
-      `${session.providerId}:${session.providerSessionId}`,
-      session
-    );
-  }
-
-  for (const session of uniqueSessions.values()) {
-    const homeRoot = providerHomeRoot({
-      providerId: session.providerId,
-      workspacePath: params.workspacePath,
-      workspaceSlug: params.workspaceSlug,
-    });
-    for (const filePath of await walkProviderSessionFiles(homeRoot)) {
-      if (
-        isProviderNativeSessionPath({
-          filePath,
-          providerId: session.providerId,
-        }) &&
-        path.basename(filePath).includes(session.providerSessionId)
-      ) {
-        await rm(filePath, { force: true });
-        removedPaths.push(path.relative(params.workspacePath, filePath));
-      }
-    }
-  }
-  return removedPaths;
+const createWorkflowStageCleanupFragments = (
+  stage: WorkflowStageId
+): readonly string[] => {
+  const stageIndex = WORKFLOW_STAGES.indexOf(stage);
+  return stageIndex >= 0 ? WORKFLOW_STAGES.slice(stageIndex) : [stage];
 };
 
 export const handleWorkflowStepClear = async (
@@ -345,17 +263,22 @@ export const handleWorkflowStepClear = async (
       workspaceRoot: parsed.workspacePath,
       workspaceSlug: parsed.workspaceSlug,
     });
-    const deletedProviderNativeSessionPaths =
-      await pruneProviderNativeWorkflowSessions({
-        sessions: clearedSessions.providerNativeSessions,
-        workspacePath: parsed.workspacePath,
-        workspaceSlug: parsed.workspaceSlug,
-      });
+    const runtimeCleanup = await pruneWorkflowRuntimeSessionFiles({
+      deletedSessionIds: clearedSessions.deletedSessionIds,
+      providerNativeSessions: clearedSessions.providerNativeSessions,
+      unifiedSessionFileNameFragments: createWorkflowStageCleanupFragments(
+        parsed.target.stage
+      ),
+      workspacePath: parsed.workspacePath,
+      workspaceSlug: parsed.workspaceSlug,
+    });
     deps.resetWorkflowState(parsed.workspaceSlug);
     res.json({
       cleared: true,
-      deletedProviderNativeSessionPaths,
+      deletedProviderNativeSessionPaths:
+        runtimeCleanup.deletedProviderNativeSessionPaths,
       deletedSessionIds: clearedSessions.deletedSessionIds,
+      deletedUnifiedSessionPaths: runtimeCleanup.deletedUnifiedSessionPaths,
       restore,
       target: parsed.target,
       workspaceSlug: parsed.workspaceSlug,

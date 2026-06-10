@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "f6313f800",
+  "lastRecordedCommit": "b9e5dc924",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6a.ignored-runtime.task1",
-  "expectedCommitMessage": "fix: skip ignored runtime paths in workflow handoff commits",
+  "currentTaskId": "qg-restore-isolation.phase6c.clear-runtime.task1",
+  "expectedCommitMessage": "fix: prune workflow stage clear runtime sessions",
   "debt": {
-    "expectedCommitMessage": "fix: skip ignored runtime paths in workflow handoff commits",
-    "preCommitHead": "f6313f800",
+    "expectedCommitMessage": "fix: prune workflow stage clear runtime sessions",
+    "preCommitHead": "b9e5dc924",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6a.ignored-runtime.task1"
+    "taskId": "qg-restore-isolation.phase6c.clear-runtime.task1"
   }
 }
 ```
@@ -113,18 +113,38 @@
 ### Stream: Ignored Runtime Path Filtering
 
 22. [DONE] `qg-restore-isolation.phase6a.ignored-runtime.task1` Prevent workflow handoff/continuity commits after Quality Gates completion from attempting to stage ignored runtime session paths while still committing trackable continuity and handoff artifacts; add focused regression coverage for ignored `.codeai-hub/**/runtime` paths (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/workflow/boundary, doc/TODO/todo-plan.md`; expected commit: `fix: skip ignored runtime paths in workflow handoff commits`). Result: `WorkflowBoundaryGit` now filters explicit ignored pathspecs before staging while preserving tracked matches; regression covers ignored `.codeai-hub/**/runtime/sessions` alongside trackable continuity paths. Targeted tests passed 5/5 (`workflow-boundary-git.test.ts`, `session-request-handler-managed-workflow-turn.quality-gates.test.ts`); Ultracite check passed for changed files; `npm run build --workspace=@codeai-hub/core` passed.
-23. [PENDING] Git Commit: `fix: skip ignored runtime paths in workflow handoff commits` (hash: TBD)
+23. [DONE] Git Commit: `fix: skip ignored runtime paths in workflow handoff commits` (hash: b9e5dc924)
 
 ## Phase 6B - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest After Handoff Fix
 
-24. [TODO] `qg-restore-isolation.phase6b.user-retest.task1` User retests post-Quality-Gates handoff after the ignored-runtime staging fix: Quality Gates completion should advance into the next workflow step without a Core-side ignored-path git add error (scope: `manual retest`; no commit expected).
+24. [DONE] `qg-restore-isolation.phase6b.user-retest.task1` User retests post-Quality-Gates handoff after the ignored-runtime staging fix: Quality Gates completion should advance into the next workflow step without a Core-side ignored-path git add error (scope: `manual retest`; no commit expected). Result: the post-QG handoff advanced into the lead Product Part workflow, and the Product Part brief/order plan commits were accepted. Follow-up defects found during downstream Development Tree testing: Clear/Undo leaves unified runtime sessions behind on workflow-stage and downstream node clears, and stale Core runtime state can pre-create future Development Tree worktree paths before `git worktree add`.
+
+## Phase 6C - Clear/Undo Runtime Cleanup (owner: Codex, updated: 2026-06-10)
+
+### Stream: Runtime Session Pruning
+
+25. [DONE] `qg-restore-isolation.phase6c.clear-runtime.task1` Add a shared Clear/Undo runtime-session cleanup helper and wire workflow-stage clears to prune matching unified session files and provider-native session files without deleting unrelated sessions (scope: `packages/core/src/remote-bridge/handlers/workflow-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts`; expected commit: `fix: prune workflow stage clear runtime sessions`).
+26. [PENDING] Git Commit: `fix: prune workflow stage clear runtime sessions` (hash: TBD)
+27. [TODO] `qg-restore-isolation.phase6c.clear-devtree-node.task1` Wire downstream Development Tree node Clear to the shared runtime-session cleanup helper so cluster/module clears remove matching unified and provider-native session files together with in-memory sessions, continuity, and worktrees (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune development tree node clear runtime sessions`).
+28. [TODO] Git Commit: `fix: prune development tree node clear runtime sessions` (hash: TBD)
+
+### Stream: Development Tree Worktree Bootstrap Preflight
+
+29. [TODO] `qg-restore-isolation.phase6c.worktree-preflight.task1` Make Development Tree cluster-contract worktree bootstrap idempotent against stale Core runtime-only directories while blocking non-runtime path collisions before `git worktree add -B` mutates branch refs (scope: `packages/core/src/development-tree/node-bootstrap, doc/TODO/todo-plan.md`; expected commit: `fix: self-heal stale development tree worktree paths`).
+30. [TODO] Git Commit: `fix: self-heal stale development tree worktree paths` (hash: TBD)
+
+## Phase 6D - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
+
+### Stream: Retest After Clear/Undo Fix
+
+31. [TODO] `qg-restore-isolation.phase6d.user-retest.task1` User retests Clear/Undo across workflow stages, Product Part root nodes, and downstream Development Tree nodes, then retries the downstream cluster-contract wave that previously failed on an existing worktree path (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Archive And Dispose
 
-25. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-26. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
-27. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+32. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+33. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+34. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
