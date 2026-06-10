@@ -2,30 +2,30 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.484** (Attached Worktree Runtime Streaming)
+**Current Release — v1.2.485** (No-Stop Orchestrator Gates)
 
-This regression-fix release lets the Core-owned WebSocket delivery scope observe
-runtime roots that Core creates under `<mainWorkspace>.worktrees/...`.
-Cluster/Module worktree sessions now live-stream to the main Project Manager
-client as attached runtime roots instead of being filtered out as unrelated
-workspaces.
+This release adopts the no-stop dual-outcome policy for the Core orchestrator:
+every managed settlement ends either as an agent repair/continuation dispatch
+or as a button gate with a concrete user action. Informational "Core cannot
+continue" stop cards are removed as a class.
 
-The attachment is not triggered by selecting a node in the UI. Core derives the
-allowed attachment boundary from the selected main workspace and accepts any
-number of sessions under the sibling `.worktrees` root while still rejecting
-unrelated absolute workspace paths.
+Dirty Git is eliminated as a stop. Managed boundaries auto-commit with
+two-basket classification: step-owned residue joins the managed step commit,
+everything else is preserved in a separate `chore: preserve workspace changes`
+commit, and idempotent no-staged turns advance instead of blocking.
 
-The related Development Tree planning documents now record that Core creates,
-attaches, observes, and clears these worktree runtime roots. Project Manager
-remains a replaceable projection that renders already observed Core state.
+Silent stops are gone: continuation dispatch is awaited with a retry, settled
+managed turns dispatch their prepared repair prompts, managed arbitration is
+time-boxed (120s), repair loops are bounded (3 attempts, then the review gate
+opens with the artifact as is), and Project Manager releases the input on every
+Core gate event, including unknown future managed lock reasons.
 
-Retest by recreating the FinderWidget lead Product Part flow through
-`note-selection-cluster`. Keep the cluster node selected: new agent and
-Core/System messages should live-refresh without toggling the sidebar, and
-clicking `Подтверждаю` should advance through the visible cluster dialog without
-leaving the input blocked.
+Retest from Quality Gates Baseline through Product Part and
+`note-selection-cluster`: dirty workspaces must auto-commit and continue, no
+"Core cannot continue" card should ever appear, and the input must never stay
+on "agent is working" after Core reaches a gate.
 
-**Previous Release — v1.2.482** (Cluster Contract Review Unlock)
+**Previous Release — v1.2.484** (Attached Worktree Runtime Streaming)
 
 This regression-fix release closes the projected Cluster Contract review lock
 loop. Project Manager now applies managed workflow side effects when replaying

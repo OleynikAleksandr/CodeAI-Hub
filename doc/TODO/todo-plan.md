@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "65a124aea",
+  "lastRecordedCommit": "38460f7af",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase7.verify.task1",
-  "expectedCommitMessage": "test: verify orchestrator stop gate simplification",
+  "currentTaskId": "orchestrator-stop-gate.phase8.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare stop gate simplification release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify orchestrator stop gate simplification",
-    "preCommitHead": "65a124aea",
+    "expectedCommitMessage": "docs: prepare stop gate simplification release notes",
+    "preCommitHead": "38460f7af",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase7.verify.task1"
+    "taskId": "orchestrator-stop-gate.phase8.release-notes.task1"
   }
 }
 ```
@@ -152,18 +152,18 @@
 ### Stream: Targeted Verification
 
 43. [DONE] `orchestrator-stop-gate.phase7.verify.task1` Run targeted Core and Project Manager tests/builds for dirty Git auto-commit (step + preserve), guaranteed continuation delivery, contained errors, softened validators, Development Tree sub-agent flow, projected worktree sessions, and UI lock release/expiry, including silent-path tests where a failing handler must still produce an agent dispatch or button gate. Result: core build green; 133/137 core suite tests green with 4 pre-existing failures outside this scope (model-binding emission, diagram facade validation, dist exclusion) verified present before this scope on commit 88fb8e621; webview typecheck and bundle green; PM gate lock tests 9/9 (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify orchestrator stop gate simplification`).
-44. [PENDING] Git Commit: `test: verify orchestrator stop gate simplification` (hash: TBD)
+44. [DONE] Git Commit: `test: verify orchestrator stop gate simplification` (hash: 38460f7af)
 
 ## Phase 8 - Release Build Confirmation (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Release Permission
 
-45. [TODO] `orchestrator-stop-gate.phase8.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none).
+45. [DONE] `orchestrator-stop-gate.phase8.release-confirm.task1` Ask the user for explicit confirmation before preparing release notes, bumping versions, running `build-all.sh`, or packaging VSIX (scope: user workflow; expected commit: none). Result: User explicitly pre-authorized the release build in this session: 'доведи все до самого конца и собери новый релиз для моих тестов'.
 
 ### Stream: Release After Confirmation
 
-46. [TODO] `orchestrator-stop-gate.phase8.release-notes.task1` Prepare release notes for the stop-gate simplification release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare stop gate simplification release notes`).
-47. [TODO] Git Commit: `docs: prepare stop gate simplification release notes` (hash: TBD)
+46. [DONE] `orchestrator-stop-gate.phase8.release-notes.task1` Prepare release notes for the stop-gate simplification release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare stop gate simplification release notes`).
+47. [PENDING] Git Commit: `docs: prepare stop gate simplification release notes` (hash: TBD)
 48. [TODO] `orchestrator-stop-gate.phase8.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare stop gate simplification release artifacts`).
 49. [TODO] Git Commit: `build: prepare stop gate simplification release artifacts` (hash: TBD)
 50. [TODO] `orchestrator-stop-gate.phase8.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package stop gate simplification vsix release`).

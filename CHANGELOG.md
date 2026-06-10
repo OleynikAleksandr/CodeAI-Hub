@@ -8,6 +8,29 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.485] - 2026-06-10
+### Changed
+- **No-stop dual-outcome policy for the orchestrator.** Every Core settlement of a managed turn, validation, or commit boundary now ends either as an agent repair/continuation dispatch or as a button gate with a concrete user action; informational "Core cannot continue" stop cards are removed as a class.
+- **Dirty Git is eliminated as a stop.** Managed terminal boundaries, workflow boundary anchors, and accepted-step commits auto-commit with two-basket classification: step-owned residue joins the managed step commit, everything else is preserved in a separate `chore: preserve workspace changes` commit. Idempotent no-staged turns advance with the current HEAD hash instead of blocking.
+- **Bounded repair loops.** Repair dispatch attempts per artifact are capped at 3; on exhaustion the artifact opens for review as is (accept to continue, or describe corrections) instead of looping forever.
+
+### Fixed
+- **Silent stops eliminated.** Agent continuation dispatch is awaited with one retry and reports delivery failure with a released input; settled managed turns now dispatch their prepared repair prompts (including Quality Gates `repair_integration`/`repair_verification`); managed turn-completion failures and Development Tree plan parse failures produce a released-input Core message instead of a hung dialog.
+- **Managed turn arbitration is time-boxed (120s).** A hung handler can no longer hold "agent is working" forever.
+- **Project Manager releases the input on every Core gate.** A `managed_input_gate` `active: false` event unlocks any managed lock reason (prefix-based), and the optimistic review-click lock expires after 60s without a Core ack.
+- **Stage plan bookkeeping pauses are actionable.** Plan-state boundary messages now release the input and instruct re-validation instead of declaring "Core cannot continue".
+- **Legacy red boundary tests repaired.** Three stale tests were rewritten to the current living-runtime semantics and the boundary suite is green.
+
+### Documentation
+- Stop-gate planning source rewritten to the accepted no-stop dual-outcome policy with the silent-stop audit classes; both Development Tree planning documents, Core/PM cluster SSOT invariants, and the workflow overview describe the new gates.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/*.test.js packages/core/dist/managed-workflow-orchestration/**/*.test.js packages/core/dist/remote-bridge/handlers/managed-internal-continuation-dispatch.test.js packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `npx tsx --test src/client/project-manager/components/sessions/turn-state-stream.test.ts`
+
 ## [1.2.484] - 2026-06-10
 ### Fixed
 - **Attached worktree sessions now live-stream to the main Project Manager client.** Core WebSocket scoped delivery treats `<mainWorkspace>.worktrees/...` as Core-owned attached runtime roots, so Cluster/Module sessions created in separate worktrees are no longer filtered out as unrelated workspaces.
