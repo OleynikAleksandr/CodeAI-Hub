@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "cccea3487",
+  "lastRecordedCommit": "daf5eb48b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase52.verify.task1",
-  "expectedCommitMessage": "test: verify worktree runtime attachment workflow",
+  "currentTaskId": "development-tree-cluster-contract.phase53.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare worktree runtime attachment release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify worktree runtime attachment workflow",
-    "preCommitHead": "cccea3487",
+    "expectedCommitMessage": "docs: prepare worktree runtime attachment release notes",
+    "preCommitHead": "daf5eb48b",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase52.verify.task1"
+    "taskId": "development-tree-cluster-contract.phase53.release-notes.task1"
   }
 }
 ```
@@ -755,15 +755,15 @@ Verification evidence:
 ### Stream: Regression Verification
 
 327. [DONE] `development-tree-cluster-contract.phase52.verify.task1` Run targeted Core WebSocket tests plus affected builds/typechecks for attached worktree runtime streaming (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify worktree runtime attachment workflow`).
-328. [PENDING] Git Commit: `test: verify worktree runtime attachment workflow` (hash: TBD)
+328. [DONE] Git Commit: `test: verify worktree runtime attachment workflow` (hash: daf5eb48b)
 
 ## Phase 53 - Release Build Confirmation (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Release After Explicit User Request
 
-329. [TODO] `development-tree-cluster-contract.phase53.release-confirm.task1` User explicitly requested building a new release after the Core-owned worktree runtime attachment fix (scope: user workflow; expected commit: none).
-330. [TODO] `development-tree-cluster-contract.phase53.release-notes.task1` Prepare release notes for the attached worktree runtime streaming fix before bumping versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare worktree runtime attachment release notes`).
-331. [TODO] Git Commit: `docs: prepare worktree runtime attachment release notes` (hash: TBD)
+329. [DONE] `development-tree-cluster-contract.phase53.release-confirm.task1` User explicitly requested building a new release after the Core-owned worktree runtime attachment fix (scope: user workflow; expected commit: none).
+330. [DONE] `development-tree-cluster-contract.phase53.release-notes.task1` Prepare release notes for the attached worktree runtime streaming fix before bumping versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare worktree runtime attachment release notes`).
+331. [PENDING] Git Commit: `docs: prepare worktree runtime attachment release notes` (hash: TBD)
 332. [TODO] `development-tree-cluster-contract.phase53.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint worktree runtime attachment release build state`).
 333. [TODO] Git Commit: `docs: checkpoint worktree runtime attachment release build state` (hash: TBD)
 334. [TODO] `development-tree-cluster-contract.phase53.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare worktree runtime attachment release artifacts`).

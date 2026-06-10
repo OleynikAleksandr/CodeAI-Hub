@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.484] - 2026-06-10
+### Fixed
+- **Attached worktree sessions now live-stream to the main Project Manager client.** Core WebSocket scoped delivery treats `<mainWorkspace>.worktrees/...` as Core-owned attached runtime roots, so Cluster/Module sessions created in separate worktrees are no longer filtered out as unrelated workspaces.
+- **Workspace reconnect now hydrates attached session scope.** When Project Manager selects or reconnects to the main workspace, Core pre-populates session/workspace mappings for all known sessions under the attached `.worktrees` root, not just exact main-workspace sessions.
+- **Unrelated workspaces remain isolated.** The attachment predicate accepts only the main workspace and its sibling `.worktrees` subtree; prefix-only paths such as `.worktrees2` and other projects are rejected.
+
+### Documentation
+- **Planning docs now make runtime attachment Core-owned.** The Development Tree branch workflow and Product Part sub-agent orchestration plans specify that the component creating a worktree must attach it to the observation graph immediately; UI selection only renders already observed state.
+
+### Verification
+- `npm run build --workspace packages/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workspace-runtime-attachment-scope.test.js packages/core/dist/remote-bridge/handlers/websocket-attached-worktree-streaming.test.js`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.483] - 2026-06-09
 ### Fixed
 - **Projected Cluster dialogs now keep the resolved worktree root.** Project Manager replaces the active dialog intent with the Core-resolved `worktreePath`, so live history refresh reads the cluster worktree JSONL instead of falling back to the main workspace runtime.

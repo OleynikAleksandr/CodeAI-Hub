@@ -2,21 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.483** (Projected Cluster Dialog Routing)
+**Current Release — v1.2.484** (Attached Worktree Runtime Streaming)
 
-This regression-fix release routes projected Cluster/Module dialogs through the
-actual node worktree root. Project Manager now keeps the Core-resolved
-`worktreePath` as the active dialog intent, and `dialog:list`, `dialog:history`,
-and `dialog:send` commands carry that explicit workspace root instead of
-silently falling back to the main workspace runtime.
+This regression-fix release lets the Core-owned WebSocket delivery scope observe
+runtime roots that Core creates under `<mainWorkspace>.worktrees/...`.
+Cluster/Module worktree sessions now live-stream to the main Project Manager
+client as attached runtime roots instead of being filtered out as unrelated
+workspaces.
 
-The `Подтверждаю` action for a projected cluster review now goes through
-`dialog:send` with the managed review action preserved, so Core resolves the
-same worktree-backed dialog chain that the user sees. The UI also shows a local
-managed-review wait lock while Core processes the confirmation.
+The attachment is not triggered by selecting a node in the UI. Core derives the
+allowed attachment boundary from the selected main workspace and accepts any
+number of sessions under the sibling `.worktrees` root while still rejecting
+unrelated absolute workspace paths.
 
-The related Development Tree planning documents now record the exact symptoms,
-root causes, invariants, and regression checks for this class of bugs.
+The related Development Tree planning documents now record that Core creates,
+attaches, observes, and clears these worktree runtime roots. Project Manager
+remains a replaceable projection that renders already observed Core state.
 
 Retest by recreating the FinderWidget lead Product Part flow through
 `note-selection-cluster`. Keep the cluster node selected: new agent and
