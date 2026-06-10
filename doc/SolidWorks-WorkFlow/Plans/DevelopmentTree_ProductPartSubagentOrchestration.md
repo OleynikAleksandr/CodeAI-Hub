@@ -292,6 +292,25 @@ Regression checks for future fixes:
 
 This regression is a warning for all future sub-agent surfaces: the left tree projection identity and the right dialog runtime identity are different objects. The projection can be owned by the main Product Part graph, but the chat history, provider continuity, review button, and native session binding belong to the node worktree.
 
+### 10.1. Core-owned runtime attachments
+
+The follow-up 2026-06-10 retest showed that routing explicit `dialog:history` requests to a worktree is not enough. The backend can complete the cluster session and write the final JSONL, while Project Manager remains visually stuck because live WebSocket delivery is still scoped only to the main workspace.
+
+The correct rule is not "user opens a projected dialog, then Core starts watching the worktree". Core creates the worktree, so Core must attach that worktree runtime root to the main workspace observation graph immediately when the downstream node is bootstrapped.
+
+Required model:
+
+- the main workspace remains the Project Manager scope and owns the Product Part coordination graph;
+- every Core-created cluster/module worktree becomes an attached runtime root of that main workspace;
+- live session events, dialog messages, turn-state events, managed input gates, and review handoff messages from attached runtime roots are delivered to Project Manager as part of the main Development Tree observation stream;
+- selecting a node in the left tree only chooses which already-observed dialog/session to render; it must not be the action that starts observation;
+- Clear/Undo of a cluster/module node removes its worktree and detaches that runtime root;
+- reconnect/restart must rebuild attachments from current Development Tree/worktree truth, not from prior UI selection state.
+
+This must scale to any number of Core-created worktrees. Project Manager should not subscribe to arbitrary folders and should not scan all possible directories. Core owns the set of attached runtime roots because Core is the only layer allowed to create, clear, and reconcile those worktrees.
+
+Regression signal: if a cluster/module dialog updates only after sidebar toggling, the explicit history path may be correct, but the Core-owned runtime attachment stream is missing or filtered out.
+
 ## 11. MVP Implementation Boundary
 
 The implemented MVP scope is intentionally narrow:

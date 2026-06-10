@@ -157,6 +157,27 @@ Concrete regression signals:
 
 These bugs are Core/Project Manager integration bugs. They must not be fixed by prompt changes, provider retries, or manual sidebar refresh assumptions.
 
+### 4.1.3. Core-owned attached runtime roots
+
+Projected worktree dialogs must not depend on a user selection event to become observable.
+
+When Core creates a cluster/module worktree, Core must also attach that worktree runtime root to the main workspace observation graph. The Project Manager client remains scoped to the main workspace, but Core delivery treats all Core-created attached runtime roots as part of that main workspace's Development Tree runtime surface.
+
+Required behavior:
+
+1. Core creates a worktree for a downstream Cluster, Standalone Module, Cluster Module, worker sandbox, or later integration node.
+2. In the same bootstrap/reconciliation boundary, Core records that runtime root as attached to the main workspace that owns the Development Tree.
+3. Project Manager receives live graph/status/session/dialog events from the main workspace and every attached runtime root without waiting for the user to click the node.
+4. The left tree selection only changes which already-observed node is rendered in the right panel.
+5. Clear/Undo of a downstream node removes the worktree and detaches its runtime root.
+6. Core restart/reconnect rebuilds the attachment set from Git/filesystem/development-tree truth.
+
+This attachment set is not a UI preference and not a replacement for Git. It is a Core-owned delivery/read-model concern. Its purpose is to let one Project Manager surface observe a cluster-module graph whose lower nodes execute in many separate Git worktrees.
+
+The mechanism must support any number of attached runtime roots. It must stay bounded to roots derived from the selected main workspace, normally under `<mainWorkspace>.worktrees/...`, and must reject unrelated absolute paths.
+
+Regression signal: if `dialog:history` can manually load the final worktree JSONL but `session:stream`, `dialog:message`, `turn_state`, or managed review events do not arrive live, the runtime root is not attached to the main workspace observation graph.
+
 ### 4.2. Product Part Development Brief remains the branch root
 
 Для каждого `Product Part` нужен короткий branch-root artifact:

@@ -8,15 +8,15 @@
   "planId": "development-tree-cluster-contract-subagent-orchestration-2026-06-08",
   "branch": "main",
   "baseHead": "b90dba86c",
-  "lastRecordedCommit": "577634fd8",
+  "lastRecordedCommit": "4d650fbd3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md",
-  "currentTaskId": "development-tree-cluster-contract.phase48.vsix.task1",
-  "expectedCommitMessage": "build: package projected cluster dialog vsix release",
+  "currentTaskId": "development-tree-cluster-contract.phase51.runtime-attachment-docs.task1",
+  "expectedCommitMessage": "docs: specify core-owned worktree runtime attachments",
   "debt": {
-    "expectedCommitMessage": "build: package projected cluster dialog vsix release",
-    "preCommitHead": "577634fd8",
+    "expectedCommitMessage": "docs: specify core-owned worktree runtime attachments",
+    "preCommitHead": "4d650fbd3",
     "stage": "commit_pending",
-    "taskId": "development-tree-cluster-contract.phase48.vsix.task1"
+    "taskId": "development-tree-cluster-contract.phase51.runtime-attachment-docs.task1"
   }
 }
 ```
@@ -728,18 +728,59 @@ Verification evidence:
 313. [DONE] `development-tree-cluster-contract.phase48.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare projected cluster dialog release artifacts`).
 314. [DONE] Git Commit: `build: prepare projected cluster dialog release artifacts` (hash: 577634fd8)
 315. [DONE] `development-tree-cluster-contract.phase48.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package projected cluster dialog vsix release`).
-316. [PENDING] Git Commit: `build: package projected cluster dialog vsix release` (hash: TBD)
+316. [DONE] Git Commit: `build: package projected cluster dialog vsix release` (hash: 4d650fbd3)
 
 ## Phase 49 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-09)
 
 ### Stream: Projected Cluster Dialog Release Retest
 
-317. [TODO] `development-tree-cluster-contract.phase49.user-retest.task1` User installs the next release and retests the FinderWidget cluster-contract flow: projected cluster dialog must live-refresh from worktree JSONL without sidebar toggling, `Подтверждаю` must route through the visible cluster dialog, and the input must not remain blocked with a free-text placeholder (scope: user workflow; expected commit: none).
+317. [BLOCKED] `development-tree-cluster-contract.phase49.user-retest.task1` User installs the next release and retests the FinderWidget cluster-contract flow: projected cluster dialog must live-refresh from worktree JSONL without sidebar toggling, `Подтверждаю` must route through the visible cluster dialog, and the input must not remain blocked with a free-text placeholder (scope: user workflow; expected commit: none). Blocker: release `1.2.483` still does not live-refresh projected cluster dialogs because WebSocket delivery remains scoped to the main workspace and drops session events emitted from Core-created worktree runtime roots.
 
-## Phase 50 - Scope Closeout (owner: Codex, updated: 2026-06-09)
+## Phase 51 - Core-Owned Worktree Runtime Attachments (owner: Codex, updated: 2026-06-10)
+
+### Stream: Runtime Attachment Architecture
+
+321. [DONE] `development-tree-cluster-contract.phase51.runtime-attachment-docs.task1` Record that Core, not the UI selection event, owns attachment of cluster/module worktree runtime roots to the main workspace observation graph (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify core-owned worktree runtime attachments`).
+322. [PENDING] Git Commit: `docs: specify core-owned worktree runtime attachments` (hash: TBD)
+
+### Stream: Runtime Attachment Delivery
+
+323. [TODO] `development-tree-cluster-contract.phase51.runtime-attachment-core.task1` Add a focused Core runtime attachment helper and use it in WebSocket scoped delivery so sessions under `<mainWorkspace>.worktrees/...` live-stream to the main Project Manager client without changing the selected workspace scope (scope: `packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.ts, packages/core/src/remote-bridge/handlers/websocket-session-scope.ts, packages/core/src/remote-bridge/handlers/websocket-manager.ts`; expected commit: `fix: stream attached worktree runtime events`).
+324. [TODO] Git Commit: `fix: stream attached worktree runtime events` (hash: TBD)
+325. [TODO] `development-tree-cluster-contract.phase51.runtime-attachment-tests.task1` Add regression tests for main-workspace clients receiving live session/dialog events from attached worktree runtime roots while still rejecting unrelated workspaces (scope: `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts, packages/core/src/remote-bridge/handlers/workspace-runtime-attachment-scope.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify attached worktree runtime streaming`).
+326. [TODO] Git Commit: `test: verify attached worktree runtime streaming` (hash: TBD)
+
+## Phase 52 - Tooling Verification (owner: Codex, updated: 2026-06-10)
+
+### Stream: Regression Verification
+
+327. [TODO] `development-tree-cluster-contract.phase52.verify.task1` Run targeted Core WebSocket tests plus affected builds/typechecks for attached worktree runtime streaming (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify worktree runtime attachment workflow`).
+328. [TODO] Git Commit: `test: verify worktree runtime attachment workflow` (hash: TBD)
+
+## Phase 53 - Release Build Confirmation (owner: Codex, updated: 2026-06-10)
+
+### Stream: Release After Explicit User Request
+
+329. [TODO] `development-tree-cluster-contract.phase53.release-confirm.task1` User explicitly requested building a new release after the Core-owned worktree runtime attachment fix (scope: user workflow; expected commit: none).
+330. [TODO] `development-tree-cluster-contract.phase53.release-notes.task1` Prepare release notes for the attached worktree runtime streaming fix before bumping versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare worktree runtime attachment release notes`).
+331. [TODO] Git Commit: `docs: prepare worktree runtime attachment release notes` (hash: TBD)
+332. [TODO] `development-tree-cluster-contract.phase53.release-state.task1` Commit the active plan transition to the clean-tree build-all task before running release scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: checkpoint worktree runtime attachment release build state`).
+333. [TODO] Git Commit: `docs: checkpoint worktree runtime attachment release build state` (hash: TBD)
+334. [TODO] `development-tree-cluster-contract.phase53.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `build: prepare worktree runtime attachment release artifacts`).
+335. [TODO] Git Commit: `build: prepare worktree runtime attachment release artifacts` (hash: TBD)
+336. [TODO] `development-tree-cluster-contract.phase53.vsix.task1` Run `./scripts/build-release.sh --use-current-version` and verify VSIX package output (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package worktree runtime attachment vsix release`).
+337. [TODO] Git Commit: `build: package worktree runtime attachment vsix release` (hash: TBD)
+
+## Phase 54 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-10)
+
+### Stream: Attached Worktree Runtime Retest
+
+338. [TODO] `development-tree-cluster-contract.phase54.user-retest.task1` User installs the next release and retests that Core-created cluster/module worktree sessions live-refresh in Project Manager without sidebar toggling while the main workspace graph remains selected (scope: user workflow; expected commit: none).
+
+## Phase 55 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Closeout After Acceptance
 
-318. [TODO] `development-tree-cluster-contract.phase50.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
-319. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
-320. [TODO] `development-tree-cluster-contract.phase50.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+339. [TODO] `development-tree-cluster-contract.phase55.closeout.task1` After explicit user acceptance of the fixed release, archive this plan and decide disposition for `DevelopmentTree_ProductPartSubagentOrchestration.md`, `DevelopmentTree_BranchWorkflow_Architecture.md`, and related SSOT updates (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; expected commit: `docs: close cluster contract subagent orchestration scope`).
+340. [TODO] Git Commit: `docs: close cluster contract subagent orchestration scope` (hash: TBD)
+341. [TODO] `development-tree-cluster-contract.phase55.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
