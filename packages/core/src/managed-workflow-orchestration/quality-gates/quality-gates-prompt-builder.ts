@@ -196,6 +196,16 @@ export const buildQualityGatesIntegrationRepairPrompt = (
     "When the repair is ready, stop with a content-readiness note for Core validation. Do not claim the Quality Gates step is complete; Core must open Phase 4 Formal Quality Gates Verification first.",
   ].join("\n");
 
+export const buildQualityGatesSequentialVerificationContract =
+  (): readonly string[] => [
+    "Formal verification command execution contract:",
+    "- Resolve package scripts and hook reachability first, then build one ordered verification plan.",
+    "- Run formal verification commands sequentially in a single workspace; do not run these commands in parallel tool calls.",
+    "- Treat dependency restore, install, clean, delete, and any hook or aggregate command that may invoke them as exclusive workspace mutation commands.",
+    "- Do not start the next command until the previous command exits and dependency/install side effects have settled.",
+    '- Record evidence only after the sequential run completes: set `verificationEvidence.executionMode` to `"sequential"` and add a positive integer `sequence` to every command evidence entry.',
+  ];
+
 export const buildQualityGatesVerificationRepairPrompt = (
   options: QualityGatesIntegrationRepairPromptOptions
 ): string =>
@@ -216,6 +226,8 @@ export const buildQualityGatesVerificationRepairPrompt = (
     ...formatDiagnostics(options.diagnostics, { phase: "verification" }),
     "",
     ...buildVerificationEvidenceRepairContract(options.diagnostics),
+    "",
+    ...buildQualityGatesSequentialVerificationContract(),
     "",
     "Repair the Quality Gates verification evidence within the already accepted and integrated contract scope.",
     "Run the required formal verification commands and record exact passing evidence in the Quality Gates artifacts.",

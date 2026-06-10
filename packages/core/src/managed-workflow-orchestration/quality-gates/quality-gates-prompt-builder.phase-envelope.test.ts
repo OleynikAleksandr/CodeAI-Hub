@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { buildQualityGatesVerificationContinuation } from "../../remote-bridge/handlers/quality-gates-repair-prompt-dispatch";
 import {
   buildQualityGatesContractDraftPrompt,
   buildQualityGatesIntegrationPrompt,
@@ -21,6 +22,9 @@ const SEQUENTIAL_EVIDENCE_MODE_RE =
   /verificationEvidence\.executionMode[\s\S]*"sequential"/u;
 const SEQUENTIAL_DIAGNOSTIC_RE = /sequential workspace transaction/u;
 const SEQUENCE_FIELD_RE = /"sequence": 1/u;
+const NO_PARALLEL_COMMANDS_RE = /do not run these commands in parallel/u;
+const EXCLUSIVE_WORKSPACE_MUTATION_RE =
+  /exclusive workspace mutation commands/u;
 const QUALITY_GATES_JSON_PATH_RE = /quality_gates\/quality-gates\.json/u;
 const BEFORE_COMMIT_COMMAND_RE = /"command": "npm run qg:before-commit"/u;
 const PRE_COMMIT_HOOK_RE = /"command": "sh \.husky\/pre-commit"/u;
@@ -86,8 +90,18 @@ test("Quality Gates verification repair prompt explains evidence shape", () => {
   assert.match(prompt, SEQUENTIAL_EVIDENCE_MODE_RE);
   assert.match(prompt, SEQUENTIAL_DIAGNOSTIC_RE);
   assert.match(prompt, SEQUENCE_FIELD_RE);
+  assert.match(prompt, NO_PARALLEL_COMMANDS_RE);
+  assert.match(prompt, EXCLUSIVE_WORKSPACE_MUTATION_RE);
   assert.match(prompt, QUALITY_GATES_JSON_PATH_RE);
   assert.match(prompt, BEFORE_COMMIT_COMMAND_RE);
   assert.match(prompt, PRE_COMMIT_HOOK_RE);
   assert.match(prompt, VERIFIED_STATE_RE);
+});
+
+test("Quality Gates verification continuation forbids parallel verification commands", () => {
+  const prompt = buildQualityGatesVerificationContinuation(WORKSPACE_SLUG);
+
+  assert.match(prompt, NO_PARALLEL_COMMANDS_RE);
+  assert.match(prompt, EXCLUSIVE_WORKSPACE_MUTATION_RE);
+  assert.match(prompt, SEQUENTIAL_EVIDENCE_MODE_RE);
 });

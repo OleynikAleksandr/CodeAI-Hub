@@ -1,6 +1,7 @@
 import {
   buildQualityGatesDraftRepairPrompt,
   buildQualityGatesIntegrationRepairPrompt,
+  buildQualityGatesSequentialVerificationContract,
   buildQualityGatesVerificationRepairPrompt,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder";
 import type { QualityGatesManagedValidationResult } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
@@ -55,6 +56,9 @@ export const buildQualityGatesVerificationContinuation = (
     "Core opens Phase 4 Formal Quality Gates Verification.",
     `Verify \`.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json\` and the integrated enforcement surface before persistent return.`,
     'Resolve hook `npm run <script>` calls against `package.json`, run available `qg:*` aggregate commands and Husky hook scripts, then record `verificationState: "verified"` with command evidence.',
+    "",
+    ...buildQualityGatesSequentialVerificationContract(),
+    "",
     "Do not run Git commands or edit stage todo files.",
   ].join("\n");
 
