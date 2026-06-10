@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "edfb5a605",
+  "lastRecordedCommit": "ab3c43750",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase2.assets.task1",
-  "expectedCommitMessage": "fix: sync quality gates sequential verification asset",
+  "currentTaskId": "qg-restore-isolation.phase3.docs.task1",
+  "expectedCommitMessage": "docs: describe sequential quality gates verification",
   "debt": {
-    "expectedCommitMessage": "fix: sync quality gates sequential verification asset",
-    "preCommitHead": "edfb5a605",
+    "expectedCommitMessage": "docs: describe sequential quality gates verification",
+    "preCommitHead": "ab3c43750",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase2.assets.task1"
+    "taskId": "qg-restore-isolation.phase3.docs.task1"
   }
 }
 ```
@@ -72,14 +72,14 @@
 7. [DONE] `qg-restore-isolation.phase2.prompts.task1` Embed the sequential formal verification contract into Core Phase 4 continuation/repair prompts and cover it with prompt tests (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-prompt-dispatch.ts`; expected commit: `fix: serialize quality gates verification prompts`). Result: Phase 4 repair and initial continuation prompts now share the sequential verification contract; targeted prompt test passed 3/3; Ultracite check passed for changed prompt files.
 8. [DONE] Git Commit: `fix: serialize quality gates verification prompts` (hash: edfb5a605)
 9. [DONE] `qg-restore-isolation.phase2.assets.task1` Sync the bundled Quality Gates agent asset/template contract so generated Phase 4 prompts forbid parallel verification command execution (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `fix: sync quality gates sequential verification asset`). Result: `node scripts/generate-bundled-templates.js` regenerated `bundled-templates.ts`; bundled Quality Gates template test passed 3/3; Ultracite check passed for changed asset/template files.
-10. [PENDING] Git Commit: `fix: sync quality gates sequential verification asset` (hash: TBD)
+10. [DONE] Git Commit: `fix: sync quality gates sequential verification asset` (hash: ab3c43750)
 
 ## Phase 3 - Documentation Sync (owner: Codex, updated: 2026-06-10)
 
 ### Stream: SSOT Update
 
-11. [TODO] `qg-restore-isolation.phase3.docs.task1` Synchronize the implemented sequential Quality Gates verification contract into managed workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe sequential quality gates verification`).
-12. [TODO] Git Commit: `docs: describe sequential quality gates verification` (hash: TBD)
+11. [DONE] `qg-restore-isolation.phase3.docs.task1` Synchronize the implemented sequential Quality Gates verification contract into managed workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe sequential quality gates verification`). Result: ManagedWorkflowOrchestration and WorkflowSteps Overview now describe Phase 4 as a sequential workspace transaction with exclusive mutation commands and ordered evidence.
+12. [PENDING] Git Commit: `docs: describe sequential quality gates verification` (hash: TBD)
 
 ## Phase 4 - Tooling Verification (owner: Codex, updated: 2026-06-10)
 
