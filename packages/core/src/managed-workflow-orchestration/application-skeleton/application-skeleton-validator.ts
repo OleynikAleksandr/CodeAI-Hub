@@ -159,6 +159,11 @@ const validateRelativePath = (value: string): string | null => {
   return null;
 };
 
+const DRAFT_MARKDOWN_WARNING_CODES = new Set([
+  "markdown_missing_required_section",
+  "markdown_wrong_stage",
+]);
+
 const validateDraftMarkdown = (markdown: string | null): readonly string[] => {
   if (!markdown) {
     return ["missing_markdown"];
@@ -278,7 +283,10 @@ export const validateApplicationSkeletonManagedArtifacts = async (
   }
   if (phase === "draft") {
     const diagnostics = validateDraftShape({ mapJson, markdown });
-    return diagnostics.length > 0
+    const hardDiagnostics = diagnostics.filter(
+      (code) => !DRAFT_MARKDOWN_WARNING_CODES.has(code)
+    );
+    return hardDiagnostics.length > 0
       ? buildInvalidResult({
           diagnostics,
           mapJson,
@@ -286,7 +294,7 @@ export const validateApplicationSkeletonManagedArtifacts = async (
           workspaceSlug: request.workspaceSlug,
         })
       : {
-          diagnostics: [],
+          diagnostics,
           mapJson,
           nextAction: "open_user_review",
           nextPrompt: null,

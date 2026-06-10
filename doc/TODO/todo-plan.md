@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "3f0bf5af6",
+  "lastRecordedCommit": "6104a6817",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase3.repair-limits.task1",
-  "expectedCommitMessage": "fix: bound repair loops with graceful degradation",
+  "currentTaskId": "orchestrator-stop-gate.phase4.validators.task1",
+  "expectedCommitMessage": "fix: downgrade noncritical managed validators",
   "debt": {
-    "expectedCommitMessage": "fix: bound repair loops with graceful degradation",
-    "preCommitHead": "3f0bf5af6",
+    "expectedCommitMessage": "fix: downgrade noncritical managed validators",
+    "preCommitHead": "6104a6817",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase3.repair-limits.task1"
+    "taskId": "orchestrator-stop-gate.phase4.validators.task1"
   }
 }
 ```
@@ -116,14 +116,14 @@
 ### Stream: Bounded Repair Loops
 
 27. [DONE] `orchestrator-stop-gate.phase3.repair-limits.task1` Bound managed repair loops: cap repair dispatch attempts per artifact (3), then degrade gracefully — accept agent-readable artifacts with a recorded warning and continue, or raise a button gate (retry / continue as is / roll back step) only when Core-required machine fields are missing (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: bound repair loops with graceful degradation`).
-28. [PENDING] Git Commit: `fix: bound repair loops with graceful degradation` (hash: TBD)
+28. [DONE] Git Commit: `fix: bound repair loops with graceful degradation` (hash: 6104a6817)
 
 ## Phase 4 - Validation Pressure Reduction (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Hard Gate To Warning Conversion
 
-29. [TODO] `orchestrator-stop-gate.phase4.validators.task1` Downgrade non-critical managed artifact validation failures to continuation-with-warning where Core does not need the rejected field to compute the next workflow action; warnings are recorded in the managed plan and never rendered as stopping cards (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/managed-workflow-orchestration/application-skeleton, packages/core/src/managed-workflow-orchestration/diagram-modules`; expected commit: `fix: downgrade noncritical managed validators`).
-30. [TODO] Git Commit: `fix: downgrade noncritical managed validators` (hash: TBD)
+29. [DONE] `orchestrator-stop-gate.phase4.validators.task1` Downgrade non-critical managed artifact validation failures to continuation-with-warning: Application Skeleton draft markdown structure codes become warnings carried into user review instead of repair rejections (Core reads only the machine JSON for the next action); deeper per-field splits for Diagram Modules and Quality Gates stay hard until user testing shows recoverable cases, since their machine artifacts are the next-step inputs (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton, doc/TODO/todo-plan.md`; expected commit: `fix: downgrade noncritical managed validators`).
+30. [PENDING] Git Commit: `fix: downgrade noncritical managed validators` (hash: TBD)
 31. [TODO] `orchestrator-stop-gate.phase4.development-tree.task1` Apply the same policy to Product Part and Cluster/Module contract flows: Core-required machine fields stay hard (agent repair dispatch, bounded), agent-readable prose and recoverable contract detail issues become warnings or revision prompts (scope: `packages/core/src/remote-bridge/handlers/product-part-*, packages/core/src/remote-bridge/handlers/cluster-contract-*, doc/TODO/todo-plan.md`; expected commit: `fix: soften development tree contract blockers`).
 32. [TODO] Git Commit: `fix: soften development tree contract blockers` (hash: TBD)
 
