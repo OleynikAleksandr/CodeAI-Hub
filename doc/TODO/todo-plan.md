@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "b138bd446",
+  "lastRecordedCommit": "971cab3ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task4",
-  "expectedCommitMessage": "test: verify name agnostic gate validation",
+  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task5",
+  "expectedCommitMessage": "docs: describe name agnostic gate validation",
   "debt": {
-    "expectedCommitMessage": "test: verify name agnostic gate validation",
-    "preCommitHead": "b138bd446",
+    "expectedCommitMessage": "docs: describe name agnostic gate validation",
+    "preCommitHead": "971cab3ab",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9b.fix.task4"
+    "taskId": "orchestrator-stop-gate.phase9b.fix.task5"
   }
 }
 ```
@@ -224,9 +224,9 @@ Accepted model: the orchestrator validates only what affects downstream quality 
 74. [DONE] `orchestrator-stop-gate.phase9b.fix.task3` Rewrite the stage prompts and diagnostics texts to the name-agnostic contract: integration prompt requires a working reachable command per required gate and downgrades `qg:*` naming to a style recommendation, the size-policy hint stops prescribing same-name scripts, and the new entity diagnostics name the exact unreachable command (scope: `packages/core/src/managed-workflow-orchestration/quality-gates, packages/core/src/templates, packages/agents/quality-gates-agent/assets`; expected commit: `fix: teach prompts name agnostic gate wiring`).
 75. [DONE] Git Commit: `fix: teach prompts name agnostic gate wiring` (hash: b138bd446)
 76. [DONE] `orchestrator-stop-gate.phase9b.fix.task4` Add the run-1 regression test: a contract whose gate ids carry a `qg-` prefix and whose package scripts use arbitrary names must pass integration validation when commands are reachable, and verification must accept hook-run evidence without aggregate scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-name-agnostic-validation.test.ts`; expected commit: `test: verify name agnostic gate validation`).
-77. [PENDING] Git Commit: `test: verify name agnostic gate validation` (hash: TBD)
-78. [TODO] `orchestrator-stop-gate.phase9b.fix.task5` Sync the name-agnostic validation model into the Core SSOT invariants and the stop-gate planning document validation-pressure section (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe name agnostic gate validation`).
-79. [TODO] Git Commit: `docs: describe name agnostic gate validation` (hash: TBD)
+77. [DONE] Git Commit: `test: verify name agnostic gate validation` (hash: 971cab3ab)
+78. [DONE] `orchestrator-stop-gate.phase9b.fix.task5` Sync the name-agnostic validation model into the Core SSOT invariants and the stop-gate planning document validation-pressure section (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe name agnostic gate validation`).
+79. [PENDING] Git Commit: `docs: describe name agnostic gate validation` (hash: TBD)
 80. [TODO] `orchestrator-stop-gate.phase9a.release-notes.task1` Prepare release notes for the repair-limit acceptance fix release after explicit confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare repair limit acceptance release notes`).
 81. [TODO] Git Commit: `docs: prepare repair limit acceptance release notes` (hash: TBD)
 82. [TODO] `orchestrator-stop-gate.phase9a.build-all.task1` Run `./scripts/build-all.sh` to bump packages and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare repair limit acceptance release artifacts`).

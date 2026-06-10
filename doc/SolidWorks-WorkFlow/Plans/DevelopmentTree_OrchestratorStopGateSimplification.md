@@ -56,6 +56,7 @@ The repair-limit gate must obey the dual outcome itself (2026-06-10 FinderWidget
 ### 2.3. Validation pressure matches the consumer
 
 - Hard validation (agent dispatch, bounded) is reserved for fields Core reads to compute the next workflow action.
+- **Names are never validated, only entities (accepted 2026-06-10, implemented for Quality Gates).** The 2026-06-10 FinderWidget run 1 failed all three integration repairs because the prompt formula `qg:<gate-id>`, the validator canonicalization (silently stripping a `qg-` prefix), and the diagnostics (which never named the expected key) could not agree; run 2 passed only because the agent happened to choose unprefixed gate ids. Implemented model: the contract command (`commands.<gate-id>.proposedCommand`) is the single machine truth; integration requires the command to exist, resolve through `package.json` transitively, and be reachable from the matching hook; verification requires the hook runs themselves to pass. Script naming is a style recommendation, not a gate. The same model is the blueprint for the other managed stages when their formal validators are reviewed.
 - Agent-readable prose, naming polish, and recoverable detail gaps become warnings recorded in the managed plan while the workflow continues, or revision prompts to the agent. They are never rendered as stopping cards.
 - When a lower-level agent receives insufficient contract seed information, the correct outcome is a semantic question/revision request routed through the normal session, not a schema-format rejection.
 
