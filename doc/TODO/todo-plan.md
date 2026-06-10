@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "4ce55c5d4",
+  "lastRecordedCommit": "4dfd90dc3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task1",
-  "expectedCommitMessage": "fix: validate gate commands name agnostically",
+  "currentTaskId": "orchestrator-stop-gate.phase9b.fix.task1b",
+  "expectedCommitMessage": "test: align validator expectations with entity diagnostics",
   "debt": {
-    "expectedCommitMessage": "fix: validate gate commands name agnostically",
-    "preCommitHead": "4ce55c5d4",
+    "expectedCommitMessage": "test: align validator expectations with entity diagnostics",
+    "preCommitHead": "4dfd90dc3",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase9b.fix.task1"
+    "taskId": "orchestrator-stop-gate.phase9b.fix.task1b"
   }
 }
 ```
@@ -216,9 +216,9 @@ Accepted model: the orchestrator validates only what affects downstream quality 
 ### Stream: Name-Agnostic Gate Validation
 
 68. [DONE] `orchestrator-stop-gate.phase9b.fix.task1` Add the gate command reachability module and rewrite hook diagnostics name-agnostically: read each required gate command from the contract (`commands[gateId].proposedCommand`/`command`), require a non-empty command, resolve `npm run X` references against `package.json` transitively, and report gate commands not reachable from the matching `.husky` hook instead of reconstructing canonical script names (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-command-reachability.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts`; expected commit: `fix: validate gate commands name agnostically`).
-69. [PENDING] Git Commit: `fix: validate gate commands name agnostically` (hash: TBD)
-70. [TODO] `orchestrator-stop-gate.phase9b.fix.task1b` Align the existing validator integration expectations with the new entity diagnostics so the suite stays green between micro-commits (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `test: align validator expectations with entity diagnostics`).
-71. [TODO] Git Commit: `test: align validator expectations with entity diagnostics` (hash: TBD)
+69. [DONE] Git Commit: `fix: validate gate commands name agnostically` (hash: 4dfd90dc3)
+70. [DONE] `orchestrator-stop-gate.phase9b.fix.task1b` Align the existing validator integration expectations with the new entity diagnostics so the suite stays green between micro-commits (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `test: align validator expectations with entity diagnostics`).
+71. [PENDING] Git Commit: `test: align validator expectations with entity diagnostics` (hash: TBD)
 72. [TODO] `orchestrator-stop-gate.phase9b.fix.task2` Make verification evidence and planned-gate runner evidence contract-driven: verification requirements become hook runs (`sh .husky/pre-commit`, `sh .husky/pre-push`) plus contract commands for module-execution gates, with aggregate scripts accepted only as optional alternatives; planned-gate runner evidence detection uses the contract command instead of canonical script names (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-command-reachability.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts`; expected commit: `fix: verify gates by contract commands`).
 73. [TODO] Git Commit: `fix: verify gates by contract commands` (hash: TBD)
 74. [TODO] `orchestrator-stop-gate.phase9b.fix.task3` Rewrite the stage prompts and diagnostics texts to the name-agnostic contract: integration prompt requires a working reachable command per required gate and downgrades `qg:*` naming to a style recommendation, the size-policy hint stops prescribing same-name scripts, and the new entity diagnostics name the exact unreachable command (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `fix: teach prompts name agnostic gate wiring`).

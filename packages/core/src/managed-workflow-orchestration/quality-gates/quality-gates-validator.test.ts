@@ -451,7 +451,7 @@ test("Quality Gates validator rejects integrated contract without package script
     assert.ok(result.diagnostics.includes("missing_package_json"));
     assert.ok(
       result.diagnostics.includes(
-        "missing_hook_gate:qg-secret-scan in .husky/pre-commit"
+        "gate_command_unresolved:qg-secret-scan:npm run qg:secret-scan"
       )
     );
     assert.match(result.nextPrompt ?? "", INTEGRATION_REJECTED_RE);
