@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "d65e968bd",
+  "lastRecordedCommit": "3f0bf5af6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase3.plan-repair.task1",
-  "expectedCommitMessage": "fix: auto repair managed stage plan state",
+  "currentTaskId": "orchestrator-stop-gate.phase3.repair-limits.task1",
+  "expectedCommitMessage": "fix: bound repair loops with graceful degradation",
   "debt": {
-    "expectedCommitMessage": "fix: auto repair managed stage plan state",
-    "preCommitHead": "d65e968bd",
+    "expectedCommitMessage": "fix: bound repair loops with graceful degradation",
+    "preCommitHead": "3f0bf5af6",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase3.plan-repair.task1"
+    "taskId": "orchestrator-stop-gate.phase3.repair-limits.task1"
   }
 }
 ```
@@ -111,12 +111,12 @@
 ### Stream: Managed Plan State Auto-Repair
 
 25. [DONE] `orchestrator-stop-gate.phase3.plan-repair.task1` Auto-repair managed stage plan state on `plan_mismatch`, expected-commit drift, and `commit_failed` when Git plus managed state make the safe transition inferable, and replace the remaining "Core cannot continue" cards with agent repair dispatch (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: auto repair managed stage plan state`).
-26. [PENDING] Git Commit: `fix: auto repair managed stage plan state` (hash: TBD)
+26. [DONE] Git Commit: `fix: auto repair managed stage plan state` (hash: 3f0bf5af6)
 
 ### Stream: Bounded Repair Loops
 
-27. [TODO] `orchestrator-stop-gate.phase3.repair-limits.task1` Bound managed repair loops: cap repair dispatch attempts per artifact (3), then degrade gracefully — accept agent-readable artifacts with a recorded warning and continue, or raise a button gate (retry / continue as is / roll back step) only when Core-required machine fields are missing (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: bound repair loops with graceful degradation`).
-28. [TODO] Git Commit: `fix: bound repair loops with graceful degradation` (hash: TBD)
+27. [DONE] `orchestrator-stop-gate.phase3.repair-limits.task1` Bound managed repair loops: cap repair dispatch attempts per artifact (3), then degrade gracefully — accept agent-readable artifacts with a recorded warning and continue, or raise a button gate (retry / continue as is / roll back step) only when Core-required machine fields are missing (scope: `packages/core/src/managed-workflow-orchestration, packages/core/src/remote-bridge/handlers`; expected commit: `fix: bound repair loops with graceful degradation`).
+28. [PENDING] Git Commit: `fix: bound repair loops with graceful degradation` (hash: TBD)
 
 ## Phase 4 - Validation Pressure Reduction (owner: Codex, updated: 2026-06-10)
 

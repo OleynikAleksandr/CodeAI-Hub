@@ -8,7 +8,7 @@ import type { QualityGatesManagedValidationResult } from "../../managed-workflow
 const QUALITY_GATES_REPAIR_TASK_RE =
   /^quality-gates\.phase[34]\.repair\.task(\d+)$/u;
 
-const resolveQualityGatesRepairAttemptNumber = (
+export const resolveQualityGatesRepairAttemptNumber = (
   taskId: string | null
 ): number => {
   const match = taskId?.match(QUALITY_GATES_REPAIR_TASK_RE);

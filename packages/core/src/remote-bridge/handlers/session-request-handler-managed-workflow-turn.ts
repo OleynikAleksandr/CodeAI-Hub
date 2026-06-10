@@ -1,9 +1,4 @@
-import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
-import {
-  buildApplicationSkeletonBoundaryBlockedMessage,
-  buildApplicationSkeletonDraftRepairPrompt,
-  buildApplicationSkeletonMaterializationRepairPrompt,
-} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
+import { buildApplicationSkeletonBoundaryBlockedMessage } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import {
   type ApplicationSkeletonManagedValidationResult,
@@ -12,7 +7,6 @@ import {
 import {
   buildDiagramModulesManagedCommitBoundaryBlockedMessage as buildDiagramBoundaryBlockedMessage,
   buildDiagramModulesManagedContinuationMessage,
-  buildDiagramModulesProductPartRepairPrompt,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
 import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
 import { commitDiagramModulesRejectedTurn } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller";
@@ -28,30 +22,37 @@ import {
   type QualityGatesManagedValidationResult,
   validateQualityGatesManagedArtifacts,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
-import type { Session, SessionManager } from "../../session-manager";
+import type { Session } from "../../session-manager";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
+import { buildApplicationSkeletonRepairDispatch } from "./application-skeleton-repair-prompt-dispatch";
 import { ClusterContractTurnController } from "./cluster-contract-turn-controller";
 import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import {
   buildDevelopmentTreeTurnFailureMessage,
   runGuardedDevelopmentTreeTurn,
 } from "./development-tree-turn-guard";
+import { buildDiagramModulesRepairDispatch } from "./diagram-modules-repair-prompt-dispatch";
 import {
   buildContinuationDeliveryFailureMessage as buildDeliveryFailureMessage,
   dispatchManagedInternalContinuation as dispatchContinuation,
 } from "./managed-internal-continuation-dispatch";
+import {
+  buildRepairLimitReviewMessage,
+  isRepairAttemptLimitReached,
+} from "./managed-repair-limit";
 import { persistManagedDecision } from "./managed-workflow-decision-persister";
 import {
   resolveDiagramModulesRepairAttemptNumber,
   resolveMaterializationRepairAttemptNumber,
 } from "./managed-workflow-repair-attempts";
 import { ProductPartDevelopmentBriefTurnController } from "./product-part-development-brief-turn-controller";
+import { completeQualityGatesPersistentReturn } from "./quality-gates-persistent-return";
 import {
   buildQualityGatesRepairDispatch,
   buildQualityGatesVerificationContinuation,
+  resolveQualityGatesRepairAttemptNumber,
 } from "./quality-gates-repair-prompt-dispatch";
-import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
-import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
+import type { SessionRequestHandlerManagedWorkflowTurnOptions } from "./session-request-handler-managed-workflow-turn-options";
 import { resolvePreliminaryArtifactGate } from "./session-request-handler-preliminary-artifact-gate";
 
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
@@ -60,23 +61,15 @@ const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const QUALITY_GATES_STAGE = "quality_gates";
 const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const QUALITY_GATES_VERIFY_TASK_ID = "quality-gates.phase4.verify.task1";
+const QUALITY_GATES_VERIFY_OPEN = {
+  content:
+    "Core: Quality Gates integration accepted. Phase 4 formal verification prompt sent.",
+  tag: "managed-workflow-validation",
+} as const;
 export type ManagedWorkflowTurnCompletionResult =
   | "continued"
   | "not_managed"
   | "settled";
-interface ManagedWorkflowTurnEventMessages {
-  readonly appendCoreMessage: SessionRequestHandlerEventMessages["appendCoreMessage"];
-  readonly waitForMessagePersistence?: SessionRequestHandlerEventMessages["waitForMessagePersistence"];
-}
-interface SessionRequestHandlerManagedWorkflowTurnOptions {
-  readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
-  readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
-  readonly diagramStagePlan?: DiagramModulesStagePlanController;
-  readonly eventMessages: ManagedWorkflowTurnEventMessages;
-  readonly getMessageDispatch: () => SessionRequestHandlerMessageDispatch;
-  readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
-  readonly sessionManager: Pick<SessionManager, "getSession">;
-}
 export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
   private readonly clusterContractTurn = new ClusterContractTurnController();
@@ -191,29 +184,27 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         });
         return "settled";
       }
-      const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
-        attemptNumber: resolveDiagramModulesRepairAttemptNumber(
-          planAdvance.commit.nextTaskId
-        ),
-        currentPartId: decision.currentPartId,
-        diagnostics: decision.diagnostics,
-        rejectedCommitHash: planAdvance.commit.hash,
-        workspaceSlug: params.workspaceSlug,
-      });
-      const repairTarget = decision.currentPartId
-        ? `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/${decision.currentPartId}.md`
-        : `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
+      const attemptNumber = resolveDiagramModulesRepairAttemptNumber(
+        planAdvance.commit.nextTaskId
+      );
+      if (isRepairAttemptLimitReached(attemptNumber)) {
+        this.appendCoreMessage(
+          params.sessionId,
+          buildRepairLimitReviewMessage("Diagram Modules", decision.diagnostics)
+        );
+        return "settled";
+      }
+      const dispatch = buildDiagramModulesRepairDispatch(
+        params,
+        decision,
+        planAdvance.commit.hash,
+        attemptNumber
+      );
       this.appendCoreMessage(params.sessionId, {
-        content: [
-          "Core: Diagram Modules требует исправить staged artifact.",
-          `Target artifact: \`${repairTarget}\`.`,
-          "Diagnostics:",
-          ...decision.diagnostics.map((diagnostic) => `- ${diagnostic}`),
-          "Полный repair prompt отправлен агенту внутренним сообщением.",
-        ].join("\n"),
+        content: dispatch.notice,
         tag: "managed-workflow-validation",
       });
-      this.dispatchAgentContinuation(params.sessionId, repairPrompt);
+      this.dispatchAgentContinuation(params.sessionId, dispatch.prompt);
       return "continued";
     }
     const planAdvance = await this.diagramStagePlan.commitAcceptedTurn({
@@ -284,11 +275,10 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         });
         return "settled";
       }
-      this.dispatchApplicationRepairPrompt(params, decision, {
+      return this.dispatchApplicationRepairPrompt(params, decision, {
         rejectedCommitHash: planAdvance.commit.hash,
         repairTaskId: planAdvance.commit.nextTaskId,
       });
-      return "continued";
     }
     const planAdvance = await this.applicationStagePlan.commitManagedTurn({
       decision,
@@ -332,32 +322,35 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       readonly rejectedCommitHash: string;
       readonly repairTaskId: string | null;
     } | null
-  ): void {
-    const repairPrompt =
+  ): ManagedWorkflowTurnCompletionResult {
+    const attemptNumber =
       decision.nextAction === "repair_materialization"
-        ? buildApplicationSkeletonMaterializationRepairPrompt({
-            attemptNumber: resolveMaterializationRepairAttemptNumber(
-              rejected?.repairTaskId ?? null
-            ),
-            diagnostics: decision.diagnostics,
-            rejectedCommitHash: rejected?.rejectedCommitHash ?? null,
-            workspaceSlug: params.workspaceSlug,
-          })
-        : (decision.nextPrompt ??
-          buildApplicationSkeletonDraftRepairPrompt({
-            diagnostics: decision.diagnostics,
-            workspaceSlug: params.workspaceSlug,
-          }));
+        ? resolveMaterializationRepairAttemptNumber(
+            rejected?.repairTaskId ?? null
+          )
+        : 1;
+    if (isRepairAttemptLimitReached(attemptNumber)) {
+      this.appendCoreMessage(
+        params.sessionId,
+        buildRepairLimitReviewMessage(
+          "Application Skeleton",
+          decision.diagnostics
+        )
+      );
+      return "settled";
+    }
+    const dispatch = buildApplicationSkeletonRepairDispatch(
+      params,
+      decision,
+      rejected,
+      attemptNumber
+    );
     this.appendCoreMessage(params.sessionId, {
-      content: [
-        `Core: Application Skeleton требует исправить ${
-          decision.phase === "materialization" ? "материализацию" : "черновик"
-        }.`,
-        "Полный repair prompt отправлен агенту внутренним сообщением.",
-      ].join("\n"),
+      content: dispatch.notice,
       tag: "managed-workflow-validation",
     });
-    this.dispatchAgentContinuation(params.sessionId, repairPrompt);
+    this.dispatchAgentContinuation(params.sessionId, dispatch.prompt);
+    return "continued";
   }
   private async handleQualityGatesTurn(params: {
     readonly sessionId: string;
@@ -388,11 +381,10 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         });
         return "settled";
       }
-      this.dispatchQualityGatesRepairPrompt(params, decision, {
+      return this.dispatchQualityGatesRepairPrompt(params, decision, {
         rejectedCommitHash: planAdvance.commit.hash,
         repairTaskId: planAdvance.commit.nextTaskId,
       });
-      return "continued";
     }
     const planAdvance = await this.qualityGatesStagePlan.commitManagedTurn({
       decision,
@@ -410,11 +402,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       return "settled";
     }
     if (planAdvance.commit.nextTaskId === QUALITY_GATES_VERIFY_TASK_ID) {
-      this.appendCoreMessage(params.sessionId, {
-        content:
-          "Core: Quality Gates integration accepted. Phase 4 formal verification prompt sent.",
-        tag: "managed-workflow-validation",
-      });
+      this.appendCoreMessage(params.sessionId, QUALITY_GATES_VERIFY_OPEN);
       this.dispatchAgentContinuation(
         params.sessionId,
         buildQualityGatesVerificationContinuation(params.workspaceSlug)
@@ -425,8 +413,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       decision.phase === "verification" &&
       decision.nextAction === "open_persistent_return";
     if (decision.nextAction !== "open_user_review" && !completesStage) {
-      this.dispatchQualityGatesRepairPrompt(params, decision, null);
-      return "continued";
+      return this.dispatchQualityGatesRepairPrompt(params, decision, null);
     }
     this.appendCoreMessage(params.sessionId, {
       content: completesStage
@@ -438,16 +425,15 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     });
     if (completesStage) {
       const { eventMessages } = this.options;
-      await eventMessages.waitForMessagePersistence?.(params.sessionId);
-      await this.qualityGatesStagePlan.commitTerminalHandoffResidue({
-        workspaceRoot: params.workspaceRoot,
-        workspaceSlug: params.workspaceSlug,
-      });
-      await this.productPartBootstrap.bootstrap({
+      await completeQualityGatesPersistentReturn({
         agentGateway: this.options.developmentTreeAgentGateway,
+        productPartBootstrap: this.productPartBootstrap,
         sessionId: params.sessionId,
         sessionManager: this.options.sessionManager,
         stagePlan: this.qualityGatesStagePlan,
+        waitForMessagePersistence: (sessionId) =>
+          eventMessages.waitForMessagePersistence?.(sessionId) ??
+          Promise.resolve(),
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
       });
@@ -464,7 +450,17 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       readonly rejectedCommitHash: string;
       readonly repairTaskId: string | null;
     } | null
-  ): void {
+  ): ManagedWorkflowTurnCompletionResult {
+    const attemptNumber = resolveQualityGatesRepairAttemptNumber(
+      rejected?.repairTaskId ?? null
+    );
+    if (isRepairAttemptLimitReached(attemptNumber)) {
+      this.appendCoreMessage(
+        params.sessionId,
+        buildRepairLimitReviewMessage("Quality Gates", decision.diagnostics)
+      );
+      return "settled";
+    }
     const dispatch = buildQualityGatesRepairDispatch(
       params,
       decision,
@@ -475,6 +471,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       tag: "managed-workflow-validation",
     });
     this.dispatchAgentContinuation(params.sessionId, dispatch.prompt);
+    return "continued";
   }
   private dispatchAgentContinuation(sessionId: string, content: string): void {
     dispatchContinuation(this.options.getMessageDispatch(), {
