@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import type { Session, SessionManager } from "../../session-manager";
@@ -9,6 +9,10 @@ import {
   isWithinPath,
   removeProductPartWorktrees,
 } from "./product-part-worktree-cleanup";
+import {
+  pruneWorkflowRuntimeSessionFiles,
+  type WorkflowProviderNativeSessionRef,
+} from "./workflow-clear-session-cleanup";
 
 const PRODUCT_PART_ROOT_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([a-z0-9]+(?:-[a-z0-9]+)*)$/u;
@@ -48,14 +52,9 @@ export interface ProductPartClearRestartResult {
   readonly recreatedProductPartPlanPaths: readonly string[];
 }
 
-interface ProviderNativeSessionRef {
-  readonly providerId: string;
-  readonly providerSessionId: string;
-}
-
 interface ClearedProductPartSessions {
   readonly deletedSessionIds: readonly string[];
-  readonly providerNativeSessions: readonly ProviderNativeSessionRef[];
+  readonly providerNativeSessions: readonly WorkflowProviderNativeSessionRef[];
   readonly restartProviderId: string | null;
 }
 
@@ -94,7 +93,7 @@ const clearProductPartRuntimeSessions = (
   deps: ProductPartClearDeps
 ): ClearedProductPartSessions => {
   const deletedSessionIds: string[] = [];
-  const providerNativeSessions: ProviderNativeSessionRef[] = [];
+  const providerNativeSessions: WorkflowProviderNativeSessionRef[] = [];
   let restartProviderId: string | null = null;
   const partId = parseProductPartRootStage(request.target.workflowPath);
   const productPartWorktreeRoot = partId
@@ -130,120 +129,6 @@ const removePathIfPresent = async (params: {
 }): Promise<string> => {
   await rm(params.absolutePath, { force: true, recursive: true });
   return path.relative(params.workspacePath, params.absolutePath);
-};
-
-const providerHomeRoot = (params: {
-  readonly providerId: string;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): string =>
-  path.join(
-    params.workspacePath,
-    ".codeai-hub",
-    params.workspaceSlug,
-    "runtime",
-    "providers",
-    params.providerId,
-    "home"
-  );
-
-const collectFiles = async (root: string): Promise<readonly string[]> => {
-  const entries = await readdir(root, { withFileTypes: true }).catch(() => []);
-  const files: string[] = [];
-  for (const entry of entries) {
-    const absolutePath = path.join(root, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...(await collectFiles(absolutePath)));
-      continue;
-    }
-    if (entry.isFile()) {
-      files.push(absolutePath);
-    }
-  }
-  return files;
-};
-
-const isProviderNativeSessionPath = (params: {
-  readonly filePath: string;
-  readonly providerId: string;
-}): boolean => {
-  const normalized = params.filePath.replace(/\\/gu, "/");
-  if (params.providerId === "codex") {
-    return normalized.includes("/sessions/");
-  }
-  if (params.providerId === "claude") {
-    return normalized.includes("/.claude/projects/");
-  }
-  return false;
-};
-
-const pruneProviderNativeSessions = async (params: {
-  readonly sessions: readonly ProviderNativeSessionRef[];
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<readonly string[]> => {
-  const removedPaths: string[] = [];
-  const uniqueSessions = new Map<string, ProviderNativeSessionRef>();
-  for (const session of params.sessions) {
-    uniqueSessions.set(
-      `${session.providerId}:${session.providerSessionId}`,
-      session
-    );
-  }
-
-  for (const session of uniqueSessions.values()) {
-    const homeRoot = providerHomeRoot({
-      providerId: session.providerId,
-      workspacePath: params.workspacePath,
-      workspaceSlug: params.workspaceSlug,
-    });
-    for (const filePath of await collectFiles(homeRoot)) {
-      if (
-        isProviderNativeSessionPath({
-          filePath,
-          providerId: session.providerId,
-        }) &&
-        path.basename(filePath).includes(session.providerSessionId)
-      ) {
-        await rm(filePath, { force: true });
-        removedPaths.push(path.relative(params.workspacePath, filePath));
-      }
-    }
-  }
-  return removedPaths;
-};
-
-const pruneUnifiedSessionFiles = async (params: {
-  readonly deletedSessionIds: readonly string[];
-  readonly providerNativeSessions: readonly ProviderNativeSessionRef[];
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<readonly string[]> => {
-  const ids = new Set([
-    ...params.deletedSessionIds,
-    ...params.providerNativeSessions.map(
-      (session) => session.providerSessionId
-    ),
-  ]);
-  if (ids.size === 0) {
-    return [];
-  }
-  const sessionsRoot = path.join(
-    params.workspacePath,
-    ".codeai-hub",
-    params.workspaceSlug,
-    "runtime",
-    "sessions"
-  );
-  const deletedPaths: string[] = [];
-  for (const filePath of await collectFiles(sessionsRoot)) {
-    const fileName = path.basename(filePath);
-    if ([...ids].some((id) => fileName.includes(id))) {
-      await rm(filePath, { force: true });
-      deletedPaths.push(path.relative(params.workspacePath, filePath));
-    }
-  }
-  return deletedPaths;
 };
 
 const removeContinuityIndexEntries = async (params: {
@@ -386,14 +271,10 @@ export const clearAndRestartProductPart = async (
     throw new Error("Product Part clear requires a Product Part root node");
   }
   const clearedSessions = clearProductPartRuntimeSessions(request, deps);
-  const deletedUnifiedSessionPaths = await pruneUnifiedSessionFiles({
+  const runtimeCleanup = await pruneWorkflowRuntimeSessionFiles({
     deletedSessionIds: clearedSessions.deletedSessionIds,
     providerNativeSessions: clearedSessions.providerNativeSessions,
-    workspacePath: request.workspacePath,
-    workspaceSlug: request.workspaceSlug,
-  });
-  const deletedProviderNativeSessionPaths = await pruneProviderNativeSessions({
-    sessions: clearedSessions.providerNativeSessions,
+    unifiedSessionFileNameFragments: [request.target.workflowPath, partId],
     workspacePath: request.workspacePath,
     workspaceSlug: request.workspaceSlug,
   });
@@ -430,7 +311,8 @@ export const clearAndRestartProductPart = async (
   });
   return {
     clearedSessions,
-    deletedProviderNativeSessionPaths,
+    deletedProviderNativeSessionPaths:
+      runtimeCleanup.deletedProviderNativeSessionPaths,
     restart: {
       partId,
       bootstrapSessionIds: bootstrap.agentSessions
@@ -440,7 +322,7 @@ export const clearAndRestartProductPart = async (
       deletedManagedPaths: removedArtifacts.deletedManagedPaths,
       deletedProductPartPlanPaths: removedArtifacts.deletedProductPartPlanPaths,
       deletedWorktreePaths,
-      deletedUnifiedSessionPaths,
+      deletedUnifiedSessionPaths: runtimeCleanup.deletedUnifiedSessionPaths,
       recreatedDraftPaths: bootstrap.writtenDrafts
         .filter((draft) => draft.action !== "unchanged")
         .map((draft) => draft.relativePath),

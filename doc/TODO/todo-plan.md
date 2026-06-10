@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "f3a3973ac",
+  "lastRecordedCommit": "b30b7fafb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6c.worktree-preflight.task1",
-  "expectedCommitMessage": "fix: self-heal stale development tree worktree paths",
+  "currentTaskId": "qg-restore-isolation.phase6c.clear-product-part-root.task1",
+  "expectedCommitMessage": "fix: align product part clear runtime cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: self-heal stale development tree worktree paths",
-    "preCommitHead": "f3a3973ac",
+    "expectedCommitMessage": "fix: align product part clear runtime cleanup",
+    "preCommitHead": "b30b7fafb",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6c.worktree-preflight.task1"
+    "taskId": "qg-restore-isolation.phase6c.clear-product-part-root.task1"
   }
 }
 ```
@@ -133,18 +133,23 @@
 ### Stream: Development Tree Worktree Bootstrap Preflight
 
 29. [DONE] `qg-restore-isolation.phase6c.worktree-preflight.task1` Make Development Tree cluster-contract worktree bootstrap idempotent against stale Core runtime-only directories while blocking non-runtime path collisions before `git worktree add -B` mutates branch refs (scope: `packages/core/src/development-tree/node-bootstrap, doc/TODO/todo-plan.md`; expected commit: `fix: self-heal stale development tree worktree paths`).
-30. [PENDING] Git Commit: `fix: self-heal stale development tree worktree paths` (hash: TBD)
+30. [DONE] Git Commit: `fix: self-heal stale development tree worktree paths` (hash: b30b7fafb)
+
+### Stream: Product Part Root Cleanup Alignment
+
+31. [DONE] `qg-restore-isolation.phase6c.clear-product-part-root.task1` Wire Product Part root Clear to the shared runtime-session cleanup helper so root Product Part restarts prune stale unified session files by stage/part fragments in addition to live session ids (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align product part clear runtime cleanup`).
+32. [PENDING] Git Commit: `fix: align product part clear runtime cleanup` (hash: TBD)
 
 ## Phase 6D - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest After Clear/Undo Fix
 
-31. [TODO] `qg-restore-isolation.phase6d.user-retest.task1` User retests Clear/Undo across workflow stages, Product Part root nodes, and downstream Development Tree nodes, then retries the downstream cluster-contract wave that previously failed on an existing worktree path (scope: `manual retest`; no commit expected).
+33. [TODO] `qg-restore-isolation.phase6d.user-retest.task1` User retests Clear/Undo across workflow stages, Product Part root nodes, and downstream Development Tree nodes, then retries the downstream cluster-contract wave that previously failed on an existing worktree path (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
 ### Stream: Archive And Dispose
 
-32. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-33. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
-34. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+34. [TODO] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+35. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+36. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

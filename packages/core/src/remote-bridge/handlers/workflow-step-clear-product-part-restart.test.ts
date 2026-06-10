@@ -139,6 +139,13 @@ test("Product Part root clear removes old session material and recreates agent p
     "runtime/sessions/unified/codex",
     `${oldSessionProviderId}.jsonl`
   );
+  const staleUnifiedPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/sessions/unified/codex",
+    `codex-stale-${partId}.jsonl`
+  );
   const providerNativePath = path.join(
     workspaceRoot,
     ".codeai-hub",
@@ -208,6 +215,7 @@ test("Product Part root clear removes old session material and recreates agent p
       })
     );
     await writeText(unifiedPath, "{}\n");
+    await writeText(staleUnifiedPath, "{}\n");
     await writeText(providerNativePath, "{}\n");
 
     const result = await clearAndRestartProductPart(
@@ -265,6 +273,7 @@ test("Product Part root clear removes old session material and recreates agent p
     );
     assert.equal(await fileExists(providerNativePath), false);
     assert.equal(await fileExists(unifiedPath), false);
+    assert.equal(await fileExists(staleUnifiedPath), false);
     assert.equal(await fileExists(continuityPath), false);
     assert.equal(
       (await readFile(continuityIndexPath, "utf8")).includes(workflowPath),
