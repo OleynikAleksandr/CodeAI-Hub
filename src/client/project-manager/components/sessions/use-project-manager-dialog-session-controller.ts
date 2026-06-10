@@ -15,7 +15,7 @@ import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { shouldRefreshDialogHistoryForStream, updateSnapshotsWithTurnState } from "./turn-state-stream";
 import { seedSnapshotWithCachedUsageLimits, updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { appendOptimisticUserMessage } from "./session-message-dedupe";
-import { applyDialogManagedReviewPendingLock } from "./dialog-managed-review-lock";
+import { scheduleDialogManagedReviewPendingLock } from "./dialog-managed-review-lock";
 import { shouldSuppressIdleDialogRestoreRefresh, useProjectManagerDialogCoreEvents } from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
@@ -418,9 +418,7 @@ export const useProjectManagerDialogSessionController = (
     reload();
     const currentSessionId = sessionRef.current?.id ?? currentDialogId;
     if (turnOptions?.managedReviewAction) {
-      setSnapshots((previous) =>
-        applyDialogManagedReviewPendingLock(previous, currentSessionId)
-      );
+      scheduleDialogManagedReviewPendingLock(setSnapshots, currentSessionId);
     }
     api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content, {
       workspacePath: intent.workspacePath,

@@ -2,6 +2,7 @@ import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, serializeSessionModelBinding } from "../types";
+import { runManagedArbitrationWithTimeBox } from "./managed-arbitration-time-box";
 import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
 import {
   isRecord,
@@ -292,11 +293,13 @@ export class SessionProviderEventRouter {
           type: "session:stream",
           payload: { sessionId, event },
         });
-        (
+        runManagedArbitrationWithTimeBox(
+          this.deps,
+          sessionId,
           this.deps.handleManagedWorkflowTurnCompleted?.(sessionId) ??
-          Promise.resolve<ManagedWorkflowTurnCompletionResult | undefined>(
-            "settled"
-          )
+            Promise.resolve<ManagedWorkflowTurnCompletionResult | undefined>(
+              "settled"
+            )
         )
           .catch((error: unknown) => {
             const message =

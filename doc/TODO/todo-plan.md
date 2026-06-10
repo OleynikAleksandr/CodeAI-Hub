@@ -8,15 +8,15 @@
   "planId": "orchestrator-stop-gate-simplification-2026-06-10",
   "branch": "main",
   "baseHead": "8be648655",
-  "lastRecordedCommit": "c407dd833",
+  "lastRecordedCommit": "096ad06dd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_OrchestratorStopGateSimplification.md",
-  "currentTaskId": "orchestrator-stop-gate.phase5.ui-lock.task1",
-  "expectedCommitMessage": "fix: release input on core gates",
+  "currentTaskId": "orchestrator-stop-gate.phase5.ui-lock.task2",
+  "expectedCommitMessage": "fix: expire stale managed input locks",
   "debt": {
-    "expectedCommitMessage": "fix: release input on core gates",
-    "preCommitHead": "c407dd833",
+    "expectedCommitMessage": "fix: expire stale managed input locks",
+    "preCommitHead": "096ad06dd",
     "stage": "commit_pending",
-    "taskId": "orchestrator-stop-gate.phase5.ui-lock.task1"
+    "taskId": "orchestrator-stop-gate.phase5.ui-lock.task2"
   }
 }
 ```
@@ -132,9 +132,9 @@
 ### Stream: Truthful User Input State
 
 33. [DONE] `orchestrator-stop-gate.phase5.ui-lock.task1` Ensure Project Manager releases the input on every Core gate event: managed input gate `active: false` unlocks regardless of the lock reason (prefix-based managed-lock detection protects only non-managed bootstrap locks), so Core validation, review, warning, repair-ready, and bookkeeping states never leave a stale "agent is working" lock (scope: `src/client/project-manager/components/sessions/turn-state-stream.ts, doc/TODO/todo-plan.md`; expected commit: `fix: release input on core gates`).
-34. [PENDING] Git Commit: `fix: release input on core gates` (hash: TBD)
-35. [TODO] `orchestrator-stop-gate.phase5.ui-lock.task2` Eliminate stale lock dead ends: expire the local managed-review pending lock when no Core ack arrives, unlock on `active: false` gate events regardless of reason, time-box the managed turn-completion arbitration so a hung handler cannot hold "agent is working" forever, and reconcile lock state from Core snapshots on reconnect (scope: `src/client/project-manager/components/sessions, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, doc/TODO/todo-plan.md`; expected commit: `fix: expire stale managed input locks`).
-36. [TODO] Git Commit: `fix: expire stale managed input locks` (hash: TBD)
+34. [DONE] Git Commit: `fix: release input on core gates` (hash: 096ad06dd)
+35. [DONE] `orchestrator-stop-gate.phase5.ui-lock.task2` Eliminate stale lock dead ends: expire the local managed-review pending lock when no Core ack arrives, unlock on `active: false` gate events regardless of reason, time-box the managed turn-completion arbitration so a hung handler cannot hold "agent is working" forever, and reconcile lock state from Core snapshots on reconnect (scope: `src/client/project-manager/components/sessions, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: expire stale managed input locks`).
+36. [PENDING] Git Commit: `fix: expire stale managed input locks` (hash: TBD)
 37. [TODO] `orchestrator-stop-gate.phase5.ui-lock-test.task1` Add targeted Project Manager/Core stream tests for cluster worktree sessions, managed review acceptance, and Quality Gates boundary messages so stale working locks cannot regress (scope: `src/client/project-manager, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `test: verify core gate input release`).
 38. [TODO] Git Commit: `test: verify core gate input release` (hash: TBD)
 
