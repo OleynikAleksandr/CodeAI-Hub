@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "fe7b26a0e",
+  "lastRecordedCommit": "435a401cf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6o.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare product part brief barrier release notes",
+  "currentTaskId": "qg-restore-isolation.phase6o.build-all.task1",
+  "expectedCommitMessage": "build: prepare product part brief barrier release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare product part brief barrier release notes",
-    "preCommitHead": "fe7b26a0e",
+    "expectedCommitMessage": "build: prepare product part brief barrier release artifacts",
+    "preCommitHead": "435a401cf",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6o.release-notes.task1"
+    "taskId": "qg-restore-isolation.phase6o.build-all.task1"
   }
 }
 ```
@@ -250,12 +250,12 @@
 ### Stream: Release Notes
 
 71. [DONE] `qg-restore-isolation.phase6o.release-notes.task1` Prepare release notes for the user-authorized Product Part review-session and brief-barrier orchestration release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part brief barrier release notes`). Result: README announces future release `v1.2.490` as Product Part Brief Barrier, and CHANGELOG records Product Part review-session projection, resilient Product Part history persistence, all-brief gating before the lead `DevelopmentOrderPlan`, and cross-session lead continuation dispatch.
-72. [PENDING] Git Commit: `docs: prepare product part brief barrier release notes` (hash: TBD)
+72. [DONE] Git Commit: `docs: prepare product part brief barrier release notes` (hash: 435a401cf)
 
 ### Stream: Release Artifacts
 
-73. [TODO] `qg-restore-isolation.phase6o.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part brief barrier release artifacts`).
-74. [TODO] Git Commit: `build: prepare product part brief barrier release artifacts` (hash: TBD)
+73. [DONE] `qg-restore-isolation.phase6o.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part brief barrier release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.490`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
+74. [PENDING] Git Commit: `build: prepare product part brief barrier release artifacts` (hash: TBD)
 75. [TODO] `qg-restore-isolation.phase6o.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part brief barrier vsix release`).
 76. [TODO] Git Commit: `build: package product part brief barrier vsix release` (hash: TBD)
 
