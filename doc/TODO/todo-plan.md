@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "4f07d7bd4",
+  "lastRecordedCommit": "34da575df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6j.vsix.task1",
-  "expectedCommitMessage": "build: package cluster contract language vsix release",
+  "currentTaskId": "qg-restore-isolation.phase6l.session-projection-refactor.task1",
+  "expectedCommitMessage": "refactor: extract development tree session projection",
   "debt": {
-    "expectedCommitMessage": "build: package cluster contract language vsix release",
-    "preCommitHead": "4f07d7bd4",
+    "expectedCommitMessage": "refactor: extract development tree session projection",
+    "preCommitHead": "34da575df",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6j.vsix.task1"
+    "taskId": "qg-restore-isolation.phase6l.session-projection-refactor.task1"
   }
 }
 ```
@@ -204,13 +204,39 @@
 54. [DONE] `qg-restore-isolation.phase6j.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare cluster contract language release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.489`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
 55. [DONE] Git Commit: `build: prepare cluster contract language release artifacts` (hash: 4f07d7bd4)
 56. [DONE] `qg-restore-isolation.phase6j.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package cluster contract language vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for `1.2.489`; Step 7 SDK exclusions, local artifact validation, markdown links, duplication check, production dependency pruning, VSIX package creation, runtime package surface verification, and dev dependency restore passed. VSIX: `codeai-hub-1.2.489.vsix` (`5.1M`).
-57. [PENDING] Git Commit: `build: package cluster contract language vsix release` (hash: TBD)
+57. [DONE] Git Commit: `build: package cluster contract language vsix release` (hash: 34da575df)
 
 ## Phase 6K - User Workflow Acceptance Testing (owner: User, updated: 2026-06-10)
 
 ### Stream: Retest After Cluster Contract Language Fix
 
-58. [TODO] `qg-restore-isolation.phase6k.user-retest.task1` User installs the new release and retests downstream Cluster Contract startup: the first agent progress/final chat should be in Russian while canonical file names, ids, JSON keys, method/event names, and status tokens remain English (scope: `manual retest`; no commit expected).
+58. [DONE] `qg-restore-isolation.phase6k.user-retest.task1` User installs the new release and retests downstream Cluster Contract startup: the first agent progress/final chat should be in Russian while canonical file names, ids, JSON keys, method/event names, and status tokens remain English (scope: `manual retest`; no commit expected). Result: v1.2.489 fixed downstream Cluster Contract chat language and stopped non-lead Product Part cluster/module folders from appearing under the main Product Part TODO tree. Follow-up defects found: non-lead Product Part review session `finder-widget-shell` can be absent/empty in Project Manager because Product Part managed review sessions are not projected as first-class Development Tree node sessions and unified history can be missing its primary JSONL while a translation overlay remains; Core also starts lead `DevelopmentOrderPlan` before all non-lead Product Part briefs have reached a user-reviewed terminal state.
+
+## Phase 6L - Product Part Review Session Projection (owner: Codex, updated: 2026-06-11)
+
+### Stream: Project Product Part Sessions
+
+59. [DONE] `qg-restore-isolation.phase6l.session-projection-refactor.task1` Extract Development Tree session projection helpers out of the near-limit snapshot reader before adding Product Part review-session projection (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: extract development tree session projection`). Result: cluster session projection helpers moved into `development-tree-session-projection.ts`; `development-tree-snapshot.ts` dropped from 495 to 352 lines. Targeted Development Tree snapshot/projected-session tests passed 9/9; Ultracite check passed for the touched files.
+60. [PENDING] Git Commit: `refactor: extract development tree session projection` (hash: TBD)
+61. [TODO] `qg-restore-isolation.phase6l.product-part-session.task1` Project Product Part managed brief-review sessions from Core-owned managed state/continuity into `DevelopmentTreePartNode.session`, and cover the non-lead Product Part visibility scenario with regression tests (scope: `packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: project product part review sessions`).
+62. [TODO] Git Commit: `fix: project product part review sessions` (hash: TBD)
+
+### Stream: Managed History Resilience
+
+63. [TODO] `qg-restore-isolation.phase6l.product-part-history.task1` Make Development Tree managed Product Part startup/history persistence resilient so Project Manager does not end up with a translation overlay but no primary unified dialog history for user-review sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts`; expected commit: `fix: persist product part review dialog history`).
+64. [TODO] Git Commit: `fix: persist product part review dialog history` (hash: TBD)
+
+## Phase 6M - Product Part Brief Barrier (owner: Codex, updated: 2026-06-11)
+
+### Stream: Lead Order Plan Readiness Barrier
+
+65. [TODO] `qg-restore-isolation.phase6m.brief-barrier.task1` Prevent Core from starting the lead Product Part `DevelopmentOrderPlan` turn until every planned Product Part brief has a Core-owned user-reviewed terminal state, and inline all Product Part brief contents/statuses into the lead order-plan prompt when the barrier opens (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`; expected commit: `fix: gate lead order plan on product part briefs`).
+66. [TODO] Git Commit: `fix: gate lead order plan on product part briefs` (hash: TBD)
+
+### Stream: Downstream Planning Documentation
+
+67. [TODO] `qg-restore-isolation.phase6m.brief-barrier-docs.task1` Document the Product Part brief barrier and lead `DevelopmentOrderPlan` all-brief input contract in the active downstream execution refactor planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part brief barrier`).
+68. [TODO] Git Commit: `docs: describe product part brief barrier` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
