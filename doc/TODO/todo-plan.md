@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "435a401cf",
+  "lastRecordedCommit": "978f6da18",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6o.build-all.task1",
-  "expectedCommitMessage": "build: prepare product part brief barrier release artifacts",
+  "currentTaskId": "qg-restore-isolation.phase6o.vsix.task1",
+  "expectedCommitMessage": "build: package product part brief barrier vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare product part brief barrier release artifacts",
-    "preCommitHead": "435a401cf",
+    "expectedCommitMessage": "build: package product part brief barrier vsix release",
+    "preCommitHead": "978f6da18",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6o.build-all.task1"
+    "taskId": "qg-restore-isolation.phase6o.vsix.task1"
   }
 }
 ```
@@ -255,9 +255,9 @@
 ### Stream: Release Artifacts
 
 73. [DONE] `qg-restore-isolation.phase6o.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part brief barrier release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.490`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
-74. [PENDING] Git Commit: `build: prepare product part brief barrier release artifacts` (hash: TBD)
-75. [TODO] `qg-restore-isolation.phase6o.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part brief barrier vsix release`).
-76. [TODO] Git Commit: `build: package product part brief barrier vsix release` (hash: TBD)
+74. [DONE] Git Commit: `build: prepare product part brief barrier release artifacts` (hash: 978f6da18)
+75. [DONE] `qg-restore-isolation.phase6o.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part brief barrier vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for `1.2.490`; Step 7 SDK exclusions, local artifact validation, markdown links, duplication check, production dependency pruning, VSIX package creation, runtime package surface verification, dev dependency restore, and package-size verification passed. VSIX: `codeai-hub-1.2.490.vsix` (`5.2M`).
+76. [PENDING] Git Commit: `build: package product part brief barrier vsix release` (hash: TBD)
 
 ## Phase 6P - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
