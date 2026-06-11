@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "21be5b807",
+  "lastRecordedCommit": "52fdee917",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6v.build-all.task1",
-  "expectedCommitMessage": "build: prepare product part fanout release artifacts",
+  "currentTaskId": "qg-restore-isolation.phase6v.vsix.task1",
+  "expectedCommitMessage": "build: package product part fanout vsix release",
   "debt": {
-    "expectedCommitMessage": "build: prepare product part fanout release artifacts",
-    "preCommitHead": "21be5b807",
+    "expectedCommitMessage": "build: package product part fanout vsix release",
+    "preCommitHead": "52fdee917",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6v.build-all.task1"
+    "taskId": "qg-restore-isolation.phase6v.vsix.task1"
   }
 }
 ```
@@ -348,9 +348,9 @@
 ### Stream: Release Artifacts
 
 107. [DONE] `qg-restore-isolation.phase6v.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part fanout release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` passed; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start. Unified version prepared: `1.2.492`. Release tarballs staged in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `claude-module-1.2.492.tar.bz2`, `codex-module-1.2.492.tar.bz2`, `gemini-module-1.2.492.tar.bz2`, `kimi-module-1.2.492.tar.bz2`, `glm-claude-code-module-1.2.492.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.492.tar.bz2`, `vscode-webview-1.2.492.tar.bz2`, `project-manager-1.2.492.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.492.tar.bz2`.
-108. [PENDING] Git Commit: `build: prepare product part fanout release artifacts` (hash: TBD)
-109. [TODO] `qg-restore-isolation.phase6v.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and keep release artifacts available for retest (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part fanout vsix release`).
-110. [TODO] Git Commit: `build: package product part fanout vsix release` (hash: TBD)
+108. [DONE] Git Commit: `build: prepare product part fanout release artifacts` (hash: 52fdee917)
+109. [DONE] `qg-restore-isolation.phase6v.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and keep release artifacts available for retest (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part fanout vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.492`; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before packaging. Required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`. VSIX created at repository root: `codeai-hub-1.2.492.vsix` (`5.2M`). Runtime tarballs for `1.2.492` are staged in `doc/tmp/releases/` and `~/.codeai-hub/releases/` for Claude, Codex, Gemini, Kimi, GLM-Claude-Code, Core darwin-arm64, VS Code webview, Project Manager, and CEF launcher.
+110. [PENDING] Git Commit: `build: package product part fanout vsix release` (hash: TBD)
 
 ## Phase 6W - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
