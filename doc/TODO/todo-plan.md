@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "9a3c691ee",
+  "lastRecordedCommit": "73783c8f0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6s.vsix.task1",
-  "expectedCommitMessage": "build: package product part bootstrap recovery vsix release",
+  "currentTaskId": "qg-restore-isolation.phase6u.product-part-fanout.task1",
+  "expectedCommitMessage": "fix: fan out product part agents for all planned parts",
   "debt": {
-    "expectedCommitMessage": "build: package product part bootstrap recovery vsix release",
-    "preCommitHead": "9a3c691ee",
+    "expectedCommitMessage": "fix: fan out product part agents for all planned parts",
+    "preCommitHead": "73783c8f0",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6s.vsix.task1"
+    "taskId": "qg-restore-isolation.phase6u.product-part-fanout.task1"
   }
 }
 ```
@@ -318,13 +318,45 @@
 96. [DONE] `qg-restore-isolation.phase6s.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part bootstrap recovery release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` passed; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start. Unified version prepared: `1.2.491`. Release tarballs staged in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `claude-module-1.2.491.tar.bz2`, `codex-module-1.2.491.tar.bz2`, `gemini-module-1.2.491.tar.bz2`, `kimi-module-1.2.491.tar.bz2`, `glm-claude-code-module-1.2.491.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.491.tar.bz2`, `vscode-webview-1.2.491.tar.bz2`, `project-manager-1.2.491.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.491.tar.bz2`.
 97. [DONE] Git Commit: `build: prepare product part bootstrap recovery release artifacts` (hash: 9a3c691ee)
 98. [DONE] `qg-restore-isolation.phase6s.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part bootstrap recovery vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before packaging. Required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`. VSIX created at repository root: `codeai-hub-1.2.491.vsix` (`5.2M`). Runtime tarballs for `1.2.491` are staged in `doc/tmp/releases/` and `~/.codeai-hub/releases/` for Claude, Codex, Gemini, Kimi, GLM-Claude-Code, Core darwin-arm64, VS Code webview, Project Manager, and CEF launcher.
-99. [PENDING] Git Commit: `build: package product part bootstrap recovery vsix release` (hash: TBD)
+99. [DONE] Git Commit: `build: package product part bootstrap recovery vsix release` (hash: 73783c8f0)
 
 ## Phase 6T - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
 ### Stream: Retest After Product Part Bootstrap Recovery
 
-100. [TODO] `qg-restore-isolation.phase6t.user-retest.task1` User installs the new release and retests Product Part orchestration after Clear/Restart: non-lead Product Part session should show persisted messages, its brief should reach review/acceptance, and the lead `DevelopmentOrderPlan` assignment should unlock only after every brief is accepted (scope: `manual retest`; no commit expected).
+100. [DONE] `qg-restore-isolation.phase6t.user-retest.task1` User installs the new release and retests Product Part orchestration after Clear/Restart: non-lead Product Part session should show persisted messages, its brief should reach review/acceptance, and the lead `DevelopmentOrderPlan` assignment should unlock only after every brief is accepted (scope: `manual retest`; no commit expected). Result: release `1.2.491` fixed stale empty Project Manager dialog projection, but retest found the deeper Product Part fan-out defect: Core can leave a planned non-lead Product Part with plan/draft scaffold but without a live Product Part agent session, while the lead all-brief barrier only reports the missing accepted brief and does not start/recover the missing Product Part agent.
+
+## Phase 6U - Product Part Fan-Out Recovery (owner: Codex, updated: 2026-06-11)
+
+### Stream: All Product Parts Agent Fan-Out
+
+101. [DONE] `qg-restore-isolation.phase6u.product-part-fanout.task1` Enforce Core-owned Product Part fan-out for any number of planned Product Parts: Quality Gates handoff must create/recover a Product Part agent session for every planned Product Part and fail closed if any planned Product Part cannot be started, so the lead all-brief barrier cannot silently wait on a never-started Product Part (scope: `packages/core/src/remote-bridge/handlers/development-tree-quality-gates-handoff-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: fan out product part agents for all planned parts`). Result: Quality Gates Development Tree bootstrap now builds the complete Product Part leadership order from lead, declared order, and all planned ids; it retries targeted bootstrap for missing Product Part sessions and throws a managed handoff error if any expected Product Part still lacks a started agent session. Regression coverage now uses two Product Parts (`local-runtime`, `finder-widget-shell`) and asserts both receive Product Part plans, draft artifacts, workflow stages, and first prompts. Targeted Quality Gates handoff test passed 3/3; `npm run build --workspace=@codeai-hub/core` passed.
+102. [PENDING] Git Commit: `fix: fan out product part agents for all planned parts` (hash: TBD)
+
+### Stream: Documentation Sync
+
+103. [TODO] `qg-restore-isolation.phase6u.docs.task1` Document that Development Tree starts all planned Product Part agents concurrently after Quality Gates, while only the lead Product Part later receives the `DevelopmentOrderPlan` assignment after every Product Part brief is accepted (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part fanout invariant`).
+104. [TODO] Git Commit: `docs: describe product part fanout invariant` (hash: TBD)
+
+## Phase 6V - Release Build (owner: Codex, updated: 2026-06-11)
+
+### Stream: Release Notes
+
+105. [TODO] `qg-restore-isolation.phase6v.release-notes.task1` Prepare release notes for the user-authorized Product Part fan-out recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part fanout release notes`).
+106. [TODO] Git Commit: `docs: prepare product part fanout release notes` (hash: TBD)
+
+### Stream: Release Artifacts
+
+107. [TODO] `qg-restore-isolation.phase6v.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part fanout release artifacts`).
+108. [TODO] Git Commit: `build: prepare product part fanout release artifacts` (hash: TBD)
+109. [TODO] `qg-restore-isolation.phase6v.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and keep release artifacts available for retest (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part fanout vsix release`).
+110. [TODO] Git Commit: `build: package product part fanout vsix release` (hash: TBD)
+
+## Phase 6W - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
+
+### Stream: Retest After Product Part Fan-Out Recovery
+
+111. [TODO] `qg-restore-isolation.phase6w.user-retest.task1` User installs the new release and retests Development Tree Product Part fan-out: all planned Product Parts should receive agent sessions after Quality Gates, non-lead Product Part briefs should reach user review, and the lead `DevelopmentOrderPlan` assignment should unlock only after every brief is accepted (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 

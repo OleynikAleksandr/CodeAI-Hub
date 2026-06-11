@@ -23,12 +23,10 @@ const QUALITY_REVIEW_RE =
 const QUALITY_RETURN_RE = /Core: Quality Gates завершён и зафиксирован/u;
 const QUALITY_VERIFY_RE =
   /Core opens Phase 4 Formal Quality Gates Verification/u;
-const RETURN_RE = /Можно переходить к следующему шагу/u;
 const PRODUCT_PART_BOOTSTRAP_COMMIT_RE =
   /docs: bootstrap product part development briefs/u;
 const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief\.draft\.md/u;
 const PRODUCT_PART_BRIEF_TITLE_RE = /ProductPartDevelopmentBrief/u;
-const PRODUCT_PART_LOCAL_RUNTIME_RE = /local-runtime/u;
 const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
 
@@ -204,6 +202,10 @@ const createHandler = (params: {
 const writeDiagramModulesAcceptedArtifacts = async (
   workspaceRoot: string
 ): Promise<void> => {
+  const parts = [
+    ["local-runtime", "provider-bridge"],
+    ["finder-widget-shell", "view-shell"],
+  ] as const;
   await writeWorkspaceFile(
     workspaceRoot,
     `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
@@ -211,36 +213,40 @@ const writeDiagramModulesAcceptedArtifacts = async (
       "# Product Parts Index",
       "",
       "- leadProductPartId: `local-runtime`",
-      "- productPartLeadershipOrder: `local-runtime`",
+      `- productPartLeadershipOrder: ${parts.map(([id]) => `\`${id}\``).join(", ")}`,
       "",
-      "### Product Part: local-runtime",
-      "- Title: Local Runtime",
-      "- Purpose: Runtime shell.",
-      "",
+      ...parts.flatMap(([id]) => [
+        `### Product Part: ${id}`,
+        `- Title: ${id}`,
+        "- Purpose: Test product part.",
+        "",
+      ]),
     ].join("\n")
   );
-  await writeWorkspaceFile(
-    workspaceRoot,
-    `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/local-runtime.md`,
-    [
-      "# Product Part: local-runtime",
-      "",
-      "## Identity",
-      "",
-      "| Field | Value |",
-      "| ----- | ----- |",
-      "| Part ID | `local-runtime` |",
-      "",
-      "## Owned Clusters",
-      "",
-      "## Standalone Modules",
-      "",
-      "| `module-id` | Responsibility |",
-      "| --- | --- |",
-      "| `provider-bridge` | Coordinates providers. |",
-      "",
-    ].join("\n")
-  );
+  for (const [id, moduleId] of parts) {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${id}.md`,
+      [
+        `# Product Part: ${id}`,
+        "",
+        "## Identity",
+        "",
+        "| Field | Value |",
+        "| ----- | ----- |",
+        `| Part ID | \`${id}\` |`,
+        "",
+        "## Owned Clusters",
+        "",
+        "## Standalone Modules",
+        "",
+        "| `module-id` | Responsibility |",
+        "| --- | --- |",
+        `| \`${moduleId}\` | Test responsibility. |`,
+        "",
+      ].join("\n")
+    );
+  }
   await execFileAsync("git", ["add", `.codeai-hub/${WORKSPACE_SLUG}`], {
     cwd: workspaceRoot,
   });
@@ -456,28 +462,22 @@ test("Quality Gates completion bootstraps Product Part brief workflow after term
 
     assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-complete");
     assert.match(coreMessages.at(-1)?.content ?? "", QUALITY_RETURN_RE);
-    assert.match(coreMessages.at(-1)?.content ?? "", RETURN_RE);
+    assert.ok(coreMessages.at(-1)?.content.includes("Можно переходить"));
     assert.deepEqual(waitEvents, [sessionId]);
-    const productPartPlan = path.join(
-      workspaceRoot,
-      "doc/TODO/stages/development-tree/product-parts/local-runtime/todo-plan.md"
-    );
-    const productPartBrief = path.join(
-      workspaceRoot,
-      `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/local-runtime/ProductPartDevelopmentBrief.draft.md`
-    );
-    assert.match(
-      await readFile(productPartPlan, "utf8"),
-      PRODUCT_PART_LOCAL_RUNTIME_RE
-    );
-    assert.match(
-      await readFile(productPartBrief, "utf8"),
-      PRODUCT_PART_BRIEF_TITLE_RE
-    );
-    assert.deepEqual(createdStages, [
+    for (const partId of ["local-runtime", "finder-widget-shell"]) {
+      const planPath = `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
+      const briefPath = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${partId}/ProductPartDevelopmentBrief.draft.md`;
+      await readFile(path.join(workspaceRoot, planPath), "utf8");
+      assert.match(
+        await readFile(path.join(workspaceRoot, briefPath), "utf8"),
+        PRODUCT_PART_BRIEF_TITLE_RE
+      );
+    }
+    assert.deepEqual([...createdStages].sort(), [
+      "development_tree/materialized/product-parts/finder-widget-shell",
       "development_tree/materialized/product-parts/local-runtime",
     ]);
-    assert.equal(sentMessages.length, 1);
+    assert.equal(sentMessages.length, 2);
     assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);
     const { stdout: statusOutput } = await execFileAsync(
       "git",
