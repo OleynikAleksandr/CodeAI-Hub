@@ -1,9 +1,20 @@
 # Quality Gates Restore Isolation Architecture
 
-**Status:** Active planning source
+**Status:** Active planning source; implemented and released through `v1.2.487`, retained until current scope closeout.
 **Created:** 2026-06-10
 **Owner:** Codex
 **Scope:** Quality Gates Phase 4 formal verification command isolation after the `1.2.486` no-stop orchestration retest.
+
+## Implementation Status
+
+Implemented in the current execution scope:
+
+- Core rejects `verificationState: "verified"` without sequential execution evidence.
+- Phase 4 continuation/repair prompts and bundled Quality Gates assets require one ordered verification plan.
+- Mutating restore/install/clean/delete commands and hooks/aggregates that may invoke them are exclusive workspace mutation commands.
+- SSOT docs describe Quality Gates formal verification as a sequential workspace transaction before Development Tree unlock.
+
+Later architectural option, not implemented in this scope: move physical command execution into a Core-owned runner. The current implemented contract makes the order observable in artifacts without making Project Manager or the provider agent the authority.
 
 ## Problem
 

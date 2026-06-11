@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "36123b890",
+  "lastRecordedCommit": "befa30bd6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6p.devtree-plans.task1",
-  "expectedCommitMessage": "docs: sync development tree planning docs",
+  "currentTaskId": "qg-restore-isolation.phase6p.branch-qg-plans.task1",
+  "expectedCommitMessage": "docs: update branch workflow planning sources",
   "debt": {
-    "expectedCommitMessage": "docs: sync development tree planning docs",
-    "preCommitHead": "36123b890",
+    "expectedCommitMessage": "docs: update branch workflow planning sources",
+    "preCommitHead": "befa30bd6",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6p.devtree-plans.task1"
+    "taskId": "qg-restore-isolation.phase6p.branch-qg-plans.task1"
   }
 }
 ```
@@ -269,12 +269,12 @@
 ### Stream: Active Development Tree Planning Docs
 
 79. [DONE] `qg-restore-isolation.phase6p.devtree-plans.task1` Synchronize active downstream/Product Part planning docs with Product Part brief barrier, target-session lead dispatch, boundary-accepted cluster state, and facade-centered cluster execution tree decisions (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree planning docs`). Result: downstream and Product Part sub-agent planning docs now record the implemented `1.2.490` protective slices, Core-owned accepted-brief truth, target-session lead dispatch, facade-centered cluster boundary, legacy `ClusterSpecification` transition status, boundary-accepted/no-main-doc-copy cluster acceptance, and code-ready-only merge vocabulary.
-80. [PENDING] Git Commit: `docs: sync development tree planning docs` (hash: TBD)
+80. [DONE] Git Commit: `docs: sync development tree planning docs` (hash: befa30bd6)
 
 ### Stream: Branch Workflow And Quality Gates Planning Sources
 
-81. [TODO] `qg-restore-isolation.phase6p.branch-qg-plans.task1` Update the branch workflow reference and Quality Gates restore-isolation planning source with the implemented/released state and corrected downstream merge vocabulary (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: update branch workflow planning sources`).
-82. [TODO] Git Commit: `docs: update branch workflow planning sources` (hash: TBD)
+81. [DONE] `qg-restore-isolation.phase6p.branch-qg-plans.task1` Update the branch workflow reference and Quality Gates restore-isolation planning source with the implemented/released state and corrected downstream merge vocabulary (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: update branch workflow planning sources`). Result: BranchWorkflow now records the `2026-06-11` implementation state for Product Part managed sessions, all-brief barrier, lead-session dispatch, boundary-accepted cluster checkpoints, facade-centered cluster boundaries, legacy `ClusterSpecification` compatibility, and deferred wave/module/code-ready work; QualityGates restore-isolation planning now records that the sequential verification scope is implemented/released and that Core-runner execution remains a later option.
+82. [PENDING] Git Commit: `docs: update branch workflow planning sources` (hash: TBD)
 
 ### Stream: Plans Index And Lifecycle Notes
 

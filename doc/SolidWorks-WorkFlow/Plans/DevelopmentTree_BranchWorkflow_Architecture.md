@@ -1,8 +1,8 @@
 # Development Tree Branch Workflow Architecture
 
-**Status:** Reference Architecture (updated 2026-06-07). Sidebar visualization of Product Part / Cluster / Module branch structure and automatic first-draft materialization are already implemented in production. This document defines the next branch workflow model after `Quality Gates Baseline`: compact filesystem scaffolding, one module node, one module-agent session, artifact/user-review phases, interactive Implementation TODO Plan, read-only worker sessions, and Git-first Clear/Undo reconciliation.
+**Status:** Reference Architecture (updated 2026-06-11). Sidebar visualization of Product Part / Cluster / Module branch structure, Product Part managed plans/sessions, Product Part Brief Barrier, non-lead Product Part review-session projection, and boundary-accepted Cluster Contract checkpoints are implemented in production. This document defines the next branch workflow model after `Quality Gates Baseline`: compact filesystem scaffolding, one module node, one module-agent session, artifact/user-review phases, interactive Implementation TODO Plan, read-only worker sessions, and Git-first Clear/Undo reconciliation.
 **Created:** 2026-04-07
-**Updated:** 2026-06-07
+**Updated:** 2026-06-11
 **Owner:** Oleksandr + Codex
 **Scope:** Формализовать Development Tree после `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline`: `Product Part Development Brief`, `Lead Development Order Plan`, `Cluster Design`, managed module workflow, worker visibility, user review gates, and MVP boundaries for implementation execution.
 
@@ -235,14 +235,13 @@ Development Tree проектируется сверху вниз:
 
 Нижний агент может уточнять имена, DTO, edge cases, алгоритмические детали и тестовые сценарии. Он не может молча менять смысл входов/выходов, потребителя, статусную модель или ответственность узла. Если seed недостаточен или противоречив, агент должен остановиться на blocking question / revision request, а не заполнять пробелы догадками.
 
-### 4.3. Cluster Design keeps one session and two artifacts
+### 4.3. Cluster Design keeps one session and a facade-centered boundary
 
-`Cluster` проектируется одной cluster-agent session и создаёт два артефакта:
+`Cluster` проектируется одной cluster-agent session. Первичная cluster-level граница — facade boundary:
 
-- `Cluster Specification`;
 - `Cluster Facade Contract`.
 
-Спецификация отвечает за внутреннюю роль cluster-а. Facade contract отвечает за его публичную boundary.
+Legacy `Cluster Specification` drafts may exist during the transition, but they are not the architectural SSOT. Specifications belong to modules. The cluster-level boundary is the facade contract and, later, the actual cluster facade class plus validation evidence.
 
 `Cluster Facade Contract` является pre-code artifact, а не архитектурным эссе. Он обязан указывать будущий кодовый surface:
 
@@ -496,13 +495,14 @@ Quality Gates Baseline accepted
   -> Core creates Product Part managed todo-plan.md for every Product Part
   -> Product Part agents draft Product Part Development Briefs in parallel
   -> user reviews / revises / accepts each brief
+  -> Core opens the Product Part Brief Barrier only after every planned brief is accepted
   -> Lead Product Part agent drafts Development Order Plan
   -> Core validates the plan shape and node references
   -> user reviews / revises / accepts Development Order Plan
   -> Core unlocks only the first allowed cluster / standalone module wave
 ```
 
-До accepted `Development Order Plan` нельзя запускать cluster/module agents автоматически. Пользователь может видеть всё дерево, но Core не должен открывать нижние agents без понятного порядка старта.
+До accepted `Development Order Plan` нельзя запускать cluster/module agents автоматически. Пользователь может видеть всё дерево, но Core не должен открывать нижние agents без понятного порядка старта. Lead `Development Order Plan` не стартует, пока Core не принял все planned Product Part briefs; когда барьер открывается из secondary Product Part session, Core dispatches the assignment into the lead Product Part session.
 
 После downstream work Product Part agents могут вернуться как integration reviewers:
 
@@ -514,15 +514,16 @@ Module implementation
   -> final user review
 ```
 
-Implementation status as of 2026-06-02:
+Implementation status as of 2026-06-11:
 
 - Core prompt/validation layer for `Diagram Modules` already requires `leadProductPartId` and `productPartLeadershipOrder`.
 - Core/PM read-model types already carry these fields.
-- Sidebar projection already has a `Lead Product Part Orchestration` operation shape.
-- Missing implementation: Core does not yet create Product Part managed `todo-plan.md` files at `doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md`.
-- Missing implementation: Core does not yet bootstrap Product Part agent sessions for Development Brief creation after `Quality Gates Baseline`.
-- Missing implementation: Core does not yet create/validate the lead-only `Development Order Plan`.
-- Missing implementation: current Development Tree materialization path must pass `leadProductPartId` and `productPartLeadershipOrder` into the filesystem planner, not only `plannedPartIds` / `generatedPartIds`.
+- Core creates Product Part managed `todo-plan.md` files and bootstraps Product Part Development Brief sessions after `Quality Gates Baseline`.
+- Project Manager projects Product Part review sessions, including non-lead Product Parts, as Development Tree node sessions.
+- Core blocks the lead `Development Order Plan` assignment until all planned Product Part briefs are user-accepted, then dispatches the unlocked lead continuation into the lead Product Part session.
+- Core creates first-wave Cluster Contract sub-agent worktrees and records boundary-accepted checkpoints without copying draft cluster docs into main or marking the cluster `merged`.
+- Missing implementation: a full Core-owned wave runner beyond the first Cluster Contract wave.
+- Missing implementation: cluster facade class generation, module specification/facade/code execution, code-ready gates, and code-ready merge back to main.
 
 ---
 
@@ -631,8 +632,9 @@ Branch-level user artifacts живут под:
 
 Для каждого `Cluster`:
 
-- `.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/clusters/<cluster-id>/cluster-specification.md`
 - `.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/clusters/<cluster-id>/cluster-facade-contract.md`
+
+Legacy `cluster-specification.md` may remain readable during migration, but new planning should treat module specifications as the specification layer and cluster facade contract/class as the cluster boundary.
 
 ### 6.4. Module artifacts inside a cluster
 
@@ -762,21 +764,13 @@ Machine-readable `development-order-plan.json` должен хранить:
 - dependency node ids;
 - locked reason, если node ещё нельзя открыть.
 
+Core supplies this plan prompt only after every planned Product Part brief is accepted and embeds the full accepted markdown for every Product Part inline. The JSON `requiredBriefs` list must mirror that Core-owned accepted set.
+
 Если у lead agent есть критичные вопросы, без которых нельзя честно создать этот plan, они задаются пользователю до draft-а. Неясности не выносятся в отдельный обязательный artifact.
 
-### 7.3. Cluster Specification
+### 7.3. Legacy Cluster Specification Compatibility
 
-Минимальные разделы:
-
-1. `Identity`
-2. `Purpose`
-3. `Role inside Product Part`
-4. `Constituent Modules`
-5. `Responsibilities`
-6. `Internal Coordination`
-7. `Dependencies and Seams`
-8. `Non-Goals`
-9. `Open Decisions`
+`Cluster Specification` is no longer the primary cluster-level artifact. During migration Core may read or display legacy drafts, but new downstream work treats module specifications as the specification layer and `Cluster Facade Contract` as the cluster boundary.
 
 ### 7.4. Cluster Facade Contract
 
@@ -892,8 +886,9 @@ Cluster/module facade contracts должны быть согласованы с:
 
 Module workflow внутри cluster можно начинать только после:
 
-1. `cluster-specification.md`
-2. `cluster-facade-contract.md`
+1. accepted cluster facade boundary;
+2. worktree state that is still active and not obsolete;
+3. code-ready gate policy for the target module wave once module execution is implemented.
 
 Standalone module не требует cluster gate.
 
@@ -955,7 +950,6 @@ Commit gate делает две вещи:
 
 - `Product Part Development Brief`;
 - `Development Order Plan`;
-- `Cluster Specification`;
 - `Cluster Facade Contract`;
 - module workflow artifacts;
 - implementation plan and worker execution state.
@@ -970,7 +964,7 @@ Commit gate делает две вещи:
 
 ### 9.3. Cluster to module
 
-Изменение `Cluster Specification` или `Cluster Facade Contract` делает `OUTDATED`:
+Изменение `Cluster Facade Contract` или будущего cluster facade class делает `OUTDATED`:
 
 - module facade/specification artifacts внутри cluster;
 - implementation plans этих modules;
@@ -1004,22 +998,23 @@ Commit gate делает две вещи:
 3. Product Part agents параллельно создают `Product Part Development Brief`.
 4. Если агенту не хватает информации, он задаёт вопросы пользователю до финального draft-а.
 5. Пользователь принимает brief каждого Product Part.
-6. Lead Product Part agent создаёт `Development Order Plan`.
-7. Core валидирует machine-readable order plan.
-8. Пользователь принимает Development Order Plan.
-9. Core открывает только первую разрешённую wave cluster / standalone module agents.
-10. Для нужного cluster создать и принять `Cluster Specification` + `Cluster Facade Contract`.
-11. Для module открыть module-agent session.
-12. Создать и принять `Module Facade Contract`.
-13. Создать и принять `Module Specification`.
-14. Создать и принять `Implementation TODO Plan`.
-15. Выполнить worker microtasks с интерактивным progress view.
-16. После каждой accepted microtask выполнить paired Git Commit через Core-managed lifecycle.
-17. На каждом commit boundary запустить pre-commit hooks / Quality Gates.
-18. Вернуть worker results module agent-у.
-19. Module agent выполняет assembly / semantic integration.
-20. Пользователь принимает module result.
-21. Core закрывает module workflow.
+6. Core открывает Product Part Brief Barrier и dispatches lead assignment только после acceptance всех planned briefs.
+7. Lead Product Part agent создаёт `Development Order Plan`.
+8. Core валидирует machine-readable order plan.
+9. Пользователь принимает Development Order Plan.
+10. Core открывает только первую разрешённую wave cluster / standalone module agents.
+11. Для нужного cluster создать и принять `Cluster Facade Contract` как boundary-accepted checkpoint без mainline merge.
+12. Для module открыть module-agent session.
+13. Создать и принять `Module Facade Contract`.
+14. Создать и принять `Module Specification`.
+15. Создать и принять `Implementation TODO Plan`.
+16. Выполнить worker microtasks с интерактивным progress view.
+17. После каждой accepted microtask выполнить paired Git Commit через Core-managed lifecycle.
+18. На каждом commit boundary запустить pre-commit hooks / Quality Gates.
+19. Вернуть worker results module agent-у.
+20. Module agent выполняет assembly / semantic integration.
+21. Пользователь принимает module result.
+22. Core закрывает module workflow.
 
 ---
 
