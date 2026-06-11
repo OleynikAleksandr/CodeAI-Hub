@@ -46,6 +46,7 @@ export class RemoteBridgeMessageRouter {
     });
     this.developmentTreeNodeCommandRouter =
       new RemoteBridgeDevelopmentTreeNodeCommandRouter({
+        sessionHandler: deps.sessionHandler,
         sessionCreateRouter: this.sessionCreateRouter,
         sendCommandError: (clientId, command, message, code) =>
           this.sendCommandError(clientId, command, message, code),

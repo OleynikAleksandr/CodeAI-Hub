@@ -2,13 +2,21 @@ import { execFile } from "node:child_process";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
+import { bootstrapDevelopmentTreeProductPartAgents } from "./handlers/development-tree-product-part-agent-bootstrap";
+import { readDiagramModulesProgressSnapshot } from "./handlers/diagram-modules-progress";
+import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import type { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
 const execFileAsync = promisify(execFile);
 const COMMAND = "development-tree:node-start";
 const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
 const PRODUCT_PART_STAGE_RE =
-  /^development_tree\/materialized\/product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  /^development_tree\/materialized\/product-parts\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+
+type ProductPartBootstrapSessionHandler = Pick<
+  SessionRequestHandler,
+  "createSessionForWorkflow" | "handleMessage"
+>;
 
 type SendCommandError = (
   clientId: string,
@@ -25,13 +33,16 @@ const directoryExists = async (absolutePath: string): Promise<boolean> =>
 
 export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
   private readonly sendCommandError: SendCommandError;
+  private readonly sessionHandler?: ProductPartBootstrapSessionHandler;
   private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
 
   constructor(deps: {
     readonly sendCommandError: SendCommandError;
+    readonly sessionHandler?: ProductPartBootstrapSessionHandler;
     readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
   }) {
     this.sendCommandError = deps.sendCommandError;
+    this.sessionHandler = deps.sessionHandler;
     this.sessionCreateRouter = deps.sessionCreateRouter;
   }
 
@@ -75,7 +86,9 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       );
       return;
     }
-    if (!PRODUCT_PART_STAGE_RE.test(workflowPath)) {
+    const productPartId =
+      workflowPath.match(PRODUCT_PART_STAGE_RE)?.[1] ?? null;
+    if (!productPartId) {
       this.sendCommandError(
         clientId,
         COMMAND,
@@ -97,6 +110,15 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       );
       return;
     }
+    if (this.sessionHandler) {
+      await this.bootstrapProductPart({
+        partId: productPartId,
+        providerId,
+        workspacePath,
+        workspaceSlug,
+      });
+      return;
+    }
     await this.sessionCreateRouter.handle(clientId, {
       type: "session:create",
       payload: {
@@ -110,6 +132,35 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
           modelId: readOptionalString(payload.modelId),
         },
       },
+    });
+  }
+
+  private async bootstrapProductPart(params: {
+    readonly partId: string;
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const progress = await readDiagramModulesProgressSnapshot({
+      workspaceRoot: params.workspacePath,
+      workspaceSlug: params.workspaceSlug,
+    });
+    await bootstrapDevelopmentTreeProductPartAgents({
+      agentGateway: {
+        createSessionForWorkflow: async (options) =>
+          (await this.sessionHandler?.createSessionForWorkflow(options)) ??
+          null,
+        handleMessage: async (sessionId, content) =>
+          await this.sessionHandler?.handleMessage(sessionId, content),
+      },
+      leadProductPartId: progress?.leadProductPartId ?? null,
+      productPartLeadershipOrder: progress?.productPartLeadershipOrder?.length
+        ? progress.productPartLeadershipOrder
+        : progress?.plannedPartIds,
+      providerId: params.providerId,
+      targetProductPartIds: [params.partId],
+      workspaceRoot: params.workspacePath,
+      workspaceSlug: params.workspaceSlug,
     });
   }
 

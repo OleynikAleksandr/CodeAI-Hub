@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "2a18b3027",
+  "lastRecordedCommit": "e7613ba72",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6r.product-part-bootstrap.task1",
-  "expectedCommitMessage": "fix: restart product part bootstrap sessions",
+  "currentTaskId": "qg-restore-isolation.phase6r.product-part-start-route.task1",
+  "expectedCommitMessage": "fix: route product part start through bootstrap",
   "debt": {
-    "expectedCommitMessage": "fix: restart product part bootstrap sessions",
-    "preCommitHead": "2a18b3027",
+    "expectedCommitMessage": "fix: route product part start through bootstrap",
+    "preCommitHead": "e7613ba72",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6r.product-part-bootstrap.task1"
+    "taskId": "qg-restore-isolation.phase6r.product-part-start-route.task1"
   }
 }
 ```
@@ -292,9 +292,9 @@
 ### Stream: Restartable Product Part Agent Sessions
 
 86. [DONE] `qg-restore-isolation.phase6r.product-part-bootstrap.task1` Make Product Part node bootstrap restart the agent session when the plan/draft already exists but the agent has not produced a usable draft, so Clear/Restart and stale local runtime recovery can re-open the Product Part worker instead of leaving sentinel-only artifacts (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restart product part bootstrap sessions`). Result: Product Part bootstrap now starts an agent session whenever a Product Part managed plan participates in bootstrap, even if its draft/plan already existed; regression covers a pre-existing Product Part plan/draft and confirms the start prompt is sent. Targeted test passed 4/4; `npm run build --workspace=@codeai-hub/core` passed.
-87. [PENDING] Git Commit: `fix: restart product part bootstrap sessions` (hash: TBD)
-88. [TODO] `qg-restore-isolation.phase6r.product-part-start-route.task1` Route Project Manager Product Part `Start node` through the Core-owned Product Part bootstrap path instead of creating an empty workflow session shell, preserving the downstream Product Part prompt/plan/draft contract (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts`; expected commit: `fix: route product part start through bootstrap`).
-89. [TODO] Git Commit: `fix: route product part start through bootstrap` (hash: TBD)
+87. [DONE] Git Commit: `fix: restart product part bootstrap sessions` (hash: e7613ba72)
+88. [DONE] `qg-restore-isolation.phase6r.product-part-start-route.task1` Route Project Manager Product Part `Start node` through the Core-owned Product Part bootstrap path instead of creating an empty workflow session shell, preserving the downstream Product Part prompt/plan/draft contract (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts`; expected commit: `fix: route product part start through bootstrap`). Result: Product Part root `Start node` now validates the same clean/path gates but dispatches `bootstrapDevelopmentTreeProductPartAgents` through `SessionRequestHandler`, creating the managed Product Part plan/draft and sending the Product Part start prompt instead of an empty session shell. Downstream cluster/module starts remain blocked while Product Part briefs are pending. Targeted route test passed 1/1; `npm run build --workspace=@codeai-hub/core` passed.
+89. [PENDING] Git Commit: `fix: route product part start through bootstrap` (hash: TBD)
 
 ### Stream: Stale Dialog Projection Guard
 
