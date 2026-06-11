@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "1fb9eaf65",
+  "lastRecordedCommit": "21be5b807",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6v.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare product part fanout release notes",
+  "currentTaskId": "qg-restore-isolation.phase6v.build-all.task1",
+  "expectedCommitMessage": "build: prepare product part fanout release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare product part fanout release notes",
-    "preCommitHead": "1fb9eaf65",
+    "expectedCommitMessage": "build: prepare product part fanout release artifacts",
+    "preCommitHead": "21be5b807",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6v.release-notes.task1"
+    "taskId": "qg-restore-isolation.phase6v.build-all.task1"
   }
 }
 ```
@@ -343,12 +343,12 @@
 ### Stream: Release Notes
 
 105. [DONE] `qg-restore-isolation.phase6v.release-notes.task1` Prepare release notes for the user-authorized Product Part fan-out recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part fanout release notes`). Result: README now announces future release `v1.2.492` as Product Part Fan-Out Recovery, and CHANGELOG records all-planned-Product-Part startup, fail-closed missing-session recovery, Development Tree documentation sync, and verification commands.
-106. [PENDING] Git Commit: `docs: prepare product part fanout release notes` (hash: TBD)
+106. [DONE] Git Commit: `docs: prepare product part fanout release notes` (hash: 21be5b807)
 
 ### Stream: Release Artifacts
 
-107. [TODO] `qg-restore-isolation.phase6v.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part fanout release artifacts`).
-108. [TODO] Git Commit: `build: prepare product part fanout release artifacts` (hash: TBD)
+107. [DONE] `qg-restore-isolation.phase6v.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part fanout release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` passed; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start. Unified version prepared: `1.2.492`. Release tarballs staged in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `claude-module-1.2.492.tar.bz2`, `codex-module-1.2.492.tar.bz2`, `gemini-module-1.2.492.tar.bz2`, `kimi-module-1.2.492.tar.bz2`, `glm-claude-code-module-1.2.492.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.492.tar.bz2`, `vscode-webview-1.2.492.tar.bz2`, `project-manager-1.2.492.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.492.tar.bz2`.
+108. [PENDING] Git Commit: `build: prepare product part fanout release artifacts` (hash: TBD)
 109. [TODO] `qg-restore-isolation.phase6v.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and keep release artifacts available for retest (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part fanout vsix release`).
 110. [TODO] Git Commit: `build: package product part fanout vsix release` (hash: TBD)
 
