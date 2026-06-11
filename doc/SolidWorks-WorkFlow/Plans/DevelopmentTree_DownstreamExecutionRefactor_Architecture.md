@@ -69,6 +69,20 @@ The lead agent may propose the graph, but Core owns truth:
 - only Core advances node status;
 - only Core decides when a downstream tree is merge-ready.
 
+### Product Part Brief Barrier
+
+Core must not dispatch the lead Product Part `DevelopmentOrderPlan` assignment until every planned Product Part has a user-accepted `ProductPartDevelopmentBrief.draft.md` recorded in Core-managed Product Part review state.
+
+The barrier is evaluated from:
+
+- the planned Product Part ids and leadership order declared in `product-parts.index.md`;
+- each Product Part managed review decision under `.codeai-hub/<workspace>/workflow/managed/development-tree-product-parts/<partId>.json`;
+- the full accepted brief markdown at `.codeai-hub/<workspace>/development_tree/materialized/product-parts/<partId>/ProductPartDevelopmentBrief.draft.md`.
+
+If any planned Product Part brief is missing or not accepted, Core records the lead order-plan task as blocked and does not send an internal provider prompt. When the barrier opens, Core builds the lead prompt with the full text of every accepted Product Part brief inline. Paths are included as provenance, but the prompt must not require the lead agent to discover or read brief files itself.
+
+The lead agent may summarize and reason over those briefs, but it must not invent `requiredBriefs`. The JSON `requiredBriefs` list in `DevelopmentOrderPlan.v2` must reflect the Core-supplied accepted brief set.
+
 ## 5. Cluster Worktree And Module Parallelism
 
 The first implementation does not need to split every module into its own worktree. A cluster worktree may be the initial execution surface for the cluster facade and all owned module specifications/facades. This keeps context coherent and prevents premature orchestration complexity.

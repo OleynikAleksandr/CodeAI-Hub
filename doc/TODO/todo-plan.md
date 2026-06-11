@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "e9b529ba0",
+  "lastRecordedCommit": "621032785",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6m.brief-barrier.task1",
-  "expectedCommitMessage": "fix: gate lead order plan on product part briefs",
+  "currentTaskId": "qg-restore-isolation.phase6m.brief-barrier-docs.task1",
+  "expectedCommitMessage": "docs: describe product part brief barrier",
   "debt": {
-    "expectedCommitMessage": "fix: gate lead order plan on product part briefs",
-    "preCommitHead": "e9b529ba0",
+    "expectedCommitMessage": "docs: describe product part brief barrier",
+    "preCommitHead": "621032785",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6m.brief-barrier.task1"
+    "taskId": "qg-restore-isolation.phase6m.brief-barrier-docs.task1"
   }
 }
 ```
@@ -231,12 +231,12 @@
 ### Stream: Lead Order Plan Readiness Barrier
 
 65. [DONE] `qg-restore-isolation.phase6m.brief-barrier.task1` Prevent Core from starting the lead Product Part `DevelopmentOrderPlan` turn until every planned Product Part brief has a Core-owned user-reviewed terminal state, and inline all Product Part brief contents/statuses into the lead order-plan prompt when the barrier opens (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-assignment.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`; expected commit: `fix: gate lead order plan on product part briefs`). Result: lead Product Part brief acceptance now resolves a Core-owned all-brief barrier from `product-parts.index.md` and managed Product Part review decisions; when any planned Product Part brief is not accepted, the lead order-plan task is marked `BLOCKED` and no provider prompt is dispatched; when the barrier opens, the lead prompt embeds the full markdown text of every accepted Product Part brief and the JSON example includes all accepted `requiredBriefs` plus the declared leadership order. Targeted Product Part brief/order-plan tests passed 4/4; Ultracite check passed for touched files; `npm run build --workspace=@codeai-hub/core` passed.
-66. [PENDING] Git Commit: `fix: gate lead order plan on product part briefs` (hash: TBD)
+66. [DONE] Git Commit: `fix: gate lead order plan on product part briefs` (hash: 621032785)
 
 ### Stream: Downstream Planning Documentation
 
-67. [TODO] `qg-restore-isolation.phase6m.brief-barrier-docs.task1` Document the Product Part brief barrier and lead `DevelopmentOrderPlan` all-brief input contract in the active downstream execution refactor planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part brief barrier`).
-68. [TODO] Git Commit: `docs: describe product part brief barrier` (hash: TBD)
+67. [DONE] `qg-restore-isolation.phase6m.brief-barrier-docs.task1` Document the Product Part brief barrier and lead `DevelopmentOrderPlan` all-brief input contract in the active downstream execution refactor planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part brief barrier`). Result: downstream execution refactor planning now defines the Product Part Brief Barrier, its Core-owned input sources, blocked behavior, and the requirement that the lead `DevelopmentOrderPlan` prompt inline the full accepted markdown brief for every planned Product Part.
+68. [PENDING] Git Commit: `docs: describe product part brief barrier` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
