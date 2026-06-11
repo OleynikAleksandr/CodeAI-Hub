@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "978f6da18",
+  "lastRecordedCommit": "5d5b4ebd4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6o.vsix.task1",
-  "expectedCommitMessage": "build: package product part brief barrier vsix release",
+  "currentTaskId": "qg-restore-isolation.phase6p.canonical-docs.task1",
+  "expectedCommitMessage": "docs: sync development tree canonical architecture",
   "debt": {
-    "expectedCommitMessage": "build: package product part brief barrier vsix release",
-    "preCommitHead": "978f6da18",
+    "expectedCommitMessage": "docs: sync development tree canonical architecture",
+    "preCommitHead": "5d5b4ebd4",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6o.vsix.task1"
+    "taskId": "qg-restore-isolation.phase6p.canonical-docs.task1"
   }
 }
 ```
@@ -257,13 +257,35 @@
 73. [DONE] `qg-restore-isolation.phase6o.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part brief barrier release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully, bumped the workspace to `1.2.490`, and copied provider/core/UI/CEF launcher tarballs to `doc/tmp/releases/`.
 74. [DONE] Git Commit: `build: prepare product part brief barrier release artifacts` (hash: 978f6da18)
 75. [DONE] `qg-restore-isolation.phase6o.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part brief barrier vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for `1.2.490`; Step 7 SDK exclusions, local artifact validation, markdown links, duplication check, production dependency pruning, VSIX package creation, runtime package surface verification, dev dependency restore, and package-size verification passed. VSIX: `codeai-hub-1.2.490.vsix` (`5.2M`).
-76. [PENDING] Git Commit: `build: package product part brief barrier vsix release` (hash: TBD)
+76. [DONE] Git Commit: `build: package product part brief barrier vsix release` (hash: 5d5b4ebd4)
 
-## Phase 6P - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
+## Phase 6P - Documentation Synchronization (owner: Codex, updated: 2026-06-11)
+
+### Stream: Canonical Development Tree SSOT
+
+77. [DONE] `qg-restore-isolation.phase6p.canonical-docs.task1` Synchronize canonical Development Tree SSOT with accepted Product Part session projection, all-brief lead barrier, cluster boundary-accepted/no-doc-merge behavior, and global language settings for downstream prompts (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree canonical architecture`). Result: System Architecture and Workflow Steps Overview now describe Product Part review-session projection, persisted primary dialog history, Core-owned all-brief barrier before lead `DevelopmentOrderPlan`, full accepted brief markdown in the lead prompt, global language settings for downstream prompts, cluster `boundary_accepted` checkpoints, and code-ready-only downstream merges.
+78. [PENDING] Git Commit: `docs: sync development tree canonical architecture` (hash: TBD)
+
+### Stream: Active Development Tree Planning Docs
+
+79. [TODO] `qg-restore-isolation.phase6p.devtree-plans.task1` Synchronize active downstream/Product Part planning docs with Product Part brief barrier, target-session lead dispatch, boundary-accepted cluster state, and facade-centered cluster execution tree decisions (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree planning docs`).
+80. [TODO] Git Commit: `docs: sync development tree planning docs` (hash: TBD)
+
+### Stream: Branch Workflow And Quality Gates Planning Sources
+
+81. [TODO] `qg-restore-isolation.phase6p.branch-qg-plans.task1` Update the branch workflow reference and Quality Gates restore-isolation planning source with the implemented/released state and corrected downstream merge vocabulary (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: update branch workflow planning sources`).
+82. [TODO] Git Commit: `docs: update branch workflow planning sources` (hash: TBD)
+
+### Stream: Plans Index And Lifecycle Notes
+
+83. [TODO] `qg-restore-isolation.phase6p.plans-index.task1` Update navigation/lifecycle documentation so active root planning docs in `Plans/` are discoverable and accurately described until closeout disposition (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: index active planning sources`).
+84. [TODO] Git Commit: `docs: index active planning sources` (hash: TBD)
+
+## Phase 6Q - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
 ### Stream: Retest After Product Part Brief Barrier Release
 
-77. [TODO] `qg-restore-isolation.phase6p.user-retest.task1` User installs the new release and retests Development Tree Product Part orchestration: non-lead Product Part review sessions should appear in Project Manager with persisted history, lead `DevelopmentOrderPlan` should wait for every planned Product Part brief acceptance, and secondary Product Part acceptance should dispatch the unlocked lead continuation into the lead session (scope: `manual retest`; no commit expected).
+85. [TODO] `qg-restore-isolation.phase6q.user-retest.task1` User installs the new release and retests Development Tree Product Part orchestration: non-lead Product Part review sessions should appear in Project Manager with persisted history, lead `DevelopmentOrderPlan` should wait for every planned Product Part brief acceptance, and secondary Product Part acceptance should dispatch the unlocked lead continuation into the lead session (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
