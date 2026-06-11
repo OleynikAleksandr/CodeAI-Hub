@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "34da575df",
+  "lastRecordedCommit": "49b98e74f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6l.session-projection-refactor.task1",
-  "expectedCommitMessage": "refactor: extract development tree session projection",
+  "currentTaskId": "qg-restore-isolation.phase6l.product-part-session.task1",
+  "expectedCommitMessage": "fix: project product part review sessions",
   "debt": {
-    "expectedCommitMessage": "refactor: extract development tree session projection",
-    "preCommitHead": "34da575df",
+    "expectedCommitMessage": "fix: project product part review sessions",
+    "preCommitHead": "49b98e74f",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6l.session-projection-refactor.task1"
+    "taskId": "qg-restore-isolation.phase6l.product-part-session.task1"
   }
 }
 ```
@@ -217,9 +217,9 @@
 ### Stream: Project Product Part Sessions
 
 59. [DONE] `qg-restore-isolation.phase6l.session-projection-refactor.task1` Extract Development Tree session projection helpers out of the near-limit snapshot reader before adding Product Part review-session projection (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: extract development tree session projection`). Result: cluster session projection helpers moved into `development-tree-session-projection.ts`; `development-tree-snapshot.ts` dropped from 495 to 352 lines. Targeted Development Tree snapshot/projected-session tests passed 9/9; Ultracite check passed for the touched files.
-60. [PENDING] Git Commit: `refactor: extract development tree session projection` (hash: TBD)
-61. [TODO] `qg-restore-isolation.phase6l.product-part-session.task1` Project Product Part managed brief-review sessions from Core-owned managed state/continuity into `DevelopmentTreePartNode.session`, and cover the non-lead Product Part visibility scenario with regression tests (scope: `packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: project product part review sessions`).
-62. [TODO] Git Commit: `fix: project product part review sessions` (hash: TBD)
+60. [DONE] Git Commit: `refactor: extract development tree session projection` (hash: 49b98e74f)
+61. [DONE] `qg-restore-isolation.phase6l.product-part-session.task1` Project Product Part managed brief-review sessions from Core-owned managed state/continuity into `DevelopmentTreePartNode.session`, and cover the non-lead Product Part visibility scenario with regression tests (scope: `packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`; expected commit: `fix: project product part review sessions`). Result: Product Part managed state now resolves through main workspace continuity and is attached to the Product Part node as a started session; regression coverage verifies snapshot session projection, dialog list visibility, and history opening for a non-lead Product Part review session. Targeted Development Tree snapshot/projected-session tests passed 10/10; Ultracite check passed for the touched files; `npm run build --workspace=@codeai-hub/core` passed.
+62. [PENDING] Git Commit: `fix: project product part review sessions` (hash: TBD)
 
 ### Stream: Managed History Resilience
 

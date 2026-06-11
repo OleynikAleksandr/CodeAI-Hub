@@ -83,6 +83,34 @@ const writeProjectedUnlockState = async (
   );
 };
 
+const writeProductPartManagedState = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const statePath = path.join(
+    workspaceRoot,
+    ".codeai-hub/demo/workflow/managed/development-tree-product-parts/ui-shell.json"
+  );
+  await mkdir(path.dirname(statePath), { recursive: true });
+  await writeFile(
+    statePath,
+    `${JSON.stringify(
+      {
+        acceptedCommitHash: "abc1234",
+        acceptedCommitMessage: "chore: accept ui-shell product part brief",
+        files: [],
+        partId: "ui-shell",
+        readiness: "ready",
+        schema: "codeai-product-part-development-brief-managed-v1",
+        sessionId: "runtime-part-session-1",
+        updatedAt: "2026-06-08T12:02:00.000Z",
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
 const writeWorktreeContinuityIndex = async (params: {
   readonly dialogId: string;
   readonly providerId: string;
@@ -126,6 +154,48 @@ const writeWorktreeContinuityIndex = async (params: {
   );
 };
 
+const writeMainContinuityIndex = async (params: {
+  readonly dialogId: string;
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly runtimeSessionId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  const indexPath = path.join(
+    params.workspaceRoot,
+    ".codeai-hub",
+    params.workspaceSlug,
+    "continuity",
+    "index.json"
+  );
+  await mkdir(path.dirname(indexPath), { recursive: true });
+  await writeFile(
+    indexPath,
+    `${JSON.stringify(
+      {
+        entries: [
+          {
+            dialogId: params.dialogId,
+            latestSessionId: params.runtimeSessionId,
+            providerId: params.providerId,
+            providerSessionId: params.providerSessionId,
+            rootSessionId: params.dialogId,
+            stage: "development_tree/materialized/product-parts/ui-shell",
+            updatedAt: "2026-06-08T12:03:00.000Z",
+          },
+        ],
+        updatedAt: "2026-06-08T12:03:00.000Z",
+        version: 1,
+        workspaceSlug: params.workspaceSlug,
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
 const writeWorktreeCapsuleHistory = async (params: {
   readonly dialogId: string;
   readonly providerId: string;
@@ -159,6 +229,46 @@ const writeWorktreeCapsuleHistory = async (params: {
         messageId: "cluster-message-1",
         role: "assistant",
         content: "Cluster contract draft accepted for review.",
+      }),
+    ].join("\n"),
+    "utf8"
+  );
+};
+
+const writeWorkspaceCapsuleHistory = async (params: {
+  readonly content: string;
+  readonly dialogId: string;
+  readonly providerId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  const capsule = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  });
+  const historyPath = buildSessionFilePath({
+    rootDirectory: capsule.sessionsRoot.absolutePath,
+    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    provider: params.providerId,
+    sessionId: params.dialogId,
+  });
+  await mkdir(path.dirname(historyPath), { recursive: true });
+  await writeFile(
+    historyPath,
+    [
+      JSON.stringify({
+        type: "session-open",
+        timestamp: "2026-06-08T12:02:00.000Z",
+        provider: params.providerId,
+        sessionId: params.dialogId,
+      }),
+      JSON.stringify({
+        type: "message",
+        timestamp: "2026-06-08T12:03:00.000Z",
+        provider: params.providerId,
+        messageId: "product-part-message-1",
+        role: "assistant",
+        content: params.content,
       }),
     ].join("\n"),
     "utf8"
@@ -255,5 +365,70 @@ test("projected cluster sessions are visible from the main workspace", async () 
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
     await rm(worktreePath, { force: true, recursive: true });
+  }
+});
+
+test("product part review sessions are visible from the main workspace", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-product-part-session-")
+  );
+  try {
+    await writePart(workspaceRoot);
+    await writeProductPartManagedState(workspaceRoot);
+    await writeMainContinuityIndex({
+      dialogId: "codex-runtime-part-session-1-ui-shell",
+      providerId: "codex",
+      providerSessionId: "provider-part-session-1",
+      runtimeSessionId: "runtime-part-session-1",
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+    await writeWorkspaceCapsuleHistory({
+      content: "Product Part brief ready for review.",
+      dialogId: "codex-runtime-part-session-1-ui-shell",
+      providerId: "codex",
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+
+    const snapshot = await readDevelopmentTreeSnapshot({
+      generatedPartIds: ["ui-shell"],
+      plannedPartIds: ["ui-shell"],
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+    const part = snapshot.parts[0];
+    assert.equal(
+      part?.session?.dialogId,
+      "codex-runtime-part-session-1-ui-shell"
+    );
+    assert.equal(part?.session?.providerSessionId, "provider-part-session-1");
+    assert.equal(part?.session?.sessionId, "runtime-part-session-1");
+    assert.equal(part?.session?.providerId, "codex");
+    assert.equal(part?.lifecycle?.startState, "started");
+    assert.equal(part?.lifecycle?.startable, false);
+
+    const dialogs = await new DialogListService({
+      logger: new Logger("error"),
+    }).listDialogs({ workspaceRoot, workspaceSlug: "demo" });
+    assert.equal(dialogs.length, 1);
+    assert.equal(dialogs[0]?.dialogId, "codex-runtime-part-session-1-ui-shell");
+    assert.equal(dialogs[0]?.providerSessionId, "provider-part-session-1");
+    assert.equal(dialogs[0]?.stage, part?.workflowPath);
+
+    const history = await new DialogHistoryService({
+      logger: new Logger("error"),
+    }).readHistory({
+      dialogId: "codex-runtime-part-session-1-ui-shell",
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+    assert.equal(history.messages.length, 1);
+    assert.equal(
+      history.messages[0]?.content,
+      "Product Part brief ready for review."
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
   }
 });

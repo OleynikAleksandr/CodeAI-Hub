@@ -45,6 +45,93 @@ const createUnlockStatePath = (params: {
 }): string =>
   `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-product-parts/${params.partId}.unlock-state.json`;
 
+const createProductPartManagedStatePath = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-product-parts/${params.partId}.json`;
+
+const createProductPartStage = (partId: string): string =>
+  `development_tree/materialized/product-parts/${partId}`;
+
+const readContinuityEntryForStage = async (params: {
+  readonly sessionId: string | null;
+  readonly stage: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<Record<string, unknown> | null> => {
+  const index = await readJsonRecord(
+    params.workspaceRoot,
+    `.codeai-hub/${params.workspaceSlug}/continuity/index.json`
+  );
+  if (
+    index?.workspaceSlug !== params.workspaceSlug ||
+    !Array.isArray(index.entries)
+  ) {
+    return null;
+  }
+  const candidates = index.entries.filter(
+    (entry): entry is Record<string, unknown> => {
+      if (!(entry && typeof entry === "object" && !Array.isArray(entry))) {
+        return false;
+      }
+      return readNonEmptyString(entry.stage) === params.stage;
+    }
+  );
+  const matchingRuntimeSession = candidates.find(
+    (entry) =>
+      params.sessionId &&
+      readNonEmptyString(entry.latestSessionId) === params.sessionId
+  );
+  const matchingDialogId = candidates.find(
+    (entry) =>
+      params.sessionId &&
+      (readNonEmptyString(entry.dialogId)?.includes(params.sessionId) ||
+        readNonEmptyString(entry.rootSessionId)?.includes(params.sessionId))
+  );
+  return (
+    matchingRuntimeSession ??
+    matchingDialogId ??
+    [...candidates].sort(
+      (left, right) =>
+        readNonEmptyString(right.updatedAt)?.localeCompare(
+          readNonEmptyString(left.updatedAt) ?? ""
+        ) ?? 0
+    )[0] ??
+    null
+  );
+};
+
+const createSessionFromContinuityEntry = (params: {
+  readonly entry: Record<string, unknown> | null;
+  readonly fallbackSessionId: string;
+  readonly fallbackUpdatedAt: string | null;
+  readonly providerId?: string;
+}): DevelopmentTreeNodeSession | undefined => {
+  const providerId =
+    readNonEmptyString(params.entry?.providerId) ?? params.providerId;
+  if (!providerId) {
+    return undefined;
+  }
+  const dialogId =
+    readNonEmptyString(params.entry?.dialogId) ?? params.fallbackSessionId;
+  return {
+    dialogId,
+    providerId,
+    providerSessionId:
+      readNonEmptyString(params.entry?.providerSessionId) ??
+      params.fallbackSessionId,
+    rootSessionId: readNonEmptyString(params.entry?.rootSessionId) ?? dialogId,
+    sessionId:
+      readNonEmptyString(params.entry?.latestSessionId) ??
+      params.fallbackSessionId,
+    updatedAt:
+      readNonEmptyString(params.entry?.updatedAt) ??
+      params.fallbackUpdatedAt ??
+      new Date(0).toISOString(),
+  };
+};
+
 export const readUnlockNodes = async (params: {
   readonly partId: string;
   readonly workspaceRoot: string;
@@ -75,46 +162,12 @@ const readWorktreeContinuityEntry = async (params: {
   if (!(worktreePath && stage)) {
     return null;
   }
-  const index = await readJsonRecord(
-    worktreePath,
-    `.codeai-hub/${params.workspaceSlug}/continuity/index.json`
-  );
-  if (
-    index?.workspaceSlug !== params.workspaceSlug ||
-    !Array.isArray(index.entries)
-  ) {
-    return null;
-  }
-  const candidates = index.entries.filter(
-    (entry): entry is Record<string, unknown> => {
-      if (!(entry && typeof entry === "object" && !Array.isArray(entry))) {
-        return false;
-      }
-      return readNonEmptyString(entry.stage) === stage;
-    }
-  );
-  const sessionId = readNonEmptyString(params.node?.sessionId);
-  const matchingRuntimeSession = candidates.find(
-    (entry) =>
-      sessionId && readNonEmptyString(entry.latestSessionId) === sessionId
-  );
-  const matchingDialogId = candidates.find(
-    (entry) =>
-      sessionId &&
-      (readNonEmptyString(entry.dialogId)?.includes(sessionId) ||
-        readNonEmptyString(entry.rootSessionId)?.includes(sessionId))
-  );
-  return (
-    matchingRuntimeSession ??
-    matchingDialogId ??
-    [...candidates].sort(
-      (left, right) =>
-        readNonEmptyString(right.updatedAt)?.localeCompare(
-          readNonEmptyString(left.updatedAt) ?? ""
-        ) ?? 0
-    )[0] ??
-    null
-  );
+  return await readContinuityEntryForStage({
+    sessionId: readNonEmptyString(params.node?.sessionId),
+    stage,
+    workspaceRoot: worktreePath,
+    workspaceSlug: params.workspaceSlug,
+  });
 };
 
 export const createProjectedSession = async (params: {
@@ -128,24 +181,36 @@ export const createProjectedSession = async (params: {
     return undefined;
   }
   const worktreeEntry = await readWorktreeContinuityEntry(params);
-  const dialogId =
-    readNonEmptyString(worktreeEntry?.dialogId) ?? node.sessionId;
-  const providerId =
-    readNonEmptyString(worktreeEntry?.providerId) ?? node.providerId;
-  const providerSessionId =
-    readNonEmptyString(worktreeEntry?.providerSessionId) ?? node.sessionId;
-  const rootSessionId =
-    readNonEmptyString(worktreeEntry?.rootSessionId) ?? node.sessionId;
-  const sessionId =
-    readNonEmptyString(worktreeEntry?.latestSessionId) ?? node.sessionId;
-  const updatedAt =
-    readNonEmptyString(worktreeEntry?.updatedAt) ?? node.startedAt;
-  return {
-    dialogId,
-    providerId,
-    providerSessionId,
-    rootSessionId,
+  return createSessionFromContinuityEntry({
+    entry: worktreeEntry,
+    fallbackSessionId: node.sessionId,
+    fallbackUpdatedAt: node.startedAt,
+    providerId: node.providerId,
+  });
+};
+
+export const createProductPartProjectedSession = async (params: {
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<DevelopmentTreeNodeSession | undefined> => {
+  const state = await readJsonRecord(
+    params.workspaceRoot,
+    createProductPartManagedStatePath(params)
+  );
+  const sessionId = readNonEmptyString(state?.sessionId);
+  if (!sessionId) {
+    return undefined;
+  }
+  const entry = await readContinuityEntryForStage({
     sessionId,
-    updatedAt,
-  };
+    stage: createProductPartStage(params.partId),
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  });
+  return createSessionFromContinuityEntry({
+    entry,
+    fallbackSessionId: sessionId,
+    fallbackUpdatedAt: readNonEmptyString(state?.updatedAt),
+  });
 };

@@ -15,6 +15,7 @@ import {
 } from "../../development-tree/filesystem-structurator/development-tree-production-path-applier";
 import {
   type CoordinationStatus,
+  createProductPartProjectedSession,
   createProjectedSession,
   readJsonRecord,
   readUnlockNodes,
@@ -281,8 +282,16 @@ const withCoordinationState = async (
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
       });
+      const projectedPart = attachProjectedSession(
+        part,
+        await createProductPartProjectedSession({
+          partId: part.id,
+          workspaceRoot: params.workspaceRoot,
+          workspaceSlug: params.workspaceSlug,
+        })
+      );
       return {
-        ...part,
+        ...projectedPart,
         clusters: await Promise.all(
           part.clusters.map(
             async (cluster): Promise<DevelopmentTreeClusterNode> => {
