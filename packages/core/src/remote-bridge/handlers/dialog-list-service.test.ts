@@ -223,6 +223,55 @@ test("DialogListService keeps continuity latestSessionId when provider differs",
   }
 });
 
+test("DialogListService hides stale Development Tree dialogs without history or live runtime", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "dialog-list-stale-devtree-")
+  );
+  const workspaceSlug = "workspace";
+  try {
+    await writeContinuityIndex({
+      workspaceRoot,
+      workspaceSlug,
+      entries: [
+        {
+          stage: "development_tree/materialized/product-parts/ui-shell",
+          rootSessionId: "codex-stale-ui-shell",
+          dialogId: "codex-stale-ui-shell",
+          updatedAt: "2026-02-22T08:00:00.000Z",
+          latestSessionId: "runtime-session-id",
+          providerId: "codexCli",
+          providerSessionId: "provider-session-1",
+        },
+      ],
+    });
+
+    const service = new DialogListService({ logger: new Logger("error") });
+    const staleDialogs = await service.listDialogs({
+      workspaceRoot,
+      workspaceSlug,
+    });
+    assert.equal(staleDialogs.length, 0);
+
+    const liveDialogs = await service.listDialogs({
+      workspaceRoot,
+      workspaceSlug,
+      runtimeSessions: [
+        createRuntimeSession({
+          id: "runtime-session-id",
+          providerId: "codexCli",
+          providerSessionId: "provider-session-1",
+          workspacePath: workspaceRoot,
+          updatedAt: "2026-02-22T08:01:00.000Z",
+        }),
+      ],
+    });
+    assert.equal(liveDialogs.length, 1);
+    assert.equal(liveDialogs[0]?.dialogId, "codex-stale-ui-shell");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("DialogListService prefers duplicate dialog entries that have capsule history", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "dialog-list-capsule-")

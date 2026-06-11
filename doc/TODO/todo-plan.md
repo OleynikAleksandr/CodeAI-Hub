@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "e7613ba72",
+  "lastRecordedCommit": "a5250a973",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6r.product-part-start-route.task1",
-  "expectedCommitMessage": "fix: route product part start through bootstrap",
+  "currentTaskId": "qg-restore-isolation.phase6r.stale-dialog-projection.task1",
+  "expectedCommitMessage": "fix: hide stale development tree dialog projections",
   "debt": {
-    "expectedCommitMessage": "fix: route product part start through bootstrap",
-    "preCommitHead": "e7613ba72",
+    "expectedCommitMessage": "fix: hide stale development tree dialog projections",
+    "preCommitHead": "a5250a973",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6r.product-part-start-route.task1"
+    "taskId": "qg-restore-isolation.phase6r.stale-dialog-projection.task1"
   }
 }
 ```
@@ -294,12 +294,12 @@
 86. [DONE] `qg-restore-isolation.phase6r.product-part-bootstrap.task1` Make Product Part node bootstrap restart the agent session when the plan/draft already exists but the agent has not produced a usable draft, so Clear/Restart and stale local runtime recovery can re-open the Product Part worker instead of leaving sentinel-only artifacts (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restart product part bootstrap sessions`). Result: Product Part bootstrap now starts an agent session whenever a Product Part managed plan participates in bootstrap, even if its draft/plan already existed; regression covers a pre-existing Product Part plan/draft and confirms the start prompt is sent. Targeted test passed 4/4; `npm run build --workspace=@codeai-hub/core` passed.
 87. [DONE] Git Commit: `fix: restart product part bootstrap sessions` (hash: e7613ba72)
 88. [DONE] `qg-restore-isolation.phase6r.product-part-start-route.task1` Route Project Manager Product Part `Start node` through the Core-owned Product Part bootstrap path instead of creating an empty workflow session shell, preserving the downstream Product Part prompt/plan/draft contract (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts`; expected commit: `fix: route product part start through bootstrap`). Result: Product Part root `Start node` now validates the same clean/path gates but dispatches `bootstrapDevelopmentTreeProductPartAgents` through `SessionRequestHandler`, creating the managed Product Part plan/draft and sending the Product Part start prompt instead of an empty session shell. Downstream cluster/module starts remain blocked while Product Part briefs are pending. Targeted route test passed 1/1; `npm run build --workspace=@codeai-hub/core` passed.
-89. [PENDING] Git Commit: `fix: route product part start through bootstrap` (hash: TBD)
+89. [DONE] Git Commit: `fix: route product part start through bootstrap` (hash: a5250a973)
 
 ### Stream: Stale Dialog Projection Guard
 
-90. [TODO] `qg-restore-isolation.phase6r.stale-dialog-projection.task1` Hide stale Development Tree dialog continuity entries that have neither a live runtime session nor a persisted unified history file, so Project Manager shows a recoverable start/restart surface instead of an empty dialog (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hide stale development tree dialog projections`).
-91. [TODO] Git Commit: `fix: hide stale development tree dialog projections` (hash: TBD)
+90. [DONE] `qg-restore-isolation.phase6r.stale-dialog-projection.task1` Hide stale Development Tree dialog continuity entries that have neither a live runtime session nor a persisted unified history file, so Project Manager shows a recoverable start/restart surface instead of an empty dialog (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hide stale development tree dialog projections`). Result: Dialog list projection now drops Development Tree continuity entries when the selected dialog has no persisted unified history and no live runtime session, while ordinary dialogs and Development Tree sessions with a live runtime/history remain visible. Regression covers the stale Product Part dialog case and the live runtime recovery path; projected worktree sessions still pass. Targeted dialog-list test passed 5/5; projected-session test passed 2/2; `npm run build --workspace=@codeai-hub/core` passed.
+91. [PENDING] Git Commit: `fix: hide stale development tree dialog projections` (hash: TBD)
 
 ### Stream: Documentation Sync
 

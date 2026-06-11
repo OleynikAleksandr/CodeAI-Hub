@@ -296,6 +296,21 @@ const readDialogWorktreePath = (entry: ContinuityIndexEntry): string | null => {
   return readNonEmptyString(worktreePath);
 };
 
+const isDevelopmentTreeDialog = (entry: ContinuityIndexEntry): boolean =>
+  entry.stage.startsWith("development_tree/");
+
+const hasLiveRuntimeSession = (
+  entry: ContinuityIndexEntry,
+  runtimeSessions: readonly Session[]
+): boolean =>
+  runtimeSessions.some(
+    (session) =>
+      (entry.latestSessionId === session.id &&
+        (!entry.providerId || session.providerId === entry.providerId)) ||
+      (entry.providerId === session.providerId &&
+        entry.providerSessionId === session.providerSessionId)
+  );
+
 export class DialogListService {
   private readonly logger: Logger;
 
@@ -331,9 +346,10 @@ export class DialogListService {
 
   private async selectPreferredEntry(options: {
     readonly entries: readonly ContinuityIndexEntry[];
+    readonly runtimeSessions: readonly Session[];
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
-  }): Promise<ContinuityIndexEntry> {
+  }): Promise<ContinuityIndexEntry | null> {
     let preferred = options.entries[0];
     let preferredHasHistory = preferred?.providerId
       ? await this.hasDialogHistoryFile({
@@ -368,11 +384,19 @@ export class DialogListService {
       }
     }
 
+    if (
+      isDevelopmentTreeDialog(preferred) &&
+      !preferredHasHistory &&
+      !hasLiveRuntimeSession(preferred, options.runtimeSessions)
+    ) {
+      return null;
+    }
     return preferred;
   }
 
   private async dedupeDialogEntries(options: {
     readonly entries: readonly ContinuityIndexEntry[];
+    readonly runtimeSessions: readonly Session[];
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<readonly ContinuityIndexEntry[]> {
@@ -395,13 +419,15 @@ export class DialogListService {
 
     const deduped = [...passthrough];
     for (const entries of grouped.values()) {
-      deduped.push(
-        await this.selectPreferredEntry({
-          entries,
-          workspaceRoot: options.workspaceRoot,
-          workspaceSlug: options.workspaceSlug,
-        })
-      );
+      const selected = await this.selectPreferredEntry({
+        entries,
+        runtimeSessions: options.runtimeSessions,
+        workspaceRoot: options.workspaceRoot,
+        workspaceSlug: options.workspaceSlug,
+      });
+      if (selected) {
+        deduped.push(selected);
+      }
     }
 
     deduped.sort((left, right) =>
@@ -456,11 +482,13 @@ export class DialogListService {
 
     const projectedDevelopmentTreeDialogs =
       await readProjectedDevelopmentTreeDialogs(options);
+    const runtimeSessions = options.runtimeSessions ?? [];
     return await this.dedupeDialogEntries({
       entries: reconcileLatestSessionIds(
         [...entries, ...projectedDevelopmentTreeDialogs],
-        options.runtimeSessions ?? []
+        runtimeSessions
       ),
+      runtimeSessions,
       workspaceRoot: options.workspaceRoot,
       workspaceSlug: options.workspaceSlug,
     });
