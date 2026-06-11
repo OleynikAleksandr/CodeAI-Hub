@@ -2,7 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.490** (Product Part Brief Barrier)
+**Current Release — v1.2.491** (Product Part Bootstrap Recovery)
+
+This release fixes Product Part restart and stale dialog recovery in the
+Development Tree. Product Part root Clear/Restart now recreates the Product
+Part plan, draft and agent session through the same Core-owned bootstrap path
+used for a fresh manual start, even when plan/draft files already exist after a
+partial reset.
+
+Project Manager Product Part `Start node` now routes through Product Part
+bootstrap instead of creating an empty workflow session shell. Development Tree
+dialog projection also hides stale continuity entries when Core has neither a
+live runtime session nor a persisted unified history file, so a node returns to
+the recoverable start/restart surface instead of opening an empty chat.
+
+Retest focus: clear/restart the non-lead Product Part, then select it in
+Project Manager. Its session should appear with real messages after bootstrap,
+the Product Part brief should reach review/acceptance, and the lead Product Part
+should unlock `DevelopmentOrderPlan` only after every Product Part brief is
+accepted.
+
+**Previous Release — v1.2.490** (Product Part Brief Barrier)
 
 This release fixes Product Part review-session projection and lead Product Part
 orchestration after all briefs are accepted. Non-lead Product Part review

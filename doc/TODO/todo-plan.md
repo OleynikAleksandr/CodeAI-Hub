@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "d9c227e81",
+  "lastRecordedCommit": "e1b16161d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6r.docs.task1",
-  "expectedCommitMessage": "docs: describe product part bootstrap recovery",
+  "currentTaskId": "qg-restore-isolation.phase6s.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare product part bootstrap recovery release notes",
   "debt": {
-    "expectedCommitMessage": "docs: describe product part bootstrap recovery",
-    "preCommitHead": "d9c227e81",
+    "expectedCommitMessage": "docs: prepare product part bootstrap recovery release notes",
+    "preCommitHead": "e1b16161d",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6r.docs.task1"
+    "taskId": "qg-restore-isolation.phase6s.release-notes.task1"
   }
 }
 ```
@@ -304,14 +304,14 @@
 ### Stream: Documentation Sync
 
 92. [DONE] `qg-restore-isolation.phase6r.docs.task1` Document the Product Part bootstrap/restart invariant: Product Part session projection is valid only with a persisted/live dialog, manual start and Clear/Restart use the same Core bootstrap path, and the brief barrier cannot depend on stale continuity shells (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part bootstrap recovery`). Result: SystemArchitecture and WorkflowSteps Overview now state that Product Part manual start and Product Part root Clear/Restart both route through the Core-owned Product Part bootstrap path, empty workflow session shells are forbidden, and Project Manager hides stale `development_tree/...` dialog projections without a live runtime session or persisted unified history. `npm run plan:validate` passed.
-93. [PENDING] Git Commit: `docs: describe product part bootstrap recovery` (hash: TBD)
+93. [DONE] Git Commit: `docs: describe product part bootstrap recovery` (hash: e1b16161d)
 
 ## Phase 6S - Release Build (owner: Codex, updated: 2026-06-11)
 
 ### Stream: Release Notes
 
-94. [TODO] `qg-restore-isolation.phase6s.release-notes.task1` Prepare release notes for the user-authorized Product Part bootstrap recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part bootstrap recovery release notes`).
-95. [TODO] Git Commit: `docs: prepare product part bootstrap recovery release notes` (hash: TBD)
+94. [DONE] `qg-restore-isolation.phase6s.release-notes.task1` Prepare release notes for the user-authorized Product Part bootstrap recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part bootstrap recovery release notes`). Result: README now announces future release `v1.2.491` as Product Part Bootstrap Recovery, and CHANGELOG records Product Part bootstrap restart, Product Part root start routing through bootstrap, stale Development Tree dialog projection hiding, documentation sync, and verification commands.
+95. [PENDING] Git Commit: `docs: prepare product part bootstrap recovery release notes` (hash: TBD)
 
 ### Stream: Release Artifacts
 

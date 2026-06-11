@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.491] - 2026-06-11
+### Fixed
+- **Product Part Clear/Restart recreates the managed agent session.** Product Part bootstrap now starts a new agent session whenever the Product Part managed plan participates in bootstrap, even if plan/draft files already exist after a partial reset.
+- **Product Part `Start node` no longer creates an empty shell session.** Project Manager start commands for Product Part roots route through Core-owned Product Part bootstrap, creating the managed plan, draft, prompt and dialog history together.
+- **Stale Development Tree dialog projections are hidden.** Dialog list projection drops `development_tree/...` continuity entries when the selected dialog has no live runtime session and no persisted unified history file, so stale shells do not open as empty chats.
+
+### Changed
+- **Bootstrap/restart invariants are documented as Core-owned.** Development Tree docs now state that Product Part manual start and Product Part root Clear/Restart share one bootstrap path, and that Project Manager may render only live or persisted Development Tree dialogs.
+
+### Verification
+- `npx tsx --test packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.490] - 2026-06-11
 ### Fixed
 - **Product Part review sessions are projected into Project Manager.** Managed Product Part brief-review state now resolves through main workspace continuity and is attached to the Product Part node as a started Development Tree session, so non-lead Product Part nodes can open their dialog instead of showing an empty placeholder.
