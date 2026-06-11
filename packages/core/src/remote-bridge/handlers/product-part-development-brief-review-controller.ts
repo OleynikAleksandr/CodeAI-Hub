@@ -1,7 +1,11 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
-import { resolveLeadOrderPlanAssignment } from "./product-part-development-order-plan-assignment";
+import {
+  prepareLeadOrderPlanDispatch,
+  readLeadProductPartId,
+  resolveLeadOrderPlanAssignment,
+} from "./product-part-development-order-plan-assignment";
 import { ProductPartDevelopmentOrderPlanReviewController } from "./product-part-development-order-plan-review-controller";
 
 interface ManagedPlanState {
@@ -17,6 +21,10 @@ export type ProductPartBriefReviewResult =
       readonly handled: true;
       readonly message: { readonly content: string; readonly tag: string };
       readonly nextInternalMessage?: string;
+      readonly targetInternalMessage?: {
+        readonly content: string;
+        readonly sessionId: string;
+      };
     };
 
 const AGENT_TOUCHED_RE = /^agentTouched:\s*(?:false|true)\s*$/im;
@@ -285,14 +293,29 @@ export class ProductPartDevelopmentBriefReviewController {
       )}\n`
     );
     const isLeadPart = IS_LEAD_PLAN_RE.test(planText);
-    const leadAssignment = isLeadPart
+    const leadPartId = isLeadPart
+      ? partId
+      : await readLeadProductPartId({
+          workspaceRoot: params.workspaceRoot,
+          workspaceSlug: params.workspaceSlug,
+        });
+    const leadAssignment = leadPartId
       ? await resolveLeadOrderPlanAssignment({
-          leadPartId: partId,
+          leadPartId,
           workspaceRoot: params.workspaceRoot,
           workspaceSlug: params.workspaceSlug,
         })
       : null;
-    const startOrderPlan = leadAssignment?.ready === true;
+    const startOrderPlan = isLeadPart && leadAssignment?.ready === true;
+    const leadDispatch =
+      !isLeadPart && leadAssignment?.ready === true && leadPartId
+        ? await prepareLeadOrderPlanDispatch({
+            content: leadAssignment.prompt,
+            leadPartId,
+            workspaceRoot: params.workspaceRoot,
+            workspaceSlug: params.workspaceSlug,
+          })
+        : null;
     await writeText(
       params.workspaceRoot,
       planPath,
@@ -316,6 +339,7 @@ export class ProductPartDevelopmentBriefReviewController {
       commitMessage: "chore: advance managed workflow ledger",
       paths: await uniqueExistingPaths(params.workspaceRoot, [
         planPath,
+        ...(leadDispatch ? [leadDispatch.planPath] : []),
         managedDecisionPath,
         createContinuityIndexPath(params.workspaceSlug),
       ]),
@@ -335,11 +359,20 @@ export class ProductPartDevelopmentBriefReviewController {
             leadAssignment?.ready === false
               ? leadAssignment.blockedMessage
               : null,
+          leadOrderPlanDispatchMessage: leadDispatch
+            ? `Core: all Product Part briefs are accepted; lead Development Order Plan assignment was dispatched to lead Product Part \`${leadPartId}\`.`
+            : null,
           partId,
         }),
         tag: messageTag,
       },
       nextInternalMessage: startOrderPlan ? leadAssignment?.prompt : undefined,
+      targetInternalMessage: leadDispatch
+        ? {
+            content: leadDispatch.content,
+            sessionId: leadDispatch.sessionId,
+          }
+        : undefined,
     };
   }
 }
@@ -359,6 +392,7 @@ const createAcceptedMessageTag = (params: {
 const createAcceptedMessage = (params: {
   readonly commitHash: string;
   readonly isLeadPart: boolean;
+  readonly leadOrderPlanDispatchMessage?: string | null;
   readonly leadOrderPlanBlockedMessage?: string | null;
   readonly partId: string;
 }): string =>
@@ -366,6 +400,7 @@ const createAcceptedMessage = (params: {
     `Core: пользователь принял Product Part \`${params.partId}\` Development Brief.`,
     `Commit: \`${params.commitHash}\`.`,
     params.leadOrderPlanBlockedMessage ??
+      params.leadOrderPlanDispatchMessage ??
       (params.isLeadPart
         ? "Lead Product Part review закрыт; Core запускает следующий managed assignment: Development Order Plan draft."
         : "Product Part review закрыт; сессия остаётся доступной для будущих правок."),

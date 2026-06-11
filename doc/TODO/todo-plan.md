@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "621032785",
+  "lastRecordedCommit": "350c9da55",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6m.brief-barrier-docs.task1",
-  "expectedCommitMessage": "docs: describe product part brief barrier",
+  "currentTaskId": "qg-restore-isolation.phase6n.brief-barrier-dispatch.task1",
+  "expectedCommitMessage": "fix: dispatch lead order plan after brief barrier",
   "debt": {
-    "expectedCommitMessage": "docs: describe product part brief barrier",
-    "preCommitHead": "621032785",
+    "expectedCommitMessage": "fix: dispatch lead order plan after brief barrier",
+    "preCommitHead": "350c9da55",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6m.brief-barrier-docs.task1"
+    "taskId": "qg-restore-isolation.phase6n.brief-barrier-dispatch.task1"
   }
 }
 ```
@@ -236,7 +236,14 @@
 ### Stream: Downstream Planning Documentation
 
 67. [DONE] `qg-restore-isolation.phase6m.brief-barrier-docs.task1` Document the Product Part brief barrier and lead `DevelopmentOrderPlan` all-brief input contract in the active downstream execution refactor planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part brief barrier`). Result: downstream execution refactor planning now defines the Product Part Brief Barrier, its Core-owned input sources, blocked behavior, and the requirement that the lead `DevelopmentOrderPlan` prompt inline the full accepted markdown brief for every planned Product Part.
-68. [PENDING] Git Commit: `docs: describe product part brief barrier` (hash: TBD)
+68. [DONE] Git Commit: `docs: describe product part brief barrier` (hash: 350c9da55)
+
+## Phase 6N - Product Part Brief Barrier Dispatch (owner: Codex, updated: 2026-06-11)
+
+### Stream: Cross Session Lead Dispatch
+
+69. [DONE] `qg-restore-isolation.phase6n.brief-barrier-dispatch.task1` When a secondary Product Part brief acceptance opens the all-brief barrier after the lead Product Part was previously blocked, dispatch the lead `DevelopmentOrderPlan` prompt to the lead session instead of the current secondary session (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-assignment.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/development-tree-turn-result-dispatch.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`; expected commit: `fix: dispatch lead order plan after brief barrier`). Result: secondary Product Part acceptance now detects when the all-brief barrier opens, moves the previously blocked lead order-plan task to `IN_PROGRESS`, and returns a target internal message for the lead session. Managed workflow turn dispatch now routes target continuations to the requested session instead of the current secondary session. Targeted Product Part brief/order-plan tests passed 5/5; Ultracite check passed for touched files; `npm run build --workspace=@codeai-hub/core` passed.
+70. [PENDING] Git Commit: `fix: dispatch lead order plan after brief barrier` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 

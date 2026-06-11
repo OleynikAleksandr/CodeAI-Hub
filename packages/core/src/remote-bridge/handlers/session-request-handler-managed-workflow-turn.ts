@@ -31,6 +31,7 @@ import {
   buildDevelopmentTreeTurnFailureMessage,
   runGuardedDevelopmentTreeTurn,
 } from "./development-tree-turn-guard";
+import { dispatchDevelopmentTreeTurnResult } from "./development-tree-turn-result-dispatch";
 import { buildDiagramModulesRepairDispatch } from "./diagram-modules-repair-prompt-dispatch";
 import {
   buildContinuationDeliveryFailureMessage as buildDeliveryFailureMessage,
@@ -143,14 +144,14 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         })
       );
       if (result.handled) {
-        this.appendCoreMessage(sessionId, result.message);
-        const nextInternalMessage =
-          "nextInternalMessage" in result ? result.nextInternalMessage : null;
-        if (typeof nextInternalMessage === "string" && nextInternalMessage) {
-          this.dispatchAgentContinuation(sessionId, nextInternalMessage);
-          return "continued";
-        }
-        return "settled";
+        return dispatchDevelopmentTreeTurnResult({
+          appendCoreMessage: (targetSessionId, payload) =>
+            this.appendCoreMessage(targetSessionId, payload),
+          dispatchAgentContinuation: (targetSessionId, content) =>
+            this.dispatchAgentContinuation(targetSessionId, content),
+          result,
+          sessionId,
+        });
       }
     }
     return "not_managed";

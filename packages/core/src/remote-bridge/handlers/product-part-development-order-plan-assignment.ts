@@ -1,4 +1,4 @@
-import { readFile, stat } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 interface AcceptedBriefInput {
@@ -28,6 +28,8 @@ const PRODUCT_PART_TABLE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`[^`]+`\s*\|\s*.+\|$/gm;
 const LEADERSHIP_ORDER_RE =
   /(?:^|\n)\s*(?:[-*]\s*)?(?:productPartLeadershipOrder|Product Part Leadership Order)\s*[:|]\s*(.+)/iu;
+const LEAD_PRODUCT_PART_RE =
+  /(?:^|\n)\s*(?:[-*]\s*)?(?:leadProductPartId|Lead Product Part(?: ID)?)\s*[:|]\s*`?([a-z0-9]+(?:-[a-z0-9]+)*)`?/iu;
 const PRODUCT_PART_ID_IN_TEXT_RE = /`([a-z0-9]+(?:-[a-z0-9]+)*)`/gu;
 
 const readOptionalFile = async (
@@ -54,6 +56,19 @@ const readOptionalJsonRecord = async (
     ? (parsed as Record<string, unknown>)
     : null;
 };
+
+const writeText = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const collectProductPartIds = (markdown: string): readonly string[] => {
   const partIds: string[] = [];
@@ -91,6 +106,15 @@ const readLeadershipOrder = (
 const createDiagramIndexPath = (workspaceSlug: string): string =>
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`;
 
+const createTaskPrefix = (partId: string): string =>
+  `development-tree.product-part.${partId}`;
+
+const createOrderPlanTaskId = (partId: string): string =>
+  `${createTaskPrefix(partId)}.phase3.order-plan.task1`;
+
+const createPlanPath = (partId: string): string =>
+  `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
+
 const createBriefPath = (params: {
   readonly partId: string;
   readonly workspaceSlug: string;
@@ -118,6 +142,17 @@ const createOrderPlanJsonPath = (params: {
 const isAcceptedBrief = (decision: Record<string, unknown> | null): boolean =>
   decision?.schema === "codeai-product-part-development-brief-managed-v1" &&
   decision.reviewState === "accepted";
+
+const markOrderPlanTaskInProgress = (content: string, partId: string): string =>
+  content.replace(
+    new RegExp(
+      `^(\\d+\\. \\[)(?:TODO|BLOCKED)(\\] \`${escapeRegExp(
+        createOrderPlanTaskId(partId)
+      )}\` .*)$`,
+      "mu"
+    ),
+    "$1IN_PROGRESS$2"
+  );
 
 const readBriefInput = async (params: {
   readonly partId: string;
@@ -353,4 +388,49 @@ export const resolveLeadOrderPlanAssignment = async (params: {
     }),
     ready: true,
   };
+};
+
+export const readLeadProductPartId = async (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<string | null> => {
+  const indexText = await readOptionalFile(
+    params.workspaceRoot,
+    createDiagramIndexPath(params.workspaceSlug)
+  );
+  return indexText?.match(LEAD_PRODUCT_PART_RE)?.[1] ?? null;
+};
+
+export const prepareLeadOrderPlanDispatch = async (params: {
+  readonly content: string;
+  readonly leadPartId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<{
+  readonly content: string;
+  readonly planPath: string;
+  readonly sessionId: string;
+} | null> => {
+  const decision = await readOptionalJsonRecord(
+    params.workspaceRoot,
+    createManagedDecisionPath({
+      partId: params.leadPartId,
+      workspaceSlug: params.workspaceSlug,
+    })
+  );
+  const sessionId = decision?.sessionId;
+  if (!(typeof sessionId === "string" && sessionId.trim())) {
+    return null;
+  }
+  const planPath = createPlanPath(params.leadPartId);
+  const planText = await readOptionalFile(params.workspaceRoot, planPath);
+  if (!planText) {
+    return null;
+  }
+  await writeText(
+    params.workspaceRoot,
+    planPath,
+    markOrderPlanTaskInProgress(planText, params.leadPartId)
+  );
+  return { content: params.content, planPath, sessionId: sessionId.trim() };
 };
