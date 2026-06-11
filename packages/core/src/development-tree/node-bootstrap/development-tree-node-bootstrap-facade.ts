@@ -84,6 +84,8 @@ export class DevelopmentTreeNodeBootstrapFacade {
     const writtenProductPartPlans: ProductPartDevelopmentBriefPlanWriteResult[] =
       [];
     for (const node of newNodes) {
+      let productPartPlan: ProductPartDevelopmentBriefPlanWriteResult | null =
+        null;
       if (params.writeProductPartPlans) {
         const plan = await this.productPartPlanWriter.writePlan({
           leadProductPartId: params.leadProductPartId,
@@ -93,6 +95,7 @@ export class DevelopmentTreeNodeBootstrapFacade {
           workspaceSlug: params.workspaceSlug,
         });
         if (plan) {
+          productPartPlan = plan;
           writtenProductPartPlans.push(plan);
         }
       }
@@ -101,7 +104,12 @@ export class DevelopmentTreeNodeBootstrapFacade {
       const hasDraftChanges = result.drafts.some(
         (draft) => draft.action !== "unchanged"
       );
-      if (this.agentSessionOptions && hasDraftChanges) {
+      const isProductPartBootstrap =
+        node.kind === "product_part" && productPartPlan !== null;
+      if (
+        this.agentSessionOptions &&
+        (hasDraftChanges || isProductPartBootstrap)
+      ) {
         agentSessions.push(
           await this.agentSessionBootstrapper.bootstrapNode(
             node,

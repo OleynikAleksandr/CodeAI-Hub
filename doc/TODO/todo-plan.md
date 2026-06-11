@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "6c723fa86",
+  "lastRecordedCommit": "2a18b3027",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6p.plans-index.task1",
-  "expectedCommitMessage": "docs: index active planning sources",
+  "currentTaskId": "qg-restore-isolation.phase6r.product-part-bootstrap.task1",
+  "expectedCommitMessage": "fix: restart product part bootstrap sessions",
   "debt": {
-    "expectedCommitMessage": "docs: index active planning sources",
-    "preCommitHead": "6c723fa86",
+    "expectedCommitMessage": "fix: restart product part bootstrap sessions",
+    "preCommitHead": "2a18b3027",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6p.plans-index.task1"
+    "taskId": "qg-restore-isolation.phase6r.product-part-bootstrap.task1"
   }
 }
 ```
@@ -279,13 +279,52 @@
 ### Stream: Plans Index And Lifecycle Notes
 
 83. [DONE] `qg-restore-isolation.phase6p.plans-index.task1` Update navigation/lifecycle documentation so active root planning docs in `Plans/` are discoverable and accurately described until closeout disposition (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: index active planning sources`). Result: Docs Index now describes the current implemented/released state of Quality Gates restore isolation and Development Tree Product Part/cluster planning sources, while Plans README allows a small indexed active directive set in the root until closeout disposition.
-84. [PENDING] Git Commit: `docs: index active planning sources` (hash: TBD)
+84. [DONE] Git Commit: `docs: index active planning sources` (hash: 2a18b3027)
 
 ## Phase 6Q - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
 ### Stream: Retest After Product Part Brief Barrier Release
 
-85. [TODO] `qg-restore-isolation.phase6q.user-retest.task1` User installs the new release and retests Development Tree Product Part orchestration: non-lead Product Part review sessions should appear in Project Manager with persisted history, lead `DevelopmentOrderPlan` should wait for every planned Product Part brief acceptance, and secondary Product Part acceptance should dispatch the unlocked lead continuation into the lead session (scope: `manual retest`; no commit expected).
+85. [DONE] `qg-restore-isolation.phase6q.user-retest.task1` User installs the new release and retests Development Tree Product Part orchestration: non-lead Product Part review sessions should appear in Project Manager with persisted history, lead `DevelopmentOrderPlan` should wait for every planned Product Part brief acceptance, and secondary Product Part acceptance should dispatch the unlocked lead continuation into the lead session (scope: `manual retest`; no commit expected). Result: lead Product Part barrier now correctly waits for all accepted briefs, but retest found that a non-lead Product Part can be left with a projected/stale session and no persisted dialog messages after Product Part clear/restart; the lead plan remains blocked forever because the shell brief cannot reach user review/acceptance.
+
+## Phase 6R - Product Part Bootstrap Recovery (owner: Codex, updated: 2026-06-11)
+
+### Stream: Restartable Product Part Agent Sessions
+
+86. [DONE] `qg-restore-isolation.phase6r.product-part-bootstrap.task1` Make Product Part node bootstrap restart the agent session when the plan/draft already exists but the agent has not produced a usable draft, so Clear/Restart and stale local runtime recovery can re-open the Product Part worker instead of leaving sentinel-only artifacts (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restart product part bootstrap sessions`). Result: Product Part bootstrap now starts an agent session whenever a Product Part managed plan participates in bootstrap, even if its draft/plan already existed; regression covers a pre-existing Product Part plan/draft and confirms the start prompt is sent. Targeted test passed 4/4; `npm run build --workspace=@codeai-hub/core` passed.
+87. [PENDING] Git Commit: `fix: restart product part bootstrap sessions` (hash: TBD)
+88. [TODO] `qg-restore-isolation.phase6r.product-part-start-route.task1` Route Project Manager Product Part `Start node` through the Core-owned Product Part bootstrap path instead of creating an empty workflow session shell, preserving the downstream Product Part prompt/plan/draft contract (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts`; expected commit: `fix: route product part start through bootstrap`).
+89. [TODO] Git Commit: `fix: route product part start through bootstrap` (hash: TBD)
+
+### Stream: Stale Dialog Projection Guard
+
+90. [TODO] `qg-restore-isolation.phase6r.stale-dialog-projection.task1` Hide stale Development Tree dialog continuity entries that have neither a live runtime session nor a persisted unified history file, so Project Manager shows a recoverable start/restart surface instead of an empty dialog (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hide stale development tree dialog projections`).
+91. [TODO] Git Commit: `fix: hide stale development tree dialog projections` (hash: TBD)
+
+### Stream: Documentation Sync
+
+92. [TODO] `qg-restore-isolation.phase6r.docs.task1` Document the Product Part bootstrap/restart invariant: Product Part session projection is valid only with a persisted/live dialog, manual start and Clear/Restart use the same Core bootstrap path, and the brief barrier cannot depend on stale continuity shells (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part bootstrap recovery`).
+93. [TODO] Git Commit: `docs: describe product part bootstrap recovery` (hash: TBD)
+
+## Phase 6S - Release Build (owner: Codex, updated: 2026-06-11)
+
+### Stream: Release Notes
+
+94. [TODO] `qg-restore-isolation.phase6s.release-notes.task1` Prepare release notes for the user-authorized Product Part bootstrap recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part bootstrap recovery release notes`).
+95. [TODO] Git Commit: `docs: prepare product part bootstrap recovery release notes` (hash: TBD)
+
+### Stream: Release Artifacts
+
+96. [TODO] `qg-restore-isolation.phase6s.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part bootstrap recovery release artifacts`).
+97. [TODO] Git Commit: `build: prepare product part bootstrap recovery release artifacts` (hash: TBD)
+98. [TODO] `qg-restore-isolation.phase6s.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part bootstrap recovery vsix release`).
+99. [TODO] Git Commit: `build: package product part bootstrap recovery vsix release` (hash: TBD)
+
+## Phase 6T - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
+
+### Stream: Retest After Product Part Bootstrap Recovery
+
+100. [TODO] `qg-restore-isolation.phase6t.user-retest.task1` User installs the new release and retests Product Part orchestration after Clear/Restart: non-lead Product Part session should show persisted messages, its brief should reach review/acceptance, and the lead `DevelopmentOrderPlan` assignment should unlock only after every brief is accepted (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 

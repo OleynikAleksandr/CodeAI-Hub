@@ -8,6 +8,7 @@ import { DevelopmentTreeNodeBootstrapFacade } from "./development-tree-node-boot
 
 const MODULE_DRAFTS_FIRST_MESSAGE_PATTERN =
   /ModuleSpec\.draft\.md[\s\S]*ModuleFacadeContract\.draft\.md/;
+const PRODUCT_PART_BRIEF_FIRST_MESSAGE_PATTERN = /ProductPartDevelopmentBrief/u;
 
 const createModuleFolder = async (
   workspaceRoot: string,
@@ -25,6 +26,18 @@ const createModuleFolder = async (
     ),
     { recursive: true }
   );
+};
+
+const createProductPartFolder = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const root = createDevelopmentTreeMaterializedRoot({
+    workspaceRoot,
+    workspaceSlug: "demo-workspace",
+  });
+  await mkdir(path.join(root.absolutePath, "product-parts/local-runtime"), {
+    recursive: true,
+  });
 };
 
 test("DevelopmentTreeNodeBootstrapFacade consumes each materialized node once", async () => {
@@ -79,6 +92,64 @@ test("DevelopmentTreeNodeBootstrapFacade only returns newly added folders after 
       ["module:settings-store"]
     );
     assert.equal(next.processedCount, 3);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("DevelopmentTreeNodeBootstrapFacade restarts Product Part agent when plan and draft already exist", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "node-bootstrap-")
+  );
+  try {
+    await createProductPartFolder(workspaceRoot);
+    await new DevelopmentTreeNodeBootstrapFacade().consumeNewNodes({
+      leadProductPartId: "local-runtime",
+      productPartLeadershipOrder: ["local-runtime"],
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      writeProductPartPlans: true,
+    });
+
+    const createdStages: string[] = [];
+    const sentMessages: string[] = [];
+    const result = await new DevelopmentTreeNodeBootstrapFacade({
+      agentSessionOptions: {
+        gateway: {
+          createSessionForWorkflow: (options) => {
+            createdStages.push(options.context.stage);
+            return Promise.resolve({ id: `session-${createdStages.length}` });
+          },
+          handleMessage: (_sessionId, content) => {
+            sentMessages.push(content);
+            return Promise.resolve();
+          },
+        },
+        providerId: "codex",
+        workspacePath: workspaceRoot,
+        workspaceSlug: "demo-workspace",
+      },
+    }).consumeNewNodes({
+      leadProductPartId: "local-runtime",
+      nodeKinds: ["product_part"],
+      productPartLeadershipOrder: ["local-runtime"],
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      writeProductPartPlans: true,
+    });
+
+    assert.notEqual(result.writtenDrafts[0]?.action, "created");
+    assert.deepEqual(
+      result.writtenProductPartPlans.map((plan) => plan.action),
+      ["unchanged"]
+    );
+    assert.deepEqual(createdStages, [
+      "development_tree/materialized/product-parts/local-runtime",
+    ]);
+    assert.match(
+      sentMessages[0] ?? "",
+      PRODUCT_PART_BRIEF_FIRST_MESSAGE_PATTERN
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
