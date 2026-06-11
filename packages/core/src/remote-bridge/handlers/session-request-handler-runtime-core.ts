@@ -217,12 +217,14 @@ export const createSessionRequestHandlerRuntimeCore = (
           );
         }
       },
-      persistStartPrompt: (sessionId, content) =>
+      persistStartPrompt: async (sessionId, content) => {
         eventMessages.appendDialogMessage(sessionId, {
           content,
           role: "user",
           tag: "development-tree-agent-start-prompt",
-        }),
+        });
+        await eventMessages.waitForMessagePersistence(sessionId);
+      },
     },
     eventMessages,
     getMessageDispatch: () => messageDispatchRef.get(),

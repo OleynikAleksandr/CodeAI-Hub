@@ -11,6 +11,7 @@ const RUNTIME_CORE_SOURCE_PATH = join(
   process.cwd(),
   "packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts"
 );
+const WAIT_FOR_PERSISTENCE_RE = /waitForMessagePersistence/u;
 const USER_ROLE_RE = /role:\s*"user"/u;
 
 test("Development Tree start prompts persist as user turns", async () => {
@@ -24,6 +25,7 @@ test("Development Tree start prompts persist as user turns", async () => {
 
   assert.ok(persistStartPromptBlock.length > 0);
   assert.match(persistStartPromptBlock, APPEND_DIALOG_MESSAGE_RE);
+  assert.match(persistStartPromptBlock, WAIT_FOR_PERSISTENCE_RE);
   assert.match(persistStartPromptBlock, USER_ROLE_RE);
   assert.match(persistStartPromptBlock, DEVELOPMENT_TREE_START_PROMPT_TAG_RE);
   assert.doesNotMatch(persistStartPromptBlock, APPEND_CORE_MESSAGE_RE);

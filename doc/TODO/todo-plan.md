@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "49b98e74f",
+  "lastRecordedCommit": "108df07f0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6l.product-part-session.task1",
-  "expectedCommitMessage": "fix: project product part review sessions",
+  "currentTaskId": "qg-restore-isolation.phase6l.product-part-history.task1",
+  "expectedCommitMessage": "fix: persist product part review dialog history",
   "debt": {
-    "expectedCommitMessage": "fix: project product part review sessions",
-    "preCommitHead": "49b98e74f",
+    "expectedCommitMessage": "fix: persist product part review dialog history",
+    "preCommitHead": "108df07f0",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6l.product-part-session.task1"
+    "taskId": "qg-restore-isolation.phase6l.product-part-history.task1"
   }
 }
 ```
@@ -219,12 +219,12 @@
 59. [DONE] `qg-restore-isolation.phase6l.session-projection-refactor.task1` Extract Development Tree session projection helpers out of the near-limit snapshot reader before adding Product Part review-session projection (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: extract development tree session projection`). Result: cluster session projection helpers moved into `development-tree-session-projection.ts`; `development-tree-snapshot.ts` dropped from 495 to 352 lines. Targeted Development Tree snapshot/projected-session tests passed 9/9; Ultracite check passed for the touched files.
 60. [DONE] Git Commit: `refactor: extract development tree session projection` (hash: 49b98e74f)
 61. [DONE] `qg-restore-isolation.phase6l.product-part-session.task1` Project Product Part managed brief-review sessions from Core-owned managed state/continuity into `DevelopmentTreePartNode.session`, and cover the non-lead Product Part visibility scenario with regression tests (scope: `packages/core/src/remote-bridge/handlers/development-tree-session-projection.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`; expected commit: `fix: project product part review sessions`). Result: Product Part managed state now resolves through main workspace continuity and is attached to the Product Part node as a started session; regression coverage verifies snapshot session projection, dialog list visibility, and history opening for a non-lead Product Part review session. Targeted Development Tree snapshot/projected-session tests passed 10/10; Ultracite check passed for the touched files; `npm run build --workspace=@codeai-hub/core` passed.
-62. [PENDING] Git Commit: `fix: project product part review sessions` (hash: TBD)
+62. [DONE] Git Commit: `fix: project product part review sessions` (hash: 108df07f0)
 
 ### Stream: Managed History Resilience
 
-63. [TODO] `qg-restore-isolation.phase6l.product-part-history.task1` Make Development Tree managed Product Part startup/history persistence resilient so Project Manager does not end up with a translation overlay but no primary unified dialog history for user-review sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts`; expected commit: `fix: persist product part review dialog history`).
-64. [TODO] Git Commit: `fix: persist product part review dialog history` (hash: TBD)
+63. [DONE] `qg-restore-isolation.phase6l.product-part-history.task1` Make Development Tree managed Product Part startup/history persistence resilient so Project Manager does not end up with a translation overlay but no primary unified dialog history for user-review sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part review dialog history`). Result: Development Tree managed startup now waits for dialog-message persistence after appending the agent start prompt and before the provider turn is dispatched, so primary unified history is written before later translation/provider activity can race ahead. Targeted runtime/event-message tests passed 7/7; Ultracite check passed for touched files; `npm run build --workspace=@codeai-hub/core` passed.
+64. [PENDING] Git Commit: `fix: persist product part review dialog history` (hash: TBD)
 
 ## Phase 6M - Product Part Brief Barrier (owner: Codex, updated: 2026-06-11)
 
