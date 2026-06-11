@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "5d5b4ebd4",
+  "lastRecordedCommit": "36123b890",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6p.canonical-docs.task1",
-  "expectedCommitMessage": "docs: sync development tree canonical architecture",
+  "currentTaskId": "qg-restore-isolation.phase6p.devtree-plans.task1",
+  "expectedCommitMessage": "docs: sync development tree planning docs",
   "debt": {
-    "expectedCommitMessage": "docs: sync development tree canonical architecture",
-    "preCommitHead": "5d5b4ebd4",
+    "expectedCommitMessage": "docs: sync development tree planning docs",
+    "preCommitHead": "36123b890",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6p.canonical-docs.task1"
+    "taskId": "qg-restore-isolation.phase6p.devtree-plans.task1"
   }
 }
 ```
@@ -264,12 +264,12 @@
 ### Stream: Canonical Development Tree SSOT
 
 77. [DONE] `qg-restore-isolation.phase6p.canonical-docs.task1` Synchronize canonical Development Tree SSOT with accepted Product Part session projection, all-brief lead barrier, cluster boundary-accepted/no-doc-merge behavior, and global language settings for downstream prompts (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree canonical architecture`). Result: System Architecture and Workflow Steps Overview now describe Product Part review-session projection, persisted primary dialog history, Core-owned all-brief barrier before lead `DevelopmentOrderPlan`, full accepted brief markdown in the lead prompt, global language settings for downstream prompts, cluster `boundary_accepted` checkpoints, and code-ready-only downstream merges.
-78. [PENDING] Git Commit: `docs: sync development tree canonical architecture` (hash: TBD)
+78. [DONE] Git Commit: `docs: sync development tree canonical architecture` (hash: 36123b890)
 
 ### Stream: Active Development Tree Planning Docs
 
-79. [TODO] `qg-restore-isolation.phase6p.devtree-plans.task1` Synchronize active downstream/Product Part planning docs with Product Part brief barrier, target-session lead dispatch, boundary-accepted cluster state, and facade-centered cluster execution tree decisions (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree planning docs`).
-80. [TODO] Git Commit: `docs: sync development tree planning docs` (hash: TBD)
+79. [DONE] `qg-restore-isolation.phase6p.devtree-plans.task1` Synchronize active downstream/Product Part planning docs with Product Part brief barrier, target-session lead dispatch, boundary-accepted cluster state, and facade-centered cluster execution tree decisions (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree planning docs`). Result: downstream and Product Part sub-agent planning docs now record the implemented `1.2.490` protective slices, Core-owned accepted-brief truth, target-session lead dispatch, facade-centered cluster boundary, legacy `ClusterSpecification` transition status, boundary-accepted/no-main-doc-copy cluster acceptance, and code-ready-only merge vocabulary.
+80. [PENDING] Git Commit: `docs: sync development tree planning docs` (hash: TBD)
 
 ### Stream: Branch Workflow And Quality Gates Planning Sources
 

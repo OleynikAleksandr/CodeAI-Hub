@@ -1,6 +1,6 @@
 # Development Tree Product Part Sub-Agent Orchestration
 
-**Status:** Implementation scope active, MVP slice implemented through Cluster Contract sub-agent orchestration and Project Manager coordination projection, 2026-06-08.
+**Status:** Implementation scope active, MVP slice implemented through Cluster Contract sub-agent orchestration, Project Manager coordination projection, boundary-accepted cluster checkpoints, Product Part review-session projection, and Product Part Brief Barrier dispatch, 2026-06-11.
 **Relationship to reference architecture:** this document extends `DevelopmentTree_BranchWorkflow_Architecture.md` for the next implementation scope. It does not replace the reference architecture.
 
 ## 1. Problem
@@ -29,14 +29,15 @@ The lead Product Part managed plan should not move to `Phase Return - User Retur
 Instead:
 
 1. Product Part Development Brief is drafted and accepted.
-2. Lead Product Part agent drafts `DevelopmentOrderPlan.v2`.
-3. User reviews and accepts `DevelopmentOrderPlan.v2`.
-4. Core validates the order plan as an unlock contract.
-5. Lead Product Part plan enters a downstream coordination phase.
-6. Core opens the first allowed cluster/standalone module wave.
-7. Lead Product Part agent receives summarized downstream results and performs semantic coordination review.
-8. Core performs merge/commit only after the required semantic and mechanical gates pass.
-9. `Phase Return - User Return And Revisions` is reached only after the Product Part is assembled or explicitly paused by the user at a supported node-level gate.
+2. Core waits until every planned Product Part has a user-accepted Development Brief.
+3. Core dispatches the lead-only `DevelopmentOrderPlan.v2` assignment into the lead Product Part session with every accepted Product Part brief embedded inline.
+4. User reviews and accepts `DevelopmentOrderPlan.v2`.
+5. Core validates the order plan as an unlock contract.
+6. Lead Product Part plan enters a downstream coordination phase.
+7. Core opens the first allowed cluster/standalone module wave.
+8. Lead Product Part agent receives summarized downstream results and performs semantic coordination review.
+9. Core performs merge/commit only after the required semantic and mechanical gates pass.
+10. `Phase Return - User Return And Revisions` is reached only after the Product Part is assembled or explicitly paused by the user at a supported node-level gate.
 
 ## 4. DevelopmentOrderPlan.v2 Contract
 
@@ -64,6 +65,10 @@ Minimum machine shape:
     {
       "partId": "finder-widget",
       "status": "accepted"
+    },
+    {
+      "partId": "finder-widget-shell",
+      "status": "accepted"
     }
   ],
   "nodes": [
@@ -78,9 +83,7 @@ Minimum machine shape:
         "startPolicy": "core-unlocks-user-startable"
       },
       "expectedArtifacts": [
-        "ClusterSpecification.draft.md",
         "ClusterFacadeContract.draft.md",
-        "ClusterSpecification.draft.json",
         "ClusterFacadeContract.draft.json"
       ]
     }
@@ -96,13 +99,15 @@ Minimum machine shape:
   "lockedNodes": [
     {
       "nodeId": "module:finder-widget/note-selection-cluster/latest-note-resolver",
-      "reason": "waiting_for_cluster_specification_and_facade_contract"
+      "reason": "waiting_for_cluster_facade_boundary_and_code_ready_state"
     }
   ]
 }
 ```
 
 The exact field names may evolve during implementation, but the contract must remain machine-readable and validator-owned by Core.
+
+Core, not the lead agent, owns accepted-brief truth. The lead prompt includes the full accepted markdown for every planned Product Part. `requiredBriefs` in the JSON must mirror that Core-supplied set; the agent must not invent missing briefs or mark a not-yet-accepted brief as accepted.
 
 ### 4.1. Top-down contract seeds
 
@@ -142,11 +147,10 @@ Product Part: finder-widget
 
 The first sub-agent should create:
 
-- `Cluster Specification`;
 - `Cluster Facade Contract`;
 - machine-readable JSON companions for Core validation.
 
-The cluster contract is not an abstract design note. It is a pre-code artifact. It must describe the future code surface concretely enough that module agents and implementation agents can work without re-inventing the boundary:
+The cluster contract is not an abstract design note. It is the pre-code cluster boundary. It must describe the future code surface concretely enough that module agents and implementation agents can work without re-inventing the boundary:
 
 - facade class name;
 - facade file path;
@@ -157,6 +161,8 @@ The cluster contract is not an abstract design note. It is a pre-code artifact. 
 - owned module call order;
 - module boundary contracts for `latest-note-resolver` and `note-payload-builder`;
 - blocking and non-blocking open questions.
+
+Legacy `ClusterSpecification` drafts may still exist during the transition, but they are not the primary cluster-level artifact. Specifications belong to modules; the cluster-level boundary is the facade.
 
 The first wave should not open `latest-note-resolver` or `note-payload-builder` directly. Those modules need the cluster contract first, otherwise module agents may invent incompatible input/output contracts.
 
@@ -175,7 +181,7 @@ The lead Product Part plan is the user-facing coordination axis. It records:
 - branch/worktree references;
 - current node-level gate;
 - semantic review outcome;
-- merge outcome;
+- boundary acceptance / code-ready / merge outcome;
 - next unlocked wave;
 - final Product Part return/pause state.
 
@@ -274,12 +280,12 @@ Project Manager should show one Product Part coordination graph:
 finder-widget
   DevelopmentOrderPlan.v2: accepted
   Wave 1: Cluster Contracts
-    note-selection-cluster: running | review | accepted | merge-ready | merged | needs-revision
+    note-selection-cluster: running | review | boundary_accepted | worktree_active | code_ready | merged | needs-revision
   Wave 2: Module Contracts
-    latest-note-resolver: locked until cluster contract accepted
+    latest-note-resolver: locked until cluster facade boundary/code-ready gate permits module work
     note-payload-builder: locked until latest-note-resolver contract/result accepted
   Final: Product Part Assembly
-    status: locked until downstream nodes merged
+    status: locked until downstream nodes are code-ready and merged
 ```
 
 The graph may link to sub-agent details, but the default surface remains Product Part-level.
@@ -349,9 +355,11 @@ The implemented MVP scope is intentionally narrow:
 3. Order-plan acceptance keeps the lead Product Part in downstream coordination instead of final return.
 4. Core materializes first-wave unlock state for cluster/standalone module nodes.
 5. Core bootstraps first-wave Cluster Contract sub-agents in deterministic Git worktrees/branches.
-6. Cluster Contract sub-agents create `ClusterSpecification` and `ClusterFacadeContract` markdown/json artifacts, stop at review, and accept revision text as provider feedback.
-7. Acceptance writes review-result and merge-boundary evidence, merges accepted cluster artifacts back to the main workspace, marks the cluster `merged`, and keeps dependent modules `locked`.
-8. Project Manager renders the resulting Product Part coordination graph from Core's `developmentTree` snapshot.
+6. Cluster Contract sub-agents create cluster facade boundary markdown/json artifacts, stop at review, and accept revision text as provider feedback.
+7. Acceptance writes review-result and boundary-accepted evidence, does not copy draft cluster docs into main, does not mark the cluster `merged`, and keeps the worktree active for future facade/module code work.
+8. Product Part review-session projection exposes non-lead Product Part sessions in Project Manager, and managed startup persists the primary unified history before provider/translation side effects.
+9. Product Part Brief Barrier blocks the lead `DevelopmentOrderPlan` assignment until every planned Product Part brief is accepted, then dispatches the unlocked continuation into the lead Product Part session.
+10. Project Manager renders the resulting Product Part coordination graph from Core's `developmentTree` snapshot.
 
 This keeps the product moving without pretending that Core can design arbitrary products by script. Agents own semantic planning; Core owns deterministic execution and recovery.
 
