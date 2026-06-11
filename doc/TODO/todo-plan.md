@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "fda8f33d6",
+  "lastRecordedCommit": "1fb9eaf65",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6u.docs.task1",
-  "expectedCommitMessage": "docs: describe product part fanout invariant",
+  "currentTaskId": "qg-restore-isolation.phase6v.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare product part fanout release notes",
   "debt": {
-    "expectedCommitMessage": "docs: describe product part fanout invariant",
-    "preCommitHead": "fda8f33d6",
+    "expectedCommitMessage": "docs: prepare product part fanout release notes",
+    "preCommitHead": "1fb9eaf65",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6u.docs.task1"
+    "taskId": "qg-restore-isolation.phase6v.release-notes.task1"
   }
 }
 ```
@@ -336,14 +336,14 @@
 ### Stream: Documentation Sync
 
 103. [DONE] `qg-restore-isolation.phase6u.docs.task1` Document that Development Tree starts all planned Product Part agents concurrently after Quality Gates, while only the lead Product Part later receives the `DevelopmentOrderPlan` assignment after every Product Part brief is accepted (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part fanout invariant`). Result: System Architecture and Workflow Steps Overview now define Product Part root work as Core-owned fan-out after verified Quality Gates, using the complete Product Part leadership order and fail-closed startup semantics; Cluster/Module sessions remain downstream-controlled by accepted Product Part order waves or explicit node commands. The docs also clarify that Product Part manual Start is a recovery path through the same bootstrap contract, not a generic empty session shortcut.
-104. [PENDING] Git Commit: `docs: describe product part fanout invariant` (hash: TBD)
+104. [DONE] Git Commit: `docs: describe product part fanout invariant` (hash: 1fb9eaf65)
 
 ## Phase 6V - Release Build (owner: Codex, updated: 2026-06-11)
 
 ### Stream: Release Notes
 
-105. [TODO] `qg-restore-isolation.phase6v.release-notes.task1` Prepare release notes for the user-authorized Product Part fan-out recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part fanout release notes`).
-106. [TODO] Git Commit: `docs: prepare product part fanout release notes` (hash: TBD)
+105. [DONE] `qg-restore-isolation.phase6v.release-notes.task1` Prepare release notes for the user-authorized Product Part fan-out recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part fanout release notes`). Result: README now announces future release `v1.2.492` as Product Part Fan-Out Recovery, and CHANGELOG records all-planned-Product-Part startup, fail-closed missing-session recovery, Development Tree documentation sync, and verification commands.
+106. [PENDING] Git Commit: `docs: prepare product part fanout release notes` (hash: TBD)
 
 ### Stream: Release Artifacts
 

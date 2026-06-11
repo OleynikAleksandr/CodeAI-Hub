@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.492] - 2026-06-11
+### Fixed
+- **Quality Gates handoff now fans out to every planned Product Part.** Core builds the complete Product Part leadership order from `leadProductPartId`, declared `productPartLeadershipOrder`, and any remaining planned ids, then starts/restarts a Product Part agent session for each planned part.
+- **Missing Product Part sessions fail closed instead of blocking silently.** If targeted recovery still cannot start a planned Product Part session, the Development Tree handoff raises an explicit Core error so the lead all-brief barrier cannot wait forever on a never-started Product Part.
+
+### Changed
+- **Development Tree docs now define Product Part root work as Core fan-out.** Cluster and Module sessions remain downstream-controlled by accepted Product Part order waves or explicit node commands, while Product Part root sessions are created by the Quality Gates terminal handoff.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.491] - 2026-06-11
 ### Fixed
 - **Product Part Clear/Restart recreates the managed agent session.** Product Part bootstrap now starts a new agent session whenever the Product Part managed plan participates in bootstrap, even if plan/draft files already exist after a partial reset.
