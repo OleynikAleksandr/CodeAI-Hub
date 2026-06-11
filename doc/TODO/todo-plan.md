@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "befa30bd6",
+  "lastRecordedCommit": "6c723fa86",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6p.branch-qg-plans.task1",
-  "expectedCommitMessage": "docs: update branch workflow planning sources",
+  "currentTaskId": "qg-restore-isolation.phase6p.plans-index.task1",
+  "expectedCommitMessage": "docs: index active planning sources",
   "debt": {
-    "expectedCommitMessage": "docs: update branch workflow planning sources",
-    "preCommitHead": "befa30bd6",
+    "expectedCommitMessage": "docs: index active planning sources",
+    "preCommitHead": "6c723fa86",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6p.branch-qg-plans.task1"
+    "taskId": "qg-restore-isolation.phase6p.plans-index.task1"
   }
 }
 ```
@@ -274,12 +274,12 @@
 ### Stream: Branch Workflow And Quality Gates Planning Sources
 
 81. [DONE] `qg-restore-isolation.phase6p.branch-qg-plans.task1` Update the branch workflow reference and Quality Gates restore-isolation planning source with the implemented/released state and corrected downstream merge vocabulary (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: update branch workflow planning sources`). Result: BranchWorkflow now records the `2026-06-11` implementation state for Product Part managed sessions, all-brief barrier, lead-session dispatch, boundary-accepted cluster checkpoints, facade-centered cluster boundaries, legacy `ClusterSpecification` compatibility, and deferred wave/module/code-ready work; QualityGates restore-isolation planning now records that the sequential verification scope is implemented/released and that Core-runner execution remains a later option.
-82. [PENDING] Git Commit: `docs: update branch workflow planning sources` (hash: TBD)
+82. [DONE] Git Commit: `docs: update branch workflow planning sources` (hash: 6c723fa86)
 
 ### Stream: Plans Index And Lifecycle Notes
 
-83. [TODO] `qg-restore-isolation.phase6p.plans-index.task1` Update navigation/lifecycle documentation so active root planning docs in `Plans/` are discoverable and accurately described until closeout disposition (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: index active planning sources`).
-84. [TODO] Git Commit: `docs: index active planning sources` (hash: TBD)
+83. [DONE] `qg-restore-isolation.phase6p.plans-index.task1` Update navigation/lifecycle documentation so active root planning docs in `Plans/` are discoverable and accurately described until closeout disposition (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: index active planning sources`). Result: Docs Index now describes the current implemented/released state of Quality Gates restore isolation and Development Tree Product Part/cluster planning sources, while Plans README allows a small indexed active directive set in the root until closeout disposition.
+84. [PENDING] Git Commit: `docs: index active planning sources` (hash: TBD)
 
 ## Phase 6Q - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
