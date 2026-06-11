@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "e1b16161d",
+  "lastRecordedCommit": "64a6e71b3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6s.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare product part bootstrap recovery release notes",
+  "currentTaskId": "qg-restore-isolation.phase6s.build-all.task1",
+  "expectedCommitMessage": "build: prepare product part bootstrap recovery release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare product part bootstrap recovery release notes",
-    "preCommitHead": "e1b16161d",
+    "expectedCommitMessage": "build: prepare product part bootstrap recovery release artifacts",
+    "preCommitHead": "64a6e71b3",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6s.release-notes.task1"
+    "taskId": "qg-restore-isolation.phase6s.build-all.task1"
   }
 }
 ```
@@ -311,12 +311,12 @@
 ### Stream: Release Notes
 
 94. [DONE] `qg-restore-isolation.phase6s.release-notes.task1` Prepare release notes for the user-authorized Product Part bootstrap recovery release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part bootstrap recovery release notes`). Result: README now announces future release `v1.2.491` as Product Part Bootstrap Recovery, and CHANGELOG records Product Part bootstrap restart, Product Part root start routing through bootstrap, stale Development Tree dialog projection hiding, documentation sync, and verification commands.
-95. [PENDING] Git Commit: `docs: prepare product part bootstrap recovery release notes` (hash: TBD)
+95. [DONE] Git Commit: `docs: prepare product part bootstrap recovery release notes` (hash: 64a6e71b3)
 
 ### Stream: Release Artifacts
 
-96. [TODO] `qg-restore-isolation.phase6s.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part bootstrap recovery release artifacts`).
-97. [TODO] Git Commit: `build: prepare product part bootstrap recovery release artifacts` (hash: TBD)
+96. [DONE] `qg-restore-isolation.phase6s.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part bootstrap recovery release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` passed; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start. Unified version prepared: `1.2.491`. Release tarballs staged in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `claude-module-1.2.491.tar.bz2`, `codex-module-1.2.491.tar.bz2`, `gemini-module-1.2.491.tar.bz2`, `kimi-module-1.2.491.tar.bz2`, `glm-claude-code-module-1.2.491.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.491.tar.bz2`, `vscode-webview-1.2.491.tar.bz2`, `project-manager-1.2.491.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.491.tar.bz2`.
+97. [PENDING] Git Commit: `build: prepare product part bootstrap recovery release artifacts` (hash: TBD)
 98. [TODO] `qg-restore-isolation.phase6s.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part bootstrap recovery vsix release`).
 99. [TODO] Git Commit: `build: package product part bootstrap recovery vsix release` (hash: TBD)
 
