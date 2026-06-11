@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "73783c8f0",
+  "lastRecordedCommit": "fda8f33d6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6u.product-part-fanout.task1",
-  "expectedCommitMessage": "fix: fan out product part agents for all planned parts",
+  "currentTaskId": "qg-restore-isolation.phase6u.docs.task1",
+  "expectedCommitMessage": "docs: describe product part fanout invariant",
   "debt": {
-    "expectedCommitMessage": "fix: fan out product part agents for all planned parts",
-    "preCommitHead": "73783c8f0",
+    "expectedCommitMessage": "docs: describe product part fanout invariant",
+    "preCommitHead": "fda8f33d6",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6u.product-part-fanout.task1"
+    "taskId": "qg-restore-isolation.phase6u.docs.task1"
   }
 }
 ```
@@ -331,12 +331,12 @@
 ### Stream: All Product Parts Agent Fan-Out
 
 101. [DONE] `qg-restore-isolation.phase6u.product-part-fanout.task1` Enforce Core-owned Product Part fan-out for any number of planned Product Parts: Quality Gates handoff must create/recover a Product Part agent session for every planned Product Part and fail closed if any planned Product Part cannot be started, so the lead all-brief barrier cannot silently wait on a never-started Product Part (scope: `packages/core/src/remote-bridge/handlers/development-tree-quality-gates-handoff-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: fan out product part agents for all planned parts`). Result: Quality Gates Development Tree bootstrap now builds the complete Product Part leadership order from lead, declared order, and all planned ids; it retries targeted bootstrap for missing Product Part sessions and throws a managed handoff error if any expected Product Part still lacks a started agent session. Regression coverage now uses two Product Parts (`local-runtime`, `finder-widget-shell`) and asserts both receive Product Part plans, draft artifacts, workflow stages, and first prompts. Targeted Quality Gates handoff test passed 3/3; `npm run build --workspace=@codeai-hub/core` passed.
-102. [PENDING] Git Commit: `fix: fan out product part agents for all planned parts` (hash: TBD)
+102. [DONE] Git Commit: `fix: fan out product part agents for all planned parts` (hash: fda8f33d6)
 
 ### Stream: Documentation Sync
 
-103. [TODO] `qg-restore-isolation.phase6u.docs.task1` Document that Development Tree starts all planned Product Part agents concurrently after Quality Gates, while only the lead Product Part later receives the `DevelopmentOrderPlan` assignment after every Product Part brief is accepted (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part fanout invariant`).
-104. [TODO] Git Commit: `docs: describe product part fanout invariant` (hash: TBD)
+103. [DONE] `qg-restore-isolation.phase6u.docs.task1` Document that Development Tree starts all planned Product Part agents concurrently after Quality Gates, while only the lead Product Part later receives the `DevelopmentOrderPlan` assignment after every Product Part brief is accepted (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part fanout invariant`). Result: System Architecture and Workflow Steps Overview now define Product Part root work as Core-owned fan-out after verified Quality Gates, using the complete Product Part leadership order and fail-closed startup semantics; Cluster/Module sessions remain downstream-controlled by accepted Product Part order waves or explicit node commands. The docs also clarify that Product Part manual Start is a recovery path through the same bootstrap contract, not a generic empty session shortcut.
+104. [PENDING] Git Commit: `docs: describe product part fanout invariant` (hash: TBD)
 
 ## Phase 6V - Release Build (owner: Codex, updated: 2026-06-11)
 
