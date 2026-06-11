@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "a5250a973",
+  "lastRecordedCommit": "d9c227e81",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6r.stale-dialog-projection.task1",
-  "expectedCommitMessage": "fix: hide stale development tree dialog projections",
+  "currentTaskId": "qg-restore-isolation.phase6r.docs.task1",
+  "expectedCommitMessage": "docs: describe product part bootstrap recovery",
   "debt": {
-    "expectedCommitMessage": "fix: hide stale development tree dialog projections",
-    "preCommitHead": "a5250a973",
+    "expectedCommitMessage": "docs: describe product part bootstrap recovery",
+    "preCommitHead": "d9c227e81",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6r.stale-dialog-projection.task1"
+    "taskId": "qg-restore-isolation.phase6r.docs.task1"
   }
 }
 ```
@@ -299,12 +299,12 @@
 ### Stream: Stale Dialog Projection Guard
 
 90. [DONE] `qg-restore-isolation.phase6r.stale-dialog-projection.task1` Hide stale Development Tree dialog continuity entries that have neither a live runtime session nor a persisted unified history file, so Project Manager shows a recoverable start/restart surface instead of an empty dialog (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hide stale development tree dialog projections`). Result: Dialog list projection now drops Development Tree continuity entries when the selected dialog has no persisted unified history and no live runtime session, while ordinary dialogs and Development Tree sessions with a live runtime/history remain visible. Regression covers the stale Product Part dialog case and the live runtime recovery path; projected worktree sessions still pass. Targeted dialog-list test passed 5/5; projected-session test passed 2/2; `npm run build --workspace=@codeai-hub/core` passed.
-91. [PENDING] Git Commit: `fix: hide stale development tree dialog projections` (hash: TBD)
+91. [DONE] Git Commit: `fix: hide stale development tree dialog projections` (hash: d9c227e81)
 
 ### Stream: Documentation Sync
 
-92. [TODO] `qg-restore-isolation.phase6r.docs.task1` Document the Product Part bootstrap/restart invariant: Product Part session projection is valid only with a persisted/live dialog, manual start and Clear/Restart use the same Core bootstrap path, and the brief barrier cannot depend on stale continuity shells (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part bootstrap recovery`).
-93. [TODO] Git Commit: `docs: describe product part bootstrap recovery` (hash: TBD)
+92. [DONE] `qg-restore-isolation.phase6r.docs.task1` Document the Product Part bootstrap/restart invariant: Product Part session projection is valid only with a persisted/live dialog, manual start and Clear/Restart use the same Core bootstrap path, and the brief barrier cannot depend on stale continuity shells (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: describe product part bootstrap recovery`). Result: SystemArchitecture and WorkflowSteps Overview now state that Product Part manual start and Product Part root Clear/Restart both route through the Core-owned Product Part bootstrap path, empty workflow session shells are forbidden, and Project Manager hides stale `development_tree/...` dialog projections without a live runtime session or persisted unified history. `npm run plan:validate` passed.
+93. [PENDING] Git Commit: `docs: describe product part bootstrap recovery` (hash: TBD)
 
 ## Phase 6S - Release Build (owner: Codex, updated: 2026-06-11)
 
