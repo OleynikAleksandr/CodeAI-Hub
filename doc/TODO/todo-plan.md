@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "350c9da55",
+  "lastRecordedCommit": "fe7b26a0e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6n.brief-barrier-dispatch.task1",
-  "expectedCommitMessage": "fix: dispatch lead order plan after brief barrier",
+  "currentTaskId": "qg-restore-isolation.phase6o.release-notes.task1",
+  "expectedCommitMessage": "docs: prepare product part brief barrier release notes",
   "debt": {
-    "expectedCommitMessage": "fix: dispatch lead order plan after brief barrier",
-    "preCommitHead": "350c9da55",
+    "expectedCommitMessage": "docs: prepare product part brief barrier release notes",
+    "preCommitHead": "fe7b26a0e",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6n.brief-barrier-dispatch.task1"
+    "taskId": "qg-restore-isolation.phase6o.release-notes.task1"
   }
 }
 ```
@@ -243,7 +243,27 @@
 ### Stream: Cross Session Lead Dispatch
 
 69. [DONE] `qg-restore-isolation.phase6n.brief-barrier-dispatch.task1` When a secondary Product Part brief acceptance opens the all-brief barrier after the lead Product Part was previously blocked, dispatch the lead `DevelopmentOrderPlan` prompt to the lead session instead of the current secondary session (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-assignment.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/development-tree-turn-result-dispatch.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`; expected commit: `fix: dispatch lead order plan after brief barrier`). Result: secondary Product Part acceptance now detects when the all-brief barrier opens, moves the previously blocked lead order-plan task to `IN_PROGRESS`, and returns a target internal message for the lead session. Managed workflow turn dispatch now routes target continuations to the requested session instead of the current secondary session. Targeted Product Part brief/order-plan tests passed 5/5; Ultracite check passed for touched files; `npm run build --workspace=@codeai-hub/core` passed.
-70. [PENDING] Git Commit: `fix: dispatch lead order plan after brief barrier` (hash: TBD)
+70. [DONE] Git Commit: `fix: dispatch lead order plan after brief barrier` (hash: fe7b26a0e)
+
+## Phase 6O - Release Build (owner: Codex, updated: 2026-06-11)
+
+### Stream: Release Notes
+
+71. [DONE] `qg-restore-isolation.phase6o.release-notes.task1` Prepare release notes for the user-authorized Product Part review-session and brief-barrier orchestration release before version bump/build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare product part brief barrier release notes`). Result: README announces future release `v1.2.490` as Product Part Brief Barrier, and CHANGELOG records Product Part review-session projection, resilient Product Part history persistence, all-brief gating before the lead `DevelopmentOrderPlan`, and cross-session lead continuation dispatch.
+72. [PENDING] Git Commit: `docs: prepare product part brief barrier release notes` (hash: TBD)
+
+### Stream: Release Artifacts
+
+73. [TODO] `qg-restore-isolation.phase6o.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part brief barrier release artifacts`).
+74. [TODO] Git Commit: `build: prepare product part brief barrier release artifacts` (hash: TBD)
+75. [TODO] `qg-restore-isolation.phase6o.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and copy release artifacts to `doc/tmp/releases/` as needed (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part brief barrier vsix release`).
+76. [TODO] Git Commit: `build: package product part brief barrier vsix release` (hash: TBD)
+
+## Phase 6P - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
+
+### Stream: Retest After Product Part Brief Barrier Release
+
+77. [TODO] `qg-restore-isolation.phase6p.user-retest.task1` User installs the new release and retests Development Tree Product Part orchestration: non-lead Product Part review sessions should appear in Project Manager with persisted history, lead `DevelopmentOrderPlan` should wait for every planned Product Part brief acceptance, and secondary Product Part acceptance should dispatch the unlocked lead continuation into the lead session (scope: `manual retest`; no commit expected).
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 

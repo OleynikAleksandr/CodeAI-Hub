@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.490] - 2026-06-11
+### Fixed
+- **Product Part review sessions are projected into Project Manager.** Managed Product Part brief-review state now resolves through main workspace continuity and is attached to the Product Part node as a started Development Tree session, so non-lead Product Part nodes can open their dialog instead of showing an empty placeholder.
+- **Product Part review history is persisted before provider races can hide it.** Development Tree managed startup waits for dialog-message persistence after appending the agent start prompt and before dispatching the provider turn, preventing a translation overlay from existing without the primary unified JSONL history.
+- **Lead `DevelopmentOrderPlan` waits for all Product Part briefs.** Core blocks the lead Product Part order-plan task until every planned Product Part brief has a Core-owned user-reviewed accepted state.
+- **Secondary Product Part acceptance dispatches the unlocked lead turn to the lead session.** When the final non-lead brief opens the all-brief barrier, Core moves the previously blocked lead order-plan task to `IN_PROGRESS` and routes the continuation to the lead Product Part session instead of the current secondary session.
+
+### Changed
+- **Lead order-plan prompts now embed every accepted Product Part brief.** The prompt includes the full markdown text, status, and declared leadership order for all planned Product Parts, so the lead Product Part can plan waves across the whole product instead of seeing only its own brief.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/development-tree-projected-session.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.489] - 2026-06-10
 ### Fixed
 - **Cluster Contract first prompts now carry the runtime language contract.** The downstream cluster-contract bootstrap path resolves chat and artifact prose languages through the existing global localization settings loaders before sending the first prompt, so `reasoning=ru` no longer falls back to English agent progress/final chat.

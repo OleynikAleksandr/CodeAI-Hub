@@ -2,7 +2,29 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.489** (Cluster Contract Language)
+**Current Release — v1.2.490** (Product Part Brief Barrier)
+
+This release fixes Product Part review-session projection and lead Product Part
+orchestration after all briefs are accepted. Non-lead Product Part review
+sessions are now projected as first-class Development Tree node sessions in
+Project Manager, and managed startup waits for the primary unified dialog
+history to be persisted before later provider/translation activity can race
+ahead.
+
+Core now treats accepted Product Part briefs as an all-brief barrier before the
+lead Product Part receives the `DevelopmentOrderPlan` assignment. If any
+planned Product Part brief is not user-accepted, the lead order-plan task stays
+blocked. When the last secondary brief is accepted, Core dispatches the unlocked
+lead continuation to the lead Product Part session and inlines the full accepted
+brief markdown for every planned Product Part into the prompt.
+
+Retest focus: start at least two Product Parts, accept the non-lead brief, and
+check that its review session opens in Project Manager with persisted history.
+Then verify the lead Product Part does not start `DevelopmentOrderPlan` until
+all Product Part briefs are accepted, and that the unlocked order-plan prompt
+appears in the lead Product Part session.
+
+**Previous Release — v1.2.489** (Cluster Contract Language)
 
 This release fixes the downstream Cluster Contract first prompt language
 contract. Core now resolves the chat language from global localization settings
