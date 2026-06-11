@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -11,16 +11,28 @@ import { ProductPartDevelopmentBriefReviewController } from "./product-part-deve
 const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "engine";
+const SECONDARY_PART_ID = "shell";
 const CLUSTER_ID = "existing-cluster-id";
 const CLUSTER_NODE_ID = `cluster:${PART_ID}/${CLUSTER_ID}`;
 const CLUSTER_MODULE_ID = "existing-module-id";
 const STANDALONE_MODULE_ID = "existing-standalone-module-id";
 const STANDALONE_NODE_ID = `standalone-module:${PART_ID}/${STANDALONE_MODULE_ID}`;
 const PLAN_PATH = `doc/TODO/stages/development-tree/product-parts/${PART_ID}/todo-plan.md`;
+const INDEX_PATH = `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`;
 const BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/ProductPartDevelopmentBrief.draft.md`;
+const SECONDARY_BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${SECONDARY_PART_ID}/ProductPartDevelopmentBrief.draft.md`;
+const SECONDARY_DECISION_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${SECONDARY_PART_ID}.json`;
 const CLUSTER_MODULE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/clusters/${CLUSTER_ID}/modules/${CLUSTER_MODULE_ID}`;
 const STANDALONE_MODULE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/modules/${STANDALONE_MODULE_ID}`;
+const ACCEPTED_BRIEFS_SECTION_RE =
+  /Accepted Product Part briefs supplied by Core \(full text\)/u;
+const ACCEPTED_LEAD_BRIEF_CONTENT_RE = /Accepted Product Part brief content\./u;
+const ACCEPTED_SHELL_BRIEF_CONTENT_RE =
+  /Accepted Shell Product Part brief content\./u;
+const BLOCKED_ORDER_PLAN_RE =
+  /\[BLOCKED\] `development-tree\.product-part\.engine\.phase3\.order-plan\.task1`/u;
 const FENCED_JSON_BLOCK_RE = /```json\n([\s\S]*?)\n```/u;
+const MISSING_SHELL_BRIEF_RE = /Missing accepted briefs: `shell`/u;
 const PARENT_OWNED_BOUNDARIES_RE = /parent-owned boundaries for lower agents/u;
 
 const writeWorkspaceFile = async (
@@ -99,6 +111,44 @@ const createAcceptedBrief = (): string =>
     "",
   ].join("\n");
 
+const createProductPartsIndex = (): string =>
+  [
+    "- leadProductPartId: `engine`",
+    "- productPartLeadershipOrder: `engine`, `shell`",
+    "",
+    "### Product Part: engine",
+    "### Product Part: shell",
+    "",
+  ].join("\n");
+
+const createAcceptedSecondaryBrief = (): string =>
+  [
+    "---",
+    "status: accepted",
+    "agentTouched: true",
+    "---",
+    "# ProductPartDevelopmentBrief",
+    "",
+    "Accepted Shell Product Part brief content.",
+    "",
+  ].join("\n");
+
+const createAcceptedSecondaryDecision = (): string =>
+  `${JSON.stringify(
+    {
+      acceptedCommitHash: "shell123",
+      acceptedCommitMessage:
+        "docs: accept shell product part development brief",
+      partId: SECONDARY_PART_ID,
+      reviewState: "accepted",
+      schema: "codeai-product-part-development-brief-managed-v1",
+      sessionId: "shell-session-1",
+      updatedAt: "2026-06-11T10:00:00.000Z",
+    },
+    null,
+    2
+  )}\n`;
+
 const asRecord = (value: unknown): Record<string, unknown> =>
   value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -110,13 +160,37 @@ const extractPromptPlan = (prompt: string): Record<string, unknown> => {
   return JSON.parse(json) as Record<string, unknown>;
 };
 
-const prepareReviewWorkspace = async (): Promise<string> => {
+const prepareReviewWorkspace = async (
+  options: {
+    readonly includeProductPartsIndex?: boolean;
+    readonly includeSecondaryAcceptedBrief?: boolean;
+  } = {}
+): Promise<string> => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "lead-order-plan-prompt-")
   );
   await initializeGitWorkspace(workspaceRoot);
   await writeWorkspaceFile(workspaceRoot, PLAN_PATH, createReviewPlan());
   await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createAcceptedBrief());
+  if (options.includeProductPartsIndex) {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      INDEX_PATH,
+      createProductPartsIndex()
+    );
+  }
+  if (options.includeSecondaryAcceptedBrief) {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      SECONDARY_BRIEF_PATH,
+      createAcceptedSecondaryBrief()
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      SECONDARY_DECISION_PATH,
+      createAcceptedSecondaryDecision()
+    );
+  }
   await mkdir(path.join(workspaceRoot, CLUSTER_MODULE_PATH), {
     recursive: true,
   });
@@ -139,6 +213,8 @@ test("lead order-plan assignment prompt includes a valid standalone-module v2 ex
       });
     assert.equal(result.handled, true);
     assert.ok(result.nextInternalMessage);
+    assert.match(result.nextInternalMessage, ACCEPTED_BRIEFS_SECTION_RE);
+    assert.match(result.nextInternalMessage, ACCEPTED_LEAD_BRIEF_CONTENT_RE);
 
     const promptPlan = extractPromptPlan(result.nextInternalMessage);
     const nodes = Array.isArray(promptPlan.nodes) ? promptPlan.nodes : [];
@@ -175,6 +251,63 @@ test("lead order-plan assignment prompt includes a valid standalone-module v2 ex
       workspaceSlug: WORKSPACE_SLUG,
     });
     assert.deepEqual(validation.diagnostics, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("lead order-plan assignment waits for all product part briefs", async () => {
+  const workspaceRoot = await prepareReviewWorkspace({
+    includeProductPartsIndex: true,
+  });
+  try {
+    const result =
+      await new ProductPartDevelopmentBriefReviewController().handleAccepted({
+        sessionId: "product-part-session-1",
+        stage: `development_tree/materialized/product-parts/${PART_ID}`,
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+    assert.equal(result.handled, true);
+    assert.equal(result.nextInternalMessage, undefined);
+    assert.match(result.message.content, MISSING_SHELL_BRIEF_RE);
+
+    const planText = await readFile(
+      path.join(workspaceRoot, PLAN_PATH),
+      "utf8"
+    );
+    assert.match(planText, BLOCKED_ORDER_PLAN_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("lead order-plan assignment includes all accepted product part briefs", async () => {
+  const workspaceRoot = await prepareReviewWorkspace({
+    includeProductPartsIndex: true,
+    includeSecondaryAcceptedBrief: true,
+  });
+  try {
+    const result =
+      await new ProductPartDevelopmentBriefReviewController().handleAccepted({
+        sessionId: "product-part-session-1",
+        stage: `development_tree/materialized/product-parts/${PART_ID}`,
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+    assert.equal(result.handled, true);
+    assert.ok(result.nextInternalMessage);
+    assert.match(result.nextInternalMessage, ACCEPTED_SHELL_BRIEF_CONTENT_RE);
+
+    const promptPlan = extractPromptPlan(result.nextInternalMessage);
+    assert.deepEqual(promptPlan.productPartLeadershipOrder, [
+      PART_ID,
+      SECONDARY_PART_ID,
+    ]);
+    assert.deepEqual(promptPlan.requiredBriefs, [
+      { partId: PART_ID, status: "accepted" },
+      { partId: SECONDARY_PART_ID, status: "accepted" },
+    ]);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

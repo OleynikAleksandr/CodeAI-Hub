@@ -1,6 +1,7 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import { resolveLeadOrderPlanAssignment } from "./product-part-development-order-plan-assignment";
 import { ProductPartDevelopmentOrderPlanReviewController } from "./product-part-development-order-plan-review-controller";
 
 interface ManagedPlanState {
@@ -86,18 +87,6 @@ const createBriefPath = (params: {
   readonly workspaceSlug: string;
 }): string =>
   `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/ProductPartDevelopmentBrief.draft.md`;
-
-const createOrderPlanPath = (params: {
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): string =>
-  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/DevelopmentOrderPlan.draft.md`;
-
-const createOrderPlanJsonPath = (params: {
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): string =>
-  `.codeai-hub/${params.workspaceSlug}/development_tree/materialized/product-parts/${params.partId}/DevelopmentOrderPlan.draft.json`;
 
 const createManagedDecisionPath = (params: {
   readonly partId: string;
@@ -188,6 +177,17 @@ const markOrderPlanTaskInProgress = (content: string, partId: string): string =>
       "mu"
     ),
     "$1IN_PROGRESS$2"
+  );
+
+const markOrderPlanTaskBlocked = (content: string, partId: string): string =>
+  content.replace(
+    new RegExp(
+      `^(\\d+\\. \\[)(?:TODO|IN_PROGRESS)(\\] \`${escapeRegExp(
+        createOrderPlanTaskId(partId)
+      )}\` .*)$`,
+      "mu"
+    ),
+    "$1BLOCKED$2"
   );
 
 const nextItemNumber = (content: string): number => {
@@ -285,6 +285,14 @@ export class ProductPartDevelopmentBriefReviewController {
       )}\n`
     );
     const isLeadPart = IS_LEAD_PLAN_RE.test(planText);
+    const leadAssignment = isLeadPart
+      ? await resolveLeadOrderPlanAssignment({
+          leadPartId: partId,
+          workspaceRoot: params.workspaceRoot,
+          workspaceSlug: params.workspaceSlug,
+        })
+      : null;
+    const startOrderPlan = leadAssignment?.ready === true;
     await writeText(
       params.workspaceRoot,
       planPath,
@@ -294,6 +302,7 @@ export class ProductPartDevelopmentBriefReviewController {
           content: planText,
           expectedCommitMessage: planState.expectedCommitMessage,
           partId,
+          startOrderPlan,
         }),
         createNextPlanState({
           commitHash: commit.hash,
@@ -312,154 +321,62 @@ export class ProductPartDevelopmentBriefReviewController {
       ]),
       workspaceRoot: params.workspaceRoot,
     });
+    const messageTag = createAcceptedMessageTag({
+      isLeadPart,
+      startOrderPlan,
+    });
     return {
       handled: true,
       message: {
         content: createAcceptedMessage({
           commitHash: commit.hash,
           isLeadPart,
+          leadOrderPlanBlockedMessage:
+            leadAssignment?.ready === false
+              ? leadAssignment.blockedMessage
+              : null,
           partId,
         }),
-        tag: isLeadPart
-          ? "managed-workflow-assignment"
-          : "managed-workflow-complete",
+        tag: messageTag,
       },
-      nextInternalMessage: isLeadPart
-        ? createLeadOrderPlanPrompt({
-            partId,
-            workspaceSlug: params.workspaceSlug,
-          })
-        : undefined,
+      nextInternalMessage: startOrderPlan ? leadAssignment?.prompt : undefined,
     };
   }
 }
 
+const createAcceptedMessageTag = (params: {
+  readonly isLeadPart: boolean;
+  readonly startOrderPlan: boolean;
+}): string => {
+  if (!params.isLeadPart) {
+    return "managed-workflow-complete";
+  }
+  return params.startOrderPlan
+    ? "managed-workflow-assignment"
+    : "managed-workflow-validation";
+};
+
 const createAcceptedMessage = (params: {
   readonly commitHash: string;
   readonly isLeadPart: boolean;
+  readonly leadOrderPlanBlockedMessage?: string | null;
   readonly partId: string;
 }): string =>
   [
     `Core: пользователь принял Product Part \`${params.partId}\` Development Brief.`,
     `Commit: \`${params.commitHash}\`.`,
-    params.isLeadPart
-      ? "Lead Product Part review закрыт; Core запускает следующий managed assignment: Development Order Plan draft."
-      : "Product Part review закрыт; сессия остаётся доступной для будущих правок.",
+    params.leadOrderPlanBlockedMessage ??
+      (params.isLeadPart
+        ? "Lead Product Part review закрыт; Core запускает следующий managed assignment: Development Order Plan draft."
+        : "Product Part review закрыт; сессия остаётся доступной для будущих правок."),
   ].join("\n");
-
-const createLeadOrderPlanPrompt = (params: {
-  readonly partId: string;
-  readonly workspaceSlug: string;
-}): string => {
-  const orderPlanPath = createOrderPlanPath(params);
-  const orderPlanJsonPath = createOrderPlanJsonPath(params);
-  return [
-    `Core managed assignment: Product Part \`${params.partId}\` is the lead Product Part and its Development Brief was accepted by the user.`,
-    "",
-    "Continue in this same session. Create or update both lead Development Order Plan artifacts:",
-    `- \`${orderPlanPath}\``,
-    `- \`${orderPlanJsonPath}\``,
-    "",
-    "The markdown artifact must explain the Core-executable downstream order for Product Parts, clusters, and standalone modules using the accepted Product Part briefs and visible dependencies already available in the workspace.",
-    "",
-    "The JSON artifact must be valid JSON with this Core-readable unlock contract. Use only node ids that already exist in the materialized Development Tree; do not invent clusters or modules.",
-    'Use exact node id shapes: cluster nodes are `cluster:<partId>/<clusterId>` with `kind: "cluster"`; modules inside a cluster are `module:<partId>/<clusterId>/<moduleId>` with `kind: "module"`; standalone modules are `standalone-module:<partId>/<moduleId>` with `kind: "standalone_module"` and no `clusterId`.',
-    "Do not encode standalone modules as `module:<partId>/<moduleId>`. If a node appears in `lockedNodes`, the same id must also appear in `nodes`. The first wave may unlock only dependency-free cluster or standalone_module nodes, never a module inside a cluster before the cluster contract exists.",
-    "For every cluster and standalone_module node, include `contractSeeds`. These are parent-owned boundaries for lower agents: consumer, required inputs, required outputs, statuses/errors, blocking questions, and for clusters the required owned modules. Lower agents may refine these seeds but must not invent a different boundary.",
-    "```json",
-    JSON.stringify(
-      {
-        schema: "codeai-development-order-plan-v2",
-        leadProductPartId: params.partId,
-        productPartLeadershipOrder: [params.partId, "dependent-product-part"],
-        requiredBriefs: [
-          {
-            partId: params.partId,
-            status: "accepted",
-          },
-        ],
-        nodes: [
-          {
-            id: `cluster:${params.partId}/existing-cluster-id`,
-            kind: "cluster",
-            partId: params.partId,
-            clusterId: "existing-cluster-id",
-            dependsOn: [],
-            expectedArtifacts: [
-              "ClusterSpecification.draft.md",
-              "ClusterFacadeContract.draft.md",
-              "ClusterSpecification.draft.json",
-              "ClusterFacadeContract.draft.json",
-            ],
-          },
-          {
-            id: `module:${params.partId}/existing-cluster-id/existing-module-id`,
-            kind: "module",
-            partId: params.partId,
-            clusterId: "existing-cluster-id",
-            moduleId: "existing-module-id",
-            dependsOn: [`cluster:${params.partId}/existing-cluster-id`],
-            expectedArtifacts: ["ModuleSpecification.draft.md"],
-          },
-          {
-            id: `standalone-module:${params.partId}/existing-standalone-module-id`,
-            kind: "standalone_module",
-            partId: params.partId,
-            moduleId: "existing-standalone-module-id",
-            dependsOn: [],
-            expectedArtifacts: ["ModuleSpecification.draft.md"],
-          },
-        ],
-        contractSeeds: [
-          {
-            nodeId: `cluster:${params.partId}/existing-cluster-id`,
-            consumer: "dependent-product-part-or-shell",
-            requiredInputs: ["parent-defined input context"],
-            requiredOutputs: ["parent-defined normalized result"],
-            requiredStatuses: ["success", "empty", "error"],
-            requiredOwnedModules: ["existing-module-id"],
-            blockingQuestions: [],
-          },
-          {
-            nodeId: `standalone-module:${params.partId}/existing-standalone-module-id`,
-            consumer: "dependent-product-part-or-shell",
-            requiredInputs: ["parent-defined input context"],
-            requiredOutputs: ["parent-defined standalone module result"],
-            requiredStatuses: ["success", "error"],
-            blockingQuestions: [],
-          },
-        ],
-        waves: [
-          {
-            id: "wave-1-cluster-contracts",
-            unlockNodeIds: [`cluster:${params.partId}/existing-cluster-id`],
-            parallelGroup: "A",
-            gate: "lead_product_part_coordination_review",
-          },
-        ],
-        lockedNodes: [
-          {
-            nodeId: `module:${params.partId}/existing-cluster-id/existing-module-id`,
-            reason: "waiting_for_cluster_specification_and_facade_contract",
-          },
-        ],
-      },
-      null,
-      2
-    ),
-    "```",
-    "",
-    "Do not leave placeholder text, sentinel values, or invalid JSON. If a critical dependency is unknowable from available artifacts, write the best conservative order and record the assumption explicitly.",
-    "",
-    "Expected commit message after the artifacts are ready: `docs: update lead development order plan`.",
-  ].join("\n");
-};
 
 const createAcceptedPlanText = (params: {
   readonly commitHash: string;
   readonly content: string;
   readonly expectedCommitMessage: string;
   readonly partId: string;
+  readonly startOrderPlan: boolean;
 }): string => {
   const accepted = markReviewTaskAccepted({
     commitHash: params.commitHash,
@@ -468,7 +385,9 @@ const createAcceptedPlanText = (params: {
     partId: params.partId,
   });
   if (IS_LEAD_PLAN_RE.test(params.content)) {
-    return markOrderPlanTaskInProgress(accepted, params.partId);
+    return params.startOrderPlan
+      ? markOrderPlanTaskInProgress(accepted, params.partId)
+      : markOrderPlanTaskBlocked(accepted, params.partId);
   }
   return appendReturnPhaseIfMissing({
     content: accepted,

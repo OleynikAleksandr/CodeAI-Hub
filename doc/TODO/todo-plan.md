@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "108df07f0",
+  "lastRecordedCommit": "e9b529ba0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6l.product-part-history.task1",
-  "expectedCommitMessage": "fix: persist product part review dialog history",
+  "currentTaskId": "qg-restore-isolation.phase6m.brief-barrier.task1",
+  "expectedCommitMessage": "fix: gate lead order plan on product part briefs",
   "debt": {
-    "expectedCommitMessage": "fix: persist product part review dialog history",
-    "preCommitHead": "108df07f0",
+    "expectedCommitMessage": "fix: gate lead order plan on product part briefs",
+    "preCommitHead": "e9b529ba0",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6l.product-part-history.task1"
+    "taskId": "qg-restore-isolation.phase6m.brief-barrier.task1"
   }
 }
 ```
@@ -224,14 +224,14 @@
 ### Stream: Managed History Resilience
 
 63. [DONE] `qg-restore-isolation.phase6l.product-part-history.task1` Make Development Tree managed Product Part startup/history persistence resilient so Project Manager does not end up with a translation overlay but no primary unified dialog history for user-review sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part review dialog history`). Result: Development Tree managed startup now waits for dialog-message persistence after appending the agent start prompt and before the provider turn is dispatched, so primary unified history is written before later translation/provider activity can race ahead. Targeted runtime/event-message tests passed 7/7; Ultracite check passed for touched files; `npm run build --workspace=@codeai-hub/core` passed.
-64. [PENDING] Git Commit: `fix: persist product part review dialog history` (hash: TBD)
+64. [DONE] Git Commit: `fix: persist product part review dialog history` (hash: e9b529ba0)
 
 ## Phase 6M - Product Part Brief Barrier (owner: Codex, updated: 2026-06-11)
 
 ### Stream: Lead Order Plan Readiness Barrier
 
-65. [TODO] `qg-restore-isolation.phase6m.brief-barrier.task1` Prevent Core from starting the lead Product Part `DevelopmentOrderPlan` turn until every planned Product Part brief has a Core-owned user-reviewed terminal state, and inline all Product Part brief contents/statuses into the lead order-plan prompt when the barrier opens (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`; expected commit: `fix: gate lead order plan on product part briefs`).
-66. [TODO] Git Commit: `fix: gate lead order plan on product part briefs` (hash: TBD)
+65. [DONE] `qg-restore-isolation.phase6m.brief-barrier.task1` Prevent Core from starting the lead Product Part `DevelopmentOrderPlan` turn until every planned Product Part brief has a Core-owned user-reviewed terminal state, and inline all Product Part brief contents/statuses into the lead order-plan prompt when the barrier opens (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-assignment.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.ts`; expected commit: `fix: gate lead order plan on product part briefs`). Result: lead Product Part brief acceptance now resolves a Core-owned all-brief barrier from `product-parts.index.md` and managed Product Part review decisions; when any planned Product Part brief is not accepted, the lead order-plan task is marked `BLOCKED` and no provider prompt is dispatched; when the barrier opens, the lead prompt embeds the full markdown text of every accepted Product Part brief and the JSON example includes all accepted `requiredBriefs` plus the declared leadership order. Targeted Product Part brief/order-plan tests passed 4/4; Ultracite check passed for touched files; `npm run build --workspace=@codeai-hub/core` passed.
+66. [PENDING] Git Commit: `fix: gate lead order plan on product part briefs` (hash: TBD)
 
 ### Stream: Downstream Planning Documentation
 
