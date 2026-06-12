@@ -27,11 +27,17 @@ const GIT_INDEX_LOCK_RE =
 const BACKSLASH_RE = /\\/gu;
 const LEADING_DOT_SLASH_RE = /^\.\//u;
 const TRAILING_SLASH_RE = /\/+$/u;
+const TRAILING_NEWLINES_RE = /(?:\r?\n)+$/u;
 const DOT_PREFIX = ".";
 
 interface GitCommandResult {
   readonly exitCode: number;
   readonly stdout: string;
+}
+
+interface GitCommandOptions {
+  readonly allowedExitCodes?: readonly number[];
+  readonly trimStdout?: boolean;
 }
 
 interface GitCommandError extends Error {
@@ -109,6 +115,9 @@ const removeMacMetadata = async (directory: string): Promise<void> => {
     }
   }
 };
+
+const normalizeGitStdout = (stdout: string, trimStdout: boolean): string =>
+  trimStdout ? stdout.trim() : stdout.replace(TRAILING_NEWLINES_RE, "");
 
 export class WorkflowBoundaryGit {
   private static readonly workspaceQueues = new Map<string, Promise<void>>();
@@ -232,7 +241,11 @@ export class WorkflowBoundaryGit {
     return await this.runExclusive(workspaceRoot, async () => {
       await this.ensureRepositoryUnlocked(workspaceRoot);
       await removeMacMetadata(workspaceRoot);
-      const output = await this.git(workspaceRoot, ["status", "--porcelain"]);
+      const { stdout: output } = await this.runGitCommand(
+        workspaceRoot,
+        ["status", "--porcelain"],
+        { trimStdout: false }
+      );
       return output.length > 0 ? output.split("\n") : [];
     });
   }
@@ -347,21 +360,28 @@ export class WorkflowBoundaryGit {
   private async runGitCommand(
     workspaceRoot: string,
     args: readonly string[],
-    options: { readonly allowedExitCodes?: readonly number[] } = {}
+    options: GitCommandOptions = {}
   ): Promise<GitCommandResult> {
+    const trimStdout = options.trimStdout ?? true;
     for (let attempt = 0; ; attempt += 1) {
       try {
         const { stdout } = await execFileAsync("git", args, {
           cwd: workspaceRoot,
         });
-        return { exitCode: 0, stdout: stdout.trim() };
+        return {
+          exitCode: 0,
+          stdout: normalizeGitStdout(stdout, trimStdout),
+        };
       } catch (error) {
         const exitCode = readExitCode(error);
         if (exitCode !== null && options.allowedExitCodes?.includes(exitCode)) {
           const stdout = (error as GitCommandError).stdout;
           return {
             exitCode,
-            stdout: typeof stdout === "string" ? stdout.trim() : "",
+            stdout:
+              typeof stdout === "string"
+                ? normalizeGitStdout(stdout, trimStdout)
+                : "",
           };
         }
         if (isGitIndexLockError(error) && attempt < this.retryDelaysMs.length) {

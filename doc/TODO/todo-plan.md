@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "8f211df63",
+  "lastRecordedCommit": "3b7666ce4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase3.release-build.task1",
-  "expectedCommitMessage": "chore: release 1.2.493",
+  "currentTaskId": "devtree-early-pp.phase4.status-pathspec.task1",
+  "expectedCommitMessage": "fix: preserve workflow status path prefixes",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.493",
-    "preCommitHead": "8f211df63",
+    "expectedCommitMessage": "fix: preserve workflow status path prefixes",
+    "preCommitHead": "3b7666ce4",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase3.release-build.task1"
+    "taskId": "devtree-early-pp.phase4.status-pathspec.task1"
   }
 }
 ```
@@ -80,18 +80,25 @@
 11. [DONE] `devtree-early-pp.phase3.release-docs.task1` После подтверждения подготовить release notes/version docs на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.493`).
 12. [DONE] Git Commit: `docs: prepare release 1.2.493` (hash: 8f211df63)
 13. [DONE] `devtree-early-pp.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.493`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.493.vsix`; tarball'ы 1.2.493 скопированы в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-14. [PENDING] Git Commit: `chore: release 1.2.493` (hash: TBD)
+14. [DONE] Git Commit: `chore: release 1.2.493` (hash: 3b7666ce4)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-12)
 
 ### Stream: Retest Early Development Tree Fan-Out
 
-15. [TODO] `devtree-early-pp.phase4.user-retest.task1` Пользователь тестирует релиз: после Diagram Modules acceptance Product Part agents должны стартовать раньше Application Skeleton/Quality Gates code-readiness gate, secondary briefs должны быть доступны для последовательного review, а production code не должен стартовать до verified Quality Gates (scope: `manual retest`; expected commit: none).
+15. [BLOCKED] `devtree-early-pp.phase4.user-retest.task1` Пользователь тестирует релиз: после Diagram Modules acceptance Product Part agents должны стартовать раньше Application Skeleton/Quality Gates code-readiness gate, secondary briefs должны быть доступны для последовательного review, а production code не должен стартовать до verified Quality Gates (scope: `manual retest`; expected commit: none). Result: Релиз 1.2.493 заблокирован на старте `virtual_simulation`: `WorkflowBoundaryGit.statusPorcelain()` теряет ведущий пробел porcelain-строки ` M .codeai-hub/...`, downstream path parser получает `codeai-hub/.../workflow/state.json`, и `git add -A -- codeai-hub/.../workflow/state.json` падает.
+
+### Stream: Workflow Boundary Status Pathspec Fix
+
+16. [DONE] `devtree-early-pp.phase4.status-pathspec.task1` Сохранить ведущие status columns в `WorkflowBoundaryGit.statusPorcelain()` и покрыть regression test для modified tracked `.codeai-hub/<workspace>/workflow/state.json` при старте следующего workflow boundary (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-git.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: preserve workflow status path prefixes`).
+17. [PENDING] Git Commit: `fix: preserve workflow status path prefixes` (hash: TBD)
+18. [TODO] `devtree-early-pp.phase4.status-pathspec-verify.task1` Выполнить targeted Core tests/build для workflow boundary git pathspec fix (scope: `packages/core`; expected commit: none).
+19. [TODO] `devtree-early-pp.phase4.user-retest-494.task1` Пользователь тестирует следующий релиз: Description -> Virtual Simulation должен стартовать после modified tracked `.codeai-hub/<workspace>/workflow/state.json`, затем повторно проверить ранний Product Part pre-code fan-out после Diagram Modules (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-16. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-17. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-18. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+20. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+21. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+22. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
