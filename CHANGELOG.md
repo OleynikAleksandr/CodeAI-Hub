@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.496] - 2026-06-12
+### Fixed
+- **Attention markers now come from managed user gates, not continuable chats.** Core derives the Project Manager orange cursor from explicit managed user-review/user-gate state in the Documentation Tree and Development Tree. A formally completed step remains green even though its chat can still be resumed by the user.
+- **Quality Gates Baseline now participates in the managed attention cursor.** When Quality Gates reaches `awaiting_acceptance`, the workflow state read model exposes it as the active `workflow:quality_gates` user gate.
+- **The active tree row now pulses its orange frame.** Project Manager keeps the orange frame visible and animates its intensity instead of relying only on the small status/type marker.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/workflow-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-user-input-attention.test.js packages/core/dist/development-tree/development-tree-user-gate-cursor.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.495] - 2026-06-12
 ### Fixed
 - **Project Manager now shows the active user-gate review cursor.** Core exposes a single active review gate plus queued gates, and Project Manager renders the active gate in the existing Documentation Tree / Development Tree with a pulsing amber marker.

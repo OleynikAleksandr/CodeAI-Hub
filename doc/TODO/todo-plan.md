@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "69880fb9f",
+  "lastRecordedCommit": "e188ed067",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.input-attention-ui.task1",
-  "expectedCommitMessage": "fix: animate active user attention frames",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-496.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.496",
   "debt": {
-    "expectedCommitMessage": "fix: animate active user attention frames",
-    "preCommitHead": "69880fb9f",
+    "expectedCommitMessage": "docs: prepare release 1.2.496",
+    "preCommitHead": "e188ed067",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.input-attention-ui.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-496.task1"
   }
 }
 ```
@@ -125,11 +125,11 @@
 42. [DONE] `devtree-early-pp.phase4.input-attention-service-test.task1` Покрыть response-level поведение `WorkflowStateService`: Documentation Tree gate появляется при managed `awaiting_acceptance`, а обычный продолжабельный/завершённый чат не является самостоятельным источником attention marker (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover workflow managed attention cursor`).
 43. [DONE] Git Commit: `test: cover workflow managed attention cursor` (hash: 69880fb9f)
 44. [DONE] `devtree-early-pp.phase4.input-attention-ui.task1` Сделать active user attention row/frame animation устойчивой: оранжевая рамка не исчезает, а плавно меняет intensity/opacity примерно от 100% до 60% и обратно (scope: `packages/ui/project-manager/styles.css, doc/TODO/todo-plan.md`; expected commit: `fix: animate active user attention frames`).
-45. [PENDING] Git Commit: `fix: animate active user attention frames` (hash: TBD)
-46. [TODO] `devtree-early-pp.phase4.input-attention-verify.task1` Выполнить targeted Core/Project Manager tests/build для managed input attention cursor и tree markers (scope: `packages/core, src/client/project-manager`; expected commit: none).
-47. [TODO] `devtree-early-pp.phase4.release-confirm-496.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса managed input attention cursor (scope: `manual confirmation`; expected commit: none).
-48. [TODO] `devtree-early-pp.phase4.release-docs-496.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.496 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.496`).
-49. [TODO] Git Commit: `docs: prepare release 1.2.496` (hash: TBD)
+45. [DONE] Git Commit: `fix: animate active user attention frames` (hash: e188ed067)
+46. [DONE] `devtree-early-pp.phase4.input-attention-verify.task1` Выполнить targeted Core/Project Manager tests/build для managed input attention cursor и tree markers (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: npm run build --workspace @codeai-hub/core; node --test workflow-user-input-attention, workflow-state-service-user-input-attention, development-tree-user-gate-cursor; npm run typecheck:webview; npm run build:project-manager; npm run build:webview.
+47. [DONE] `devtree-early-pp.phase4.release-confirm-496.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса managed input attention cursor (scope: `manual confirmation`; expected commit: none). Result: Пользователь явно подтвердил сборку нового релиза 1.2.496 после зелёной verification.
+48. [DONE] `devtree-early-pp.phase4.release-docs-496.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.496 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.496`).
+49. [PENDING] Git Commit: `docs: prepare release 1.2.496` (hash: TBD)
 50. [TODO] `devtree-early-pp.phase4.release-build-496.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.496`).
 51. [TODO] Git Commit: `chore: release 1.2.496` (hash: TBD)
 52. [TODO] `devtree-early-pp.phase4.user-retest-496.task1` Пользователь тестирует следующий релиз: любой managed workflow/development-tree user-review/user-gate должен подсвечивать соответствующий узел дерева анимированной orange frame; queued user gates остаются read-only; Quality Gates Baseline должен подсвечиваться, когда Core/агент открыл user review, а формально завершённые зелёные шаги не должны получать orange marker только потому, что чат можно продолжить (scope: `manual retest`; expected commit: none).

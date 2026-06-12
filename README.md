@@ -2,7 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.495** (User Gate Review Cursor)
+**Current Release — v1.2.496** (Managed User Attention Cursor)
+
+This release tightens the Project Manager attention marker contract. Core now
+derives the orange attention cursor only from explicit managed user-review /
+user-gate state in the Documentation Tree and Development Tree, not from the
+fact that an old chat can technically be continued.
+
+`Quality Gates Baseline` now receives the same active orange marker when Core
+or the agent opens managed user review. Formally completed steps remain green
+and do not become orange just because the user may choose to return to that
+chat later.
+
+The active attention row now pulses the orange frame itself with a stable
+visible intensity instead of animating only the small marker. Queued gates stay
+visible and read-only until Core promotes them.
+
+Retest focus: complete a managed workflow step that opens user review, including
+`Quality Gates Baseline`. The corresponding tree node should show a pulsing
+orange frame while it waits for user action. Accepted/completed steps should
+stay green without orange attention unless Core/agent opens a new user gate.
+
+**Previous Release — v1.2.495** (User Gate Review Cursor)
 
 This release adds a Core-owned user-gate cursor for parallel workflow reviews.
 Project Manager now highlights the single active review gate in the existing
