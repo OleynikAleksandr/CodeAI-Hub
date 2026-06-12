@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "52fdee917",
+  "lastRecordedCommit": "df0cee984",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6v.vsix.task1",
-  "expectedCommitMessage": "build: package product part fanout vsix release",
+  "currentTaskId": "qg-restore-isolation.phase6x.archive-absorbed-plans.task1",
+  "expectedCommitMessage": "docs: archive absorbed development tree planning references",
   "debt": {
-    "expectedCommitMessage": "build: package product part fanout vsix release",
-    "preCommitHead": "52fdee917",
+    "expectedCommitMessage": "docs: archive absorbed development tree planning references",
+    "preCommitHead": "df0cee984",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6v.vsix.task1"
+    "taskId": "qg-restore-isolation.phase6x.archive-absorbed-plans.task1"
   }
 }
 ```
@@ -350,13 +350,24 @@
 107. [DONE] `qg-restore-isolation.phase6v.build-all.task1` Run `./scripts/build-all.sh` to bump package versions and build provider/core/UI/launcher artifacts for the release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: prepare product part fanout release artifacts`). Result: `./scripts/build-all.sh --allow-dirty` passed; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start. Unified version prepared: `1.2.492`. Release tarballs staged in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `claude-module-1.2.492.tar.bz2`, `codex-module-1.2.492.tar.bz2`, `gemini-module-1.2.492.tar.bz2`, `kimi-module-1.2.492.tar.bz2`, `glm-claude-code-module-1.2.492.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.492.tar.bz2`, `vscode-webview-1.2.492.tar.bz2`, `project-manager-1.2.492.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.492.tar.bz2`.
 108. [DONE] Git Commit: `build: prepare product part fanout release artifacts` (hash: 52fdee917)
 109. [DONE] `qg-restore-isolation.phase6v.vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency pruning/package output, and keep release artifacts available for retest (scope: `codeai-hub-*.vsix, doc/tmp/releases/**, .vscodeignore, package-lock.json, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `build: package product part fanout vsix release`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.492`; dirty allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before packaging. Required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`. VSIX created at repository root: `codeai-hub-1.2.492.vsix` (`5.2M`). Runtime tarballs for `1.2.492` are staged in `doc/tmp/releases/` and `~/.codeai-hub/releases/` for Claude, Codex, Gemini, Kimi, GLM-Claude-Code, Core darwin-arm64, VS Code webview, Project Manager, and CEF launcher.
-110. [PENDING] Git Commit: `build: package product part fanout vsix release` (hash: TBD)
+110. [DONE] Git Commit: `build: package product part fanout vsix release` (hash: df0cee984)
 
 ## Phase 6W - User Workflow Acceptance Testing (owner: User, updated: 2026-06-11)
 
 ### Stream: Retest After Product Part Fan-Out Recovery
 
-111. [TODO] `qg-restore-isolation.phase6w.user-retest.task1` User installs the new release and retests Development Tree Product Part fan-out: all planned Product Parts should receive agent sessions after Quality Gates, non-lead Product Part briefs should reach user review, and the lead `DevelopmentOrderPlan` assignment should unlock only after every brief is accepted (scope: `manual retest`; no commit expected).
+111. [DONE] `qg-restore-isolation.phase6w.user-retest.task1` User installs the new release and retests Development Tree Product Part fan-out: all planned Product Parts should receive agent sessions after Quality Gates, non-lead Product Part briefs should reach user review, and the lead `DevelopmentOrderPlan` assignment should unlock only after every brief is accepted (scope: `manual retest`; no commit expected). Result: User retested release `1.2.492` from a reset Quality Gates Baseline path; Core started every planned Product Part, allowed secondary Product Part brief review first, then lead brief review, and only after all briefs were accepted dispatched the lead `DevelopmentOrderPlan` continuation. The accepted order then opened the first cluster-contract worktree and preserved the no-doc-only-mainline-merge boundary.
+
+## Phase 6X - Development Tree Planning Shelf Consolidation (owner: Codex, updated: 2026-06-12)
+
+### Stream: Active Plans Disposition
+
+112. [DONE] `qg-restore-isolation.phase6x.archive-absorbed-plans.task1` Archive absorbed Development Tree planning references that are no longer active strategic/directive sources after their stable decisions were carried into SSOT docs and the downstream execution refactor line (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive absorbed development tree planning references`).
+113. [PENDING] Git Commit: `docs: archive absorbed development tree planning references` (hash: TBD)
+114. [TODO] `qg-restore-isolation.phase6x.plans-index.task1` Update Plans README, Docs Index, and downstream execution planning status so the root planning shelf distinguishes active strategic sources from closeout-pending or archived references (scope: `doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: consolidate active development tree planning sources`).
+115. [TODO] Git Commit: `docs: consolidate active development tree planning sources` (hash: TBD)
+116. [TODO] `qg-restore-isolation.phase6x.user-gate-cursor-plan.task1` Create the next refactoring planning document for parallel Development Tree execution with a Core-owned sequential user-review cursor, tree marker states, auto-open behavior, and Product Part brief ordering (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan development tree user gate cursor`).
+117. [TODO] Git Commit: `docs: plan development tree user gate cursor` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
