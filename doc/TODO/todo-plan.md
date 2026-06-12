@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "839bbcba4",
+  "lastRecordedCommit": "69880fb9f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.input-attention-service-test.task1",
-  "expectedCommitMessage": "test: cover workflow managed attention cursor",
+  "currentTaskId": "devtree-early-pp.phase4.input-attention-ui.task1",
+  "expectedCommitMessage": "fix: animate active user attention frames",
   "debt": {
-    "expectedCommitMessage": "test: cover workflow managed attention cursor",
-    "preCommitHead": "839bbcba4",
+    "expectedCommitMessage": "fix: animate active user attention frames",
+    "preCommitHead": "69880fb9f",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.input-attention-service-test.task1"
+    "taskId": "devtree-early-pp.phase4.input-attention-ui.task1"
   }
 }
 ```
@@ -123,9 +123,9 @@
 40. [DONE] `devtree-early-pp.phase4.input-attention-core.task1` Перевести user attention cursor на Core-owned managed gate state: active/queued gates определяются явным user-review/user-gate состоянием Development Tree и Documentation Tree; свободный продолжабельный чат сам по себе не создаёт orange marker для формально завершённого шага (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts`; expected commit: `fix: derive user attention from managed input state`).
 41. [DONE] Git Commit: `fix: derive user attention from managed input state` (hash: 839bbcba4)
 42. [DONE] `devtree-early-pp.phase4.input-attention-service-test.task1` Покрыть response-level поведение `WorkflowStateService`: Documentation Tree gate появляется при managed `awaiting_acceptance`, а обычный продолжабельный/завершённый чат не является самостоятельным источником attention marker (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover workflow managed attention cursor`).
-43. [PENDING] Git Commit: `test: cover workflow managed attention cursor` (hash: TBD)
-44. [TODO] `devtree-early-pp.phase4.input-attention-ui.task1` Сделать active user attention row/frame animation устойчивой: оранжевая рамка не исчезает, а плавно меняет intensity/opacity примерно от 100% до 60% и обратно (scope: `packages/ui/project-manager/styles.css, doc/TODO/todo-plan.md`; expected commit: `fix: animate active user attention frames`).
-45. [TODO] Git Commit: `fix: animate active user attention frames` (hash: TBD)
+43. [DONE] Git Commit: `test: cover workflow managed attention cursor` (hash: 69880fb9f)
+44. [DONE] `devtree-early-pp.phase4.input-attention-ui.task1` Сделать active user attention row/frame animation устойчивой: оранжевая рамка не исчезает, а плавно меняет intensity/opacity примерно от 100% до 60% и обратно (scope: `packages/ui/project-manager/styles.css, doc/TODO/todo-plan.md`; expected commit: `fix: animate active user attention frames`).
+45. [PENDING] Git Commit: `fix: animate active user attention frames` (hash: TBD)
 46. [TODO] `devtree-early-pp.phase4.input-attention-verify.task1` Выполнить targeted Core/Project Manager tests/build для managed input attention cursor и tree markers (scope: `packages/core, src/client/project-manager`; expected commit: none).
 47. [TODO] `devtree-early-pp.phase4.release-confirm-496.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса managed input attention cursor (scope: `manual confirmation`; expected commit: none).
 48. [TODO] `devtree-early-pp.phase4.release-docs-496.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.496 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.496`).
