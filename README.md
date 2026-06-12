@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.497** (Quality Gates Research Review Attention)
+**Current Release — v1.2.498** (Preliminary Review Attention)
+
+This release closes the same active-attention gap for preliminary Documentation
+Tree steps. `Description` and `Virtual Simulation` now use the shared
+Core-owned user gate cursor when Core opens a preliminary user-review turn, so
+their tree rows keep the pulsing orange frame while the user still needs to
+answer questions or press `Подтверждаю`.
+
+Core derives this state from the session messages that already drive the
+managed preliminary review lifecycle: `managed-workflow-user-review` opens the
+attention marker, and `managed-workflow-complete` closes it. The presence of
+`Final_Description.md` or `virtual-simulation.md` alone no longer makes the
+step look simply complete while review is still open.
+
+Retest focus: complete `Description` until the system message asks for user
+review. The Documentation Tree row should keep the active pulsing orange frame
+until the user accepts the result. Repeat the same check for `Virtual
+Simulation` if that step is part of the run.
+
+**Previous Release — v1.2.497** (Quality Gates Research Review Attention)
 
 This release fixes the remaining Quality Gates attention gap found during
 retest of the managed user attention cursor. `Quality Gates Baseline` now gets

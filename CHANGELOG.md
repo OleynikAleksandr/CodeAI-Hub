@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.498] - 2026-06-12
+### Fixed
+- **Preliminary Documentation Tree review now triggers the active attention marker.** Core detects open `Description` and `Virtual Simulation` preliminary review turns from session messages and exposes them through the same `userGateCursor` as other managed user gates.
+- **Artifact presence no longer hides an open preliminary review.** `Final_Description.md` and `virtual-simulation.md` may already exist, but the tree row remains an active pulsing orange gate until Core records `managed-workflow-complete`.
+- **The marker lifecycle follows the existing preliminary review contract.** `managed-workflow-user-review` opens the attention state, and `managed-workflow-complete` closes it without adding Project Manager-owned workflow truth.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/workflow-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/development-tree-user-gate-cursor.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.497] - 2026-06-12
 ### Fixed
 - **Quality Gates research review now triggers the active attention marker.** Core detects the open Quality Gates user review from the managed stage `todo-plan.md` review task, so `Quality Gates Baseline` gets the pulsing orange frame even while only `quality-gates-research.md` and `quality-gates-research.json` exist.

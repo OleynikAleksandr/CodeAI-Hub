@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "de2ff0b06",
+  "lastRecordedCommit": "ac4ac652d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.preliminary-attention-test.task1",
-  "expectedCommitMessage": "test: cover preliminary workflow review attention",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-498.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.498",
   "debt": {
-    "expectedCommitMessage": "test: cover preliminary workflow review attention",
-    "preCommitHead": "de2ff0b06",
+    "expectedCommitMessage": "docs: prepare release 1.2.498",
+    "preCommitHead": "ac4ac652d",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.preliminary-attention-test.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-498.task1"
   }
 }
 ```
@@ -153,11 +153,11 @@
 64. [DONE] `devtree-early-pp.phase4.preliminary-attention.task1` Подключить preliminary user review gates для `Description` и `Virtual Simulation` к тому же Core-owned `userGateCursor`: открытый `managed-workflow-user-review` в сессии даёт active Documentation Tree marker, а `managed-workflow-complete` закрывает marker (scope: `packages/core/src/remote-bridge/handlers/workflow-preliminary-review-attention.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts`; expected commit: `fix: show preliminary workflow review attention`).
 65. [DONE] Git Commit: `fix: show preliminary workflow review attention` (hash: de2ff0b06)
 66. [DONE] `devtree-early-pp.phase4.preliminary-attention-test.task1` Покрыть regression tests: `Description` review с `Final_Description.md` и открытым Core gate возвращает active `workflow:description`; после persistent return/completion marker исчезает; `Virtual Simulation` review использует тот же контракт (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover preliminary workflow review attention`).
-67. [PENDING] Git Commit: `test: cover preliminary workflow review attention` (hash: TBD)
-68. [TODO] `devtree-early-pp.phase4.preliminary-attention-verify.task1` Выполнить targeted Core/Project Manager verification для preliminary Documentation Tree review attention (scope: `packages/core, src/client/project-manager`; expected commit: none).
-69. [TODO] `devtree-early-pp.phase4.release-confirm-498.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса preliminary workflow review attention (scope: `manual confirmation`; expected commit: none).
-70. [TODO] `devtree-early-pp.phase4.release-docs-498.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.498 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.498`).
-71. [TODO] Git Commit: `docs: prepare release 1.2.498` (hash: TBD)
+67. [DONE] Git Commit: `test: cover preliminary workflow review attention` (hash: ac4ac652d)
+68. [DONE] `devtree-early-pp.phase4.preliminary-attention-verify.task1` Выполнить targeted Core/Project Manager verification для preliminary Documentation Tree review attention (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: @codeai-hub/core build; workflow user-input attention tests; workflow-state user-input attention tests; typecheck:webview; build:project-manager; build:webview
+69. [DONE] `devtree-early-pp.phase4.release-confirm-498.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса preliminary workflow review attention (scope: `manual confirmation`; expected commit: none). Result: User confirmed release build 1.2.498
+70. [DONE] `devtree-early-pp.phase4.release-docs-498.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.498 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.498`).
+71. [PENDING] Git Commit: `docs: prepare release 1.2.498` (hash: TBD)
 72. [TODO] `devtree-early-pp.phase4.release-build-498.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.498`).
 73. [TODO] Git Commit: `chore: release 1.2.498` (hash: TBD)
 74. [TODO] `devtree-early-pp.phase4.user-retest-498.task1` Пользователь тестирует следующий релиз: `Description` и `Virtual Simulation` должны получать анимированную orange frame в Documentation Tree, когда Core открыл preliminary user review и ждёт `Подтверждаю`; после acceptance/persistent return эти шаги остаются обычными зелёными без orange marker (scope: `manual retest`; expected commit: none).
