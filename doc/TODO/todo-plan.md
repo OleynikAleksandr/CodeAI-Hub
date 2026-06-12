@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "21fc7c831",
+  "lastRecordedCommit": "ec6280414",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-495.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.495",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-495.task1",
+  "expectedCommitMessage": "chore: release 1.2.495",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.495",
-    "preCommitHead": "21fc7c831",
+    "expectedCommitMessage": "chore: release 1.2.495",
+    "preCommitHead": "ec6280414",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-495.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-495.task1"
   }
 }
 ```
@@ -113,9 +113,9 @@
 33. [DONE] `devtree-early-pp.phase4.user-gate-verify.task1` Выполнить targeted Core/Project Manager tests/build для user-gate cursor и markers (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: core build, development-tree cursor test, workflow-state client test, webview typecheck, Project Manager build, webview build.
 34. [DONE] `devtree-early-pp.phase4.release-confirm-495.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса user-gate cursor (scope: `manual confirmation`; expected commit: none). Result: Пользователь явно подтвердил сборку нового релиза 1.2.495.
 35. [DONE] `devtree-early-pp.phase4.release-docs-495.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.495 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.495`).
-36. [PENDING] Git Commit: `docs: prepare release 1.2.495` (hash: TBD)
-37. [TODO] `devtree-early-pp.phase4.release-build-495.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.495`).
-38. [TODO] Git Commit: `chore: release 1.2.495` (hash: TBD)
+36. [DONE] Git Commit: `docs: prepare release 1.2.495` (hash: ec6280414)
+37. [DONE] `devtree-early-pp.phase4.release-build-495.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.495`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.495.vsix` (5.2M); tarball'ы 1.2.495 скопированы в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+38. [PENDING] Git Commit: `chore: release 1.2.495` (hash: TBD)
 39. [TODO] `devtree-early-pp.phase4.user-retest-495.task1` Пользователь тестирует следующий релиз: active user gate должен подсвечиваться pulsing amber/orange, queued gates должны быть read-only, secondary Product Part briefs должны идти перед lead Product Part, Documentation Tree gates Application Skeleton / Quality Gates должны участвовать в том же attention model (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
