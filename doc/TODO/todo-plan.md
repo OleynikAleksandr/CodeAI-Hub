@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "2a9513186",
+  "lastRecordedCommit": "8f211df63",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase3.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.493",
+  "currentTaskId": "devtree-early-pp.phase3.release-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.493",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.493",
-    "preCommitHead": "2a9513186",
+    "expectedCommitMessage": "chore: release 1.2.493",
+    "preCommitHead": "8f211df63",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase3.release-docs.task1"
+    "taskId": "devtree-early-pp.phase3.release-build.task1"
   }
 }
 ```
@@ -78,9 +78,9 @@
 
 10. [DONE] `devtree-early-pp.phase3.release-confirm.task1` Получить отдельное подтверждение пользователя на релизную сборку после зелёных фиксов и проверок (scope: `manual confirmation`; expected commit: none). Result: Пользователь явно подтвердил сборку нового релиза 1.2.493 после зелёной verification.
 11. [DONE] `devtree-early-pp.phase3.release-docs.task1` После подтверждения подготовить release notes/version docs на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.493`).
-12. [PENDING] Git Commit: `docs: prepare release 1.2.493` (hash: TBD)
-13. [TODO] `devtree-early-pp.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем при чистом дереве `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package versions, release artifacts, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.493`).
-14. [TODO] Git Commit: `chore: release 1.2.493` (hash: TBD)
+12. [DONE] Git Commit: `docs: prepare release 1.2.493` (hash: 8f211df63)
+13. [DONE] `devtree-early-pp.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.493`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.493.vsix`; tarball'ы 1.2.493 скопированы в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+14. [PENDING] Git Commit: `chore: release 1.2.493` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-12)
 
