@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.495] - 2026-06-12
+### Fixed
+- **Project Manager now shows the active user-gate review cursor.** Core exposes a single active review gate plus queued gates, and Project Manager renders the active gate in the existing Documentation Tree / Development Tree with a pulsing amber marker.
+- **Queued review gates are visible but read-only.** Queued managed review sessions keep their history visible, but the confirmation action is hidden and input is locked until Core promotes that gate.
+- **Lead Product Part review is held until secondary briefs are handled.** Development Tree user-gate ordering presents non-lead Product Part brief reviews before the lead Product Part, so the lead `DevelopmentOrderPlan` remains the final user reaction in that group.
+- **Documentation Tree review gates join the same attention model.** `Application Skeleton` and `Quality Gates Baseline` review prompts now participate in the top-level user-gate cursor when their managed review message waits for confirmation.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/development-tree/development-tree-user-gate-cursor.test.js`
+- `npx tsx --test src/client/project-manager/services/workflow-state-client.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.494] - 2026-06-12
 ### Fixed
 - **Workflow boundary preflight now preserves dot-prefixed status paths.** `WorkflowBoundaryGit.statusPorcelain()` no longer trims the leading status column from `git status --porcelain`, so an unstaged modified tracked path such as `.codeai-hub/<workspace>/workflow/state.json` is not rewritten into `codeai-hub/<workspace>/workflow/state.json`.

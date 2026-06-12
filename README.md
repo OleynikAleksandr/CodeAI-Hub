@@ -2,7 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.494** (Workflow Boundary Pathspec Recovery)
+**Current Release — v1.2.495** (User Gate Review Cursor)
+
+This release adds a Core-owned user-gate cursor for parallel workflow reviews.
+Project Manager now highlights the single active review gate in the existing
+Documentation Tree / Development Tree with a pulsing amber marker, while queued
+review gates remain visible but read-only until Core promotes them.
+
+Development Tree Product Part brief reviews now present non-lead Product Parts
+before the lead Product Part, so the lead `DevelopmentOrderPlan` stays last and
+can consume the accepted secondary briefs. Documentation Tree review gates for
+`Application Skeleton` and `Quality Gates Baseline` participate in the same
+attention model when their managed review message requires user confirmation.
+
+Retest focus: complete `Diagram Modules` in a workspace with at least two
+Product Parts. Project Manager should show exactly one active pulsing user-gate
+marker, queued review sessions should be read-only, secondary Product Part
+briefs should be reviewed before the lead Product Part, and `Application
+Skeleton` / `Quality Gates Baseline` review gates should use the same attention
+cursor when they wait for confirmation.
+
+**Previous Release — v1.2.494** (Workflow Boundary Pathspec Recovery)
 
 This release fixes an early workflow boundary failure that could block the
 transition from `Description` to `Virtual Simulation`. Core now preserves the

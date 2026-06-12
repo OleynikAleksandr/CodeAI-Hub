@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "8f3effec1",
+  "lastRecordedCommit": "21fc7c831",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.user-gate-ui.task1",
-  "expectedCommitMessage": "fix: show user gate attention markers",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-495.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.495",
   "debt": {
-    "expectedCommitMessage": "fix: show user gate attention markers",
-    "preCommitHead": "8f3effec1",
+    "expectedCommitMessage": "docs: prepare release 1.2.495",
+    "preCommitHead": "21fc7c831",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.user-gate-ui.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-495.task1"
   }
 }
 ```
@@ -109,14 +109,19 @@
 29. [DONE] `devtree-early-pp.phase4.user-gate-doc-tree.task1` Подключить Documentation Tree user gates для Application Skeleton и Quality Gates review prompts в workflow state read-model (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: expose documentation user gate cursor`).
 30. [DONE] Git Commit: `fix: expose documentation user gate cursor` (hash: 8f3effec1)
 31. [DONE] `devtree-early-pp.phase4.user-gate-ui.task1` Отобразить active/queued user-gate markers в существующих Documentation Tree / Development Tree nodes и заблокировать queued review input/actions read-only до promotion (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, packages/ui/project-manager/styles.css`; expected commit: `fix: show user gate attention markers`).
-32. [PENDING] Git Commit: `fix: show user gate attention markers` (hash: TBD)
-33. [TODO] `devtree-early-pp.phase4.user-gate-verify.task1` Выполнить targeted Core/Project Manager tests/build для user-gate cursor и markers (scope: `packages/core, src/client/project-manager`; expected commit: none).
-34. [TODO] `devtree-early-pp.phase4.user-retest-495.task1` Пользователь тестирует следующий релиз: active user gate должен подсвечиваться pulsing amber/orange, queued gates должны быть read-only, secondary Product Part briefs должны идти перед lead Product Part, Documentation Tree gates Application Skeleton / Quality Gates должны участвовать в том же attention model (scope: `manual retest`; expected commit: none).
+32. [DONE] Git Commit: `fix: show user gate attention markers` (hash: 21fc7c831)
+33. [DONE] `devtree-early-pp.phase4.user-gate-verify.task1` Выполнить targeted Core/Project Manager tests/build для user-gate cursor и markers (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: core build, development-tree cursor test, workflow-state client test, webview typecheck, Project Manager build, webview build.
+34. [DONE] `devtree-early-pp.phase4.release-confirm-495.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса user-gate cursor (scope: `manual confirmation`; expected commit: none). Result: Пользователь явно подтвердил сборку нового релиза 1.2.495.
+35. [DONE] `devtree-early-pp.phase4.release-docs-495.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.495 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.495`).
+36. [PENDING] Git Commit: `docs: prepare release 1.2.495` (hash: TBD)
+37. [TODO] `devtree-early-pp.phase4.release-build-495.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.495`).
+38. [TODO] Git Commit: `chore: release 1.2.495` (hash: TBD)
+39. [TODO] `devtree-early-pp.phase4.user-retest-495.task1` Пользователь тестирует следующий релиз: active user gate должен подсвечиваться pulsing amber/orange, queued gates должны быть read-only, secondary Product Part briefs должны идти перед lead Product Part, Documentation Tree gates Application Skeleton / Quality Gates должны участвовать в том же attention model (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-35. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-36. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-37. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+40. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+41. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+42. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
