@@ -14,13 +14,17 @@ import {
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
 import { api } from "../../api";
+import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
 import { isDisplayOnlyKimiModelSwitch } from "../../services/switch-api";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
+import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
+const MANAGED_REVIEW_TAG = "managed-workflow-user-review";
+const QUEUED_REVIEW_TAG = "managed-workflow-user-review-queued";
 type DialogControllerClaudeSwitch = {
   readonly requestClaudeModelSwitch?: (
     modelId: ClaudeModelAliasId,
@@ -43,6 +47,84 @@ const isSpeechStatePayload = (payload: unknown): payload is SpeechStatePayload =
   payload !== null &&
   "status" in payload &&
   typeof payload.status === "string";
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const matchesQueuedGate = (params: {
+  readonly gate: Record<string, unknown>;
+  readonly intent: DialogOpenIntent | null;
+  readonly sessionId: string | null;
+}): boolean => {
+  const intentStage = params.intent?.stage ?? null;
+  const nodeId = readString(params.gate.nodeId);
+  const stage = readString(params.gate.stage);
+  const workflowPath = readString(params.gate.workflowPath);
+  const session = isRecord(params.gate.session) ? params.gate.session : null;
+  const sessionIds = [
+    readString(session?.dialogId),
+    readString(session?.providerSessionId),
+    readString(session?.rootSessionId),
+    readString(session?.sessionId),
+  ];
+  return Boolean(
+    (params.sessionId && sessionIds.includes(params.sessionId)) ||
+      (params.intent?.providerSessionId &&
+        sessionIds.includes(params.intent.providerSessionId)) ||
+      (intentStage &&
+        (intentStage === stage ||
+          intentStage === workflowPath ||
+          nodeId === `workflow:${intentStage}`))
+  );
+};
+
+const resolveQueuedGateLockReason = (params: {
+  readonly cursor: unknown;
+  readonly intent: DialogOpenIntent | null;
+  readonly sessionId: string | null;
+}): string | null => {
+  if (!isRecord(params.cursor) || !Array.isArray(params.cursor.queuedUserGates)) {
+    return null;
+  }
+  const gate = params.cursor.queuedUserGates.find(
+    (item): item is Record<string, unknown> =>
+      isRecord(item) && matchesQueuedGate({ ...params, gate: item })
+  );
+  return gate
+    ? (readString(gate.inputLockReason) ?? "Another user gate is active.")
+    : null;
+};
+
+const applyQueuedGateSnapshotLock = (
+  snapshots: SessionSnapshots,
+  sessionId: string,
+  reason: string
+): SessionSnapshots => {
+  const snapshot = snapshots[sessionId];
+  if (!snapshot) return snapshots;
+  const now = Date.now();
+  return {
+    ...snapshots,
+    [sessionId]: {
+      ...snapshot,
+      messages: snapshot.messages.map((message) =>
+        message.tag === MANAGED_REVIEW_TAG
+          ? { ...message, tag: QUEUED_REVIEW_TAG }
+          : message
+      ),
+      status: {
+        ...snapshot.status,
+        connectionState:
+          snapshot.status.connectionState === "running" ? "running" : "blocked",
+        continuityLock: { active: true, reason, updatedAt: now },
+        updatedAt: now,
+      },
+    },
+  };
+};
 
 const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
@@ -71,6 +153,7 @@ const ProjectManagerDialogSessionView = (props: {
   } = controller;
   const { settings } = useProjectManagerSettings();
   const { availableEngines } = useLocalization();
+  const workflowSnapshot = useWorkflowStateSnapshot().snapshot;
   const localModelOptions = availableEngines
     .map((engine) => engine.engineId)
     .filter((engineId) => engineId.startsWith(LOCAL_MODEL_ENGINE_PREFIX))
@@ -82,6 +165,19 @@ const ProjectManagerDialogSessionView = (props: {
     null
   );
   const activeSpeechMessageId = resolveActiveSpeechMessageId(speechState);
+  const queuedGateLockReason = resolveQueuedGateLockReason({
+    cursor: workflowSnapshot?.userGateCursor,
+    intent: props.intent,
+    sessionId: session?.id ?? null,
+  });
+  const visibleSnapshots =
+    queuedGateLockReason && session
+      ? applyQueuedGateSnapshotLock(
+          snapshots,
+          session.id,
+          queuedGateLockReason
+        )
+      : snapshots;
   useRuntimeModelSync(session?.id ?? null, setSnapshots);
   useEffect(
     () =>
@@ -195,7 +291,7 @@ const ProjectManagerDialogSessionView = (props: {
       sessions={[session]}
       showThinkingMessages={showThinkingMessages}
       showEmptyState={true}
-      snapshots={snapshots}
+      snapshots={visibleSnapshots}
       speakingMessageId={activeSpeechMessageId}
       tokenDebugSummaryOverride={tokenDebugSummaryOverride}
     />

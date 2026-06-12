@@ -29,18 +29,24 @@ import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulati
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import { useStepProviderResolver } from "./use-step-provider-resolver";
 import { renderTypeMarker } from "./workspace-tree-type-marker";
-
 const USER_MESSAGES_CATEGORY = "system_feedback";
-
 const isTechnicalStageRewriteBoundaryActive = (
   workflowState: WorkflowStateSnapshot | null
 ): boolean =>
   workflowState?.stages.diagram_modules !== undefined &&
   workflowState.stages.diagram_modules !== "idle";
-
 const isReadOnlyUpstreamStage = (stage: WorkflowStageId): boolean =>
   stage === "description" || stage === "virtual_simulation";
-
+type UserGateCursorView = {
+  readonly activeUserGate?: { readonly nodeId?: string } | null;
+  readonly queuedUserGates?: readonly { readonly nodeId?: string }[];
+};
+const normalizeUserGateNodeId = (nodeId?: string): string | null =>
+  typeof nodeId !== "string"
+    ? null
+    : nodeId.startsWith("product-part:")
+      ? `devtree:${nodeId.slice("product-part:".length)}`
+      : nodeId;
 const createDevelopmentTreeExpansionKey = (
   nodes: readonly TreeNode[]
 ): string =>
@@ -91,21 +97,18 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
   const clearMenu = useWorkspaceTreeClearMenu({ workspacePath, workspaceSlug });
-
   const virtualSimulationArtifactAvailable =
     useVirtualSimulationArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
       workspacePath,
       workspaceSlug,
     });
-
   const diagramModulesArtifactAvailable =
     useDiagramModulesArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
       workspacePath,
       workspaceSlug,
     });
-
   const selectArtifact = useCallback(
     (artifactPath: string, label: string) => {
       if (!(workspaceSlug && workspacePath)) {
@@ -119,7 +122,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     },
     [workspacePath, workspaceSlug]
   );
-
   const dispatchDialogOpenIntent = useCallback(
     (payload: SessionResumeIntent) => {
       window.dispatchEvent(
@@ -130,7 +132,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     },
     []
   );
-
   const clearArtifactWithTool = useCallback(
     (activeTool: string) => {
       window.dispatchEvent(
@@ -141,7 +142,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     },
     []
   );
-
   const dispatchStageActivated = useCallback((stage: string) => {
     window.dispatchEvent(
       new CustomEvent("pm:stage:activated", {
@@ -149,7 +149,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       })
     );
   }, []);
-
   useStagePanelSync({
     workflowState,
     workspaceSlug,
@@ -172,7 +171,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       onResumeSession: dispatchDialogOpenIntent,
       onClearArtifactWithTool: clearArtifactWithTool,
     });
-
   useEffect(() => {
     if (!selectedWorkspaceId) {
       setExpandedNodes({});
@@ -191,14 +189,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     workspacePath,
     workspaceSlug,
   ]);
-
-  // Forward shared store snapshot to auto-select logic.
-  // Guard: only forward when the store has loaded data for the CURRENT
-  // workspace.  Without this, a stale previous-workspace snapshot can
-  // fire handleStateUpdate (which uses the new selectedWorkspaceId)
-  // and permanently null out pendingWorkspaceIdRef before the correct
-  // snapshot arrives, preventing auto-select from ever dispatching
-  // pm:dialog:open for the new workspace.
   useEffect(() => {
     if (storeState.loaded && storeState.workspaceSlug === workspaceSlug) {
       handleStateUpdate(storeState.snapshot);
@@ -242,7 +232,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
 
   const resolveNodeExpanded = (nodeId: string): boolean =>
     expandedNodes[nodeId] ?? false;
-
   const handleTreeToggle = (id: string) => {
     setExpandedNodes((current) => {
       const next = { ...current };
@@ -250,7 +239,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return next;
     });
   };
-
   const togglePart = (partId: string) => {
     if (openPartId === partId) {
       setOpenPartId(null);
@@ -260,11 +248,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       setOpenClusterId(null);
     }
   };
-
   const toggleCluster = (clusterId: string) => {
     setOpenClusterId(openClusterId === clusterId ? null : clusterId);
   };
-
   const trunkNodes = resolveStageNodes();
   const devTree = workflowState?.developmentTree;
   const devTreeNodes =
@@ -280,7 +266,17 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? `${selectedWorkspaceId}:${createDevelopmentTreeExpansionKey(devTreeNodes)}`
       : null;
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
-
+  const userGateCursor = workflowState?.userGateCursor as
+    | UserGateCursorView
+    | undefined;
+  const activeGateNodeId = normalizeUserGateNodeId(
+    userGateCursor?.activeUserGate?.nodeId
+  );
+  const queuedGateNodeIds = new Set(
+    (userGateCursor?.queuedUserGates ?? [])
+      .map((gate) => normalizeUserGateNodeId(gate.nodeId))
+      .filter((nodeId): nodeId is string => Boolean(nodeId))
+  );
   useEffect(() => {
     if (!devTreeExpansionKey || autoExpandedTreeKey === devTreeExpansionKey) {
       return;
@@ -297,10 +293,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       `pm-tree__item--${node.status}`,
       node.nodeType ? `pm-tree__item--type-${node.nodeType}` : null,
       node.isSelected ? "pm-tree__item--selected" : null,
+      node.id === activeGateNodeId ? "pm-tree__item--user-gate-active" : null,
+      queuedGateNodeIds.has(node.id)
+        ? "pm-tree__item--user-gate-queued"
+        : null,
     ]
       .filter((className): className is string => Boolean(className))
       .join(" ");
-
   const renderTreeLabel = (label: string): React.ReactNode =>
     label.split("\n").map((line, index) => (
       <Fragment key={`${line}-${index}`}>
@@ -308,7 +307,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         {line}
       </Fragment>
     ));
-
   const renderModuleRow = (node: TreeNode): React.ReactNode => {
     const children = node.children ?? [];
     return (
@@ -474,8 +472,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               </li>
             );
           })}
-
-          {/* Development Tree — nested structure */}
           {(devTreeNodes.length > 0 || devTreeLockedNodes.length > 0) && (
             <>
               <li className="pm-tree__separator" key="section:development">

@@ -812,6 +812,46 @@ body {
   border-radius: 5px;
 }
 
+@keyframes pm-user-gate-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px rgba(242, 162, 58, 0.24),
+      0 0 0 0 rgba(242, 162, 58, 0.32);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 4px rgba(242, 162, 58, 0.2),
+      0 0 0 8px rgba(242, 162, 58, 0);
+  }
+}
+
+.pm-tree__item--user-gate-active {
+  background: rgba(242, 162, 58, 0.12);
+  border-color: rgba(242, 162, 58, 0.52);
+}
+
+.pm-tree__item--user-gate-active .pm-tree__status::before,
+.pm-tree__item--user-gate-active .pm-tree__type-marker {
+  color: #1f1507;
+  background: #f2a23a;
+  border-color: #f2a23a;
+  animation: pm-user-gate-pulse 1.15s ease-in-out infinite;
+}
+
+.pm-tree__item--user-gate-queued {
+  border-color: rgba(242, 162, 58, 0.24);
+}
+
+.pm-tree__item--user-gate-queued .pm-tree__status::before,
+.pm-tree__item--user-gate-queued .pm-tree__type-marker {
+  color: #2c2111;
+  background: #b78335;
+  border-color: #b78335;
+  box-shadow: 0 0 0 3px rgba(242, 162, 58, 0.12);
+}
+
 .pm-tree__item--type-operation {
   gap: 8px;
   padding-top: 4px;

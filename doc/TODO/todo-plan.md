@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "e6e4dd361",
+  "lastRecordedCommit": "8f3effec1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.user-gate-doc-tree.task1",
-  "expectedCommitMessage": "fix: expose documentation user gate cursor",
+  "currentTaskId": "devtree-early-pp.phase4.user-gate-ui.task1",
+  "expectedCommitMessage": "fix: show user gate attention markers",
   "debt": {
-    "expectedCommitMessage": "fix: expose documentation user gate cursor",
-    "preCommitHead": "e6e4dd361",
+    "expectedCommitMessage": "fix: show user gate attention markers",
+    "preCommitHead": "8f3effec1",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.user-gate-doc-tree.task1"
+    "taskId": "devtree-early-pp.phase4.user-gate-ui.task1"
   }
 }
 ```
@@ -107,9 +107,9 @@
 27. [DONE] `devtree-early-pp.phase4.user-gate-core-test.task1` Покрыть Development Tree user-gate cursor regression test: два Product Part brief review gates, non-lead active, lead queued last (scope: `packages/core/src/development-tree/development-tree-user-gate-cursor.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover development tree user gate cursor`).
 28. [DONE] Git Commit: `test: cover development tree user gate cursor` (hash: e6e4dd361)
 29. [DONE] `devtree-early-pp.phase4.user-gate-doc-tree.task1` Подключить Documentation Tree user gates для Application Skeleton и Quality Gates review prompts в workflow state read-model (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: expose documentation user gate cursor`).
-30. [PENDING] Git Commit: `fix: expose documentation user gate cursor` (hash: TBD)
-31. [TODO] `devtree-early-pp.phase4.user-gate-ui.task1` Отобразить active/queued user-gate markers в существующих Documentation Tree / Development Tree nodes и заблокировать queued review input/actions read-only до promotion (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, media/project-manager.css`; expected commit: `fix: show user gate attention markers`).
-32. [TODO] Git Commit: `fix: show user gate attention markers` (hash: TBD)
+30. [DONE] Git Commit: `fix: expose documentation user gate cursor` (hash: 8f3effec1)
+31. [DONE] `devtree-early-pp.phase4.user-gate-ui.task1` Отобразить active/queued user-gate markers в существующих Documentation Tree / Development Tree nodes и заблокировать queued review input/actions read-only до promotion (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, packages/ui/project-manager/styles.css`; expected commit: `fix: show user gate attention markers`).
+32. [PENDING] Git Commit: `fix: show user gate attention markers` (hash: TBD)
 33. [TODO] `devtree-early-pp.phase4.user-gate-verify.task1` Выполнить targeted Core/Project Manager tests/build для user-gate cursor и markers (scope: `packages/core, src/client/project-manager`; expected commit: none).
 34. [TODO] `devtree-early-pp.phase4.user-retest-495.task1` Пользователь тестирует следующий релиз: active user gate должен подсвечиваться pulsing amber/orange, queued gates должны быть read-only, secondary Product Part briefs должны идти перед lead Product Part, Documentation Tree gates Application Skeleton / Quality Gates должны участвовать в том же attention model (scope: `manual retest`; expected commit: none).
 
