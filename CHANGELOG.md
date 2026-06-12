@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.497] - 2026-06-12
+### Fixed
+- **Quality Gates research review now triggers the active attention marker.** Core detects the open Quality Gates user review from the managed stage `todo-plan.md` review task, so `Quality Gates Baseline` gets the pulsing orange frame even while only `quality-gates-research.md` and `quality-gates-research.json` exist.
+- **Research review artifact targets are explicit.** The workflow state cursor points the active gate at the research artifacts before the final `quality-gates.md` / `quality-gates.json` contract is created.
+- **Stale managed decision JSON remains non-authoritative.** The marker is driven by the active stage plan review task, not by stale `workflow/managed/*.json` state from older completed turns.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/workflow-state-service-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/workflow-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/development-tree-user-gate-cursor.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.496] - 2026-06-12
 ### Fixed
 - **Attention markers now come from managed user gates, not continuable chats.** Core derives the Project Manager orange cursor from explicit managed user-review/user-gate state in the Documentation Tree and Development Tree. A formally completed step remains green even though its chat can still be resumed by the user.

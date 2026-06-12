@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.496** (Managed User Attention Cursor)
+**Current Release — v1.2.497** (Quality Gates Research Review Attention)
+
+This release fixes the remaining Quality Gates attention gap found during
+retest of the managed user attention cursor. `Quality Gates Baseline` now gets
+the active pulsing orange frame when Core opens the research user-review turn,
+even before the final `quality-gates.md` / `quality-gates.json` contract exists.
+
+Core derives this state from the active Quality Gates stage `todo-plan.md`
+review task and exposes the research artifacts as the review targets:
+`quality-gates-research.md` and `quality-gates-research.json`. Stale managed
+decision JSON alone still does not create an attention marker.
+
+Retest focus: run `Quality Gates Baseline` to the research review state where
+the system message asks the user to confirm. The corresponding Documentation
+Tree node should show the same pulsing orange frame as other active user gates,
+with the input available only for the active gate.
+
+**Previous Release — v1.2.496** (Managed User Attention Cursor)
 
 This release tightens the Project Manager attention marker contract. Core now
 derives the orange attention cursor only from explicit managed user-review /
