@@ -44,6 +44,41 @@ test("resolveWorkflowUserInputAttentionCursor ignores completed documentation st
   assert.deepEqual(cursor.queuedUserGates, []);
 });
 
+test("resolveWorkflowUserInputAttentionCursor exposes preliminary review gates with stage artifacts", () => {
+  const cursor = resolveWorkflowUserInputAttentionCursor({
+    developmentTree: {},
+    documentationStages: [
+      {
+        progress: null,
+        reviewOpen: true,
+        stage: "description",
+      },
+      {
+        progress: null,
+        reviewOpen: true,
+        stage: "virtual_simulation",
+      },
+    ],
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+
+  assert.equal(cursor.activeUserGate?.nodeId, "workflow:description");
+  assert.equal(cursor.activeUserGate?.inputLocked, false);
+  assert.equal(cursor.activeUserGate?.status, "active");
+  assert.deepEqual(cursor.activeUserGate?.artifactPaths, [
+    `.codeai-hub/${WORKSPACE_SLUG}/description/Final_Description.md`,
+  ]);
+  assert.equal(
+    cursor.queuedUserGates[0]?.nodeId,
+    "workflow:virtual_simulation"
+  );
+  assert.equal(cursor.queuedUserGates[0]?.inputLocked, true);
+  assert.equal(cursor.queuedUserGates[0]?.status, "queued");
+  assert.deepEqual(cursor.queuedUserGates[0]?.artifactPaths, [
+    `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/virtual-simulation.md`,
+  ]);
+});
+
 test("resolveWorkflowUserInputAttentionCursor keeps development tree gates before documentation gates", () => {
   const cursor = resolveWorkflowUserInputAttentionCursor({
     developmentTree: {

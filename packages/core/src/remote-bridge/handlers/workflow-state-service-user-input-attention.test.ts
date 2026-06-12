@@ -9,10 +9,22 @@ import {
   PLAN_START as QUALITY_GATES_PLAN_START,
   QUALITY_GATES_STAGE_PLAN_PATH,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model";
+import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const WORKSPACE_SLUG = "demo-workspace";
+type PreliminaryStage = "description" | "virtual_simulation";
+
+const PRELIMINARY_STAGE_ARTIFACTS: Record<PreliminaryStage, string> = {
+  description: "Final_Description.md",
+  virtual_simulation: "virtual-simulation.md",
+};
+
+const PRELIMINARY_STAGE_LABELS: Record<PreliminaryStage, string> = {
+  description: "Description",
+  virtual_simulation: "Virtual Simulation",
+};
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -114,6 +126,49 @@ const writeQualityGatesArtifacts = async (
   );
 };
 
+const writePreliminaryArtifact = async (
+  workspaceRoot: string,
+  stage: PreliminaryStage
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/${stage}/${PRELIMINARY_STAGE_ARTIFACTS[stage]}`,
+    `# ${PRELIMINARY_STAGE_LABELS[stage]}\n`
+  );
+};
+
+const createPreliminaryReviewSession = (params: {
+  readonly completed?: boolean;
+  readonly sessionManager: SessionManager;
+  readonly stage: PreliminaryStage;
+  readonly workspaceRoot: string;
+}): void => {
+  const session = params.sessionManager.createSession(
+    "codexCli",
+    params.workspaceRoot,
+    `provider-${params.stage}`,
+    {
+      initiativeSlug: WORKSPACE_SLUG,
+      stage: params.stage,
+    }
+  );
+  const label = PRELIMINARY_STAGE_LABELS[params.stage];
+  params.sessionManager.appendMessage(
+    session.id,
+    "system",
+    `Core: ${label} перешёл в пользовательскую проверку.\nНажмите кнопку «Подтверждаю» ниже.`,
+    { tag: "managed-workflow-user-review" }
+  );
+  if (params.completed) {
+    params.sessionManager.appendMessage(
+      session.id,
+      "system",
+      `Core: ${label} завершён и зафиксирован.`,
+      { tag: "managed-workflow-complete" }
+    );
+  }
+};
+
 const readUserGateCursor = (
   payload: Record<string, unknown>
 ): {
@@ -148,6 +203,103 @@ test("workflow-state exposes Quality Gates research review as active user attent
     assert.deepEqual(cursor.activeUserGate?.artifactPaths, [
       `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.md`,
       `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.json`,
+    ]);
+    assert.deepEqual(cursor.queuedUserGates, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state keeps Description review as active user attention after artifact exists", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-attention-description-review-")
+  );
+  try {
+    const sessionManager = new SessionManager();
+    await writePreliminaryArtifact(workspaceRoot, "description");
+    createPreliminaryReviewSession({
+      sessionManager,
+      stage: "description",
+      workspaceRoot,
+    });
+    const payload = await readWorkflowState({
+      service: new WorkflowStateService({
+        logger: new Logger("error"),
+        sessionManager,
+      }),
+      workspaceRoot,
+    });
+    const cursor = readUserGateCursor(payload);
+
+    assert.equal(cursor.activeUserGate?.nodeId, "workflow:description");
+    assert.equal(
+      cursor.activeUserGate?.reason,
+      "managed_stage_review_required"
+    );
+    assert.equal(cursor.activeUserGate?.inputLocked, false);
+    assert.equal(cursor.activeUserGate?.status, "active");
+    assert.deepEqual(cursor.activeUserGate?.artifactPaths, [
+      `.codeai-hub/${WORKSPACE_SLUG}/description/Final_Description.md`,
+    ]);
+    assert.deepEqual(cursor.queuedUserGates, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state removes preliminary user attention after completion", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-attention-description-complete-")
+  );
+  try {
+    const sessionManager = new SessionManager();
+    await writePreliminaryArtifact(workspaceRoot, "description");
+    createPreliminaryReviewSession({
+      completed: true,
+      sessionManager,
+      stage: "description",
+      workspaceRoot,
+    });
+    const payload = await readWorkflowState({
+      service: new WorkflowStateService({
+        logger: new Logger("error"),
+        sessionManager,
+      }),
+      workspaceRoot,
+    });
+    const cursor = readUserGateCursor(payload);
+
+    assert.equal(cursor.activeUserGate, null);
+    assert.deepEqual(cursor.queuedUserGates, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state exposes Virtual Simulation review as active user attention", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-attention-virtual-simulation-review-")
+  );
+  try {
+    const sessionManager = new SessionManager();
+    await writePreliminaryArtifact(workspaceRoot, "virtual_simulation");
+    createPreliminaryReviewSession({
+      sessionManager,
+      stage: "virtual_simulation",
+      workspaceRoot,
+    });
+    const payload = await readWorkflowState({
+      service: new WorkflowStateService({
+        logger: new Logger("error"),
+        sessionManager,
+      }),
+      workspaceRoot,
+    });
+    const cursor = readUserGateCursor(payload);
+
+    assert.equal(cursor.activeUserGate?.nodeId, "workflow:virtual_simulation");
+    assert.deepEqual(cursor.activeUserGate?.artifactPaths, [
+      `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/virtual-simulation.md`,
     ]);
     assert.deepEqual(cursor.queuedUserGates, []);
   } finally {

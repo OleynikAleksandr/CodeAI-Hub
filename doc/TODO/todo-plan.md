@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "0168cc67e",
+  "lastRecordedCommit": "de2ff0b06",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.preliminary-attention.task1",
-  "expectedCommitMessage": "fix: show preliminary workflow review attention",
+  "currentTaskId": "devtree-early-pp.phase4.preliminary-attention-test.task1",
+  "expectedCommitMessage": "test: cover preliminary workflow review attention",
   "debt": {
-    "expectedCommitMessage": "fix: show preliminary workflow review attention",
-    "preCommitHead": "0168cc67e",
+    "expectedCommitMessage": "test: cover preliminary workflow review attention",
+    "preCommitHead": "de2ff0b06",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.preliminary-attention.task1"
+    "taskId": "devtree-early-pp.phase4.preliminary-attention-test.task1"
   }
 }
 ```
@@ -151,9 +151,9 @@
 ### Stream: Preliminary Workflow Review Attention
 
 64. [DONE] `devtree-early-pp.phase4.preliminary-attention.task1` Подключить preliminary user review gates для `Description` и `Virtual Simulation` к тому же Core-owned `userGateCursor`: открытый `managed-workflow-user-review` в сессии даёт active Documentation Tree marker, а `managed-workflow-complete` закрывает marker (scope: `packages/core/src/remote-bridge/handlers/workflow-preliminary-review-attention.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts`; expected commit: `fix: show preliminary workflow review attention`).
-65. [PENDING] Git Commit: `fix: show preliminary workflow review attention` (hash: TBD)
-66. [TODO] `devtree-early-pp.phase4.preliminary-attention-test.task1` Покрыть regression tests: `Description` review с `Final_Description.md` и открытым Core gate возвращает active `workflow:description`; после persistent return/completion marker исчезает; `Virtual Simulation` review использует тот же контракт (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover preliminary workflow review attention`).
-67. [TODO] Git Commit: `test: cover preliminary workflow review attention` (hash: TBD)
+65. [DONE] Git Commit: `fix: show preliminary workflow review attention` (hash: de2ff0b06)
+66. [DONE] `devtree-early-pp.phase4.preliminary-attention-test.task1` Покрыть regression tests: `Description` review с `Final_Description.md` и открытым Core gate возвращает active `workflow:description`; после persistent return/completion marker исчезает; `Virtual Simulation` review использует тот же контракт (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover preliminary workflow review attention`).
+67. [PENDING] Git Commit: `test: cover preliminary workflow review attention` (hash: TBD)
 68. [TODO] `devtree-early-pp.phase4.preliminary-attention-verify.task1` Выполнить targeted Core/Project Manager verification для preliminary Documentation Tree review attention (scope: `packages/core, src/client/project-manager`; expected commit: none).
 69. [TODO] `devtree-early-pp.phase4.release-confirm-498.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса preliminary workflow review attention (scope: `manual confirmation`; expected commit: none).
 70. [TODO] `devtree-early-pp.phase4.release-docs-498.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.498 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.498`).
