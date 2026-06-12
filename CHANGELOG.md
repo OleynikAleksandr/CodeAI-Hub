@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.494] - 2026-06-12
+### Fixed
+- **Workflow boundary preflight now preserves dot-prefixed status paths.** `WorkflowBoundaryGit.statusPorcelain()` no longer trims the leading status column from `git status --porcelain`, so an unstaged modified tracked path such as `.codeai-hub/<workspace>/workflow/state.json` is not rewritten into `codeai-hub/<workspace>/workflow/state.json`.
+- **Description -> Virtual Simulation can continue after workflow state changes.** Boundary preparation now stages the real `.codeai-hub/...` pathspec instead of failing with `fatal: pathspec 'codeai-hub/.../workflow/state.json' did not match any files`.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/workflow/boundary/workflow-boundary-git.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js`
+
 ## [1.2.493] - 2026-06-12
 ### Fixed
 - **Diagram Modules acceptance now starts Product Part pre-code agents.** Core materializes the neutral Development Tree artifact workspace and starts every planned Product Part brief session immediately after accepted Diagram Modules, using the full `leadProductPartId` / `productPartLeadershipOrder` / remaining planned-id order.

@@ -2,7 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.493** (Early Product Part Pre-Code Fan-Out)
+**Current Release — v1.2.494** (Workflow Boundary Pathspec Recovery)
+
+This release fixes an early workflow boundary failure that could block the
+transition from `Description` to `Virtual Simulation`. Core now preserves the
+leading status columns returned by `git status --porcelain`, so modified
+tracked `.codeai-hub/<workspace>/workflow/state.json` paths keep their leading
+dot when the next boundary preflight prepares Git pathspecs.
+
+The fix is covered by a regression test that reproduces the real state after a
+completed Description boundary: a modified tracked workflow state file plus new
+description artifacts, followed by creation of the next workflow boundary.
+
+Retest focus: start a fresh workflow, complete Description, and continue into
+Virtual Simulation. The next step should start without `git add -A --
+codeai-hub/.../workflow/state.json` pathspec errors. Then repeat the 1.2.493
+focus: after accepting `Diagram Modules`, Product Part pre-code sessions should
+appear before completing Application Skeleton and Quality Gates Baseline.
+
+**Previous Release — v1.2.493** (Early Product Part Pre-Code Fan-Out)
 
 This release starts the Development Tree pre-code lane earlier. After the user
 accepts `Diagram Modules`, Core now materializes the neutral Development Tree
