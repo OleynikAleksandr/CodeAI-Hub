@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "ec6280414",
+  "lastRecordedCommit": "2042cc102",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-495.task1",
-  "expectedCommitMessage": "chore: release 1.2.495",
+  "currentTaskId": "devtree-early-pp.phase4.input-attention-core.task1",
+  "expectedCommitMessage": "fix: derive user attention from managed input state",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.495",
-    "preCommitHead": "ec6280414",
+    "expectedCommitMessage": "fix: derive user attention from managed input state",
+    "preCommitHead": "2042cc102",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-495.task1"
+    "taskId": "devtree-early-pp.phase4.input-attention-core.task1"
   }
 }
 ```
@@ -115,13 +115,29 @@
 35. [DONE] `devtree-early-pp.phase4.release-docs-495.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.495 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.495`).
 36. [DONE] Git Commit: `docs: prepare release 1.2.495` (hash: ec6280414)
 37. [DONE] `devtree-early-pp.phase4.release-build-495.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.495`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.495.vsix` (5.2M); tarball'ы 1.2.495 скопированы в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-38. [PENDING] Git Commit: `chore: release 1.2.495` (hash: TBD)
-39. [TODO] `devtree-early-pp.phase4.user-retest-495.task1` Пользователь тестирует следующий релиз: active user gate должен подсвечиваться pulsing amber/orange, queued gates должны быть read-only, secondary Product Part briefs должны идти перед lead Product Part, Documentation Tree gates Application Skeleton / Quality Gates должны участвовать в том же attention model (scope: `manual retest`; expected commit: none).
+38. [DONE] Git Commit: `chore: release 1.2.495` (hash: 2042cc102)
+39. [BLOCKED] `devtree-early-pp.phase4.user-retest-495.task1` Пользователь тестирует следующий релиз: active user gate должен подсвечиваться pulsing amber/orange, queued gates должны быть read-only, secondary Product Part briefs должны идти перед lead Product Part, Documentation Tree gates Application Skeleton / Quality Gates должны участвовать в том же attention model (scope: `manual retest`; expected commit: none). Result: Product Part gates подсвечиваются и queued input блокируется, но Documentation Tree шаг `Quality Gates Baseline` может ждать реакции пользователя без marker; текущий cursor слишком узко опирается на частные review/progress states вместо Core-owned managed input availability.
+
+### Stream: Managed Input Attention Cursor
+
+40. [DONE] `devtree-early-pp.phase4.input-attention-core.task1` Перевести user attention cursor на Core-owned managed gate state: active/queued gates определяются явным user-review/user-gate состоянием Development Tree и Documentation Tree; свободный продолжабельный чат сам по себе не создаёт orange marker для формально завершённого шага (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts`; expected commit: `fix: derive user attention from managed input state`).
+41. [PENDING] Git Commit: `fix: derive user attention from managed input state` (hash: TBD)
+42. [TODO] `devtree-early-pp.phase4.input-attention-service-test.task1` Покрыть response-level поведение `WorkflowStateService`: Documentation Tree gate появляется при managed `awaiting_acceptance`, а обычный продолжабельный idle/завершённый чат не является самостоятельным источником attention marker (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover workflow managed attention cursor`).
+43. [TODO] Git Commit: `test: cover workflow managed attention cursor` (hash: TBD)
+44. [TODO] `devtree-early-pp.phase4.input-attention-ui.task1` Сделать active user attention row/frame animation устойчивой: оранжевая рамка не исчезает, а плавно меняет intensity/opacity примерно от 100% до 60% и обратно (scope: `packages/ui/project-manager/styles.css, doc/TODO/todo-plan.md`; expected commit: `fix: animate active user attention frames`).
+45. [TODO] Git Commit: `fix: animate active user attention frames` (hash: TBD)
+46. [TODO] `devtree-early-pp.phase4.input-attention-verify.task1` Выполнить targeted Core/Project Manager tests/build для managed input attention cursor и tree markers (scope: `packages/core, src/client/project-manager`; expected commit: none).
+47. [TODO] `devtree-early-pp.phase4.release-confirm-496.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса managed input attention cursor (scope: `manual confirmation`; expected commit: none).
+48. [TODO] `devtree-early-pp.phase4.release-docs-496.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.496 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.496`).
+49. [TODO] Git Commit: `docs: prepare release 1.2.496` (hash: TBD)
+50. [TODO] `devtree-early-pp.phase4.release-build-496.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.496`).
+51. [TODO] Git Commit: `chore: release 1.2.496` (hash: TBD)
+52. [TODO] `devtree-early-pp.phase4.user-retest-496.task1` Пользователь тестирует следующий релиз: любой managed workflow/development-tree turn с unlocked user input должен подсвечивать соответствующий узел дерева анимированной orange frame; queued user gates остаются read-only; Quality Gates Baseline должен подсвечиваться, когда его поле ввода доступно для реакции пользователя (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-40. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-41. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-42. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+53. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+54. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+55. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
