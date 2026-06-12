@@ -1,3 +1,18 @@
+# Plan Closeout: active-plans-russian-translation-2026-06-12
+
+**Created:** 2026-06-12
+**Acceptance:** Пользователь принял русский перевод двух активных Plans-документов и запросил следующий implementation scope.
+**Execution Scope Status:** ACTIVE at archive creation
+**Branch:** main
+**Current Task:** active-plans-ru.phase4.closeout.task1
+**Expected Commit:** docs: close active plans russian translation scope
+**Last Recorded Commit:** 0d7f6f25b
+**Planning Source Disposition:** kept_active
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/README.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/README.md",
   "currentTaskId": "active-plans-ru.phase4.closeout.task1",
   "expectedCommitMessage": "docs: close active plans russian translation scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close active plans russian translation scope",
-    "preCommitHead": "0d7f6f25b",
-    "stage": "commit_pending",
-    "taskId": "active-plans-ru.phase4.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -62,6 +72,7 @@
 
 ### Stream: Archive And Dispose
 
-5. [DONE] `active-plans-ru.phase4.closeout.task1` После явного acceptance пользователя закрыть документационный translation scope и оставить активные planning-документы на месте как рабочие источники следующего refactor cycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close active plans russian translation scope`).
-6. [PENDING] Git Commit: `docs: close active plans russian translation scope` (hash: TBD)
+5. [IN_PROGRESS] `active-plans-ru.phase4.closeout.task1` После явного acceptance пользователя закрыть документационный translation scope и оставить активные planning-документы на месте как рабочие источники следующего refactor cycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close active plans russian translation scope`).
+6. [TODO] Git Commit: `docs: close active plans russian translation scope` (hash: TBD)
 7. [TODO] `active-plans-ru.phase4.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
