@@ -30,6 +30,7 @@ import {
   attachValidationDirtyGate,
   readTechnicalStageDirtyStatus,
 } from "./technical-stage-dirty-gate";
+import { resolvePreliminaryReviewOpenStages } from "./workflow-preliminary-review-attention";
 import {
   normalizeClearedWorkflowProjection,
   workflowArtifactFileExists,
@@ -166,6 +167,11 @@ export class WorkflowStateService {
       workspaceSlug: workspaceSlugResult.value,
       stage: "virtual_simulation",
       fileName: "virtual-simulation.md",
+    });
+    const preliminaryReviewOpenStages = resolvePreliminaryReviewOpenStages({
+      sessionManager: this.sessionManager,
+      workspaceRoot,
+      workspaceSlug: workspaceSlugResult.value,
     });
 
     Promise.all([
@@ -338,6 +344,20 @@ export class WorkflowStateService {
                     userGateCursor: resolveWorkflowUserInputAttentionCursor({
                       developmentTree,
                       documentationStages: [
+                        {
+                          progress: null,
+                          reviewOpen:
+                            preliminaryReviewOpenStages.has("description"),
+                          stage: "description",
+                        },
+                        {
+                          progress: null,
+                          reviewOpen:
+                            preliminaryReviewOpenStages.has(
+                              "virtual_simulation"
+                            ),
+                          stage: "virtual_simulation",
+                        },
                         {
                           progress:
                             technicalStageProgress.applicationSkeletonProgress,

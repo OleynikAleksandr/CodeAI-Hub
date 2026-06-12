@@ -1,6 +1,10 @@
 const USER_GATE_INPUT_LOCK_REASON = "Another user gate is active.";
 
-type DocumentationGateStage = "application_skeleton" | "quality_gates";
+type DocumentationGateStage =
+  | "application_skeleton"
+  | "description"
+  | "quality_gates"
+  | "virtual_simulation";
 
 export interface WorkflowInputAttentionDevelopmentTree {
   readonly activeUserGate?: unknown;
@@ -21,6 +25,13 @@ export interface WorkflowInputAttentionDocumentationStage {
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const DOCUMENTATION_STAGE_ARTIFACTS: Record<DocumentationGateStage, string> = {
+  application_skeleton: "application-skeleton.md",
+  description: "Final_Description.md",
+  quality_gates: "quality-gates.md",
+  virtual_simulation: "virtual-simulation.md",
+};
 
 const normalizeQueuedGate = (
   gate: Record<string, unknown>
@@ -52,10 +63,7 @@ const createDocumentationUserGate = (params: {
   ) {
     return null;
   }
-  const fileName =
-    params.stage === "quality_gates"
-      ? "quality-gates.md"
-      : "application-skeleton.md";
+  const fileName = DOCUMENTATION_STAGE_ARTIFACTS[params.stage];
   return {
     artifactPaths: params.artifactPaths ?? [
       `.codeai-hub/${params.workspaceSlug}/${params.stage}/${fileName}`,

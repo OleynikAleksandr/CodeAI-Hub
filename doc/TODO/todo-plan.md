@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "9dd520c96",
+  "lastRecordedCommit": "0168cc67e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-497.task1",
-  "expectedCommitMessage": "chore: release 1.2.497",
+  "currentTaskId": "devtree-early-pp.phase4.preliminary-attention.task1",
+  "expectedCommitMessage": "fix: show preliminary workflow review attention",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.497",
-    "preCommitHead": "9dd520c96",
+    "expectedCommitMessage": "fix: show preliminary workflow review attention",
+    "preCommitHead": "0168cc67e",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-497.task1"
+    "taskId": "devtree-early-pp.phase4.preliminary-attention.task1"
   }
 }
 ```
@@ -145,13 +145,27 @@
 59. [DONE] `devtree-early-pp.phase4.release-docs-497.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.497 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.497`).
 60. [DONE] Git Commit: `docs: prepare release 1.2.497` (hash: 9dd520c96)
 61. [DONE] `devtree-early-pp.phase4.release-build-497.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.497`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.497.vsix` (5.2M); tarball'ы 1.2.497 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-62. [PENDING] Git Commit: `chore: release 1.2.497` (hash: TBD)
-63. [TODO] `devtree-early-pp.phase4.user-retest-497.task1` Пользователь тестирует следующий релиз: Quality Gates Baseline должен подсвечиваться анимированной orange frame уже на research review, когда stage todo-plan находится на managed review task и доступны только `quality-gates-research.md/json`; stale completed stages и persistent return phases остаются зелёными/обычными без orange marker (scope: `manual retest`; expected commit: none).
+62. [DONE] Git Commit: `chore: release 1.2.497` (hash: 0168cc67e)
+63. [BLOCKED] `devtree-early-pp.phase4.user-retest-497.task1` Пользователь тестирует следующий релиз: Quality Gates Baseline должен подсвечиваться анимированной orange frame уже на research review, когда stage todo-plan находится на managed review task и доступны только `quality-gates-research.md/json`; stale completed stages и persistent return phases остаются зелёными/обычными без orange marker (scope: `manual retest`; expected commit: none). Result: Релиз 1.2.497 исправил Quality Gates research review, но выявил такой же пробел для preliminary Documentation Tree review: после `Description` Core открывает пользовательскую проверку с кнопкой `Подтверждаю`, однако filesystem hydration уже видит `Final_Description.md` и отображает шаг зелёным без active orange user-gate frame.
+
+### Stream: Preliminary Workflow Review Attention
+
+64. [DONE] `devtree-early-pp.phase4.preliminary-attention.task1` Подключить preliminary user review gates для `Description` и `Virtual Simulation` к тому же Core-owned `userGateCursor`: открытый `managed-workflow-user-review` в сессии даёт active Documentation Tree marker, а `managed-workflow-complete` закрывает marker (scope: `packages/core/src/remote-bridge/handlers/workflow-preliminary-review-attention.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts`; expected commit: `fix: show preliminary workflow review attention`).
+65. [PENDING] Git Commit: `fix: show preliminary workflow review attention` (hash: TBD)
+66. [TODO] `devtree-early-pp.phase4.preliminary-attention-test.task1` Покрыть regression tests: `Description` review с `Final_Description.md` и открытым Core gate возвращает active `workflow:description`; после persistent return/completion marker исчезает; `Virtual Simulation` review использует тот же контракт (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover preliminary workflow review attention`).
+67. [TODO] Git Commit: `test: cover preliminary workflow review attention` (hash: TBD)
+68. [TODO] `devtree-early-pp.phase4.preliminary-attention-verify.task1` Выполнить targeted Core/Project Manager verification для preliminary Documentation Tree review attention (scope: `packages/core, src/client/project-manager`; expected commit: none).
+69. [TODO] `devtree-early-pp.phase4.release-confirm-498.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса preliminary workflow review attention (scope: `manual confirmation`; expected commit: none).
+70. [TODO] `devtree-early-pp.phase4.release-docs-498.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.498 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.498`).
+71. [TODO] Git Commit: `docs: prepare release 1.2.498` (hash: TBD)
+72. [TODO] `devtree-early-pp.phase4.release-build-498.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.498`).
+73. [TODO] Git Commit: `chore: release 1.2.498` (hash: TBD)
+74. [TODO] `devtree-early-pp.phase4.user-retest-498.task1` Пользователь тестирует следующий релиз: `Description` и `Virtual Simulation` должны получать анимированную orange frame в Documentation Tree, когда Core открыл preliminary user review и ждёт `Подтверждаю`; после acceptance/persistent return эти шаги остаются обычными зелёными без orange marker (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-64. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-65. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-66. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+75. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+76. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+77. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
