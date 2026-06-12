@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.493] - 2026-06-12
+### Fixed
+- **Diagram Modules acceptance now starts Product Part pre-code agents.** Core materializes the neutral Development Tree artifact workspace and starts every planned Product Part brief session immediately after accepted Diagram Modules, using the full `leadProductPartId` / `productPartLeadershipOrder` / remaining planned-id order.
+- **Quality Gates handoff is now recovery/idempotency, not the primary Product Part trigger.** The verified Quality Gates terminal handoff reruns the same Core bootstrap path only to recover missing Product Part sessions.
+
+### Changed
+- **Development Tree pre-code work is separated from code-readiness.** Product Part briefs may run in parallel with `Application Skeleton` and `Quality Gates Baseline`, while production code, code-ready downstream merge, and final integration still require committed skeleton materialization plus verified Quality Gates evidence.
+- **SSOT docs now describe the two-lane model.** The active Development Tree planning document, System Architecture, and Workflow Steps overview distinguish early pre-code fan-out from the later code-generation gate.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.js`
+
 ## [1.2.492] - 2026-06-11
 ### Fixed
 - **Quality Gates handoff now fans out to every planned Product Part.** Core builds the complete Product Part leadership order from `leadProductPartId`, declared `productPartLeadershipOrder`, and any remaining planned ids, then starts/restarts a Product Part agent session for each planned part.

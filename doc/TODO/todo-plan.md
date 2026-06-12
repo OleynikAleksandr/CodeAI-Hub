@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "ccd33fceb",
+  "lastRecordedCommit": "2a9513186",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase1.docs.task1",
-  "expectedCommitMessage": "docs: document early development tree precode bootstrap",
+  "currentTaskId": "devtree-early-pp.phase3.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.493",
   "debt": {
-    "expectedCommitMessage": "docs: document early development tree precode bootstrap",
-    "preCommitHead": "ccd33fceb",
+    "expectedCommitMessage": "docs: prepare release 1.2.493",
+    "preCommitHead": "2a9513186",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase1.docs.task1"
+    "taskId": "devtree-early-pp.phase3.release-docs.task1"
   }
 }
 ```
@@ -64,21 +64,21 @@
 ### Stream: Architecture Documentation
 
 7. [DONE] `devtree-early-pp.phase1.docs.task1` Синхронизировать SSOT и активный planning-документ: pre-code Product Part lane стартует после accepted `Diagram Modules`, а `Application Skeleton -> Quality Gates` остаётся барьером только для production code/code-ready merge (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md`; expected commit: `docs: document early development tree precode bootstrap`).
-8. [PENDING] Git Commit: `docs: document early development tree precode bootstrap` (hash: TBD)
+8. [DONE] Git Commit: `docs: document early development tree precode bootstrap` (hash: 2a9513186)
 
 ## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Targeted Core Checks
 
-9. [TODO] `devtree-early-pp.phase2.verify.task1` Выполнить таргетные тесты и сборку Core для затронутых handlers/managed workflow paths (scope: `packages/core`; expected commit: none).
+9. [DONE] `devtree-early-pp.phase2.verify.task1` Выполнить таргетные тесты и сборку Core для затронутых handlers/managed workflow paths (scope: `packages/core`; expected commit: none). Result: Verification passed: npm run build --workspace @codeai-hub/core; node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.js.
 
 ## Phase 3 - Release Build (owner: Codex/User, updated: 2026-06-12)
 
 ### Stream: Release Build Confirmation
 
-10. [TODO] `devtree-early-pp.phase3.release-confirm.task1` Получить отдельное подтверждение пользователя на релизную сборку после зелёных фиксов и проверок (scope: `manual confirmation`; expected commit: none).
-11. [TODO] `devtree-early-pp.phase3.release-docs.task1` После подтверждения подготовить release notes/version docs на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.493`).
-12. [TODO] Git Commit: `docs: prepare release 1.2.493` (hash: TBD)
+10. [DONE] `devtree-early-pp.phase3.release-confirm.task1` Получить отдельное подтверждение пользователя на релизную сборку после зелёных фиксов и проверок (scope: `manual confirmation`; expected commit: none). Result: Пользователь явно подтвердил сборку нового релиза 1.2.493 после зелёной verification.
+11. [DONE] `devtree-early-pp.phase3.release-docs.task1` После подтверждения подготовить release notes/version docs на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.493`).
+12. [PENDING] Git Commit: `docs: prepare release 1.2.493` (hash: TBD)
 13. [TODO] `devtree-early-pp.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем при чистом дереве `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package versions, release artifacts, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.493`).
 14. [TODO] Git Commit: `chore: release 1.2.493` (hash: TBD)
 

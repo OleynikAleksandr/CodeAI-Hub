@@ -2,7 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.492** (Product Part Fan-Out Recovery)
+**Current Release — v1.2.493** (Early Product Part Pre-Code Fan-Out)
+
+This release starts the Development Tree pre-code lane earlier. After the user
+accepts `Diagram Modules`, Core now materializes the neutral Development Tree
+artifact workspace and starts/recover Product Part brief agents for every
+planned Product Part in the complete leadership order.
+
+Quality Gates terminal handoff remains an idempotent recovery path for missing
+Product Part sessions, but it is no longer the primary trigger for Product Part
+briefs. `Application Skeleton -> Quality Gates Baseline` still blocks
+production code, code-ready downstream merge, and final integration.
+
+Retest focus: accept `Diagram Modules` in a workspace with at least two Product
+Parts. Product Part sessions and brief drafts should appear before completing
+`Application Skeleton` and `Quality Gates Baseline`. Then continue through
+Skeleton/Quality Gates and verify no production code or code-ready merge starts
+before verified Quality Gates.
+
+**Previous Release — v1.2.492** (Product Part Fan-Out Recovery)
 
 This release fixes the Product Part fan-out boundary after Quality Gates. Core
 now starts or recovers an agent session for every planned Product Part after the
