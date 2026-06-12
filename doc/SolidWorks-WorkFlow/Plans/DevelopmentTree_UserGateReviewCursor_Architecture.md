@@ -1,55 +1,55 @@
-# Development Tree User Gate Review Cursor
+# Курсор пользовательских review-gates в Development Tree
 
-**Status:** active next-step planning source, opened 2026-06-12.
-**Parent strategic line:** `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
-**Scope:** parallel pre-code Development Tree execution with a Core-owned sequential user-review cursor and Project Manager tree attention markers.
+**Статус:** активный planning-документ следующего шага, открыт 2026-06-12.
+**Родительская стратегическая линия:** `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
+**Область:** параллельное pre-code исполнение Development Tree с Core-owned последовательным курсором user review и attention markers в дереве Project Manager.
 
-## 1. Problem
+## 1. Проблема
 
-The Development Tree can run more work in parallel than the user can review in parallel.
+Development Tree может выполнять больше работы параллельно, чем пользователь способен параллельно review-ить.
 
-After `Diagram Modules` is accepted, Core already knows the Product Parts, clusters, standalone modules, lead Product Part, and leadership order. Product Part briefs, lead order planning, cluster facade contracts, and module specifications are semantic/pre-code work. They do not require the final application codebase to be created yet.
+После acceptance шага `Diagram Modules` Core уже знает Product Parts, clusters, standalone modules, lead Product Part и leadership order. Product Part briefs, lead order planning, cluster facade contracts и module specifications являются semantic/pre-code work. Для них ещё не нужен финально созданный application codebase.
 
-At the same time, the user must not receive several simultaneous review prompts and enabled confirmation buttons. If six Product Part or node artifacts reach review at nearly the same time, the UI must not ask the user to act on all of them at once. The user can read many sessions, but should have exactly one active decision target.
+Одновременно пользователь не должен получать несколько параллельных review prompts и несколько включённых confirmation buttons. Если шесть Product Part или node artifacts доходят до review почти одновременно, UI не должен просить пользователя действовать по всем ним сразу. Пользователь может читать много sessions, но активная точка принятия решения должна быть ровно одна.
 
-The current marker model has enough base states for ordinary progress:
+Текущая marker model уже имеет базовые состояния обычного прогресса:
 
-- gray: not started;
-- yellow: running;
-- green: completed/accepted.
+- gray: не начато;
+- yellow: выполняется;
+- green: завершено/принято.
 
-It lacks a strong "the system needs your action here now" state and lacks a Core-owned rule for choosing which pending review receives the user's active input.
+Ей не хватает сильного состояния "система ждёт твоего действия именно здесь" и Core-owned правила выбора, какой pending review получает активный user input.
 
-## 2. Decision
+## 2. Решение
 
-Use the existing Documentation Tree / Development Tree sidebar as the primary user-orientation surface. Do not create a separate action inbox for this refactor.
+Использовать существующий sidebar Documentation Tree / Development Tree как основной surface ориентации пользователя. Для этого refactor не создавать отдельный action inbox.
 
-Core owns a single review cursor:
+Core владеет единственным review cursor:
 
 ```text
 activeUserGate: UserGate | null
 queuedUserGates: UserGate[]
 ```
 
-Only `activeUserGate` accepts user action. Queued gates are visible and readable, but their review controls and chat input are locked until Core promotes that gate to active.
+Только `activeUserGate` принимает user action. Queued gates видимы и читаемы, но их review controls и chat input заблокированы, пока Core не повысит этот gate до active.
 
-Project Manager renders this Core-owned cursor in the existing tree:
+Project Manager отображает этот Core-owned cursor в существующем дереве:
 
-- running nodes remain yellow;
-- completed nodes remain green;
-- the active user gate gets a pulsing amber/orange marker;
-- queued user gates get a non-pulsing amber/orange marker or a muted attention marker;
-- blocker/error states remain red and must not be confused with normal user review.
+- running nodes остаются yellow;
+- completed nodes остаются green;
+- active user gate получает pulsing amber/orange marker;
+- queued user gates получают non-pulsing amber/orange marker или muted attention marker;
+- blocker/error states остаются red и не должны смешиваться с обычным user review.
 
-The pulsing marker is the "respond here now" signal. Red remains reserved for failed validation, blocked orchestration, missing artifacts, or unrecoverable runtime errors.
+Pulsing marker — это сигнал "ответь здесь сейчас". Red остаётся зарезервированным для failed validation, blocked orchestration, missing artifacts или unrecoverable runtime errors.
 
-## 3. Parallel Execution Model
+## 3. Модель параллельного исполнения
 
-The Development Tree process should be split into two lanes after accepted `Diagram Modules`.
+Процесс Development Tree после accepted `Diagram Modules` должен быть разделён на две lanes.
 
-### Lane A: Project foundation
+### Линия A: фундамент проекта
 
-This lane remains code-foundation owned:
+Эта lane остаётся code-foundation owned:
 
 ```text
 Application Skeleton
@@ -57,11 +57,11 @@ Application Skeleton
   -> verified code-generation readiness
 ```
 
-`Quality Gates Baseline` still depends on the accepted/materialized Application Skeleton. The refactor does not remove that dependency.
+`Quality Gates Baseline` по-прежнему зависит от accepted/materialized Application Skeleton. Этот refactor не снимает эту зависимость.
 
-### Lane B: Development Tree pre-code planning
+### Линия B: pre-code планирование Development Tree
 
-This lane may run in parallel with Lane A:
+Эта lane может выполняться параллельно с Lane A:
 
 ```text
 Product Part Development Briefs
@@ -71,9 +71,9 @@ Product Part Development Briefs
   -> cluster facade contracts and module specifications
 ```
 
-Lane B may produce pre-code artifacts while Lane A is still preparing the application foundation. It must not produce implementation code or code-ready merges until Lane A reaches verified readiness.
+Lane B может производить pre-code artifacts, пока Lane A ещё готовит application foundation. Но она не должна производить implementation code или code-ready merges, пока Lane A не достигла verified readiness.
 
-Allowed before verified Quality Gates:
+Разрешено до verified Quality Gates:
 
 - Product Part Development Briefs;
 - lead `DevelopmentOrderPlan.v2`;
@@ -81,26 +81,26 @@ Allowed before verified Quality Gates:
 - cluster facade contracts;
 - module facade contracts;
 - module function/specification artifacts;
-- implementation TODO plans that describe future code work.
+- implementation TODO plans, описывающие будущую code work.
 
-Forbidden before verified Quality Gates:
+Запрещено до verified Quality Gates:
 
-- writing production implementation code;
-- claiming a cluster/module is code-ready;
-- merging downstream tree contents to main as implementation;
-- running final code integration gates that require the real skeleton/gate surface.
+- писать production implementation code;
+- утверждать, что cluster/module находится в состоянии code-ready;
+- merge-ить downstream tree contents в main как implementation;
+- запускать final code integration gates, которым нужен реальный skeleton/gate surface.
 
-If an early pre-code artifact needs exact file paths that are not yet known before Application Skeleton is accepted, it should use logical/provisional paths and mark them as `pending_skeleton_alignment`. Core can repair or reconcile those paths after Skeleton materialization.
+Если раннему pre-code artifact нужны точные file paths, которые ещё неизвестны до acceptance Application Skeleton, он должен использовать logical/provisional paths и помечать их как `pending_skeleton_alignment`. Core сможет repair или reconcile эти paths после Skeleton materialization.
 
-## 4. Product Part Brief Barrier
+## 4. Барьер Product Part Brief
 
-Core must start every planned Product Part agent for the pre-code lane. The number of Product Parts is arbitrary and comes from accepted `Diagram Modules`.
+Core должен запускать каждого planned Product Part agent для pre-code lane. Количество Product Parts произвольное и приходит из accepted `Diagram Modules`.
 
-Every Product Part agent drafts a `ProductPartDevelopmentBrief`.
+Каждый Product Part agent создаёт draft `ProductPartDevelopmentBrief`.
 
-Only the lead Product Part later receives the `DevelopmentOrderPlan.v2` assignment, and only after Core has recorded user acceptance for every planned Product Part brief.
+Только lead Product Part позже получает `DevelopmentOrderPlan.v2` assignment, и только после того, как Core записал user acceptance для каждого planned Product Part brief.
 
-The barrier is Core-owned:
+Barrier принадлежит Core:
 
 ```text
 all planned Product Part briefs accepted?
@@ -108,58 +108,58 @@ all planned Product Part briefs accepted?
   yes -> Core dispatches the lead order-plan prompt
 ```
 
-When the barrier opens, the lead prompt must contain the full text of every accepted Product Part brief inline. Paths are provenance only; the lead agent must not be required to discover or read the brief files.
+Когда barrier открывается, lead prompt должен содержать полный текст каждого accepted Product Part brief inline. Paths являются только provenance; lead agent не должен быть вынужден самостоятельно искать или читать brief files.
 
-The user-review cursor makes this understandable in the UI:
+User-review cursor делает это понятным в UI:
 
-- secondary Product Part brief review gates can become active one by one;
-- the lead Product Part order-plan node stays blocked or pending while those review gates are unresolved;
-- once all briefs are accepted, Core promotes or dispatches the lead order-plan task.
+- secondary Product Part brief review gates могут становиться active по одному;
+- lead Product Part order-plan node остаётся blocked или pending, пока эти review gates не resolved;
+- когда все briefs accepted, Core promotes или dispatches lead order-plan task.
 
-## 5. User Review Cursor Rules
+## 5. Правила курсора user review
 
-Core chooses the active review gate deterministically.
+Core выбирает active review gate детерминированно.
 
-Recommended ordering:
+Рекомендуемый порядок:
 
-1. dependency-unblocking gates before dependent gates;
-2. Product Part brief gates before lead `DevelopmentOrderPlan.v2`;
-3. earlier completed provider turns before later completed provider turns;
-4. tree order as the final tie-breaker.
+1. dependency-unblocking gates перед dependent gates;
+2. Product Part brief gates перед lead `DevelopmentOrderPlan.v2`;
+3. provider turns, завершившиеся раньше, перед provider turns, завершившимися позже;
+4. tree order как последний tie-breaker.
 
-Only the active gate has enabled user actions:
+Только active gate имеет включённые user actions:
 
 - review buttons;
 - revision/feedback input;
 - accept/reject controls;
 - managed repair entrypoints.
 
-Queued gates are read-only:
+Queued gates являются read-only:
 
-- the user may open the node;
-- the user may read session history and artifacts;
-- the user sees why input is locked;
-- no acceptance/revision action is accepted until Core promotes the gate.
+- пользователь может открыть node;
+- пользователь может читать session history и artifacts;
+- пользователь видит, почему input заблокирован;
+- acceptance/revision action не принимается, пока Core не повысит gate до active.
 
-This is parallel orchestration with sequential user decisions.
+Это parallel orchestration с sequential user decisions.
 
-## 6. Auto-Open Behavior
+## 6. Поведение auto-open
 
-When `activeUserGate` changes, Project Manager should automatically open the corresponding node, session, and artifact panel once.
+Когда `activeUserGate` меняется, Project Manager должен один раз автоматически открыть соответствующие node, session и artifact panel.
 
-Rules:
+Правила:
 
-- auto-open happens only on promotion to active, not on every snapshot refresh;
-- if the user navigates away, the pulsing marker remains available for manual return;
-- queued gates must not steal focus;
-- reconnecting Project Manager clients read the same Core-owned cursor and render the same active/queued state;
-- closing Project Manager must not stop Core from running until the next user gate.
+- auto-open происходит только при promotion to active, а не при каждом snapshot refresh;
+- если пользователь уходит на другой node, pulsing marker остаётся доступным для ручного возврата;
+- queued gates не должны перехватывать focus;
+- переподключившиеся Project Manager clients читают тот же Core-owned cursor и показывают то же active/queued state;
+- закрытие Project Manager не должно останавливать Core до следующего user gate.
 
-## 7. Snapshot Contract
+## 7. Контракт snapshot
 
-Core should expose enough state for clients to render the tree without owning workflow truth.
+Core должен отдавать достаточно state, чтобы clients могли отображать дерево, не владея workflow truth.
 
-Minimum read-model fields:
+Минимальные read-model fields:
 
 ```json
 {
@@ -188,41 +188,41 @@ Minimum read-model fields:
 }
 ```
 
-The exact TypeScript shape can differ, but the ownership boundary must not: Core decides active/queued status; Project Manager renders it.
+Точная TypeScript shape может отличаться, но ownership boundary не должна меняться: Core решает active/queued status; Project Manager отображает его.
 
-## 8. First Implementation Slice
+## 8. Первый срез реализации
 
-The first code refactor should be small and verifiable:
+Первый code refactor должен быть маленьким и проверяемым:
 
-1. Add Core-owned user-gate cursor state to the Development Tree snapshot/read model.
-2. Make Project Manager render active and queued user-review markers in the existing tree.
-3. Auto-open only the active gate session/artifacts on cursor promotion.
-4. Lock queued gate input/actions while allowing read-only session/artifact viewing.
-5. Wire Product Part brief review gates so secondary briefs are presented sequentially and the lead order-plan task visibly waits for all accepted briefs.
+1. Добавить Core-owned user-gate cursor state в Development Tree snapshot/read model.
+2. Научить Project Manager отображать active и queued user-review markers в существующем дереве.
+3. Auto-open только active gate session/artifacts при cursor promotion.
+4. Блокировать queued gate input/actions, разрешая read-only просмотр session/artifacts.
+5. Подключить Product Part brief review gates так, чтобы secondary briefs предъявлялись последовательно, а lead order-plan task видимо ждал acceptance всех briefs.
 
-This slice does not need to move Product Part startup earlier than Quality Gates yet. Moving the entire pre-code lane to begin after `Diagram Modules` can be a later slice once the cursor is reliable.
+Этому slice не обязательно переносить Product Part startup раньше Quality Gates. Перенос всей pre-code lane на старт после `Diagram Modules` может быть следующим slice после того, как cursor станет надёжным.
 
-## 9. Acceptance Criteria
+## 9. Критерии приёмки
 
-- Multiple Development Tree agents may run concurrently.
-- If multiple review gates become ready, exactly one gate is active for user input.
-- The active gate is visible in the sidebar with a pulsing amber/orange marker.
-- Queued gates are visible but read-only.
-- Selecting a queued gate shows its session/artifacts and a Core-provided lock reason.
-- Accepting/rejecting/revising the active gate promotes the next queued gate without requiring a full Project Manager restart.
-- Lead `DevelopmentOrderPlan.v2` does not start until every Product Part brief is accepted.
-- The implementation remains Core-owned and works if Project Manager is closed until the next user gate.
+- Несколько Development Tree agents могут выполняться одновременно.
+- Если несколько review gates становятся ready, ровно один gate active для user input.
+- Active gate виден в sidebar через pulsing amber/orange marker.
+- Queued gates видимы, но read-only.
+- Selecting queued gate показывает его session/artifacts и Core-provided lock reason.
+- Acceptance/rejection/revision active gate promotes следующий queued gate без полного restart Project Manager.
+- Lead `DevelopmentOrderPlan.v2` не стартует, пока каждый Product Part brief не accepted.
+- Implementation остаётся Core-owned и работает, если Project Manager закрыт до следующего user gate.
 
-## 10. Out Of Scope
+## 10. Вне области
 
-- Building a separate action inbox/dashboard.
-- Letting Project Manager choose the active review gate.
-- Allowing multiple enabled user acceptance buttons at the same time.
-- Generating production implementation code before Application Skeleton and Quality Gates are ready.
-- Treating a doc-only cluster boundary as a final merge.
+- Строить отдельный action inbox/dashboard.
+- Позволять Project Manager выбирать active review gate.
+- Разрешать несколько включённых user acceptance buttons одновременно.
+- Генерировать production implementation code до готовности Application Skeleton и Quality Gates.
+- Считать doc-only cluster boundary финальным merge.
 
-## 11. Open Questions
+## 11. Открытые вопросы
 
-- Should queued gates use a static amber marker or a softer gray/amber marker?
-- Should Core persist the last auto-opened gate per client, or only expose the global cursor and let each client suppress repeated auto-open locally?
-- Should pre-code cluster/module contract waves start immediately after accepted lead `DevelopmentOrderPlan.v2` even if Application Skeleton is still running, or should the first release of this refactor limit itself to Product Part brief/order-plan gating?
+- Должны ли queued gates использовать static amber marker или более мягкий gray/amber marker?
+- Должен ли Core persist-ить last auto-opened gate per client, или только отдавать global cursor, а каждый client сам suppress-ит повторный auto-open локально?
+- Должны ли pre-code cluster/module contract waves стартовать сразу после accepted lead `DevelopmentOrderPlan.v2`, даже если Application Skeleton ещё выполняется, или первый релиз этого refactor должен ограничиться Product Part brief/order-plan gating?

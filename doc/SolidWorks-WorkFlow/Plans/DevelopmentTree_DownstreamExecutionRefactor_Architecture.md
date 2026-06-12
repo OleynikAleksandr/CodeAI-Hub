@@ -1,133 +1,133 @@
-# Development Tree Downstream Execution Refactor
+# Рефакторинг downstream-исполнения Development Tree
 
-**Status:** active strategic planning source, opened 2026-06-10; protective slices implemented through release `1.2.492`, remaining wave/module/code-ready work deferred.
-**Relationship to current directives:** this document is now the consolidated active Development Tree downstream execution line. `Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md` remains a historical reference baseline, and `Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` remains an absorbed implementation planning source. Their stable decisions are carried by the current SSOT docs and by this downstream refactor line; they are no longer separate active root directives.
+**Статус:** активный стратегический planning-документ, открыт 2026-06-10; защитные срезы реализованы до релиза `1.2.492`, оставшаяся работа по wave/module/code-ready отложена.
+**Связь с текущими директивами:** этот документ теперь является консолидированной активной линией downstream-исполнения Development Tree. `Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md` остаётся историческим reference baseline, а `Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` остаётся поглощённым implementation planning source. Их устойчивые решения перенесены в текущие SSOT-документы и в эту downstream-refactor линию; они больше не являются отдельными активными директивами в корне `Plans/`.
 
-## 1. Problem
+## 1. Проблема
 
-FinderWidget retesting exposed that the current Development Tree MVP can start a first cluster-contract sub-agent in a worktree, accept its draft artifacts, and copy those draft artifacts back to the main workspace. That behavior is too weak for the intended downstream execution model.
+Ретест FinderWidget показал, что текущий MVP Development Tree умеет открыть первого cluster-contract sub-agent в worktree, принять его draft-артефакты и скопировать эти draft-артефакты обратно в основной workspace. Для целевой downstream-модели этого недостаточно.
 
-The current implementation uses the word `merged` for a doc-only cluster contract transfer. That is misleading. A downstream cluster tree should not be considered merge-ready for the main workspace until it has produced code artifacts and passed the relevant gates. Copying `ClusterFacadeContract.draft.*` back to the main workspace is at most a planning/review checkpoint, not integration.
+Текущая реализация использовала слово `merged` для doc-only переноса cluster contract. Это вводит в заблуждение. Downstream cluster tree нельзя считать готовым к merge в основной workspace, пока он не произвёл code artifacts и не прошёл соответствующие gates. Копирование `ClusterFacadeContract.draft.*` обратно в основной workspace может быть максимум planning/review checkpoint, но не integration.
 
-The same retest showed that `DevelopmentOrderPlan.v2` is not yet used as a real executable wave graph. The lead Product Part starts first because it should decide which downstream nodes are parallelizable and which nodes are ordered followers. If Core only starts the first cluster contract and then stops, the lead Product Part order plan is not yet delivering its main architectural value.
+Тот же ретест показал, что `DevelopmentOrderPlan.v2` пока не используется как реальный исполняемый wave graph. Lead Product Part запускается первым потому, что он должен определить, какие downstream-узлы можно выполнять параллельно, а какие должны ждать предыдущие результаты. Если Core открывает только первый cluster contract и затем останавливается, lead Product Part order plan ещё не даёт своей основной архитектурной ценности.
 
-## 2. Decision Direction
+## 2. Направление решения
 
-The downstream model should move from "cluster-contract document branch" to "cluster execution tree".
+Downstream-модель должна перейти от "ветки документа cluster-contract" к "дереву исполнения cluster".
 
-Main workspace ownership:
+Основной workspace владеет:
 
-- accepted trunk workflow artifacts;
-- Product Part Development Briefs;
-- accepted lead `DevelopmentOrderPlan.v2`;
-- high-level Product Part coordination state.
+- принятыми trunk workflow artifacts;
+- `Product Part Development Brief`;
+- принятым lead `DevelopmentOrderPlan.v2`;
+- высокоуровневым coordination state для Product Part.
 
-Downstream cluster worktree ownership:
+Downstream cluster worktree владеет:
 
-- the cluster facade boundary;
-- the future cluster facade class;
-- module specifications for modules owned by the cluster;
-- module facade contracts/classes when they can be safely produced in the same cluster worktree;
-- local commits, sessions, validation evidence, and node-level review state.
+- границей cluster facade;
+- будущим классом cluster facade;
+- спецификациями модулей, принадлежащих cluster;
+- module facade contracts/classes, когда их можно безопасно создать в том же cluster worktree;
+- локальными коммитами, sessions, validation evidence и node-level review state.
 
-The main workspace must not receive downstream cluster artifacts as a final merge until the cluster worktree has produced the code boundary required for the next integration step. A doc-only copy may be allowed only if it is explicitly named as a review snapshot or planning checkpoint, never as `merged`.
+Основной workspace не должен получать downstream cluster artifacts как финальный merge, пока cluster worktree не создал code boundary, необходимую для следующего integration step. Doc-only copy допустим только если он явно называется review snapshot или planning checkpoint, но никогда не `merged`.
 
-Implemented protective state as of `1.2.490`:
+Защитное состояние, реализованное на момент `1.2.490`:
 
-- Product Part review sessions, including non-lead Product Parts, are projected as Development Tree node sessions in Project Manager.
-- Product Part managed startup persists the primary unified dialog history before provider/translation activity can race ahead.
-- Cluster Contract acceptance writes a boundary-accepted coordination checkpoint and leaves the worktree active; it does not copy draft cluster documents into main and does not mark the cluster `merged`.
-- The lead `DevelopmentOrderPlan` assignment is blocked by the Product Part Brief Barrier until every planned Product Part brief is user-accepted.
+- Product Part review sessions, включая non-lead Product Parts, отображаются как Development Tree node sessions в Project Manager.
+- Product Part managed startup сохраняет primary unified dialog history до того, как provider/translation activity может уйти вперёд и создать race.
+- Acceptance для Cluster Contract пишет `boundary-accepted` coordination checkpoint и оставляет worktree активным; он не копирует draft cluster documents в main и не помечает cluster как `merged`.
+- Lead `DevelopmentOrderPlan` assignment блокируется через Product Part Brief Barrier, пока каждый planned Product Part brief не принят пользователем.
 
-## 3. Cluster Boundary Shape
+## 3. Форма границы кластера
 
-A cluster should not have a separate long-form "Cluster Specification" as a primary artifact. The cluster-level boundary is the facade.
+У cluster не должно быть отдельной длинной "Cluster Specification" как основного артефакта. Граница уровня cluster — это facade.
 
-Expected cluster-level artifacts:
+Ожидаемые артефакты уровня cluster:
 
-- `ClusterFacadeContract.draft.{md,json}` while the boundary is still under review;
-- the actual cluster facade class once the boundary is accepted for code generation;
-- validation evidence proving that the facade boundary and generated code match.
+- `ClusterFacadeContract.draft.{md,json}`, пока boundary ещё находится на review;
+- реальный class cluster facade после acceptance границы для code generation;
+- validation evidence, доказывающий, что facade boundary и сгенерированный code совпадают.
 
-Expected module-level artifacts:
+Ожидаемые артефакты уровня module:
 
 - module specifications;
-- module facade contracts/classes where needed;
-- module implementation plans and code in later execution phases.
+- module facade contracts/classes, где это нужно;
+- module implementation plans и code на следующих execution phases.
 
-Specifications belong to modules. The cluster should coordinate modules through its facade and through explicit module boundary contracts, not through a parallel cluster specification document that can drift from the facade.
+Specifications принадлежат modules. Cluster должен координировать modules через свой facade и через явные module boundary contracts, а не через параллельный cluster specification document, который может разойтись с facade.
 
-## 4. Why Lead Product Part Runs First
+## 4. Почему лидирующий Product Part запускается первым
 
-The lead Product Part is not first because it should do all downstream work itself. It is first because it creates the Core-readable execution map:
+Lead Product Part не запускается первым для того, чтобы выполнить всю downstream-работу самостоятельно. Он запускается первым потому, что создаёт execution map, читаемую Core:
 
-- which nodes may start in the same wave;
-- which nodes must wait for accepted upstream boundaries;
-- which nodes belong to another Product Part but depend on this Product Part;
-- which downstream trees need worktrees;
-- which merge/review gates must be satisfied before mainline integration.
+- какие nodes можно стартовать в одной wave;
+- какие nodes должны ждать принятых upstream boundaries;
+- какие nodes принадлежат другому Product Part, но зависят от этого Product Part;
+- какие downstream trees требуют worktrees;
+- какие merge/review gates должны быть выполнены перед mainline integration.
 
-Core must consume this graph as execution input, not as advisory prose. The future wave runner should evaluate the accepted `DevelopmentOrderPlan.v2`, Core-owned Product Part acceptance state, node dependencies, worktree state, and review results before starting each wave.
+Core должен использовать этот graph как execution input, а не как advisory prose. Будущий wave runner должен оценивать принятый `DevelopmentOrderPlan.v2`, Core-owned Product Part acceptance state, node dependencies, worktree state и review results перед стартом каждой wave.
 
-The lead agent may propose the graph, but Core owns truth:
+Lead agent может предложить graph, но Core владеет truth:
 
-- Product Part brief acceptance must be read from Core-managed review state, not trusted from agent-written `requiredBriefs`;
-- only Core starts downstream worktrees;
-- only Core advances node status;
-- only Core decides when a downstream tree is merge-ready.
+- Product Part brief acceptance должен читаться из Core-managed review state, а не из agent-written `requiredBriefs`;
+- только Core запускает downstream worktrees;
+- только Core продвигает node status;
+- только Core решает, когда downstream tree готов к merge.
 
-### Product Part Brief Barrier
+### Барьер Product Part Brief
 
-Core must not dispatch the lead Product Part `DevelopmentOrderPlan` assignment until every planned Product Part has a user-accepted `ProductPartDevelopmentBrief.draft.md` recorded in Core-managed Product Part review state.
+Core не должен отправлять lead Product Part `DevelopmentOrderPlan` assignment, пока каждый planned Product Part не имеет user-accepted `ProductPartDevelopmentBrief.draft.md`, записанный в Core-managed Product Part review state.
 
-The barrier is evaluated from:
+Barrier оценивается по:
 
-- the planned Product Part ids and leadership order declared in `product-parts.index.md`;
-- each Product Part managed review decision under `.codeai-hub/<workspace>/workflow/managed/development-tree-product-parts/<partId>.json`;
-- the full accepted brief markdown at `.codeai-hub/<workspace>/development_tree/materialized/product-parts/<partId>/ProductPartDevelopmentBrief.draft.md`.
+- planned Product Part ids и leadership order, объявленным в `product-parts.index.md`;
+- каждому Product Part managed review decision в `.codeai-hub/<workspace>/workflow/managed/development-tree-product-parts/<partId>.json`;
+- полному markdown принятого brief в `.codeai-hub/<workspace>/development_tree/materialized/product-parts/<partId>/ProductPartDevelopmentBrief.draft.md`.
 
-If any planned Product Part brief is missing or not accepted, Core records the lead order-plan task as blocked and does not send an internal provider prompt. When the barrier opens, Core builds the lead prompt with the full text of every accepted Product Part brief inline and dispatches it to the lead Product Part session, even when the final acceptance happened in a secondary Product Part session. Paths are included as provenance, but the prompt must not require the lead agent to discover or read brief files itself.
+Если какой-либо planned Product Part brief отсутствует или не принят, Core записывает lead order-plan task как blocked и не отправляет internal provider prompt. Когда barrier открывается, Core собирает lead prompt с полным текстом каждого accepted Product Part brief inline и отправляет его в lead Product Part session, даже если финальный acceptance произошёл в secondary Product Part session. Paths включаются как provenance, но prompt не должен требовать от lead agent самостоятельно искать или читать brief files.
 
-The lead agent may summarize and reason over those briefs, but it must not invent `requiredBriefs`. The JSON `requiredBriefs` list in `DevelopmentOrderPlan.v2` must reflect the Core-supplied accepted brief set.
+Lead agent может суммировать эти briefs и рассуждать по ним, но не должен выдумывать `requiredBriefs`. JSON-список `requiredBriefs` в `DevelopmentOrderPlan.v2` должен отражать Core-supplied accepted brief set.
 
-## 5. Cluster Worktree And Module Parallelism
+## 5. Cluster worktree и параллельность модулей
 
-The first implementation does not need to split every module into its own worktree. A cluster worktree may be the initial execution surface for the cluster facade and all owned module specifications/facades. This keeps context coherent and prevents premature orchestration complexity.
+Первая реализация не обязана выделять каждый module в отдельный worktree. Cluster worktree может быть начальной execution surface для cluster facade и всех принадлежащих ему module specifications/facades. Это сохраняет цельный контекст и не создаёт преждевременную orchestration complexity.
 
-Parallel module work should be a second-level optimization:
+Параллельная module work должна быть оптимизацией второго уровня:
 
-1. Core opens the cluster worktree from the accepted main workspace boundary.
-2. The cluster worktree establishes the cluster facade and module boundary contracts.
-3. If module work can proceed independently, Core may fork module worktrees from the cluster worktree state.
-4. Module worktrees merge back into the cluster worktree.
-5. The cluster worktree merges back to main only after the cluster code boundary and gates are complete.
+1. Core открывает cluster worktree от принятой main workspace boundary.
+2. Cluster worktree устанавливает cluster facade и module boundary contracts.
+3. Если module work может идти независимо, Core может форкнуть module worktrees из состояния cluster worktree.
+4. Module worktrees merge-ятся обратно в cluster worktree.
+5. Cluster worktree merge-ится обратно в main только после завершения cluster code boundary и gates.
 
-This keeps parallelism available without forcing every early design artifact to become a separate main-workspace branch.
+Так parallelism остаётся доступным, но ранние design artifacts не обязаны сразу становиться отдельными main-workspace branches.
 
-## 6. Refactor Stages To Slice Later
+## 6. Этапы рефакторинга для будущей нарезки
 
-This document will collect several refactor topics. The first known stages are:
+Этот документ собирает несколько refactor topics. Первые известные stages:
 
-1. Stop pre-creating empty `doc/TODO/stages/development-tree/...` directories for unopened cluster/module nodes. `doc/TODO` should contain real managed plans only. Implemented for non-lead Product Part main-workspace scaffolding in `1.2.489`; broader cluster/module cleanup remains part of downstream execution refactor.
-2. Rename or split the current doc-only cluster contract transfer so it is not reported as a final merge. Protective behavior implemented in `1.2.488` as `boundary_accepted`.
-3. Replace `ClusterSpecification` with a facade-centered cluster boundary model.
-4. Add a Core-owned wave runner that executes accepted `DevelopmentOrderPlan.v2` beyond the first cluster-contract wave.
-5. Add downstream node executors for standalone modules, cluster module specifications, cluster facade code, and later implementation work.
-6. Add merge-ready gates that require code artifacts and validation evidence before downstream work returns to the main workspace.
+1. Остановить предварительное создание пустых `doc/TODO/stages/development-tree/...` directories для unopened cluster/module nodes. `doc/TODO` должен содержать только реальные managed plans. Для non-lead Product Part main-workspace scaffolding это реализовано в `1.2.489`; более широкий cleanup cluster/module остаётся частью downstream execution refactor.
+2. Переименовать или разделить текущий doc-only cluster contract transfer так, чтобы он не отображался как final merge. Защитное поведение реализовано в `1.2.488` как `boundary_accepted`.
+3. Заменить `ClusterSpecification` на facade-centered cluster boundary model.
+4. Добавить Core-owned wave runner, который выполняет принятый `DevelopmentOrderPlan.v2` дальше первой cluster-contract wave.
+5. Добавить downstream node executors для standalone modules, cluster module specifications, cluster facade code и более поздней implementation work.
+6. Добавить merge-ready gates, которые требуют code artifacts и validation evidence перед возвратом downstream work в main workspace.
 
-## 7. Immediate Protective Step
+## 7. Первый защитный шаг
 
-The first implementation step should stop the current doc-only cluster contract acceptance from behaving like a mainline merge.
+Первый implementation step должен остановить поведение, при котором текущий doc-only cluster contract acceptance выглядит как mainline merge.
 
-Required behavior now:
+Требуемое поведение сейчас:
 
-1. User/lead accepts the cluster facade boundary in the cluster worktree.
-2. Core records that review decision as a boundary checkpoint.
-3. Core may write a main-workspace coordination artifact with an explicit name such as `boundary-accepted`, but it must not copy draft cluster documentation into the main workspace as an integration result.
-4. Core must not mark the cluster node as `merged`.
-5. The cluster worktree remains the active downstream execution tree for the next phases.
+1. User/lead принимает cluster facade boundary в cluster worktree.
+2. Core записывает это review decision как boundary checkpoint.
+3. Core может записать main-workspace coordination artifact с явным именем вроде `boundary-accepted`, но не должен копировать draft cluster documentation в основной workspace как integration result.
+4. Core не должен помечать cluster node как `merged`.
+5. Cluster worktree остаётся активным downstream execution tree для следующих phases.
 
-This is intentionally smaller than the final wave runner. It prevents false `merged` state while leaving room for the later execution graph:
+Этот шаг намеренно меньше финального wave runner. Он предотвращает ложное состояние `merged`, сохраняя место для дальнейшего execution graph:
 
 ```text
 cluster worktree opened
@@ -141,22 +141,22 @@ cluster worktree opened
   -> merge complete cluster contents to main
 ```
 
-Standalone modules should follow the same rule. A standalone module should not return to main as a final result until its specification, facade boundary/class where needed, code, and validation evidence are present. The difference is only the shape of the subtree: a cluster returns all owned cluster contents together; a standalone module returns its standalone contents.
+Standalone modules должны следовать тому же правилу. Standalone module не должен возвращаться в main как финальный результат, пока его specification, facade boundary/class где нужно, code и validation evidence не присутствуют. Разница только в форме subtree: cluster возвращает всё принадлежащее cluster содержимое вместе; standalone module возвращает своё standalone-содержимое.
 
-## 8. Merge Vocabulary
+## 8. Словарь merge-состояний
 
-The refactor should reserve `merged` for a real mainline integration of code-ready downstream content.
+Рефакторинг должен зарезервировать `merged` для реальной mainline integration code-ready downstream content.
 
-Intermediate terms should be explicit:
+Промежуточные термины должны быть явными:
 
-- `boundary_accepted`: the user/lead accepted the facade boundary, but code is not ready.
-- `worktree_active`: downstream execution continues in the node worktree.
-- `code_ready`: the downstream tree has the required code artifacts and local validation evidence.
-- `merged`: Core integrated the downstream code-ready result into the main workspace.
+- `boundary_accepted`: user/lead принял facade boundary, но code ещё не готов.
+- `worktree_active`: downstream execution продолжается в node worktree.
+- `code_ready`: downstream tree имеет необходимые code artifacts и local validation evidence.
+- `merged`: Core интегрировал downstream code-ready result в основной workspace.
 
-## 9. Open Questions
+## 9. Открытые вопросы
 
-- Should the accepted cluster facade contract be copied to main as a visible review snapshot, or should it remain only inside the cluster worktree until code exists? Current protective answer: no draft document copy to main; Core may write only explicit boundary-accepted coordination evidence until code exists.
-- What is the minimum code artifact that makes a cluster worktree merge-ready: facade class stub, facade plus module facade stubs, or fully implemented cluster slice?
-- Should standalone modules run in their own worktrees immediately, or can they be handled inside the lead Product Part / cluster coordination tree until parallelism is needed?
-- How should Project Manager name intermediate states so users can distinguish `review_snapshot`, `boundary_accepted`, `code_ready`, and `merged_to_main`?
+- Нужно ли копировать accepted cluster facade contract в main как видимый review snapshot, или он должен оставаться только внутри cluster worktree до появления code? Текущий защитный ответ: не копировать draft document в main; Core может писать только явный boundary-accepted coordination evidence, пока code не существует.
+- Какой минимальный code artifact делает cluster worktree merge-ready: facade class stub, facade плюс module facade stubs или полностью реализованный cluster slice?
+- Должны ли standalone modules сразу запускаться в собственных worktrees, или их можно вести внутри lead Product Part / cluster coordination tree до момента, когда parallelism действительно понадобится?
+- Как Project Manager должен называть промежуточные состояния, чтобы пользователь различал `review_snapshot`, `boundary_accepted`, `code_ready` и `merged_to_main`?
