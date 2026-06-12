@@ -1,13 +1,13 @@
 # Quality Gates Restore Isolation Architecture
 
-**Status:** Active planning source; implemented and released through `v1.2.487`, retained until current scope closeout.
+**Status:** Archived planning source; implemented and released through `v1.2.487`, closed by release/retest scope closeout on 2026-06-12.
 **Created:** 2026-06-10
 **Owner:** Codex
 **Scope:** Quality Gates Phase 4 formal verification command isolation after the `1.2.486` no-stop orchestration retest.
 
 ## Implementation Status
 
-Implemented in the current execution scope:
+Implemented in the closed execution scope:
 
 - Core rejects `verificationState: "verified"` without sequential execution evidence.
 - Phase 4 continuation/repair prompts and bundled Quality Gates assets require one ordered verification plan.

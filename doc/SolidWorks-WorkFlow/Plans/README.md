@@ -13,7 +13,7 @@ Root `Plans/` is intentionally kept small.
 
 - `DevelopmentTree_DownstreamExecutionRefactor_Architecture.md` — active strategic line for unfinished Development Tree downstream execution work.
 - `DevelopmentTree_UserGateReviewCursor_Architecture.md` — active bounded next-step refactor source for parallel pre-code Development Tree execution with one Core-owned user-review cursor.
-- `QualityGates_RestoreIsolation_Architecture.md` — closeout-pending source for the currently active `doc/TODO/todo-plan.md`; it is retained in root only until that scope is accepted and archived.
+- `Archive/QualityGates_RestoreIsolation_Architecture.md` — archived completed Quality Gates restore-isolation planning source; stable behavior lives in SSOT docs.
 - `Archive/DevelopmentTree_BranchWorkflow_Architecture.md` — archived reference baseline; live Development Tree decisions are carried by SSOT docs and the downstream refactor line.
 - `Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` — archived absorbed implementation planning source; protective Product Part / cluster orchestration decisions have been folded into SSOT docs and the downstream refactor line.
 

@@ -1,3 +1,18 @@
+# Plan Closeout: quality-gates-restore-isolation-2026-06-10
+
+**Created:** 2026-06-12T08:10:11.056Z
+**Acceptance:** User accepted the Quality Gates restore-isolation scope and requested archiving its completed planning source.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** qg-restore-isolation.phase7.closeout.task1
+**Expected Commit:** docs: close quality gates restore isolation plan
+**Last Recorded Commit:** 1cecfa540
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_RestoreIsolation_Architecture.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_RestoreIsolation_Architecture.md",
   "currentTaskId": "qg-restore-isolation.phase7.closeout.task1",
   "expectedCommitMessage": "docs: close quality gates restore isolation plan",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates restore isolation plan",
-    "preCommitHead": "1cecfa540",
-    "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase7.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -373,6 +383,7 @@
 
 ### Stream: Archive And Dispose
 
-47. [DONE] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
-48. [PENDING] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
+47. [IN_PROGRESS] `qg-restore-isolation.phase7.closeout.task1` After explicit user acceptance, archive the active todo plan and dispose the planning source according to the Plans lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_RestoreIsolation_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates restore isolation plan`).
+48. [TODO] Git Commit: `docs: close quality gates restore isolation plan` (hash: TBD)
 49. [TODO] `qg-restore-isolation.phase7.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
