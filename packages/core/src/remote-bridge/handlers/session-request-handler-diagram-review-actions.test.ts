@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
@@ -27,6 +28,10 @@ const DIAGRAM_COMPLETE_MESSAGE_RE =
 const DIAGRAM_COMPLETED_RE = /"diagram_modules"/u;
 const USER_ACCEPTANCE_RE = /подтверждаю/u;
 const DIAGRAM_ACCEPTED_COMMIT_RE = /codeai-step: Diagram Modules accepted/u;
+const PRODUCT_PART_BOOTSTRAP_COMMIT_RE =
+  /docs: bootstrap product part development briefs/u;
+const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief\.draft\.md/u;
+const PRODUCT_PART_BRIEF_TITLE_RE = /ProductPartDevelopmentBrief/u;
 const APPLICATION_SKELETON_ACTIVATION_EVENT = {
   payload: { stage: "application_skeleton" },
   type: "workflow:stage:activate",
@@ -123,9 +128,74 @@ const prepareDiagramReviewWorkspace = async (
   return capsule;
 };
 
+const writeDiagramModulesAcceptedArtifacts = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const parts = [
+    ["local-runtime", "provider-bridge"],
+    ["finder-widget-shell", "view-shell"],
+  ] as const;
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+    [
+      "# Product Parts Index",
+      "",
+      "- leadProductPartId: `local-runtime`",
+      `- productPartLeadershipOrder: ${parts.map(([id]) => `\`${id}\``).join(", ")}`,
+      "",
+      ...parts.flatMap(([id]) => [
+        `### Product Part: ${id}`,
+        `- Title: ${id}`,
+        "- Purpose: Test product part.",
+        "",
+      ]),
+    ].join("\n")
+  );
+  for (const [id, moduleId] of parts) {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${id}.md`,
+      [
+        `# Product Part: ${id}`,
+        "",
+        "## Identity",
+        "",
+        "| Field | Value |",
+        "| ----- | ----- |",
+        `| Part ID | \`${id}\` |`,
+        "",
+        "## Standalone Modules",
+        "",
+        "| `module-id` | Responsibility |",
+        "| --- | --- |",
+        `| \`${moduleId}\` | Test responsibility. |`,
+        "",
+      ].join("\n")
+    );
+  }
+  await execFileAsync("git", ["add", `.codeai-hub/${WORKSPACE_SLUG}`], {
+    cwd: workspaceRoot,
+  });
+  await execFileAsync(
+    "git",
+    [
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-m",
+      "test: accept diagram modules artifacts",
+    ],
+    { cwd: workspaceRoot }
+  ).catch(() => undefined);
+};
+
 const createActions = (
   sessionManager: SessionManager,
-  options: { readonly messageLogPath?: string } = {}
+  options: {
+    readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
+    readonly messageLogPath?: string;
+  } = {}
 ) => {
   const coreMessages: CapturedMessage[] = [];
   const dialogMessages: CapturedMessage[] = [];
@@ -141,6 +211,7 @@ const createActions = (
       getContext: () => null,
     } as never,
     continuityRolloverOrchestrator: {} as never,
+    developmentTreeAgentGateway: options.developmentTreeAgentGateway,
     eventMessages: {
       appendCoreMessage: (_sessionId: string, message: CapturedMessage) => {
         appendPersistedMessage(options.messageLogPath, message);
@@ -200,6 +271,7 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
   );
   try {
     const capsule = await prepareDiagramReviewWorkspace(workspaceRoot);
+    await writeDiagramModulesAcceptedArtifacts(workspaceRoot);
     const unifiedSessionPath = path.join(
       capsule.unifiedSessionsRoot.absolutePath,
       "codexCli",
@@ -217,7 +289,19 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       "provider-session-1",
       { initiativeSlug: WORKSPACE_SLUG, stage: DIAGRAM_STAGE }
     );
+    const createdStages: string[] = [];
+    const sentMessages: string[] = [];
     const harness = createActions(sessionManager, {
+      developmentTreeAgentGateway: {
+        createSessionForWorkflow: (options) => {
+          createdStages.push(options.context.stage);
+          return Promise.resolve({ id: `devtree-${createdStages.length}` });
+        },
+        handleMessage: (_sessionId, content) => {
+          sentMessages.push(content);
+          return Promise.resolve();
+        },
+      },
       messageLogPath: unifiedSessionPath,
     });
 
@@ -258,6 +342,25 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       await git(workspaceRoot, ["log", "--format=%s"]),
       DIAGRAM_ACCEPTED_COMMIT_RE
     );
+    assert.match(
+      await git(workspaceRoot, ["log", "--format=%s"]),
+      PRODUCT_PART_BOOTSTRAP_COMMIT_RE
+    );
+    for (const partId of ["local-runtime", "finder-widget-shell"]) {
+      const planPath = `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
+      const briefPath = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${partId}/ProductPartDevelopmentBrief.draft.md`;
+      await readWorkspaceFile(workspaceRoot, planPath);
+      assert.match(
+        await readWorkspaceFile(workspaceRoot, briefPath),
+        PRODUCT_PART_BRIEF_TITLE_RE
+      );
+    }
+    assert.deepEqual([...createdStages].sort(), [
+      "development_tree/materialized/product-parts/finder-widget-shell",
+      "development_tree/materialized/product-parts/local-runtime",
+    ]);
+    assert.equal(sentMessages.length, 2);
+    assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     const unifiedSession = await readFile(unifiedSessionPath, "utf8");
     assert.match(unifiedSession, DIAGRAM_COMPLETE_MESSAGE_RE);

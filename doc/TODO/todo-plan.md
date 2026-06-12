@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "7b0870b26",
+  "lastRecordedCommit": "7995807ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase1.diagram-acceptance.task1",
-  "expectedCommitMessage": "fix: start product part precode agents after diagram modules",
+  "currentTaskId": "devtree-early-pp.phase1.diagram-test.task1",
+  "expectedCommitMessage": "test: cover early product part precode bootstrap",
   "debt": {
-    "expectedCommitMessage": "fix: start product part precode agents after diagram modules",
-    "preCommitHead": "7b0870b26",
+    "expectedCommitMessage": "test: cover early product part precode bootstrap",
+    "preCommitHead": "7995807ab",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase1.diagram-acceptance.task1"
+    "taskId": "devtree-early-pp.phase1.diagram-test.task1"
   }
 }
 ```
@@ -57,9 +57,9 @@
 ### Stream: Diagram Modules Acceptance Fan-Out
 
 3. [DONE] `devtree-early-pp.phase1.diagram-acceptance.task1` Запускать Product Part pre-code bootstrap сразу после Core acceptance `Diagram Modules` через Diagram Modules-owned managed Git committer, сохраняя activation `Application Skeleton` и не связывая ранний fan-out с Quality Gates controller (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: start product part precode agents after diagram modules`).
-4. [PENDING] Git Commit: `fix: start product part precode agents after diagram modules` (hash: TBD)
-5. [TODO] `devtree-early-pp.phase1.diagram-test.task1` Проверить, что acceptance `Diagram Modules` создаёт Product Part brief plans/sessions уже на этом шаге, а старый Quality Gates handoff остаётся recovery/idempotency path (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover early product part precode bootstrap`).
-6. [TODO] Git Commit: `test: cover early product part precode bootstrap` (hash: TBD)
+4. [DONE] Git Commit: `fix: start product part precode agents after diagram modules` (hash: 7995807ab)
+5. [DONE] `devtree-early-pp.phase1.diagram-test.task1` Проверить, что acceptance `Diagram Modules` создаёт Product Part brief plans/sessions уже на этом шаге, а старый Quality Gates handoff остаётся recovery/idempotency path (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover early product part precode bootstrap`).
+6. [PENDING] Git Commit: `test: cover early product part precode bootstrap` (hash: TBD)
 
 ### Stream: Architecture Documentation
 
