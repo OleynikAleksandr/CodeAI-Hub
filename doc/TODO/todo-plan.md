@@ -8,15 +8,15 @@
   "planId": "quality-gates-restore-isolation-2026-06-10",
   "branch": "main",
   "baseHead": "df0341147",
-  "lastRecordedCommit": "df0aa3d0c",
+  "lastRecordedCommit": "de9604599",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_RestoreIsolation_Architecture.md",
-  "currentTaskId": "qg-restore-isolation.phase6x.plans-index.task1",
-  "expectedCommitMessage": "docs: consolidate active development tree planning sources",
+  "currentTaskId": "qg-restore-isolation.phase6x.user-gate-cursor-plan.task1",
+  "expectedCommitMessage": "docs: plan development tree user gate cursor",
   "debt": {
-    "expectedCommitMessage": "docs: consolidate active development tree planning sources",
-    "preCommitHead": "df0aa3d0c",
+    "expectedCommitMessage": "docs: plan development tree user gate cursor",
+    "preCommitHead": "de9604599",
     "stage": "commit_pending",
-    "taskId": "qg-restore-isolation.phase6x.plans-index.task1"
+    "taskId": "qg-restore-isolation.phase6x.user-gate-cursor-plan.task1"
   }
 }
 ```
@@ -365,9 +365,9 @@
 112. [DONE] `qg-restore-isolation.phase6x.archive-absorbed-plans.task1` Archive absorbed Development Tree planning references that are no longer active strategic/directive sources after their stable decisions were carried into SSOT docs and the downstream execution refactor line (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive absorbed development tree planning references`).
 113. [DONE] Git Commit: `docs: archive absorbed development tree planning references` (hash: df0aa3d0c)
 114. [DONE] `qg-restore-isolation.phase6x.plans-index.task1` Update Plans README, Docs Index, and downstream execution planning status so the root planning shelf distinguishes active strategic sources from closeout-pending or archived references (scope: `doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: consolidate active development tree planning sources`).
-115. [PENDING] Git Commit: `docs: consolidate active development tree planning sources` (hash: TBD)
-116. [TODO] `qg-restore-isolation.phase6x.user-gate-cursor-plan.task1` Create the next refactoring planning document for parallel Development Tree execution with a Core-owned sequential user-review cursor, tree marker states, auto-open behavior, and Product Part brief ordering (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan development tree user gate cursor`).
-117. [TODO] Git Commit: `docs: plan development tree user gate cursor` (hash: TBD)
+115. [DONE] Git Commit: `docs: consolidate active development tree planning sources` (hash: de9604599)
+116. [DONE] `qg-restore-isolation.phase6x.user-gate-cursor-plan.task1` Create the next refactoring planning document for parallel Development Tree execution with a Core-owned sequential user-review cursor, tree marker states, auto-open behavior, and Product Part brief ordering (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan development tree user gate cursor`).
+117. [PENDING] Git Commit: `docs: plan development tree user gate cursor` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-10)
 
