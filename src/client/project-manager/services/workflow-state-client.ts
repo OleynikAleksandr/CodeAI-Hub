@@ -132,6 +132,7 @@ export type WorkflowStateSnapshot = {
   readonly applicationSkeletonProgress?: Record<string, unknown> | null;
   readonly qualityGatesProgress?: Record<string, unknown> | null;
   readonly developmentTree?: DevelopmentTreeSnapshot | null;
+  readonly userGateCursor?: Record<string, unknown> | null;
 };
 
 type WorkflowStateResponse = {
@@ -146,6 +147,7 @@ type WorkflowStateResponse = {
   readonly applicationSkeletonProgress?: unknown;
   readonly qualityGatesProgress?: unknown;
   readonly developmentTree?: unknown;
+  readonly userGateCursor?: unknown;
 };
 
 const STAGE_ORDER: readonly WorkflowStageId[] = [
@@ -416,6 +418,9 @@ const parseWorkflowState = (
   const developmentTree = parseDevelopmentTreeSnapshot(
     response?.developmentTree
   );
+  const userGateCursor = isRecord(response?.userGateCursor)
+    ? response.userGateCursor
+    : null;
   if (isRecord(stagesPayload)) {
     for (const stage of STAGE_ORDER) {
       const stageState = stagesPayload[stage];
@@ -443,6 +448,7 @@ const parseWorkflowState = (
     applicationSkeletonProgress,
     qualityGatesProgress,
     developmentTree,
+    userGateCursor,
   };
 };
 

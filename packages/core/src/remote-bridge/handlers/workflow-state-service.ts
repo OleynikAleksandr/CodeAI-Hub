@@ -46,18 +46,71 @@ const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 const readAbsolutePath = (value: unknown): string | null => {
   const trimmed = readNonEmptyString(value);
-  if (!trimmed) {
-    return null;
-  }
-  return path.isAbsolute(trimmed) ? trimmed : null;
+  return trimmed && path.isAbsolute(trimmed) ? trimmed : null;
 };
 const isTechnicalStageRewriteBoundaryActive = (state: WorkflowState): boolean =>
   state.stages.diagram_modules.status !== "idle" ||
   state.stages.application_skeleton.status !== "idle" ||
   state.stages.quality_gates.status !== "idle";
+const USER_GATE_INPUT_LOCK_REASON = "Another user gate is active.";
 type WorkspaceSlugResult =
   | { readonly ok: true; readonly value: string }
   | { readonly ok: false; readonly status: number; readonly error: string };
+type DocumentationGateStage = "application_skeleton" | "quality_gates";
+const createDocumentationUserGate = (
+  progress: { readonly substep?: string } | null,
+  stage: DocumentationGateStage,
+  workspaceSlug: string
+): Record<string, unknown> | null => {
+  if (progress?.substep !== "awaiting_acceptance") {
+    return null;
+  }
+  const fileName =
+    stage === "quality_gates" ? "quality-gates.md" : "application-skeleton.md";
+  return {
+    artifactPaths: [`.codeai-hub/${workspaceSlug}/${stage}/${fileName}`],
+    id: `workflow:${stage}/review`,
+    nodeId: `workflow:${stage}`,
+    nodeKind: "workflow_stage",
+    reason: "managed_stage_review_required",
+    stage,
+  };
+};
+const resolveWorkflowUserGateCursor = (
+  developmentTree: {
+    readonly activeUserGate?: object | null;
+    readonly queuedUserGates?: readonly object[];
+  },
+  applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null,
+  qualityGatesProgress: QualityGatesProgressSnapshot | null,
+  workspaceSlug: string
+): Record<string, unknown> => {
+  const gates = [
+    developmentTree.activeUserGate,
+    ...(developmentTree.queuedUserGates ?? []),
+    createDocumentationUserGate(
+      applicationSkeletonProgress,
+      "application_skeleton",
+      workspaceSlug
+    ),
+    createDocumentationUserGate(
+      qualityGatesProgress,
+      "quality_gates",
+      workspaceSlug
+    ),
+  ].filter((gate): gate is object => Boolean(gate));
+  return {
+    activeUserGate: gates[0]
+      ? { ...gates[0], inputLocked: false, status: "active" }
+      : null,
+    queuedUserGates: gates.slice(1).map((gate) => ({
+      ...gate,
+      inputLocked: true,
+      inputLockReason: USER_GATE_INPUT_LOCK_REASON,
+      status: "queued",
+    })),
+  };
+};
 const resolveTechnicalStageRewriteBoundary = (params: {
   readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
   readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
@@ -77,7 +130,6 @@ const resolveTechnicalStageRewriteBoundary = (params: {
     readOnlyStages: active ? ["description", "virtual_simulation"] : [],
   };
 };
-
 export class WorkflowStateService {
   private readonly logger: Logger;
   private readonly sessionManager?: SessionManager;
@@ -126,6 +178,7 @@ export class WorkflowStateService {
         description: null,
         lastActive: null,
         diagramModulesProgress: null,
+        userGateCursor: null,
         managedWorkflowPreview: null,
       });
       return;
@@ -332,6 +385,12 @@ export class WorkflowStateService {
                     qualityGatesProgress:
                       technicalStageProgress.qualityGatesProgress,
                     developmentTree,
+                    userGateCursor: resolveWorkflowUserGateCursor(
+                      developmentTree,
+                      technicalStageProgress.applicationSkeletonProgress,
+                      technicalStageProgress.qualityGatesProgress,
+                      workspaceSlugResult.value
+                    ),
                     technicalStageRewriteBoundary,
                     managedWorkflowPreview:
                       this.managedWorkflowReadModel.project({
@@ -355,6 +414,7 @@ export class WorkflowStateService {
           description: null,
           lastActive: null,
           diagramModulesProgress: null,
+          userGateCursor: null,
           managedWorkflowPreview: null,
         });
       });

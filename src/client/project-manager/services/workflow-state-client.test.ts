@@ -299,6 +299,48 @@ test("fetchWorkflowState preserves managed orchestration read-only projection", 
   );
 });
 
+test("fetchWorkflowState preserves workflow user gate cursor", async () => {
+  installFetchStub(
+    createWorkflowPayload(null, { chains: [] }, "2026-05-04T10:00:00.000Z", {
+      userGateCursor: {
+        activeUserGate: {
+          id: "workflow:application_skeleton/review",
+          inputLocked: false,
+          nodeId: "workflow:application_skeleton",
+          nodeKind: "workflow_stage",
+          reason: "managed_stage_review_required",
+          stage: "application_skeleton",
+          status: "active",
+        },
+        queuedUserGates: [
+          {
+            id: "workflow:quality_gates/review",
+            inputLocked: true,
+            nodeId: "workflow:quality_gates",
+            nodeKind: "workflow_stage",
+            reason: "managed_stage_review_required",
+            stage: "quality_gates",
+            status: "queued",
+          },
+        ],
+      },
+    })
+  );
+
+  const state = await fetchWorkflowState({
+    httpUrl: "http://127.0.0.1:8080",
+    workspaceSlug: "demo",
+  });
+
+  const cursor = state?.userGateCursor as
+    | { readonly activeUserGate?: { readonly id?: string } }
+    | undefined;
+  assert.equal(
+    cursor?.activeUserGate?.id,
+    "workflow:application_skeleton/review"
+  );
+});
+
 test("fetchWorkflowState preserves refreshed development tree metadata", async () => {
   installFetchStub(
     createWorkflowPayload(
