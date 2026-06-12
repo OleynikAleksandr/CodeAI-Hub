@@ -9,6 +9,7 @@ import type {
   DevelopmentTreeSnapshot,
   DevelopmentTreeSnapshotRequest,
 } from "../../development-tree/development-tree-types";
+import { applyDevelopmentTreeUserGateCursor } from "../../development-tree/development-tree-user-gate-cursor";
 import {
   type DevelopmentTreeCodeWorkspacePathEntry,
   readDevelopmentTreeCodeWorkspacePathIndex,
@@ -154,6 +155,7 @@ const withCodeWorkspacePaths = (
   snapshot: DevelopmentTreeSnapshot,
   entries: readonly DevelopmentTreeCodeWorkspacePathEntry[]
 ): DevelopmentTreeSnapshot => ({
+  ...snapshot,
   parts: snapshot.parts.map(
     (part): DevelopmentTreePartNode => ({
       ...part,
@@ -356,5 +358,9 @@ export const readDevelopmentTreeSnapshot = async (
   const pathAwareSnapshot = codePathIndex
     ? withCodeWorkspacePaths(snapshot, codePathIndex.entries)
     : snapshot;
-  return await withCoordinationState(pathAwareSnapshot, params);
+  const coordinatedSnapshot = await withCoordinationState(
+    pathAwareSnapshot,
+    params
+  );
+  return await applyDevelopmentTreeUserGateCursor(coordinatedSnapshot, params);
 };

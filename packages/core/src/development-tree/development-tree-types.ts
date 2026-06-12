@@ -34,6 +34,30 @@ export interface DevelopmentTreeNodeLifecycle {
   readonly startState: DevelopmentTreeNodeStartState;
 }
 
+export type DevelopmentTreeUserGateNodeKind = "product_part";
+
+export type DevelopmentTreeUserGateReason =
+  | "product_part_brief_review_required"
+  | "waiting_for_user_gate_cursor";
+
+export type DevelopmentTreeUserGateStatus = "active" | "queued";
+
+export interface DevelopmentTreeUserGate {
+  readonly artifactPaths: readonly string[];
+  readonly currentTaskId?: string;
+  readonly expectedCommitMessage?: string;
+  readonly id: string;
+  readonly inputLocked: boolean;
+  readonly inputLockReason?: string;
+  readonly nodeId: string;
+  readonly nodeKind: DevelopmentTreeUserGateNodeKind;
+  readonly partId: string;
+  readonly reason: DevelopmentTreeUserGateReason;
+  readonly session?: DevelopmentTreeNodeSession;
+  readonly status: DevelopmentTreeUserGateStatus;
+  readonly workflowPath?: string;
+}
+
 export type DevelopmentTreeOperationNodeKind =
   | "contract_graph"
   | "cross_part_contracts"
@@ -92,13 +116,16 @@ export interface DevelopmentTreePartNode {
   readonly session?: DevelopmentTreeNodeSession;
   readonly standaloneModules: readonly DevelopmentTreeModuleNode[];
   readonly status: "skeleton" | "materialized";
+  readonly userGate?: DevelopmentTreeUserGate;
   readonly workflowPath?: string;
 }
 
 export interface DevelopmentTreeSnapshot {
+  readonly activeUserGate?: DevelopmentTreeUserGate | null;
   readonly leadProductPartId?: string | null;
   readonly parts: readonly DevelopmentTreePartNode[];
   readonly productPartLeadershipOrder?: readonly string[];
+  readonly queuedUserGates?: readonly DevelopmentTreeUserGate[];
 }
 
 export interface DevelopmentTreeSnapshotRequest {
