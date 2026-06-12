@@ -7,6 +7,17 @@
 - согласовать проблему, решение, границы и структуру;
 - не смешивать planning-доки с реализованными SSOT-документами.
 
+## Current Root Shelf
+
+Root `Plans/` is intentionally kept small.
+
+- `DevelopmentTree_DownstreamExecutionRefactor_Architecture.md` — active strategic line for unfinished Development Tree downstream execution work.
+- `QualityGates_RestoreIsolation_Architecture.md` — closeout-pending source for the currently active `doc/TODO/todo-plan.md`; it is retained in root only until that scope is accepted and archived.
+- `Archive/DevelopmentTree_BranchWorkflow_Architecture.md` — archived reference baseline; live Development Tree decisions are carried by SSOT docs and the downstream refactor line.
+- `Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` — archived absorbed implementation planning source; protective Product Part / cluster orchestration decisions have been folded into SSOT docs and the downstream refactor line.
+
+New root planning documents should be temporary and should explicitly state whether they are the active strategic line, a bounded next-step refactor source, or a closeout-pending source.
+
 ## Правила
 
 1. Для обычных багфиксов сначала используется `doc/BugRegistry.md`.

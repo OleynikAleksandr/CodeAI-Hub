@@ -1,7 +1,7 @@
 # Development Tree Downstream Execution Refactor
 
-**Status:** active planning capture, opened 2026-06-10; protective slices implemented through release `1.2.490`, remaining wave/module/code-ready work deferred.
-**Relationship to current directives:** this document sits next to `DevelopmentTree_BranchWorkflow_Architecture.md` and `DevelopmentTree_ProductPartSubagentOrchestration.md`. It does not replace them yet. It records refactor topics discovered during FinderWidget v1.2.487 retesting before they are sliced into a future `doc/TODO/todo-plan.md`.
+**Status:** active strategic planning source, opened 2026-06-10; protective slices implemented through release `1.2.492`, remaining wave/module/code-ready work deferred.
+**Relationship to current directives:** this document is now the consolidated active Development Tree downstream execution line. `Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md` remains a historical reference baseline, and `Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` remains an absorbed implementation planning source. Their stable decisions are carried by the current SSOT docs and by this downstream refactor line; they are no longer separate active root directives.
 
 ## 1. Problem
 
