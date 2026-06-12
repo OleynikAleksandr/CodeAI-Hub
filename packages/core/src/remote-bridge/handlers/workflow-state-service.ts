@@ -18,6 +18,7 @@ import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import { isQualityGatesReviewOpen } from "./managed-review-state-readers";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   applyTechnicalRootProgressToState,
@@ -154,6 +155,8 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
+    const qualityGatesReviewOpenPromise =
+      isQualityGatesReviewOpen(workspaceRoot);
     const technicalStageDirtyStatusPromise = readTechnicalStageDirtyStatus(
       workspaceRoot,
       workspaceSlugResult.value
@@ -172,6 +175,7 @@ export class WorkflowStateService {
       diagramModulesProgressPromise,
       applicationSkeletonProgressPromise,
       qualityGatesProgressPromise,
+      qualityGatesReviewOpenPromise,
       technicalStageDirtyStatusPromise,
       virtualSimulationArtifactExistsPromise,
     ])
@@ -183,6 +187,7 @@ export class WorkflowStateService {
           rawDiagramModulesProgress,
           rawApplicationSkeletonProgress,
           rawQualityGatesProgress,
+          qualityGatesReviewOpen,
           technicalStageDirtyStatus,
           virtualSimulationArtifactExists,
         ]) => {
@@ -339,7 +344,15 @@ export class WorkflowStateService {
                           stage: "application_skeleton",
                         },
                         {
+                          artifactPaths:
+                            technicalStageProgress.qualityGatesProgress
+                              ? undefined
+                              : [
+                                  `.codeai-hub/${workspaceSlugResult.value}/quality_gates/quality-gates-research.md`,
+                                  `.codeai-hub/${workspaceSlugResult.value}/quality_gates/quality-gates-research.json`,
+                                ],
                           progress: technicalStageProgress.qualityGatesProgress,
+                          reviewOpen: qualityGatesReviewOpen,
                           stage: "quality_gates",
                         },
                       ],

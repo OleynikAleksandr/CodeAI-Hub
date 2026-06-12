@@ -13,7 +13,9 @@ export interface WorkflowInputAttentionCursor {
 }
 
 export interface WorkflowInputAttentionDocumentationStage {
+  readonly artifactPaths?: readonly string[];
   readonly progress: { readonly substep?: string } | null;
+  readonly reviewOpen?: boolean;
   readonly stage: DocumentationGateStage;
 }
 
@@ -38,11 +40,16 @@ const normalizeActiveGate = (
 });
 
 const createDocumentationUserGate = (params: {
+  readonly artifactPaths?: readonly string[];
   readonly progress: { readonly substep?: string } | null;
+  readonly reviewOpen?: boolean;
   readonly stage: DocumentationGateStage;
   readonly workspaceSlug: string;
 }): Record<string, unknown> | null => {
-  if (params.progress?.substep !== "awaiting_acceptance") {
+  if (
+    params.progress?.substep !== "awaiting_acceptance" &&
+    params.reviewOpen !== true
+  ) {
     return null;
   }
   const fileName =
@@ -50,7 +57,7 @@ const createDocumentationUserGate = (params: {
       ? "quality-gates.md"
       : "application-skeleton.md";
   return {
-    artifactPaths: [
+    artifactPaths: params.artifactPaths ?? [
       `.codeai-hub/${params.workspaceSlug}/${params.stage}/${fileName}`,
     ],
     id: `workflow:${params.stage}/review`,
@@ -73,7 +80,9 @@ export const resolveWorkflowUserInputAttentionCursor = (params: {
   const documentationGates = params.documentationStages
     .map((stage) =>
       createDocumentationUserGate({
+        artifactPaths: stage.artifactPaths,
         progress: stage.progress,
+        reviewOpen: stage.reviewOpen,
         stage: stage.stage,
         workspaceSlug: params.workspaceSlug,
       })

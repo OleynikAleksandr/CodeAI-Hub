@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "fc054f5ea",
+  "lastRecordedCommit": "34c23d6fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-496.task1",
-  "expectedCommitMessage": "chore: release 1.2.496",
+  "currentTaskId": "devtree-early-pp.phase4.qg-research-attention.task1",
+  "expectedCommitMessage": "fix: show quality gates research review attention",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.496",
-    "preCommitHead": "fc054f5ea",
+    "expectedCommitMessage": "fix: show quality gates research review attention",
+    "preCommitHead": "34c23d6fe",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-496.task1"
+    "taskId": "devtree-early-pp.phase4.qg-research-attention.task1"
   }
 }
 ```
@@ -131,13 +131,27 @@
 48. [DONE] `devtree-early-pp.phase4.release-docs-496.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.496 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.496`).
 49. [DONE] Git Commit: `docs: prepare release 1.2.496` (hash: fc054f5ea)
 50. [DONE] `devtree-early-pp.phase4.release-build-496.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.496`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.496.vsix` (5.2M); tarball'ы 1.2.496 скопированы в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-51. [PENDING] Git Commit: `chore: release 1.2.496` (hash: TBD)
-52. [TODO] `devtree-early-pp.phase4.user-retest-496.task1` Пользователь тестирует следующий релиз: любой managed workflow/development-tree user-review/user-gate должен подсвечивать соответствующий узел дерева анимированной orange frame; queued user gates остаются read-only; Quality Gates Baseline должен подсвечиваться, когда Core/агент открыл user review, а формально завершённые зелёные шаги не должны получать orange marker только потому, что чат можно продолжить (scope: `manual retest`; expected commit: none).
+51. [DONE] Git Commit: `chore: release 1.2.496` (hash: 34c23d6fe)
+52. [BLOCKED] `devtree-early-pp.phase4.user-retest-496.task1` Пользователь тестирует следующий релиз: любой managed workflow/development-tree user-review/user-gate должен подсвечивать соответствующий узел дерева анимированной orange frame; queued user gates остаются read-only; Quality Gates Baseline должен подсвечиваться, когда Core/агент открыл user review, а формально завершённые зелёные шаги не должны получать orange marker только потому, что чат можно продолжить (scope: `manual retest`; expected commit: none). Result: Релиз 1.2.496 подсвечивает часть managed review gates, но Quality Gates research review не подсвечивается: на этом шаге существуют только `quality-gates-research.md/json`, stage plan уже стоит на `quality-gates.phase2.review.task1`, а `qualityGatesProgress` ещё `null`, потому что reader ждёт финальные `quality-gates.md/json`.
+
+### Stream: Quality Gates Research Review Attention
+
+53. [DONE] `devtree-early-pp.phase4.qg-research-attention.task1` Расширить Core-owned Documentation Tree attention source: Quality Gates user review определяется по активному managed stage todo-plan review task и покрывает research review до появления финальных `quality-gates.md/json`; stale managed decision JSON сам по себе не создаёт marker (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show quality gates research review attention`).
+54. [PENDING] Git Commit: `fix: show quality gates research review attention` (hash: TBD)
+55. [TODO] `devtree-early-pp.phase4.qg-research-attention-test.task1` Покрыть regression test для Quality Gates research review: при `currentTaskId=quality-gates.phase2.review.task1` и только `quality-gates-research.md/json` workflow state отдаёт active `workflow:quality_gates`; accepted/completed state без review task не подсвечивается (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research review attention`).
+56. [TODO] Git Commit: `test: cover quality gates research review attention` (hash: TBD)
+57. [TODO] `devtree-early-pp.phase4.qg-research-attention-verify.task1` Выполнить targeted Core/Project Manager verification для Quality Gates research review attention (scope: `packages/core, src/client/project-manager`; expected commit: none).
+58. [TODO] `devtree-early-pp.phase4.release-confirm-497.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса Quality Gates research review attention (scope: `manual confirmation`; expected commit: none).
+59. [TODO] `devtree-early-pp.phase4.release-docs-497.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.497 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.497`).
+60. [TODO] Git Commit: `docs: prepare release 1.2.497` (hash: TBD)
+61. [TODO] `devtree-early-pp.phase4.release-build-497.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.497`).
+62. [TODO] Git Commit: `chore: release 1.2.497` (hash: TBD)
+63. [TODO] `devtree-early-pp.phase4.user-retest-497.task1` Пользователь тестирует следующий релиз: Quality Gates Baseline должен подсвечиваться анимированной orange frame уже на research review, когда stage todo-plan находится на managed review task и доступны только `quality-gates-research.md/json`; stale completed stages и persistent return phases остаются зелёными/обычными без orange marker (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-53. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-54. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-55. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+64. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+65. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+66. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
