@@ -16,6 +16,7 @@ import { parseMaterializationRepairTaskNumber } from "../../managed-workflow-orc
 import { validateApplicationSkeletonManagedArtifacts } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
 import {
   acceptDiagramModulesReviewWithoutRevision,
+  commitDiagramModulesDevelopmentTreeBootstrap,
   isDiagramModulesReviewOpen,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
 import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
@@ -25,6 +26,7 @@ import { WorkflowStepCommitFacade } from "../../workflow/boundary/workflow-step-
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { persistApplicationSkeletonManagedDecision } from "./application-skeleton-managed-decision-persister";
 import { handleClusterContractManagedReviewDecision } from "./cluster-contract-review-controller";
+import { DevelopmentTreeProductPartPrecodeBootstrap } from "./development-tree-product-part-precode-bootstrap";
 import {
   buildDevelopmentTreeTurnFailureMessage,
   runGuardedDevelopmentTreeTurn,
@@ -75,9 +77,8 @@ const ACCEPT_RE =
 const NEGATED_ACCEPT_RE =
   /(?:\b(?:do\s+not|don't|not)\s+(?:accept|approve|confirm)\b|(?:^|[\s,.;:!?])(?:не|не\s+надо|не\s+нужно)\s+(?:подтверждаю|п[іi]дтверджую)(?:$|[\s,.;:!?]))/iu;
 const hasManagedStageSession = (session: Session, stage: string): boolean =>
-  Boolean(
-    session.stage === stage && session.workspacePath && session.initiativeSlug
-  );
+  session.stage === stage &&
+  Boolean(session.workspacePath && session.initiativeSlug);
 const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   const normalized = content.trim();
   if (!normalized) {
@@ -91,7 +92,6 @@ const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   }
   return "revision";
 };
-
 export class SessionRequestHandlerManagedReviewDecisions {
   private readonly applicationSkeletonStagePlan =
     new ApplicationSkeletonStagePlanController();
@@ -110,7 +110,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
         eventMessages: deps.eventMessages,
       });
   }
-
   async handleReviewDecision(
     options: ManagedReviewDecisionOptions
   ): Promise<boolean> {
@@ -411,7 +410,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     releaseGate();
   }
-
   private async acceptApplicationSkeletonReview(
     session: Session,
     phase: ApplicationSkeletonReviewPhase
@@ -452,6 +450,16 @@ export class SessionRequestHandlerManagedReviewDecisions {
           },
         ],
         stage: DIAGRAM_MODULES_STAGE,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      await new DevelopmentTreeProductPartPrecodeBootstrap().bootstrap({
+        agentGateway: this.deps.developmentTreeAgentGateway,
+        committer: {
+          commitDevelopmentTreeBootstrap:
+            commitDiagramModulesDevelopmentTreeBootstrap,
+        },
+        providerId: session.providerId,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });

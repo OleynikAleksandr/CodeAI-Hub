@@ -13,6 +13,8 @@ const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 const APPLICATION_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const DEVELOPMENT_TREE_BOOTSTRAP_COMMIT_MESSAGE =
+  "docs: bootstrap product part development briefs";
 const REVIEW_TASK_PREFIX = "diagram-modules.phase2.review.";
 const REVIEW_TASK_ID = "diagram-modules.phase2.review.task1";
 const REVIEW_COMMIT_MESSAGE = "docs: open diagram modules user review";
@@ -380,6 +382,20 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   await commitManagedWorkflowLedger({
     gitBoundary: asManagedGitBoundary(gitBoundary),
     ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
+    workspaceRoot: params.workspaceRoot,
+  });
+};
+
+export const commitDiagramModulesDevelopmentTreeBootstrap = async (params: {
+  readonly gitBoundary?: DiagramModulesGitBoundaryDependency;
+  readonly managedPaths: readonly string[];
+  readonly workspaceRoot: string;
+}): Promise<void> => {
+  const gitBoundary =
+    params.gitBoundary ?? new DiagramModulesManagedGitBoundary();
+  await gitBoundary.commitManagedChanges({
+    commitMessage: DEVELOPMENT_TREE_BOOTSTRAP_COMMIT_MESSAGE,
+    managedPaths: params.managedPaths,
     workspaceRoot: params.workspaceRoot,
   });
 };
