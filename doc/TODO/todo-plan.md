@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "c1800e5ef",
+  "lastRecordedCommit": "9fe405770",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-494.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.494",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-494.task1",
+  "expectedCommitMessage": "chore: release 1.2.494",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.494",
-    "preCommitHead": "c1800e5ef",
+    "expectedCommitMessage": "chore: release 1.2.494",
+    "preCommitHead": "9fe405770",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-494.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-494.task1"
   }
 }
 ```
@@ -95,9 +95,9 @@
 18. [DONE] `devtree-early-pp.phase4.status-pathspec-verify.task1` Выполнить targeted Core tests/build для workflow boundary git pathspec fix (scope: `packages/core`; expected commit: none). Result: Verification passed: npm run build --workspace @codeai-hub/core; node --test --test-reporter=spec packages/core/dist/workflow/boundary/workflow-boundary-git.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js.
 19. [DONE] `devtree-early-pp.phase4.release-confirm-494.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса `WorkflowBoundaryGit.statusPorcelain()` (scope: `manual confirmation`; expected commit: none). Result: Пользователь явно подтвердил сборку нового релиза 1.2.494.
 20. [DONE] `devtree-early-pp.phase4.release-docs-494.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.494 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.494`).
-21. [PENDING] Git Commit: `docs: prepare release 1.2.494` (hash: TBD)
-22. [TODO] `devtree-early-pp.phase4.release-build-494.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.494`).
-23. [TODO] Git Commit: `chore: release 1.2.494` (hash: TBD)
+21. [DONE] Git Commit: `docs: prepare release 1.2.494` (hash: 9fe405770)
+22. [DONE] `devtree-early-pp.phase4.release-build-494.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.494`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.494.vsix` (5.2M); tarball'ы 1.2.494 скопированы в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+23. [PENDING] Git Commit: `chore: release 1.2.494` (hash: TBD)
 24. [TODO] `devtree-early-pp.phase4.user-retest-494.task1` Пользователь тестирует следующий релиз: Description -> Virtual Simulation должен стартовать после modified tracked `.codeai-hub/<workspace>/workflow/state.json`, затем повторно проверить ранний Product Part pre-code fan-out после Diagram Modules (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
