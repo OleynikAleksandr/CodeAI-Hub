@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "34c23d6fe",
+  "lastRecordedCommit": "a19596838",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.qg-research-attention.task1",
-  "expectedCommitMessage": "fix: show quality gates research review attention",
+  "currentTaskId": "devtree-early-pp.phase4.qg-research-attention-test.task1",
+  "expectedCommitMessage": "test: cover quality gates research review attention",
   "debt": {
-    "expectedCommitMessage": "fix: show quality gates research review attention",
-    "preCommitHead": "34c23d6fe",
+    "expectedCommitMessage": "test: cover quality gates research review attention",
+    "preCommitHead": "a19596838",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.qg-research-attention.task1"
+    "taskId": "devtree-early-pp.phase4.qg-research-attention-test.task1"
   }
 }
 ```
@@ -137,9 +137,9 @@
 ### Stream: Quality Gates Research Review Attention
 
 53. [DONE] `devtree-early-pp.phase4.qg-research-attention.task1` Расширить Core-owned Documentation Tree attention source: Quality Gates user review определяется по активному managed stage todo-plan review task и покрывает research review до появления финальных `quality-gates.md/json`; stale managed decision JSON сам по себе не создаёт marker (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show quality gates research review attention`).
-54. [PENDING] Git Commit: `fix: show quality gates research review attention` (hash: TBD)
-55. [TODO] `devtree-early-pp.phase4.qg-research-attention-test.task1` Покрыть regression test для Quality Gates research review: при `currentTaskId=quality-gates.phase2.review.task1` и только `quality-gates-research.md/json` workflow state отдаёт active `workflow:quality_gates`; accepted/completed state без review task не подсвечивается (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research review attention`).
-56. [TODO] Git Commit: `test: cover quality gates research review attention` (hash: TBD)
+54. [DONE] Git Commit: `fix: show quality gates research review attention` (hash: a19596838)
+55. [DONE] `devtree-early-pp.phase4.qg-research-attention-test.task1` Покрыть regression test для Quality Gates research review: при `currentTaskId=quality-gates.phase2.review.task1` и только `quality-gates-research.md/json` workflow state отдаёт active `workflow:quality_gates`; accepted/completed state без review task не подсвечивается (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research review attention`).
+56. [PENDING] Git Commit: `test: cover quality gates research review attention` (hash: TBD)
 57. [TODO] `devtree-early-pp.phase4.qg-research-attention-verify.task1` Выполнить targeted Core/Project Manager verification для Quality Gates research review attention (scope: `packages/core, src/client/project-manager`; expected commit: none).
 58. [TODO] `devtree-early-pp.phase4.release-confirm-497.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса Quality Gates research review attention (scope: `manual confirmation`; expected commit: none).
 59. [TODO] `devtree-early-pp.phase4.release-docs-497.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.497 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.497`).
