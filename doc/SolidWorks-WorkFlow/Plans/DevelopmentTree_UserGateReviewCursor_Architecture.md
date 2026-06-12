@@ -1,6 +1,6 @@
 # Курсор пользовательских review-gates в Development Tree
 
-**Статус:** активный planning-документ следующего шага, открыт 2026-06-12.
+**Статус:** активный planning-документ следующего шага, открыт 2026-06-12; ранний Product Part pre-code bootstrap после accepted `Diagram Modules` реализован в первом срезе, Core-owned review cursor/markers остаются следующим незавершённым слоем.
 **Родительская стратегическая линия:** `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
 **Область:** параллельное pre-code исполнение Development Tree с Core-owned последовательным курсором user review и attention markers в дереве Project Manager.
 
@@ -190,17 +190,21 @@ Core должен отдавать достаточно state, чтобы client
 
 Точная TypeScript shape может отличаться, но ownership boundary не должна меняться: Core решает active/queued status; Project Manager отображает его.
 
-## 8. Первый срез реализации
+## 8. Срезы реализации
 
-Первый code refactor должен быть маленьким и проверяемым:
+Реализованный первый code refactor:
+
+1. После acceptance `Diagram Modules` Core запускает Product Part pre-code lane: материализует нейтральный Development Tree artifact workspace, создаёт Product Part managed plans/drafts/sessions и отправляет первый prompt каждому planned Product Part agent по leadership order.
+2. `Quality Gates Baseline` больше не является primary trigger для Product Part briefs; terminal handoff оставлен как recovery/idempotency path для missing Product Part sessions.
+3. `Application Skeleton -> Quality Gates` остаётся code-readiness lane: production code, code-ready merge и final integration по-прежнему запрещены до verified Quality Gates.
+
+Следующий code refactor должен быть маленьким и проверяемым:
 
 1. Добавить Core-owned user-gate cursor state в Development Tree snapshot/read model.
 2. Научить Project Manager отображать active и queued user-review markers в существующем дереве.
 3. Auto-open только active gate session/artifacts при cursor promotion.
 4. Блокировать queued gate input/actions, разрешая read-only просмотр session/artifacts.
 5. Подключить Product Part brief review gates так, чтобы secondary briefs предъявлялись последовательно, а lead order-plan task видимо ждал acceptance всех briefs.
-
-Этому slice не обязательно переносить Product Part startup раньше Quality Gates. Перенос всей pre-code lane на старт после `Diagram Modules` может быть следующим slice после того, как cursor станет надёжным.
 
 ## 9. Критерии приёмки
 
