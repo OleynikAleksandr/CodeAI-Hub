@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "ac4ac652d",
+  "lastRecordedCommit": "566232152",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-498.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.498",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-498.task1",
+  "expectedCommitMessage": "chore: release 1.2.498",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.498",
-    "preCommitHead": "ac4ac652d",
+    "expectedCommitMessage": "chore: release 1.2.498",
+    "preCommitHead": "566232152",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-498.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-498.task1"
   }
 }
 ```
@@ -157,9 +157,9 @@
 68. [DONE] `devtree-early-pp.phase4.preliminary-attention-verify.task1` Выполнить targeted Core/Project Manager verification для preliminary Documentation Tree review attention (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: @codeai-hub/core build; workflow user-input attention tests; workflow-state user-input attention tests; typecheck:webview; build:project-manager; build:webview
 69. [DONE] `devtree-early-pp.phase4.release-confirm-498.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса preliminary workflow review attention (scope: `manual confirmation`; expected commit: none). Result: User confirmed release build 1.2.498
 70. [DONE] `devtree-early-pp.phase4.release-docs-498.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.498 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.498`).
-71. [PENDING] Git Commit: `docs: prepare release 1.2.498` (hash: TBD)
-72. [TODO] `devtree-early-pp.phase4.release-build-498.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.498`).
-73. [TODO] Git Commit: `chore: release 1.2.498` (hash: TBD)
+71. [DONE] Git Commit: `docs: prepare release 1.2.498` (hash: 566232152)
+72. [DONE] `devtree-early-pp.phase4.release-build-498.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.498`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.498.vsix` (5.2M); tarball'ы 1.2.498 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+73. [PENDING] Git Commit: `chore: release 1.2.498` (hash: TBD)
 74. [TODO] `devtree-early-pp.phase4.user-retest-498.task1` Пользователь тестирует следующий релиз: `Description` и `Virtual Simulation` должны получать анимированную orange frame в Documentation Tree, когда Core открыл preliminary user review и ждёт `Подтверждаю`; после acceptance/persistent return эти шаги остаются обычными зелёными без orange marker (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
