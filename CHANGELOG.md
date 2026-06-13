@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.509] - 2026-06-13
+### Changed
+- **Clean rebuild of the 1.2.508 persisted handoff fix under a new release number.** Runtime behavior is unchanged from 1.2.508; this release exists so the next retest installs a fresh package version.
+
+### Verification
+- `./scripts/build-all.sh --allow-dirty`
+- `./scripts/build-release.sh --use-current-version --allow-dirty`
+
 ## [1.2.508] - 2026-06-13
 ### Fixed
 - **Core now persists the next active stage after `Diagram Modules` acceptance.** The managed acceptance flow writes `workflow/state.json.lastActive.stage=application_skeleton` and the `Application Skeleton` artifact path, so Project Manager snapshot recovery no longer depends only on the realtime activation event.

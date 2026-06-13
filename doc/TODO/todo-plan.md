@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "03ea7191c",
+  "lastRecordedCommit": "9d7da4587",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-508.task1",
-  "expectedCommitMessage": "chore: release 1.2.508",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-509.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.509",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.508",
-    "preCommitHead": "03ea7191c",
+    "expectedCommitMessage": "docs: prepare release 1.2.509",
+    "preCommitHead": "9d7da4587",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-508.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-509.task1"
   }
 }
 ```
@@ -341,9 +341,17 @@
 202. [DONE] `devtree-early-pp.phase4.release-docs-508.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.508 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.508`).
 203. [DONE] Git Commit: `docs: prepare release 1.2.508` (hash: 03ea7191c)
 204. [DONE] `devtree-early-pp.phase4.release-build-508.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.508`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully; VSIX: `codeai-hub-1.2.508.vsix` (5.3M); 1.2.508 provider/core/launcher/UI tarballs are present in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-205. [PENDING] Git Commit: `chore: release 1.2.508` (hash: TBD)
+205. [DONE] Git Commit: `chore: release 1.2.508` (hash: 9d7da4587)
+
+### Stream: Release 1.2.509 Rebuild
+
+206. [DONE] `devtree-early-pp.phase4.release-confirm-509.task1` Получить отдельное подтверждение пользователя на релизную пересборку с новым номером после 1.2.508 (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested rebuilding the release with a new number, so the next release target is 1.2.509.
+207. [DONE] `devtree-early-pp.phase4.release-docs-509.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.509 перед `build-all.sh` без новых кодовых изменений относительно 1.2.508 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.509`).
+208. [PENDING] Git Commit: `docs: prepare release 1.2.509` (hash: TBD)
+209. [TODO] `devtree-early-pp.phase4.release-build-509.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.509`).
+210. [TODO] Git Commit: `chore: release 1.2.509` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-206. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-207. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+211. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+212. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)

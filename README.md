@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.508** (Persistent Diagram Handoff State)
+**Current Release — v1.2.509** (Persistent Diagram Handoff Rebuild)
+
+This release is a clean rebuild of the 1.2.508 persisted `Diagram Modules` to
+`Application Skeleton` handoff fix under a new release number. No additional
+runtime behavior was changed after 1.2.508.
+
+Retest focus remains the same: after accepting the final `Diagram Modules`
+review, Project Manager should automatically move to the `Application Skeleton`
+card instead of leaving `Diagram Modules` selected.
+
+**Previous Release — v1.2.508** (Persistent Diagram Handoff State)
 
 This release fixes the Core-side source of truth for the `Diagram Modules` to
 `Application Skeleton` handoff. After accepting the final `Diagram Modules`
@@ -14,10 +24,6 @@ still point back to `diagram_modules`. The handoff is now recorded by Core
 during the same managed acceptance flow that advances `workspace.plan.md`, so a
 fresh Project Manager snapshot can recover the next-step card without relying on
 a realtime event.
-
-Retest focus: after accepting the final `Diagram Modules` review, Project
-Manager should automatically move to the `Application Skeleton` card instead of
-leaving `Diagram Modules` selected.
 
 **Previous Release — v1.2.507** (Stage Handoff Snapshot Recovery)
 
