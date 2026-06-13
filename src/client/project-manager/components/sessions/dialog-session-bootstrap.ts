@@ -11,6 +11,7 @@ import { applyWorkspaceSnapshotToSnapshots } from "./session-stream";
 import { seedSnapshotWithCachedUsageLimits } from "./usage-limits-stream";
 
 const RUNTIME_RESTORE_IN_FLIGHT_TTL_MS = 30_000;
+const RUNTIME_HYDRATION_LOCK_REASON = "runtime_state_hydration";
 
 const pruneExpiredRestoreRequests = (
   requests: Map<string, number>,
@@ -57,6 +58,45 @@ export const shouldCreateRuntimeRestore = (options: {
   return true;
 };
 
+const shouldApplyRuntimeHydrationLock = (session: SessionRecord): boolean =>
+  session.binding.status === "pending" &&
+  typeof session.binding.providerSessionId === "string";
+
+const applyRuntimeHydrationLock = (
+  snapshots: SessionSnapshots,
+  session: SessionRecord
+): SessionSnapshots => {
+  const current = snapshots[session.id];
+  if (!current) {
+    return snapshots;
+  }
+  if (
+    current.status.connectionState === "blocked" &&
+    current.status.continuityLock?.active === true &&
+    current.status.continuityLock.reason === RUNTIME_HYDRATION_LOCK_REASON
+  ) {
+    return snapshots;
+  }
+  const now = Date.now();
+  return {
+    ...snapshots,
+    [session.id]: {
+      ...current,
+      binding: session.binding,
+      status: {
+        ...current.status,
+        connectionState: "blocked",
+        continuityLock: {
+          active: true,
+          reason: RUNTIME_HYDRATION_LOCK_REASON,
+          updatedAt: now,
+        },
+        updatedAt: now,
+      },
+    },
+  };
+};
+
 export const createDialogBootstrapSnapshots = (options: {
   readonly previous: SessionSnapshots;
   readonly nextSession: SessionRecord;
@@ -64,26 +104,30 @@ export const createDialogBootstrapSnapshots = (options: {
   readonly settings: Settings | null;
   readonly latestSnapshot: WorkspaceSnapshotPushPayload | null;
 }): SessionSnapshots => {
-  if (options.previous[options.nextSession.id]) {
-    return options.previous;
+  const existing = options.previous[options.nextSession.id];
+  let next: SessionSnapshots = options.previous;
+  if (!existing) {
+    const labelsForSnapshot = buildProviderLabels(options.providerId);
+    const base = seedSnapshotWithCachedUsageLimits(
+      createInitialSnapshot(
+        options.nextSession,
+        labelsForSnapshot,
+        options.settings
+      )
+    );
+    next = {
+      ...options.previous,
+      [options.nextSession.id]: base,
+    };
   }
-  const labelsForSnapshot = buildProviderLabels(options.providerId);
-  const base = seedSnapshotWithCachedUsageLimits(
-    createInitialSnapshot(
-      options.nextSession,
-      labelsForSnapshot,
-      options.settings
-    )
-  );
-  let next: SessionSnapshots = {
-    ...options.previous,
-    [options.nextSession.id]: base,
-  };
   if (
     options.latestSnapshot &&
     options.latestSnapshot.workspaceRoot === options.nextSession.workspacePath
   ) {
     next = applyWorkspaceSnapshotToSnapshots(next, options.latestSnapshot);
+  }
+  if (shouldApplyRuntimeHydrationLock(options.nextSession)) {
+    next = applyRuntimeHydrationLock(next, options.nextSession);
   }
   return next;
 };

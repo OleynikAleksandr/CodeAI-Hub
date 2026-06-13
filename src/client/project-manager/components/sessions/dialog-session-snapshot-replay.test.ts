@@ -214,7 +214,7 @@ test("projected dialog stream events request tail history refresh", async () => 
 
   assertIncludes(controllerSource, "shouldRefreshDialogHistoryForStream", "controller must route projected worktree stream events into dialog history refresh");
   assertIncludes(controllerSource, "requestDialogHistory(activeIntent, dialogId, cursor, { force: cursor <= 0 });", "controller must refresh the active dialog tail after matching turn-state events");
-  assertIncludes(controllerSource, "applyDialogManagedReviewPendingLock", "managed review confirmation must visibly lock the projected dialog while Core processes the action");
+  assertIncludes(controllerSource, "scheduleDialogManagedReviewPendingLock", "managed review confirmation must visibly lock the projected dialog while Core processes the action");
   assertIncludes(turnStateSource, "turnState.providerSessionId ===", "turn-state matching must support projected dialogs whose visible id differs from runtime session id");
 });
 
@@ -447,15 +447,26 @@ test("dialog restore path keeps snapshot-confirmed idle dialogs ready and suppre
 });
 
 test("dialog restore bootstrap stays pending until runtime session materializes", async () => {
-  const [controllerSource, coreEventsSource] = await Promise.all([
+  const [controllerSource, coreEventsSource, bootstrapSource] = await Promise.all([
     readFile(CONTROLLER_SOURCE_PATH, "utf8"),
     readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+    readFile(BOOTSTRAP_SOURCE_PATH, "utf8"),
   ]);
 
   assert.equal(
     coreEventsSource.includes('status: "pending" as const'),
     true,
     "dialog bootstrap must keep placeholder session binding pending when runtime session is still absent"
+  );
+  assert.equal(
+    bootstrapSource.includes("RUNTIME_HYDRATION_LOCK_REASON"),
+    true,
+    "pending dialog bootstrap must carry a dedicated hydration input lock"
+  );
+  assert.equal(
+    bootstrapSource.includes("applyRuntimeHydrationLock(next, options.nextSession)"),
+    true,
+    "pending dialog bootstrap must keep input locked until Core runtime state arrives"
   );
   assert.equal(
     controllerSource.includes('current.binding.status !== "ready"'),
