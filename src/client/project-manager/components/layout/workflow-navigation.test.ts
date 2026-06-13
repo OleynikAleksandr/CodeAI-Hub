@@ -67,6 +67,21 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     true,
     "Core stage activation must reuse the shared stage activation route"
   );
+  assert.equal(
+    mainAreaSource.includes("managed-workflow-user-review"),
+    true,
+    "managed workflow user review messages must trigger immediate workflow-state refresh"
+  );
+  assert.equal(
+    mainAreaSource.includes("managed-workflow-complete"),
+    true,
+    "managed workflow completion messages must trigger immediate workflow-state refresh"
+  );
+  assert.equal(
+    mainAreaSource.includes("workflowStateStore.requestImmediatePoll()"),
+    true,
+    "main area must refresh workflow state immediately for Core-managed review lifecycle events"
+  );
 
   // main area must not render a toolbar or import it
   assert.equal(

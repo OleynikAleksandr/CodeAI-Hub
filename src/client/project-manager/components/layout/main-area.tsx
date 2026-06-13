@@ -142,10 +142,15 @@ export const MainArea: React.FC<MainAreaProps> = ({
   useEffect(
     () =>
       api.onCoreEvent((message) => {
+        const tag = message.type === "session:message" && message.payload && typeof message.payload === "object" ? (message.payload as { readonly tag?: unknown }).tag : null;
+        if (tag === "managed-workflow-user-review" || tag === "managed-workflow-complete") {
+          workflowStateStore.requestImmediatePoll();
+        }
         const stage = readCoreStageActivation(message);
         if (!stage) {
           return;
         }
+        workflowStateStore.requestImmediatePoll();
         window.dispatchEvent(
           new CustomEvent("pm:stage:activated", {
             detail: { source: "core-workflow-stage-activate", stage },

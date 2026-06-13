@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "566232152",
+  "lastRecordedCommit": "4747aa955",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-498.task1",
-  "expectedCommitMessage": "chore: release 1.2.498",
+  "currentTaskId": "devtree-early-pp.phase4.attention-refresh.task1",
+  "expectedCommitMessage": "fix: refresh workflow attention on managed review messages",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.498",
-    "preCommitHead": "566232152",
+    "expectedCommitMessage": "fix: refresh workflow attention on managed review messages",
+    "preCommitHead": "4747aa955",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-498.task1"
+    "taskId": "devtree-early-pp.phase4.attention-refresh.task1"
   }
 }
 ```
@@ -159,13 +159,26 @@
 70. [DONE] `devtree-early-pp.phase4.release-docs-498.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.498 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.498`).
 71. [DONE] Git Commit: `docs: prepare release 1.2.498` (hash: 566232152)
 72. [DONE] `devtree-early-pp.phase4.release-build-498.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.498`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.498.vsix` (5.2M); tarball'ы 1.2.498 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-73. [PENDING] Git Commit: `chore: release 1.2.498` (hash: TBD)
-74. [TODO] `devtree-early-pp.phase4.user-retest-498.task1` Пользователь тестирует следующий релиз: `Description` и `Virtual Simulation` должны получать анимированную orange frame в Documentation Tree, когда Core открыл preliminary user review и ждёт `Подтверждаю`; после acceptance/persistent return эти шаги остаются обычными зелёными без orange marker (scope: `manual retest`; expected commit: none).
+73. [DONE] Git Commit: `chore: release 1.2.498` (hash: 4747aa955)
+74. [BLOCKED] `devtree-early-pp.phase4.user-retest-498.task1` Пользователь тестирует следующий релиз: `Description` и `Virtual Simulation` должны получать анимированную orange frame в Documentation Tree, когда Core открыл preliminary user review и ждёт `Подтверждаю`; после acceptance/persistent return эти шаги остаются обычными зелёными без orange marker (scope: `manual retest`; expected commit: none). Result: Релиз 1.2.498 подтвердил появление animated attention marker уже на `Description`, но выявил два timing-дефекта: marker появляется с задержкой после review-карточки и исчезает только после следующего workflow activation, а должен исчезать сразу после `Подтверждаю`. Дополнительно тестовая анкета FinderWidget должна явно задавать два product parts и lead part.
+
+### Stream: Managed Review Attention Refresh
+
+75. [DONE] `devtree-early-pp.phase4.attention-refresh.task1` Подключить немедленный refresh `workflowStateStore` на Core session messages с managed review lifecycle tags, чтобы open/close user gate обновлял tree marker сразу при появлении review-карточки и сразу после `Подтверждаю` (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: refresh workflow attention on managed review messages`).
+76. [PENDING] Git Commit: `fix: refresh workflow attention on managed review messages` (hash: TBD)
+77. [TODO] `devtree-early-pp.phase4.finder-widget-questionnaire.task1` Актуализировать тестовую анкету FinderWidget так, чтобы в ней явно требовались два product parts и один lead product part (scope: `/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01/.codeai-hub/finderwidget-test01/description/questionnaire.md, doc/TODO/todo-plan.md`; expected commit: none).
+78. [TODO] `devtree-early-pp.phase4.attention-refresh-verify.task1` Выполнить targeted Project Manager/Core verification для immediate attention refresh и regression tests для preliminary user gate cursor (scope: `src/client/project-manager, packages/core`; expected commit: none).
+79. [TODO] `devtree-early-pp.phase4.release-confirm-499.task1` Зафиксировать явное подтверждение пользователя на релизную сборку после фиксов 1.2.498 retest (scope: `manual confirmation`; expected commit: none).
+80. [TODO] `devtree-early-pp.phase4.release-docs-499.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.499 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.499`).
+81. [TODO] Git Commit: `docs: prepare release 1.2.499` (hash: TBD)
+82. [TODO] `devtree-early-pp.phase4.release-build-499.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.499`).
+83. [TODO] Git Commit: `chore: release 1.2.499` (hash: TBD)
+84. [TODO] `devtree-early-pp.phase4.user-retest-499.task1` Пользователь тестирует следующий релиз: animated attention marker должен появляться одновременно с review-карточкой `Подтверждаю`, исчезать сразу после acceptance, а новая анкета FinderWidget должна вести Description agent к двум product parts с явным lead part (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-75. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-76. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-77. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+85. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+86. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+87. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
