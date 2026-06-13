@@ -3,6 +3,7 @@ const USER_GATE_INPUT_LOCK_REASON = "Another user gate is active.";
 type DocumentationGateStage =
   | "application_skeleton"
   | "description"
+  | "diagram_modules"
   | "quality_gates"
   | "virtual_simulation";
 
@@ -29,6 +30,7 @@ const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
 const DOCUMENTATION_STAGE_ARTIFACTS: Record<DocumentationGateStage, string> = {
   application_skeleton: "application-skeleton.md",
   description: "Final_Description.md",
+  diagram_modules: "product-parts.index.md",
   quality_gates: "quality-gates.md",
   virtual_simulation: "virtual-simulation.md",
 };

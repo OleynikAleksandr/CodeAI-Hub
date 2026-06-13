@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { Request, Response } from "express";
+import { isDiagramModulesReviewOpen } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
 import { ManagedWorkflowReadModelProjector } from "../../managed-workflow-orchestration/managed-workflow-read-model-projector";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -147,6 +148,8 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
+    const diagramModulesReviewOpenPromise =
+      isDiagramModulesReviewOpen(workspaceRoot);
     const applicationSkeletonProgressPromise =
       readApplicationSkeletonProgressSnapshot({
         workspaceRoot,
@@ -179,6 +182,7 @@ export class WorkflowStateService {
       descriptionPromise,
       lastActivePromise,
       diagramModulesProgressPromise,
+      diagramModulesReviewOpenPromise,
       applicationSkeletonProgressPromise,
       qualityGatesProgressPromise,
       qualityGatesReviewOpenPromise,
@@ -191,6 +195,7 @@ export class WorkflowStateService {
           descriptionSnapshot,
           lastActive,
           rawDiagramModulesProgress,
+          diagramModulesReviewOpen,
           rawApplicationSkeletonProgress,
           rawQualityGatesProgress,
           qualityGatesReviewOpen,
@@ -357,6 +362,11 @@ export class WorkflowStateService {
                               "virtual_simulation"
                             ),
                           stage: "virtual_simulation",
+                        },
+                        {
+                          progress: null,
+                          reviewOpen: diagramModulesReviewOpen,
+                          stage: "diagram_modules",
                         },
                         {
                           progress:
