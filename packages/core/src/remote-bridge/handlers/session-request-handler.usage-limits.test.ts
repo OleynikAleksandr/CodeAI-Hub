@@ -413,7 +413,7 @@ test("SessionRequestHandler re-dispatches binding_ready refresh after an empty w
   assert.equal(refreshCalls, 3);
 });
 
-test("SessionRequestHandler replays cached usage limits and still refreshes on dialog_opened", async () => {
+test("SessionRequestHandler replays cached usage limits without provider refresh on dialog_opened", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
     "codexCli",
@@ -481,18 +481,14 @@ test("SessionRequestHandler replays cached usage limits and still refreshes on d
     sessionId: session.id,
   });
 
-  assert.equal(refreshCalls, 1);
+  assert.equal(refreshCalls, 0);
   const usageLimitEvents = findUsageLimitsStreamEvents(
     harness.events,
     session.id
   );
-  assert.equal(usageLimitEvents.length, 2);
+  assert.equal(usageLimitEvents.length, 1);
   assert.equal(
     usageLimitEvents[0]?.payload.event.usageLimits?.currentSession?.percentUsed,
     21
-  );
-  assert.equal(
-    usageLimitEvents[1]?.payload.event.usageLimits?.currentSession?.percentUsed,
-    34
   );
 });

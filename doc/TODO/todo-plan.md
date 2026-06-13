@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "b4e3258fa",
+  "lastRecordedCommit": "46a726bd6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.codex-auth-recovery-message.task1",
-  "expectedCommitMessage": "fix: explain codex auth recovery to users",
+  "currentTaskId": "devtree-early-pp.phase4.codex-auth-usage-limits.task1",
+  "expectedCommitMessage": "fix: avoid codex usage limit auth loops",
   "debt": {
-    "expectedCommitMessage": "fix: explain codex auth recovery to users",
-    "preCommitHead": "b4e3258fa",
+    "expectedCommitMessage": "fix: avoid codex usage limit auth loops",
+    "preCommitHead": "46a726bd6",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.codex-auth-recovery-message.task1"
+    "taskId": "devtree-early-pp.phase4.codex-auth-usage-limits.task1"
   }
 }
 ```
@@ -212,9 +212,9 @@
 ### Stream: Codex Auth Recovery UX
 
 111. [DONE] `devtree-early-pp.phase4.codex-auth-recovery-message.task1` Классифицировать известный Codex refresh-token failure и писать в сессию понятную инструкцию recovery: закрыть приложения, использующие Codex, выполнить `codex logout`, затем `codex login`, после чего перезапустить CodeAI Hub (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-auth-recovery.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: explain codex auth recovery to users`).
-112. [PENDING] Git Commit: `fix: explain codex auth recovery to users` (hash: TBD)
-113. [TODO] `devtree-early-pp.phase4.codex-auth-usage-limits.task1` Не запускать повторный provider refresh для usage-limits при `dialog_opened`, если уже есть cached replay или если это не нужно для активного turn; это снижает лавину refresh-попыток при сломанном Codex auth (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: avoid codex usage limit auth loops`).
-114. [TODO] Git Commit: `fix: avoid codex usage limit auth loops` (hash: TBD)
+112. [DONE] Git Commit: `fix: explain codex auth recovery to users` (hash: 46a726bd6)
+113. [DONE] `devtree-early-pp.phase4.codex-auth-usage-limits.task1` Не запускать повторный provider refresh для usage-limits при `dialog_opened`, если уже есть cached replay или если это не нужно для активного turn; это снижает лавину refresh-попыток при сломанном Codex auth (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: avoid codex usage limit auth loops`).
+114. [PENDING] Git Commit: `fix: avoid codex usage limit auth loops` (hash: TBD)
 115. [TODO] `devtree-early-pp.phase4.codex-auth-recovery-verify.task1` Выполнить targeted Core verification для Codex auth recovery message и usage-limits refresh behavior (scope: `packages/core`; expected commit: none).
 116. [TODO] `devtree-early-pp.phase4.release-confirm-502.task1` Получить отдельное подтверждение пользователя на релизную сборку после Codex auth recovery UX фикса (scope: `manual confirmation`; expected commit: none).
 

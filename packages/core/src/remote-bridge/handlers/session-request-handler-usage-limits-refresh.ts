@@ -65,12 +65,14 @@ export const handleRefreshUsageLimitsFlow = async (params: {
         providerSessionId: boundProviderSessionId,
       })
     : null;
+  const canDispatchProviderRefresh = lifecycleTrigger !== "dialog_opened";
   const shouldDispatchRefresh =
+    canDispatchProviderRefresh &&
     shouldDispatchUsageLimitsRefresh({
       cachedReplayAvailable: Boolean(cachedReplayEvent),
       lifecycleTrigger,
       runtimeTurnState,
-    }) || lifecycleTrigger === "dialog_opened";
+    });
   logUsageLimitsRefreshReceived({
     adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
     boundProviderSessionId,
