@@ -34,16 +34,19 @@ export interface DevelopmentTreeNodeLifecycle {
   readonly startState: DevelopmentTreeNodeStartState;
 }
 
-export type DevelopmentTreeUserGateNodeKind = "product_part";
+export type DevelopmentTreeUserGateNodeKind = "cluster" | "product_part";
 
 export type DevelopmentTreeUserGateReason =
+  | "cluster_contract_review_required"
   | "product_part_brief_review_required"
+  | "product_part_order_plan_review_required"
   | "waiting_for_user_gate_cursor";
 
 export type DevelopmentTreeUserGateStatus = "active" | "queued";
 
 export interface DevelopmentTreeUserGate {
   readonly artifactPaths: readonly string[];
+  readonly clusterId?: string;
   readonly currentTaskId?: string;
   readonly expectedCommitMessage?: string;
   readonly id: string;

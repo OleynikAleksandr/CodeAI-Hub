@@ -41,12 +41,18 @@ type UserGateCursorView = {
   readonly activeUserGate?: { readonly nodeId?: string } | null;
   readonly queuedUserGates?: readonly { readonly nodeId?: string }[];
 };
-const normalizeUserGateNodeId = (nodeId?: string): string | null =>
-  typeof nodeId !== "string"
+const CLUSTER_USER_GATE_NODE_ID_RE = /^cluster:([^/]+)\/(.+)$/u;
+const normalizeUserGateNodeId = (nodeId?: string): string | null => {
+  const clusterMatch =
+    typeof nodeId === "string" ? nodeId.match(CLUSTER_USER_GATE_NODE_ID_RE) : null;
+  return typeof nodeId !== "string"
     ? null
-    : nodeId.startsWith("product-part:")
-      ? `devtree:${nodeId.slice("product-part:".length)}`
-      : nodeId;
+    : clusterMatch
+      ? `devtree:${clusterMatch[1]}:${clusterMatch[2]}`
+      : nodeId.startsWith("product-part:")
+        ? `devtree:${nodeId.slice("product-part:".length)}`
+        : nodeId;
+};
 const createDevelopmentTreeExpansionKey = (
   nodes: readonly TreeNode[]
 ): string =>
