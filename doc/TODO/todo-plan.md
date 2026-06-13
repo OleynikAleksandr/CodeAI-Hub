@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "97a6f699b",
+  "lastRecordedCommit": "244235086",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.stage-last-active-fallback.task1",
-  "expectedCommitMessage": "fix: sync stage handoff from workflow snapshot",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-507.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.507",
   "debt": {
-    "expectedCommitMessage": "fix: sync stage handoff from workflow snapshot",
-    "preCommitHead": "97a6f699b",
+    "expectedCommitMessage": "docs: prepare release 1.2.507",
+    "preCommitHead": "244235086",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.stage-last-active-fallback.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-507.task1"
   }
 }
 ```
@@ -322,11 +322,11 @@
 ### Stream: Stage Handoff Last Active Fallback 1.2.507
 
 188. [DONE] `devtree-early-pp.phase4.stage-last-active-fallback.task1` Применять Core-owned `workflowState.lastActive.stage` как persistent fallback для `pm:stage:activated`, чтобы acceptance `Diagram Modules` открывал `Application Skeleton` даже если realtime `workflow:stage:activate` не был применён UI (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sync stage handoff from workflow snapshot`).
-189. [PENDING] Git Commit: `fix: sync stage handoff from workflow snapshot` (hash: TBD)
-190. [TODO] `devtree-early-pp.phase4.stage-last-active-fallback-verify.task1` Выполнить targeted Project Manager verification для snapshot-based stage handoff fallback (scope: `src/client/project-manager`; expected commit: none).
-191. [TODO] `devtree-early-pp.phase4.release-confirm-507.task1` Получить отдельное подтверждение пользователя на релизную сборку 1.2.507 после stage handoff fallback фикса (scope: `manual confirmation`; expected commit: none).
-192. [TODO] `devtree-early-pp.phase4.release-docs-507.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.507 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.507`).
-193. [TODO] Git Commit: `docs: prepare release 1.2.507` (hash: TBD)
+189. [DONE] Git Commit: `fix: sync stage handoff from workflow snapshot` (hash: 244235086)
+190. [DONE] `devtree-early-pp.phase4.stage-last-active-fallback-verify.task1` Выполнить targeted Project Manager verification для snapshot-based stage handoff fallback (scope: `src/client/project-manager`; expected commit: none). Result: Targeted Project Manager verification passed after snapshot stage handoff fallback: npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts; npm run typecheck:webview; npm run build:project-manager; npm run build:webview.
+191. [DONE] `devtree-early-pp.phase4.release-confirm-507.task1` Получить отдельное подтверждение пользователя на релизную сборку 1.2.507 после stage handoff fallback фикса (scope: `manual confirmation`; expected commit: none). Result: Пользователь подтвердил сборку релиза 1.2.507 после фикса snapshot-based stage handoff fallback.
+192. [DONE] `devtree-early-pp.phase4.release-docs-507.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.507 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.507`). Result: README current release and CHANGELOG entry prepared for v1.2.507 stage handoff snapshot recovery retest.
+193. [PENDING] Git Commit: `docs: prepare release 1.2.507` (hash: TBD)
 194. [TODO] `devtree-early-pp.phase4.release-build-507.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.507`).
 195. [TODO] Git Commit: `chore: release 1.2.507` (hash: TBD)
 

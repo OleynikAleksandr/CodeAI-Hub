@@ -2,7 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.506** (Project Manager Navigation Lock Hydration)
+**Current Release — v1.2.507** (Stage Handoff Snapshot Recovery)
+
+This release fixes the remaining Project Manager handoff gap after accepting
+`Diagram Modules`. Core already persisted `lastActive.stage` as
+`application_skeleton`, but the UI could stay on the `Diagram Modules` session
+if the realtime `workflow:stage:activate` event was not applied during panel
+hydration.
+
+Project Manager now treats `workflowState.lastActive.stage` as the persistent
+fallback for the same shared `pm:stage:activated` route used by sidebar clicks
+and Core events. When the workflow snapshot says the active stage is
+`application_skeleton`, the sidebar selection, session panel, and artifact
+panel all recover through the normal stage activation path.
+
+Retest focus: after accepting the final `Diagram Modules` review, Project
+Manager should automatically move to the `Application Skeleton` card instead of
+leaving `Diagram Modules` selected.
+
+**Previous Release — v1.2.506** (Project Manager Navigation Lock Hydration)
 
 This release fixes the Project Manager regressions found during the v1.2.505
 retest around navigation handoff, projected dialog input locking, and selected

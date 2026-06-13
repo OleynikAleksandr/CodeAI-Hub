@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.507] - 2026-06-13
+### Fixed
+- **Project Manager now recovers stage handoff from persisted workflow state.** Panel sync treats `workflowState.lastActive.stage` as a snapshot fallback and re-dispatches the shared `pm:stage:activated` route, so accepting `Diagram Modules` can still open `Application Skeleton` even if the realtime activation event was missed.
+- **The sidebar selection, session panel, and artifact panel use the same recovery path.** Snapshot recovery no longer adds a separate UI truth path; it reuses the same stage activation event used by Core and tree clicks.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.506] - 2026-06-13
 ### Fixed
 - **Stage handoff replay now waits for the refreshed workflow snapshot.** Core-owned `workflow:stage:activate` events are retained and replayed by Project Manager panel sync after `workflowState.updatedAt` changes, so accepting `Diagram Modules` reliably opens the `Application Skeleton` card.
