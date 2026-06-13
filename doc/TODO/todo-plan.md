@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "c1d83d35b",
+  "lastRecordedCommit": "77342f07a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.lead-review-target-message.task1",
-  "expectedCommitMessage": "fix: dispatch promoted lead review message",
+  "currentTaskId": "devtree-early-pp.phase4.lead-review-deferral-tests.task1",
+  "expectedCommitMessage": "test: cover lead product part review deferral",
   "debt": {
-    "expectedCommitMessage": "fix: dispatch promoted lead review message",
-    "preCommitHead": "c1d83d35b",
+    "expectedCommitMessage": "test: cover lead product part review deferral",
+    "preCommitHead": "77342f07a",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.lead-review-target-message.task1"
+    "taskId": "devtree-early-pp.phase4.lead-review-deferral-tests.task1"
   }
 }
 ```
@@ -255,9 +255,9 @@
 137. [DONE] `devtree-early-pp.phase4.lead-review-deferral.task1` Перенести правило "lead Product Part review последним" в Core lifecycle: lead draft может быть зафиксирован, но review gate открывается только после принятых secondary briefs (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-review-deferral.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts`; expected commit: `fix: defer lead product part review until secondary briefs`).
 138. [DONE] Git Commit: `fix: defer lead product part review until secondary briefs` (hash: c1d83d35b)
 139. [DONE] `devtree-early-pp.phase4.lead-review-target-message.task1` Доставлять promoted lead review system-message в lead Product Part session, чтобы кнопка `Подтверждаю` появлялась только после secondary acceptance (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: dispatch promoted lead review message`).
-140. [PENDING] Git Commit: `fix: dispatch promoted lead review message` (hash: TBD)
-141. [TODO] `devtree-early-pp.phase4.lead-review-deferral-tests.task1` Покрыть regression tests: exact draft target paths, lead draft deferred при missing secondary, secondary acceptance promotes lead brief review before order-plan assignment (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.lane.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lead product part review deferral`).
-142. [TODO] Git Commit: `test: cover lead product part review deferral` (hash: TBD)
+140. [DONE] Git Commit: `fix: dispatch promoted lead review message` (hash: 77342f07a)
+141. [DONE] `devtree-early-pp.phase4.lead-review-deferral-tests.task1` Покрыть regression tests: exact draft target paths, lead draft deferred при missing secondary, secondary acceptance promotes lead brief review before order-plan assignment (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/remote-bridge/handlers/product-part-brief-review-deferral.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lead product part review deferral`).
+142. [PENDING] Git Commit: `test: cover lead product part review deferral` (hash: TBD)
 143. [TODO] `devtree-early-pp.phase4.lead-review-deferral-verify.task1` Выполнить targeted Core verification для Product Part lead deferral и exact draft target prompt (scope: `packages/core`; expected commit: none).
 144. [TODO] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none).
 145. [TODO] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).

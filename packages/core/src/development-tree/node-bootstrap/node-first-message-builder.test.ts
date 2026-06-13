@@ -29,6 +29,8 @@ const FACADE_CONTRACT_PROSE_LOCALIZATION_PATTERN =
   /keep method\/event names and identifiers canonical, but write descriptions, boundary rationale, assumptions, and open questions in the target artifact language/;
 const PRODUCT_PART_BRIEF_DRAFT_PATTERN =
   /ProductPartDevelopmentBrief\.draft\.md/;
+const PRODUCT_PART_BRIEF_TARGET_PATTERN =
+  /\.codeai-hub\/demo\/development_tree\/materialized\/product-parts\/local-runtime\/ProductPartDevelopmentBrief\.draft\.md/;
 const RUNTIME_TOOLING_FACTS_PATTERN = /Runtime tooling facts:/;
 const PYTHON3_COMMAND_PATTERN = /Python command: `python3`\./;
 const ARTIFACT_WRITE_ENCODING_PATTERN = /Artifact write encoding:/;
@@ -142,7 +144,12 @@ test("NodeFirstMessageBuilder includes module drafts and contract boundaries", (
 test("NodeFirstMessageBuilder maps product part and cluster draft files", () => {
   const builder = new NodeFirstMessageBuilder();
   const productPart = builder.build({
-    node: createNode({ id: "local-runtime", kind: "product_part" }),
+    node: createNode({
+      id: "local-runtime",
+      kind: "product_part",
+      relativePath:
+        ".codeai-hub/demo/development_tree/materialized/product-parts/local-runtime",
+    }),
     technologyBase: "TypeScript",
   });
   const cluster = builder.build({
@@ -158,6 +165,7 @@ test("NodeFirstMessageBuilder maps product part and cluster draft files", () => 
     "ProductPartDevelopmentBrief.draft.md",
   ]);
   assert.match(productPart.content, PRODUCT_PART_BRIEF_DRAFT_PATTERN);
+  assert.match(productPart.content, PRODUCT_PART_BRIEF_TARGET_PATTERN);
   assert.deepEqual(cluster.draftFileNames, [
     "ClusterDescription.draft.md",
     "ClusterFacadeContract.draft.md",
