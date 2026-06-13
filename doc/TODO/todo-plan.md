@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "0e1d7aeb1",
+  "lastRecordedCommit": "85dcedd3f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.order-plan-fixture-seeds.task1",
-  "expectedCommitMessage": "test: update development order plan fixture seeds",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-503.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.503",
   "debt": {
-    "expectedCommitMessage": "test: update development order plan fixture seeds",
-    "preCommitHead": "0e1d7aeb1",
+    "expectedCommitMessage": "docs: prepare release 1.2.503",
+    "preCommitHead": "85dcedd3f",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.order-plan-fixture-seeds.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-503.task1"
   }
 }
 ```
@@ -260,11 +260,11 @@
 142. [DONE] Git Commit: `test: cover lead product part review deferral` (hash: 0e1d7aeb1)
 143. [BLOCKED] `devtree-early-pp.phase4.lead-review-deferral-verify.task1` Выполнить targeted Core verification для Product Part lead deferral и exact draft target prompt (scope: `packages/core`; expected commit: none). Result: Targeted verification exposed outdated `ProductPartDevelopmentBriefTurnController` order-plan fixture: `DevelopmentOrderPlan.draft.json` lacks required `contractSeeds`, so old order-plan review tests stop before commit.
 144. [DONE] `devtree-early-pp.phase4.order-plan-fixture-seeds.task1` Обновить order-plan regression fixture под текущий v2 contract: cluster/standalone seeds обязательны для Development Order Plan validation (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: update development order plan fixture seeds`).
-145. [PENDING] Git Commit: `test: update development order plan fixture seeds` (hash: TBD)
-146. [TODO] `devtree-early-pp.phase4.lead-review-deferral-verify-retry.task1` Повторно выполнить targeted Core verification для Product Part lead deferral, exact draft target prompt и order-plan handoff fixtures (scope: `packages/core`; expected commit: none).
-147. [TODO] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none).
-148. [TODO] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
-149. [TODO] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
+145. [DONE] Git Commit: `test: update development order plan fixture seeds` (hash: 85dcedd3f)
+146. [DONE] `devtree-early-pp.phase4.lead-review-deferral-verify-retry.task1` Повторно выполнить targeted Core verification для Product Part lead deferral, exact draft target prompt и order-plan handoff fixtures (scope: `packages/core`; expected commit: none). Result: Targeted verification passed: npm run build --workspace @codeai-hub/core; node --test for node-first-message-builder, product-part-brief-review-deferral, product-part-development-brief-turn-controller, product-part-development-brief-review-controller.lane, and product-part-managed-review-decision-handler (17/17).
+147. [DONE] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested release build 1.2.503 after Product Part lead-review deferral fix.
+148. [DONE] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
+149. [PENDING] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
 150. [TODO] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`).
 151. [TODO] Git Commit: `chore: release 1.2.503` (hash: TBD)
 

@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.503] - 2026-06-13
+### Fixed
+- **Lead Product Part review is now Core-deferred until secondary briefs are accepted.** A lead Product Part draft can finish first, but Core records it as `ready_for_review_deferred` and does not show the user confirmation card until all secondary Product Part Development Briefs are accepted.
+- **Secondary acceptance now promotes the deferred lead review in the lead session.** After the last secondary brief is accepted, Core sends the `managed-workflow-user-review` message to the lead Product Part session; the lead Development Order Plan assignment still waits for that lead review acceptance.
+- **Development Tree draft prompts now list exact target paths.** Product Part, Cluster, and Module agents receive materialized relative paths for their draft files, reducing accidental writes to the lane worktree root.
+- **Order-plan regression fixtures now include required contract seeds.** The targeted test suite covers the current v2 Development Order Plan validator contract while staying under the 500-line source guard.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/development-tree/node-bootstrap/node-first-message-builder.test.js packages/core/dist/remote-bridge/handlers/product-part-brief-review-deferral.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-review-controller.lane.test.js packages/core/dist/remote-bridge/handlers/product-part-managed-review-decision-handler.test.js`
+
 ## [1.2.502] - 2026-06-13
 ### Fixed
 - **Product Part pre-code work now runs in deterministic worktree lanes.** After `Diagram Modules` acceptance, Product Part draft sessions start in per-part precode Git worktrees while the main workspace keeps only Core-owned orchestration projection state.

@@ -2,28 +2,35 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.502** (Product Part Worktree Lanes)
+**Current Release — v1.2.503** (Lead Product Part Review Ordering)
+
+This release tightens the Product Part pre-code review lifecycle introduced in
+v1.2.502. Lead Product Part draft work may finish first, but Core now defers
+the lead user review gate until every secondary Product Part Development Brief
+has been accepted and checkpointed.
+
+When the last secondary brief is accepted, Core promotes the deferred lead
+review inside the lead Product Part session and only then shows the
+`Подтверждаю` review card there. The lead Development Order Plan assignment is
+still blocked until that lead brief review is accepted by the user.
+
+Development Tree agents also receive exact draft target paths in their first
+prompt, so Product Part agents should write
+`ProductPartDevelopmentBrief.draft.md` into the materialized node folder rather
+than the lane worktree root.
+
+Retest focus: reset the test workspace to the questionnaire, run through
+`Diagram Modules`, let both Product Part lanes work, and verify that secondary
+Product Part review cards are handled before the lead card. If the lead agent
+finishes first, it should show a Core waiting message, not a `Подтверждаю`
+button, until secondary briefs are accepted.
+
+**Previous Release — v1.2.502** (Product Part Worktree Lanes)
 
 This release moves early Product Part pre-code work out of the main workspace
 and into deterministic Git worktree lanes. After `Diagram Modules` acceptance,
 Core starts each Product Part draft session in its own precode lane while the
 main workspace keeps only the orchestration projection state.
-
-Accepted secondary Product Part briefs are checkpointed back to the main
-workspace sequentially. The lead Product Part receives the full accepted brief
-texts inline only after those checkpoints are complete, and its Development
-Order Plan continues in the lead Product Part lane instead of writing the
-pre-code plan into the main workspace.
-
-Clear/undo for Product Part roots now removes lane worktrees, their temporary
-branches, continuity state, and stale runtime session files before recreating a
-fresh precode lane for the selected Product Part.
-
-Retest focus: reset the test workspace to the questionnaire, run through
-`Diagram Modules`, and verify that Product Part sessions appear in Project
-Manager while main Git stays clean. Accept secondary Product Part briefs first,
-then the lead brief; the lead order-plan turn should start only after accepted
-brief checkpoints are present.
 
 **Previous Release — v1.2.501** (Product Part Turn Serialization)
 
