@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.500] - 2026-06-13
+### Fixed
+- **Managed review gates now share one complete attention cursor.** Core exposes active user attention for `Diagram Modules`, `Application Skeleton` final review, and repair-limit user review across `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`.
+- **Development Tree review gates now reach the right rows.** Lead `DevelopmentOrderPlan` review and Cluster Contract review now participate in the same active/queued user-gate cursor as Product Part brief review.
+- **Cluster gate ids map to visible Project Manager nodes.** Project Manager normalizes semantic `cluster:<part>/<cluster>` ids to the rendered `devtree:<part>:<cluster>` row so Cluster Contract review can pulse the cluster node itself.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/workflow-state-service-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/workflow-user-input-attention.test.js packages/core/dist/development-tree/development-tree-user-gate-cursor.test.js`
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.499] - 2026-06-13
 ### Fixed
 - **Managed review attention now refreshes immediately.** Project Manager requests an immediate workflow-state refresh when Core emits `managed-workflow-user-review` or `managed-workflow-complete` session messages, so the orange animated marker appears with the review card and closes as soon as the user accepts.

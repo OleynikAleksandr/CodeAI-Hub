@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "d40dccf7d",
+  "lastRecordedCommit": "8cb67b956",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.managed-review-gates-test.task1",
-  "expectedCommitMessage": "test: cover managed review gate attention cursor",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-500.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.500",
   "debt": {
-    "expectedCommitMessage": "test: cover managed review gate attention cursor",
-    "preCommitHead": "d40dccf7d",
+    "expectedCommitMessage": "docs: prepare release 1.2.500",
+    "preCommitHead": "8cb67b956",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.managed-review-gates-test.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-500.task1"
   }
 }
 ```
@@ -189,11 +189,11 @@
 92. [DONE] `devtree-early-pp.phase4.development-tree-review-gates.task1` Расширить Development Tree user-gate cursor на lead `DevelopmentOrderPlan` review и cluster contract review, чтобы active/queued marker доходил до Product Part и Cluster узлов (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.ts, src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `fix: cover development tree managed review gates`).
 93. [DONE] Git Commit: `fix: cover development tree managed review gates` (hash: d40dccf7d)
 94. [DONE] `devtree-early-pp.phase4.managed-review-gates-test.task1` Покрыть regression tests для Documentation Tree final/repair-limit gates и Development Tree order-plan/cluster gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.test.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `test: cover managed review gate attention cursor`).
-95. [PENDING] Git Commit: `test: cover managed review gate attention cursor` (hash: TBD)
-96. [TODO] `devtree-early-pp.phase4.managed-review-gates-verify.task1` Выполнить targeted Core/Project Manager verification для полного покрытия managed review attention cursor (scope: `packages/core, src/client/project-manager`; expected commit: none).
-97. [TODO] `devtree-early-pp.phase4.release-confirm-500.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку после расширенного фикса managed review gate coverage (scope: `manual confirmation`; expected commit: none).
-98. [TODO] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).
-99. [TODO] Git Commit: `docs: prepare release 1.2.500` (hash: TBD)
+95. [DONE] Git Commit: `test: cover managed review gate attention cursor` (hash: 8cb67b956)
+96. [DONE] `devtree-early-pp.phase4.managed-review-gates-verify.task1` Выполнить targeted Core/Project Manager verification для полного покрытия managed review attention cursor (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: @codeai-hub/core build; compiled managed review attention tests 18/18; Project Manager workflow-navigation source test; typecheck:webview; build:project-manager; build:webview
+97. [DONE] `devtree-early-pp.phase4.release-confirm-500.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку после расширенного фикса managed review gate coverage (scope: `manual confirmation`; expected commit: none). Result: User explicitly confirmed release build 1.2.500 after managed review gate coverage fix
+98. [DONE] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).
+99. [PENDING] Git Commit: `docs: prepare release 1.2.500` (hash: TBD)
 100. [TODO] `devtree-early-pp.phase4.release-build-500.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.500`).
 101. [TODO] Git Commit: `chore: release 1.2.500` (hash: TBD)
 102. [TODO] `devtree-early-pp.phase4.user-retest-500.task1` Пользователь тестирует следующий релиз: все Documentation Tree и Development Tree шаги с открытым user input/review gate должны подсвечиваться animated orange attention marker одновременно с review-карточкой `Подтверждаю`, а marker должен исчезать сразу после acceptance (scope: `manual retest`; expected commit: none).
