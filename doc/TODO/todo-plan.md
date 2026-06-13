@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "8bdc1974a",
+  "lastRecordedCommit": "97436c4a6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1",
-  "expectedCommitMessage": "docs: plan product part worktree lanes implementation",
+  "currentTaskId": "devtree-early-pp.phase4.worktree-lane-runtime.task1",
+  "expectedCommitMessage": "fix: add product part worktree lane runtime",
   "debt": {
-    "expectedCommitMessage": "docs: plan product part worktree lanes implementation",
-    "preCommitHead": "8bdc1974a",
+    "expectedCommitMessage": "fix: add product part worktree lane runtime",
+    "preCommitHead": "97436c4a6",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1"
+    "taskId": "devtree-early-pp.phase4.worktree-lane-runtime.task1"
   }
 }
 ```
@@ -224,12 +224,12 @@
 117. [DONE] `devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1` Актуализировать две активные стратегические директивы `Plans/` под новое правило: main workspace является orchestration/merge surface, Product Part agents стартуют в lane worktrees уже на pre-code документах, а совместимость со старыми тестовыми workspace не требуется (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: align development tree plans with worktree lanes`).
 118. [DONE] Git Commit: `docs: align development tree plans with worktree lanes` (hash: 8bdc1974a)
 119. [DONE] `devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1` Создать рядом с активными `Plans/` отдельный planning-документ конкретной реализации Product Part worktree lanes и обновить полку `Plans/README.md` + `Docs_Index.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan product part worktree lanes implementation`).
-120. [PENDING] Git Commit: `docs: plan product part worktree lanes implementation` (hash: TBD)
+120. [DONE] Git Commit: `docs: plan product part worktree lanes implementation` (hash: 97436c4a6)
 
 ### Stream: Product Part Worktree Lane Implementation
 
-121. [TODO] `devtree-early-pp.phase4.worktree-lane-runtime.task1` Найти и вынести Core helper для детерминированного Product Part lane branch/worktree path, create/delete lifecycle и safe existence checks на базе существующего workspace/worktree runtime (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: add product part worktree lane runtime`).
-122. [TODO] Git Commit: `fix: add product part worktree lane runtime` (hash: TBD)
+121. [DONE] `devtree-early-pp.phase4.worktree-lane-runtime.task1` Найти и вынести Core helper для детерминированного Product Part lane branch/worktree path, create/delete lifecycle и safe existence checks на базе существующего workspace/worktree runtime (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-worktree-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: add product part worktree lane runtime`).
+122. [PENDING] Git Commit: `fix: add product part worktree lane runtime` (hash: TBD)
 123. [TODO] `devtree-early-pp.phase4.worktree-lane-bootstrap.task1` Перевести Product Part pre-code bootstrap после accepted `Diagram Modules` на запуск Product Part sessions в lane worktrees, сохранив их отображение в основном Development Tree snapshot (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: start product part agents in worktree lanes`).
 124. [TODO] Git Commit: `fix: start product part agents in worktree lanes` (hash: TBD)
 125. [TODO] `devtree-early-pp.phase4.worktree-lane-merge.task1` Реализовать sequential Core-owned merge/copy accepted Product Part brief из lane worktree обратно в main workspace после user acceptance; lead Product Part стартует только после accepted secondary lane merges и получает briefs inline (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: merge accepted product part briefs from lanes`).

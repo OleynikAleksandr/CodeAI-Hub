@@ -39,6 +39,15 @@ const createExpectedWorktreePath = (workspaceRoot: string): string =>
     "note-selection-cluster"
   );
 
+const createExpectedProductPartWorktreePath = (workspaceRoot: string): string =>
+  path.join(
+    `${workspaceRoot}.worktrees`,
+    "finderwidget-test01",
+    "product-parts",
+    "finder-widget",
+    "precode"
+  );
+
 const createWorktree = async (
   workspaceRoot: string
 ): Promise<{
@@ -51,6 +60,20 @@ const createWorktree = async (
     workspaceRoot,
     workspaceSlug: "finderwidget-test01",
   });
+
+const createProductPartWorktree = async (
+  workspaceRoot: string
+): Promise<{
+  readonly branchName: string;
+  readonly worktreePath: string;
+}> =>
+  await new DevelopmentTreeNodeWorktreeService().createProductPartPrecodeWorktree(
+    {
+      partId: "finder-widget",
+      workspaceRoot,
+      workspaceSlug: "finderwidget-test01",
+    }
+  );
 
 test("DevelopmentTreeNodeWorktreeService creates a deterministic cluster contract worktree", async () => {
   const workspaceRoot = await mkdtemp(
@@ -69,6 +92,43 @@ test("DevelopmentTreeNodeWorktreeService creates a deterministic cluster contrac
       result.worktreePath,
       createExpectedWorktreePath(workspaceRoot)
     );
+    assert.equal(
+      await runGit(result.worktreePath, ["branch", "--show-current"]),
+      `${result.branchName}\n`
+    );
+    assert.equal(
+      await readFile(path.join(result.worktreePath, "README.md"), "utf8"),
+      "# Test\n"
+    );
+    assert.equal(
+      (await runGit(workspaceRoot, ["status", "--porcelain"])).trim(),
+      ""
+    );
+  } finally {
+    await rm(`${workspaceRoot}.worktrees`, { force: true, recursive: true });
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("DevelopmentTreeNodeWorktreeService creates a deterministic Product Part precode worktree", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "development-tree-product-part-worktree-")
+  );
+  try {
+    await initializeRepository(workspaceRoot);
+
+    const result = await createProductPartWorktree(workspaceRoot);
+    const repeated = await createProductPartWorktree(workspaceRoot);
+
+    assert.equal(
+      result.branchName,
+      "codex/development-tree/finderwidget-test01/product-parts/finder-widget/precode"
+    );
+    assert.equal(
+      result.worktreePath,
+      createExpectedProductPartWorktreePath(workspaceRoot)
+    );
+    assert.deepEqual(repeated, result);
     assert.equal(
       await runGit(result.worktreePath, ["branch", "--show-current"]),
       `${result.branchName}\n`

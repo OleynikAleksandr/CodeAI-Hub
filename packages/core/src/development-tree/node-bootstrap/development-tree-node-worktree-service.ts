@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { mkdir, readdir, rm, stat } from "node:fs/promises";
+import { mkdir, readdir, realpath, rm, stat } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -14,6 +14,19 @@ export interface DevelopmentTreeClusterWorktreeRequest {
 }
 
 export interface DevelopmentTreeClusterWorktreeResult {
+  readonly branchName: string;
+  readonly nodeId: string;
+  readonly worktreePath: string;
+}
+
+export interface DevelopmentTreeProductPartWorktreeRequest {
+  readonly baseRef?: string;
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}
+
+export interface DevelopmentTreeProductPartWorktreeResult {
   readonly branchName: string;
   readonly nodeId: string;
   readonly worktreePath: string;
@@ -42,6 +55,19 @@ const createBranchName = (params: {
     "contract",
   ].join("/");
 
+const createProductPartBranchName = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  [
+    "codex",
+    "development-tree",
+    sanitizeSegment(params.workspaceSlug),
+    "product-parts",
+    sanitizeSegment(params.partId),
+    "precode",
+  ].join("/");
+
 const createWorktreePath = (params: {
   readonly clusterId: string;
   readonly partId: string;
@@ -56,6 +82,20 @@ const createWorktreePath = (params: {
     sanitizeSegment(params.partId),
     "cluster-contracts",
     sanitizeSegment(params.clusterId)
+  );
+
+const createProductPartWorktreePath = (params: {
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  path.join(
+    path.dirname(params.workspaceRoot),
+    `${path.basename(params.workspaceRoot)}.worktrees`,
+    sanitizeSegment(params.workspaceSlug),
+    "product-parts",
+    sanitizeSegment(params.partId),
+    "precode"
   );
 
 const runGit = async (
@@ -86,6 +126,9 @@ const listGitWorktreePaths = async (
 
 const pathExists = async (absolutePath: string): Promise<boolean> =>
   Boolean(await stat(absolutePath).catch(() => null));
+
+const canonicalizePath = async (absolutePath: string): Promise<string> =>
+  path.resolve(await realpath(absolutePath).catch(() => absolutePath));
 
 const collectRelativeFiles = async (
   root: string,
@@ -120,46 +163,81 @@ const isRuntimeOnlyStalePath = async (
   });
 };
 
+const createRegisteredWorktree = async (params: {
+  readonly baseRef?: string;
+  readonly branchName: string;
+  readonly nodeId: string;
+  readonly workspaceRoot: string;
+  readonly worktreePath: string;
+}): Promise<{
+  readonly branchName: string;
+  readonly nodeId: string;
+  readonly worktreePath: string;
+}> => {
+  await mkdir(path.dirname(params.worktreePath), { recursive: true });
+  await runGit(params.workspaceRoot, ["worktree", "prune"]);
+  const expectedWorktreePath = await canonicalizePath(params.worktreePath);
+  const registeredWorktreePaths = await Promise.all(
+    (await listGitWorktreePaths(params.workspaceRoot)).map(canonicalizePath)
+  );
+  const registeredWorktree =
+    registeredWorktreePaths.includes(expectedWorktreePath);
+  if (registeredWorktree) {
+    return {
+      branchName: params.branchName,
+      nodeId: params.nodeId,
+      worktreePath: params.worktreePath,
+    };
+  }
+  if (await pathExists(params.worktreePath)) {
+    if (!(await isRuntimeOnlyStalePath(params.worktreePath))) {
+      throw new Error(
+        `Development Tree worktree path already exists and is not runtime-only: ${params.worktreePath}`
+      );
+    }
+    await rm(params.worktreePath, { force: true, recursive: true });
+  }
+  await runGit(params.workspaceRoot, [
+    "worktree",
+    "add",
+    "-B",
+    params.branchName,
+    params.worktreePath,
+    params.baseRef ?? "HEAD",
+  ]);
+  return {
+    branchName: params.branchName,
+    nodeId: params.nodeId,
+    worktreePath: params.worktreePath,
+  };
+};
+
 export class DevelopmentTreeNodeWorktreeService {
   async createClusterContractWorktree(
     request: DevelopmentTreeClusterWorktreeRequest
   ): Promise<DevelopmentTreeClusterWorktreeResult> {
     const branchName = createBranchName(request);
     const worktreePath = createWorktreePath(request);
-    await mkdir(path.dirname(worktreePath), { recursive: true });
-    await runGit(request.workspaceRoot, ["worktree", "prune"]);
-    const registeredWorktree = (
-      await listGitWorktreePaths(request.workspaceRoot)
-    )
-      .map((entry) => path.resolve(entry))
-      .includes(path.resolve(worktreePath));
-    if (registeredWorktree) {
-      return {
-        branchName,
-        nodeId: `cluster:${request.partId}/${request.clusterId}`,
-        worktreePath,
-      };
-    }
-    if (await pathExists(worktreePath)) {
-      if (!(await isRuntimeOnlyStalePath(worktreePath))) {
-        throw new Error(
-          `Development Tree worktree path already exists and is not runtime-only: ${worktreePath}`
-        );
-      }
-      await rm(worktreePath, { force: true, recursive: true });
-    }
-    await runGit(request.workspaceRoot, [
-      "worktree",
-      "add",
-      "-B",
-      branchName,
-      worktreePath,
-      request.baseRef ?? "HEAD",
-    ]);
-    return {
+    return await createRegisteredWorktree({
+      baseRef: request.baseRef,
       branchName,
       nodeId: `cluster:${request.partId}/${request.clusterId}`,
+      workspaceRoot: request.workspaceRoot,
       worktreePath,
-    };
+    });
+  }
+
+  async createProductPartPrecodeWorktree(
+    request: DevelopmentTreeProductPartWorktreeRequest
+  ): Promise<DevelopmentTreeProductPartWorktreeResult> {
+    const branchName = createProductPartBranchName(request);
+    const worktreePath = createProductPartWorktreePath(request);
+    return await createRegisteredWorktree({
+      baseRef: request.baseRef,
+      branchName,
+      nodeId: `product-part:${request.partId}`,
+      workspaceRoot: request.workspaceRoot,
+      worktreePath,
+    });
   }
 }
