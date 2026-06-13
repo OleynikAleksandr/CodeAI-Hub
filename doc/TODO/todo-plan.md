@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "aace636b3",
+  "lastRecordedCommit": "58ed15ece",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-505.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.505",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-505.task1",
+  "expectedCommitMessage": "chore: release 1.2.505",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.505",
-    "preCommitHead": "aace636b3",
+    "expectedCommitMessage": "chore: release 1.2.505",
+    "preCommitHead": "58ed15ece",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-505.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-505.task1"
   }
 }
 ```
@@ -298,9 +298,9 @@
 168. [DONE] `devtree-early-pp.phase4.user-gate-cursor-verify.task1` Выполнить targeted Project Manager verification для workflow-state token, повторного auto-focus и queued review UI (scope: `src/client/project-manager`; expected commit: none). Result: Targeted verification passed: `npm run typecheck:webview`; `npx tsx --test src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts` (17/17); `npm run build:project-manager`; `npm run build:webview`.
 169. [DONE] `devtree-early-pp.phase4.release-confirm-505.task1` Зафиксировать явное подтверждение пользователя на релизную сборку 1.2.505 после user-gate cursor/queued review UX фикса (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested the fix and release rebuild after 1.2.504 testing.
 170. [DONE] `devtree-early-pp.phase4.release-docs-505.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.505 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.505`). Result: README and CHANGELOG prepared for v1.2.505 repeated user-gate refresh / queued review UX retest.
-171. [PENDING] Git Commit: `docs: prepare release 1.2.505` (hash: TBD)
-172. [TODO] `devtree-early-pp.phase4.release-build-505.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.505`).
-173. [TODO] Git Commit: `chore: release 1.2.505` (hash: TBD)
+171. [DONE] Git Commit: `docs: prepare release 1.2.505` (hash: 58ed15ece)
+172. [DONE] `devtree-early-pp.phase4.release-build-505.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.505`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.505.vsix` (5.3M); tarball'ы 1.2.505 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+173. [PENDING] Git Commit: `chore: release 1.2.505` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
