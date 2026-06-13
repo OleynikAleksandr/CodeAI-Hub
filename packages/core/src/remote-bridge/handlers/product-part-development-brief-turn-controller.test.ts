@@ -73,19 +73,16 @@ const writeWorkspaceFile = async (
 
 const createTempWorkspace = (prefix: string): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), prefix));
-
 const runGit = (
   workspaceRoot: string,
   args: readonly string[]
 ): Promise<{ readonly stdout: string }> =>
   execFileAsync("git", [...args], { cwd: workspaceRoot });
-
 const initializeGitWorkspace = async (workspaceRoot: string): Promise<void> => {
   await runGit(workspaceRoot, ["init"]);
   await runGit(workspaceRoot, ["config", "user.email", "test@example.local"]);
   await runGit(workspaceRoot, ["config", "user.name", "Test"]);
 };
-
 const commitAll = async (
   workspaceRoot: string,
   message: string
@@ -189,7 +186,6 @@ const createReviewPlan = (isLeadPart: boolean): string => {
 
 const createOrderPlanMarkdown = (): string =>
   "# Development Order Plan\n\nBuild the engine Product Part first, then open dependent clusters once the Product Part contract is stable.";
-
 const createOrderPlanJson = (): string =>
   `${JSON.stringify(
     {
@@ -212,6 +208,17 @@ const createOrderPlanJson = (): string =>
           kind: "module",
           moduleId: MODULE_ID,
           partId: PART_ID,
+        },
+      ],
+      contractSeeds: [
+        {
+          blockingQuestions: [],
+          consumer: "finder-widget-shell",
+          nodeId: CLUSTER_NODE_ID,
+          requiredInputs: ["markdown note folder path"],
+          requiredOutputs: ["latest selected note metadata"],
+          requiredOwnedModules: [MODULE_ID],
+          requiredStatuses: ["success", "empty", "error"],
         },
       ],
       waves: [

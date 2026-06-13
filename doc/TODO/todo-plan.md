@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "77342f07a",
+  "lastRecordedCommit": "0e1d7aeb1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.lead-review-deferral-tests.task1",
-  "expectedCommitMessage": "test: cover lead product part review deferral",
+  "currentTaskId": "devtree-early-pp.phase4.order-plan-fixture-seeds.task1",
+  "expectedCommitMessage": "test: update development order plan fixture seeds",
   "debt": {
-    "expectedCommitMessage": "test: cover lead product part review deferral",
-    "preCommitHead": "77342f07a",
+    "expectedCommitMessage": "test: update development order plan fixture seeds",
+    "preCommitHead": "0e1d7aeb1",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.lead-review-deferral-tests.task1"
+    "taskId": "devtree-early-pp.phase4.order-plan-fixture-seeds.task1"
   }
 }
 ```
@@ -257,16 +257,19 @@
 139. [DONE] `devtree-early-pp.phase4.lead-review-target-message.task1` Доставлять promoted lead review system-message в lead Product Part session, чтобы кнопка `Подтверждаю` появлялась только после secondary acceptance (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: dispatch promoted lead review message`).
 140. [DONE] Git Commit: `fix: dispatch promoted lead review message` (hash: 77342f07a)
 141. [DONE] `devtree-early-pp.phase4.lead-review-deferral-tests.task1` Покрыть regression tests: exact draft target paths, lead draft deferred при missing secondary, secondary acceptance promotes lead brief review before order-plan assignment (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/remote-bridge/handlers/product-part-brief-review-deferral.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lead product part review deferral`).
-142. [PENDING] Git Commit: `test: cover lead product part review deferral` (hash: TBD)
-143. [TODO] `devtree-early-pp.phase4.lead-review-deferral-verify.task1` Выполнить targeted Core verification для Product Part lead deferral и exact draft target prompt (scope: `packages/core`; expected commit: none).
-144. [TODO] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none).
-145. [TODO] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
-146. [TODO] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
-147. [TODO] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`).
-148. [TODO] Git Commit: `chore: release 1.2.503` (hash: TBD)
+142. [DONE] Git Commit: `test: cover lead product part review deferral` (hash: 0e1d7aeb1)
+143. [BLOCKED] `devtree-early-pp.phase4.lead-review-deferral-verify.task1` Выполнить targeted Core verification для Product Part lead deferral и exact draft target prompt (scope: `packages/core`; expected commit: none). Result: Targeted verification exposed outdated `ProductPartDevelopmentBriefTurnController` order-plan fixture: `DevelopmentOrderPlan.draft.json` lacks required `contractSeeds`, so old order-plan review tests stop before commit.
+144. [DONE] `devtree-early-pp.phase4.order-plan-fixture-seeds.task1` Обновить order-plan regression fixture под текущий v2 contract: cluster/standalone seeds обязательны для Development Order Plan validation (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: update development order plan fixture seeds`).
+145. [PENDING] Git Commit: `test: update development order plan fixture seeds` (hash: TBD)
+146. [TODO] `devtree-early-pp.phase4.lead-review-deferral-verify-retry.task1` Повторно выполнить targeted Core verification для Product Part lead deferral, exact draft target prompt и order-plan handoff fixtures (scope: `packages/core`; expected commit: none).
+147. [TODO] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none).
+148. [TODO] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
+149. [TODO] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
+150. [TODO] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`).
+151. [TODO] Git Commit: `chore: release 1.2.503` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-149. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-150. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+153. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+154. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
 151. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
