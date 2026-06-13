@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.501] - 2026-06-13
+### Fixed
+- **Product Part bootstrap from Diagram Modules review actions now waits for each initial agent turn.** The managed review action path now wraps the Development Tree agent gateway with `waitForInitialTurnSettled`, matching the Quality Gates handoff path.
+- **Diagram Modules acceptance no longer dispatches Product Part first turns almost simultaneously.** Secondary and lead Product Part sessions still start automatically, but Core waits for the current Product Part turn to settle before starting the next one.
+- **The Codex refresh-token race is no longer recreated by the early Product Part fan-out.** Workspaces that already hit `refresh token was already used` may still require one manual Codex sign-out/sign-in, but Core should not recreate the race after re-authentication.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.js`
+
 ## [1.2.500] - 2026-06-13
 ### Fixed
 - **Managed review gates now share one complete attention cursor.** Core exposes active user attention for `Diagram Modules`, `Application Skeleton` final review, and repair-limit user review across `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`.

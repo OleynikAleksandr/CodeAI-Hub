@@ -2,7 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.500** (Managed Review Gate Coverage)
+**Current Release — v1.2.501** (Product Part Turn Serialization)
+
+This release fixes the Codex refresh-token race found during the v1.2.500
+retest. When `Diagram Modules` is accepted, the managed review action path now
+uses the same Development Tree agent-turn settlement wait as the Quality Gates
+handoff path before starting the next Product Part agent.
+
+The practical effect is that secondary and lead Product Part draft sessions are
+still bootstrapped automatically after `Diagram Modules`, but their first Codex
+turns are serialized instead of being dispatched almost simultaneously against
+the same shared Codex auth state. `Application Skeleton` activation remains
+available after the Diagram Modules handoff, but Product Part bootstrap no
+longer skips the Core-owned wait guard.
+
+Retest focus: after installing this release, re-authenticate Codex once if the
+workspace already hit `refresh token was already used`, then rerun the workflow
+from `Diagram Modules` acceptance. Product Part draft sessions should start
+without recreating the refresh-token race, and `Application Skeleton` should
+remain startable from the next card.
+
+**Previous Release — v1.2.500** (Managed Review Gate Coverage)
 
 This release broadens the Core-owned attention cursor so every managed review
 gate that can show a user confirmation card also drives the same animated

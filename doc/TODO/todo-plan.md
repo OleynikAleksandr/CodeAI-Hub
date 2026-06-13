@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "e1c8d84a9",
+  "lastRecordedCommit": "5aff7d08f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.product-part-turn-wait.task1",
-  "expectedCommitMessage": "fix: wait for product part turns from review actions",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-501.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.501",
   "debt": {
-    "expectedCommitMessage": "fix: wait for product part turns from review actions",
-    "preCommitHead": "e1c8d84a9",
+    "expectedCommitMessage": "docs: prepare release 1.2.501",
+    "preCommitHead": "5aff7d08f",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.product-part-turn-wait.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-501.task1"
   }
 }
 ```
@@ -201,14 +201,18 @@
 ### Stream: Managed Review Product Part Turn Serialization
 
 103. [DONE] `devtree-early-pp.phase4.product-part-turn-wait.task1` Включить `waitForInitialTurnSettled` для Development Tree agent gateway в managed review action path, чтобы Diagram Modules acceptance не запускал следующий Product Part и Application Skeleton activation до settled первого Product Part turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wait for product part turns from review actions`).
-104. [PENDING] Git Commit: `fix: wait for product part turns from review actions` (hash: TBD)
-105. [TODO] `devtree-early-pp.phase4.product-part-turn-wait-verify.task1` Выполнить targeted Core verification для Diagram Modules review acceptance/Product Part bootstrap serialization (scope: `packages/core`; expected commit: none).
-106. [TODO] `devtree-early-pp.phase4.release-confirm-501.task1` Получить отдельное подтверждение пользователя на релизную сборку после auth-race фикса (scope: `manual confirmation`; expected commit: none).
+104. [DONE] Git Commit: `fix: wait for product part turns from review actions` (hash: 5aff7d08f)
+105. [DONE] `devtree-early-pp.phase4.product-part-turn-wait-verify.task1` Выполнить targeted Core verification для Diagram Modules review acceptance/Product Part bootstrap serialization (scope: `packages/core`; expected commit: none). Result: Targeted Core verification passed for Product Part turn serialization
+106. [DONE] `devtree-early-pp.phase4.release-confirm-501.task1` Получить отдельное подтверждение пользователя на релизную сборку после auth-race фикса (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested release build 1.2.501
+107. [DONE] `devtree-early-pp.phase4.release-docs-501.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.501 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.501`). Result: README/CHANGELOG prepared for release 1.2.501 with Product Part turn serialization retest notes.
+108. [PENDING] Git Commit: `docs: prepare release 1.2.501` (hash: TBD)
+109. [TODO] `devtree-early-pp.phase4.release-build-501.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.501`).
+110. [TODO] Git Commit: `chore: release 1.2.501` (hash: TBD)
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-107. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-108. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-109. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+111. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+112. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+113. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
