@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "09d9edf60",
+  "lastRecordedCommit": "6260d2d1c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase1.test.task1",
-  "expectedCommitMessage": "test: cover quality gates no product part rebootstrap",
+  "currentTaskId": "qg-rebootstrap.phase1.docs.task1",
+  "expectedCommitMessage": "docs: document quality gates no rebootstrap boundary",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates no product part rebootstrap",
-    "preCommitHead": "09d9edf60",
+    "expectedCommitMessage": "docs: document quality gates no rebootstrap boundary",
+    "preCommitHead": "6260d2d1c",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase1.test.task1"
+    "taskId": "qg-rebootstrap.phase1.docs.task1"
   }
 }
 ```
@@ -55,12 +55,12 @@
 ### Stream: Regression Test
 
 3. [DONE] `qg-rebootstrap.phase1.test.task1` Заменить старый positive regression на negative regression: Quality Gates completion с Diagram Modules artifacts не вызывает Development Tree gateway, не создаёт Product Part brief plan/draft и не пишет bootstrap commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates no product part rebootstrap`).
-4. [PENDING] Git Commit: `test: cover quality gates no product part rebootstrap` (hash: TBD)
+4. [DONE] Git Commit: `test: cover quality gates no product part rebootstrap` (hash: 6260d2d1c)
 
 ### Stream: SSOT Documentation
 
-5. [TODO] `qg-rebootstrap.phase1.docs.task1` Синхронизировать SSOT: Quality Gates terminal handoff больше не recovery/idempotency trigger для Product Part lanes; повторный запуск Product Part lanes допускается только через Diagram Modules acceptance или Product Part clear/restart/manual recovery path (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates no rebootstrap boundary`).
-6. [TODO] Git Commit: `docs: document quality gates no rebootstrap boundary` (hash: TBD)
+5. [DONE] `qg-rebootstrap.phase1.docs.task1` Синхронизировать SSOT: Quality Gates terminal handoff больше не recovery/idempotency trigger для Product Part lanes; повторный запуск Product Part lanes допускается только через Diagram Modules acceptance или Product Part clear/restart/manual recovery path (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates no rebootstrap boundary`).
+6. [PENDING] Git Commit: `docs: document quality gates no rebootstrap boundary` (hash: TBD)
 
 ## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-06-13)
 

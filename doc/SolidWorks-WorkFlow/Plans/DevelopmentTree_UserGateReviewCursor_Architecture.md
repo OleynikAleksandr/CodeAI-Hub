@@ -211,7 +211,7 @@ Core должен отдавать достаточно state, чтобы client
 Реализованные code refactor slices:
 
 1. После acceptance `Diagram Modules` Core запускает Product Part pre-code lane: материализует нейтральный Development Tree artifact workspace, создаёт Product Part managed plans/drafts/sessions и отправляет первый prompt каждому planned Product Part agent по leadership order.
-2. `Quality Gates Baseline` больше не является primary trigger для Product Part briefs; terminal handoff оставлен как recovery/idempotency path для missing Product Part sessions.
+2. `Quality Gates Baseline` больше не является trigger или recovery/idempotency path для Product Part briefs; terminal handoff не запускает, не восстанавливает и не rebootstrap-ит Product Part sessions.
 3. `Application Skeleton -> Quality Gates` остаётся code-readiness lane: production code, code-ready merge и final integration по-прежнему запрещены до verified Quality Gates.
 4. Product Part pre-code agents работают в deterministic worktree lanes, поэтому main workspace остаётся clean после `Diagram Modules` acceptance.
 5. Project Manager сохраняет tree projection: session физически живёт в lane worktree, но node отображается в основном Development Tree.
