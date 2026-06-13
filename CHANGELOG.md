@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.508] - 2026-06-13
+### Fixed
+- **Core now persists the next active stage after `Diagram Modules` acceptance.** The managed acceptance flow writes `workflow/state.json.lastActive.stage=application_skeleton` and the `Application Skeleton` artifact path, so Project Manager snapshot recovery no longer depends only on the realtime activation event.
+- **The `Diagram Modules -> Application Skeleton` handoff has a Core regression test.** The acceptance test now verifies both `workspace.plan.md` stage advancement and the persisted `workflow/state.json.lastActive` value.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts`
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.507] - 2026-06-13
 ### Fixed
 - **Project Manager now recovers stage handoff from persisted workflow state.** Panel sync treats `workflowState.lastActive.stage` as a snapshot fallback and re-dispatches the shared `pm:stage:activated` route, so accepting `Diagram Modules` can still open `Application Skeleton` even if the realtime activation event was missed.

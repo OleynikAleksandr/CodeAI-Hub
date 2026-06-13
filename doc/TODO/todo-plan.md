@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "87a9eb528",
+  "lastRecordedCommit": "d862299a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.diagram-last-active-persist-test.task1",
-  "expectedCommitMessage": "test: cover diagram handoff last active state",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-508.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.508",
   "debt": {
-    "expectedCommitMessage": "test: cover diagram handoff last active state",
-    "preCommitHead": "87a9eb528",
+    "expectedCommitMessage": "docs: prepare release 1.2.508",
+    "preCommitHead": "d862299a7",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.diagram-last-active-persist-test.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-508.task1"
   }
 }
 ```
@@ -335,11 +335,11 @@
 196. [DONE] `devtree-early-pp.phase4.diagram-last-active-persist.task1` При acceptance `Diagram Modules` persistently записывать `workflow/state.json.lastActive.stage=application_skeleton`, чтобы Project Manager snapshot мог восстановить переход на карточку `Application Skeleton` без realtime event (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist diagram handoff active stage`).
 197. [DONE] Git Commit: `fix: persist diagram handoff active stage` (hash: 87a9eb528)
 198. [DONE] `devtree-early-pp.phase4.diagram-last-active-persist-test.task1` Покрыть regression test: после `acceptDiagramModulesReviewWithoutRevision` Core workflow state содержит `lastActive.stage=application_skeleton` и ожидаемый artifact path (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram handoff last active state`).
-199. [PENDING] Git Commit: `test: cover diagram handoff last active state` (hash: TBD)
-200. [TODO] `devtree-early-pp.phase4.diagram-last-active-persist-verify.task1` Выполнить targeted Core/Project Manager verification для persisted lastActive handoff после `Diagram Modules` acceptance (scope: `packages/core, src/client/project-manager`; expected commit: none).
-201. [TODO] `devtree-early-pp.phase4.release-confirm-508.task1` Получить отдельное подтверждение пользователя на релизную сборку 1.2.508 после persisted Diagram Modules handoff фикса (scope: `manual confirmation`; expected commit: none).
-202. [TODO] `devtree-early-pp.phase4.release-docs-508.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.508 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.508`).
-203. [TODO] Git Commit: `docs: prepare release 1.2.508` (hash: TBD)
+199. [DONE] Git Commit: `test: cover diagram handoff last active state` (hash: d862299a7)
+200. [DONE] `devtree-early-pp.phase4.diagram-last-active-persist-verify.task1` Выполнить targeted Core/Project Manager verification для persisted lastActive handoff после `Diagram Modules` acceptance (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Verification passed: npm run build --workspace @codeai-hub/core; npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts; npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts; npm run typecheck:webview; npm run build:project-manager; npm run build:webview.
+201. [DONE] `devtree-early-pp.phase4.release-confirm-508.task1` Получить отдельное подтверждение пользователя на релизную сборку 1.2.508 после persisted Diagram Modules handoff фикса (scope: `manual confirmation`; expected commit: none). Result: User explicitly confirmed release build 1.2.508 after persisted Diagram Modules handoff fix.
+202. [DONE] `devtree-early-pp.phase4.release-docs-508.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.508 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.508`).
+203. [PENDING] Git Commit: `docs: prepare release 1.2.508` (hash: TBD)
 204. [TODO] `devtree-early-pp.phase4.release-build-508.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.508`).
 205. [TODO] Git Commit: `chore: release 1.2.508` (hash: TBD)
 

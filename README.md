@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.507** (Stage Handoff Snapshot Recovery)
+**Current Release — v1.2.508** (Persistent Diagram Handoff State)
+
+This release fixes the Core-side source of truth for the `Diagram Modules` to
+`Application Skeleton` handoff. After accepting the final `Diagram Modules`
+review, Core now persistently writes `workflow/state.json.lastActive.stage` as
+`application_skeleton` with the `Application Skeleton` artifact path.
+
+The previous UI fallback was correct, but the saved workflow snapshot could
+still point back to `diagram_modules`. The handoff is now recorded by Core
+during the same managed acceptance flow that advances `workspace.plan.md`, so a
+fresh Project Manager snapshot can recover the next-step card without relying on
+a realtime event.
+
+Retest focus: after accepting the final `Diagram Modules` review, Project
+Manager should automatically move to the `Application Skeleton` card instead of
+leaving `Diagram Modules` selected.
+
+**Previous Release — v1.2.507** (Stage Handoff Snapshot Recovery)
 
 This release fixes the remaining Project Manager handoff gap after accepting
 `Diagram Modules`. Core already persisted `lastActive.stage` as
@@ -15,10 +32,6 @@ fallback for the same shared `pm:stage:activated` route used by sidebar clicks
 and Core events. When the workflow snapshot says the active stage is
 `application_skeleton`, the sidebar selection, session panel, and artifact
 panel all recover through the normal stage activation path.
-
-Retest focus: after accepting the final `Diagram Modules` review, Project
-Manager should automatically move to the `Application Skeleton` card instead of
-leaving `Diagram Modules` selected.
 
 **Previous Release — v1.2.506** (Project Manager Navigation Lock Hydration)
 
