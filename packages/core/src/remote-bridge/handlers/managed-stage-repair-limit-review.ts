@@ -187,7 +187,6 @@ export const handleManagedStageRepairLimitReviewDecision = (
     return handleQualityGatesRepairLimitReviewDecision({
       content: params.content,
       deps: {
-        developmentTreeAgentGateway: params.deps.developmentTreeAgentGateway,
         eventMessages: params.deps.eventMessages,
         messageDispatch: params.deps.messageDispatch,
         stagePlan: params.deps.qualityGatesStagePlan,

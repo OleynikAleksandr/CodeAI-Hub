@@ -26,7 +26,6 @@ import type { Session } from "../../session-manager";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { buildApplicationSkeletonRepairDispatch } from "./application-skeleton-repair-prompt-dispatch";
 import { ClusterContractTurnController } from "./cluster-contract-turn-controller";
-import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import {
   buildDevelopmentTreeTurnFailureMessage,
   runGuardedDevelopmentTreeTurn,
@@ -76,8 +75,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly clusterContractTurn = new ClusterContractTurnController();
   private readonly diagramStagePlan: DiagramModulesStagePlanController;
   private readonly options: SessionRequestHandlerManagedWorkflowTurnOptions;
-  private readonly productPartBootstrap =
-    new DevelopmentTreeQualityGatesHandoffBootstrap();
   private readonly productPartBriefTurn =
     new ProductPartDevelopmentBriefTurnController();
   private readonly qualityGatesStagePlan: QualityGatesStagePlanController;
@@ -427,10 +424,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     if (completesStage) {
       const { eventMessages } = this.options;
       await completeQualityGatesPersistentReturn({
-        agentGateway: this.options.developmentTreeAgentGateway,
-        productPartBootstrap: this.productPartBootstrap,
         sessionId: params.sessionId,
-        sessionManager: this.options.sessionManager,
         stagePlan: this.qualityGatesStagePlan,
         waitForMessagePersistence: (sessionId) =>
           eventMessages.waitForMessagePersistence?.(sessionId) ??

@@ -1,6 +1,5 @@
 import { stat } from "node:fs/promises";
 import path from "node:path";
-import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import {
   buildManagedPersistentReturnHandoffMessage,
   buildManagedUserLedReviewHandoffMessage,
@@ -19,7 +18,6 @@ import {
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-repair-limit-acceptance";
 import type { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import type { Session } from "../../session-manager";
-import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import {
   buildContinuationDeliveryFailureMessage,
   dispatchManagedInternalContinuation,
@@ -127,7 +125,6 @@ export const dispatchQualityGatesReviewRevision = async (
 };
 
 export interface QualityGatesRepairLimitReviewDeps {
-  readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage" | "waitForMessagePersistence"
@@ -171,10 +168,7 @@ const continueAfterRepairLimitAccept = async (
     tag: "managed-workflow-complete",
   });
   await completeQualityGatesPersistentReturn({
-    agentGateway: deps.developmentTreeAgentGateway,
-    productPartBootstrap: new DevelopmentTreeQualityGatesHandoffBootstrap(),
     sessionId: session.id,
-    sessionManager: { getSession: () => session },
     stagePlan: deps.stagePlan,
     waitForMessagePersistence: (sessionId) =>
       deps.eventMessages.waitForMessagePersistence(sessionId),
