@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "617667b10",
+  "lastRecordedCommit": "494303884",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.user-gate-cursor-token.task1",
-  "expectedCommitMessage": "fix: refresh repeated user gate focus",
+  "currentTaskId": "devtree-early-pp.phase4.queued-review-ui.task1",
+  "expectedCommitMessage": "fix: explain queued managed review gates",
   "debt": {
-    "expectedCommitMessage": "fix: refresh repeated user gate focus",
-    "preCommitHead": "617667b10",
+    "expectedCommitMessage": "fix: explain queued managed review gates",
+    "preCommitHead": "494303884",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.user-gate-cursor-token.task1"
+    "taskId": "devtree-early-pp.phase4.queued-review-ui.task1"
   }
 }
 ```
@@ -292,9 +292,9 @@
 ### Stream: Repeated User Gate Focus And Queued Review UX
 
 164. [DONE] `devtree-early-pp.phase4.user-gate-cursor-token.task1` Включить `userGateCursor` в Project Manager workflow-state change token и использовать stable gate identity для auto-focus, чтобы повторный review-gate на том же узле перерисовывал marker и открывал сессию сразу (scope: `src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts, src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: refresh repeated user gate focus`). Result: Targeted checks passed: `npm run typecheck:webview`; `npm run build:project-manager`; `npm run build:webview`; `npx tsx --test src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`.
-165. [PENDING] Git Commit: `fix: refresh repeated user gate focus` (hash: TBD)
-166. [TODO] `devtree-early-pp.phase4.queued-review-ui.task1` Развести active и queued managed review card в dialog UI: queued gate должен показывать понятное состояние ожидания активного gate и не обещать кнопку, пока Core не повысит его в active (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/ui/src/session/dialog-panel.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.tsx`; expected commit: `fix: explain queued managed review gates`).
-167. [TODO] Git Commit: `fix: explain queued managed review gates` (hash: TBD)
+165. [DONE] Git Commit: `fix: refresh repeated user gate focus` (hash: 494303884)
+166. [DONE] `devtree-early-pp.phase4.queued-review-ui.task1` Развести active и queued managed review card в dialog UI: queued gate должен показывать понятное состояние ожидания активного gate и не обещать кнопку, пока Core не повысит его в active (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain queued managed review gates`). Result: Targeted checks passed: `npm run typecheck:webview`; `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; `npm run build:project-manager`; `npm run build:webview`.
+167. [PENDING] Git Commit: `fix: explain queued managed review gates` (hash: TBD)
 168. [TODO] `devtree-early-pp.phase4.user-gate-cursor-verify.task1` Выполнить targeted Project Manager verification для workflow-state token, повторного auto-focus и queued review UI (scope: `src/client/project-manager`; expected commit: none).
 169. [TODO] `devtree-early-pp.phase4.release-confirm-505.task1` Зафиксировать явное подтверждение пользователя на релизную сборку 1.2.505 после user-gate cursor/queued review UX фикса (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested the fix and release rebuild after 1.2.504 testing.
 170. [TODO] `devtree-early-pp.phase4.release-docs-505.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.505 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.505`).

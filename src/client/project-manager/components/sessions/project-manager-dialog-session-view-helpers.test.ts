@@ -283,6 +283,29 @@ test("DialogPanel renders managed review confirm action only for review handoff"
   );
 });
 
+test("DialogPanel explains queued managed review without promising a confirm button", () => {
+  const queuedReview = createSystemMessage(
+    "review-queued",
+    "Core: Quality Gates перешёл в пользовательскую проверку.\nЕсли хотите принять текущий результат, нажмите кнопку «Подтверждаю» ниже.",
+    "managed-workflow-user-review-queued"
+  );
+  const html = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      activeManagedReviewMessageId: null,
+      messages: [queuedReview],
+      onManagedReviewAccept: () => undefined,
+      speakingMessageId: null,
+    })
+  );
+
+  assert.equal(
+    html.includes("session-dialog__managed-review-confirm"),
+    false
+  );
+  assert.equal(html.includes("ожидает очереди"), true);
+  assert.equal(html.includes("нажмите кнопку"), false);
+});
+
 test("system dialog messages use the shared card chrome", () => {
   const css = readFileSync(
     new URL("../../../../../media/session-view.css", import.meta.url),

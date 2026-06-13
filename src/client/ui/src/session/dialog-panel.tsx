@@ -17,6 +17,7 @@ import MarkdownContent from "./markdown-content";
 
 const AUTO_SCROLL_EPSILON = 32;
 const USER_MESSAGES_CATEGORY = "system_feedback";
+const QUEUED_MANAGED_REVIEW_TAG = "managed-workflow-user-review-queued";
 
 interface DialogPanelProps {
   readonly activeManagedReviewMessageId?: string | null;
@@ -260,10 +261,17 @@ const StandardMessage = ({
     message.tag === "managed-workflow-user-review" &&
     message.id === activeManagedReviewMessageId &&
     typeof onManagedReviewAccept === "function";
+  const showQueuedManagedReview =
+    message.role === "system" && message.tag === QUEUED_MANAGED_REVIEW_TAG;
   const confirmLabel = t(
     "ui_interface",
     "session.dialog.managed_review_confirm_label",
     "Подтверждаю"
+  );
+  const queuedReviewCopy = t(
+    "ui_interface",
+    "session.dialog.managed_review_queued_copy",
+    "Этот review ожидает очереди пользовательского подтверждения.\n\nСейчас активен другой шаг, требующий реакции пользователя. Кнопка «Подтверждаю» появится здесь автоматически, когда Core сделает этот review активным."
   );
   return (
     <article className={className}>
@@ -283,7 +291,11 @@ const StandardMessage = ({
       </header>
       <MarkdownContent
         className="session-dialog__content"
-        content={resolveDisplayContent(message)}
+        content={
+          showQueuedManagedReview
+            ? queuedReviewCopy
+            : resolveDisplayContent(message)
+        }
         onFileLinkActivate={onFileLinkActivate}
       />
       {showManagedReviewAccept ? (
