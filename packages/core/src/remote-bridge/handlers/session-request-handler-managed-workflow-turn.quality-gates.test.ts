@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { appendFileSync, mkdirSync } from "node:fs";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { appendFileSync, existsSync, mkdirSync } from "node:fs";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -25,8 +25,6 @@ const QUALITY_VERIFY_RE =
   /Core opens Phase 4 Formal Quality Gates Verification/u;
 const PRODUCT_PART_BOOTSTRAP_COMMIT_RE =
   /docs: bootstrap product part development briefs/u;
-const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief\.draft\.md/u;
-const PRODUCT_PART_BRIEF_TITLE_RE = /ProductPartDevelopmentBrief/u;
 const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
 
@@ -436,22 +434,26 @@ test("Quality Gates integration opens formal verification continuation", async (
   }
 });
 
-test("Quality Gates completion bootstraps Product Part brief workflow after terminal handoff", async () => {
+test("Quality Gates completion does not rebootstrap Product Part brief workflow after terminal handoff", async () => {
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-devtree-"));
   try {
     await prepareQualityVerification(workspaceRoot);
     await writeDiagramModulesAcceptedArtifacts(workspaceRoot);
-    const createdStages: string[] = [];
-    const sentMessages: string[] = [];
+    let createSessionCalls = 0;
+    let sentMessageCalls = 0;
     const { coreMessages, handler, sessionId, waitEvents } = createHandler({
       developmentTreeAgentGateway: {
-        createSessionForWorkflow: (options) => {
-          createdStages.push(options.context.stage);
-          return Promise.resolve({ id: `devtree-${createdStages.length}` });
+        createSessionForWorkflow: () => {
+          createSessionCalls += 1;
+          throw new Error(
+            "Quality Gates completion must not start Product Part sessions"
+          );
         },
-        handleMessage: (_sessionId, content) => {
-          sentMessages.push(content);
-          return Promise.resolve();
+        handleMessage: () => {
+          sentMessageCalls += 1;
+          throw new Error(
+            "Quality Gates completion must not send Product Part prompts"
+          );
         },
       },
       persistCoreMessages: true,
@@ -464,21 +466,14 @@ test("Quality Gates completion bootstraps Product Part brief workflow after term
     assert.match(coreMessages.at(-1)?.content ?? "", QUALITY_RETURN_RE);
     assert.ok(coreMessages.at(-1)?.content.includes("Можно переходить"));
     assert.deepEqual(waitEvents, [sessionId]);
+    assert.equal(createSessionCalls, 0);
+    assert.equal(sentMessageCalls, 0);
     for (const partId of ["local-runtime", "finder-widget-shell"]) {
       const planPath = `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
       const briefPath = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${partId}/ProductPartDevelopmentBrief.draft.md`;
-      await readFile(path.join(workspaceRoot, planPath), "utf8");
-      assert.match(
-        await readFile(path.join(workspaceRoot, briefPath), "utf8"),
-        PRODUCT_PART_BRIEF_TITLE_RE
-      );
+      assert.equal(existsSync(path.join(workspaceRoot, planPath)), false);
+      assert.equal(existsSync(path.join(workspaceRoot, briefPath)), false);
     }
-    assert.deepEqual([...createdStages].sort(), [
-      "development_tree/materialized/product-parts/finder-widget-shell",
-      "development_tree/materialized/product-parts/local-runtime",
-    ]);
-    assert.equal(sentMessages.length, 2);
-    assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);
     const { stdout: statusOutput } = await execFileAsync(
       "git",
       ["status", "--porcelain"],
@@ -490,7 +485,7 @@ test("Quality Gates completion bootstraps Product Part brief workflow after term
       ["log", "--oneline", "-5"],
       { cwd: workspaceRoot }
     );
-    assert.match(logOutput, PRODUCT_PART_BOOTSTRAP_COMMIT_RE);
+    assert.doesNotMatch(logOutput, PRODUCT_PART_BOOTSTRAP_COMMIT_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "63349dc64",
+  "lastRecordedCommit": "09d9edf60",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase1.runtime.task1",
-  "expectedCommitMessage": "fix: stop quality gates product part rebootstrap",
+  "currentTaskId": "qg-rebootstrap.phase1.test.task1",
+  "expectedCommitMessage": "test: cover quality gates no product part rebootstrap",
   "debt": {
-    "expectedCommitMessage": "fix: stop quality gates product part rebootstrap",
-    "preCommitHead": "63349dc64",
+    "expectedCommitMessage": "test: cover quality gates no product part rebootstrap",
+    "preCommitHead": "09d9edf60",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase1.runtime.task1"
+    "taskId": "qg-rebootstrap.phase1.test.task1"
   }
 }
 ```
@@ -50,12 +50,12 @@
 ### Stream: Runtime Cleanup
 
 1. [DONE] `qg-rebootstrap.phase1.runtime.task1` Удалить Quality Gates terminal handoff -> Product Part bootstrap coupling из runtime helper/callers; Quality Gates persistent return должен только commit terminal residue и не создавать Product Part sessions/lanes (scope: `packages/core/src/remote-bridge/handlers/**, doc/TODO/todo-plan.md`; expected commit: `fix: stop quality gates product part rebootstrap`).
-2. [PENDING] Git Commit: `fix: stop quality gates product part rebootstrap` (hash: TBD)
+2. [DONE] Git Commit: `fix: stop quality gates product part rebootstrap` (hash: 09d9edf60)
 
 ### Stream: Regression Test
 
-3. [TODO] `qg-rebootstrap.phase1.test.task1` Заменить старый positive regression на negative regression: Quality Gates completion с Diagram Modules artifacts не вызывает Development Tree gateway, не создаёт Product Part brief plan/draft и не пишет bootstrap commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates no product part rebootstrap`).
-4. [TODO] Git Commit: `test: cover quality gates no product part rebootstrap` (hash: TBD)
+3. [DONE] `qg-rebootstrap.phase1.test.task1` Заменить старый positive regression на negative regression: Quality Gates completion с Diagram Modules artifacts не вызывает Development Tree gateway, не создаёт Product Part brief plan/draft и не пишет bootstrap commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates no product part rebootstrap`).
+4. [PENDING] Git Commit: `test: cover quality gates no product part rebootstrap` (hash: TBD)
 
 ### Stream: SSOT Documentation
 
