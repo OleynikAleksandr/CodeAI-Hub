@@ -32,6 +32,7 @@ import {
   resolveUserGateNodeTargets,
   useWorkspaceTreeUserGateFocus,
 } from "./workspace-tree-user-gate-focus";
+import { useWorkspaceTreeSelectionCursor } from "./workspace-tree-selection";
 const USER_MESSAGES_CATEGORY = "system_feedback";
 const isTechnicalStageRewriteBoundaryActive = (
   workflowState: WorkflowStateSnapshot | null
@@ -60,6 +61,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const [openPartId, setOpenPartId] = useState<string | null>(null);
   const [openClusterId, setOpenClusterId] = useState<string | null>(null);
   const activeStage = useWorkspaceTreeActiveStage(selectedWorkspaceId);
+  const { selectedNodeId, selectTreeNodeId } = useWorkspaceTreeSelectionCursor({
+    activeStage,
+    selectedWorkspaceId,
+  });
   const storeState = useWorkflowStateSnapshot();
   const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
   const technicalStageRewriteBoundaryActive =
@@ -123,12 +128,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     []
   );
   const dispatchStageActivated = useCallback((stage: string) => {
+    selectTreeNodeId(`workflow:${stage}`);
     window.dispatchEvent(
       new CustomEvent("pm:stage:activated", {
         detail: { stage, source: "workspace-tree-stage" },
       })
     );
-  }, []);
+  }, [selectTreeNodeId]);
   useStagePanelSync({
     workflowState,
     workspaceSlug,
@@ -178,7 +184,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (!workflowState) {
       return WORKFLOW_STAGE_ORDER.map((stage) => ({
         id: `workflow:${stage}`,
-        isSelected: stage === activeStage,
+        isSelected: selectedNodeId === `workflow:${stage}`,
         label: resolveStageLabel(stage, t),
         status: "todo",
         stage,
@@ -201,7 +207,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         title: readOnly
           ? `${title} Rewrite boundary active: read-only upstream stage.`
           : title,
-        isSelected: stage === activeStage,
+        isSelected: selectedNodeId === `workflow:${stage}`,
         status: resolveTreeStatus(status, blocked),
         visualDepth: 0,
         onSelect: () => dispatchStageActivated(stage),
@@ -256,7 +262,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       "pm-tree__item",
       `pm-tree__item--${node.status}`,
       node.nodeType ? `pm-tree__item--type-${node.nodeType}` : null,
-      node.isSelected ? "pm-tree__item--selected" : null,
+      (node.isSelected || node.id === selectedNodeId) ? "pm-tree__item--selected" : null,
       node.id === activeGateNodeId ? "pm-tree__item--user-gate-active" : null,
       queuedGateNodeIds.has(node.id)
         ? "pm-tree__item--user-gate-queued"
@@ -264,6 +270,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     ]
       .filter((className): className is string => Boolean(className))
       .join(" ");
+  const selectNode = (node: TreeNode) => {
+    selectTreeNodeId(node.id);
+    node.onSelect?.();
+  };
   const renderTreeLabel = (label: string): React.ReactNode =>
     label.split("\n").map((line, index) => (
       <Fragment key={`${line}-${index}`}>
@@ -302,7 +312,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <li
           className={renderItemClass(node)}
           data-provider={providerResolver.forBranchModule(node.id) ?? undefined}
-          onClick={node.onSelect}
+          onClick={() => selectNode(node)}
           {...clearMenu.bind(node.clearTarget, node.label)}
           role={node.onSelect ? "button" : undefined}
           style={
@@ -340,7 +350,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <div
           className={renderItemClass(node)}
           data-provider={clusterProvider}
-          onClick={node.onSelect}
+          onClick={() => selectNode(node)}
           {...clearMenu.bind(node.clearTarget, node.label)}
           role="button"
         >
@@ -381,7 +391,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <div
           className={renderItemClass(node)}
           data-provider={partProvider}
-          onClick={node.onSelect}
+          onClick={() => selectNode(node)}
           {...clearMenu.bind(node.clearTarget, node.label)}
           role="button"
         >
