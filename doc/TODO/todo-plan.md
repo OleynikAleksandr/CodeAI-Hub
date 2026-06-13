@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "b9cb4f031",
+  "lastRecordedCommit": "43c7c975c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.worktree-lane-merge.task1",
-  "expectedCommitMessage": "fix: merge accepted product part briefs from lanes",
+  "currentTaskId": "devtree-early-pp.phase4.worktree-lane-clear.task1",
+  "expectedCommitMessage": "fix: clear product part worktree lanes safely",
   "debt": {
-    "expectedCommitMessage": "fix: merge accepted product part briefs from lanes",
-    "preCommitHead": "b9cb4f031",
+    "expectedCommitMessage": "fix: clear product part worktree lanes safely",
+    "preCommitHead": "43c7c975c",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.worktree-lane-merge.task1"
+    "taskId": "devtree-early-pp.phase4.worktree-lane-clear.task1"
   }
 }
 ```
@@ -233,9 +233,9 @@
 123. [DONE] `devtree-early-pp.phase4.worktree-lane-bootstrap.task1` Перевести Product Part pre-code bootstrap после accepted `Diagram Modules` на запуск Product Part sessions в lane worktrees, сохранив их отображение в основном Development Tree snapshot (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: start product part agents in worktree lanes`).
 124. [DONE] Git Commit: `fix: start product part agents in worktree lanes` (hash: b9cb4f031)
 125. [DONE] `devtree-early-pp.phase4.worktree-lane-merge.task1` Реализовать sequential Core-owned merge/copy accepted Product Part brief из lane worktree обратно в main workspace после user acceptance; lead Product Part стартует только после accepted secondary lane merges и получает briefs inline (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: merge accepted product part briefs from lanes`).
-126. [PENDING] Git Commit: `fix: merge accepted product part briefs from lanes` (hash: TBD)
-127. [TODO] `devtree-early-pp.phase4.worktree-lane-clear.task1` Подключить clear/undo для Product Part lanes: до merge удалить worktree/branch/session state, после merge делать последовательный revert merge/accepted commit и cleanup lane runtime (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part worktree lanes safely`).
-128. [TODO] Git Commit: `fix: clear product part worktree lanes safely` (hash: TBD)
+126. [DONE] Git Commit: `fix: merge accepted product part briefs from lanes` (hash: 43c7c975c)
+127. [DONE] `devtree-early-pp.phase4.worktree-lane-clear.task1` Подключить clear/undo для Product Part lanes: до merge удалить worktree/branch/session state, после merge делать последовательный revert merge/accepted commit и cleanup lane runtime (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part worktree lanes safely`).
+128. [PENDING] Git Commit: `fix: clear product part worktree lanes safely` (hash: TBD)
 129. [TODO] `devtree-early-pp.phase4.worktree-lane-verify.task1` Выполнить targeted Core/Project Manager verification для Product Part worktree lanes: Diagram Modules acceptance оставляет main workspace clean, Product Part sessions видны, secondary accepted briefs merge sequentially, lead waits for briefs (scope: `packages/core, src/client/project-manager`; expected commit: none).
 130. [TODO] `devtree-early-pp.phase4.release-confirm-502-worktree.task1` Получить отдельное подтверждение пользователя на релизную сборку после Product Part worktree-lane refactor (scope: `manual confirmation`; expected commit: none).
 

@@ -23,6 +23,7 @@ const WORKSPACE_SLUG = "demo-workspace";
 const PRODUCT_PART_BRIEF_PLAN_RE =
   /Product Part Development Brief Managed TODO Plan/u;
 const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief/u;
+const PRECODE_BRANCH_RE = /codex\/test-precode-worktree/u;
 const execFileAsync = promisify(execFile);
 
 const writeText = async (filePath: string, content: string): Promise<void> => {
@@ -58,6 +59,67 @@ const initializeGitWorkspace = async (workspaceRoot: string): Promise<void> => {
   await runGit(workspaceRoot, ["commit", "-m", "test: initial workspace"]);
 };
 
+const writeAcceptedDiagramModulesArtifacts = async (params: {
+  readonly partId: string;
+  readonly siblingPartId: string;
+  readonly workspaceRoot: string;
+}): Promise<void> => {
+  await writeText(
+    path.join(
+      params.workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`
+    ),
+    [
+      "# Product Parts Index",
+      "",
+      `- leadProductPartId: \`${params.partId}\``,
+      `- productPartLeadershipOrder: \`${params.partId}\`, \`${params.siblingPartId}\``,
+      "",
+      `### Product Part: ${params.partId}`,
+      "- Title: Target part",
+      "- Purpose: Test target part.",
+      "",
+      `### Product Part: ${params.siblingPartId}`,
+      "- Title: Sibling part",
+      "- Purpose: Test sibling part.",
+      "",
+    ].join("\n")
+  );
+  for (const [partId, moduleId] of [
+    [params.partId, "target-module"],
+    [params.siblingPartId, "sibling-module"],
+  ] as const) {
+    await writeText(
+      path.join(
+        params.workspaceRoot,
+        `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/${partId}.md`
+      ),
+      [
+        `# Product Part: ${partId}`,
+        "",
+        "## Identity",
+        "",
+        "| Field | Value |",
+        "| ----- | ----- |",
+        `| Part ID | \`${partId}\` |`,
+        "",
+        "## Standalone Modules",
+        "",
+        "| `module-id` | Responsibility |",
+        "| --- | --- |",
+        `| \`${moduleId}\` | Test responsibility. |`,
+        "",
+      ].join("\n")
+    );
+  }
+  await runGit(params.workspaceRoot, ["add", "."]);
+  await runGit(params.workspaceRoot, [
+    "commit",
+    "-m",
+    "test: accepted diagram modules artifacts",
+  ]);
+};
+
 test("Product Part root clear removes old session material and recreates agent plan/session", async () => {
   const tempRoot = await realpath(tmpdir());
   const workspaceRoot = await mkdtemp(
@@ -79,11 +141,18 @@ test("Product Part root clear removes old session material and recreates agent p
     "note-selection-cluster",
     "contract"
   );
+  const precodeWorktreePath = path.join(
+    worktreesRoot,
+    WORKSPACE_SLUG,
+    "product-parts",
+    partId,
+    "precode"
+  );
   const oldSessionProviderId = "old-product-part-provider-session";
   const sessionManager = new SessionManager();
   const oldSession = sessionManager.createSession(
     "codex",
-    workspaceRoot,
+    precodeWorktreePath,
     oldSessionProviderId,
     {
       initiativeSlug: WORKSPACE_SLUG,
@@ -156,6 +225,20 @@ test("Product Part root clear removes old session material and recreates agent p
 
   try {
     await initializeGitWorkspace(workspaceRoot);
+    await writeAcceptedDiagramModulesArtifacts({
+      partId,
+      siblingPartId,
+      workspaceRoot,
+    });
+    await mkdir(path.dirname(precodeWorktreePath), { recursive: true });
+    await runGit(workspaceRoot, [
+      "worktree",
+      "add",
+      "-B",
+      "codex/test-precode-worktree",
+      precodeWorktreePath,
+      "HEAD",
+    ]);
     await mkdir(path.dirname(downstreamWorktreePath), { recursive: true });
     await runGit(workspaceRoot, [
       "worktree",
@@ -217,6 +300,16 @@ test("Product Part root clear removes old session material and recreates agent p
     await writeText(unifiedPath, "{}\n");
     await writeText(staleUnifiedPath, "{}\n");
     await writeText(providerNativePath, "{}\n");
+    await writeText(
+      path.join(
+        precodeWorktreePath,
+        ".codeai-hub",
+        WORKSPACE_SLUG,
+        "runtime/sessions/unified/codex",
+        `${oldSessionProviderId}.jsonl`
+      ),
+      "{}\n"
+    );
 
     const result = await clearAndRestartProductPart(
       {
@@ -259,16 +352,25 @@ test("Product Part root clear removes old session material and recreates agent p
     assert.equal(sessions.length, 1);
     assert.equal(siblingSessions.length, 0);
     assert.equal(sessions[0]?.stage, workflowPath);
+    assert.equal(sessions[0]?.workspacePath, precodeWorktreePath);
     assert.deepEqual(result.restart.bootstrapSessionIds, [sessions[0]?.id]);
-    assert.deepEqual(result.restart.deletedWorktreePaths, [
-      path.relative(workspaceRoot, downstreamWorktreePath),
-    ]);
+    assert.deepEqual(
+      [...result.restart.deletedWorktreePaths].sort(),
+      [
+        path.relative(workspaceRoot, downstreamWorktreePath),
+        path.relative(workspaceRoot, precodeWorktreePath),
+      ].sort()
+    );
     assert.equal(await fileExists(downstreamWorktreePath), false);
-    assert.equal(await fileExists(worktreesRoot), false);
+    assert.equal(await fileExists(precodeWorktreePath), true);
     assert.equal(
       (
         await runGit(workspaceRoot, ["worktree", "list", "--porcelain"])
       ).includes(downstreamWorktreePath),
+      false
+    );
+    assert.equal(
+      PRECODE_BRANCH_RE.test(await runGit(workspaceRoot, ["branch", "--list"])),
       false
     );
     assert.equal(await fileExists(providerNativePath), false);
@@ -279,10 +381,28 @@ test("Product Part root clear removes old session material and recreates agent p
       (await readFile(continuityIndexPath, "utf8")).includes(workflowPath),
       false
     );
-    assert.match(await readFile(planPath, "utf8"), PRODUCT_PART_BRIEF_PLAN_RE);
+    assert.equal(await fileExists(planPath), false);
     assert.match(
       await readFile(
-        path.join(productPartRoot, "ProductPartDevelopmentBrief.draft.md"),
+        path.join(
+          precodeWorktreePath,
+          "doc/TODO/stages/development-tree/product-parts",
+          partId,
+          "todo-plan.md"
+        ),
+        "utf8"
+      ),
+      PRODUCT_PART_BRIEF_PLAN_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(
+          precodeWorktreePath,
+          ".codeai-hub",
+          WORKSPACE_SLUG,
+          workflowPath,
+          "ProductPartDevelopmentBrief.draft.md"
+        ),
         "utf8"
       ),
       PRODUCT_PART_BRIEF_DRAFT_RE

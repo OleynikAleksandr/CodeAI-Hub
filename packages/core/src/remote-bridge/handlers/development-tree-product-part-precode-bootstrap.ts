@@ -3,6 +3,7 @@ import path from "node:path";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import type { DevelopmentTreeSnapshot } from "../../development-tree/development-tree-types";
 import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
+import type { DevelopmentTreeNodeBootstrapScanResult } from "../../development-tree/node-bootstrap/development-tree-node-bootstrap-facade";
 import { DevelopmentTreeNodeWorktreeService } from "../../development-tree/node-bootstrap/development-tree-node-worktree-service";
 import type {
   DevelopmentTreeAgentSessionGateway,
@@ -23,15 +24,19 @@ export interface DevelopmentTreeProductPartPrecodeBootstrapRequest {
   readonly agentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly committer: DevelopmentTreeProductPartPrecodeCommitter;
   readonly providerId?: string | null;
+  readonly targetProductPartIds?: readonly string[];
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
 
 export interface DevelopmentTreeProductPartPrecodeBootstrapResult {
+  readonly agentSessions: readonly NodeAgentSessionBootstrapResult[];
   readonly expectedProductPartIds: readonly string[];
   readonly managedPaths: readonly string[];
   readonly skipped: boolean;
   readonly startedProductPartIds: readonly string[];
+  readonly writtenDrafts: DevelopmentTreeNodeBootstrapScanResult["writtenDrafts"];
+  readonly writtenProductPartPlans: DevelopmentTreeNodeBootstrapScanResult["writtenProductPartPlans"];
 }
 
 const uniquePaths = (paths: readonly string[]): readonly string[] => [
@@ -176,10 +181,13 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
     });
     if (!progress?.leadProductPartId) {
       return {
+        agentSessions: [],
         expectedProductPartIds: [],
         managedPaths: [],
         skipped: true,
         startedProductPartIds: [],
+        writtenDrafts: [],
+        writtenProductPartPlans: [],
       };
     }
     const productPartLeadershipOrder = resolveProductPartLeadershipOrder({
@@ -187,6 +195,17 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       plannedPartIds: progress.plannedPartIds,
       productPartLeadershipOrder: progress.productPartLeadershipOrder,
     });
+    const targetProductPartIds = new Set(
+      params.targetProductPartIds?.filter((partId) =>
+        productPartLeadershipOrder.includes(partId)
+      ) ?? []
+    );
+    const scheduledProductPartIds =
+      targetProductPartIds.size > 0
+        ? productPartLeadershipOrder.filter((partId) =>
+            targetProductPartIds.has(partId)
+          )
+        : productPartLeadershipOrder;
     const snapshot = await new DevelopmentTreeStateFacade().currentSnapshot({
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
@@ -196,8 +215,12 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       productPartLeadershipOrder,
     });
     const agentSessions: NodeAgentSessionBootstrapResult[] = [];
+    const writtenDrafts: DevelopmentTreeNodeBootstrapScanResult["writtenDrafts"][number][] =
+      [];
+    const writtenProductPartPlans: DevelopmentTreeNodeBootstrapScanResult["writtenProductPartPlans"][number][] =
+      [];
     const mainManagedStatePaths: string[] = [];
-    for (const partId of productPartLeadershipOrder) {
+    for (const partId of scheduledProductPartIds) {
       const result = await this.bootstrapProductPartLane({
         ...params,
         leadProductPartId: progress.leadProductPartId,
@@ -206,10 +229,12 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
         snapshot,
       });
       agentSessions.push(...result.agentSessions);
+      writtenDrafts.push(...result.writtenDrafts);
+      writtenProductPartPlans.push(...result.writtenProductPartPlans);
       mainManagedStatePaths.push(result.managedStatePath);
     }
     const stillMissingProductPartIds = findMissingProductPartSessions({
-      expectedPartIds: productPartLeadershipOrder,
+      expectedPartIds: scheduledProductPartIds,
       sessions: agentSessions,
     });
     if (stillMissingProductPartIds.length > 0) {
@@ -227,10 +252,13 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       workspaceRoot: params.workspaceRoot,
     });
     return {
-      expectedProductPartIds: productPartLeadershipOrder,
+      agentSessions,
+      expectedProductPartIds: scheduledProductPartIds,
       managedPaths,
       skipped: false,
       startedProductPartIds: collectStartedProductPartIds(agentSessions),
+      writtenDrafts,
+      writtenProductPartPlans,
     };
   }
 
@@ -244,6 +272,8 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
   ): Promise<{
     readonly agentSessions: readonly NodeAgentSessionBootstrapResult[];
     readonly managedStatePath: string;
+    readonly writtenDrafts: DevelopmentTreeNodeBootstrapScanResult["writtenDrafts"];
+    readonly writtenProductPartPlans: DevelopmentTreeNodeBootstrapScanResult["writtenProductPartPlans"];
   }> {
     const worktree = await this.worktrees.createProductPartPrecodeWorktree({
       partId: params.partId,
@@ -293,6 +323,8 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
     return {
       agentSessions: bootstrap.agentSessions,
       managedStatePath,
+      writtenDrafts: bootstrap.writtenDrafts,
+      writtenProductPartPlans: bootstrap.writtenProductPartPlans,
     };
   }
 

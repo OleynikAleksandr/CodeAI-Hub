@@ -5,6 +5,11 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
+interface GitWorktreeEntry {
+  readonly branchName?: string;
+  readonly worktreePath: string;
+}
+
 export const isWithinPath = (root: string, candidate: string): boolean => {
   if (!root) {
     return false;
@@ -39,19 +44,43 @@ export const createProductPartWorktreeRoot = (params: {
     params.partId
   );
 
-const listGitWorktreePaths = async (
+const readBranchName = (line: string): string | null => {
+  const value = line.slice("branch ".length).trim();
+  return value.startsWith("refs/heads/")
+    ? value.slice("refs/heads/".length)
+    : null;
+};
+
+const listGitWorktrees = async (
   workspacePath: string
-): Promise<readonly string[]> => {
+): Promise<readonly GitWorktreeEntry[]> => {
   const result = await execFileAsync(
     "git",
     ["worktree", "list", "--porcelain"],
     { cwd: workspacePath }
   ).catch(() => ({ stdout: "" }));
-  return result.stdout
-    .split("\n")
-    .filter((line) => line.startsWith("worktree "))
-    .map((line) => line.slice("worktree ".length).trim())
-    .filter(Boolean);
+  const entries: GitWorktreeEntry[] = [];
+  let current: { branchName?: string; worktreePath: string } | null = null;
+  for (const line of result.stdout.split("\n")) {
+    if (line.startsWith("worktree ")) {
+      if (current) {
+        entries.push(current);
+      }
+      const worktreePath = line.slice("worktree ".length).trim();
+      current = worktreePath ? { worktreePath } : null;
+      continue;
+    }
+    if (current && line.startsWith("branch ")) {
+      const branchName = readBranchName(line);
+      if (branchName) {
+        current.branchName = branchName;
+      }
+    }
+  }
+  if (current) {
+    entries.push(current);
+  }
+  return entries;
 };
 
 const directoryHasEntries = async (directoryPath: string): Promise<boolean> =>
@@ -83,7 +112,8 @@ export const removeProductPartWorktrees = async (params: {
   const worktreesRoot = createWorktreesRoot(params.workspacePath);
   const productPartWorktreeRoot = createProductPartWorktreeRoot(params);
   const removedPaths: string[] = [];
-  for (const worktreePath of await listGitWorktreePaths(params.workspacePath)) {
+  for (const entry of await listGitWorktrees(params.workspacePath)) {
+    const { branchName, worktreePath } = entry;
     if (!isWithinPath(productPartWorktreeRoot, worktreePath)) {
       continue;
     }
@@ -94,6 +124,11 @@ export const removeProductPartWorktrees = async (params: {
     ).catch(async () => {
       await rm(worktreePath, { force: true, recursive: true });
     });
+    if (branchName) {
+      await execFileAsync("git", ["branch", "-D", branchName], {
+        cwd: params.workspacePath,
+      }).catch(() => null);
+    }
     removedPaths.push(path.relative(params.workspacePath, worktreePath));
   }
   await rm(productPartWorktreeRoot, { force: true, recursive: true });

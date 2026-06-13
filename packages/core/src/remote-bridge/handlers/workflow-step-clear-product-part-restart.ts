@@ -1,9 +1,11 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { promisify } from "node:util";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import type { Session, SessionManager } from "../../session-manager";
-import { bootstrapDevelopmentTreeProductPartAgents } from "./development-tree-product-part-agent-bootstrap";
-import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import { DevelopmentTreeProductPartPrecodeBootstrap } from "./development-tree-product-part-precode-bootstrap";
 import {
   createProductPartWorktreeRoot,
   isWithinPath,
@@ -14,6 +16,7 @@ import {
   type WorkflowProviderNativeSessionRef,
 } from "./workflow-clear-session-cleanup";
 
+const execFileAsync = promisify(execFile);
 const PRODUCT_PART_ROOT_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([a-z0-9]+(?:-[a-z0-9]+)*)$/u;
 const PRODUCT_PART_ROOT_DRAFT_FILES = [
@@ -258,6 +261,42 @@ const resolveProductPartRestartProviderId = (
   clearedSessions.providerNativeSessions[0]?.providerId ??
   null;
 
+const uniquePaths = (paths: readonly string[]): readonly string[] => [
+  ...new Set(paths.filter((entry) => entry.trim().length > 0)),
+];
+
+const pathExists = async (
+  workspacePath: string,
+  relativePath: string
+): Promise<boolean> =>
+  Boolean(await stat(path.join(workspacePath, relativePath)).catch(() => null));
+
+const hasTrackedPath = async (
+  workspacePath: string,
+  relativePath: string
+): Promise<boolean> => {
+  const result = await execFileAsync("git", ["ls-files", "--", relativePath], {
+    cwd: workspacePath,
+  }).catch(() => ({ stdout: "" }));
+  return result.stdout.trim().length > 0;
+};
+
+const filterCommitPaths = async (params: {
+  readonly paths: readonly string[];
+  readonly workspacePath: string;
+}): Promise<readonly string[]> => {
+  const filtered: string[] = [];
+  for (const relativePath of uniquePaths(params.paths)) {
+    if (
+      (await pathExists(params.workspacePath, relativePath)) ||
+      (await hasTrackedPath(params.workspacePath, relativePath))
+    ) {
+      filtered.push(relativePath);
+    }
+  }
+  return filtered;
+};
+
 export const clearAndRestartProductPart = async (
   request: ProductPartClearRequest,
   deps: ProductPartClearDeps
@@ -294,21 +333,43 @@ export const clearAndRestartProductPart = async (
     workspacePath: request.workspacePath,
     workspaceSlug: request.workspaceSlug,
   });
-  const progress = await readDiagramModulesProgressSnapshot({
-    workspaceRoot: request.workspacePath,
-    workspaceSlug: request.workspaceSlug,
-  });
-  const bootstrap = await bootstrapDevelopmentTreeProductPartAgents({
-    agentGateway: deps.developmentTreeAgentGateway,
-    providerId: resolveProductPartRestartProviderId(clearedSessions),
-    leadProductPartId: progress?.leadProductPartId ?? null,
-    productPartLeadershipOrder: progress?.productPartLeadershipOrder?.length
-      ? progress.productPartLeadershipOrder
-      : progress?.plannedPartIds,
-    targetProductPartIds: [partId],
-    workspaceRoot: request.workspacePath,
-    workspaceSlug: request.workspaceSlug,
-  });
+  const mainCommitPaths = uniquePaths([
+    ...deletedContinuityPaths,
+    path.join(".codeai-hub", request.workspaceSlug, "continuity"),
+    ...removedArtifacts.deletedManagedPaths,
+    ...removedArtifacts.deletedProductPartPlanPaths,
+  ]);
+  const bootstrap =
+    await new DevelopmentTreeProductPartPrecodeBootstrap().bootstrap({
+      agentGateway: deps.developmentTreeAgentGateway,
+      committer: {
+        commitDevelopmentTreeBootstrap: async ({ managedPaths }) => {
+          await new WorkflowBoundaryGit().commit({
+            commitMessage: `chore: restart product part ${partId} lane`,
+            paths: await filterCommitPaths({
+              paths: [...mainCommitPaths, ...managedPaths],
+              workspacePath: request.workspacePath,
+            }),
+            workspaceRoot: request.workspacePath,
+          });
+        },
+      },
+      providerId: resolveProductPartRestartProviderId(clearedSessions),
+      targetProductPartIds: [partId],
+      workspaceRoot: request.workspacePath,
+      workspaceSlug: request.workspaceSlug,
+    });
+  if (bootstrap.skipped) {
+    await new WorkflowBoundaryGit().commit({
+      allowEmpty: true,
+      commitMessage: `chore: clear product part ${partId} lane`,
+      paths: await filterCommitPaths({
+        paths: mainCommitPaths,
+        workspacePath: request.workspacePath,
+      }),
+      workspaceRoot: request.workspacePath,
+    });
+  }
   return {
     clearedSessions,
     deletedProviderNativeSessionPaths:
