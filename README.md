@@ -2,28 +2,37 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.503** (Lead Product Part Review Ordering)
+**Current Release — v1.2.504** (User Gate Focus UX)
+
+This release refines the Project Manager Development Tree user-gate experience
+after the v1.2.503 Product Part ordering fix. Core still owns the active/queued
+user gate cursor, but Project Manager now uses that cursor to automatically
+select the active Documentation or Development Tree node and show the session
+that contains the user review card.
+
+Development Tree Product Part rows also remain collapsed when the tree first
+hydrates, so the lead Product Part no longer appears visually like the next
+user task just because it has children. When a node needs attention, the orange
+animated marker remains the attention signal while the selected session shows
+the actionable review card.
+
+Tree interaction is now split deliberately: clicking the P/C/M marker
+expands/collapses a Product Part, Cluster, or Module node; clicking the node
+name only selects that node and opens its session/artifacts. This avoids
+accidental expansion when the user is simply trying to inspect the active
+review.
+
+Retest focus: reset the test workspace to the questionnaire, run through
+`Diagram Modules`, and verify that secondary Product Part gates are selected
+and shown before the lead gate. Both Product Part rows should initially be
+collapsed, and only the P/C/M marker should toggle nested rows.
+
+**Previous Release — v1.2.503** (Lead Product Part Review Ordering)
 
 This release tightens the Product Part pre-code review lifecycle introduced in
 v1.2.502. Lead Product Part draft work may finish first, but Core now defers
 the lead user review gate until every secondary Product Part Development Brief
 has been accepted and checkpointed.
-
-When the last secondary brief is accepted, Core promotes the deferred lead
-review inside the lead Product Part session and only then shows the
-`Подтверждаю` review card there. The lead Development Order Plan assignment is
-still blocked until that lead brief review is accepted by the user.
-
-Development Tree agents also receive exact draft target paths in their first
-prompt, so Product Part agents should write
-`ProductPartDevelopmentBrief.draft.md` into the materialized node folder rather
-than the lane worktree root.
-
-Retest focus: reset the test workspace to the questionnaire, run through
-`Diagram Modules`, let both Product Part lanes work, and verify that secondary
-Product Part review cards are handled before the lead card. If the lead agent
-finishes first, it should show a Core waiting message, not a `Подтверждаю`
-button, until secondary briefs are accepted.
 
 **Previous Release — v1.2.502** (Product Part Worktree Lanes)
 

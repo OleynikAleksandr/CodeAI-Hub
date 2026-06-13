@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "33eb4f6aa",
+  "lastRecordedCommit": "7a20af719",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.marker-toggle-ui.task1",
-  "expectedCommitMessage": "fix: separate tree marker toggles from selection",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-504.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.504",
   "debt": {
-    "expectedCommitMessage": "fix: separate tree marker toggles from selection",
-    "preCommitHead": "33eb4f6aa",
+    "expectedCommitMessage": "docs: prepare release 1.2.504",
+    "preCommitHead": "7a20af719",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.marker-toggle-ui.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-504.task1"
   }
 }
 ```
@@ -277,11 +277,15 @@
 153. [DONE] `devtree-early-pp.phase4.user-gate-focus-ui.task1` Подключить UI auto-focus к Core-owned active user gate: активный Documentation/Development Tree gate должен автоматически выбирать свой узел и показывать его сессию/review card, а Product Part ветки не должны стартово раскрываться сами (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: focus active user gate sessions`).
 154. [DONE] Git Commit: `fix: focus active user gate sessions` (hash: 33eb4f6aa)
 155. [DONE] `devtree-early-pp.phase4.marker-toggle-ui.task1` Разделить выбор узла и раскрытие дерева: клик по P/C/M marker раскрывает/сворачивает collapsible узел, клик по имени только выбирает/открывает сессию/артефакт; добавить reset-style для marker button (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: separate tree marker toggles from selection`).
-156. [PENDING] Git Commit: `fix: separate tree marker toggles from selection` (hash: TBD)
-157. [TODO] `devtree-early-pp.phase4.user-gate-focus-verify.task1` Выполнить targeted Project Manager verification для auto-focus active user gate, collapsed Product Part default и marker-only toggles (scope: `src/client/project-manager`; expected commit: none).
-158. [TODO] `devtree-early-pp.phase4.release-confirm-504.task1` Получить отдельное подтверждение пользователя на релизную сборку после UX фикса user-gate focus/toggle (scope: `manual confirmation`; expected commit: none).
+156. [DONE] Git Commit: `fix: separate tree marker toggles from selection` (hash: 7a20af719)
+157. [DONE] `devtree-early-pp.phase4.user-gate-focus-verify.task1` Выполнить targeted Project Manager verification для auto-focus active user gate, collapsed Product Part default и marker-only toggles (scope: `src/client/project-manager`; expected commit: none). Result: Verification passed: workflow-navigation source test, typecheck:webview, build:project-manager, build:webview.
+158. [DONE] `devtree-early-pp.phase4.release-confirm-504.task1` Получить отдельное подтверждение пользователя на релизную сборку после UX фикса user-gate focus/toggle (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested release build 1.2.504 after the three user-gate focus/toggle fixes.
+159. [DONE] `devtree-early-pp.phase4.release-docs-504.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.504 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.504`).
+160. [PENDING] Git Commit: `docs: prepare release 1.2.504` (hash: TBD)
+161. [TODO] `devtree-early-pp.phase4.release-build-504.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.504`).
+162. [TODO] Git Commit: `chore: release 1.2.504` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-159. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-160. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+163. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+164. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)

@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.504] - 2026-06-13
+### Fixed
+- **Project Manager now focuses the active Core-owned user gate.** When Core exposes an active Documentation Tree or Development Tree user gate, the sidebar selects that node and opens the session/review card that needs the user response.
+- **Development Tree Product Parts no longer auto-expand on hydration.** Product Part rows start collapsed, so the lead Product Part does not look like the next actionable task simply because it has nested clusters/modules.
+- **P/C/M markers now own expansion while labels own selection.** Clicking a Product Part, Cluster, or Module marker expands/collapses that node; clicking the node name only selects it and opens its session/artifacts.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.503] - 2026-06-13
 ### Fixed
 - **Lead Product Part review is now Core-deferred until secondary briefs are accepted.** A lead Product Part draft can finish first, but Core records it as `ready_for_review_deferred` and does not show the user confirmation card until all secondary Product Part Development Briefs are accepted.
