@@ -2,7 +2,35 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.505** (Repeated User Gate Refresh)
+**Current Release — v1.2.506** (Project Manager Navigation Lock Hydration)
+
+This release fixes the Project Manager regressions found during the v1.2.505
+retest around navigation handoff, projected dialog input locking, and selected
+tree markers.
+
+After accepting `Diagram Modules`, Core-owned stage activation is replayed after
+the fresh workflow snapshot arrives. That keeps the next-step card, such as
+`Application Skeleton`, in sync even when the first activation event beat the
+state refresh.
+
+Projected Development Tree dialogs now stay conservatively input-locked while
+their runtime state is still hydrating. Switching away from a Product Part
+session and back should no longer reopen the input box while that agent turn is
+still active.
+
+The sidebar now uses one selected-node cursor across Documentation Tree and
+Development Tree. Selecting a Product Part, Cluster, Module, or operation moves
+the green selected frame to that node instead of leaving the previous
+Documentation Tree row selected.
+
+Retest focus: reset the test workspace to the questionnaire, run through
+`Diagram Modules`, accept secondary Product Parts before the lead, and continue
+into `Application Skeleton` / `Quality Gates Baseline`. The next-step card
+should appear immediately after stage acceptance, Product Part dialogs should
+not lose input lock while agents work, and only the currently selected tree node
+should have the green selected frame.
+
+**Previous Release — v1.2.505** (Repeated User Gate Refresh)
 
 This release fixes the user-gate refresh regressions found during the v1.2.504
 retest. Project Manager now treats `userGateCursor` changes as first-class

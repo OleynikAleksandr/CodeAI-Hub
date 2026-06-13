@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "f7f694762",
+  "lastRecordedCommit": "26ed2bb98",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.unified-tree-selection-contract.task1",
-  "expectedCommitMessage": "test: cover unified workspace tree selection marker",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-506.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.506",
   "debt": {
-    "expectedCommitMessage": "test: cover unified workspace tree selection marker",
-    "preCommitHead": "f7f694762",
+    "expectedCommitMessage": "docs: prepare release 1.2.506",
+    "preCommitHead": "26ed2bb98",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.unified-tree-selection-contract.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-506.task1"
   }
 }
 ```
@@ -311,11 +311,11 @@
 178. [DONE] `devtree-early-pp.phase4.unified-tree-selection.task1` Ввести единый selected marker для Documentation Tree и Development Tree: выбранным зелёной рамкой может быть только текущий stage/product-part/cluster/module/operation node, а выбор Development Tree node снимает рамку с последнего Documentation stage (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-selection.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unify workspace tree selection marker`). Result: Workspace Tree now uses a single selected node cursor shared by workflow stage events, branch selection events and direct Development Tree row clicks; targeted checks passed: `npm run typecheck:webview`.
 179. [DONE] Git Commit: `fix: unify workspace tree selection marker` (hash: f7f694762)
 180. [DONE] `devtree-early-pp.phase4.unified-tree-selection-contract.task1` Обновить source-contract тест навигации под новый single selected node cursor, чтобы regression снова не оставлял зелёную рамку на Documentation Tree после выбора Development Tree node (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover unified workspace tree selection marker`). Result: Navigation source-contract now requires `useWorkspaceTreeSelectionCursor`, Development Tree branch cursor updates and fallback-only active stage selection. Targeted checks passed: `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`; `npm run typecheck:webview`.
-181. [PENDING] Git Commit: `test: cover unified workspace tree selection marker` (hash: TBD)
-182. [TODO] `devtree-early-pp.phase4.navigation-lock-selection-verify.task1` Выполнить targeted Project Manager verification для stage handoff replay, dialog lock hydration и unified tree selection (scope: `src/client/project-manager`; expected commit: none).
-183. [TODO] `devtree-early-pp.phase4.release-confirm-506.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.506 после фиксов Project Manager navigation/input/selection (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested implementation and release rebuild after 1.2.505 testing.
-184. [TODO] `devtree-early-pp.phase4.release-docs-506.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.506 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.506`).
-185. [TODO] Git Commit: `docs: prepare release 1.2.506` (hash: TBD)
+181. [DONE] Git Commit: `test: cover unified workspace tree selection marker` (hash: 26ed2bb98)
+182. [DONE] `devtree-early-pp.phase4.navigation-lock-selection-verify.task1` Выполнить targeted Project Manager verification для stage handoff replay, dialog lock hydration и unified tree selection (scope: `src/client/project-manager`; expected commit: none). Result: Targeted verification passed: npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts; npm run typecheck:webview; npm run build:project-manager; npm run build:webview.
+183. [DONE] `devtree-early-pp.phase4.release-confirm-506.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.506 после фиксов Project Manager navigation/input/selection (scope: `manual confirmation`; expected commit: none). Result: User explicitly confirmed implementation and release rebuild after 1.2.505 retest remarks.
+184. [DONE] `devtree-early-pp.phase4.release-docs-506.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.506 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.506`). Result: README current release and CHANGELOG entry prepared for v1.2.506 Project Manager navigation/input/selection retest.
+185. [PENDING] Git Commit: `docs: prepare release 1.2.506` (hash: TBD)
 186. [TODO] `devtree-early-pp.phase4.release-build-506.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.506`).
 187. [TODO] Git Commit: `chore: release 1.2.506` (hash: TBD)
 

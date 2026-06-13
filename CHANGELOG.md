@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.506] - 2026-06-13
+### Fixed
+- **Stage handoff replay now waits for the refreshed workflow snapshot.** Core-owned `workflow:stage:activate` events are retained and replayed by Project Manager panel sync after `workflowState.updatedAt` changes, so accepting `Diagram Modules` reliably opens the `Application Skeleton` card.
+- **Projected Development Tree dialogs stay locked during runtime hydration.** Pending dialog bootstrap now applies a temporary `runtime_state_hydration` input lock until Core runtime snapshot/turn-state arrives, preventing Product Part sessions from reopening input while the agent is still working.
+- **Documentation Tree and Development Tree now share one selected-node cursor.** Selecting a Product Part, Cluster, Module, or operation moves the green selected frame to that node and removes the stale selection from the previous Documentation Tree stage.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.505] - 2026-06-13
 ### Fixed
 - **Project Manager now refreshes the tree when only the user-gate cursor changes.** The workflow-state change token includes active and queued `userGateCursor` identity, so pulsing attention markers appear immediately for newly opened review gates.
