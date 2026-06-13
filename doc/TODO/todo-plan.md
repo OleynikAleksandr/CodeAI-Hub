@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "26ed2bb98",
+  "lastRecordedCommit": "46f13bd8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-506.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.506",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-506.task1",
+  "expectedCommitMessage": "chore: release 1.2.506",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.506",
-    "preCommitHead": "26ed2bb98",
+    "expectedCommitMessage": "chore: release 1.2.506",
+    "preCommitHead": "46f13bd8e",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-506.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-506.task1"
   }
 }
 ```
@@ -315,9 +315,9 @@
 182. [DONE] `devtree-early-pp.phase4.navigation-lock-selection-verify.task1` Выполнить targeted Project Manager verification для stage handoff replay, dialog lock hydration и unified tree selection (scope: `src/client/project-manager`; expected commit: none). Result: Targeted verification passed: npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts; npm run typecheck:webview; npm run build:project-manager; npm run build:webview.
 183. [DONE] `devtree-early-pp.phase4.release-confirm-506.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.506 после фиксов Project Manager navigation/input/selection (scope: `manual confirmation`; expected commit: none). Result: User explicitly confirmed implementation and release rebuild after 1.2.505 retest remarks.
 184. [DONE] `devtree-early-pp.phase4.release-docs-506.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.506 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.506`). Result: README current release and CHANGELOG entry prepared for v1.2.506 Project Manager navigation/input/selection retest.
-185. [PENDING] Git Commit: `docs: prepare release 1.2.506` (hash: TBD)
-186. [TODO] `devtree-early-pp.phase4.release-build-506.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.506`).
-187. [TODO] Git Commit: `chore: release 1.2.506` (hash: TBD)
+185. [DONE] Git Commit: `docs: prepare release 1.2.506` (hash: 46f13bd8e)
+186. [DONE] `devtree-early-pp.phase4.release-build-506.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.506`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully; VSIX: `codeai-hub-1.2.506.vsix` (5.3M); 1.2.506 provider/core/launcher/UI tarballs are present in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+187. [PENDING] Git Commit: `chore: release 1.2.506` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
