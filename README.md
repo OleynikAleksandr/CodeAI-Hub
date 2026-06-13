@@ -2,30 +2,38 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.504** (User Gate Focus UX)
+**Current Release — v1.2.505** (Repeated User Gate Refresh)
+
+This release fixes the user-gate refresh regressions found during the v1.2.504
+retest. Project Manager now treats `userGateCursor` changes as first-class
+workflow-state changes, so a new active gate is rendered immediately even when
+the root workflow timestamp and regular progress fields did not change.
+
+Repeated review gates on the same Development Tree node are also separated by
+gate identity. A Product Part brief review and the later lead
+`DevelopmentOrderPlan` review may both target `finder-widget`, but the sidebar
+will still re-focus the Product Part session when Core opens the second gate.
+
+Queued managed review cards no longer show stale text that asks the user to
+press a missing `Подтверждаю` button. If another user gate is active, the queued
+session explains that it is waiting for the Core-owned review cursor and that
+the confirmation button will appear when the gate is promoted to active.
+
+Retest focus: reset the test workspace to the questionnaire, run through
+`Diagram Modules`, accept the secondary Product Part first, and then watch the
+lead Product Part through both review gates. The pulsing marker and selected
+session should move immediately for the repeated `finder-widget` gate. If
+`Quality Gates Baseline` reaches review while a Product Part gate is active, it
+should be queued/read-only with a clear waiting message rather than a missing
+button.
+
+**Previous Release — v1.2.504** (User Gate Focus UX)
 
 This release refines the Project Manager Development Tree user-gate experience
 after the v1.2.503 Product Part ordering fix. Core still owns the active/queued
 user gate cursor, but Project Manager now uses that cursor to automatically
 select the active Documentation or Development Tree node and show the session
 that contains the user review card.
-
-Development Tree Product Part rows also remain collapsed when the tree first
-hydrates, so the lead Product Part no longer appears visually like the next
-user task just because it has children. When a node needs attention, the orange
-animated marker remains the attention signal while the selected session shows
-the actionable review card.
-
-Tree interaction is now split deliberately: clicking the P/C/M marker
-expands/collapses a Product Part, Cluster, or Module node; clicking the node
-name only selects that node and opens its session/artifacts. This avoids
-accidental expansion when the user is simply trying to inspect the active
-review.
-
-Retest focus: reset the test workspace to the questionnaire, run through
-`Diagram Modules`, and verify that secondary Product Part gates are selected
-and shown before the lead gate. Both Product Part rows should initially be
-collapsed, and only the P/C/M marker should toggle nested rows.
 
 **Previous Release — v1.2.503** (Lead Product Part Review Ordering)
 

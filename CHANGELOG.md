@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.505] - 2026-06-13
+### Fixed
+- **Project Manager now refreshes the tree when only the user-gate cursor changes.** The workflow-state change token includes active and queued `userGateCursor` identity, so pulsing attention markers appear immediately for newly opened review gates.
+- **Repeated review gates on the same Development Tree node re-focus correctly.** The sidebar auto-focus key now includes gate identity and task data, so a Product Part brief review and later `DevelopmentOrderPlan` review do not collapse into one already-focused node.
+- **Queued managed reviews no longer promise a missing confirm button.** Read-only queued review cards show a waiting message until Core promotes that gate to active, instead of rendering stale text that says to press `Подтверждаю` below.
+
+### Verification
+- `npm run typecheck:webview`
+- `npx tsx --test src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.504] - 2026-06-13
 ### Fixed
 - **Project Manager now focuses the active Core-owned user gate.** When Core exposes an active Documentation Tree or Development Tree user gate, the sidebar selects that node and opens the session/review card that needs the user response.
