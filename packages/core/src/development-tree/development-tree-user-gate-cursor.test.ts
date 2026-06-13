@@ -195,6 +195,66 @@ test("applyDevelopmentTreeUserGateCursor activates secondary brief before lead b
   }
 });
 
+test("applyDevelopmentTreeUserGateCursor reads Product Part review state from lane worktree", async () => {
+  const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), "devtree-gate-"));
+  const worktreeRoot = path.join(
+    `${workspaceRoot}.worktrees`,
+    WORKSPACE_SLUG,
+    "product-parts",
+    "finder-widget-shell",
+    "precode"
+  );
+  try {
+    await writeProductPartPlan(worktreeRoot, "finder-widget-shell");
+    const managedStatePath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "workflow",
+      "managed",
+      "development-tree-product-parts",
+      "finder-widget-shell.json"
+    );
+    await mkdir(path.dirname(managedStatePath), { recursive: true });
+    await writeFile(
+      managedStatePath,
+      `${JSON.stringify(
+        {
+          partId: "finder-widget-shell",
+          reviewState: "lane_started",
+          schema: "codeai-product-part-development-brief-managed-v1",
+          sessionId: "finder-widget-shell-session",
+          worktreePath: worktreeRoot,
+        },
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const snapshot: DevelopmentTreeSnapshot = {
+      leadProductPartId: "finder-widget",
+      parts: [createPart("finder-widget-shell")],
+    };
+    const result = await applyDevelopmentTreeUserGateCursor(snapshot, {
+      generatedPartIds: ["finder-widget-shell"],
+      leadProductPartId: "finder-widget",
+      plannedPartIds: ["finder-widget-shell"],
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.activeUserGate?.partId, "finder-widget-shell");
+    assert.equal(
+      result.activeUserGate?.reason,
+      "product_part_brief_review_required"
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+    await rm(`${workspaceRoot}.worktrees`, { recursive: true, force: true });
+  }
+});
+
 test("applyDevelopmentTreeUserGateCursor exposes lead order-plan review", async () => {
   const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), "devtree-gate-"));
   try {

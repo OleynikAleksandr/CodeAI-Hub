@@ -72,6 +72,21 @@ const createProductPartPlanPath = (params: {
     "todo-plan.md"
   );
 
+const createProductPartManagedStatePath = (params: {
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  path.join(
+    params.workspaceRoot,
+    ".codeai-hub",
+    params.workspaceSlug,
+    "workflow",
+    "managed",
+    "development-tree-product-parts",
+    `${params.partId}.json`
+  );
+
 const createClusterPlanPath = (params: {
   readonly clusterId: string;
   readonly partId: string;
@@ -137,6 +152,38 @@ const readPlanState = async (
 ): Promise<ManagedPlanState | null> => {
   const content = await readExistingFile(absolutePlanPath);
   return content ? parsePlanState(content) : null;
+};
+
+const readWorktreePathFromManagedState = (content: string): string | null => {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    return null;
+  }
+  if (!(parsed && typeof parsed === "object" && !Array.isArray(parsed))) {
+    return null;
+  }
+  return readNonEmptyString((parsed as Record<string, unknown>).worktreePath);
+};
+
+const readProductPartPlanState = async (params: {
+  readonly partId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<ManagedPlanState | null> => {
+  const managedState = await readExistingFile(
+    createProductPartManagedStatePath(params)
+  );
+  const worktreePath = managedState
+    ? readWorktreePathFromManagedState(managedState)
+    : null;
+  return await readPlanState(
+    createProductPartPlanPath({
+      partId: params.partId,
+      workspaceRoot: worktreePath ?? params.workspaceRoot,
+    })
+  );
 };
 
 const hasPendingBriefReview = (
@@ -277,12 +324,11 @@ const readPendingReviewGates = async (
   );
   const gates: DevelopmentTreeUserGate[] = [];
   for (const part of orderedParts) {
-    const state = await readPlanState(
-      createProductPartPlanPath({
-        partId: part.id,
-        workspaceRoot: params.workspaceRoot,
-      })
-    );
+    const state = await readProductPartPlanState({
+      partId: part.id,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
     if (!hasPendingBriefReview(state, part.id)) {
       continue;
     }
@@ -296,12 +342,11 @@ const readPendingReviewGates = async (
     );
   }
   for (const part of orderedParts) {
-    const state = await readPlanState(
-      createProductPartPlanPath({
-        partId: part.id,
-        workspaceRoot: params.workspaceRoot,
-      })
-    );
+    const state = await readProductPartPlanState({
+      partId: part.id,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
     if (!hasPendingOrderPlanReview(state, part.id)) {
       continue;
     }

@@ -1,5 +1,6 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 
 interface AcceptedBriefInput {
   readonly content: string;
@@ -410,6 +411,7 @@ export const prepareLeadOrderPlanDispatch = async (params: {
   readonly content: string;
   readonly planPath: string;
   readonly sessionId: string;
+  readonly workspaceRoot: string;
 } | null> => {
   const decision = await readOptionalJsonRecord(
     params.workspaceRoot,
@@ -422,15 +424,29 @@ export const prepareLeadOrderPlanDispatch = async (params: {
   if (!(typeof sessionId === "string" && sessionId.trim())) {
     return null;
   }
+  const planWorkspaceRoot =
+    typeof decision?.worktreePath === "string" && decision.worktreePath.trim()
+      ? decision.worktreePath.trim()
+      : params.workspaceRoot;
   const planPath = createPlanPath(params.leadPartId);
-  const planText = await readOptionalFile(params.workspaceRoot, planPath);
+  const planText = await readOptionalFile(planWorkspaceRoot, planPath);
   if (!planText) {
     return null;
   }
   await writeText(
-    params.workspaceRoot,
+    planWorkspaceRoot,
     planPath,
     markOrderPlanTaskInProgress(planText, params.leadPartId)
   );
-  return { content: params.content, planPath, sessionId: sessionId.trim() };
+  await new WorkflowBoundaryGit().commit({
+    commitMessage: "chore: advance managed workflow ledger",
+    paths: [planPath],
+    workspaceRoot: planWorkspaceRoot,
+  });
+  return {
+    content: params.content,
+    planPath,
+    sessionId: sessionId.trim(),
+    workspaceRoot: planWorkspaceRoot,
+  };
 };

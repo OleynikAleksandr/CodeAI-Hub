@@ -1,6 +1,7 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import { checkpointAcceptedProductPartBriefFromLane } from "./product-part-brief-lane-checkpoint";
 import {
   prepareLeadOrderPlanDispatch,
   readLeadProductPartId,
@@ -292,17 +293,26 @@ export class ProductPartDevelopmentBriefReviewController {
         2
       )}\n`
     );
+    const checkpoint = await checkpointAcceptedProductPartBriefFromLane({
+      acceptedCommitHash: commit.hash,
+      acceptedCommitMessage: planState.expectedCommitMessage,
+      laneWorkspaceRoot: params.workspaceRoot,
+      partId,
+      sessionId: params.sessionId,
+      workspaceSlug: params.workspaceSlug,
+    });
+    const coordinationWorkspaceRoot = checkpoint.workspaceRoot;
     const isLeadPart = IS_LEAD_PLAN_RE.test(planText);
     const leadPartId = isLeadPart
       ? partId
       : await readLeadProductPartId({
-          workspaceRoot: params.workspaceRoot,
+          workspaceRoot: coordinationWorkspaceRoot,
           workspaceSlug: params.workspaceSlug,
         });
     const leadAssignment = leadPartId
       ? await resolveLeadOrderPlanAssignment({
           leadPartId,
-          workspaceRoot: params.workspaceRoot,
+          workspaceRoot: coordinationWorkspaceRoot,
           workspaceSlug: params.workspaceSlug,
         })
       : null;
@@ -312,7 +322,7 @@ export class ProductPartDevelopmentBriefReviewController {
         ? await prepareLeadOrderPlanDispatch({
             content: leadAssignment.prompt,
             leadPartId,
-            workspaceRoot: params.workspaceRoot,
+            workspaceRoot: coordinationWorkspaceRoot,
             workspaceSlug: params.workspaceSlug,
           })
         : null;
@@ -339,7 +349,6 @@ export class ProductPartDevelopmentBriefReviewController {
       commitMessage: "chore: advance managed workflow ledger",
       paths: await uniqueExistingPaths(params.workspaceRoot, [
         planPath,
-        ...(leadDispatch ? [leadDispatch.planPath] : []),
         managedDecisionPath,
         createContinuityIndexPath(params.workspaceSlug),
       ]),
