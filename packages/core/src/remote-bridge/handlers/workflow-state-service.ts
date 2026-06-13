@@ -1,6 +1,5 @@
 import path from "node:path";
 import type { Request, Response } from "express";
-import { isDiagramModulesReviewOpen } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
 import { ManagedWorkflowReadModelProjector } from "../../managed-workflow-orchestration/managed-workflow-read-model-projector";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -19,7 +18,7 @@ import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
-import { isQualityGatesReviewOpen } from "./managed-review-state-readers";
+import { readManagedDocumentationReviewOpenStages } from "./managed-review-state-readers";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   applyTechnicalRootProgressToState,
@@ -148,8 +147,6 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
-    const diagramModulesReviewOpenPromise =
-      isDiagramModulesReviewOpen(workspaceRoot);
     const applicationSkeletonProgressPromise =
       readApplicationSkeletonProgressSnapshot({
         workspaceRoot,
@@ -159,8 +156,8 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
-    const qualityGatesReviewOpenPromise =
-      isQualityGatesReviewOpen(workspaceRoot);
+    const managedReviewOpenPromise =
+      readManagedDocumentationReviewOpenStages(workspaceRoot);
     const technicalStageDirtyStatusPromise = readTechnicalStageDirtyStatus(
       workspaceRoot,
       workspaceSlugResult.value
@@ -182,10 +179,9 @@ export class WorkflowStateService {
       descriptionPromise,
       lastActivePromise,
       diagramModulesProgressPromise,
-      diagramModulesReviewOpenPromise,
       applicationSkeletonProgressPromise,
       qualityGatesProgressPromise,
-      qualityGatesReviewOpenPromise,
+      managedReviewOpenPromise,
       technicalStageDirtyStatusPromise,
       virtualSimulationArtifactExistsPromise,
     ])
@@ -195,10 +191,9 @@ export class WorkflowStateService {
           descriptionSnapshot,
           lastActive,
           rawDiagramModulesProgress,
-          diagramModulesReviewOpen,
           rawApplicationSkeletonProgress,
           rawQualityGatesProgress,
-          qualityGatesReviewOpen,
+          managedReviewOpen,
           technicalStageDirtyStatus,
           virtualSimulationArtifactExists,
         ]) => {
@@ -365,12 +360,13 @@ export class WorkflowStateService {
                         },
                         {
                           progress: null,
-                          reviewOpen: diagramModulesReviewOpen,
+                          reviewOpen: managedReviewOpen.diagramModules,
                           stage: "diagram_modules",
                         },
                         {
                           progress:
                             technicalStageProgress.applicationSkeletonProgress,
+                          reviewOpen: managedReviewOpen.applicationSkeleton,
                           stage: "application_skeleton",
                         },
                         {
@@ -382,7 +378,7 @@ export class WorkflowStateService {
                                   `.codeai-hub/${workspaceSlugResult.value}/quality_gates/quality-gates-research.json`,
                                 ],
                           progress: technicalStageProgress.qualityGatesProgress,
-                          reviewOpen: qualityGatesReviewOpen,
+                          reviewOpen: managedReviewOpen.qualityGates,
                           stage: "quality_gates",
                         },
                       ],

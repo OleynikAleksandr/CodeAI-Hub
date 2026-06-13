@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "b9fe94a99",
+  "lastRecordedCommit": "a3b87876d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.diagram-review-attention-test.task1",
-  "expectedCommitMessage": "test: cover diagram modules review attention",
+  "currentTaskId": "devtree-early-pp.phase4.documentation-review-gates.task1",
+  "expectedCommitMessage": "fix: cover documentation managed review gates",
   "debt": {
-    "expectedCommitMessage": "test: cover diagram modules review attention",
-    "preCommitHead": "b9fe94a99",
+    "expectedCommitMessage": "fix: cover documentation managed review gates",
+    "preCommitHead": "a3b87876d",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.diagram-review-attention-test.task1"
+    "taskId": "devtree-early-pp.phase4.documentation-review-gates.task1"
   }
 }
 ```
@@ -180,19 +180,28 @@
 85. [DONE] `devtree-early-pp.phase4.diagram-review-attention.task1` Добавить `Diagram Modules` в Core-owned Documentation Tree user-gate cursor: open managed review должен отдавать active `workflow:diagram_modules` marker с aggregate artifact paths (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show diagram modules review attention`).
 86. [DONE] Git Commit: `fix: show diagram modules review attention` (hash: b9fe94a99)
 87. [DONE] `devtree-early-pp.phase4.diagram-review-attention-test.task1` Покрыть regression tests для `Diagram Modules`: `aggregateReady/substep=awaiting_review` создаёт active marker, а completed/persistent state без review не создаёт marker (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules review attention`).
-88. [PENDING] Git Commit: `test: cover diagram modules review attention` (hash: TBD)
-89. [TODO] `devtree-early-pp.phase4.diagram-review-attention-verify.task1` Выполнить targeted Core/Project Manager verification для `Diagram Modules` review attention marker (scope: `packages/core, src/client/project-manager`; expected commit: none).
-90. [TODO] `devtree-early-pp.phase4.release-confirm-500.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса `Diagram Modules` review attention (scope: `manual confirmation`; expected commit: none).
-91. [TODO] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).
-92. [TODO] Git Commit: `docs: prepare release 1.2.500` (hash: TBD)
-93. [TODO] `devtree-early-pp.phase4.release-build-500.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.500`).
-94. [TODO] Git Commit: `chore: release 1.2.500` (hash: TBD)
-95. [TODO] `devtree-early-pp.phase4.user-retest-500.task1` Пользователь тестирует следующий релиз: `Diagram Modules` должен подсвечиваться animated orange attention marker одновременно с review-карточкой `Подтверждаю`, а marker должен исчезать сразу после acceptance (scope: `manual retest`; expected commit: none).
+88. [DONE] Git Commit: `test: cover diagram modules review attention` (hash: a3b87876d)
+89. [DONE] `devtree-early-pp.phase4.diagram-review-attention-verify.task1` Выполнить targeted Core/Project Manager verification для `Diagram Modules` review attention marker (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: core build, compiled attention tests, webview typecheck, Project Manager build, webview build.
+### Stream: Managed Review Gate Coverage
+
+90. [DONE] `devtree-early-pp.phase4.documentation-review-gates.task1` Покрыть Core-owned attention cursor для всех Documentation Tree managed review gates: `Application Skeleton` final review, repair-limit user review для `Diagram Modules`, `Application Skeleton`, `Quality Gates`, без роста `workflow-state-service.ts` выше лимита микро-классов (scope: `packages/core/src/remote-bridge/handlers/managed-review-state-readers.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cover documentation managed review gates`).
+91. [PENDING] Git Commit: `fix: cover documentation managed review gates` (hash: TBD)
+92. [TODO] `devtree-early-pp.phase4.development-tree-review-gates.task1` Расширить Development Tree user-gate cursor на lead `DevelopmentOrderPlan` review и cluster contract review, чтобы active/queued marker доходил до Product Part и Cluster узлов (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.ts, src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `fix: cover development tree managed review gates`).
+93. [TODO] Git Commit: `fix: cover development tree managed review gates` (hash: TBD)
+94. [TODO] `devtree-early-pp.phase4.managed-review-gates-test.task1` Покрыть regression tests для Documentation Tree final/repair-limit gates и Development Tree order-plan/cluster gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.test.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `test: cover managed review gate attention cursor`).
+95. [TODO] Git Commit: `test: cover managed review gate attention cursor` (hash: TBD)
+96. [TODO] `devtree-early-pp.phase4.managed-review-gates-verify.task1` Выполнить targeted Core/Project Manager verification для полного покрытия managed review attention cursor (scope: `packages/core, src/client/project-manager`; expected commit: none).
+97. [TODO] `devtree-early-pp.phase4.release-confirm-500.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку после расширенного фикса managed review gate coverage (scope: `manual confirmation`; expected commit: none).
+98. [TODO] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).
+99. [TODO] Git Commit: `docs: prepare release 1.2.500` (hash: TBD)
+100. [TODO] `devtree-early-pp.phase4.release-build-500.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.500`).
+101. [TODO] Git Commit: `chore: release 1.2.500` (hash: TBD)
+102. [TODO] `devtree-early-pp.phase4.user-retest-500.task1` Пользователь тестирует следующий релиз: все Documentation Tree и Development Tree шаги с открытым user input/review gate должны подсвечиваться animated orange attention marker одновременно с review-карточкой `Подтверждаю`, а marker должен исчезать сразу после acceptance (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-96. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-97. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-98. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+103. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+104. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+105. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
