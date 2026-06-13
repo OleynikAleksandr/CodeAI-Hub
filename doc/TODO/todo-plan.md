@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "8cb67b956",
+  "lastRecordedCommit": "ec0c20e7a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-500.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.500",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-500.task1",
+  "expectedCommitMessage": "chore: release 1.2.500",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.500",
-    "preCommitHead": "8cb67b956",
+    "expectedCommitMessage": "chore: release 1.2.500",
+    "preCommitHead": "ec0c20e7a",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-500.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-500.task1"
   }
 }
 ```
@@ -193,9 +193,9 @@
 96. [DONE] `devtree-early-pp.phase4.managed-review-gates-verify.task1` Выполнить targeted Core/Project Manager verification для полного покрытия managed review attention cursor (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Targeted verification passed: @codeai-hub/core build; compiled managed review attention tests 18/18; Project Manager workflow-navigation source test; typecheck:webview; build:project-manager; build:webview
 97. [DONE] `devtree-early-pp.phase4.release-confirm-500.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку после расширенного фикса managed review gate coverage (scope: `manual confirmation`; expected commit: none). Result: User explicitly confirmed release build 1.2.500 after managed review gate coverage fix
 98. [DONE] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).
-99. [PENDING] Git Commit: `docs: prepare release 1.2.500` (hash: TBD)
-100. [TODO] `devtree-early-pp.phase4.release-build-500.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.500`).
-101. [TODO] Git Commit: `chore: release 1.2.500` (hash: TBD)
+99. [DONE] Git Commit: `docs: prepare release 1.2.500` (hash: ec0c20e7a)
+100. [DONE] `devtree-early-pp.phase4.release-build-500.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.500`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.500.vsix` (5.2M); tarball'ы 1.2.500 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+101. [PENDING] Git Commit: `chore: release 1.2.500` (hash: TBD)
 102. [TODO] `devtree-early-pp.phase4.user-retest-500.task1` Пользователь тестирует следующий релиз: все Documentation Tree и Development Tree шаги с открытым user input/review gate должны подсвечиваться animated orange attention marker одновременно с review-карточкой `Подтверждаю`, а marker должен исчезать сразу после acceptance (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
