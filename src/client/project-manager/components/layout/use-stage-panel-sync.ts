@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
+
+const WORKFLOW_STATE_LAST_ACTIVE_SOURCE = "workflow-state-last-active";
 
 /**
  * Resolves artifact + session for a given stage and listens for
@@ -62,6 +64,7 @@ export const useStagePanelSync = (params: {
     readonly seenUpdatedAt: string | null;
     readonly stage: string;
   } | null>(null);
+  const lastWorkflowStateActivationKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -105,6 +108,26 @@ export const useStagePanelSync = (params: {
         : current
     );
   }, [pendingCoreActivation, syncPanelsToStage, workflowState?.updatedAt]);
+
+  useEffect(() => {
+    const lastActive = workflowState?.lastActive;
+    if (!lastActive) {
+      return;
+    }
+    const activationKey = `${workflowState.workspaceSlug}:${lastActive.stage}`;
+    if (lastWorkflowStateActivationKeyRef.current === activationKey) {
+      return;
+    }
+    lastWorkflowStateActivationKeyRef.current = activationKey;
+    window.dispatchEvent(
+      new CustomEvent("pm:stage:activated", {
+        detail: {
+          source: WORKFLOW_STATE_LAST_ACTIVE_SOURCE,
+          stage: lastActive.stage,
+        },
+      })
+    );
+  }, [workflowState?.lastActive, workflowState?.workspaceSlug]);
 
   return syncPanelsToStage;
 };

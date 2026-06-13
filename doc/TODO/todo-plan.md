@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "46f13bd8e",
+  "lastRecordedCommit": "97a6f699b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-506.task1",
-  "expectedCommitMessage": "chore: release 1.2.506",
+  "currentTaskId": "devtree-early-pp.phase4.stage-last-active-fallback.task1",
+  "expectedCommitMessage": "fix: sync stage handoff from workflow snapshot",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.506",
-    "preCommitHead": "46f13bd8e",
+    "expectedCommitMessage": "fix: sync stage handoff from workflow snapshot",
+    "preCommitHead": "97a6f699b",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-506.task1"
+    "taskId": "devtree-early-pp.phase4.stage-last-active-fallback.task1"
   }
 }
 ```
@@ -317,9 +317,20 @@
 184. [DONE] `devtree-early-pp.phase4.release-docs-506.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.506 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.506`). Result: README current release and CHANGELOG entry prepared for v1.2.506 Project Manager navigation/input/selection retest.
 185. [DONE] Git Commit: `docs: prepare release 1.2.506` (hash: 46f13bd8e)
 186. [DONE] `devtree-early-pp.phase4.release-build-506.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.506`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully; VSIX: `codeai-hub-1.2.506.vsix` (5.3M); 1.2.506 provider/core/launcher/UI tarballs are present in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-187. [PENDING] Git Commit: `chore: release 1.2.506` (hash: TBD)
+187. [DONE] Git Commit: `chore: release 1.2.506` (hash: 97a6f699b)
+
+### Stream: Stage Handoff Last Active Fallback 1.2.507
+
+188. [DONE] `devtree-early-pp.phase4.stage-last-active-fallback.task1` Применять Core-owned `workflowState.lastActive.stage` как persistent fallback для `pm:stage:activated`, чтобы acceptance `Diagram Modules` открывал `Application Skeleton` даже если realtime `workflow:stage:activate` не был применён UI (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sync stage handoff from workflow snapshot`).
+189. [PENDING] Git Commit: `fix: sync stage handoff from workflow snapshot` (hash: TBD)
+190. [TODO] `devtree-early-pp.phase4.stage-last-active-fallback-verify.task1` Выполнить targeted Project Manager verification для snapshot-based stage handoff fallback (scope: `src/client/project-manager`; expected commit: none).
+191. [TODO] `devtree-early-pp.phase4.release-confirm-507.task1` Получить отдельное подтверждение пользователя на релизную сборку 1.2.507 после stage handoff fallback фикса (scope: `manual confirmation`; expected commit: none).
+192. [TODO] `devtree-early-pp.phase4.release-docs-507.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.507 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.507`).
+193. [TODO] Git Commit: `docs: prepare release 1.2.507` (hash: TBD)
+194. [TODO] `devtree-early-pp.phase4.release-build-507.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.507`).
+195. [TODO] Git Commit: `chore: release 1.2.507` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-188. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-189. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+196. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+197. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)

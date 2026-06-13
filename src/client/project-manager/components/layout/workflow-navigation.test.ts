@@ -114,6 +114,21 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "Core stage activation must be replayed after a fresh workflow snapshot"
   );
   assert.equal(
+    stagePanelSyncSource.includes("lastWorkflowStateActivationKeyRef"),
+    true,
+    "workflow snapshot lastActive stage handoff must dedupe applied stages"
+  );
+  assert.equal(
+    stagePanelSyncSource.includes('"workflow-state-last-active"'),
+    true,
+    "workflow snapshot lastActive must reuse the shared stage activation route"
+  );
+  assert.equal(
+    stagePanelSyncSource.includes("workflowState?.lastActive"),
+    true,
+    "stage panel sync must recover stage handoff from persisted workflow lastActive state"
+  );
+  assert.equal(
     mainAreaSource.includes("managed-workflow-user-review"),
     true,
     "managed workflow user review messages must trigger immediate workflow-state refresh"
