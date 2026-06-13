@@ -2,6 +2,11 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { DraftReadinessClassifier } from "../../development-tree/node-bootstrap/draft-readiness-classifier";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import {
+  createDeferredReviewMessage,
+  markLeadBriefReviewDeferred,
+  resolveLeadBriefReviewDeferral,
+} from "./product-part-brief-review-deferral";
 import { ProductPartDevelopmentOrderPlanTurnController } from "./product-part-development-order-plan-turn-controller";
 
 export interface ProductPartBriefMessage {
@@ -187,7 +192,9 @@ const buildReadyDecision = (params: {
   readonly classification: ReturnType<DraftReadinessClassifier["classify"]>;
   readonly commitHash: string;
   readonly commitMessage: string;
+  readonly missingPartIds?: readonly string[];
   readonly partId: string;
+  readonly reviewState: "ready_for_review" | "ready_for_review_deferred";
   readonly sessionId: string;
 }): string =>
   `${JSON.stringify(
@@ -195,8 +202,12 @@ const buildReadyDecision = (params: {
       acceptedCommitHash: params.commitHash,
       acceptedCommitMessage: params.commitMessage,
       files: params.classification.files,
+      ...(params.missingPartIds?.length
+        ? { missingPartIds: params.missingPartIds }
+        : {}),
       partId: params.partId,
       readiness: params.classification.readiness,
+      reviewState: params.reviewState,
       schema: "codeai-product-part-development-brief-managed-v1",
       sessionId: params.sessionId,
       updatedAt: new Date().toISOString(),
@@ -380,6 +391,12 @@ export class ProductPartDevelopmentBriefTurnController {
         }),
       };
     }
+    const reviewDeferral = await resolveLeadBriefReviewDeferral({
+      partId: params.partId,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    const deferLeadReview = reviewDeferral.deferred;
 
     await writeText(
       params.workspaceRoot,
@@ -388,27 +405,38 @@ export class ProductPartDevelopmentBriefTurnController {
         classification: params.classification,
         commitHash: gitCommit.hash,
         commitMessage: params.planState.expectedCommitMessage,
+        missingPartIds: deferLeadReview
+          ? reviewDeferral.missingPartIds
+          : undefined,
         partId: params.partId,
+        reviewState: deferLeadReview
+          ? "ready_for_review_deferred"
+          : "ready_for_review",
         sessionId: params.sessionId,
       })
     );
+    const acceptedPlanText = markBriefTaskAccepted({
+      commitHash: gitCommit.hash,
+      commitMessage: params.planState.expectedCommitMessage,
+      content: params.planText,
+      currentTaskId: params.planState.currentTaskId,
+      partId: params.partId,
+    });
     await writeText(
       params.workspaceRoot,
       planPath,
       replaceStateBlock(
-        markBriefTaskAccepted({
-          commitHash: gitCommit.hash,
-          commitMessage: params.planState.expectedCommitMessage,
-          content: params.planText,
-          currentTaskId: params.planState.currentTaskId,
-          partId: params.partId,
-        }),
+        deferLeadReview
+          ? markLeadBriefReviewDeferred(acceptedPlanText, params.partId)
+          : acceptedPlanText,
         {
           ...params.planState,
           currentTaskId: `${createTaskPrefix(
             params.partId
           )}.phase2.brief-review.task1`,
-          expectedCommitMessage: `docs: accept ${params.partId} product part development brief`,
+          expectedCommitMessage: deferLeadReview
+            ? null
+            : `docs: accept ${params.partId} product part development brief`,
           lastRecordedCommit: gitCommit.hash,
         }
       )
@@ -422,6 +450,16 @@ export class ProductPartDevelopmentBriefTurnController {
       ]),
       workspaceRoot: params.workspaceRoot,
     });
+    if (deferLeadReview) {
+      return {
+        handled: true,
+        message: createDeferredReviewMessage({
+          commitHash: gitCommit.hash,
+          missingPartIds: reviewDeferral.missingPartIds,
+          partId: params.partId,
+        }),
+      };
+    }
     return {
       handled: true,
       message: createReadyMessage({

@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "7d1df682c",
+  "lastRecordedCommit": "3aee84bdb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.exact-draft-targets.task1",
-  "expectedCommitMessage": "fix: include exact development tree draft paths",
+  "currentTaskId": "devtree-early-pp.phase4.lead-review-deferral.task1",
+  "expectedCommitMessage": "fix: defer lead product part review until secondary briefs",
   "debt": {
-    "expectedCommitMessage": "fix: include exact development tree draft paths",
-    "preCommitHead": "7d1df682c",
+    "expectedCommitMessage": "fix: defer lead product part review until secondary briefs",
+    "preCommitHead": "3aee84bdb",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.exact-draft-targets.task1"
+    "taskId": "devtree-early-pp.phase4.lead-review-deferral.task1"
   }
 }
 ```
@@ -251,20 +251,22 @@
 ### Stream: Product Part Review Ordering Regression
 
 135. [DONE] `devtree-early-pp.phase4.exact-draft-targets.task1` Передавать Product Part/Cluster/Module agent'ам точные relative target paths для draft-файлов, чтобы агент не создавал `ProductPartDevelopmentBrief.draft.md` в root lane worktree (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: include exact development tree draft paths`).
-136. [PENDING] Git Commit: `fix: include exact development tree draft paths` (hash: TBD)
-137. [TODO] `devtree-early-pp.phase4.lead-review-deferral.task1` Перенести правило "lead Product Part review последним" в Core lifecycle: lead draft может быть зафиксирован, но review gate открывается только после принятых secondary briefs (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts`; expected commit: `fix: defer lead product part review until secondary briefs`).
-138. [TODO] Git Commit: `fix: defer lead product part review until secondary briefs` (hash: TBD)
-139. [TODO] `devtree-early-pp.phase4.lead-review-deferral-tests.task1` Покрыть regression tests: exact draft target paths, lead draft deferred при missing secondary, secondary acceptance promotes lead brief review before order-plan assignment (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.lane.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lead product part review deferral`).
-140. [TODO] Git Commit: `test: cover lead product part review deferral` (hash: TBD)
-141. [TODO] `devtree-early-pp.phase4.lead-review-deferral-verify.task1` Выполнить targeted Core verification для Product Part lead deferral и exact draft target prompt (scope: `packages/core`; expected commit: none).
-142. [TODO] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none).
-143. [TODO] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
-144. [TODO] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
-145. [TODO] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`).
-146. [TODO] Git Commit: `chore: release 1.2.503` (hash: TBD)
+136. [DONE] Git Commit: `fix: include exact development tree draft paths` (hash: 3aee84bdb)
+137. [DONE] `devtree-early-pp.phase4.lead-review-deferral.task1` Перенести правило "lead Product Part review последним" в Core lifecycle: lead draft может быть зафиксирован, но review gate открывается только после принятых secondary briefs (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-review-deferral.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.ts`; expected commit: `fix: defer lead product part review until secondary briefs`).
+138. [PENDING] Git Commit: `fix: defer lead product part review until secondary briefs` (hash: TBD)
+139. [TODO] `devtree-early-pp.phase4.lead-review-target-message.task1` Доставлять promoted lead review system-message в lead Product Part session, чтобы кнопка `Подтверждаю` появлялась только после secondary acceptance (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, doc/TODO/todo-plan.md`; expected commit: `fix: dispatch promoted lead review message`).
+140. [TODO] Git Commit: `fix: dispatch promoted lead review message` (hash: TBD)
+141. [TODO] `devtree-early-pp.phase4.lead-review-deferral-tests.task1` Покрыть regression tests: exact draft target paths, lead draft deferred при missing secondary, secondary acceptance promotes lead brief review before order-plan assignment (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.lane.test.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lead product part review deferral`).
+142. [TODO] Git Commit: `test: cover lead product part review deferral` (hash: TBD)
+143. [TODO] `devtree-early-pp.phase4.lead-review-deferral-verify.task1` Выполнить targeted Core verification для Product Part lead deferral и exact draft target prompt (scope: `packages/core`; expected commit: none).
+144. [TODO] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none).
+145. [TODO] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
+146. [TODO] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
+147. [TODO] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`).
+148. [TODO] Git Commit: `chore: release 1.2.503` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-147. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-148. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-149. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+149. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+150. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+151. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

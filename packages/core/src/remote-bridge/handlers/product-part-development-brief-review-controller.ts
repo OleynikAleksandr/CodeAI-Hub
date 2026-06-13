@@ -2,6 +2,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import { checkpointAcceptedProductPartBriefFromLane } from "./product-part-brief-lane-checkpoint";
+import { promoteDeferredLeadBriefReview } from "./product-part-brief-review-deferral";
 import {
   prepareLeadOrderPlanDispatch,
   readLeadProductPartId,
@@ -25,6 +26,11 @@ export type ProductPartBriefReviewResult =
       readonly targetInternalMessage?: {
         readonly content: string;
         readonly sessionId: string;
+      };
+      readonly targetCoreMessage?: {
+        readonly content: string;
+        readonly sessionId: string;
+        readonly tag: string;
       };
     };
 
@@ -317,8 +323,18 @@ export class ProductPartDevelopmentBriefReviewController {
         })
       : null;
     const startOrderPlan = isLeadPart && leadAssignment?.ready === true;
+    const leadReviewPromotion =
+      !isLeadPart && leadPartId
+        ? await promoteDeferredLeadBriefReview({
+            leadPartId,
+            workspaceRoot: coordinationWorkspaceRoot,
+            workspaceSlug: params.workspaceSlug,
+          })
+        : null;
     const leadDispatch =
-      !isLeadPart && leadAssignment?.ready === true && leadPartId
+      !(leadReviewPromotion || isLeadPart) &&
+      leadAssignment?.ready === true &&
+      leadPartId
         ? await prepareLeadOrderPlanDispatch({
             content: leadAssignment.prompt,
             leadPartId,
@@ -364,6 +380,9 @@ export class ProductPartDevelopmentBriefReviewController {
         content: createAcceptedMessage({
           commitHash: commit.hash,
           isLeadPart,
+          leadBriefReviewDispatchMessage: leadReviewPromotion
+            ? `Core: все secondary Product Part briefs приняты; lead Product Part \`${leadReviewPromotion.leadPartId}\` теперь открыт для пользовательской проверки.`
+            : null,
           leadOrderPlanBlockedMessage:
             leadAssignment?.ready === false
               ? leadAssignment.blockedMessage
@@ -380,6 +399,13 @@ export class ProductPartDevelopmentBriefReviewController {
         ? {
             content: leadDispatch.content,
             sessionId: leadDispatch.sessionId,
+          }
+        : undefined,
+      targetCoreMessage: leadReviewPromotion
+        ? {
+            content: leadReviewPromotion.content,
+            sessionId: leadReviewPromotion.sessionId,
+            tag: "managed-workflow-user-review",
           }
         : undefined,
     };
@@ -401,6 +427,7 @@ const createAcceptedMessageTag = (params: {
 const createAcceptedMessage = (params: {
   readonly commitHash: string;
   readonly isLeadPart: boolean;
+  readonly leadBriefReviewDispatchMessage?: string | null;
   readonly leadOrderPlanDispatchMessage?: string | null;
   readonly leadOrderPlanBlockedMessage?: string | null;
   readonly partId: string;
@@ -408,7 +435,8 @@ const createAcceptedMessage = (params: {
   [
     `Core: пользователь принял Product Part \`${params.partId}\` Development Brief.`,
     `Commit: \`${params.commitHash}\`.`,
-    params.leadOrderPlanBlockedMessage ??
+    params.leadBriefReviewDispatchMessage ??
+      params.leadOrderPlanBlockedMessage ??
       params.leadOrderPlanDispatchMessage ??
       (params.isLeadPart
         ? "Lead Product Part review закрыт; Core запускает следующий managed assignment: Development Order Plan draft."
