@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "7a20af719",
+  "lastRecordedCommit": "a2ae32873",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-504.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.504",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-504.task1",
+  "expectedCommitMessage": "chore: release 1.2.504",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.504",
-    "preCommitHead": "7a20af719",
+    "expectedCommitMessage": "chore: release 1.2.504",
+    "preCommitHead": "a2ae32873",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-504.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-504.task1"
   }
 }
 ```
@@ -281,9 +281,9 @@
 157. [DONE] `devtree-early-pp.phase4.user-gate-focus-verify.task1` Выполнить targeted Project Manager verification для auto-focus active user gate, collapsed Product Part default и marker-only toggles (scope: `src/client/project-manager`; expected commit: none). Result: Verification passed: workflow-navigation source test, typecheck:webview, build:project-manager, build:webview.
 158. [DONE] `devtree-early-pp.phase4.release-confirm-504.task1` Получить отдельное подтверждение пользователя на релизную сборку после UX фикса user-gate focus/toggle (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested release build 1.2.504 after the three user-gate focus/toggle fixes.
 159. [DONE] `devtree-early-pp.phase4.release-docs-504.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.504 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.504`).
-160. [PENDING] Git Commit: `docs: prepare release 1.2.504` (hash: TBD)
-161. [TODO] `devtree-early-pp.phase4.release-build-504.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.504`).
-162. [TODO] Git Commit: `chore: release 1.2.504` (hash: TBD)
+160. [DONE] Git Commit: `docs: prepare release 1.2.504` (hash: a2ae32873)
+161. [DONE] `devtree-early-pp.phase4.release-build-504.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.504`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.504.vsix` (5.3M); tarball'ы 1.2.504 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+162. [PENDING] Git Commit: `chore: release 1.2.504` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
