@@ -79,6 +79,30 @@ test("resolveWorkflowUserInputAttentionCursor exposes preliminary review gates w
   ]);
 });
 
+test("resolveWorkflowUserInputAttentionCursor exposes Diagram Modules review gate", () => {
+  const cursor = resolveWorkflowUserInputAttentionCursor({
+    developmentTree: {},
+    documentationStages: [
+      {
+        progress: null,
+        reviewOpen: true,
+        stage: "diagram_modules",
+      },
+    ],
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+
+  assert.equal(cursor.activeUserGate?.nodeId, "workflow:diagram_modules");
+  assert.equal(cursor.activeUserGate?.nodeKind, "workflow_stage");
+  assert.equal(cursor.activeUserGate?.stage, "diagram_modules");
+  assert.equal(cursor.activeUserGate?.inputLocked, false);
+  assert.equal(cursor.activeUserGate?.status, "active");
+  assert.deepEqual(cursor.activeUserGate?.artifactPaths, [
+    `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+  ]);
+  assert.deepEqual(cursor.queuedUserGates, []);
+});
+
 test("resolveWorkflowUserInputAttentionCursor keeps development tree gates before documentation gates", () => {
   const cursor = resolveWorkflowUserInputAttentionCursor({
     developmentTree: {

@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "2a4c2834e",
+  "lastRecordedCommit": "b9fe94a99",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.diagram-review-attention.task1",
-  "expectedCommitMessage": "fix: show diagram modules review attention",
+  "currentTaskId": "devtree-early-pp.phase4.diagram-review-attention-test.task1",
+  "expectedCommitMessage": "test: cover diagram modules review attention",
   "debt": {
-    "expectedCommitMessage": "fix: show diagram modules review attention",
-    "preCommitHead": "2a4c2834e",
+    "expectedCommitMessage": "test: cover diagram modules review attention",
+    "preCommitHead": "b9fe94a99",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.diagram-review-attention.task1"
+    "taskId": "devtree-early-pp.phase4.diagram-review-attention-test.task1"
   }
 }
 ```
@@ -178,9 +178,9 @@
 ### Stream: Diagram Modules Review Attention
 
 85. [DONE] `devtree-early-pp.phase4.diagram-review-attention.task1` Добавить `Diagram Modules` в Core-owned Documentation Tree user-gate cursor: open managed review должен отдавать active `workflow:diagram_modules` marker с aggregate artifact paths (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show diagram modules review attention`).
-86. [PENDING] Git Commit: `fix: show diagram modules review attention` (hash: TBD)
-87. [TODO] `devtree-early-pp.phase4.diagram-review-attention-test.task1` Покрыть regression tests для `Diagram Modules`: `aggregateReady/substep=awaiting_review` создаёт active marker, а completed/persistent state без review не создаёт marker (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules review attention`).
-88. [TODO] Git Commit: `test: cover diagram modules review attention` (hash: TBD)
+86. [DONE] Git Commit: `fix: show diagram modules review attention` (hash: b9fe94a99)
+87. [DONE] `devtree-early-pp.phase4.diagram-review-attention-test.task1` Покрыть regression tests для `Diagram Modules`: `aggregateReady/substep=awaiting_review` создаёт active marker, а completed/persistent state без review не создаёт marker (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules review attention`).
+88. [PENDING] Git Commit: `test: cover diagram modules review attention` (hash: TBD)
 89. [TODO] `devtree-early-pp.phase4.diagram-review-attention-verify.task1` Выполнить targeted Core/Project Manager verification для `Diagram Modules` review attention marker (scope: `packages/core, src/client/project-manager`; expected commit: none).
 90. [TODO] `devtree-early-pp.phase4.release-confirm-500.task1` Получить отдельное подтверждение пользователя на релизную сборку после фикса `Diagram Modules` review attention (scope: `manual confirmation`; expected commit: none).
 91. [TODO] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).

@@ -88,6 +88,21 @@ ${QUALITY_GATES_PLAN_START}
 ${QUALITY_GATES_PLAN_END}
 `;
 
+const createDiagramModulesPlan = (
+  currentTaskId: string
+): string => `# Diagram Modules
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "currentTaskId": "${currentTaskId}",
+  "expectedCommitMessage": null,
+  "lastRecordedCommit": "abc123"
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+`;
+
 const writeQualityGatesResearchArtifacts = async (
   workspaceRoot: string
 ): Promise<void> => {
@@ -204,6 +219,61 @@ test("workflow-state exposes Quality Gates research review as active user attent
       `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.md`,
       `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.json`,
     ]);
+    assert.deepEqual(cursor.queuedUserGates, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state exposes Diagram Modules managed review as active user attention", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-attention-diagram-review-")
+  );
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md",
+      createDiagramModulesPlan("diagram-modules.phase2.review.task1")
+    );
+    const payload = await readWorkflowState({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+    });
+    const cursor = readUserGateCursor(payload);
+
+    assert.equal(cursor.activeUserGate?.nodeId, "workflow:diagram_modules");
+    assert.equal(
+      cursor.activeUserGate?.reason,
+      "managed_stage_review_required"
+    );
+    assert.equal(cursor.activeUserGate?.inputLocked, false);
+    assert.equal(cursor.activeUserGate?.status, "active");
+    assert.deepEqual(cursor.activeUserGate?.artifactPaths, [
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+    ]);
+    assert.deepEqual(cursor.queuedUserGates, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state does not expose Diagram Modules persistent return as user attention", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-attention-diagram-return-")
+  );
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md",
+      createDiagramModulesPlan("diagram-modules.phase3.user-return.task1")
+    );
+    const payload = await readWorkflowState({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+    });
+    const cursor = readUserGateCursor(payload);
+
+    assert.equal(cursor.activeUserGate, null);
     assert.deepEqual(cursor.queuedUserGates, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
