@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "ec0c20e7a",
+  "lastRecordedCommit": "e1c8d84a9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-500.task1",
-  "expectedCommitMessage": "chore: release 1.2.500",
+  "currentTaskId": "devtree-early-pp.phase4.product-part-turn-wait.task1",
+  "expectedCommitMessage": "fix: wait for product part turns from review actions",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.500",
-    "preCommitHead": "ec0c20e7a",
+    "expectedCommitMessage": "fix: wait for product part turns from review actions",
+    "preCommitHead": "e1c8d84a9",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-500.task1"
+    "taskId": "devtree-early-pp.phase4.product-part-turn-wait.task1"
   }
 }
 ```
@@ -195,13 +195,20 @@
 98. [DONE] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).
 99. [DONE] Git Commit: `docs: prepare release 1.2.500` (hash: ec0c20e7a)
 100. [DONE] `devtree-early-pp.phase4.release-build-500.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.500`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.500.vsix` (5.2M); tarball'ы 1.2.500 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-101. [PENDING] Git Commit: `chore: release 1.2.500` (hash: TBD)
-102. [TODO] `devtree-early-pp.phase4.user-retest-500.task1` Пользователь тестирует следующий релиз: все Documentation Tree и Development Tree шаги с открытым user input/review gate должны подсвечиваться animated orange attention marker одновременно с review-карточкой `Подтверждаю`, а marker должен исчезать сразу после acceptance (scope: `manual retest`; expected commit: none).
+101. [DONE] Git Commit: `chore: release 1.2.500` (hash: e1c8d84a9)
+102. [BLOCKED] `devtree-early-pp.phase4.user-retest-500.task1` Пользователь тестирует следующий релиз: все Documentation Tree и Development Tree шаги с открытым user input/review gate должны подсвечиваться animated orange attention marker одновременно с review-карточкой `Подтверждаю`, а marker должен исчезать сразу после acceptance (scope: `manual retest`; expected commit: none). Result: Релиз 1.2.500 подтвердил Diagram Modules flow до review, но после Diagram Modules acceptance две Product Part draft-сессии стартовали почти одновременно и обе получили Codex `refresh token was already used`; Application Skeleton стартовал позже и попал в уже сломанное auth-состояние. Причина: путь managed review actions передавал Development Tree agent gateway без `waitForInitialTurnSettled`, поэтому старый sequential Product Part turn guard не работал при нажатии `Подтверждаю` в `Diagram Modules`.
+
+### Stream: Managed Review Product Part Turn Serialization
+
+103. [DONE] `devtree-early-pp.phase4.product-part-turn-wait.task1` Включить `waitForInitialTurnSettled` для Development Tree agent gateway в managed review action path, чтобы Diagram Modules acceptance не запускал следующий Product Part и Application Skeleton activation до settled первого Product Part turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wait for product part turns from review actions`).
+104. [PENDING] Git Commit: `fix: wait for product part turns from review actions` (hash: TBD)
+105. [TODO] `devtree-early-pp.phase4.product-part-turn-wait-verify.task1` Выполнить targeted Core verification для Diagram Modules review acceptance/Product Part bootstrap serialization (scope: `packages/core`; expected commit: none).
+106. [TODO] `devtree-early-pp.phase4.release-confirm-501.task1` Получить отдельное подтверждение пользователя на релизную сборку после auth-race фикса (scope: `manual confirmation`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-103. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-104. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-105. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+107. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+108. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+109. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

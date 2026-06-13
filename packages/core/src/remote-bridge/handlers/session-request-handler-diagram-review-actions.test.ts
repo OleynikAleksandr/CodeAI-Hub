@@ -13,6 +13,7 @@ import { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import type { WorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
+import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { BridgeEvent } from "../types";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 
@@ -195,6 +196,7 @@ const createActions = (
   options: {
     readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
     readonly messageLogPath?: string;
+    readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   } = {}
 ) => {
   const coreMessages: CapturedMessage[] = [];
@@ -254,6 +256,7 @@ const createActions = (
     stopRebind: {
       ensureSessionReadyForSend: async () => true,
     } as never,
+    workspaceRuntime: options.workspaceRuntime,
   });
   return {
     actions,
@@ -263,6 +266,35 @@ const createActions = (
     events,
     sentInternalMessages,
   };
+};
+
+const createSettlingWorkspaceRuntime = (
+  events: string[]
+): WorkspaceRuntimeFacade => {
+  let snapshotCount = 0;
+  const idle = {
+    lastHeartbeatAt: "2026-06-13T07:07:30.000Z",
+    turnState: "idle",
+  };
+  const running = {
+    turnState: "running",
+  };
+  return {
+    getSnapshot: () => {
+      snapshotCount += 1;
+      events.push(`snapshot:${snapshotCount}`);
+      if (snapshotCount === 1) {
+        return { sessions: { "devtree-1": running } };
+      }
+      if (snapshotCount === 2) {
+        return { sessions: { "devtree-1": idle } };
+      }
+      if (snapshotCount === 3) {
+        return { sessions: { "devtree-1": idle, "devtree-2": running } };
+      }
+      return { sessions: { "devtree-1": idle, "devtree-2": idle } };
+    },
+  } as unknown as WorkspaceRuntimeFacade;
 };
 
 test("Diagram Modules review acceptance is intercepted by Core and opens persistent return", async () => {
@@ -290,19 +322,24 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       { initiativeSlug: WORKSPACE_SLUG, stage: DIAGRAM_STAGE }
     );
     const createdStages: string[] = [];
+    const gatewayEvents: string[] = [];
     const sentMessages: string[] = [];
     const harness = createActions(sessionManager, {
       developmentTreeAgentGateway: {
         createSessionForWorkflow: (options) => {
           createdStages.push(options.context.stage);
-          return Promise.resolve({ id: `devtree-${createdStages.length}` });
+          const sessionId = `devtree-${createdStages.length}`;
+          gatewayEvents.push(`create:${sessionId}`);
+          return Promise.resolve({ id: sessionId });
         },
-        handleMessage: (_sessionId, content) => {
+        handleMessage: (sessionId, content) => {
+          gatewayEvents.push(`send:${sessionId}`);
           sentMessages.push(content);
           return Promise.resolve();
         },
       },
       messageLogPath: unifiedSessionPath,
+      workspaceRuntime: createSettlingWorkspaceRuntime(gatewayEvents),
     });
 
     await harness.actions.handleMessage(session.id, ACCEPTANCE);
@@ -361,6 +398,16 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
     ]);
     assert.equal(sentMessages.length, 2);
     assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);
+    assert.deepEqual(gatewayEvents, [
+      "create:devtree-1",
+      "send:devtree-1",
+      "snapshot:1",
+      "snapshot:2",
+      "create:devtree-2",
+      "send:devtree-2",
+      "snapshot:3",
+      "snapshot:4",
+    ]);
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     const unifiedSession = await readFile(unifiedSessionPath, "utf8");
     assert.match(unifiedSession, DIAGRAM_COMPLETE_MESSAGE_RE);

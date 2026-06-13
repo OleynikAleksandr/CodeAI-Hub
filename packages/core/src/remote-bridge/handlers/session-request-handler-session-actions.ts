@@ -5,6 +5,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, readAppliedProviderTurnConfig } from "../types";
+import { waitForDevelopmentTreeAgentTurnSettled } from "./development-tree-agent-turn-settle-waiter";
 import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
@@ -86,6 +87,32 @@ const resolveCurrentReviewGateMessageId = (session: Session): string | null => {
   return null;
 };
 
+const createManagedReviewDevelopmentTreeGateway = (
+  options: SessionRequestHandlerSessionActionsOptions
+): DevelopmentTreeAgentSessionGateway | undefined => {
+  const gateway = options.developmentTreeAgentGateway;
+  if (!gateway || gateway.waitForInitialTurnSettled) {
+    return gateway;
+  }
+  return {
+    ...gateway,
+    waitForInitialTurnSettled: async (sessionId) => {
+      const session = options.sessionManager.getSession(sessionId);
+      const result = await waitForDevelopmentTreeAgentTurnSettled({
+        sessionId,
+        workspaceRoot: session?.workspacePath ?? process.cwd(),
+        workspaceRuntime: options.workspaceRuntime,
+      });
+      if (result === "timeout") {
+        options.logger.warn(
+          "Timed out waiting for Development Tree Product Part initial turn to settle",
+          { sessionId }
+        );
+      }
+    },
+  };
+};
+
 export class SessionRequestHandlerSessionActions {
   private readonly deps: SessionRequestHandlerSessionActionsOptions;
   private readonly managedCoreGatedLock: ManagedCoreGatedLockController;
@@ -97,7 +124,8 @@ export class SessionRequestHandlerSessionActions {
     this.managedReviewDecisions =
       new SessionRequestHandlerManagedReviewDecisions({
         broadcaster: (event) => options.broadcaster(event as BridgeEvent),
-        developmentTreeAgentGateway: options.developmentTreeAgentGateway,
+        developmentTreeAgentGateway:
+          createManagedReviewDevelopmentTreeGateway(options),
         eventMessages: options.eventMessages,
         managedInputGate: {
           lock: (sessionId) =>
