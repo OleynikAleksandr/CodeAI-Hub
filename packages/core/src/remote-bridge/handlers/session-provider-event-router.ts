@@ -4,6 +4,7 @@ import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-r
 import { type BridgeEvent, serializeSessionModelBinding } from "../types";
 import { runManagedArbitrationWithTimeBox } from "./managed-arbitration-time-box";
 import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
+import { formatCodexAuthRecoveryMessage } from "./session-provider-event-auth-recovery";
 import {
   isRecord,
   readProviderEventStableId,
@@ -426,8 +427,13 @@ export class SessionProviderEventRouter {
     if (!message) {
       return;
     }
+    const session = this.deps.sessionManager.getSession(sessionId);
+    const recoveryMessage = formatCodexAuthRecoveryMessage({
+      message,
+      providerId: session?.providerId,
+    });
     this.deps.appendProviderMessage(sessionId, "system", {
-      content: `Provider turn failed: ${message}`,
+      content: recoveryMessage ?? `Provider turn failed: ${message}`,
       ...(typeof (event as { readonly timestamp?: unknown }).timestamp ===
       "string"
         ? { timestamp: (event as { readonly timestamp?: string }).timestamp }

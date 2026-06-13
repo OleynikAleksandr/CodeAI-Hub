@@ -3,6 +3,10 @@ import test from "node:test";
 import { Logger } from "../../telemetry/logger";
 import { SessionProviderEventRouter } from "./session-provider-event-router";
 
+const CODEX_AUTH_RECOVERY_RE = /Codex authentication needs/u;
+const CODEX_LOGOUT_COMMAND_RE = /codex logout/u;
+const CODEX_LOGIN_COMMAND_RE = /codex login/u;
+
 test("SessionProviderEventRouter materializes turn_failed as history-visible system message", () => {
   const appended: Array<{
     sessionId: string;
@@ -44,11 +48,11 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
       // noop
     },
     sessionManager: {
-      getSession: () => ({
-        id: "session-1",
+      getSession: (sessionId: string) => ({
+        id: sessionId,
         workspacePath: "/tmp/workspace",
         stage: "description",
-        providerId: "geminiCli",
+        providerId: sessionId === "codex-session" ? "codexCli" : "geminiCli",
       }),
     } as never,
     updateBindingWithResolvedId: () => {
@@ -83,6 +87,18 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
     ),
     true
   );
+
+  router.handleProviderEvent("codex-session", {
+    type: "turn_failed",
+    provider: "codex",
+    message:
+      "Your access token could not be refreshed because your refresh token was already used. Please log out and sign in again.",
+  });
+
+  const codexFailure = appended[1]?.event as { readonly content?: string };
+  assert.match(codexFailure.content ?? "", CODEX_AUTH_RECOVERY_RE);
+  assert.match(codexFailure.content ?? "", CODEX_LOGOUT_COMMAND_RE);
+  assert.match(codexFailure.content ?? "", CODEX_LOGIN_COMMAND_RE);
 });
 
 test("SessionProviderEventRouter keeps model_info updates on session binding", () => {

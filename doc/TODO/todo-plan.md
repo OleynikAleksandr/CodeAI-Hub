@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "c5772f6a7",
+  "lastRecordedCommit": "b4e3258fa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-501.task1",
-  "expectedCommitMessage": "chore: release 1.2.501",
+  "currentTaskId": "devtree-early-pp.phase4.codex-auth-recovery-message.task1",
+  "expectedCommitMessage": "fix: explain codex auth recovery to users",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.501",
-    "preCommitHead": "c5772f6a7",
+    "expectedCommitMessage": "fix: explain codex auth recovery to users",
+    "preCommitHead": "b4e3258fa",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-501.task1"
+    "taskId": "devtree-early-pp.phase4.codex-auth-recovery-message.task1"
   }
 }
 ```
@@ -207,12 +207,21 @@
 107. [DONE] `devtree-early-pp.phase4.release-docs-501.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.501 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.501`). Result: README/CHANGELOG prepared for release 1.2.501 with Product Part turn serialization retest notes.
 108. [DONE] Git Commit: `docs: prepare release 1.2.501` (hash: c5772f6a7)
 109. [DONE] `devtree-early-pp.phase4.release-build-501.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.501`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.501.vsix` (5.2M); tarball'ы 1.2.501 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-110. [PENDING] Git Commit: `chore: release 1.2.501` (hash: TBD)
+110. [DONE] Git Commit: `chore: release 1.2.501` (hash: b4e3258fa)
+
+### Stream: Codex Auth Recovery UX
+
+111. [DONE] `devtree-early-pp.phase4.codex-auth-recovery-message.task1` Классифицировать известный Codex refresh-token failure и писать в сессию понятную инструкцию recovery: закрыть приложения, использующие Codex, выполнить `codex logout`, затем `codex login`, после чего перезапустить CodeAI Hub (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-auth-recovery.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: explain codex auth recovery to users`).
+112. [PENDING] Git Commit: `fix: explain codex auth recovery to users` (hash: TBD)
+113. [TODO] `devtree-early-pp.phase4.codex-auth-usage-limits.task1` Не запускать повторный provider refresh для usage-limits при `dialog_opened`, если уже есть cached replay или если это не нужно для активного turn; это снижает лавину refresh-попыток при сломанном Codex auth (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: avoid codex usage limit auth loops`).
+114. [TODO] Git Commit: `fix: avoid codex usage limit auth loops` (hash: TBD)
+115. [TODO] `devtree-early-pp.phase4.codex-auth-recovery-verify.task1` Выполнить targeted Core verification для Codex auth recovery message и usage-limits refresh behavior (scope: `packages/core`; expected commit: none).
+116. [TODO] `devtree-early-pp.phase4.release-confirm-502.task1` Получить отдельное подтверждение пользователя на релизную сборку после Codex auth recovery UX фикса (scope: `manual confirmation`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-111. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-112. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-113. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+117. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+118. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+119. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
