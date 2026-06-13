@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "aa1d0efcb",
+  "lastRecordedCommit": "d40dccf7d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.development-tree-review-gates.task1",
-  "expectedCommitMessage": "fix: cover development tree managed review gates",
+  "currentTaskId": "devtree-early-pp.phase4.managed-review-gates-test.task1",
+  "expectedCommitMessage": "test: cover managed review gate attention cursor",
   "debt": {
-    "expectedCommitMessage": "fix: cover development tree managed review gates",
-    "preCommitHead": "aa1d0efcb",
+    "expectedCommitMessage": "test: cover managed review gate attention cursor",
+    "preCommitHead": "d40dccf7d",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.development-tree-review-gates.task1"
+    "taskId": "devtree-early-pp.phase4.managed-review-gates-test.task1"
   }
 }
 ```
@@ -187,9 +187,9 @@
 90. [DONE] `devtree-early-pp.phase4.documentation-review-gates.task1` Покрыть Core-owned attention cursor для всех Documentation Tree managed review gates: `Application Skeleton` final review, repair-limit user review для `Diagram Modules`, `Application Skeleton`, `Quality Gates`, без роста `workflow-state-service.ts` выше лимита микро-классов (scope: `packages/core/src/remote-bridge/handlers/managed-review-state-readers.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cover documentation managed review gates`).
 91. [DONE] Git Commit: `fix: cover documentation managed review gates` (hash: aa1d0efcb)
 92. [DONE] `devtree-early-pp.phase4.development-tree-review-gates.task1` Расширить Development Tree user-gate cursor на lead `DevelopmentOrderPlan` review и cluster contract review, чтобы active/queued marker доходил до Product Part и Cluster узлов (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.ts, src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `fix: cover development tree managed review gates`).
-93. [PENDING] Git Commit: `fix: cover development tree managed review gates` (hash: TBD)
-94. [TODO] `devtree-early-pp.phase4.managed-review-gates-test.task1` Покрыть regression tests для Documentation Tree final/repair-limit gates и Development Tree order-plan/cluster gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.test.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `test: cover managed review gate attention cursor`).
-95. [TODO] Git Commit: `test: cover managed review gate attention cursor` (hash: TBD)
+93. [DONE] Git Commit: `fix: cover development tree managed review gates` (hash: d40dccf7d)
+94. [DONE] `devtree-early-pp.phase4.managed-review-gates-test.task1` Покрыть regression tests для Documentation Tree final/repair-limit gates и Development Tree order-plan/cluster gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core/src/development-tree/development-tree-user-gate-cursor.test.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `test: cover managed review gate attention cursor`).
+95. [PENDING] Git Commit: `test: cover managed review gate attention cursor` (hash: TBD)
 96. [TODO] `devtree-early-pp.phase4.managed-review-gates-verify.task1` Выполнить targeted Core/Project Manager verification для полного покрытия managed review attention cursor (scope: `packages/core, src/client/project-manager`; expected commit: none).
 97. [TODO] `devtree-early-pp.phase4.release-confirm-500.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку после расширенного фикса managed review gate coverage (scope: `manual confirmation`; expected commit: none).
 98. [TODO] `devtree-early-pp.phase4.release-docs-500.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.500 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.500`).

@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Request, Response } from "express";
+import { APPLICATION_STAGE_PLAN_PATH } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model";
 import {
   PLAN_END as QUALITY_GATES_PLAN_END,
   PLAN_START as QUALITY_GATES_PLAN_START,
@@ -91,6 +92,21 @@ ${QUALITY_GATES_PLAN_END}
 const createDiagramModulesPlan = (
   currentTaskId: string
 ): string => `# Diagram Modules
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "currentTaskId": "${currentTaskId}",
+  "expectedCommitMessage": null,
+  "lastRecordedCommit": "abc123"
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+`;
+
+const createManagedStagePlan = (
+  currentTaskId: string
+): string => `# Managed Stage
 
 <!-- codeai-plan-state:start -->
 \`\`\`json
@@ -254,6 +270,65 @@ test("workflow-state exposes Diagram Modules managed review as active user atten
     assert.deepEqual(cursor.queuedUserGates, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state exposes Application Skeleton final review as active user attention", async () => {
+  const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), "attention-"));
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      APPLICATION_STAGE_PLAN_PATH,
+      createManagedStagePlan("application-skeleton.phase4.final-review.task1")
+    );
+    const payload = await readWorkflowState({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+    });
+    const nodeId = readUserGateCursor(payload).activeUserGate?.nodeId;
+
+    assert.equal(nodeId, "workflow:application_skeleton");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state exposes managed repair-limit reviews as active user attention", async () => {
+  const scenarios = [
+    {
+      nodeId: "workflow:diagram_modules",
+      planPath: "doc/TODO/stages/diagram-modules/todo-plan.md",
+      taskId: "diagram-modules.phase1.repair.task4",
+    },
+    {
+      nodeId: "workflow:application_skeleton",
+      planPath: APPLICATION_STAGE_PLAN_PATH,
+      taskId: "application-skeleton.phase1.repair.task4",
+    },
+    {
+      nodeId: "workflow:quality_gates",
+      planPath: QUALITY_GATES_STAGE_PLAN_PATH,
+      taskId: "quality-gates.phase3.repair.task4",
+    },
+  ] as const;
+
+  for (const scenario of scenarios) {
+    const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), "attention-"));
+    try {
+      await writeWorkspaceFile(
+        workspaceRoot,
+        scenario.planPath,
+        createManagedStagePlan(scenario.taskId)
+      );
+      const payload = await readWorkflowState({
+        service: new WorkflowStateService({ logger: new Logger("error") }),
+        workspaceRoot,
+      });
+      const nodeId = readUserGateCursor(payload).activeUserGate?.nodeId;
+      assert.equal(nodeId, scenario.nodeId);
+    } finally {
+      await rm(workspaceRoot, { force: true, recursive: true });
+    }
   }
 });
 

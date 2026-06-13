@@ -129,6 +129,16 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "workspace tree must render a dedicated selected-stage modifier"
   );
   assert.equal(
+    workspaceTreeSource.includes("CLUSTER_USER_GATE_NODE_ID_RE"),
+    true,
+    "workspace tree must normalize cluster user gate node ids"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("`devtree:${clusterMatch[1]}:${clusterMatch[2]}`"),
+    true,
+    "cluster user gate ids must resolve to development tree cluster node ids"
+  );
+  assert.equal(
     workspaceTreeAutoSelectSource.includes("resolveLastActiveStage"),
     true,
     "workspace startup auto-select must resolve the last active stage dynamically"
