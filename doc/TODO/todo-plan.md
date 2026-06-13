@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "85dcedd3f",
+  "lastRecordedCommit": "3e78cdcf1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-503.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.503",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-503.task1",
+  "expectedCommitMessage": "chore: release 1.2.503",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.503",
-    "preCommitHead": "85dcedd3f",
+    "expectedCommitMessage": "chore: release 1.2.503",
+    "preCommitHead": "3e78cdcf1",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-503.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-503.task1"
   }
 }
 ```
@@ -264,9 +264,9 @@
 146. [DONE] `devtree-early-pp.phase4.lead-review-deferral-verify-retry.task1` Повторно выполнить targeted Core verification для Product Part lead deferral, exact draft target prompt и order-plan handoff fixtures (scope: `packages/core`; expected commit: none). Result: Targeted verification passed: npm run build --workspace @codeai-hub/core; node --test for node-first-message-builder, product-part-brief-review-deferral, product-part-development-brief-turn-controller, product-part-development-brief-review-controller.lane, and product-part-managed-review-decision-handler (17/17).
 147. [DONE] `devtree-early-pp.phase4.release-confirm-503.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.503 после lead review deferral fix (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested release build 1.2.503 after Product Part lead-review deferral fix.
 148. [DONE] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
-149. [PENDING] Git Commit: `docs: prepare release 1.2.503` (hash: TBD)
-150. [TODO] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`).
-151. [TODO] Git Commit: `chore: release 1.2.503` (hash: TBD)
+149. [DONE] Git Commit: `docs: prepare release 1.2.503` (hash: 3e78cdcf1)
+150. [DONE] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.503.vsix` (5.3M); tarball'ы 1.2.503 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+151. [PENDING] Git Commit: `chore: release 1.2.503` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
