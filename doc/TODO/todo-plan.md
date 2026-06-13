@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "9d7da4587",
+  "lastRecordedCommit": "66eb2bfa9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-509.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.509",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-509.task1",
+  "expectedCommitMessage": "chore: release 1.2.509",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.509",
-    "preCommitHead": "9d7da4587",
+    "expectedCommitMessage": "chore: release 1.2.509",
+    "preCommitHead": "66eb2bfa9",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-509.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-509.task1"
   }
 }
 ```
@@ -347,9 +347,9 @@
 
 206. [DONE] `devtree-early-pp.phase4.release-confirm-509.task1` Получить отдельное подтверждение пользователя на релизную пересборку с новым номером после 1.2.508 (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested rebuilding the release with a new number, so the next release target is 1.2.509.
 207. [DONE] `devtree-early-pp.phase4.release-docs-509.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.509 перед `build-all.sh` без новых кодовых изменений относительно 1.2.508 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.509`).
-208. [PENDING] Git Commit: `docs: prepare release 1.2.509` (hash: TBD)
-209. [TODO] `devtree-early-pp.phase4.release-build-509.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.509`).
-210. [TODO] Git Commit: `chore: release 1.2.509` (hash: TBD)
+208. [DONE] Git Commit: `docs: prepare release 1.2.509` (hash: 66eb2bfa9)
+209. [DONE] `devtree-early-pp.phase4.release-build-509.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.509`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully; VSIX: `codeai-hub-1.2.509.vsix` (5.3M); 1.2.509 provider/core/launcher/UI tarballs are present in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+210. [PENDING] Git Commit: `chore: release 1.2.509` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
