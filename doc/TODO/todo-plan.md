@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "0cdecd167",
+  "lastRecordedCommit": "1142c292e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-499.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.499",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-499.task1",
+  "expectedCommitMessage": "chore: release 1.2.499",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.499",
-    "preCommitHead": "0cdecd167",
+    "expectedCommitMessage": "chore: release 1.2.499",
+    "preCommitHead": "1142c292e",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-499.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-499.task1"
   }
 }
 ```
@@ -170,9 +170,9 @@
 78. [DONE] `devtree-early-pp.phase4.attention-refresh-verify.task1` Выполнить targeted Project Manager/Core verification для immediate attention refresh и regression tests для preliminary user gate cursor (scope: `src/client/project-manager, packages/core`; expected commit: none). Result: Targeted verification passed: typecheck:webview; build:project-manager; build:webview; workflow-navigation source test; @codeai-hub/core build; workflow user-input attention dist tests
 79. [DONE] `devtree-early-pp.phase4.release-confirm-499.task1` Зафиксировать явное подтверждение пользователя на релизную сборку после фиксов 1.2.498 retest (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested new release build for 1.2.499 in retest 1.2.498 report
 80. [DONE] `devtree-early-pp.phase4.release-docs-499.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.499 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.499`).
-81. [PENDING] Git Commit: `docs: prepare release 1.2.499` (hash: TBD)
-82. [TODO] `devtree-early-pp.phase4.release-build-499.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.499`).
-83. [TODO] Git Commit: `chore: release 1.2.499` (hash: TBD)
+81. [DONE] Git Commit: `docs: prepare release 1.2.499` (hash: 1142c292e)
+82. [DONE] `devtree-early-pp.phase4.release-build-499.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.499`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.499.vsix` (5.2M); tarball'ы 1.2.499 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+83. [PENDING] Git Commit: `chore: release 1.2.499` (hash: TBD)
 84. [TODO] `devtree-early-pp.phase4.user-retest-499.task1` Пользователь тестирует следующий релиз: animated attention marker должен появляться одновременно с review-карточкой `Подтверждаю`, исчезать сразу после acceptance, а новая анкета FinderWidget должна вести Description agent к двум product parts с явным lead part (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
