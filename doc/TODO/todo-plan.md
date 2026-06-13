@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "4747aa955",
+  "lastRecordedCommit": "0cdecd167",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.attention-refresh.task1",
-  "expectedCommitMessage": "fix: refresh workflow attention on managed review messages",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-499.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.499",
   "debt": {
-    "expectedCommitMessage": "fix: refresh workflow attention on managed review messages",
-    "preCommitHead": "4747aa955",
+    "expectedCommitMessage": "docs: prepare release 1.2.499",
+    "preCommitHead": "0cdecd167",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.attention-refresh.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-499.task1"
   }
 }
 ```
@@ -165,12 +165,12 @@
 ### Stream: Managed Review Attention Refresh
 
 75. [DONE] `devtree-early-pp.phase4.attention-refresh.task1` Подключить немедленный refresh `workflowStateStore` на Core session messages с managed review lifecycle tags, чтобы open/close user gate обновлял tree marker сразу при появлении review-карточки и сразу после `Подтверждаю` (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: refresh workflow attention on managed review messages`).
-76. [PENDING] Git Commit: `fix: refresh workflow attention on managed review messages` (hash: TBD)
-77. [TODO] `devtree-early-pp.phase4.finder-widget-questionnaire.task1` Актуализировать тестовую анкету FinderWidget так, чтобы в ней явно требовались два product parts и один lead product part (scope: `/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01/.codeai-hub/finderwidget-test01/description/questionnaire.md, doc/TODO/todo-plan.md`; expected commit: none).
-78. [TODO] `devtree-early-pp.phase4.attention-refresh-verify.task1` Выполнить targeted Project Manager/Core verification для immediate attention refresh и regression tests для preliminary user gate cursor (scope: `src/client/project-manager, packages/core`; expected commit: none).
-79. [TODO] `devtree-early-pp.phase4.release-confirm-499.task1` Зафиксировать явное подтверждение пользователя на релизную сборку после фиксов 1.2.498 retest (scope: `manual confirmation`; expected commit: none).
-80. [TODO] `devtree-early-pp.phase4.release-docs-499.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.499 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.499`).
-81. [TODO] Git Commit: `docs: prepare release 1.2.499` (hash: TBD)
+76. [DONE] Git Commit: `fix: refresh workflow attention on managed review messages` (hash: 0cdecd167)
+77. [DONE] `devtree-early-pp.phase4.finder-widget-questionnaire.task1` Актуализировать тестовую анкету FinderWidget так, чтобы в ней явно требовались два product parts и один lead product part (scope: `/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01/.codeai-hub/finderwidget-test01/description/questionnaire.md, doc/TODO/todo-plan.md`; expected commit: none). Result: Updated FinderWidget questionnaire: two product parts, lead finder-widget and secondary finder-widget-shell
+78. [DONE] `devtree-early-pp.phase4.attention-refresh-verify.task1` Выполнить targeted Project Manager/Core verification для immediate attention refresh и regression tests для preliminary user gate cursor (scope: `src/client/project-manager, packages/core`; expected commit: none). Result: Targeted verification passed: typecheck:webview; build:project-manager; build:webview; workflow-navigation source test; @codeai-hub/core build; workflow user-input attention dist tests
+79. [DONE] `devtree-early-pp.phase4.release-confirm-499.task1` Зафиксировать явное подтверждение пользователя на релизную сборку после фиксов 1.2.498 retest (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested new release build for 1.2.499 in retest 1.2.498 report
+80. [DONE] `devtree-early-pp.phase4.release-docs-499.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.499 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.499`).
+81. [PENDING] Git Commit: `docs: prepare release 1.2.499` (hash: TBD)
 82. [TODO] `devtree-early-pp.phase4.release-build-499.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.499`).
 83. [TODO] Git Commit: `chore: release 1.2.499` (hash: TBD)
 84. [TODO] `devtree-early-pp.phase4.user-retest-499.task1` Пользователь тестирует следующий релиз: animated attention marker должен появляться одновременно с review-карточкой `Подтверждаю`, исчезать сразу после acceptance, а новая анкета FinderWidget должна вести Description agent к двум product parts с явным lead part (scope: `manual retest`; expected commit: none).

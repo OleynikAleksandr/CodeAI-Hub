@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.499] - 2026-06-13
+### Fixed
+- **Managed review attention now refreshes immediately.** Project Manager requests an immediate workflow-state refresh when Core emits `managed-workflow-user-review` or `managed-workflow-complete` session messages, so the orange animated marker appears with the review card and closes as soon as the user accepts.
+- **Stage activation also refreshes the shared workflow-state snapshot.** Core-managed stage activation now nudges the same store, reducing stale tree state after review transitions.
+- **FinderWidget retest questionnaire now requires two product parts.** The test fixture explicitly defines lead `finder-widget` and secondary `finder-widget-shell` so the next retest exercises lead/non-lead product-part orchestration.
+
+### Verification
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/workflow-user-input-attention.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-user-input-attention.test.js`
+
 ## [1.2.498] - 2026-06-12
 ### Fixed
 - **Preliminary Documentation Tree review now triggers the active attention marker.** Core detects open `Description` and `Virtual Simulation` preliminary review turns from session messages and exposes them through the same `userGateCursor` as other managed user gates.

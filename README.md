@@ -2,7 +2,30 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.498** (Preliminary Review Attention)
+**Current Release — v1.2.499** (Immediate Review Attention Refresh)
+
+This release tightens the timing of the animated attention marker for managed
+workflow review turns. Project Manager now refreshes the shared workflow-state
+snapshot immediately when Core emits `managed-workflow-user-review` or
+`managed-workflow-complete` session messages, instead of waiting for the next
+polling interval or the next stage activation event.
+
+The practical effect is that the orange pulsing frame appears at the same time
+as the review card with `Подтверждаю`, and disappears as soon as the user
+accepts the step. The marker should no longer remain on the previous step while
+the next step card is already visible.
+
+The FinderWidget test questionnaire was also updated to require exactly two
+product parts for the retest fixture: lead `finder-widget` and secondary
+`finder-widget-shell`.
+
+Retest focus: run `Description` to user review, verify that the Documentation
+Tree marker appears with the review card, click `Подтверждаю`, and verify that
+the previous step stops pulsing immediately. Then confirm that the refreshed
+questionnaire leads the Description/Diagram Modules path toward two product
+parts with `finder-widget` as lead.
+
+**Previous Release — v1.2.498** (Preliminary Review Attention)
 
 This release closes the same active-attention gap for preliminary Documentation
 Tree steps. `Description` and `Virtual Simulation` now use the shared
