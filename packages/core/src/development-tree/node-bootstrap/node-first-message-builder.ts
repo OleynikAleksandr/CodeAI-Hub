@@ -25,6 +25,17 @@ const NODE_KIND_LABELS = {
   product_part: "Product Part",
 } as const;
 
+const normalizeRelativePath = (value: string): string =>
+  value.replace(/\\/gu, "/").replace(/^\/+|\/+$/gu, "");
+
+const createDraftFileTargets = (
+  node: DevelopmentTreeDetectedNode,
+  draftFileNames: readonly string[]
+): readonly string[] => {
+  const nodePath = normalizeRelativePath(node.relativePath);
+  return draftFileNames.map((fileName) => `${nodePath}/${fileName}`);
+};
+
 const formatClusterLine = (node: DevelopmentTreeDetectedNode): string =>
   node.clusterId
     ? `- Cluster ID: ${node.clusterId}`
@@ -104,7 +115,7 @@ const createArtifactContextLines = (
     "Draft-pass source boundary:",
     "- Core embedded the scoped upstream context for this node in this first prompt.",
     "- For this automatic first draft pass, use only the embedded scoped context plus the listed target draft files.",
-    "- You may inspect and edit the listed target draft files, but do not read, search, list, or open any other workspace files or documents.",
+    "- You may inspect and edit only the listed target draft file paths, but do not read, search, list, or open any other workspace files or documents.",
     "- Do not reread embedded source artifacts by path during this automatic draft pass.",
     "- If context seems incomplete or truncated, record the uncertainty as an Open question instead of reading another file.",
     "- Additional file reading is allowed only after the user explicitly asks or permits you to read files in a later message.",
@@ -162,7 +173,7 @@ const createNodeSpecificRules = (
     ];
   }
   return [
-    "- Create the Product Part Development Brief in ProductPartDevelopmentBrief.draft.md.",
+    "- Create the Product Part Development Brief at the exact ProductPartDevelopmentBrief.draft.md target path listed above.",
     "- Keep it as a plain-language coordination brief, not a facade contract.",
     "- Keep child cluster/module ownership aligned with the materialized tree.",
   ];
@@ -175,11 +186,15 @@ export class NodeFirstMessageBuilder {
     const draftFileNames = this.templateRegistry.getFileNamesForNode(
       request.node
     );
+    const draftFileTargets = createDraftFileTargets(
+      request.node,
+      draftFileNames
+    );
     const technology = createTechnologyInstruction(request.technologyBase);
     const localizedInstructionLines = createLocalizedNodePromptInstructionLines(
       {
         artifactLanguage: request.artifactLanguage,
-        draftFileNames,
+        draftFileNames: draftFileTargets,
         node: request.node,
         responseLanguage: request.responseLanguage,
       }
@@ -207,7 +222,7 @@ export class NodeFirstMessageBuilder {
       ...createArtifactContextLines(request.artifactContext),
       "",
       "Draft files to fill:",
-      ...draftFileNames.map((fileName) => `- ${fileName}`),
+      ...draftFileTargets.map((fileName) => `- ${fileName}`),
       "",
       "Editing rules:",
       "- Do not edit YAML frontmatter.",
