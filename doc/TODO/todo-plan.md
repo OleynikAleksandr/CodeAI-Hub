@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "a895ce91c",
+  "lastRecordedCommit": "8bdc1974a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1",
-  "expectedCommitMessage": "docs: align development tree plans with worktree lanes",
+  "currentTaskId": "devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1",
+  "expectedCommitMessage": "docs: plan product part worktree lanes implementation",
   "debt": {
-    "expectedCommitMessage": "docs: align development tree plans with worktree lanes",
-    "preCommitHead": "a895ce91c",
+    "expectedCommitMessage": "docs: plan product part worktree lanes implementation",
+    "preCommitHead": "8bdc1974a",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1"
+    "taskId": "devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1"
   }
 }
 ```
@@ -222,9 +222,9 @@
 ### Stream: Product Part Worktree Lane Planning
 
 117. [DONE] `devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1` Актуализировать две активные стратегические директивы `Plans/` под новое правило: main workspace является orchestration/merge surface, Product Part agents стартуют в lane worktrees уже на pre-code документах, а совместимость со старыми тестовыми workspace не требуется (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: align development tree plans with worktree lanes`).
-118. [PENDING] Git Commit: `docs: align development tree plans with worktree lanes` (hash: TBD)
-119. [TODO] `devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1` Создать рядом с активными `Plans/` отдельный planning-документ конкретной реализации Product Part worktree lanes и обновить полку `Plans/README.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan product part worktree lanes implementation`).
-120. [TODO] Git Commit: `docs: plan product part worktree lanes implementation` (hash: TBD)
+118. [DONE] Git Commit: `docs: align development tree plans with worktree lanes` (hash: 8bdc1974a)
+119. [DONE] `devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1` Создать рядом с активными `Plans/` отдельный planning-документ конкретной реализации Product Part worktree lanes и обновить полку `Plans/README.md` + `Docs_Index.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan product part worktree lanes implementation`).
+120. [PENDING] Git Commit: `docs: plan product part worktree lanes implementation` (hash: TBD)
 
 ### Stream: Product Part Worktree Lane Implementation
 

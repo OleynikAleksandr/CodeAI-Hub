@@ -11,8 +11,9 @@
 
 Root `Plans/` is intentionally kept small.
 
-- `DevelopmentTree_DownstreamExecutionRefactor_Architecture.md` — active strategic line for unfinished Development Tree downstream execution work.
-- `DevelopmentTree_UserGateReviewCursor_Architecture.md` — active bounded next-step refactor source for parallel pre-code Development Tree execution with one Core-owned user-review cursor.
+- `DevelopmentTree_DownstreamExecutionRefactor_Architecture.md` — active strategic line for unfinished Development Tree downstream execution work, including the move toward Product Part, cluster, module and code worktree lanes.
+- `DevelopmentTree_UserGateReviewCursor_Architecture.md` — active bounded refactor source for pre-code Development Tree execution with Product Part worktree lanes and one Core-owned user-review cursor.
+- `DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md` — active concrete implementation plan for the first worktree-lane slice: Product Part brief agents run outside main workspace, accepted briefs checkpoint back sequentially, and lead order planning waits for all accepted briefs.
 - `Archive/QualityGates_RestoreIsolation_Architecture.md` — archived completed Quality Gates restore-isolation planning source; stable behavior lives in SSOT docs.
 - `Archive/DevelopmentTree_BranchWorkflow_Architecture.md` — archived reference baseline; live Development Tree decisions are carried by SSOT docs and the downstream refactor line.
 - `Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` — archived absorbed implementation planning source; protective Product Part / cluster orchestration decisions have been folded into SSOT docs and the downstream refactor line.
