@@ -27,6 +27,10 @@ const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
 );
+const PROJECT_MANAGER_STYLES_PATH = path.resolve(
+  process.cwd(),
+  "packages/ui/project-manager/styles.css"
+);
 
 test("sidebar-only workflow navigation keeps stage routing consistent", async () => {
   const [
@@ -36,6 +40,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     workspaceTreeAutoSelectSource,
     workspaceTreeUserGateFocusSource,
     mainAreaWorkflowStateSource,
+    projectManagerStylesSource,
   ] = await Promise.all([
       readFile(MAIN_AREA_UTILS_PATH, "utf8"),
       readFile(MAIN_AREA_PATH, "utf8"),
@@ -43,6 +48,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
       readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
       readFile(WORKSPACE_TREE_USER_GATE_FOCUS_PATH, "utf8"),
       readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
+      readFile(PROJECT_MANAGER_STYLES_PATH, "utf8"),
     ]);
 
   // main-area-utils still maps stage IDs to tool labels for panel routing
@@ -158,6 +164,31 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     workspaceTreeUserGateFocusSource.includes("activeNode.onSelect();"),
     true,
     "active user gate focus must reuse the node's existing selection route"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("renderTypeMarkerControl"),
+    true,
+    "development tree type markers must have a dedicated toggle control"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("event.stopPropagation();"),
+    true,
+    "type marker toggles must not bubble into row selection"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("if (node.isCollapsible) togglePart"),
+    false,
+    "Product Part row selection must not toggle expansion"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("if (node.isCollapsible) toggleCluster"),
+    false,
+    "Cluster row selection must not toggle expansion"
+  );
+  assert.equal(
+    projectManagerStylesSource.includes(".pm-tree__type-toggle"),
+    true,
+    "Project Manager styles must reset the P/C/M marker toggle button"
   );
   assert.equal(
     workspaceTreeAutoSelectSource.includes("resolveLastActiveStage"),

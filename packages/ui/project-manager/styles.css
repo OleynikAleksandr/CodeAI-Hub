@@ -785,6 +785,29 @@ body {
   border-radius: 6px;
 }
 
+.pm-tree__type-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--pm-tree-marker-size);
+  height: var(--pm-tree-marker-size);
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+}
+
+.pm-tree__type-toggle .pm-tree__type-marker {
+  pointer-events: none;
+}
+
+.pm-tree__type-toggle:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
 .pm-tree__item--progress .pm-tree__type-marker {
   color: #1a1207;
   background: #d9a441;

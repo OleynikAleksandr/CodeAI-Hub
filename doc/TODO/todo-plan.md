@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "95ce88ff3",
+  "lastRecordedCommit": "33eb4f6aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.user-gate-focus-ui.task1",
-  "expectedCommitMessage": "fix: focus active user gate sessions",
+  "currentTaskId": "devtree-early-pp.phase4.marker-toggle-ui.task1",
+  "expectedCommitMessage": "fix: separate tree marker toggles from selection",
   "debt": {
-    "expectedCommitMessage": "fix: focus active user gate sessions",
-    "preCommitHead": "95ce88ff3",
+    "expectedCommitMessage": "fix: separate tree marker toggles from selection",
+    "preCommitHead": "33eb4f6aa",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.user-gate-focus-ui.task1"
+    "taskId": "devtree-early-pp.phase4.marker-toggle-ui.task1"
   }
 }
 ```
@@ -275,9 +275,9 @@
 ### Stream: User Gate Focus UX
 
 153. [DONE] `devtree-early-pp.phase4.user-gate-focus-ui.task1` Подключить UI auto-focus к Core-owned active user gate: активный Documentation/Development Tree gate должен автоматически выбирать свой узел и показывать его сессию/review card, а Product Part ветки не должны стартово раскрываться сами (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: focus active user gate sessions`).
-154. [PENDING] Git Commit: `fix: focus active user gate sessions` (hash: TBD)
-155. [TODO] `devtree-early-pp.phase4.marker-toggle-ui.task1` Разделить выбор узла и раскрытие дерева: клик по P/C/M marker раскрывает/сворачивает collapsible узел, клик по имени только выбирает/открывает сессию/артефакт; добавить reset-style для marker button (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: separate tree marker toggles from selection`).
-156. [TODO] Git Commit: `fix: separate tree marker toggles from selection` (hash: TBD)
+154. [DONE] Git Commit: `fix: focus active user gate sessions` (hash: 33eb4f6aa)
+155. [DONE] `devtree-early-pp.phase4.marker-toggle-ui.task1` Разделить выбор узла и раскрытие дерева: клик по P/C/M marker раскрывает/сворачивает collapsible узел, клик по имени только выбирает/открывает сессию/артефакт; добавить reset-style для marker button (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: separate tree marker toggles from selection`).
+156. [PENDING] Git Commit: `fix: separate tree marker toggles from selection` (hash: TBD)
 157. [TODO] `devtree-early-pp.phase4.user-gate-focus-verify.task1` Выполнить targeted Project Manager verification для auto-focus active user gate, collapsed Product Part default и marker-only toggles (scope: `src/client/project-manager`; expected commit: none).
 158. [TODO] `devtree-early-pp.phase4.release-confirm-504.task1` Получить отдельное подтверждение пользователя на релизную сборку после UX фикса user-gate focus/toggle (scope: `manual confirmation`; expected commit: none).
 

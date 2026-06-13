@@ -271,8 +271,32 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         {line}
       </Fragment>
     ));
+  const renderTypeMarkerControl = (
+    node: TreeNode,
+    toggleNode?: () => void,
+    isExpanded?: boolean
+  ): React.ReactNode =>
+    toggleNode ? (
+      <button
+        aria-expanded={isExpanded}
+        aria-label={`Toggle ${node.label}`}
+        className="pm-tree__type-toggle"
+        onClick={(event) => {
+          event.stopPropagation();
+          toggleNode();
+        }}
+        type="button"
+      >
+        {renderTypeMarker(node)}
+      </button>
+    ) : (
+      renderTypeMarker(node)
+    );
   const renderModuleRow = (node: TreeNode): React.ReactNode => {
     const children = node.children ?? [];
+    const hasChildren = children.length > 0;
+    const isCollapsible = Boolean(node.isCollapsible && hasChildren);
+    const isExpanded = isCollapsible ? resolveNodeExpanded(node.id) : true;
     return (
       <Fragment key={node.id}>
         <li
@@ -289,12 +313,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               : undefined
           }
         >
-          {renderTypeMarker(node)}
+          {renderTypeMarkerControl(
+            node,
+            isCollapsible ? () => handleTreeToggle(node.id) : undefined,
+            isExpanded
+          )}
           <span className="pm-tree__label" title={node.title ?? node.label}>
             {renderTreeLabel(node.label)}
           </span>
         </li>
-        {children.map((child) => renderModuleRow(child))}
+        {isExpanded ? children.map((child) => renderModuleRow(child)) : null}
       </Fragment>
     );
   };
@@ -312,14 +340,17 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <div
           className={renderItemClass(node)}
           data-provider={clusterProvider}
-          onClick={() => {
-            node.onSelect?.();
-            if (node.isCollapsible) toggleCluster(node.id);
-          }}
+          onClick={node.onSelect}
           {...clearMenu.bind(node.clearTarget, node.label)}
           role="button"
         >
-          {renderTypeMarker(node)}
+          {renderTypeMarkerControl(
+            node,
+            node.isCollapsible && clusterModules.length > 0
+              ? () => toggleCluster(node.id)
+              : undefined,
+            isOpen
+          )}
           <span className="pm-tree__label" title={node.title ?? node.label}>
             {node.label}
           </span>
@@ -350,14 +381,17 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <div
           className={renderItemClass(node)}
           data-provider={partProvider}
-          onClick={() => {
-            node.onSelect?.();
-            if (node.isCollapsible) togglePart(node.id);
-          }}
+          onClick={node.onSelect}
           {...clearMenu.bind(node.clearTarget, node.label)}
           role="button"
         >
-          {renderTypeMarker(node)}
+          {renderTypeMarkerControl(
+            node,
+            node.isCollapsible && (clusters.length > 0 || standaloneModules.length > 0)
+              ? () => togglePart(node.id)
+              : undefined,
+            isOpen
+          )}
           <span className="pm-tree__label" title={node.title ?? node.label}>
             {node.label}
           </span>
