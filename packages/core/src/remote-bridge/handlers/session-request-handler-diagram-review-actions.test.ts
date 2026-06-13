@@ -33,6 +33,7 @@ const PRODUCT_PART_BOOTSTRAP_COMMIT_RE =
   /docs: bootstrap product part development briefs/u;
 const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief\.draft\.md/u;
 const PRODUCT_PART_BRIEF_TITLE_RE = /ProductPartDevelopmentBrief/u;
+const MISSING_FILE_RE = /ENOENT/u;
 const APPLICATION_SKELETON_ACTIVATION_EVENT = {
   payload: { stage: "application_skeleton" },
   type: "workflow:stage:activate",
@@ -322,12 +323,14 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       { initiativeSlug: WORKSPACE_SLUG, stage: DIAGRAM_STAGE }
     );
     const createdStages: string[] = [];
+    const createdWorkspacePaths: string[] = [];
     const gatewayEvents: string[] = [];
     const sentMessages: string[] = [];
     const harness = createActions(sessionManager, {
       developmentTreeAgentGateway: {
         createSessionForWorkflow: (options) => {
           createdStages.push(options.context.stage);
+          createdWorkspacePaths.push(options.workspacePath);
           const sessionId = `devtree-${createdStages.length}`;
           gatewayEvents.push(`create:${sessionId}`);
           return Promise.resolve({ id: sessionId });
@@ -384,17 +387,53 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       PRODUCT_PART_BOOTSTRAP_COMMIT_RE
     );
     for (const partId of ["local-runtime", "finder-widget-shell"]) {
+      const worktreePath = path.join(
+        `${workspaceRoot}.worktrees`,
+        WORKSPACE_SLUG,
+        "product-parts",
+        partId,
+        "precode"
+      );
       const planPath = `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
       const briefPath = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${partId}/ProductPartDevelopmentBrief.draft.md`;
-      await readWorkspaceFile(workspaceRoot, planPath);
+      await assert.rejects(
+        async () => await readWorkspaceFile(workspaceRoot, planPath),
+        MISSING_FILE_RE
+      );
+      await readWorkspaceFile(worktreePath, planPath);
       assert.match(
-        await readWorkspaceFile(workspaceRoot, briefPath),
+        await readWorkspaceFile(worktreePath, briefPath),
         PRODUCT_PART_BRIEF_TITLE_RE
       );
+      assert.equal(await git(worktreePath, ["status", "--porcelain"]), "");
+      const managedState = JSON.parse(
+        await readWorkspaceFile(
+          workspaceRoot,
+          `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${partId}.json`
+        )
+      ) as { readonly reviewState?: string; readonly worktreePath?: string };
+      assert.equal(managedState.reviewState, "lane_started");
+      assert.equal(managedState.worktreePath, worktreePath);
     }
     assert.deepEqual([...createdStages].sort(), [
       "development_tree/materialized/product-parts/finder-widget-shell",
       "development_tree/materialized/product-parts/local-runtime",
+    ]);
+    assert.deepEqual([...createdWorkspacePaths].sort(), [
+      path.join(
+        `${workspaceRoot}.worktrees`,
+        WORKSPACE_SLUG,
+        "product-parts",
+        "finder-widget-shell",
+        "precode"
+      ),
+      path.join(
+        `${workspaceRoot}.worktrees`,
+        WORKSPACE_SLUG,
+        "product-parts",
+        "local-runtime",
+        "precode"
+      ),
     ]);
     assert.equal(sentMessages.length, 2);
     assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);

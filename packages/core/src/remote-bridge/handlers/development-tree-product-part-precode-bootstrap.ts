@@ -1,17 +1,16 @@
-import { execFile } from "node:child_process";
-import { stat } from "node:fs/promises";
+import { mkdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { promisify } from "node:util";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
+import type { DevelopmentTreeSnapshot } from "../../development-tree/development-tree-types";
 import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
+import { DevelopmentTreeNodeWorktreeService } from "../../development-tree/node-bootstrap/development-tree-node-worktree-service";
 import type {
   DevelopmentTreeAgentSessionGateway,
   NodeAgentSessionBootstrapResult,
 } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
+import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import { bootstrapDevelopmentTreeProductPartAgents } from "./development-tree-product-part-agent-bootstrap";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
-
-const execFileAsync = promisify(execFile);
 
 interface DevelopmentTreeProductPartPrecodeCommitter {
   readonly commitDevelopmentTreeBootstrap: (params: {
@@ -80,6 +79,17 @@ const findMissingProductPartSessions = (params: {
   return params.expectedPartIds.filter((partId) => !started.has(partId));
 };
 
+const findProductPartSession = (params: {
+  readonly partId: string;
+  readonly sessions: readonly NodeAgentSessionBootstrapResult[];
+}): NodeAgentSessionBootstrapResult | null =>
+  params.sessions.find(
+    (session) =>
+      session.node.kind === "product_part" &&
+      session.node.partId === params.partId &&
+      Boolean(session.sessionId)
+  ) ?? null;
+
 const filterExistingRelativePaths = async (params: {
   readonly paths: readonly string[];
   readonly workspaceRoot: string;
@@ -94,20 +104,69 @@ const filterExistingRelativePaths = async (params: {
   return existingPaths;
 };
 
-const forceStageRelativePaths = async (params: {
+const writeText = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const createProductPartManagedStatePath = (params: {
+  readonly partId: string;
+  readonly workspaceSlug: string;
+}): string =>
+  `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-product-parts/${params.partId}.json`;
+
+const createLaneStartedState = (params: {
+  readonly branchName: string;
+  readonly partId: string;
+  readonly providerId?: string | null;
+  readonly session: NodeAgentSessionBootstrapResult | null;
+  readonly worktreePath: string;
+}): string =>
+  `${JSON.stringify(
+    {
+      branchName: params.branchName,
+      partId: params.partId,
+      providerId: params.providerId ?? null,
+      reviewState: "lane_started",
+      schema: "codeai-product-part-development-brief-managed-v1",
+      sessionId: params.session?.sessionId ?? null,
+      sessionStage: params.session?.stage ?? null,
+      updatedAt: new Date().toISOString(),
+      worktreePath: params.worktreePath,
+    },
+    null,
+    2
+  )}\n`;
+
+const commitLaneBootstrapChanges = async (params: {
+  readonly partId: string;
   readonly paths: readonly string[];
-  readonly workspaceRoot: string;
+  readonly worktreePath: string;
 }): Promise<void> => {
-  const paths = await filterExistingRelativePaths(params);
+  const paths = await filterExistingRelativePaths({
+    paths: params.paths,
+    workspaceRoot: params.worktreePath,
+  });
   if (paths.length === 0) {
     return;
   }
-  await execFileAsync("git", ["add", "-f", "--", ...paths], {
-    cwd: params.workspaceRoot,
+  await new WorkflowBoundaryGit().commit({
+    commitMessage: `chore: bootstrap ${params.partId} product part lane`,
+    paths,
+    workspaceRoot: params.worktreePath,
   });
 };
 
 export class DevelopmentTreeProductPartPrecodeBootstrap {
+  private readonly filesystem =
+    new DevelopmentTreeFilesystemStructuratorFacade();
+  private readonly worktrees = new DevelopmentTreeNodeWorktreeService();
+
   async bootstrap(
     params: DevelopmentTreeProductPartPrecodeBootstrapRequest
   ): Promise<DevelopmentTreeProductPartPrecodeBootstrapResult> {
@@ -136,39 +195,18 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       leadProductPartId: progress.leadProductPartId,
       productPartLeadershipOrder,
     });
-    await new DevelopmentTreeFilesystemStructuratorFacade().materialize({
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-      snapshot,
-    });
-    const bootstrap = await bootstrapDevelopmentTreeProductPartAgents({
-      agentGateway: params.agentGateway,
-      providerId: params.providerId,
-      leadProductPartId: progress.leadProductPartId,
-      productPartLeadershipOrder,
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-    });
-    const agentSessions = [...bootstrap.agentSessions];
-    const writtenDrafts = [...bootstrap.writtenDrafts];
-    const writtenProductPartPlans = [...bootstrap.writtenProductPartPlans];
-    const missingProductPartIds = findMissingProductPartSessions({
-      expectedPartIds: productPartLeadershipOrder,
-      sessions: agentSessions,
-    });
-    if (missingProductPartIds.length > 0) {
-      const recovery = await bootstrapDevelopmentTreeProductPartAgents({
-        agentGateway: params.agentGateway,
-        providerId: params.providerId,
+    const agentSessions: NodeAgentSessionBootstrapResult[] = [];
+    const mainManagedStatePaths: string[] = [];
+    for (const partId of productPartLeadershipOrder) {
+      const result = await this.bootstrapProductPartLane({
+        ...params,
         leadProductPartId: progress.leadProductPartId,
+        partId,
         productPartLeadershipOrder,
-        targetProductPartIds: missingProductPartIds,
-        workspaceRoot: params.workspaceRoot,
-        workspaceSlug: params.workspaceSlug,
+        snapshot,
       });
-      agentSessions.push(...recovery.agentSessions);
-      writtenDrafts.push(...recovery.writtenDrafts);
-      writtenProductPartPlans.push(...recovery.writtenProductPartPlans);
+      agentSessions.push(...result.agentSessions);
+      mainManagedStatePaths.push(result.managedStatePath);
     }
     const stillMissingProductPartIds = findMissingProductPartSessions({
       expectedPartIds: productPartLeadershipOrder,
@@ -179,19 +217,9 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
         `Development Tree Product Part bootstrap did not start agent sessions for: ${stillMissingProductPartIds.join(", ")}`
       );
     }
-    await forceStageRelativePaths({
-      workspaceRoot: params.workspaceRoot,
-      paths: writtenProductPartPlans.map((plan) => plan.relativePath),
-    });
     const managedPaths = await filterExistingRelativePaths({
       workspaceRoot: params.workspaceRoot,
-      paths: uniquePaths([
-        ...writtenDrafts.map((draft) => draft.relativePath),
-        ...writtenProductPartPlans.map((plan) => plan.relativePath),
-        "doc/TODO/stages/development-tree/",
-        `.codeai-hub/${params.workspaceSlug}/continuity/`,
-        `.codeai-hub/${params.workspaceSlug}/runtime/sessions/`,
-      ]),
+      paths: uniquePaths(mainManagedStatePaths),
     });
     await this.commitBootstrapChanges({
       committer: params.committer,
@@ -203,6 +231,68 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       managedPaths,
       skipped: false,
       startedProductPartIds: collectStartedProductPartIds(agentSessions),
+    };
+  }
+
+  private async bootstrapProductPartLane(
+    params: DevelopmentTreeProductPartPrecodeBootstrapRequest & {
+      readonly leadProductPartId: string;
+      readonly partId: string;
+      readonly productPartLeadershipOrder: readonly string[];
+      readonly snapshot: DevelopmentTreeSnapshot;
+    }
+  ): Promise<{
+    readonly agentSessions: readonly NodeAgentSessionBootstrapResult[];
+    readonly managedStatePath: string;
+  }> {
+    const worktree = await this.worktrees.createProductPartPrecodeWorktree({
+      partId: params.partId,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    await this.filesystem.materialize({
+      snapshot: params.snapshot,
+      workspaceRoot: worktree.worktreePath,
+      workspaceSlug: params.workspaceSlug,
+    });
+    const bootstrap = await bootstrapDevelopmentTreeProductPartAgents({
+      agentGateway: params.agentGateway,
+      providerId: params.providerId,
+      leadProductPartId: params.leadProductPartId,
+      productPartLeadershipOrder: params.productPartLeadershipOrder,
+      targetProductPartIds: [params.partId],
+      workspaceRoot: worktree.worktreePath,
+      workspaceSlug: params.workspaceSlug,
+    });
+    await commitLaneBootstrapChanges({
+      partId: params.partId,
+      paths: [
+        ...bootstrap.writtenDrafts.map((draft) => draft.relativePath),
+        ...bootstrap.writtenProductPartPlans.map((plan) => plan.relativePath),
+      ],
+      worktreePath: worktree.worktreePath,
+    });
+    const managedStatePath = createProductPartManagedStatePath({
+      partId: params.partId,
+      workspaceSlug: params.workspaceSlug,
+    });
+    await writeText(
+      params.workspaceRoot,
+      managedStatePath,
+      createLaneStartedState({
+        branchName: worktree.branchName,
+        partId: params.partId,
+        providerId: params.providerId,
+        session: findProductPartSession({
+          partId: params.partId,
+          sessions: bootstrap.agentSessions,
+        }),
+        worktreePath: worktree.worktreePath,
+      })
+    );
+    return {
+      agentSessions: bootstrap.agentSessions,
+      managedStatePath,
     };
   }
 

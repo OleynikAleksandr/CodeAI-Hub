@@ -84,7 +84,8 @@ const writeProjectedUnlockState = async (
 };
 
 const writeProductPartManagedState = async (
-  workspaceRoot: string
+  workspaceRoot: string,
+  worktreePath?: string
 ): Promise<void> => {
   const statePath = path.join(
     workspaceRoot,
@@ -102,6 +103,14 @@ const writeProductPartManagedState = async (
         readiness: "ready",
         schema: "codeai-product-part-development-brief-managed-v1",
         sessionId: "runtime-part-session-1",
+        ...(worktreePath
+          ? {
+              providerId: "codex",
+              sessionStage:
+                "development_tree/materialized/product-parts/ui-shell",
+              worktreePath,
+            }
+          : {}),
         updatedAt: "2026-06-08T12:02:00.000Z",
       },
       null,
@@ -116,6 +125,7 @@ const writeWorktreeContinuityIndex = async (params: {
   readonly providerId: string;
   readonly providerSessionId: string;
   readonly runtimeSessionId: string;
+  readonly stage?: string;
   readonly workspaceSlug: string;
   readonly worktreePath: string;
 }): Promise<void> => {
@@ -139,6 +149,7 @@ const writeWorktreeContinuityIndex = async (params: {
             providerSessionId: params.providerSessionId,
             rootSessionId: params.dialogId,
             stage:
+              params.stage ??
               "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster",
             updatedAt: "2026-06-08T12:01:00.000Z",
           },

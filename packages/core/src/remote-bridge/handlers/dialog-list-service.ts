@@ -14,6 +14,7 @@ import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import { WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG } from "../../unified-session/storage";
 import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
+import { readProjectedProductPartDialogs } from "./dialog-product-part-projected-dialogs";
 
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
@@ -480,12 +481,13 @@ export class DialogListService {
       }
     }
 
-    const projectedDevelopmentTreeDialogs =
-      await readProjectedDevelopmentTreeDialogs(options);
+    const projectedDialogs = (
+      await readProjectedDevelopmentTreeDialogs(options)
+    ).concat(await readProjectedProductPartDialogs(options));
     const runtimeSessions = options.runtimeSessions ?? [];
     return await this.dedupeDialogEntries({
       entries: reconcileLatestSessionIds(
-        [...entries, ...projectedDevelopmentTreeDialogs],
+        entries.concat(projectedDialogs),
         runtimeSessions
       ),
       runtimeSessions,

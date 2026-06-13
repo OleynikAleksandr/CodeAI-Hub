@@ -202,15 +202,20 @@ export const createProductPartProjectedSession = async (params: {
   if (!sessionId) {
     return undefined;
   }
+  const worktreePath = readNonEmptyString(state?.worktreePath);
+  const sessionStage =
+    readNonEmptyString(state?.sessionStage) ??
+    createProductPartStage(params.partId);
   const entry = await readContinuityEntryForStage({
     sessionId,
-    stage: createProductPartStage(params.partId),
-    workspaceRoot: params.workspaceRoot,
+    stage: sessionStage,
+    workspaceRoot: worktreePath ?? params.workspaceRoot,
     workspaceSlug: params.workspaceSlug,
   });
   return createSessionFromContinuityEntry({
     entry,
     fallbackSessionId: sessionId,
     fallbackUpdatedAt: readNonEmptyString(state?.updatedAt),
+    providerId: readNonEmptyString(state?.providerId) ?? undefined,
   });
 };
