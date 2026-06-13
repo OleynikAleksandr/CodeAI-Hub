@@ -23,6 +23,10 @@ const WORKSPACE_TREE_USER_GATE_FOCUS_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts"
 );
+const WORKSPACE_TREE_SELECTION_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/workspace-tree-selection.ts"
+);
 const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
@@ -43,6 +47,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     workspaceTreeSource,
     workspaceTreeAutoSelectSource,
     workspaceTreeUserGateFocusSource,
+    workspaceTreeSelectionSource,
     mainAreaWorkflowStateSource,
     stagePanelSyncSource,
     projectManagerStylesSource,
@@ -52,6 +57,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
       readFile(WORKSPACE_TREE_PATH, "utf8"),
       readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
       readFile(WORKSPACE_TREE_USER_GATE_FOCUS_PATH, "utf8"),
+      readFile(WORKSPACE_TREE_SELECTION_PATH, "utf8"),
       readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
       readFile(STAGE_PANEL_SYNC_PATH, "utf8"),
       readFile(PROJECT_MANAGER_STYLES_PATH, "utf8"),
@@ -154,14 +160,29 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "workflow stage nodes must use unified stage dispatch route"
   );
   assert.equal(
-    workspaceTreeSource.includes("useWorkspaceTreeActiveStage"),
+    workspaceTreeSource.includes("useWorkspaceTreeSelectionCursor"),
     true,
-    "workspace tree must subscribe to the shared active-stage route"
+    "workspace tree must use a single selected node cursor for both trees"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("node.id === selectedNodeId"),
+    true,
+    "workspace tree selected marker must compare every rendered node against the shared cursor"
+  );
+  assert.equal(
+    workspaceTreeSelectionSource.includes('window.addEventListener("pm:branch:selected", onBranch);'),
+    true,
+    "development tree branch selection must move the shared selected cursor"
+  );
+  assert.equal(
+    workspaceTreeSelectionSource.includes("selectedTreeNodeId ??"),
+    true,
+    "workflow active stage must be only the fallback selected cursor"
   );
   assert.equal(
     workspaceTreeSource.includes("isSelected: stage === activeStage"),
-    true,
-    "workspace tree stage selection must derive from activeStage"
+    false,
+    "workspace tree must not keep Documentation Tree selected after selecting a Development Tree node"
   );
   assert.equal(
     workspaceTreeSource.includes("pm-tree__item--selected"),

@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "88c633cca",
+  "lastRecordedCommit": "f7f694762",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.unified-tree-selection.task1",
-  "expectedCommitMessage": "fix: unify workspace tree selection marker",
+  "currentTaskId": "devtree-early-pp.phase4.unified-tree-selection-contract.task1",
+  "expectedCommitMessage": "test: cover unified workspace tree selection marker",
   "debt": {
-    "expectedCommitMessage": "fix: unify workspace tree selection marker",
-    "preCommitHead": "88c633cca",
+    "expectedCommitMessage": "test: cover unified workspace tree selection marker",
+    "preCommitHead": "f7f694762",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.unified-tree-selection.task1"
+    "taskId": "devtree-early-pp.phase4.unified-tree-selection-contract.task1"
   }
 }
 ```
@@ -309,9 +309,9 @@
 176. [DONE] `devtree-early-pp.phase4.dialog-lock-hydration.task1` Держать dialog input консервативно заблокированным при переоткрытии Product Part / Development Tree projected session до получения Core-owned runtime snapshot/turn-state, чтобы переключение между деревьями не открывало ввод во время активного agent turn (scope: `src/client/project-manager/components/sessions/dialog-session-bootstrap.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep dialog input locked during runtime hydration`). Result: Pending dialog bootstrap now applies `runtime_state_hydration` input lock until Core runtime snapshot/turn-state arrives; targeted checks passed: `npx tsx --test src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; `npm run typecheck:webview`.
 177. [DONE] Git Commit: `fix: keep dialog input locked during runtime hydration` (hash: 88c633cca)
 178. [DONE] `devtree-early-pp.phase4.unified-tree-selection.task1` Ввести единый selected marker для Documentation Tree и Development Tree: выбранным зелёной рамкой может быть только текущий stage/product-part/cluster/module/operation node, а выбор Development Tree node снимает рамку с последнего Documentation stage (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-selection.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unify workspace tree selection marker`). Result: Workspace Tree now uses a single selected node cursor shared by workflow stage events, branch selection events and direct Development Tree row clicks; targeted checks passed: `npm run typecheck:webview`.
-179. [PENDING] Git Commit: `fix: unify workspace tree selection marker` (hash: TBD)
-180. [TODO] `devtree-early-pp.phase4.unified-tree-selection-contract.task1` Обновить source-contract тест навигации под новый single selected node cursor, чтобы regression снова не оставлял зелёную рамку на Documentation Tree после выбора Development Tree node (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover unified workspace tree selection marker`).
-181. [TODO] Git Commit: `test: cover unified workspace tree selection marker` (hash: TBD)
+179. [DONE] Git Commit: `fix: unify workspace tree selection marker` (hash: f7f694762)
+180. [DONE] `devtree-early-pp.phase4.unified-tree-selection-contract.task1` Обновить source-contract тест навигации под новый single selected node cursor, чтобы regression снова не оставлял зелёную рамку на Documentation Tree после выбора Development Tree node (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover unified workspace tree selection marker`). Result: Navigation source-contract now requires `useWorkspaceTreeSelectionCursor`, Development Tree branch cursor updates and fallback-only active stage selection. Targeted checks passed: `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`; `npm run typecheck:webview`.
+181. [PENDING] Git Commit: `test: cover unified workspace tree selection marker` (hash: TBD)
 182. [TODO] `devtree-early-pp.phase4.navigation-lock-selection-verify.task1` Выполнить targeted Project Manager verification для stage handoff replay, dialog lock hydration и unified tree selection (scope: `src/client/project-manager`; expected commit: none).
 183. [TODO] `devtree-early-pp.phase4.release-confirm-506.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.506 после фиксов Project Manager navigation/input/selection (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested implementation and release rebuild after 1.2.505 testing.
 184. [TODO] `devtree-early-pp.phase4.release-docs-506.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.506 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.506`).
