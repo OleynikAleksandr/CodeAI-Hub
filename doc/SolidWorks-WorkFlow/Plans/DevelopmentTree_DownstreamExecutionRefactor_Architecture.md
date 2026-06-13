@@ -1,6 +1,6 @@
 # Рефакторинг downstream-исполнения Development Tree
 
-**Статус:** активный стратегический planning-документ, открыт 2026-06-10; защитные срезы реализованы до релиза `1.2.501`, следующий активный refactor переводит Product Part pre-code agents в отдельные worktree lanes до cluster/module/code-ready waves.
+**Статус:** активный стратегический planning-документ, открыт 2026-06-10; Product Part pre-code worktree lanes закрыты релизом `1.2.509`, а незавершённая стратегическая линия остаётся за cluster/module/code-ready downstream waves.
 **Связь с текущими директивами:** этот документ теперь является консолидированной активной линией downstream-исполнения Development Tree. `Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md` остаётся историческим reference baseline, а `Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` остаётся поглощённым implementation planning source. Их устойчивые решения перенесены в текущие SSOT-документы и в эту downstream-refactor линию; они больше не являются отдельными активными директивами в корне `Plans/`.
 
 ## 1. Проблема
@@ -42,13 +42,13 @@ Downstream cluster worktree владеет:
 
 Product Part brief является более ранним исключением с другим смыслом: это не code-ready merge downstream-узла, а accepted planning checkpoint, который нужен lead Product Part для построения `DevelopmentOrderPlan.v2`. Поэтому Core может последовательно переносить accepted `ProductPartDevelopmentBrief` из Product Part lane в main workspace, но обязан называть это accepted checkpoint/brief merge, а не downstream code integration.
 
-Защитное состояние, реализованное на момент `1.2.490`:
+Защитное состояние, реализованное к релизу `1.2.509`:
 
 - Product Part review sessions, включая non-lead Product Parts, отображаются как Development Tree node sessions в Project Manager.
 - Product Part managed startup сохраняет primary unified dialog history до того, как provider/translation activity может уйти вперёд и создать race.
 - Acceptance для Cluster Contract пишет `boundary-accepted` coordination checkpoint и оставляет worktree активным; он не копирует draft cluster documents в main и не помечает cluster как `merged`.
 - Lead `DevelopmentOrderPlan` assignment блокируется через Product Part Brief Barrier, пока каждый planned Product Part brief не принят пользователем.
-- Product Part review ordering и attention markers реализованы до уровня UI, но текущая main-workspace fan-out модель создаёт dirty Git при параллельном запуске Product Part agents. Следующий refactor заменяет её worktree lanes.
+- Product Part pre-code agents запускаются в deterministic worktree lanes, Project Manager показывает их как Development Tree node sessions, main workspace остаётся orchestration/checkpoint surface, а accepted briefs последовательно возвращаются в main как managed checkpoints.
 
 ## 3. Форма границы кластера
 

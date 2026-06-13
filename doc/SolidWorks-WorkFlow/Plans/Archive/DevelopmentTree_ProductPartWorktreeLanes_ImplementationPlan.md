@@ -1,6 +1,6 @@
 # Реализация Product Part worktree lanes
 
-**Статус:** активный bounded implementation planning source, открыт 2026-06-13.
+**Статус:** archived completed implementation planning source, закрыт релизом `1.2.509` после user acceptance 2026-06-13.
 **Родительские директивы:** `DevelopmentTree_DownstreamExecutionRefactor_Architecture.md` и `DevelopmentTree_UserGateReviewCursor_Architecture.md`.
 **Цель среза:** перевести pre-code Product Part agents из main workspace в отдельные deterministic `git worktree` lanes без попытки реализовать весь будущий cluster/module/code runner.
 

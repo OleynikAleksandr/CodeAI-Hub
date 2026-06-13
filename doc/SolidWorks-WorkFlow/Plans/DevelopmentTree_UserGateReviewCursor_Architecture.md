@@ -1,6 +1,6 @@
 # Курсор пользовательских review-gates в Development Tree
 
-**Статус:** активный planning-документ следующего шага, открыт 2026-06-12; ранний Product Part pre-code bootstrap после accepted `Diagram Modules` реализован в первом срезе, но дальнейший refactor переводит Product Part pre-code agents из main workspace в lane worktrees.
+**Статус:** активный bounded planning-документ для user-review cursor, открыт 2026-06-12; Product Part pre-code worktree lane slice реализован и принят в релизе `1.2.509`, дальнейшая открытая часть относится к будущим cluster/module/code gates.
 **Родительская стратегическая линия:** `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
 **Область:** параллельное pre-code исполнение Development Tree в отдельных worktree lanes с Core-owned последовательным курсором user review и attention markers в дереве Project Manager.
 
@@ -208,19 +208,16 @@ Core должен отдавать достаточно state, чтобы client
 
 ## 8. Срезы реализации
 
-Реализованный первый code refactor:
+Реализованные code refactor slices:
 
 1. После acceptance `Diagram Modules` Core запускает Product Part pre-code lane: материализует нейтральный Development Tree artifact workspace, создаёт Product Part managed plans/drafts/sessions и отправляет первый prompt каждому planned Product Part agent по leadership order.
 2. `Quality Gates Baseline` больше не является primary trigger для Product Part briefs; terminal handoff оставлен как recovery/idempotency path для missing Product Part sessions.
 3. `Application Skeleton -> Quality Gates` остаётся code-readiness lane: production code, code-ready merge и final integration по-прежнему запрещены до verified Quality Gates.
-
-Следующий code refactor должен быть маленьким и проверяемым:
-
-1. Перевести Product Part pre-code agents на deterministic worktree lanes, чтобы main workspace оставался clean после `Diagram Modules` acceptance.
-2. Сохранить Project Manager tree projection: session физически живёт в lane worktree, но node отображается в основном Development Tree.
-3. После user acceptance Core последовательно переносит accepted Product Part brief из lane в main workspace и делает managed merge/checkpoint commit.
-4. User-gate cursor продолжает предъявлять review gates по одному: secondary briefs перед lead order-plan.
-5. Lead `DevelopmentOrderPlan.v2` dispatch получает inline accepted briefs только после accepted merge всех Product Part briefs.
+4. Product Part pre-code agents работают в deterministic worktree lanes, поэтому main workspace остаётся clean после `Diagram Modules` acceptance.
+5. Project Manager сохраняет tree projection: session физически живёт в lane worktree, но node отображается в основном Development Tree.
+6. После user acceptance Core последовательно переносит accepted Product Part brief из lane в main workspace и делает managed checkpoint/merge commit.
+7. User-gate cursor предъявляет review gates по одному: secondary briefs перед lead Product Part review/order-plan.
+8. Lead `DevelopmentOrderPlan.v2` dispatch получает inline accepted briefs только после accepted checkpoint всех Product Part briefs.
 
 ## 9. Критерии приёмки
 

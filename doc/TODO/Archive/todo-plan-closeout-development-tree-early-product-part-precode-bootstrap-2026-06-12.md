@@ -1,3 +1,13 @@
+# Plan Closeout: development-tree-early-product-part-precode-bootstrap-2026-06-12
+
+**Created:** 2026-06-13T00:00:00.000Z
+**Acceptance:** user accepted release 1.2.509 retest; Diagram Modules -> Application Skeleton handoff works; documentation updated before GitHub push.
+**Planning Source Disposition:** kept active: DevelopmentTree_UserGateReviewCursor_Architecture.md remains a bounded directive for future cluster/module/code user gates; ProductPartWorktreeLanes implementation plan archived.
+**Release Accepted:** 1.2.509
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +22,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
   "currentTaskId": "devtree-early-pp.phase5.closeout.task1",
   "expectedCommitMessage": "docs: close development tree early product part precode bootstrap scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close development tree early product part precode bootstrap scope",
-    "preCommitHead": "7c18a7869",
-    "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase5.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -353,6 +358,7 @@
 
 ### Stream: Archive And Dispose
 
-211. [DONE] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/System/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-212. [PENDING] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+211. [IN_PROGRESS] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/System/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+212. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
 213. [TODO] `devtree-early-pp.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+````
