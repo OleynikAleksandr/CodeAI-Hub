@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "a2ae32873",
+  "lastRecordedCommit": "617667b10",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-504.task1",
-  "expectedCommitMessage": "chore: release 1.2.504",
+  "currentTaskId": "devtree-early-pp.phase4.user-gate-cursor-token.task1",
+  "expectedCommitMessage": "fix: refresh repeated user gate focus",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.504",
-    "preCommitHead": "a2ae32873",
+    "expectedCommitMessage": "fix: refresh repeated user gate focus",
+    "preCommitHead": "617667b10",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-504.task1"
+    "taskId": "devtree-early-pp.phase4.user-gate-cursor-token.task1"
   }
 }
 ```
@@ -283,9 +283,26 @@
 159. [DONE] `devtree-early-pp.phase4.release-docs-504.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.504 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.504`).
 160. [DONE] Git Commit: `docs: prepare release 1.2.504` (hash: a2ae32873)
 161. [DONE] `devtree-early-pp.phase4.release-build-504.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.504`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.504.vsix` (5.3M); tarball'ы 1.2.504 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-162. [PENDING] Git Commit: `chore: release 1.2.504` (hash: TBD)
+162. [DONE] Git Commit: `chore: release 1.2.504` (hash: 617667b10)
+
+### Stream: User Workflow Acceptance Testing 1.2.504
+
+163. [BLOCKED] `devtree-early-pp.phase4.user-retest-504.task1` Пользователь тестирует релиз 1.2.504: active Core-owned user gate должен автоматически выбирать нужный Documentation/Development Tree узел и показывать его сессию/review card; Product Part ветки должны стартовать свернутыми; клик по P/C/M marker должен раскрывать/сворачивать узел, а клик по имени должен только выбирать узел (scope: `manual retest`; expected commit: none). Result: Основная UX-часть подтвердилась, но найден regression: повторный gate на том же Product Part node появляется с большой задержкой, потому что workflow snapshot change-token не включает `userGateCursor`; auto-focus дедуплицируется только по `nodeId`; queued Documentation Tree review может показывать текст про кнопку `Подтверждаю`, но action скрыт и input заблокирован.
+
+### Stream: Repeated User Gate Focus And Queued Review UX
+
+164. [DONE] `devtree-early-pp.phase4.user-gate-cursor-token.task1` Включить `userGateCursor` в Project Manager workflow-state change token и использовать stable gate identity для auto-focus, чтобы повторный review-gate на том же узле перерисовывал marker и открывал сессию сразу (scope: `src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts, src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: refresh repeated user gate focus`). Result: Targeted checks passed: `npm run typecheck:webview`; `npm run build:project-manager`; `npm run build:webview`; `npx tsx --test src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`.
+165. [PENDING] Git Commit: `fix: refresh repeated user gate focus` (hash: TBD)
+166. [TODO] `devtree-early-pp.phase4.queued-review-ui.task1` Развести active и queued managed review card в dialog UI: queued gate должен показывать понятное состояние ожидания активного gate и не обещать кнопку, пока Core не повысит его в active (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/ui/src/session/dialog-panel.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.tsx`; expected commit: `fix: explain queued managed review gates`).
+167. [TODO] Git Commit: `fix: explain queued managed review gates` (hash: TBD)
+168. [TODO] `devtree-early-pp.phase4.user-gate-cursor-verify.task1` Выполнить targeted Project Manager verification для workflow-state token, повторного auto-focus и queued review UI (scope: `src/client/project-manager`; expected commit: none).
+169. [TODO] `devtree-early-pp.phase4.release-confirm-505.task1` Зафиксировать явное подтверждение пользователя на релизную сборку 1.2.505 после user-gate cursor/queued review UX фикса (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested the fix and release rebuild after 1.2.504 testing.
+170. [TODO] `devtree-early-pp.phase4.release-docs-505.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.505 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.505`).
+171. [TODO] Git Commit: `docs: prepare release 1.2.505` (hash: TBD)
+172. [TODO] `devtree-early-pp.phase4.release-build-505.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.505`).
+173. [TODO] Git Commit: `chore: release 1.2.505` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-163. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-164. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+174. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+175. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)

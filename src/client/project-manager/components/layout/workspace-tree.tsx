@@ -241,10 +241,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? buildDevelopmentTreeLockedNodes(workflowState, 0)
       : [];
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
-  const { activeGateNodeId, queuedGateNodeIds } = resolveUserGateNodeTargets(
-    workflowState?.userGateCursor
-  );
+  const { activeGateFocusKey, activeGateNodeId, queuedGateNodeIds } =
+    resolveUserGateNodeTargets(workflowState?.userGateCursor);
   useWorkspaceTreeUserGateFocus({
+    activeGateFocusKey,
     activeGateNodeId,
     devTreeLockedNodes,
     devTreeNodes,

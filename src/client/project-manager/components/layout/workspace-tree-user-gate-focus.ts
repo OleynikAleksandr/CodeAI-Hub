@@ -2,16 +2,25 @@ import { useEffect, useRef } from "react";
 import type { TreeNode } from "./workspace-tree-model";
 
 type UserGateCursorView = {
-  readonly activeUserGate?: { readonly nodeId?: string } | null;
+  readonly activeUserGate?: UserGateView | null;
   readonly queuedUserGates?: readonly { readonly nodeId?: string }[];
 };
 
+type UserGateView = {
+  readonly currentTaskId?: string;
+  readonly expectedCommitMessage?: string;
+  readonly id?: string;
+  readonly nodeId?: string;
+};
+
 interface UserGateNodeTargets {
+  readonly activeGateFocusKey: string | null;
   readonly activeGateNodeId: string | null;
   readonly queuedGateNodeIds: ReadonlySet<string>;
 }
 
 interface WorkspaceTreeUserGateFocusInput {
+  readonly activeGateFocusKey: string | null;
   readonly activeGateNodeId: string | null;
   readonly devTreeLockedNodes: readonly TreeNode[];
   readonly devTreeNodes: readonly TreeNode[];
@@ -30,6 +39,24 @@ const normalizeUserGateNodeId = (nodeId?: string): string | null => {
       : nodeId.startsWith("product-part:")
         ? `devtree:${nodeId.slice("product-part:".length)}`
         : nodeId;
+};
+
+const readString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const createUserGateFocusKey = (gate?: UserGateView | null): string | null => {
+  const nodeId = normalizeUserGateNodeId(gate?.nodeId);
+  if (!nodeId) {
+    return null;
+  }
+  return [
+    nodeId,
+    readString(gate?.id),
+    readString(gate?.currentTaskId),
+    readString(gate?.expectedCommitMessage),
+  ]
+    .filter((value): value is string => Boolean(value))
+    .join("|");
 };
 
 const findTreeNodeById = (
@@ -51,6 +78,7 @@ const findTreeNodeById = (
 export const resolveUserGateNodeTargets = (
   cursor?: UserGateCursorView | null
 ): UserGateNodeTargets => ({
+  activeGateFocusKey: createUserGateFocusKey(cursor?.activeUserGate),
   activeGateNodeId: normalizeUserGateNodeId(cursor?.activeUserGate?.nodeId),
   queuedGateNodeIds: new Set(
     (cursor?.queuedUserGates ?? [])
@@ -60,19 +88,21 @@ export const resolveUserGateNodeTargets = (
 });
 
 export const useWorkspaceTreeUserGateFocus = ({
+  activeGateFocusKey,
   activeGateNodeId,
   devTreeLockedNodes,
   devTreeNodes,
   trunkNodes,
 }: WorkspaceTreeUserGateFocusInput): void => {
-  const lastFocusedGateNodeIdRef = useRef<string | null>(null);
+  const lastFocusedGateKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!activeGateNodeId) {
-      lastFocusedGateNodeIdRef.current = null;
+      lastFocusedGateKeyRef.current = null;
       return;
     }
-    if (lastFocusedGateNodeIdRef.current === activeGateNodeId) {
+    const gateFocusKey = activeGateFocusKey ?? activeGateNodeId;
+    if (lastFocusedGateKeyRef.current === gateFocusKey) {
       return;
     }
     const activeNode =
@@ -82,7 +112,13 @@ export const useWorkspaceTreeUserGateFocus = ({
     if (!activeNode?.onSelect) {
       return;
     }
-    lastFocusedGateNodeIdRef.current = activeGateNodeId;
+    lastFocusedGateKeyRef.current = gateFocusKey;
     activeNode.onSelect();
-  }, [activeGateNodeId, devTreeLockedNodes, devTreeNodes, trunkNodes]);
+  }, [
+    activeGateFocusKey,
+    activeGateNodeId,
+    devTreeLockedNodes,
+    devTreeNodes,
+    trunkNodes,
+  ]);
 };

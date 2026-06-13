@@ -166,3 +166,83 @@ test("workflow state token keeps read-only projection changes observable", () =>
     buildWorkflowStateChangeToken(next)
   );
 });
+
+test("workflow state token keeps user gate cursor changes observable", () => {
+  const previous = createSnapshot({
+    userGateCursor: {
+      activeUserGate: null,
+      queuedUserGates: [],
+    },
+  });
+  const next = createSnapshot({
+    userGateCursor: {
+      activeUserGate: {
+        currentTaskId:
+          "development-tree.product-part.finder-widget.phase2.brief-review.task1",
+        expectedCommitMessage:
+          "docs: accept finder-widget product part development brief",
+        id: "product-part:finder-widget/brief-review",
+        nodeId: "product-part:finder-widget",
+        nodeKind: "product_part",
+        partId: "finder-widget",
+        session: {
+          sessionId: "finder-widget-dialog",
+        },
+        status: "active",
+      },
+      queuedUserGates: [
+        {
+          id: "workflow:quality_gates/review",
+          nodeId: "workflow:quality_gates",
+          nodeKind: "workflow_stage",
+          stage: "quality_gates",
+          status: "queued",
+        },
+      ],
+    },
+  });
+
+  assert.notEqual(
+    buildWorkflowStateChangeToken(previous),
+    buildWorkflowStateChangeToken(next)
+  );
+});
+
+test("workflow state token distinguishes repeated gates on the same node", () => {
+  const previous = createSnapshot({
+    userGateCursor: {
+      activeUserGate: {
+        currentTaskId:
+          "development-tree.product-part.finder-widget.phase2.brief-review.task1",
+        expectedCommitMessage:
+          "docs: accept finder-widget product part development brief",
+        id: "product-part:finder-widget/brief-review",
+        nodeId: "product-part:finder-widget",
+        nodeKind: "product_part",
+        partId: "finder-widget",
+        status: "active",
+      },
+      queuedUserGates: [],
+    },
+  });
+  const next = createSnapshot({
+    userGateCursor: {
+      activeUserGate: {
+        currentTaskId:
+          "development-tree.product-part.finder-widget.phase4.order-plan-review.task1",
+        expectedCommitMessage: "docs: accept lead development order plan",
+        id: "product-part:finder-widget/order-plan-review",
+        nodeId: "product-part:finder-widget",
+        nodeKind: "product_part",
+        partId: "finder-widget",
+        status: "active",
+      },
+      queuedUserGates: [],
+    },
+  });
+
+  assert.notEqual(
+    buildWorkflowStateChangeToken(previous),
+    buildWorkflowStateChangeToken(next)
+  );
+});

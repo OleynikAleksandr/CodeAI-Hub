@@ -166,6 +166,16 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "active user gate focus must reuse the node's existing selection route"
   );
   assert.equal(
+    workspaceTreeSource.includes("activeGateFocusKey"),
+    true,
+    "workspace tree must pass a stable gate identity key for repeated gates on the same node"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes("lastFocusedGateKeyRef"),
+    true,
+    "active user gate focus must dedupe by gate identity, not just by node id"
+  );
+  assert.equal(
     workspaceTreeSource.includes("renderTypeMarkerControl"),
     true,
     "development tree type markers must have a dedicated toggle control"

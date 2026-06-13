@@ -28,6 +28,19 @@ const TECHNICAL_PROGRESS_KEYS = [
   "markdownExists",
   "materialized",
 ] as const;
+const USER_GATE_TOKEN_KEYS = [
+  "id",
+  "nodeId",
+  "nodeKind",
+  "stage",
+  "partId",
+  "clusterId",
+  "currentTaskId",
+  "expectedCommitMessage",
+  "status",
+  "reason",
+  "workflowPath",
+] as const;
 
 const readRecord = (value: unknown): Record<string, unknown> | null =>
   typeof value === "object" && value !== null && !Array.isArray(value)
@@ -103,6 +116,37 @@ const continuityToken = (
     })
     .join("|");
 
+const userGateToken = (gate: unknown): string => {
+  const record = readRecord(gate);
+  if (!record) {
+    return "";
+  }
+  const session = readRecord(record.session);
+  return [
+    USER_GATE_TOKEN_KEYS.map((key) => `${key}:${scalarToken(record[key])}`).join(","),
+    `artifacts:${stringArrayToken(record.artifactPaths)}`,
+    `session:${scalarToken(session?.dialogId)}:${scalarToken(
+      session?.providerSessionId
+    )}:${scalarToken(session?.rootSessionId)}:${scalarToken(session?.sessionId)}`,
+  ].join("|");
+};
+
+const userGateCursorToken = (
+  snapshot: WorkflowStateSnapshot | null
+): string => {
+  const cursor = readRecord(snapshot?.userGateCursor);
+  if (!cursor) {
+    return "";
+  }
+  const queued = Array.isArray(cursor.queuedUserGates)
+    ? cursor.queuedUserGates
+    : [];
+  return [
+    `active:${userGateToken(cursor.activeUserGate)}`,
+    `queued:${queued.map(userGateToken).join(";")}`,
+  ].join("\n");
+};
+
 export const buildWorkflowStateChangeToken = (
   snapshot: WorkflowStateSnapshot | null
 ): string => {
@@ -124,6 +168,7 @@ export const buildWorkflowStateChangeToken = (
     `description:${snapshot.description?.draftPath ?? ""}:${snapshot.description?.finalPath ?? ""}`,
     `last:${snapshot.lastActive?.stage ?? ""}:${snapshot.lastActive?.artifactPath ?? ""}:${snapshot.lastActive?.updatedAt ?? ""}`,
     `readonly:${readOnlyProjectionToken(snapshot)}`,
+    `userGate:${userGateCursorToken(snapshot)}`,
     `diagram:${progressFieldsToken(
       diagramModulesProgress,
       DIAGRAM_MODULES_PROGRESS_KEYS
