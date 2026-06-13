@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "6260d2d1c",
+  "lastRecordedCommit": "031fb04f8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase1.docs.task1",
-  "expectedCommitMessage": "docs: document quality gates no rebootstrap boundary",
+  "currentTaskId": "qg-rebootstrap.phase2.residual-cleanup.task1",
+  "expectedCommitMessage": "fix: remove quality gates product part bootstrap api",
   "debt": {
-    "expectedCommitMessage": "docs: document quality gates no rebootstrap boundary",
-    "preCommitHead": "6260d2d1c",
+    "expectedCommitMessage": "fix: remove quality gates product part bootstrap api",
+    "preCommitHead": "031fb04f8",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase1.docs.task1"
+    "taskId": "qg-rebootstrap.phase2.residual-cleanup.task1"
   }
 }
 ```
@@ -60,33 +60,39 @@
 ### Stream: SSOT Documentation
 
 5. [DONE] `qg-rebootstrap.phase1.docs.task1` Синхронизировать SSOT: Quality Gates terminal handoff больше не recovery/idempotency trigger для Product Part lanes; повторный запуск Product Part lanes допускается только через Diagram Modules acceptance или Product Part clear/restart/manual recovery path (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates no rebootstrap boundary`).
-6. [PENDING] Git Commit: `docs: document quality gates no rebootstrap boundary` (hash: TBD)
+6. [DONE] Git Commit: `docs: document quality gates no rebootstrap boundary` (hash: 031fb04f8)
 
 ## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-06-13)
 
 ### Stream: Targeted Core Verification
 
-7. [TODO] `qg-rebootstrap.phase2.verify.task1` Выполнить targeted Core tests/build для Quality Gates completion и Development Tree bootstrap boundaries (scope: `packages/core`; expected commit: none).
+7. [DONE] `qg-rebootstrap.phase2.verify.task1` Выполнить targeted Core tests/build для Quality Gates completion и Development Tree bootstrap boundaries (scope: `packages/core`; expected commit: none). Result: initial source scan/test completed; residual Quality Gates bootstrap API found and queued for cleanup before final build
+
+### Stream: Residual Quality Gates Cleanup
+
+8. [DONE] `qg-rebootstrap.phase2.residual-cleanup.task1` Удалить остаточный Quality Gates controller API для Product Part bootstrap, сохранив живой bootstrap только в Diagram Modules acceptance и Product Part Clear/Restart recovery paths (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: remove quality gates product part bootstrap api`).
+9. [PENDING] Git Commit: `fix: remove quality gates product part bootstrap api` (hash: TBD)
+10. [TODO] `qg-rebootstrap.phase2.verify-final.task1` Выполнить финальные targeted Core tests/build после удаления остаточного API (scope: `packages/core`; expected commit: none).
 
 ## Phase 3 - Release Build (owner: Codex/User, updated: 2026-06-13)
 
 ### Stream: Release 1.2.510 Build
 
-8. [TODO] `qg-rebootstrap.phase3.release-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.510`).
-9. [TODO] Git Commit: `docs: prepare release 1.2.510` (hash: TBD)
-10. [TODO] `qg-rebootstrap.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.510`).
-11. [TODO] Git Commit: `chore: release 1.2.510` (hash: TBD)
+11. [TODO] `qg-rebootstrap.phase3.release-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.510`).
+12. [TODO] Git Commit: `docs: prepare release 1.2.510` (hash: TBD)
+13. [TODO] `qg-rebootstrap.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.510`).
+14. [TODO] Git Commit: `chore: release 1.2.510` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-13)
 
 ### Stream: Retest Quality Gates Boundary
 
-12. [TODO] `qg-rebootstrap.phase4.user-retest.task1` Пользователь тестирует релиз: после `Quality Gates Baseline` не должны повторно стартовать Product Part sessions/lanes; Product Part lanes должны стартовать только после accepted `Diagram Modules`, а Quality Gates должен завершаться persistent return без второго Development Tree bootstrap (scope: `manual retest`; expected commit: none).
+15. [TODO] `qg-rebootstrap.phase4.user-retest.task1` Пользователь тестирует релиз: после `Quality Gates Baseline` не должны повторно стартовать Product Part sessions/lanes; Product Part lanes должны стартовать только после accepted `Diagram Modules`, а Quality Gates должен завершаться persistent return без второго Development Tree bootstrap (scope: `manual retest`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-13)
 
 ### Stream: Closeout
 
-13. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-14. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
-15. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+16. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+17. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+18. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
