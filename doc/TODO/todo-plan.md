@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "86b0e4677",
+  "lastRecordedCommit": "b99b7a5d5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase3.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.510",
+  "currentTaskId": "qg-rebootstrap.phase3.release-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.510",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.510",
-    "preCommitHead": "86b0e4677",
+    "expectedCommitMessage": "chore: release 1.2.510",
+    "preCommitHead": "b99b7a5d5",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase3.release-docs.task1"
+    "taskId": "qg-rebootstrap.phase3.release-build.task1"
   }
 }
 ```
@@ -79,9 +79,9 @@
 ### Stream: Release 1.2.510 Build
 
 11. [DONE] `qg-rebootstrap.phase3.release-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.510`).
-12. [PENDING] Git Commit: `docs: prepare release 1.2.510` (hash: TBD)
-13. [TODO] `qg-rebootstrap.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.510`).
-14. [TODO] Git Commit: `chore: release 1.2.510` (hash: TBD)
+12. [DONE] Git Commit: `docs: prepare release 1.2.510` (hash: b99b7a5d5)
+13. [DONE] `qg-rebootstrap.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.510`). Result: `./scripts/build-all.sh --allow-dirty` passed; `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX `codeai-hub-1.2.510.vsix` and 1.2.510 runtime tarballs are available.
+14. [PENDING] Git Commit: `chore: release 1.2.510` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-13)
 
