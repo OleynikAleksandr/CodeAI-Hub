@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "46a726bd6",
+  "lastRecordedCommit": "a895ce91c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.codex-auth-usage-limits.task1",
-  "expectedCommitMessage": "fix: avoid codex usage limit auth loops",
+  "currentTaskId": "devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1",
+  "expectedCommitMessage": "docs: align development tree plans with worktree lanes",
   "debt": {
-    "expectedCommitMessage": "fix: avoid codex usage limit auth loops",
-    "preCommitHead": "46a726bd6",
+    "expectedCommitMessage": "docs: align development tree plans with worktree lanes",
+    "preCommitHead": "a895ce91c",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.codex-auth-usage-limits.task1"
+    "taskId": "devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1"
   }
 }
 ```
@@ -31,6 +31,7 @@
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md`
   - `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
@@ -214,14 +215,34 @@
 111. [DONE] `devtree-early-pp.phase4.codex-auth-recovery-message.task1` Классифицировать известный Codex refresh-token failure и писать в сессию понятную инструкцию recovery: закрыть приложения, использующие Codex, выполнить `codex logout`, затем `codex login`, после чего перезапустить CodeAI Hub (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-auth-recovery.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: explain codex auth recovery to users`).
 112. [DONE] Git Commit: `fix: explain codex auth recovery to users` (hash: 46a726bd6)
 113. [DONE] `devtree-early-pp.phase4.codex-auth-usage-limits.task1` Не запускать повторный provider refresh для usage-limits при `dialog_opened`, если уже есть cached replay или если это не нужно для активного turn; это снижает лавину refresh-попыток при сломанном Codex auth (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: avoid codex usage limit auth loops`).
-114. [PENDING] Git Commit: `fix: avoid codex usage limit auth loops` (hash: TBD)
-115. [TODO] `devtree-early-pp.phase4.codex-auth-recovery-verify.task1` Выполнить targeted Core verification для Codex auth recovery message и usage-limits refresh behavior (scope: `packages/core`; expected commit: none).
-116. [TODO] `devtree-early-pp.phase4.release-confirm-502.task1` Получить отдельное подтверждение пользователя на релизную сборку после Codex auth recovery UX фикса (scope: `manual confirmation`; expected commit: none).
+114. [DONE] Git Commit: `fix: avoid codex usage limit auth loops` (hash: a895ce91c)
+115. [DONE] `devtree-early-pp.phase4.codex-auth-recovery-verify.task1` Выполнить targeted Core verification для Codex auth recovery message и usage-limits refresh behavior (scope: `packages/core`; expected commit: none). Result: Targeted Core verification passed after Codex auth recovery UX fixes: @codeai-hub/core build, session-provider-event-router test, and session-request-handler usage-limits test
+116. [DONE] `devtree-early-pp.phase4.release-confirm-502.task1` Получить отдельное подтверждение пользователя на релизную сборку после Codex auth recovery UX фикса (scope: `manual confirmation`; expected commit: none). Result: User deferred release 1.2.502 and requested a deeper Product Part worktree-lane refactor; no release build was started
+
+### Stream: Product Part Worktree Lane Planning
+
+117. [DONE] `devtree-early-pp.phase4.worktree-lanes-strategy-docs.task1` Актуализировать две активные стратегические директивы `Plans/` под новое правило: main workspace является orchestration/merge surface, Product Part agents стартуют в lane worktrees уже на pre-code документах, а совместимость со старыми тестовыми workspace не требуется (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: align development tree plans with worktree lanes`).
+118. [PENDING] Git Commit: `docs: align development tree plans with worktree lanes` (hash: TBD)
+119. [TODO] `devtree-early-pp.phase4.worktree-lanes-implementation-plan.task1` Создать рядом с активными `Plans/` отдельный planning-документ конкретной реализации Product Part worktree lanes и обновить полку `Plans/README.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan product part worktree lanes implementation`).
+120. [TODO] Git Commit: `docs: plan product part worktree lanes implementation` (hash: TBD)
+
+### Stream: Product Part Worktree Lane Implementation
+
+121. [TODO] `devtree-early-pp.phase4.worktree-lane-runtime.task1` Найти и вынести Core helper для детерминированного Product Part lane branch/worktree path, create/delete lifecycle и safe existence checks на базе существующего workspace/worktree runtime (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: add product part worktree lane runtime`).
+122. [TODO] Git Commit: `fix: add product part worktree lane runtime` (hash: TBD)
+123. [TODO] `devtree-early-pp.phase4.worktree-lane-bootstrap.task1` Перевести Product Part pre-code bootstrap после accepted `Diagram Modules` на запуск Product Part sessions в lane worktrees, сохранив их отображение в основном Development Tree snapshot (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: start product part agents in worktree lanes`).
+124. [TODO] Git Commit: `fix: start product part agents in worktree lanes` (hash: TBD)
+125. [TODO] `devtree-early-pp.phase4.worktree-lane-merge.task1` Реализовать sequential Core-owned merge/copy accepted Product Part brief из lane worktree обратно в main workspace после user acceptance; lead Product Part стартует только после accepted secondary lane merges и получает briefs inline (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: merge accepted product part briefs from lanes`).
+126. [TODO] Git Commit: `fix: merge accepted product part briefs from lanes` (hash: TBD)
+127. [TODO] `devtree-early-pp.phase4.worktree-lane-clear.task1` Подключить clear/undo для Product Part lanes: до merge удалить worktree/branch/session state, после merge делать последовательный revert merge/accepted commit и cleanup lane runtime (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part worktree lanes safely`).
+128. [TODO] Git Commit: `fix: clear product part worktree lanes safely` (hash: TBD)
+129. [TODO] `devtree-early-pp.phase4.worktree-lane-verify.task1` Выполнить targeted Core/Project Manager verification для Product Part worktree lanes: Diagram Modules acceptance оставляет main workspace clean, Product Part sessions видны, secondary accepted briefs merge sequentially, lead waits for briefs (scope: `packages/core, src/client/project-manager`; expected commit: none).
+130. [TODO] `devtree-early-pp.phase4.release-confirm-502-worktree.task1` Получить отдельное подтверждение пользователя на релизную сборку после Product Part worktree-lane refactor (scope: `manual confirmation`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-117. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-118. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-119. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+131. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+132. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+133. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

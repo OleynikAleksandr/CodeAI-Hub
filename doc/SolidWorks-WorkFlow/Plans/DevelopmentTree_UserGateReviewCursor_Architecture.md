@@ -1,8 +1,8 @@
 # Курсор пользовательских review-gates в Development Tree
 
-**Статус:** активный planning-документ следующего шага, открыт 2026-06-12; ранний Product Part pre-code bootstrap после accepted `Diagram Modules` реализован в первом срезе, Core-owned review cursor/markers остаются следующим незавершённым слоем.
+**Статус:** активный planning-документ следующего шага, открыт 2026-06-12; ранний Product Part pre-code bootstrap после accepted `Diagram Modules` реализован в первом срезе, но дальнейший refactor переводит Product Part pre-code agents из main workspace в lane worktrees.
 **Родительская стратегическая линия:** `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
-**Область:** параллельное pre-code исполнение Development Tree с Core-owned последовательным курсором user review и attention markers в дереве Project Manager.
+**Область:** параллельное pre-code исполнение Development Tree в отдельных worktree lanes с Core-owned последовательным курсором user review и attention markers в дереве Project Manager.
 
 ## 1. Проблема
 
@@ -61,7 +61,7 @@ Application Skeleton
 
 ### Линия B: pre-code планирование Development Tree
 
-Эта lane может выполняться параллельно с Lane A:
+Эта lane может выполняться параллельно с Lane A, но не в main workspace. Main workspace является orchestration/merge surface и должен оставаться чистым для managed Documentation Tree steps. Product Part agents получают отдельные deterministic worktree lanes уже на стадии pre-code документов:
 
 ```text
 Product Part Development Briefs
@@ -72,6 +72,20 @@ Product Part Development Briefs
 ```
 
 Lane B может производить pre-code artifacts, пока Lane A ещё готовит application foundation. Но она не должна производить implementation code или code-ready merges, пока Lane A не достигла verified readiness.
+
+Новый invariant:
+
+```text
+main workspace
+  -> только Core-owned orchestration, accepted checkpoints и sequential merges
+
+product-part worktree lane
+  -> agent-owned ProductPartDevelopmentBrief draft/session/commits
+  -> user review gate
+  -> Core-owned accepted merge back to main
+```
+
+Branches без worktree не считаются достаточной изоляцией: branch изолирует историю, но не изолирует working tree/index. Любая параллельная agent work должна иметь отдельный checkout через `git worktree`.
 
 Разрешено до verified Quality Gates:
 
@@ -94,11 +108,11 @@ Lane B может производить pre-code artifacts, пока Lane A е�
 
 ## 4. Барьер Product Part Brief
 
-Core должен запускать каждого planned Product Part agent для pre-code lane. Количество Product Parts произвольное и приходит из accepted `Diagram Modules`.
+Core должен запускать каждого planned Product Part agent для pre-code lane в отдельном Product Part worktree. Количество Product Parts произвольное и приходит из accepted `Diagram Modules`.
 
 Каждый Product Part agent создаёт draft `ProductPartDevelopmentBrief`.
 
-Только lead Product Part позже получает `DevelopmentOrderPlan.v2` assignment, и только после того, как Core записал user acceptance для каждого planned Product Part brief.
+Только lead Product Part позже получает `DevelopmentOrderPlan.v2` assignment, и только после того, как Core записал user acceptance и последовательный accepted merge для каждого planned Product Part brief. Lead brief может быть создан в своём lane worktree как обычный Product Part brief, но order-plan turn остаётся заблокированным до barrier.
 
 Barrier принадлежит Core:
 
@@ -115,6 +129,8 @@ User-review cursor делает это понятным в UI:
 - secondary Product Part brief review gates могут становиться active по одному;
 - lead Product Part order-plan node остаётся blocked или pending, пока эти review gates не resolved;
 - когда все briefs accepted, Core promotes или dispatches lead order-plan task.
+
+Existing test workspaces are not compatibility targets for this refactor. If the lane model changes workflow state deeply, FinderWidget-style test workspaces may be cleared back to the questionnaire and rerun from scratch.
 
 ## 5. Правила курсора user review
 
@@ -200,21 +216,24 @@ Core должен отдавать достаточно state, чтобы client
 
 Следующий code refactor должен быть маленьким и проверяемым:
 
-1. Добавить Core-owned user-gate cursor state в Development Tree snapshot/read model.
-2. Научить Project Manager отображать active и queued user-review markers в существующем дереве.
-3. Auto-open только active gate session/artifacts при cursor promotion.
-4. Блокировать queued gate input/actions, разрешая read-only просмотр session/artifacts.
-5. Подключить Product Part brief review gates так, чтобы secondary briefs предъявлялись последовательно, а lead order-plan task видимо ждал acceptance всех briefs.
+1. Перевести Product Part pre-code agents на deterministic worktree lanes, чтобы main workspace оставался clean после `Diagram Modules` acceptance.
+2. Сохранить Project Manager tree projection: session физически живёт в lane worktree, но node отображается в основном Development Tree.
+3. После user acceptance Core последовательно переносит accepted Product Part brief из lane в main workspace и делает managed merge/checkpoint commit.
+4. User-gate cursor продолжает предъявлять review gates по одному: secondary briefs перед lead order-plan.
+5. Lead `DevelopmentOrderPlan.v2` dispatch получает inline accepted briefs только после accepted merge всех Product Part briefs.
 
 ## 9. Критерии приёмки
 
 - Несколько Development Tree agents могут выполняться одновременно.
+- Параллельные Product Part agents не оставляют dirty files в main workspace.
+- `Application Skeleton` и `Quality Gates Baseline` могут стартовать из clean main workspace, пока Product Part lanes работают отдельно.
 - Если несколько review gates становятся ready, ровно один gate active для user input.
 - Active gate виден в sidebar через pulsing amber/orange marker.
 - Queued gates видимы, но read-only.
 - Selecting queued gate показывает его session/artifacts и Core-provided lock reason.
 - Acceptance/rejection/revision active gate promotes следующий queued gate без полного restart Project Manager.
 - Lead `DevelopmentOrderPlan.v2` не стартует, пока каждый Product Part brief не accepted.
+- Clear/undo Product Part lane до merge удаляет lane worktree/branch/session state без изменений main workspace; после merge использует Core-owned sequential revert.
 - Implementation остаётся Core-owned и работает, если Project Manager закрыт до следующего user gate.
 
 ## 10. Вне области
@@ -224,6 +243,8 @@ Core должен отдавать достаточно state, чтобы client
 - Разрешать несколько включённых user acceptance buttons одновременно.
 - Генерировать production implementation code до готовности Application Skeleton и Quality Gates.
 - Считать doc-only cluster boundary финальным merge.
+- Запускать параллельные Product Part agents в main workspace.
+- Поддерживать compatibility migration для уже созданных тестовых workspaces после глубокого изменения lane lifecycle.
 
 ## 11. Открытые вопросы
 
