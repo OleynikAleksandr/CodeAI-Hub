@@ -93,8 +93,7 @@ const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   return "revision";
 };
 export class SessionRequestHandlerManagedReviewDecisions {
-  private readonly applicationSkeletonStagePlan =
-    new ApplicationSkeletonStagePlanController();
+  private readonly appStagePlan = new ApplicationSkeletonStagePlanController();
   private readonly applicationSkeletonMaterializer =
     new ApplicationSkeletonCoreMaterializer();
   private readonly deps: ManagedReviewDecisionDeps;
@@ -300,7 +299,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       }
     };
     try {
-      await this.applicationSkeletonStagePlan.acceptUserReviewWithoutRevision({
+      await this.appStagePlan.acceptUserReviewWithoutRevision({
         workspaceRoot: session.workspacePath,
       });
     } catch (error) {
@@ -344,12 +343,11 @@ export class SessionRequestHandlerManagedReviewDecisions {
         decision: failedDecision,
         session,
       });
-      const planAdvance =
-        await this.applicationSkeletonStagePlan.commitRejectedTurn({
-          decision: failedDecision,
-          workspaceRoot: session.workspacePath,
-          workspaceSlug: session.initiativeSlug,
-        });
+      const planAdvance = await this.appStagePlan.commitRejectedTurn({
+        decision: failedDecision,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
       if (planAdvance.blocked) {
         this.deps.eventMessages.appendCoreMessage(session.id, {
           content: buildApplicationSkeletonBoundaryBlockedMessage(
@@ -382,13 +380,12 @@ export class SessionRequestHandlerManagedReviewDecisions {
       return;
     }
     await persistApplicationSkeletonManagedDecision({ decision, session });
-    const planAdvance =
-      await this.applicationSkeletonStagePlan.commitManagedTurn({
-        decision,
-        sessionId: session.id,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
+    const planAdvance = await this.appStagePlan.commitManagedTurn({
+      decision,
+      sessionId: session.id,
+      workspaceRoot: session.workspacePath,
+      workspaceSlug: session.initiativeSlug,
+    });
     if (planAdvance.blocked) {
       this.deps.eventMessages.appendCoreMessage(session.id, {
         content: buildApplicationSkeletonBoundaryBlockedMessage(
@@ -404,7 +401,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
         broadcaster: this.deps.broadcaster,
         eventMessages: this.deps.eventMessages,
         sessionId: session.id,
-        stagePlan: this.applicationSkeletonStagePlan,
+        stagePlan: this.appStagePlan,
         workspaceRoot: session.workspacePath,
       });
     }
@@ -425,7 +422,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       broadcaster: this.deps.broadcaster,
       eventMessages: this.deps.eventMessages,
       sessionId: session.id,
-      stagePlan: this.applicationSkeletonStagePlan,
+      stagePlan: this.appStagePlan,
       workspaceRoot: session.workspacePath,
     });
   }
@@ -436,6 +433,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
     try {
       await acceptDiagramModulesReviewWithoutRevision({
         workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
       });
       this.deps.eventMessages.appendCoreMessage(session.id, {
         content: buildManagedPersistentReturnHandoffMessage("Diagram Modules"),

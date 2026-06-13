@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import { DiagramModulesManagedGitBoundary } from "./diagram-modules-managed-git-boundary";
 import { parseDiagramModulesRepairTaskNumber } from "./diagram-modules-stage-plan-repair-model";
@@ -13,6 +14,7 @@ const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 const APPLICATION_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DEVELOPMENT_TREE_BOOTSTRAP_COMMIT_MESSAGE =
   "docs: bootstrap product part development briefs";
 const REVIEW_TASK_PREFIX = "diagram-modules.phase2.review.";
@@ -169,7 +171,7 @@ const updateWorkspacePlan = async (workspaceRoot: string): Promise<void> => {
   const nextWorkspaceState: ManagedWorkspaceState = {
     ...workspaceState,
     activePlanPath: APPLICATION_STAGE_PLAN_PATH,
-    activeStage: "application_skeleton",
+    activeStage: APPLICATION_SKELETON_STAGE,
     completedStages: addUnique(
       workspaceState.completedStages,
       "diagram_modules"
@@ -188,6 +190,20 @@ const updateWorkspacePlan = async (workspaceRoot: string): Promise<void> => {
       WORKSPACE_END,
       nextWorkspaceState
     )
+  );
+};
+
+const updateApplicationSkeletonLastActive = async (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  await new WorkflowLastActiveStore().upsert(
+    params.workspaceRoot,
+    params.workspaceSlug,
+    {
+      artifactPath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton.md`,
+      stage: APPLICATION_SKELETON_STAGE,
+    }
   );
 };
 
@@ -342,6 +358,7 @@ export const buildDiagramModulesRepairLimitRevisionPrompt = (params: {
 export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   readonly gitBoundary?: DiagramModulesGitBoundaryDependency;
   readonly workspaceRoot: string;
+  readonly workspaceSlug?: string;
 }): Promise<void> => {
   const gitBoundary =
     params.gitBoundary ?? new DiagramModulesManagedGitBoundary();
@@ -379,6 +396,12 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
     replaceStateBlock(nextStagePlan, PLAN_START, PLAN_END, nextStageState)
   );
   await updateWorkspacePlan(params.workspaceRoot);
+  if (params.workspaceSlug) {
+    await updateApplicationSkeletonLastActive({
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+  }
   await commitManagedWorkflowLedger({
     gitBoundary: asManagedGitBoundary(gitBoundary),
     ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
