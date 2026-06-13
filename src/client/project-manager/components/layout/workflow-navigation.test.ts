@@ -27,6 +27,10 @@ const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
 );
+const STAGE_PANEL_SYNC_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/use-stage-panel-sync.ts"
+);
 const PROJECT_MANAGER_STYLES_PATH = path.resolve(
   process.cwd(),
   "packages/ui/project-manager/styles.css"
@@ -40,6 +44,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     workspaceTreeAutoSelectSource,
     workspaceTreeUserGateFocusSource,
     mainAreaWorkflowStateSource,
+    stagePanelSyncSource,
     projectManagerStylesSource,
   ] = await Promise.all([
       readFile(MAIN_AREA_UTILS_PATH, "utf8"),
@@ -48,6 +53,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
       readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
       readFile(WORKSPACE_TREE_USER_GATE_FOCUS_PATH, "utf8"),
       readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
+      readFile(STAGE_PANEL_SYNC_PATH, "utf8"),
       readFile(PROJECT_MANAGER_STYLES_PATH, "utf8"),
     ]);
 
@@ -78,6 +84,28 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     mainAreaSource.includes("core-workflow-stage-activate"),
     true,
     "Core stage activation must reuse the shared stage activation route"
+  );
+  assert.equal(
+    stagePanelSyncSource.includes("pendingCoreActivation"),
+    true,
+    "Core stage activation must be retained until workflow snapshot refresh catches up"
+  );
+  assert.equal(
+    stagePanelSyncSource.includes(
+      'detail?.source === "core-workflow-stage-activate"'
+    ),
+    true,
+    "stage panel sync must recognize Core-owned stage activation events"
+  );
+  assert.equal(
+    stagePanelSyncSource.includes("workflowState?.updatedAt"),
+    true,
+    "stage activation replay must compare against the snapshot version seen at event time"
+  );
+  assert.equal(
+    stagePanelSyncSource.includes("syncPanelsToStage(pendingCoreActivation.stage)"),
+    true,
+    "Core stage activation must be replayed after a fresh workflow snapshot"
   );
   assert.equal(
     mainAreaSource.includes("managed-workflow-user-review"),

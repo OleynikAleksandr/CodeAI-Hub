@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
@@ -58,19 +58,53 @@ export const useStagePanelSync = (params: {
       workspaceSlug,
     ]
   );
+  const [pendingCoreActivation, setPendingCoreActivation] = useState<{
+    readonly seenUpdatedAt: string | null;
+    readonly stage: string;
+  } | null>(null);
 
   useEffect(() => {
     const handler = (event: Event) => {
-      const stage = (event as CustomEvent<{ readonly stage?: string }>).detail
-        ?.stage;
+      const detail = (
+        event as CustomEvent<{
+          readonly source?: string;
+          readonly stage?: string;
+        }>
+      ).detail;
+      const stage = detail?.stage;
       if (typeof stage !== "string") {
         return;
       }
       syncPanelsToStage(stage);
+      if (detail?.source === "core-workflow-stage-activate") {
+        setPendingCoreActivation({
+          seenUpdatedAt: workflowState?.updatedAt ?? null,
+          stage,
+        });
+      } else {
+        setPendingCoreActivation(null);
+      }
     };
     window.addEventListener("pm:stage:activated", handler);
     return () => window.removeEventListener("pm:stage:activated", handler);
-  }, [syncPanelsToStage]);
+  }, [syncPanelsToStage, workflowState?.updatedAt]);
+
+  useEffect(() => {
+    if (!pendingCoreActivation) {
+      return;
+    }
+    const updatedAt = workflowState?.updatedAt ?? null;
+    if (!updatedAt || updatedAt === pendingCoreActivation.seenUpdatedAt) {
+      return;
+    }
+    syncPanelsToStage(pendingCoreActivation.stage);
+    setPendingCoreActivation((current) =>
+      current?.stage === pendingCoreActivation.stage &&
+      current.seenUpdatedAt === pendingCoreActivation.seenUpdatedAt
+        ? null
+        : current
+    );
+  }, [pendingCoreActivation, syncPanelsToStage, workflowState?.updatedAt]);
 
   return syncPanelsToStage;
 };

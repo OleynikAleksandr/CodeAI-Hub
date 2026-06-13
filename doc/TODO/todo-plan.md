@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "58ed15ece",
+  "lastRecordedCommit": "1a8ce5040",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-505.task1",
-  "expectedCommitMessage": "chore: release 1.2.505",
+  "currentTaskId": "devtree-early-pp.phase4.stage-handoff-replay.task1",
+  "expectedCommitMessage": "fix: replay workflow stage handoff after snapshot",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.505",
-    "preCommitHead": "58ed15ece",
+    "expectedCommitMessage": "fix: replay workflow stage handoff after snapshot",
+    "preCommitHead": "1a8ce5040",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-505.task1"
+    "taskId": "devtree-early-pp.phase4.stage-handoff-replay.task1"
   }
 }
 ```
@@ -300,9 +300,24 @@
 170. [DONE] `devtree-early-pp.phase4.release-docs-505.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.505 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.505`). Result: README and CHANGELOG prepared for v1.2.505 repeated user-gate refresh / queued review UX retest.
 171. [DONE] Git Commit: `docs: prepare release 1.2.505` (hash: 58ed15ece)
 172. [DONE] `devtree-early-pp.phase4.release-build-505.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.505`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.505.vsix` (5.3M); tarball'ы 1.2.505 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-173. [PENDING] Git Commit: `chore: release 1.2.505` (hash: TBD)
+173. [DONE] Git Commit: `chore: release 1.2.505` (hash: 1a8ce5040)
+
+### Stream: Project Manager Navigation And Lock Hydration 1.2.506
+
+174. [DONE] `devtree-early-pp.phase4.stage-handoff-replay.task1` После Core `workflow:stage:activate` переигрывать pending stage handoff после свежего workflow snapshot, чтобы acceptance `Diagram Modules` reliably открывал карточку `Application Skeleton` даже если первый sync пришёл до обновления state (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: replay workflow stage handoff after snapshot`). Result: Pending Core stage activation now replays from `useStagePanelSync` after `workflowState.updatedAt` changes. Targeted checks passed: `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`; `npm run typecheck:webview`.
+175. [PENDING] Git Commit: `fix: replay workflow stage handoff after snapshot` (hash: TBD)
+176. [TODO] `devtree-early-pp.phase4.dialog-lock-hydration.task1` Держать dialog input консервативно заблокированным при переоткрытии Product Part / Development Tree projected session до получения Core-owned runtime snapshot/turn-state, чтобы переключение между деревьями не открывало ввод во время активного agent turn (scope: `src/client/project-manager/components/sessions/dialog-session-bootstrap.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep dialog input locked during runtime hydration`).
+177. [TODO] Git Commit: `fix: keep dialog input locked during runtime hydration` (hash: TBD)
+178. [TODO] `devtree-early-pp.phase4.unified-tree-selection.task1` Ввести единый selected marker для Documentation Tree и Development Tree: выбранным зелёной рамкой может быть только текущий stage/product-part/cluster/module/operation node, а выбор Development Tree node снимает рамку с последнего Documentation stage (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unify workspace tree selection marker`).
+179. [TODO] Git Commit: `fix: unify workspace tree selection marker` (hash: TBD)
+180. [TODO] `devtree-early-pp.phase4.navigation-lock-selection-verify.task1` Выполнить targeted Project Manager verification для stage handoff replay, dialog lock hydration и unified tree selection (scope: `src/client/project-manager`; expected commit: none).
+181. [TODO] `devtree-early-pp.phase4.release-confirm-506.task1` Зафиксировать отдельное подтверждение пользователя на релизную сборку 1.2.506 после фиксов Project Manager navigation/input/selection (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested implementation and release rebuild after 1.2.505 testing.
+182. [TODO] `devtree-early-pp.phase4.release-docs-506.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.506 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.506`).
+183. [TODO] Git Commit: `docs: prepare release 1.2.506` (hash: TBD)
+184. [TODO] `devtree-early-pp.phase4.release-build-506.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.506`).
+185. [TODO] Git Commit: `chore: release 1.2.506` (hash: TBD)
 
 ### Stream: Archive And Dispose
 
-174. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-175. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+186. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+187. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
