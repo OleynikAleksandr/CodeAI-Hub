@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "031fb04f8",
+  "lastRecordedCommit": "86b0e4677",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase2.residual-cleanup.task1",
-  "expectedCommitMessage": "fix: remove quality gates product part bootstrap api",
+  "currentTaskId": "qg-rebootstrap.phase3.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.510",
   "debt": {
-    "expectedCommitMessage": "fix: remove quality gates product part bootstrap api",
-    "preCommitHead": "031fb04f8",
+    "expectedCommitMessage": "docs: prepare release 1.2.510",
+    "preCommitHead": "86b0e4677",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase2.residual-cleanup.task1"
+    "taskId": "qg-rebootstrap.phase3.release-docs.task1"
   }
 }
 ```
@@ -71,15 +71,15 @@
 ### Stream: Residual Quality Gates Cleanup
 
 8. [DONE] `qg-rebootstrap.phase2.residual-cleanup.task1` Удалить остаточный Quality Gates controller API для Product Part bootstrap, сохранив живой bootstrap только в Diagram Modules acceptance и Product Part Clear/Restart recovery paths (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: remove quality gates product part bootstrap api`).
-9. [PENDING] Git Commit: `fix: remove quality gates product part bootstrap api` (hash: TBD)
-10. [TODO] `qg-rebootstrap.phase2.verify-final.task1` Выполнить финальные targeted Core tests/build после удаления остаточного API (scope: `packages/core`; expected commit: none).
+9. [DONE] Git Commit: `fix: remove quality gates product part bootstrap api` (hash: 86b0e4677)
+10. [DONE] `qg-rebootstrap.phase2.verify-final.task1` Выполнить финальные targeted Core tests/build после удаления остаточного API (scope: `packages/core`; expected commit: none). Result: passed: source scan clean; tsx tests 5/5; npm run build --workspace @codeai-hub/core
 
 ## Phase 3 - Release Build (owner: Codex/User, updated: 2026-06-13)
 
 ### Stream: Release 1.2.510 Build
 
-11. [TODO] `qg-rebootstrap.phase3.release-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.510`).
-12. [TODO] Git Commit: `docs: prepare release 1.2.510` (hash: TBD)
+11. [DONE] `qg-rebootstrap.phase3.release-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.510`).
+12. [PENDING] Git Commit: `docs: prepare release 1.2.510` (hash: TBD)
 13. [TODO] `qg-rebootstrap.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.510`).
 14. [TODO] Git Commit: `chore: release 1.2.510` (hash: TBD)
 

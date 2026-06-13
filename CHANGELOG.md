@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.510] - 2026-06-13
+### Fixed
+- **Quality Gates no longer reboots Product Part pre-code lanes.** The stale `Quality Gates Baseline` terminal handoff bootstrap helper/API was removed, so Product Part sessions start from accepted `Diagram Modules` or explicit Product Part recovery paths only.
+- **A regression test now locks the boundary.** Quality Gates completion with accepted Diagram Modules artifacts must not call the Development Tree gateway, create Product Part brief plans/drafts, or write the Product Part bootstrap commit.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `./scripts/build-all.sh --allow-dirty`
+- `./scripts/build-release.sh --use-current-version --allow-dirty`
+
 ## [1.2.509] - 2026-06-13
 ### Changed
 - **Clean rebuild of the 1.2.508 persisted handoff fix under a new release number.** Runtime behavior is unchanged from 1.2.508; this release exists so the next retest installs a fresh package version.
