@@ -2,7 +2,30 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.501** (Product Part Turn Serialization)
+**Current Release — v1.2.502** (Product Part Worktree Lanes)
+
+This release moves early Product Part pre-code work out of the main workspace
+and into deterministic Git worktree lanes. After `Diagram Modules` acceptance,
+Core starts each Product Part draft session in its own precode lane while the
+main workspace keeps only the orchestration projection state.
+
+Accepted secondary Product Part briefs are checkpointed back to the main
+workspace sequentially. The lead Product Part receives the full accepted brief
+texts inline only after those checkpoints are complete, and its Development
+Order Plan continues in the lead Product Part lane instead of writing the
+pre-code plan into the main workspace.
+
+Clear/undo for Product Part roots now removes lane worktrees, their temporary
+branches, continuity state, and stale runtime session files before recreating a
+fresh precode lane for the selected Product Part.
+
+Retest focus: reset the test workspace to the questionnaire, run through
+`Diagram Modules`, and verify that Product Part sessions appear in Project
+Manager while main Git stays clean. Accept secondary Product Part briefs first,
+then the lead brief; the lead order-plan turn should start only after accepted
+brief checkpoints are present.
+
+**Previous Release — v1.2.501** (Product Part Turn Serialization)
 
 This release fixes the Codex refresh-token race found during the v1.2.500
 retest. When `Diagram Modules` is accepted, the managed review action path now

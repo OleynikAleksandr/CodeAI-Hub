@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "43c7c975c",
+  "lastRecordedCommit": "9bce57572",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.worktree-lane-clear.task1",
-  "expectedCommitMessage": "fix: clear product part worktree lanes safely",
+  "currentTaskId": "devtree-early-pp.phase4.release-docs-502-worktree.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.502",
   "debt": {
-    "expectedCommitMessage": "fix: clear product part worktree lanes safely",
-    "preCommitHead": "43c7c975c",
+    "expectedCommitMessage": "docs: prepare release 1.2.502",
+    "preCommitHead": "9bce57572",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.worktree-lane-clear.task1"
+    "taskId": "devtree-early-pp.phase4.release-docs-502-worktree.task1"
   }
 }
 ```
@@ -235,14 +235,21 @@
 125. [DONE] `devtree-early-pp.phase4.worktree-lane-merge.task1` Реализовать sequential Core-owned merge/copy accepted Product Part brief из lane worktree обратно в main workspace после user acceptance; lead Product Part стартует только после accepted secondary lane merges и получает briefs inline (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/**, doc/TODO/todo-plan.md`; expected commit: `fix: merge accepted product part briefs from lanes`).
 126. [DONE] Git Commit: `fix: merge accepted product part briefs from lanes` (hash: 43c7c975c)
 127. [DONE] `devtree-early-pp.phase4.worktree-lane-clear.task1` Подключить clear/undo для Product Part lanes: до merge удалить worktree/branch/session state, после merge делать последовательный revert merge/accepted commit и cleanup lane runtime (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: clear product part worktree lanes safely`).
-128. [PENDING] Git Commit: `fix: clear product part worktree lanes safely` (hash: TBD)
-129. [TODO] `devtree-early-pp.phase4.worktree-lane-verify.task1` Выполнить targeted Core/Project Manager verification для Product Part worktree lanes: Diagram Modules acceptance оставляет main workspace clean, Product Part sessions видны, secondary accepted briefs merge sequentially, lead waits for briefs (scope: `packages/core, src/client/project-manager`; expected commit: none).
-130. [TODO] `devtree-early-pp.phase4.release-confirm-502-worktree.task1` Получить отдельное подтверждение пользователя на релизную сборку после Product Part worktree-lane refactor (scope: `manual confirmation`; expected commit: none).
+128. [DONE] Git Commit: `fix: clear product part worktree lanes safely` (hash: 9bce57572)
+129. [DONE] `devtree-early-pp.phase4.worktree-lane-verify.task1` Выполнить targeted Core/Project Manager verification для Product Part worktree lanes: Diagram Modules acceptance оставляет main workspace clean, Product Part sessions видны, secondary accepted briefs merge sequentially, lead waits for briefs (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: Verification passed: @codeai-hub/core build; targeted Development Tree Product Part lane tests 13/13; typecheck:webview; build:project-manager; build:webview.
+130. [DONE] `devtree-early-pp.phase4.release-confirm-502-worktree.task1` Получить отдельное подтверждение пользователя на релизную сборку после Product Part worktree-lane refactor (scope: `manual confirmation`; expected commit: none). Result: User explicitly confirmed release build 1.2.502 after Product Part worktree-lane refactor.
+
+### Stream: Release 1.2.502 Build
+
+131. [DONE] `devtree-early-pp.phase4.release-docs-502-worktree.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.502 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.502`).
+132. [PENDING] Git Commit: `docs: prepare release 1.2.502` (hash: TBD)
+133. [TODO] `devtree-early-pp.phase4.release-build-502-worktree.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.502`).
+134. [TODO] Git Commit: `chore: release 1.2.502` (hash: TBD)
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
 ### Stream: Archive And Dispose
 
-131. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-132. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-133. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+135. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+136. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
+137. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.502] - 2026-06-13
+### Fixed
+- **Product Part pre-code work now runs in deterministic worktree lanes.** After `Diagram Modules` acceptance, Product Part draft sessions start in per-part precode Git worktrees while the main workspace keeps only Core-owned orchestration projection state.
+- **Accepted secondary Product Part briefs checkpoint back to main sequentially.** The lead Product Part Development Order Plan prompt is dispatched only after all accepted Product Part briefs are present in main and embedded inline in the lead assignment.
+- **Product Part root clear/undo now cleans lane runtime state.** Clear removes Product Part lane worktrees, temporary branches, continuity state, stale unified/provider sessions, then recreates a fresh precode lane for the selected Product Part.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --test-reporter=spec packages/core/dist/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.js packages/core/dist/remote-bridge/handlers/development-tree-product-part-lane-projected-session.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-review-controller.lane.test.js packages/core/dist/remote-bridge/handlers/product-part-development-brief-review-controller.prompt.test.js packages/core/dist/development-tree/development-tree-user-gate-cursor.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-development-tree-node.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.501] - 2026-06-13
 ### Fixed
 - **Product Part bootstrap from Diagram Modules review actions now waits for each initial agent turn.** The managed review action path now wraps the Development Tree agent gateway with `waitForInitialTurnSettled`, matching the Quality Gates handoff path.
