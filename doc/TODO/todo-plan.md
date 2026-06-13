@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "5aff7d08f",
+  "lastRecordedCommit": "c5772f6a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-docs-501.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.501",
+  "currentTaskId": "devtree-early-pp.phase4.release-build-501.task1",
+  "expectedCommitMessage": "chore: release 1.2.501",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.501",
-    "preCommitHead": "5aff7d08f",
+    "expectedCommitMessage": "chore: release 1.2.501",
+    "preCommitHead": "c5772f6a7",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-docs-501.task1"
+    "taskId": "devtree-early-pp.phase4.release-build-501.task1"
   }
 }
 ```
@@ -205,9 +205,9 @@
 105. [DONE] `devtree-early-pp.phase4.product-part-turn-wait-verify.task1` Выполнить targeted Core verification для Diagram Modules review acceptance/Product Part bootstrap serialization (scope: `packages/core`; expected commit: none). Result: Targeted Core verification passed for Product Part turn serialization
 106. [DONE] `devtree-early-pp.phase4.release-confirm-501.task1` Получить отдельное подтверждение пользователя на релизную сборку после auth-race фикса (scope: `manual confirmation`; expected commit: none). Result: User explicitly requested release build 1.2.501
 107. [DONE] `devtree-early-pp.phase4.release-docs-501.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.501 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.501`). Result: README/CHANGELOG prepared for release 1.2.501 with Product Part turn serialization retest notes.
-108. [PENDING] Git Commit: `docs: prepare release 1.2.501` (hash: TBD)
-109. [TODO] `devtree-early-pp.phase4.release-build-501.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.501`).
-110. [TODO] Git Commit: `chore: release 1.2.501` (hash: TBD)
+108. [DONE] Git Commit: `docs: prepare release 1.2.501` (hash: c5772f6a7)
+109. [DONE] `devtree-early-pp.phase4.release-build-501.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.501`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.501.vsix` (5.2M); tarball'ы 1.2.501 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
+110. [PENDING] Git Commit: `chore: release 1.2.501` (hash: TBD)
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-12)
 
