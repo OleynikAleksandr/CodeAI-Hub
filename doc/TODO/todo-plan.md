@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "6b493b2e4",
+  "lastRecordedCommit": "87a9eb528",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.diagram-last-active-persist.task1",
-  "expectedCommitMessage": "fix: persist diagram handoff active stage",
+  "currentTaskId": "devtree-early-pp.phase4.diagram-last-active-persist-test.task1",
+  "expectedCommitMessage": "test: cover diagram handoff last active state",
   "debt": {
-    "expectedCommitMessage": "fix: persist diagram handoff active stage",
-    "preCommitHead": "6b493b2e4",
+    "expectedCommitMessage": "test: cover diagram handoff last active state",
+    "preCommitHead": "87a9eb528",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.diagram-last-active-persist.task1"
+    "taskId": "devtree-early-pp.phase4.diagram-last-active-persist-test.task1"
   }
 }
 ```
@@ -333,9 +333,9 @@
 ### Stream: Diagram Modules Persistent Last Active 1.2.508
 
 196. [DONE] `devtree-early-pp.phase4.diagram-last-active-persist.task1` При acceptance `Diagram Modules` persistently записывать `workflow/state.json.lastActive.stage=application_skeleton`, чтобы Project Manager snapshot мог восстановить переход на карточку `Application Skeleton` без realtime event (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist diagram handoff active stage`).
-197. [PENDING] Git Commit: `fix: persist diagram handoff active stage` (hash: TBD)
-198. [TODO] `devtree-early-pp.phase4.diagram-last-active-persist-test.task1` Покрыть regression test: после `acceptDiagramModulesReviewWithoutRevision` Core workflow state содержит `lastActive.stage=application_skeleton` и ожидаемый artifact path (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram handoff last active state`).
-199. [TODO] Git Commit: `test: cover diagram handoff last active state` (hash: TBD)
+197. [DONE] Git Commit: `fix: persist diagram handoff active stage` (hash: 87a9eb528)
+198. [DONE] `devtree-early-pp.phase4.diagram-last-active-persist-test.task1` Покрыть regression test: после `acceptDiagramModulesReviewWithoutRevision` Core workflow state содержит `lastActive.stage=application_skeleton` и ожидаемый artifact path (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram handoff last active state`).
+199. [PENDING] Git Commit: `test: cover diagram handoff last active state` (hash: TBD)
 200. [TODO] `devtree-early-pp.phase4.diagram-last-active-persist-verify.task1` Выполнить targeted Core/Project Manager verification для persisted lastActive handoff после `Diagram Modules` acceptance (scope: `packages/core, src/client/project-manager`; expected commit: none).
 201. [TODO] `devtree-early-pp.phase4.release-confirm-508.task1` Получить отдельное подтверждение пользователя на релизную сборку 1.2.508 после persisted Diagram Modules handoff фикса (scope: `manual confirmation`; expected commit: none).
 202. [TODO] `devtree-early-pp.phase4.release-docs-508.task1` После подтверждения подготовить README/CHANGELOG и active plan на будущую версию 1.2.508 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.508`).

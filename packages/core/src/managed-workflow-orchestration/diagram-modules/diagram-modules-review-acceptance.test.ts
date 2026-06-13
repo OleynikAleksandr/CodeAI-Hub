@@ -24,7 +24,16 @@ const MANUAL_NOTES_TRACKED_RE = /manual-notes\.md/u;
 const REVIEW_DISPOSITION_RE =
   /Git Commit: `docs: open diagram modules user review` \(hash: [0-9a-f]{7,}\)/u;
 const WORKSPACE_SLUG = "demo-workspace";
+const APPLICATION_SKELETON_ARTIFACT_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
+const WORKFLOW_STATE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`;
 const execFileAsync = promisify(execFile);
+
+interface WorkflowStateForTest {
+  readonly lastActive?: {
+    readonly artifactPath?: string;
+    readonly stage?: string;
+  };
+}
 
 const git = async (
   workspaceRoot: string,
@@ -101,7 +110,10 @@ test("Diagram Modules review acceptance opens persistent return and unlocks Appl
 
     assert.equal(await isDiagramModulesReviewOpen(workspaceRoot), true);
 
-    await acceptDiagramModulesReviewWithoutRevision({ workspaceRoot });
+    await acceptDiagramModulesReviewWithoutRevision({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
 
     const stagePlan = await readWorkspaceFile(
       workspaceRoot,
@@ -119,6 +131,14 @@ test("Diagram Modules review acceptance opens persistent return and unlocks Appl
     assert.match(workspacePlan, DIAGRAM_COMPLETED_RE);
     assert.match(workspacePlan, APP_UNLOCKED_RE);
     assert.match(workspacePlan, APP_ACTIVE_RE);
+    const workflowState = JSON.parse(
+      await readWorkspaceFile(workspaceRoot, WORKFLOW_STATE_PATH)
+    ) as WorkflowStateForTest;
+    assert.equal(workflowState.lastActive?.stage, "application_skeleton");
+    assert.equal(
+      workflowState.lastActive?.artifactPath,
+      APPLICATION_SKELETON_ARTIFACT_PATH
+    );
     assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
