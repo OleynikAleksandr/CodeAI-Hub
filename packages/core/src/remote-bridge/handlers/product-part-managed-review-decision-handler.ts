@@ -150,6 +150,12 @@ export const handleProductPartManagedReviewDecision = async (
     return false;
   }
   deps.eventMessages.appendCoreMessage(options.sessionId, result.message);
+  if (result.targetCoreMessage) {
+    deps.eventMessages.appendCoreMessage(result.targetCoreMessage.sessionId, {
+      content: result.targetCoreMessage.content,
+      tag: result.targetCoreMessage.tag,
+    });
+  }
   if (result.nextInternalMessage) {
     await deps.messageDispatch.sendInternalMessage(
       options.sessionId,
