@@ -12,7 +12,6 @@ import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
   buildDevelopmentTreeLockedNodes,
   buildDevelopmentTreeNodes,
-  resolveInitialDevelopmentTreeExpansion,
 } from "./workspace-tree-diagram-branch-nodes";
 import {
   useWorkspaceTreeAutoSelect,
@@ -29,6 +28,10 @@ import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulati
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import { useStepProviderResolver } from "./use-step-provider-resolver";
 import { renderTypeMarker } from "./workspace-tree-type-marker";
+import {
+  resolveUserGateNodeTargets,
+  useWorkspaceTreeUserGateFocus,
+} from "./workspace-tree-user-gate-focus";
 const USER_MESSAGES_CATEGORY = "system_feedback";
 const isTechnicalStageRewriteBoundaryActive = (
   workflowState: WorkflowStateSnapshot | null
@@ -37,32 +40,6 @@ const isTechnicalStageRewriteBoundaryActive = (
   workflowState.stages.diagram_modules !== "idle";
 const isReadOnlyUpstreamStage = (stage: WorkflowStageId): boolean =>
   stage === "description" || stage === "virtual_simulation";
-type UserGateCursorView = {
-  readonly activeUserGate?: { readonly nodeId?: string } | null;
-  readonly queuedUserGates?: readonly { readonly nodeId?: string }[];
-};
-const CLUSTER_USER_GATE_NODE_ID_RE = /^cluster:([^/]+)\/(.+)$/u;
-const normalizeUserGateNodeId = (nodeId?: string): string | null => {
-  const clusterMatch =
-    typeof nodeId === "string" ? nodeId.match(CLUSTER_USER_GATE_NODE_ID_RE) : null;
-  return typeof nodeId !== "string"
-    ? null
-    : clusterMatch
-      ? `devtree:${clusterMatch[1]}:${clusterMatch[2]}`
-      : nodeId.startsWith("product-part:")
-        ? `devtree:${nodeId.slice("product-part:".length)}`
-        : nodeId;
-};
-const createDevelopmentTreeExpansionKey = (
-  nodes: readonly TreeNode[]
-): string =>
-  nodes
-    .map(
-      (part) =>
-        `${part.id}:${(part.children ?? []).map((child) => child.id).join("|")}`
-    )
-    .join(";");
-
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -80,9 +57,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const [expandedNodes, setExpandedNodes] = useState<
     Readonly<Record<string, boolean>>
   >({});
-  const [autoExpandedTreeKey, setAutoExpandedTreeKey] = useState<string | null>(
-    null
-  );
   const [openPartId, setOpenPartId] = useState<string | null>(null);
   const [openClusterId, setOpenClusterId] = useState<string | null>(null);
   const activeStage = useWorkspaceTreeActiveStage(selectedWorkspaceId);
@@ -185,7 +159,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     }
     markWorkspaceChanged();
     setExpandedNodes({});
-    setAutoExpandedTreeKey(null);
     setOpenPartId(null);
     setOpenClusterId(null);
   }, [
@@ -267,31 +240,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     selectedWorkspaceId && devTreeNodes.length === 0
       ? buildDevelopmentTreeLockedNodes(workflowState, 0)
       : [];
-  const devTreeExpansionKey =
-    selectedWorkspaceId && devTreeNodes.length > 0
-      ? `${selectedWorkspaceId}:${createDevelopmentTreeExpansionKey(devTreeNodes)}`
-      : null;
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
-  const userGateCursor = workflowState?.userGateCursor as
-    | UserGateCursorView
-    | undefined;
-  const activeGateNodeId = normalizeUserGateNodeId(
-    userGateCursor?.activeUserGate?.nodeId
+  const { activeGateNodeId, queuedGateNodeIds } = resolveUserGateNodeTargets(
+    workflowState?.userGateCursor
   );
-  const queuedGateNodeIds = new Set(
-    (userGateCursor?.queuedUserGates ?? [])
-      .map((gate) => normalizeUserGateNodeId(gate.nodeId))
-      .filter((nodeId): nodeId is string => Boolean(nodeId))
-  );
-  useEffect(() => {
-    if (!devTreeExpansionKey || autoExpandedTreeKey === devTreeExpansionKey) {
-      return;
-    }
-    const initialExpansion = resolveInitialDevelopmentTreeExpansion(devTreeNodes);
-    setAutoExpandedTreeKey(devTreeExpansionKey);
-    setOpenPartId(initialExpansion.partId);
-    setOpenClusterId(initialExpansion.clusterId);
-  }, [autoExpandedTreeKey, devTreeExpansionKey, devTreeNodes]);
+  useWorkspaceTreeUserGateFocus({
+    activeGateNodeId,
+    devTreeLockedNodes,
+    devTreeNodes,
+    trunkNodes,
+  });
 
   const renderItemClass = (node: TreeNode) =>
     [

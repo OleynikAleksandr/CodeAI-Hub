@@ -8,15 +8,15 @@
   "planId": "development-tree-early-product-part-precode-bootstrap-2026-06-12",
   "branch": "main",
   "baseHead": "8f8d9b8c8",
-  "lastRecordedCommit": "3e78cdcf1",
+  "lastRecordedCommit": "95ce88ff3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "devtree-early-pp.phase4.release-build-503.task1",
-  "expectedCommitMessage": "chore: release 1.2.503",
+  "currentTaskId": "devtree-early-pp.phase4.user-gate-focus-ui.task1",
+  "expectedCommitMessage": "fix: focus active user gate sessions",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.503",
-    "preCommitHead": "3e78cdcf1",
+    "expectedCommitMessage": "fix: focus active user gate sessions",
+    "preCommitHead": "95ce88ff3",
     "stage": "commit_pending",
-    "taskId": "devtree-early-pp.phase4.release-build-503.task1"
+    "taskId": "devtree-early-pp.phase4.user-gate-focus-ui.task1"
   }
 }
 ```
@@ -266,10 +266,22 @@
 148. [DONE] `devtree-early-pp.phase4.release-docs-503.task1` Подготовить README/CHANGELOG и active plan на будущую версию 1.2.503 перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.503`).
 149. [DONE] Git Commit: `docs: prepare release 1.2.503` (hash: 3e78cdcf1)
 150. [DONE] `devtree-early-pp.phase4.release-build-503.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.503`). Result: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty` завершились успешно; VSIX: `codeai-hub-1.2.503.vsix` (5.3M); tarball'ы 1.2.503 находятся в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
-151. [PENDING] Git Commit: `chore: release 1.2.503` (hash: TBD)
+151. [DONE] Git Commit: `chore: release 1.2.503` (hash: 95ce88ff3)
+
+### Stream: User Workflow Acceptance Testing
+
+152. [BLOCKED] `devtree-early-pp.phase4.user-retest-503.task1` Пользователь тестирует релиз 1.2.503: Product Part agents получают exact draft target paths; если lead Product Part draft завершается раньше secondary, Core показывает waiting/validation message без кнопки `Подтверждаю`; secondary Product Part briefs принимаются первыми; после принятия последнего secondary Core открывает lead review card в lead session; Development Order Plan стартует только после принятия lead brief (scope: `manual retest`; expected commit: none). Result: Базовая очередность secondary-before-lead подтвердилась, но UI Development Tree сбивает пользователя: первый Product Part раскрывается автоматически, активный user-gate marker не выбирает свою сессию автоматически, а клик по имени узла одновременно выбирает и раскрывает/сворачивает дерево.
+
+### Stream: User Gate Focus UX
+
+153. [DONE] `devtree-early-pp.phase4.user-gate-focus-ui.task1` Подключить UI auto-focus к Core-owned active user gate: активный Documentation/Development Tree gate должен автоматически выбирать свой узел и показывать его сессию/review card, а Product Part ветки не должны стартово раскрываться сами (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: focus active user gate sessions`).
+154. [PENDING] Git Commit: `fix: focus active user gate sessions` (hash: TBD)
+155. [TODO] `devtree-early-pp.phase4.marker-toggle-ui.task1` Разделить выбор узла и раскрытие дерева: клик по P/C/M marker раскрывает/сворачивает collapsible узел, клик по имени только выбирает/открывает сессию/артефакт; добавить reset-style для marker button (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: separate tree marker toggles from selection`).
+156. [TODO] Git Commit: `fix: separate tree marker toggles from selection` (hash: TBD)
+157. [TODO] `devtree-early-pp.phase4.user-gate-focus-verify.task1` Выполнить targeted Project Manager verification для auto-focus active user gate, collapsed Product Part default и marker-only toggles (scope: `src/client/project-manager`; expected commit: none).
+158. [TODO] `devtree-early-pp.phase4.release-confirm-504.task1` Получить отдельное подтверждение пользователя на релизную сборку после UX фикса user-gate focus/toggle (scope: `manual confirmation`; expected commit: none).
 
 ### Stream: Archive And Dispose
 
-153. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
-154. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)
-151. [TODO] `devtree-early-pp.phase5.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+159. [TODO] `devtree-early-pp.phase5.closeout.task1` После явного acceptance пользователя закрыть scope, архивировать `todo-plan.md`, актуализировать disposition planning-документов и оставить активными только незавершённые стратегические Plans (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree early product part precode bootstrap scope`).
+160. [TODO] Git Commit: `docs: close development tree early product part precode bootstrap scope` (hash: TBD)

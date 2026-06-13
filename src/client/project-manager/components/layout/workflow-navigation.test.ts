@@ -19,6 +19,10 @@ const WORKSPACE_TREE_AUTO_SELECT_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/workspace-tree-auto-select.ts"
 );
+const WORKSPACE_TREE_USER_GATE_FOCUS_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts"
+);
 const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
@@ -30,12 +34,14 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     mainAreaSource,
     workspaceTreeSource,
     workspaceTreeAutoSelectSource,
+    workspaceTreeUserGateFocusSource,
     mainAreaWorkflowStateSource,
   ] = await Promise.all([
       readFile(MAIN_AREA_UTILS_PATH, "utf8"),
       readFile(MAIN_AREA_PATH, "utf8"),
       readFile(WORKSPACE_TREE_PATH, "utf8"),
       readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
+      readFile(WORKSPACE_TREE_USER_GATE_FOCUS_PATH, "utf8"),
       readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
     ]);
 
@@ -129,14 +135,29 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "workspace tree must render a dedicated selected-stage modifier"
   );
   assert.equal(
-    workspaceTreeSource.includes("CLUSTER_USER_GATE_NODE_ID_RE"),
+    workspaceTreeSource.includes("useWorkspaceTreeUserGateFocus"),
     true,
-    "workspace tree must normalize cluster user gate node ids"
+    "workspace tree must auto-select the active Core-owned user gate node"
   );
   assert.equal(
-    workspaceTreeSource.includes("`devtree:${clusterMatch[1]}:${clusterMatch[2]}`"),
+    workspaceTreeSource.includes("resolveInitialDevelopmentTreeExpansion"),
+    false,
+    "development tree must not auto-expand the first Product Part on hydration"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes("CLUSTER_USER_GATE_NODE_ID_RE"),
+    true,
+    "workspace tree user gate focus helper must normalize cluster user gate node ids"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes("`devtree:${clusterMatch[1]}:${clusterMatch[2]}`"),
     true,
     "cluster user gate ids must resolve to development tree cluster node ids"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes("activeNode.onSelect();"),
+    true,
+    "active user gate focus must reuse the node's existing selection route"
   );
   assert.equal(
     workspaceTreeAutoSelectSource.includes("resolveLastActiveStage"),
