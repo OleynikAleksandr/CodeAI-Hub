@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "3e4c9e2a5",
+  "lastRecordedCommit": "003e3d81a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.rollback-boundary-docs.task1",
-  "expectedCommitMessage": "docs: document skeleton clear product part boundary",
+  "currentTaskId": "qg-rebootstrap.phase4.release-511-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.511",
   "debt": {
-    "expectedCommitMessage": "docs: document skeleton clear product part boundary",
-    "preCommitHead": "3e4c9e2a5",
+    "expectedCommitMessage": "chore: release 1.2.511",
+    "preCommitHead": "003e3d81a",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.rollback-boundary-docs.task1"
+    "taskId": "qg-rebootstrap.phase4.release-511-build.task1"
   }
 }
 ```
@@ -104,9 +104,9 @@
 20. [DONE] `qg-rebootstrap.phase4.release-511-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию `1.2.511` перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.511`).
 21. [DONE] Git Commit: `docs: prepare release 1.2.511` (hash: 3e4c9e2a5)
 22. [DONE] `qg-rebootstrap.phase4.rollback-boundary-docs.task1` Зафиксировать SSOT-инвариант: clear `Application Skeleton` / `Quality Gates` сохраняет Product Part Development Tree lanes, а clear `Diagram Modules` удаляет их как downstream state (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document skeleton clear product part boundary`).
-23. [PENDING] Git Commit: `docs: document skeleton clear product part boundary` (hash: TBD)
-24. [TODO] `qg-rebootstrap.phase4.release-511-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.511`).
-25. [TODO] Git Commit: `chore: release 1.2.511` (hash: TBD)
+23. [DONE] Git Commit: `docs: document skeleton clear product part boundary` (hash: 003e3d81a)
+24. [DONE] `qg-rebootstrap.phase4.release-511-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.511`). Result: `./scripts/build-all.sh --allow-dirty` passed; `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX `codeai-hub-1.2.511.vsix` and 1.2.511 runtime tarballs are available.
+25. [PENDING] Git Commit: `chore: release 1.2.511` (hash: TBD)
 
 ### Stream: Release 1.2.511 User Retest
 
