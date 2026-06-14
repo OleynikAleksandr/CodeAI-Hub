@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.511] - 2026-06-14
+### Fixed
+- **Clearing `Application Skeleton` no longer removes Product Part Development Tree lanes.** Workflow rollback now preserves Product Part pre-code artifacts, managed decisions, continuity chains, continuity index entries, and Development Tree TODO scaffolds when the cleared stage is `Application Skeleton` or `Quality Gates Baseline`.
+- **Clearing `Diagram Modules` still removes Product Part lanes as downstream state.** The preserve/restore path is intentionally disabled for `Diagram Modules` and earlier documentation steps.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-application-skeleton-boundary.test.ts`
+- `npm run lint`
+- `./scripts/check-architecture.sh`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.510] - 2026-06-13
 ### Fixed
 - **Quality Gates no longer reboots Product Part pre-code lanes.** The stale `Quality Gates Baseline` terminal handoff bootstrap helper/API was removed, so Product Part sessions start from accepted `Diagram Modules` or explicit Product Part recovery paths only.

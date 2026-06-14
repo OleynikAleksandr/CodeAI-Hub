@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.510** (Quality Gates Product Part Boundary)
+**Current Release — v1.2.511** (Application Skeleton Clear Boundary)
+
+This bugfix release corrects workflow Clear/Undo isolation after the
+Development Tree starts. Clearing `Application Skeleton` or `Quality Gates
+Baseline` now preserves Product Part Development Tree sessions/lanes that were
+created from accepted `Diagram Modules`.
+
+Clearing `Diagram Modules` or an earlier documentation step still removes the
+Product Part lanes, because those lanes are downstream of the accepted diagram
+model.
+
+Retest focus: after Product Part sessions have been created from
+`Diagram Modules`, clear `Application Skeleton`. The Product Part Development
+Tree sessions, continuity, managed decisions, and TODO scaffolds should remain.
+Then clear `Diagram Modules`; those Product Part lanes should be removed.
+
+**Previous Release — v1.2.510** (Quality Gates Product Part Boundary)
 
 This release removes the stale `Quality Gates Baseline` to Product Part
 bootstrap path. Product Part pre-code lanes now start only from accepted

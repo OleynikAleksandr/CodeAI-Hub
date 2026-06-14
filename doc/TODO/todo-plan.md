@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "af28859ee",
+  "lastRecordedCommit": "6df76bc93",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.app-skeleton-clear.task1",
-  "expectedCommitMessage": "fix: preserve product part lanes on skeleton clear",
+  "currentTaskId": "qg-rebootstrap.phase4.release-511-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.511",
   "debt": {
-    "expectedCommitMessage": "fix: preserve product part lanes on skeleton clear",
-    "preCommitHead": "af28859ee",
+    "expectedCommitMessage": "docs: prepare release 1.2.511",
+    "preCommitHead": "6df76bc93",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.app-skeleton-clear.task1"
+    "taskId": "qg-rebootstrap.phase4.release-511-docs.task1"
   }
 }
 ```
@@ -92,13 +92,30 @@
 ### Stream: Application Skeleton Clear Boundary
 
 16. [DONE] `qg-rebootstrap.phase4.app-skeleton-clear.task1` Исправить workflow rollback: clear `Application Skeleton` / `Quality Gates` обязан сохранять Development Tree Product Part pre-code состояние, созданное accepted `Diagram Modules`; clear `Diagram Modules` и выше по-прежнему удаляет Development Tree state (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-application-skeleton-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: preserve product part lanes on skeleton clear`).
-17. [PENDING] Git Commit: `fix: preserve product part lanes on skeleton clear` (hash: TBD)
-18. [TODO] `qg-rebootstrap.phase4.app-skeleton-clear-verify.task1` Выполнить targeted regression tests и Core build для workflow clear rollback boundary (scope: `packages/core`; expected commit: none).
+17. [DONE] Git Commit: `fix: preserve product part lanes on skeleton clear` (hash: 6df76bc93)
+18. [DONE] `qg-rebootstrap.phase4.app-skeleton-clear-verify.task1` Выполнить targeted regression tests и Core build для workflow clear rollback boundary (scope: `packages/core`; expected commit: none). Result: passed: npx tsx --test workflow-step-clear-service.test.ts workflow-step-clear-application-skeleton-boundary.test.ts; npm run lint; ./scripts/check-architecture.sh; npm run build --workspace @codeai-hub/core
+
+### Stream: Release 1.2.511 Confirmation
+
+19. [DONE] `qg-rebootstrap.phase4.release-511-confirmation.task1` Запросить у пользователя явное подтверждение на сборку bugfix-релиза после исправления Application Skeleton Clear boundary; без подтверждения не запускать release notes, version bump, `build-all.sh` или `build-release.sh` (scope: release confirmation gate; expected commit: none). Result: confirmed: user requested building bugfix release 1.2.511
+
+### Stream: Release 1.2.511 Build
+
+20. [DONE] `qg-rebootstrap.phase4.release-511-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию `1.2.511` перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.511`).
+21. [PENDING] Git Commit: `docs: prepare release 1.2.511` (hash: TBD)
+22. [TODO] `qg-rebootstrap.phase4.rollback-boundary-docs.task1` Зафиксировать SSOT-инвариант: clear `Application Skeleton` / `Quality Gates` сохраняет Product Part Development Tree lanes, а clear `Diagram Modules` удаляет их как downstream state (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document skeleton clear product part boundary`).
+23. [TODO] Git Commit: `docs: document skeleton clear product part boundary` (hash: TBD)
+24. [TODO] `qg-rebootstrap.phase4.release-511-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.511`).
+25. [TODO] Git Commit: `chore: release 1.2.511` (hash: TBD)
+
+### Stream: Release 1.2.511 User Retest
+
+26. [TODO] `qg-rebootstrap.phase4.release-511-user-retest.task1` Пользователь устанавливает и тестирует релиз `1.2.511`: clear `Application Skeleton` не должен удалять Product Part Development Tree sessions/lanes, clear `Diagram Modules` должен удалять их как downstream state (scope: manual retest; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-13)
 
 ### Stream: Closeout
 
-19. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-20. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
-21. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+27. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+28. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+29. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
