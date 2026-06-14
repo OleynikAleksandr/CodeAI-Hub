@@ -1,7 +1,8 @@
 # Курсор пользовательских review-gates в Development Tree
 
-**Статус:** активный bounded planning-документ для user-review cursor, открыт 2026-06-12; Product Part pre-code worktree lane slice реализован и принят в релизе `1.2.509`, дальнейшая открытая часть относится к будущим cluster/module/code gates.
+**Статус:** archived completed planning source, открыт 2026-06-12 и закрыт после пользовательского acceptance релиза `1.2.512`. Product Part pre-code worktree lane slice реализован и принят в релизе `1.2.509`; Core-owned review cursor / attention-marker fixes приняты в `1.2.512`.
 **Родительская стратегическая линия:** `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
+**Disposition:** стабильное поведение перенесено в `System/SystemArchitecture.md`, `System/WorkflowSteps_Overview.md`, `Clusters/ManagedWorkflowOrchestration.md` и `Docs_Index.md`; будущие cluster/module/code gates остаются в активной стратегической линии `Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
 **Область:** параллельное pre-code исполнение Development Tree в отдельных worktree lanes с Core-owned последовательным курсором user review и attention markers в дереве Project Manager.
 
 ## 1. Проблема

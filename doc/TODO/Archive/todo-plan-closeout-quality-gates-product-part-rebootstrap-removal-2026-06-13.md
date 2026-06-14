@@ -1,3 +1,18 @@
+# Plan Closeout: quality-gates-product-part-rebootstrap-removal-2026-06-13
+
+**Created:** 2026-06-14T08:17:14.231Z
+**Acceptance:** user accepted release 1.2.512 retest; managed review attention clears immediately after user action; scope complete
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** qg-rebootstrap.phase5.closeout.task1
+**Expected Commit:** docs: close quality gates rebootstrap removal scope
+**Last Recorded Commit:** fbb182d01
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_UserGateReviewCursor_Architecture.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_UserGateReviewCursor_Architecture.md",
   "currentTaskId": "qg-rebootstrap.phase5.closeout.task1",
   "expectedCommitMessage": "docs: close quality gates rebootstrap removal scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates rebootstrap removal scope",
-    "preCommitHead": "fbb182d01",
-    "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase5.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -139,6 +149,7 @@
 
 ### Stream: Closeout
 
-38. [DONE] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-39. [PENDING] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+38. [IN_PROGRESS] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+39. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
 40. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+````
