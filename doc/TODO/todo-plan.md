@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "39794248c",
+  "lastRecordedCommit": "e486a4b5d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.release-512-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.512",
+  "currentTaskId": "qg-rebootstrap.phase4.release-512-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.512",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.512",
-    "preCommitHead": "39794248c",
+    "expectedCommitMessage": "chore: release 1.2.512",
+    "preCommitHead": "e486a4b5d",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.release-512-docs.task1"
+    "taskId": "qg-rebootstrap.phase4.release-512-build.task1"
   }
 }
 ```
@@ -127,9 +127,9 @@
 ### Stream: Release 1.2.512 Build
 
 33. [DONE] `qg-rebootstrap.phase4.release-512-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию `1.2.512` перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.512`).
-34. [PENDING] Git Commit: `docs: prepare release 1.2.512` (hash: TBD)
-35. [TODO] `qg-rebootstrap.phase4.release-512-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.512`).
-36. [TODO] Git Commit: `chore: release 1.2.512` (hash: TBD)
+34. [DONE] Git Commit: `docs: prepare release 1.2.512` (hash: e486a4b5d)
+35. [DONE] `qg-rebootstrap.phase4.release-512-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.512`). Result: `./scripts/build-all.sh --allow-dirty` passed; `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX `codeai-hub-1.2.512.vsix` and 1.2.512 runtime tarballs are available.
+36. [PENDING] Git Commit: `chore: release 1.2.512` (hash: TBD)
 
 ### Stream: Release 1.2.512 User Retest
 
