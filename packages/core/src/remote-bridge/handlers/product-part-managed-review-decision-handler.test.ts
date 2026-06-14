@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { ClusterContractAgentBootstrapRequest } from "../../development-tree/node-bootstrap/cluster-contract-agent-bootstrapper";
 import type { Session } from "../../session-manager";
 import type { ProductPartDevelopmentBriefReviewController } from "./product-part-development-brief-review-controller";
 import { handleProductPartManagedReviewDecision } from "./product-part-managed-review-decision-handler";
@@ -8,11 +7,10 @@ import { handleProductPartManagedReviewDecision } from "./product-part-managed-r
 const WORKSPACE_ROOT = "/tmp/finder-widget";
 const WORKSPACE_SLUG = "finderwidget-test01";
 const PART_ID = "finder-widget";
-const CLUSTER_ID = "note-selection-cluster";
 const SESSION_ID = "lead-session-1";
 const STAGE = `development_tree/materialized/product-parts/${PART_ID}`;
 const ACCEPTED_MESSAGE_RE = /accepted/u;
-const CLUSTER_WAVE_STARTED_RE = /first prompt sent/u;
+const CLUSTER_WAVE_STARTED_RE = /first cluster-contract wave|first prompt/u;
 const LEAD_REVIEW_SESSION_ID = "lead-review-session-1";
 const MODEL_BINDING = {
   baseModelId: "gpt-5.4-mini",
@@ -46,37 +44,12 @@ const createSession = (): Session => ({
   workspacePath: WORKSPACE_ROOT,
 });
 
-test("Product Part order-plan review acceptance starts first cluster wave", async () => {
+test("Product Part order-plan review acceptance does not start cluster wave", async () => {
   const dialogMessages: string[] = [];
   const coreMessages: string[] = [];
   const sentInternalMessages: string[] = [];
-  const bootstrapRequests: ClusterContractAgentBootstrapRequest[] = [];
 
   const handled = await handleProductPartManagedReviewDecision({
-    createClusterWaveBootstrapper: () => ({
-      bootstrapFirstWave: (request) => {
-        bootstrapRequests.push(request);
-        return Promise.resolve([
-          {
-            branchName: "codex/finder-widget/note-selection-cluster",
-            clusterId: CLUSTER_ID,
-            firstMessageSent: true,
-            plan: {
-              absolutePath: `${WORKSPACE_ROOT}.worktrees/${CLUSTER_ID}/doc/TODO/todo-plan.md`,
-              action: "created",
-              relativePath: "doc/TODO/todo-plan.md",
-            },
-            sessionId: "cluster-session-1",
-            stage: `${STAGE}/clusters/${CLUSTER_ID}`,
-            worktreePath: `${WORKSPACE_ROOT}.worktrees/${CLUSTER_ID}`,
-          },
-        ]);
-      },
-    }),
-    developmentTreeAgentGateway: {
-      createSessionForWorkflow: () => Promise.resolve({ id: "unused" }),
-      handleMessage: () => Promise.resolve(),
-    },
     eventMessages: {
       appendCoreMessage: (_sessionId, message) => {
         coreMessages.push(String(message.content));
@@ -116,16 +89,8 @@ test("Product Part order-plan review acceptance starts first cluster wave", asyn
   assert.equal(handled, true);
   assert.deepEqual(dialogMessages, ["подтверждаю"]);
   assert.equal(sentInternalMessages.length, 0);
-  assert.deepEqual(bootstrapRequests, [
-    {
-      inheritedModelBinding: MODEL_BINDING,
-      partId: PART_ID,
-      workspaceRoot: WORKSPACE_ROOT,
-      workspaceSlug: WORKSPACE_SLUG,
-    },
-  ]);
   assert.match(coreMessages.join("\n"), ACCEPTED_MESSAGE_RE);
-  assert.match(coreMessages.join("\n"), CLUSTER_WAVE_STARTED_RE);
+  assert.doesNotMatch(coreMessages.join("\n"), CLUSTER_WAVE_STARTED_RE);
 });
 
 test("Product Part brief acceptance dispatches promoted lead review message to lead session", async () => {

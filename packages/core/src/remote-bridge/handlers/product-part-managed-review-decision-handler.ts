@@ -1,9 +1,3 @@
-import {
-  ClusterContractAgentBootstrapper,
-  type ClusterContractAgentBootstrapRequest,
-  type ClusterContractAgentBootstrapResult,
-  type ClusterContractAgentSessionGateway,
-} from "../../development-tree/node-bootstrap/cluster-contract-agent-bootstrapper";
 import type { Session } from "../../session-manager";
 import { ProductPartDevelopmentBriefReviewController } from "./product-part-development-brief-review-controller";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
@@ -31,21 +25,7 @@ interface ProductPartReviewControllerLike {
   >;
 }
 
-interface ClusterWaveBootstrapperLike {
-  readonly bootstrapFirstWave: (
-    request: ClusterContractAgentBootstrapRequest
-  ) => Promise<readonly ClusterContractAgentBootstrapResult[]>;
-}
-
-interface FirstWaveSignal {
-  readonly startFirstWave?: { readonly partId: string };
-}
-
 interface ProductPartManagedReviewDecisionDeps {
-  readonly createClusterWaveBootstrapper?: (
-    session: ProductPartReviewSession
-  ) => ClusterWaveBootstrapperLike;
-  readonly developmentTreeAgentGateway?: ClusterContractAgentSessionGateway;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage"
@@ -84,49 +64,6 @@ const appendUserReviewMessage = (
   });
 };
 
-const buildClusterWaveStartedMessage = (
-  results: readonly ClusterContractAgentBootstrapResult[]
-): string =>
-  [
-    "Core: первая cluster-contract wave запущена по accepted Development Order Plan.",
-    ...results.map(
-      (result) =>
-        `- cluster \`${result.clusterId}\`: session \`${result.sessionId ?? "not-created"}\`, worktree \`${result.worktreePath}\`, first prompt ${result.firstMessageSent ? "sent" : "not-sent"}.`
-    ),
-  ].join("\n");
-
-const startFirstClusterWave = async (
-  deps: ProductPartManagedReviewDecisionDeps,
-  session: ProductPartReviewSession,
-  partId: string
-): Promise<void> => {
-  const gateway = deps.developmentTreeAgentGateway;
-  if (!gateway) {
-    deps.eventMessages.appendCoreMessage(session.id, {
-      content:
-        "Core: first cluster-contract wave cannot start because the Development Tree agent gateway is unavailable.",
-      tag: "managed-workflow-validation",
-    });
-    return;
-  }
-  const bootstrapper =
-    deps.createClusterWaveBootstrapper?.(session) ??
-    new ClusterContractAgentBootstrapper({
-      gateway,
-      providerId: session.providerId,
-    });
-  const results = await bootstrapper.bootstrapFirstWave({
-    inheritedModelBinding: session.modelBinding ?? null,
-    partId,
-    workspaceRoot: session.workspacePath,
-    workspaceSlug: session.initiativeSlug,
-  });
-  deps.eventMessages.appendCoreMessage(session.id, {
-    content: buildClusterWaveStartedMessage(results),
-    tag: "managed-workflow-assignment",
-  });
-};
-
 export const handleProductPartManagedReviewDecision = async (
   deps: ProductPartManagedReviewDecisionDeps
 ): Promise<boolean> => {
@@ -161,10 +98,6 @@ export const handleProductPartManagedReviewDecision = async (
       options.sessionId,
       result.nextInternalMessage
     );
-  }
-  const firstWave = (result as typeof result & FirstWaveSignal).startFirstWave;
-  if (firstWave) {
-    await startFirstClusterWave(deps, options.session, firstWave.partId);
   }
   return true;
 };
