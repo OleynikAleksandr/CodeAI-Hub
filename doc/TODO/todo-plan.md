@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "1e65a3997",
+  "lastRecordedCommit": "fcc79b2d7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-notes-refresh.task1",
-  "expectedCommitMessage": "docs: refresh release 1.2.515 notes",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-build.task1",
+  "expectedCommitMessage": "chore: build release 1.2.515",
   "debt": {
-    "expectedCommitMessage": "docs: refresh release 1.2.515 notes",
-    "preCommitHead": "1e65a3997",
+    "expectedCommitMessage": "chore: build release 1.2.515",
+    "preCommitHead": "fcc79b2d7",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-notes-refresh.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-build.task1"
   }
 }
 ```
@@ -116,12 +116,12 @@
 ### Stream: Release Notes Refresh
 
 21. [DONE] `devtree-main-doc-mode.phase7.release-notes-refresh.task1` Add the Development Tree locked-label fix to the `1.2.515` release notes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: refresh release 1.2.515 notes`).
-22. [PENDING] Git Commit: `docs: refresh release 1.2.515 notes` (hash: TBD)
+22. [DONE] Git Commit: `docs: refresh release 1.2.515 notes` (hash: fcc79b2d7)
 
 ### Stream: Release Assembly
 
-23. [TODO] `devtree-main-doc-mode.phase7.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.515`).
-24. [TODO] Git Commit: `chore: build release 1.2.515` (hash: TBD)
+23. [DONE] `devtree-main-doc-mode.phase7.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.515`).
+24. [PENDING] Git Commit: `chore: build release 1.2.515` (hash: TBD)
 
 ## Phase 7C - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
