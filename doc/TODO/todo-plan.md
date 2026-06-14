@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "ed65561aa",
+  "lastRecordedCommit": "1cf21e1f8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase2.bootstrap.task1",
-  "expectedCommitMessage": "fix: start product part documentation sessions in main workspace",
+  "currentTaskId": "devtree-main-doc-mode.phase3.checkpoint.task1",
+  "expectedCommitMessage": "fix: skip product part lane checkpoints in main workspace",
   "debt": {
-    "expectedCommitMessage": "fix: start product part documentation sessions in main workspace",
-    "preCommitHead": "ed65561aa",
+    "expectedCommitMessage": "fix: skip product part lane checkpoints in main workspace",
+    "preCommitHead": "1cf21e1f8",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase2.bootstrap.task1"
+    "taskId": "devtree-main-doc-mode.phase3.checkpoint.task1"
   }
 }
 ```
@@ -54,14 +54,14 @@
 ### Stream: Main Workspace Bootstrap
 
 3. [DONE] `devtree-main-doc-mode.phase2.bootstrap.task1` Refactor Product Part documentation bootstrap to use the main workspace instead of Product Part pre-code worktrees, and update the Diagram Modules acceptance regression test (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part documentation sessions in main workspace`).
-4. [PENDING] Git Commit: `fix: start product part documentation sessions in main workspace` (hash: TBD)
+4. [DONE] Git Commit: `fix: start product part documentation sessions in main workspace` (hash: 1cf21e1f8)
 
 ## Phase 3 - Product Part Acceptance Checkpoint (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Main Workspace Acceptance
 
-5. [TODO] `devtree-main-doc-mode.phase3.checkpoint.task1` Make Product Part accepted-brief/order-plan checkpoint helpers no-op when the Product Part session already runs in main, and update focused Product Part controller tests if needed (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: skip product part lane checkpoints in main workspace`).
-6. [TODO] Git Commit: `fix: skip product part lane checkpoints in main workspace` (hash: TBD)
+5. [DONE] `devtree-main-doc-mode.phase3.checkpoint.task1` Make Product Part accepted-brief/order-plan checkpoint helpers no-op when the Product Part session already runs in main, and update focused Product Part controller tests if needed (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: skip product part lane checkpoints in main workspace`).
+6. [PENDING] Git Commit: `fix: skip product part lane checkpoints in main workspace` (hash: TBD)
 
 ## Phase 4 - Documentation Alignment (owner: Codex, updated: 2026-06-14)
 

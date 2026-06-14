@@ -21,6 +21,7 @@ const ORDER_PLAN_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/mat
 const CONTINUITY_INDEX_PATH = `.codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`;
 const MATERIALIZED_MODULE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/clusters/${CLUSTER_ID}/modules/${MODULE_ID}`;
 const PLAN_PATH = `doc/TODO/stages/development-tree/product-parts/${PART_ID}/todo-plan.md`;
+const DECISION_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${PART_ID}.json`;
 const UNLOCK_STATE_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${PART_ID}.unlock-state.json`;
 const ACCEPTED_BRIEF_COMMIT_RE =
   /docs: update engine product part development brief/u;
@@ -58,7 +59,6 @@ const BRIEF_BOOTSTRAP_COMMIT =
   "docs: bootstrap product part development briefs";
 const BRIEF_ACCEPTED_COMMIT =
   "docs: update engine product part development brief";
-
 const writeWorkspaceFile = async (
   workspaceRoot: string,
   relativePath: string,
@@ -88,18 +88,15 @@ const commitAll = async (
   await runGit(workspaceRoot, ["add", "."]);
   await runGit(workspaceRoot, ["commit", "-m", message]);
 };
-
 const assertCleanGit = async (workspaceRoot: string): Promise<void> => {
   const { stdout } = await runGit(workspaceRoot, ["status", "--porcelain"]);
   assert.equal(stdout.trim(), "");
 };
-
 const readGitLog = async (
   workspaceRoot: string,
   maxCount: string
 ): Promise<string> =>
   (await runGit(workspaceRoot, ["log", "--oneline", maxCount])).stdout;
-
 const writeOrderPlanArtifacts = async (
   workspaceRoot: string
 ): Promise<void> => {
@@ -108,7 +105,6 @@ const writeOrderPlanArtifacts = async (
   await writeWorkspaceFile(workspaceRoot, ORDER_PLAN_PATH, markdown);
   await writeWorkspaceFile(workspaceRoot, ORDER_PLAN_JSON_PATH, json);
 };
-
 const createPlanState = (params: {
   readonly currentTaskId: string;
   readonly expectedCommitMessage: string;
@@ -433,6 +429,12 @@ test("Lead Product Part order plan review acceptance closes Product Part lane", 
     assert.match(plan, RETURN_AFTER_ORDER_PLAN_RE);
     assert.match(plan, ORDER_PLAN_EXPECTED_COMMIT_NULL_RE);
     assert.doesNotMatch(plan, NO_DOWNSTREAM_COORDINATION_RE);
+    assert.equal(
+      (
+        await readFile(path.join(workspaceRoot, DECISION_PATH), "utf8")
+      ).includes("accepted_order_plan_checkpoint"),
+      false
+    );
     const unlockState = await readFile(
       path.join(workspaceRoot, UNLOCK_STATE_PATH),
       "utf8"

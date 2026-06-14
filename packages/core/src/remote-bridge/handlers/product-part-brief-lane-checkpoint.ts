@@ -167,9 +167,14 @@ export const checkpointAcceptedProductPartOrderPlanFromLane = async (params: {
   readonly checkpointed: boolean;
   readonly workspaceRoot: string;
 }> => {
-  const mainWorkspaceRoot =
-    resolveMainWorkspaceRoot(params.laneWorkspaceRoot) ??
-    params.laneWorkspaceRoot;
+  const mainWorkspaceRoot = resolveMainWorkspaceRoot(params.laneWorkspaceRoot);
+  if (!mainWorkspaceRoot) {
+    return {
+      checkpointCommitHash: null,
+      checkpointed: false,
+      workspaceRoot: params.laneWorkspaceRoot,
+    };
+  }
   const orderPlanPath = createOrderPlanPath(params);
   const orderPlanJsonPath = createOrderPlanJsonPath(params);
   const decisionPath = createManagedDecisionPath(params);
