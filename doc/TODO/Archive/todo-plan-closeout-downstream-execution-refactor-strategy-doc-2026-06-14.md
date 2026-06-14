@@ -1,16 +1,31 @@
+# Plan Closeout: downstream-execution-refactor-strategy-doc-2026-06-14
+
+**Created:** 2026-06-14T14:01:25.575Z
+**Acceptance:** User accepted the downstream execution refactor strategy document and requested the next implementation cycle.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** planning-intake.downstream-refactor-doc.phase1.acceptance.task1
+**Expected Commit:** none
+**Last Recorded Commit:** dff6c8609
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
+  "executionScopeStatus": "ACTIVE",
   "planId": "downstream-execution-refactor-strategy-doc-2026-06-14",
   "branch": "main",
   "baseHead": "17e593ebf",
   "lastRecordedCommit": "dff6c8609",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md",
-  "currentTaskId": null,
+  "currentTaskId": "planning-intake.downstream-refactor-doc.phase1.acceptance.task1",
   "expectedCommitMessage": null,
   "debt": null
 }
@@ -46,8 +61,9 @@
 
 ### Stream: User Workflow Acceptance Testing
 
-4. [DONE] `planning-intake.downstream-refactor-doc.phase1.acceptance.task1` User reviews the updated planning document and either accepts it or requests corrections (scope: user workflow; expected commit: none). Result: User accepted the updated downstream execution refactor strategy document.
+4. [IN_PROGRESS] `planning-intake.downstream-refactor-doc.phase1.acceptance.task1` User reviews the updated planning document and either accepts it or requests corrections (scope: user workflow; expected commit: none).
 
 ### Stream: Scope Closeout
 
-5. [DONE] `planning-intake.downstream-refactor-doc.phase1.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Result: Scope closed by Plan Orchestrator; start a new plan only from NONE state.
+5. [TODO] `planning-intake.downstream-refactor-doc.phase1.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
