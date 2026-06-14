@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "b99b7a5d5",
+  "lastRecordedCommit": "af28859ee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase3.release-build.task1",
-  "expectedCommitMessage": "chore: release 1.2.510",
+  "currentTaskId": "qg-rebootstrap.phase4.app-skeleton-clear.task1",
+  "expectedCommitMessage": "fix: preserve product part lanes on skeleton clear",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.510",
-    "preCommitHead": "b99b7a5d5",
+    "expectedCommitMessage": "fix: preserve product part lanes on skeleton clear",
+    "preCommitHead": "af28859ee",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase3.release-build.task1"
+    "taskId": "qg-rebootstrap.phase4.app-skeleton-clear.task1"
   }
 }
 ```
@@ -43,7 +43,7 @@
 - Для штатного коммита использовать `npm run plan:commit -- "<expected commit message>"`.
 - Не обходить Husky hooks / quality gates.
 - Таргетные проверки: `npm run build --workspace @codeai-hub/core` и targeted tests по Quality Gates / Development Tree bootstrap.
-- **Release Build Confirmation Gate:** пользователь уже запросил новый релиз в этом сообщении; релизная сборка выполняется после зелёных фиксов и проверок.
+- **Release Build Confirmation Gate:** релиз `1.2.510` уже был собран по явному запросу пользователя; для следующего bugfix-релиза после новых фиксов нужно отдельное подтверждение пользователя.
 
 ## Phase 1 - Remove Quality Gates Product Part Rebootstrap (owner: Codex, updated: 2026-06-13)
 
@@ -81,18 +81,24 @@
 11. [DONE] `qg-rebootstrap.phase3.release-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.510`).
 12. [DONE] Git Commit: `docs: prepare release 1.2.510` (hash: b99b7a5d5)
 13. [DONE] `qg-rebootstrap.phase3.release-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.510`). Result: `./scripts/build-all.sh --allow-dirty` passed; `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX `codeai-hub-1.2.510.vsix` and 1.2.510 runtime tarballs are available.
-14. [PENDING] Git Commit: `chore: release 1.2.510` (hash: TBD)
+14. [DONE] Git Commit: `chore: release 1.2.510` (hash: af28859ee)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-13)
 
 ### Stream: Retest Quality Gates Boundary
 
-15. [TODO] `qg-rebootstrap.phase4.user-retest.task1` Пользователь тестирует релиз: после `Quality Gates Baseline` не должны повторно стартовать Product Part sessions/lanes; Product Part lanes должны стартовать только после accepted `Diagram Modules`, а Quality Gates должен завершаться persistent return без второго Development Tree bootstrap (scope: `manual retest`; expected commit: none).
+15. [DONE] `qg-rebootstrap.phase4.user-retest.task1` Пользователь тестирует релиз: после `Quality Gates Baseline` не должны повторно стартовать Product Part sessions/lanes; Product Part lanes должны стартовать только после accepted `Diagram Modules`, а Quality Gates должен завершаться persistent return без второго Development Tree bootstrap (scope: `manual retest`; expected commit: none). Result: failed: Application Skeleton Clear удаляет Development Tree Product Part sessions; требуется preserve Development Tree state до rollback
+
+### Stream: Application Skeleton Clear Boundary
+
+16. [DONE] `qg-rebootstrap.phase4.app-skeleton-clear.task1` Исправить workflow rollback: clear `Application Skeleton` / `Quality Gates` обязан сохранять Development Tree Product Part pre-code состояние, созданное accepted `Diagram Modules`; clear `Diagram Modules` и выше по-прежнему удаляет Development Tree state (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-application-skeleton-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: preserve product part lanes on skeleton clear`).
+17. [PENDING] Git Commit: `fix: preserve product part lanes on skeleton clear` (hash: TBD)
+18. [TODO] `qg-rebootstrap.phase4.app-skeleton-clear-verify.task1` Выполнить targeted regression tests и Core build для workflow clear rollback boundary (scope: `packages/core`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-13)
 
 ### Stream: Closeout
 
-16. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-17. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
-18. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+19. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+20. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+21. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
