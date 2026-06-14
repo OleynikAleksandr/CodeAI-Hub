@@ -8,15 +8,15 @@
   "planId": "product-part-lane-closeout-implementation-2026-06-14",
   "branch": "main",
   "baseHead": "5f388460e",
-  "lastRecordedCommit": "30d546a80",
+  "lastRecordedCommit": "ea3177cbc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md",
-  "currentTaskId": "product-part-lane-closeout.phase3.handler.task1",
-  "expectedCommitMessage": "fix: block cluster wave bootstrap after product part acceptance",
+  "currentTaskId": "product-part-lane-closeout.phase4.docs.task1",
+  "expectedCommitMessage": "docs: document product part lane closeout runtime",
   "debt": {
-    "expectedCommitMessage": "fix: block cluster wave bootstrap after product part acceptance",
-    "preCommitHead": "30d546a80",
+    "expectedCommitMessage": "docs: document product part lane closeout runtime",
+    "preCommitHead": "ea3177cbc",
     "stage": "commit_pending",
-    "taskId": "product-part-lane-closeout.phase3.handler.task1"
+    "taskId": "product-part-lane-closeout.phase4.docs.task1"
   }
 }
 ```
@@ -64,14 +64,14 @@
 ### Stream: Cluster Wave Guard
 
 7. [DONE] `product-part-lane-closeout.phase3.handler.task1` Remove Product Part acceptance-side cluster wave bootstrap dispatch and update its focused handler test (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: block cluster wave bootstrap after product part acceptance`).
-8. [PENDING] Git Commit: `fix: block cluster wave bootstrap after product part acceptance` (hash: TBD)
+8. [DONE] Git Commit: `fix: block cluster wave bootstrap after product part acceptance` (hash: ea3177cbc)
 
 ## Phase 4 - Documentation Alignment (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Runtime Contract Docs
 
-9. [TODO] `product-part-lane-closeout.phase4.docs.task1` Document the accepted Product Part lane closeout runtime in the canonical workflow docs (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: document product part lane closeout runtime`).
-10. [TODO] Git Commit: `docs: document product part lane closeout runtime` (hash: TBD)
+9. [DONE] `product-part-lane-closeout.phase4.docs.task1` Document the accepted Product Part lane closeout runtime in the canonical workflow docs (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: document product part lane closeout runtime`).
+10. [PENDING] Git Commit: `docs: document product part lane closeout runtime` (hash: TBD)
 
 ## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-06-14)
 
