@@ -1,4 +1,4 @@
-# CodeAI Hub
+# CodeAI Hub nitpicker-review
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
