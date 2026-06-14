@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "6df76bc93",
+  "lastRecordedCommit": "3e4c9e2a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.release-511-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.511",
+  "currentTaskId": "qg-rebootstrap.phase4.rollback-boundary-docs.task1",
+  "expectedCommitMessage": "docs: document skeleton clear product part boundary",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.511",
-    "preCommitHead": "6df76bc93",
+    "expectedCommitMessage": "docs: document skeleton clear product part boundary",
+    "preCommitHead": "3e4c9e2a5",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.release-511-docs.task1"
+    "taskId": "qg-rebootstrap.phase4.rollback-boundary-docs.task1"
   }
 }
 ```
@@ -102,9 +102,9 @@
 ### Stream: Release 1.2.511 Build
 
 20. [DONE] `qg-rebootstrap.phase4.release-511-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию `1.2.511` перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.511`).
-21. [PENDING] Git Commit: `docs: prepare release 1.2.511` (hash: TBD)
-22. [TODO] `qg-rebootstrap.phase4.rollback-boundary-docs.task1` Зафиксировать SSOT-инвариант: clear `Application Skeleton` / `Quality Gates` сохраняет Product Part Development Tree lanes, а clear `Diagram Modules` удаляет их как downstream state (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document skeleton clear product part boundary`).
-23. [TODO] Git Commit: `docs: document skeleton clear product part boundary` (hash: TBD)
+21. [DONE] Git Commit: `docs: prepare release 1.2.511` (hash: 3e4c9e2a5)
+22. [DONE] `qg-rebootstrap.phase4.rollback-boundary-docs.task1` Зафиксировать SSOT-инвариант: clear `Application Skeleton` / `Quality Gates` сохраняет Product Part Development Tree lanes, а clear `Diagram Modules` удаляет их как downstream state (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document skeleton clear product part boundary`).
+23. [PENDING] Git Commit: `docs: document skeleton clear product part boundary` (hash: TBD)
 24. [TODO] `qg-rebootstrap.phase4.release-511-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.511`).
 25. [TODO] Git Commit: `chore: release 1.2.511` (hash: TBD)
 
