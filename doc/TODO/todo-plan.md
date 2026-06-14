@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "4b16eed4e",
+  "lastRecordedCommit": "ed65561aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase1.plan.task1",
-  "expectedCommitMessage": "docs: plan main workspace product part documentation mode",
+  "currentTaskId": "devtree-main-doc-mode.phase2.bootstrap.task1",
+  "expectedCommitMessage": "fix: start product part documentation sessions in main workspace",
   "debt": {
-    "expectedCommitMessage": "docs: plan main workspace product part documentation mode",
-    "preCommitHead": "4b16eed4e",
+    "expectedCommitMessage": "fix: start product part documentation sessions in main workspace",
+    "preCommitHead": "ed65561aa",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase1.plan.task1"
+    "taskId": "devtree-main-doc-mode.phase2.bootstrap.task1"
   }
 }
 ```
@@ -47,14 +47,14 @@
 ### Stream: Planning Source And Todo Slice
 
 1. [DONE] `devtree-main-doc-mode.phase1.plan.task1` Create the operational planning document and active implementation todo slice (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md`; expected commit: `docs: plan main workspace product part documentation mode`).
-2. [PENDING] Git Commit: `docs: plan main workspace product part documentation mode` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan main workspace product part documentation mode` (hash: ed65561aa)
 
 ## Phase 2 - Product Part Documentation Bootstrap (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Main Workspace Bootstrap
 
-3. [TODO] `devtree-main-doc-mode.phase2.bootstrap.task1` Refactor Product Part documentation bootstrap to use the main workspace instead of Product Part pre-code worktrees, and update the Diagram Modules acceptance regression test (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part documentation sessions in main workspace`).
-4. [TODO] Git Commit: `fix: start product part documentation sessions in main workspace` (hash: TBD)
+3. [DONE] `devtree-main-doc-mode.phase2.bootstrap.task1` Refactor Product Part documentation bootstrap to use the main workspace instead of Product Part pre-code worktrees, and update the Diagram Modules acceptance regression test (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part documentation sessions in main workspace`).
+4. [PENDING] Git Commit: `fix: start product part documentation sessions in main workspace` (hash: TBD)
 
 ## Phase 3 - Product Part Acceptance Checkpoint (owner: Codex, updated: 2026-06-14)
 

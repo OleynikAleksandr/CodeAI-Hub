@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { appendFileSync } from "node:fs";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -387,53 +394,33 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       PRODUCT_PART_BOOTSTRAP_COMMIT_RE
     );
     for (const partId of ["local-runtime", "finder-widget-shell"]) {
-      const worktreePath = path.join(
-        `${workspaceRoot}.worktrees`,
-        WORKSPACE_SLUG,
-        "product-parts",
-        partId,
-        "precode"
-      );
       const planPath = `doc/TODO/stages/development-tree/product-parts/${partId}/todo-plan.md`;
       const briefPath = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${partId}/ProductPartDevelopmentBrief.draft.md`;
-      await assert.rejects(
-        async () => await readWorkspaceFile(workspaceRoot, planPath),
-        MISSING_FILE_RE
-      );
-      await readWorkspaceFile(worktreePath, planPath);
+      await readWorkspaceFile(workspaceRoot, planPath);
       assert.match(
-        await readWorkspaceFile(worktreePath, briefPath),
+        await readWorkspaceFile(workspaceRoot, briefPath),
         PRODUCT_PART_BRIEF_TITLE_RE
       );
-      assert.equal(await git(worktreePath, ["status", "--porcelain"]), "");
       const managedState = JSON.parse(
         await readWorkspaceFile(
           workspaceRoot,
           `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/development-tree-product-parts/${partId}.json`
         )
       ) as { readonly reviewState?: string; readonly worktreePath?: string };
-      assert.equal(managedState.reviewState, "lane_started");
-      assert.equal(managedState.worktreePath, worktreePath);
+      assert.equal(managedState.reviewState, "draft_started");
+      assert.equal(managedState.worktreePath, undefined);
     }
+    await assert.rejects(
+      async () => await stat(`${workspaceRoot}.worktrees`),
+      MISSING_FILE_RE
+    );
     assert.deepEqual([...createdStages].sort(), [
       "development_tree/materialized/product-parts/finder-widget-shell",
       "development_tree/materialized/product-parts/local-runtime",
     ]);
     assert.deepEqual([...createdWorkspacePaths].sort(), [
-      path.join(
-        `${workspaceRoot}.worktrees`,
-        WORKSPACE_SLUG,
-        "product-parts",
-        "finder-widget-shell",
-        "precode"
-      ),
-      path.join(
-        `${workspaceRoot}.worktrees`,
-        WORKSPACE_SLUG,
-        "product-parts",
-        "local-runtime",
-        "precode"
-      ),
+      workspaceRoot,
+      workspaceRoot,
     ]);
     assert.equal(sentMessages.length, 2);
     assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);
