@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "01e7e13d1",
+  "lastRecordedCommit": "7863ef23b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase4.docs.task1",
-  "expectedCommitMessage": "docs: document main workspace product part documentation mode",
+  "currentTaskId": "devtree-main-doc-mode.phase6.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.514",
   "debt": {
-    "expectedCommitMessage": "docs: document main workspace product part documentation mode",
-    "preCommitHead": "01e7e13d1",
+    "expectedCommitMessage": "docs: prepare release 1.2.514",
+    "preCommitHead": "7863ef23b",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase4.docs.task1"
+    "taskId": "devtree-main-doc-mode.phase6.release-docs.task1"
   }
 }
 ```
@@ -68,20 +68,20 @@
 ### Stream: Runtime Contract Docs
 
 7. [DONE] `devtree-main-doc-mode.phase4.docs.task1` Update canonical workflow docs and docs index for Product Part documentation mode in main workspace (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document main workspace product part documentation mode`).
-8. [PENDING] Git Commit: `docs: document main workspace product part documentation mode` (hash: TBD)
+8. [DONE] Git Commit: `docs: document main workspace product part documentation mode` (hash: 7863ef23b)
 
 ## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Targeted Verification
 
-9. [TODO] `devtree-main-doc-mode.phase5.verify.task1` Run targeted Product Part documentation-mode tests and the affected core build (scope: commands only; expected commit: none).
+9. [DONE] `devtree-main-doc-mode.phase5.verify.task1` Run targeted Product Part documentation-mode tests and the affected core build (scope: commands only; expected commit: none). Result: verification passed: diagram review bootstrap test, product part review/order-plan test, npm run build --workspace packages/core
 
 ## Phase 6 - Release Build (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Release Notes
 
-10. [TODO] `devtree-main-doc-mode.phase6.release-docs.task1` Update README and CHANGELOG for release `1.2.514` before building release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.514`).
-11. [TODO] Git Commit: `docs: prepare release 1.2.514` (hash: TBD)
+10. [DONE] `devtree-main-doc-mode.phase6.release-docs.task1` Update README and CHANGELOG for release `1.2.514` before building release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.514`).
+11. [PENDING] Git Commit: `docs: prepare release 1.2.514` (hash: TBD)
 
 ### Stream: Release Assembly
 

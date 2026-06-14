@@ -2,7 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.513** (Product Part Lane Closeout)
+**Current Release — v1.2.514** (Main Workspace Product Part Documentation)
+
+This release reverts the Product Part documentation phase away from disposable
+pre-code worktrees. After accepting `Diagram Modules`, Core still bootstraps all
+planned Product Part documentation sessions, but their draft artifacts, Product
+Part TODO ledgers, managed state, prompts, continuity, and sessions now live in
+the main workspace.
+
+Application Skeleton and Quality Gates can continue in parallel as trunk work.
+Product Part documentation no longer creates
+`<workspace>.worktrees/.../product-parts/<partId>/precode`, and accepted
+Product Part brief/order-plan checkpoints are no-ops when the session already
+runs in main.
+
+Retest focus: accept `Diagram Modules` in FinderWidget. Product Part sessions
+should appear in Project Manager, Product Part draft artifacts and TODO plans
+should be created in the main workspace, no Product Part pre-code worktree
+folders should appear, the secondary Product Part should still gate the lead
+`DevelopmentOrderPlan`, and no Cluster/Module sessions should start after order
+plan acceptance.
+
+**Previous Release — v1.2.513** (Product Part Lane Closeout)
 
 This release changes the end of the Product Part pre-code lane. After the lead
 Product Part `DevelopmentOrderPlan` is accepted, Core checkpoints the accepted

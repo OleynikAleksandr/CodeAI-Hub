@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.514] - 2026-06-14
+### Changed
+- **Product Part documentation sessions now run in the main workspace.** After accepted `Diagram Modules`, Core still bootstraps every planned Product Part session, draft artifact, Product Part TODO ledger, managed state, persisted prompt, and first provider turn, but it no longer creates Product Part pre-code worktrees.
+- **Product Part managed state no longer requires `worktreePath`.** Project Manager can project Product Part sessions from main-workspace managed state and continuity, while legacy worktree projection remains compatibility behavior for older lanes.
+- **Accepted Product Part brief/order-plan checkpoints are no-ops in main.** The checkpoint helpers now skip extra copy/commit work when the session already runs in the main workspace, keeping accepted documentation artifacts in place.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`
+- `npm run build --workspace packages/core`
+
 ## [1.2.513] - 2026-06-14
 ### Changed
 - **Accepted lead Product Part order plans now close the pre-code lane in main.** Core checkpoints the accepted `DevelopmentOrderPlan` draft/JSON, Product Part TODO ledger, unlock state, and managed decision state from the lane worktree back into the main workspace.
