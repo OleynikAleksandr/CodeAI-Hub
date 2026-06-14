@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "8b37342b2",
+  "lastRecordedCommit": "a9178d88d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs-1-2-516.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.516",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-build-1-2-516.task1",
+  "expectedCommitMessage": "chore: build release 1.2.516",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.516",
-    "preCommitHead": "8b37342b2",
+    "expectedCommitMessage": "chore: build release 1.2.516",
+    "preCommitHead": "a9178d88d",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-docs-1-2-516.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-build-1-2-516.task1"
   }
 }
 ```
@@ -147,12 +147,12 @@
 ### Stream: Release Notes
 
 29. [DONE] `devtree-main-doc-mode.phase7.release-docs-1-2-516.task1` Update README and CHANGELOG for release `1.2.516` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.516`).
-30. [PENDING] Git Commit: `docs: prepare release 1.2.516` (hash: TBD)
+30. [DONE] Git Commit: `docs: prepare release 1.2.516` (hash: a9178d88d)
 
 ### Stream: Release Assembly
 
-31. [TODO] `devtree-main-doc-mode.phase7.release-build-1-2-516.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.516`).
-32. [TODO] Git Commit: `chore: build release 1.2.516` (hash: TBD)
+31. [DONE] `devtree-main-doc-mode.phase7.release-build-1-2-516.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.516`).
+32. [PENDING] Git Commit: `chore: build release 1.2.516` (hash: TBD)
 
 ## Phase 7G - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
