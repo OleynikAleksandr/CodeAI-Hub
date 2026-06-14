@@ -173,7 +173,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       await runGuardedDevelopmentTreeTurn(
         () =>
           handleProductPartManagedReviewDecision({
-            developmentTreeAgentGateway: this.deps.developmentTreeAgentGateway,
             eventMessages: this.deps.eventMessages,
             intent: managedIntent,
             messageDispatch: this.deps.messageDispatch,
