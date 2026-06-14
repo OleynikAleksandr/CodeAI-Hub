@@ -8,15 +8,15 @@
   "planId": "product-part-lane-closeout-implementation-2026-06-14",
   "branch": "main",
   "baseHead": "5f388460e",
-  "lastRecordedCommit": "8d2e404eb",
+  "lastRecordedCommit": "e95668ae0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md",
-  "currentTaskId": "product-part-lane-closeout.phase6.release-build.task1",
-  "expectedCommitMessage": "chore: build release 1.2.513",
+  "currentTaskId": "product-part-lane-closeout.phase7.reorientation-doc.task1",
+  "expectedCommitMessage": "docs: reframe development tree documentation mode",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.513",
-    "preCommitHead": "8d2e404eb",
+    "expectedCommitMessage": "docs: reframe development tree documentation mode",
+    "preCommitHead": "e95668ae0",
     "stage": "commit_pending",
-    "taskId": "product-part-lane-closeout.phase6.release-build.task1"
+    "taskId": "product-part-lane-closeout.phase7.reorientation-doc.task1"
   }
 }
 ```
@@ -94,16 +94,21 @@
 ### Stream: Release Assembly
 
 16. [DONE] `product-part-lane-closeout.phase6.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.513`).
-17. [PENDING] Git Commit: `chore: build release 1.2.513` (hash: TBD)
+17. [DONE] Git Commit: `chore: build release 1.2.513` (hash: e95668ae0)
 
 ## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-18. [TODO] `product-part-lane-closeout.phase7.acceptance.task1` User installs the new release and retests Product Part order-plan acceptance: no cluster sessions start, accepted Product Part artifacts are in main, and Product Part worktree folders are removed (scope: user workflow; expected commit: none).
+18. [BLOCKED] `product-part-lane-closeout.phase7.acceptance.task1` User installs the new release and retests Product Part order-plan acceptance: no cluster sessions start, accepted Product Part artifacts are in main, and Product Part worktree folders are removed (scope: user workflow; expected commit: none). Result: v1.2.513 retest rejected automatic Product Part worktree/session deletion as the wrong SolidWorks-like development-tree model.
+
+### Stream: Architecture Reorientation
+
+19. [DONE] `product-part-lane-closeout.phase7.reorientation-doc.task1` Rewrite the planning source to make documentation-stage Product Part/Cluster/Module sessions main-workspace, path-scoped, and Core-committed; reserve persistent worktrees for code-stage nodes (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md`; expected commit: `docs: reframe development tree documentation mode`).
+20. [PENDING] Git Commit: `docs: reframe development tree documentation mode` (hash: TBD)
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-19. [TODO] `product-part-lane-closeout.phase8.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+21. [TODO] `product-part-lane-closeout.phase8.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

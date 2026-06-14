@@ -1,58 +1,121 @@
-# Development Tree Product Part Lane Closeout Implementation Plan
+# Development Tree Documentation Mode Reorientation Plan
 
-**Status:** active implementation planning source, opened 2026-06-14.
-**Source decision:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`.
+**Status:** active planning source, reoriented 2026-06-14 after v1.2.513 retest.
+**Supersedes:** the previous Product Part lane closeout plan that treated early
+Product Part worktrees as disposable execution lanes.
+**Source decision:** user retest rejected automatic Product Part worktree/session
+deletion as incompatible with the SolidWorks-like development-tree model.
 
-## Goal
+## Decision
 
-Stop Product Part pre-code lanes at the accepted Product Part planning checkpoint.
+Documentation artifacts do not need Git worktrees.
 
-After the lead Product Part `DevelopmentOrderPlan.v2` is accepted, Core must:
+Product Part, Cluster, and Module documentation agents should run in the main
+workspace and write only node-owned draft artifacts. Core remains the only owner
+of managed state, TODO ledgers, indexes, and Git commits.
 
-- checkpoint the accepted Product Part artifacts into the main workspace;
-- not create cluster/module documents from the Product Part lane;
-- not start cluster contract sessions;
-- remove the finished Product Part worktree folder/tree;
-- leave downstream cluster/module work for a later verified-main phase.
+Git worktrees are reserved for the code stage, where agents may touch broad code
+surfaces, run formatters/generators, and need persistent editable node branches.
 
-## Current Runtime Gap
+## Why
 
-The current order-plan acceptance path still opens downstream coordination:
+The previous v1.2.513 direction removed Product Part worktrees after checkpoint.
+That made sense for disposable CI-style lanes, but it is the wrong model for a
+SolidWorks-like development tree:
 
-- generated lead Product Part todo plans include Phase 5 downstream coordination;
-- `ProductPartDevelopmentOrderPlanReviewController` moves the Product Part plan into that downstream phase and returns `startFirstWave`;
-- `product-part-managed-review-decision-handler` sees `startFirstWave` and calls the cluster contract bootstrapper.
+- a development-tree node must remain revisitable;
+- the session that produced a node artifact is part of the node history;
+- merge/checkpoint into main is a publication step, not the death of the node;
+- automatic deletion makes later node rework feel like starting from scratch.
 
-That is the premature path observed in `FinderWidget-Test01`.
+For documentation-only work, worktrees also solve less than they cost. The
+agents can safely work in parallel when every agent writes to a disjoint
+node-owned artifact path and Core serializes the shared state/commit boundary.
 
-## Implementation Cut
+## Documentation Mode Contract
 
-Keep the diff small:
+Before code generation starts:
 
-1. Generated Product Part plans should end at `Phase Return - User Return And Revisions` after lead order-plan review.
-2. Order-plan acceptance should write accepted order-plan state/checkpoints, then move the Product Part plan to return, not downstream coordination.
-3. The managed review handler should not contain a cluster wave bootstrap path for Product Part acceptance.
-4. The accepted order-plan checkpoint should resolve a lane workspace back to main and clean the Product Part worktrees after the main checkpoint succeeds.
+1. Product Part, Cluster, and Module draft sessions run in the main workspace.
+2. Agents may write only their assigned artifact paths.
+3. Agents must not write `doc/TODO/todo-plan.md`, managed indexes, shared state,
+   or cross-node summaries.
+4. Core serializes acceptance, managed state updates, index regeneration, and
+   Git commits.
+5. Core records a ledger mapping each `nodeId` to its owned artifact paths and
+   commits.
+6. Secondary Product Part briefs must be accepted before the lead Product Part
+   `DevelopmentOrderPlan` assignment is allowed.
+7. Cluster/Module documentation can run in parallel when dependencies are
+   satisfied and target paths are disjoint.
 
-No cluster/module executor is implemented in this cycle.
+## Code Mode Contract
+
+When implementation code starts:
+
+1. Core creates persistent worktrees for Product Part, Cluster, or Module code
+   nodes that need isolated code edits.
+2. Those worktrees are not automatically deleted after merge.
+3. Merge into main publishes the current node version for build/test.
+4. Returning to a code node reuses the persistent node worktree/session.
+5. If a node is changed after publication, Core marks dependent downstream
+   nodes and the main integration projection dirty until they are reconciled.
+
+## Undo / Clear Model
+
+Clear/Undo is node-scoped, not workspace-scoped.
+
+Core uses its ledger to resolve:
+
+- `nodeId`;
+- node-owned artifact paths;
+- node-related commits;
+- downstream dependencies.
+
+For documentation nodes, Core restores only the node-owned paths to the selected
+state and regenerates shared indexes/state. It does not `git reset` the whole
+workspace and does not directly restore shared files as part of the node.
+
+For code nodes, Core returns to the persistent worktree/session and handles the
+next merge/reconciliation explicitly.
+
+## Immediate Implementation Direction
+
+The next implementation cycle should undo the disposable pre-code lane model:
+
+1. Stop creating Product Part documentation worktrees after `Diagram Modules`.
+2. Start Product Part draft sessions in the main workspace with strict target
+   paths.
+3. Keep the existing lead-gating rule: lead order-plan work waits for accepted
+   secondary Product Part briefs.
+4. Move future Cluster/Module documentation sessions to the same main-workspace,
+   path-scoped model.
+5. Keep worktree creation for the later code stage only.
+
+No code-stage worktree lifecycle is implemented by this document.
 
 ## Retest Contract
 
 In a FinderWidget-style workspace:
 
-1. Product Part agents create and accept briefs.
-2. Lead Product Part creates and accepts `DevelopmentOrderPlan`.
-3. No `cluster-contracts/...` worktree/session is created.
-4. Accepted Product Part artifacts and managed decisions are present in the main workspace.
-5. The finished `<workspace>.worktrees/<workspaceSlug>/product-parts/...` tree is removed.
+1. Product Part draft sessions can run in parallel in the main workspace.
+2. Secondary Product Part artifacts are accepted before the lead order-plan
+   assignment starts.
+3. No Product Part `.worktrees/.../precode` folders are created for
+   documentation-only artifacts.
+4. Accepted Product Part artifacts and managed decisions are present in the main
+   workspace.
+5. Project Manager continues to show completed Product Part nodes from main
+   managed state.
+6. Clear/Undo on a Product Part restores only that Product Part's owned
+   documentation artifacts and marks dependent work dirty.
 
-## Implementation Files
+## Expected Implementation Areas
 
-Expected runtime files:
-
-- `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts`
-- `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts`
-- `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts`
-- `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts`
-
-Focused tests stay beside those files.
+- Product Part documentation bootstrap/session routing.
+- Product Part draft acceptance checkpoint logic.
+- Development-tree node ledger for `nodeId -> artifactPaths -> commits`.
+- Project Manager projection from main managed state, not pre-code worktree
+  existence.
+- Focused tests for parallel path-scoped documentation sessions and node-scoped
+  Clear/Undo.
