@@ -58,9 +58,6 @@ const createPlanPaths = (params: {
 const createTaskPrefix = (partId: string): string =>
   `development-tree.product-part.${partId}`;
 
-const createDownstreamCoordinationCommitMessage = (partId: string): string =>
-  `chore: coordinate ${partId} downstream development`;
-
 const createBriefArtifactPath = (params: {
   readonly partId: string;
   readonly workspaceSlug: string;
@@ -115,7 +112,7 @@ const createLeadershipLines = (params: {
       ? params.productPartLeadershipOrder.join(", ")
       : "not provided"
   }.`,
-  "- Cluster and Module agents remain locked until the accepted Development Order Plan opens the first wave.",
+  "- Cluster and Module agents remain locked until a later verified-main downstream phase.",
   "- If critical information is missing, the Product Part agent asks the user in its own session before finalizing the brief.",
 ];
 
@@ -139,7 +136,7 @@ const createLeadOrderPlanPhases = (params: {
     "",
     "### Stream: User-Led Review",
     "",
-    `7. [TODO] \`${taskPrefix}.phase4.order-plan-review.task1\` User reviews the Development Order Plan before Core can open Cluster or standalone Module agents (scope: user workflow; expected commit: \`docs: accept lead development order plan\`).`,
+    `7. [TODO] \`${taskPrefix}.phase4.order-plan-review.task1\` User reviews the Development Order Plan before Core checkpoints the accepted Product Part planning state back to main (scope: user workflow; expected commit: \`docs: accept lead development order plan\`).`,
     "8. [TODO] Git Commit: `docs: accept lead development order plan` (hash: TBD)",
   ];
 };
@@ -155,24 +152,6 @@ const createReturnPhase = (params: {
   "",
   `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase-return.user-return.task1\` Product Part workflow is paused in an accepted state; user may return later with corrections or clarifications (scope: user workflow; expected commit: none).`,
 ];
-
-const createDownstreamCoordinationPhase = (params: {
-  readonly itemNumber: number;
-  readonly partId: string;
-}): string[] => {
-  const commitMessage = createDownstreamCoordinationCommitMessage(
-    params.partId
-  );
-  return [
-    "",
-    "## Phase 5 - Downstream Product Part Coordination",
-    "",
-    "### Stream: Cluster And Module Coordination",
-    "",
-    `${params.itemNumber}. [TODO] \`${createTaskPrefix(params.partId)}.phase5.downstream-coordination.task1\` Core coordinates unlocked downstream Cluster/Module waves while the lead Product Part remains the visible coordination surface (scope: downstream workflow; expected commit: \`${commitMessage}\`).`,
-    `${params.itemNumber + 1}. [TODO] Git Commit: \`${commitMessage}\` (hash: TBD)`,
-  ];
-};
 
 const renderPlan = (params: {
   readonly isLeadPart: boolean;
@@ -221,14 +200,8 @@ const renderPlan = (params: {
           workspaceSlug: params.workspaceSlug,
         })
       : []),
-    ...(params.isLeadPart
-      ? createDownstreamCoordinationPhase({
-          itemNumber: 9,
-          partId: params.node.partId,
-        })
-      : []),
     ...createReturnPhase({
-      itemNumber: params.isLeadPart ? 11 : 5,
+      itemNumber: params.isLeadPart ? 9 : 5,
       partId: params.node.partId,
     }),
     "",
