@@ -11,10 +11,12 @@ orchestrator removal.
 ## [1.2.515] - 2026-06-14
 ### Fixed
 - **Application Skeleton no longer blocks on Product Part documentation dirt.** Main-workspace Product Part documentation paths are now neutral for the technical-stage dirty gate, so Product Part agents can keep writing drafts/TODO ledgers while the trunk proceeds to Application Skeleton.
+- **Development Tree lock copy points at the real prerequisite.** Before `Diagram Modules` is accepted, the locked Development Tree placeholder now references `Diagram Modules` instead of `Quality Gates Baseline`.
 - **Regression coverage matches the reported blocker.** The dirty-gate test now covers a dirty `ProductPartDevelopmentBrief.draft.md` and Product Part stage `todo-plan.md` while expecting the technical workspace status to remain clean.
 
 ### Verification
 - `npx tsx --test packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`
 
 ## [1.2.514] - 2026-06-14
 ### Changed

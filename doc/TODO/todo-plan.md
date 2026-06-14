@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "329730cd1",
+  "lastRecordedCommit": "1e65a3997",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.lock-label.task1",
-  "expectedCommitMessage": "fix: correct development tree lock prerequisite",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-notes-refresh.task1",
+  "expectedCommitMessage": "docs: refresh release 1.2.515 notes",
   "debt": {
-    "expectedCommitMessage": "fix: correct development tree lock prerequisite",
-    "preCommitHead": "329730cd1",
+    "expectedCommitMessage": "docs: refresh release 1.2.515 notes",
+    "preCommitHead": "1e65a3997",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.lock-label.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-notes-refresh.task1"
   }
 }
 ```
@@ -111,12 +111,12 @@
 ### Stream: Development Tree Locked Label
 
 19. [DONE] `devtree-main-doc-mode.phase7.lock-label.task1` Point the locked Development Tree placeholder at `Diagram Modules` while that prerequisite is still missing (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`; expected commit: `fix: correct development tree lock prerequisite`).
-20. [PENDING] Git Commit: `fix: correct development tree lock prerequisite` (hash: TBD)
+20. [DONE] Git Commit: `fix: correct development tree lock prerequisite` (hash: 1e65a3997)
 
 ### Stream: Release Notes Refresh
 
-21. [TODO] `devtree-main-doc-mode.phase7.release-notes-refresh.task1` Add the Development Tree locked-label fix to the `1.2.515` release notes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: refresh release 1.2.515 notes`).
-22. [TODO] Git Commit: `docs: refresh release 1.2.515 notes` (hash: TBD)
+21. [DONE] `devtree-main-doc-mode.phase7.release-notes-refresh.task1` Add the Development Tree locked-label fix to the `1.2.515` release notes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: refresh release 1.2.515 notes`).
+22. [PENDING] Git Commit: `docs: refresh release 1.2.515 notes` (hash: TBD)
 
 ### Stream: Release Assembly
 
