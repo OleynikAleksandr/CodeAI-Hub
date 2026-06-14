@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "c1db9dfdc",
+  "lastRecordedCommit": "8b584015d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-focus-one-shot.task1",
-  "expectedCommitMessage": "fix: make development tree gate focus one-shot",
+  "currentTaskId": "devtree-main-doc-mode.phase7.product-part-parallel-start.task1",
+  "expectedCommitMessage": "fix: start product part agents concurrently",
   "debt": {
-    "expectedCommitMessage": "fix: make development tree gate focus one-shot",
-    "preCommitHead": "c1db9dfdc",
+    "expectedCommitMessage": "fix: start product part agents concurrently",
+    "preCommitHead": "8b584015d",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.user-gate-focus-one-shot.task1"
+    "taskId": "devtree-main-doc-mode.phase7.product-part-parallel-start.task1"
   }
 }
 ```
@@ -196,12 +196,12 @@
 ### Stream: One-Shot Gate Focus
 
 42. [DONE] `devtree-main-doc-mode.phase7.user-gate-focus-one-shot.task1` Restore active Development Tree user-gate focus to one automatic switch per gate identity, without refocusing after the user manually selects another node (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: make development tree gate focus one-shot`).
-43. [PENDING] Git Commit: `fix: make development tree gate focus one-shot` (hash: TBD)
+43. [DONE] Git Commit: `fix: make development tree gate focus one-shot` (hash: 8b584015d)
 
 ### Stream: Product Part Agent Startup
 
-44. [TODO] `devtree-main-doc-mode.phase7.product-part-parallel-start.task1` Start Product Part documentation agents concurrently after shared Development Tree materialization, and update the Diagram Modules acceptance regression (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part agents concurrently`).
-45. [TODO] Git Commit: `fix: start product part agents concurrently` (hash: TBD)
+44. [DONE] `devtree-main-doc-mode.phase7.product-part-parallel-start.task1` Start Product Part documentation agents concurrently after shared Development Tree materialization, and update the Diagram Modules acceptance regression (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part agents concurrently`).
+45. [PENDING] Git Commit: `fix: start product part agents concurrently` (hash: TBD)
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 

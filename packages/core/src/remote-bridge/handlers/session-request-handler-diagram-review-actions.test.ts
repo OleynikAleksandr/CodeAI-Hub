@@ -427,10 +427,10 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
     assert.deepEqual(gatewayEvents, [
       "create:devtree-1",
       "send:devtree-1",
-      "snapshot:1",
-      "snapshot:2",
       "create:devtree-2",
       "send:devtree-2",
+      "snapshot:1",
+      "snapshot:2",
       "snapshot:3",
       "snapshot:4",
     ]);

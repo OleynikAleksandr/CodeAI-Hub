@@ -92,6 +92,16 @@ const findProductPartSession = (params: {
       Boolean(session.sessionId)
   ) ?? null;
 
+const withoutInitialTurnWait = (
+  gateway: DevelopmentTreeAgentSessionGateway | undefined
+): DevelopmentTreeAgentSessionGateway | undefined => {
+  if (!gateway) {
+    return undefined;
+  }
+  const { waitForInitialTurnSettled: _wait, ...rest } = gateway;
+  return rest;
+};
+
 const filterExistingRelativePaths = async (params: {
   readonly paths: readonly string[];
   readonly workspaceRoot: string;
@@ -163,8 +173,9 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
         writtenProductPartPlans: [],
       };
     }
+    const leadProductPartId = progress.leadProductPartId;
     const productPartLeadershipOrder = resolveProductPartLeadershipOrder({
-      leadProductPartId: progress.leadProductPartId,
+      leadProductPartId,
       plannedPartIds: progress.plannedPartIds,
       productPartLeadershipOrder: progress.productPartLeadershipOrder,
     });
@@ -184,7 +195,7 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       workspaceSlug: params.workspaceSlug,
       plannedPartIds: progress.plannedPartIds,
       generatedPartIds: progress.generatedPartIds,
-      leadProductPartId: progress.leadProductPartId,
+      leadProductPartId,
       productPartLeadershipOrder,
     });
     const agentSessions: NodeAgentSessionBootstrapResult[] = [];
@@ -198,13 +209,19 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
-    for (const partId of scheduledProductPartIds) {
-      const result = await this.bootstrapProductPartDocumentation({
-        ...params,
-        leadProductPartId: progress.leadProductPartId,
-        partId,
-        productPartLeadershipOrder,
-      });
+    const startupGateway = withoutInitialTurnWait(params.agentGateway);
+    const bootstrapResults = await Promise.all(
+      scheduledProductPartIds.map((partId) =>
+        this.bootstrapProductPartDocumentation({
+          ...params,
+          agentGateway: startupGateway,
+          leadProductPartId,
+          partId,
+          productPartLeadershipOrder,
+        })
+      )
+    );
+    for (const result of bootstrapResults) {
       agentSessions.push(...result.agentSessions);
       writtenDrafts.push(...result.writtenDrafts);
       writtenProductPartPlans.push(...result.writtenProductPartPlans);
@@ -217,6 +234,17 @@ export class DevelopmentTreeProductPartPrecodeBootstrap {
     if (stillMissingProductPartIds.length > 0) {
       throw new Error(
         `Development Tree Product Part bootstrap did not start agent sessions for: ${stillMissingProductPartIds.join(", ")}`
+      );
+    }
+    const waitForInitialTurnSettled =
+      params.agentGateway?.waitForInitialTurnSettled;
+    if (waitForInitialTurnSettled) {
+      await Promise.all(
+        agentSessions.flatMap((session) =>
+          session.firstMessageSent && session.sessionId
+            ? [waitForInitialTurnSettled(session.sessionId)]
+            : []
+        )
       );
     }
     const managedPaths = await filterExistingRelativePaths({
