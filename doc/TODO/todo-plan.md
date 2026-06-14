@@ -4,31 +4,55 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "downstream-execution-refactor-strategy-doc-2026-06-14",
   "branch": "main",
-  "baseHead": "63349dc64",
-  "lastRecordedCommit": "c1563df6d",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
-  "debt": null
+  "baseHead": "17e593ebf",
+  "lastRecordedCommit": "17e593ebf",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md",
+  "currentTaskId": "planning-intake.downstream-refactor-doc.phase1.task1",
+  "expectedCommitMessage": "docs: update downstream execution refactor strategy",
+  "debt": {
+    "expectedCommitMessage": "docs: update downstream execution refactor strategy",
+    "preCommitHead": "17e593ebf",
+    "stage": "commit_pending",
+    "taskId": "planning-intake.downstream-refactor-doc.phase1.task1"
+  }
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-quality-gates-product-part-rebootstrap-removal-2026-06-13.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_UserGateReviewCursor_Architecture.md`
-- **Last recorded commit:** `c1563df6d`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`
+- **Read this context before implementation:**
+  - `doc/TODO/todo-plan.md`
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`
 
-## Start Next Scope
+## Правила выполнения
 
-There is no active execution scope. Before starting new implementation work:
+- Scope is documentation-only.
+- Do not edit production code in this intake.
+- Commit through `npm run plan:commit -- "<expected commit message>"`.
+- Keep this active plan open after the documentation update until user acceptance.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 1 — Downstream Execution Strategy Documentation (owner: Codex, updated: 2026-06-14)
+
+### Stream: Planning Document Update
+
+1. [DONE] `planning-intake.downstream-refactor-doc.phase1.task1` Update the downstream execution refactor planning document with the accepted short-lived Product Part lane and AI impact-planning model (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`; expected commit: `docs: update downstream execution refactor strategy`).
+2. [PENDING] Git Commit: `docs: update downstream execution refactor strategy` (hash: TBD)
+
+### Stream: Tooling Verification
+
+3. [TODO] `planning-intake.downstream-refactor-doc.phase1.verify.task1` Verify Markdown UTF-8/readback and run plan validation after the documentation commit (scope: commands only; expected commit: none).
+
+### Stream: User Workflow Acceptance Testing
+
+4. [TODO] `planning-intake.downstream-refactor-doc.phase1.acceptance.task1` User reviews the updated planning document and either accepts it or requests corrections (scope: user workflow; expected commit: none).
+
+### Stream: Scope Closeout
+
+5. [TODO] `planning-intake.downstream-refactor-doc.phase1.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

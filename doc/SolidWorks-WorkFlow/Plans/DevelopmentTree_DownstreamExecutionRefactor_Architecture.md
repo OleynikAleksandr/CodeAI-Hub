@@ -1,6 +1,7 @@
 # Рефакторинг downstream-исполнения Development Tree
 
-**Статус:** активный стратегический planning-документ, открыт 2026-06-10; Product Part pre-code worktree lanes закрыты релизом `1.2.509`, а незавершённая стратегическая линия остаётся за cluster/module/code-ready downstream waves.
+**Статус:** активный стратегический planning-документ, открыт 2026-06-10; Product Part pre-code worktree lanes доведены до accepted brief/order-plan checkpoint модели в релизе `1.2.509`, а незавершённая стратегическая линия остаётся за cluster/module/code-ready downstream waves.
+**Решение 2026-06-14:** Product Part pre-code lanes являются short-lived planning lanes. После accepted Product Part briefs и accepted lead `DevelopmentOrderPlan.v2` Core переносит эти accepted artifacts/decisions в основной workspace и закрывает pre-code lanes как execution residue. Cluster/module documents, facade contracts и code-ready work не должны стартовать в ранних "голых" Product Part lanes до materialized Application Skeleton и verified Quality Gates.
 **Связь с текущими директивами:** этот документ теперь является консолидированной активной линией downstream-исполнения Development Tree. `Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md` остаётся историческим reference baseline, а `Plans/Archive/DevelopmentTree_ProductPartSubagentOrchestration.md` остаётся поглощённым implementation planning source. Их устойчивые решения перенесены в текущие SSOT-документы и в эту downstream-refactor линию; они больше не являются отдельными активными директивами в корне `Plans/`.
 
 ## 1. Проблема
@@ -10,6 +11,8 @@
 Текущая реализация использовала слово `merged` для doc-only переноса cluster contract. Это вводит в заблуждение. Downstream cluster tree нельзя считать готовым к merge в основной workspace, пока он не произвёл code artifacts и не прошёл соответствующие gates. Копирование `ClusterFacadeContract.draft.*` обратно в основной workspace может быть максимум planning/review checkpoint, но не integration.
 
 Тот же ретест показал, что `DevelopmentOrderPlan.v2` пока не используется как реальный исполняемый wave graph. Lead Product Part запускается первым потому, что он должен определить, какие downstream-узлы можно выполнять параллельно, а какие должны ждать предыдущие результаты. Если Core открывает только первый cluster contract и затем останавливается, lead Product Part order plan ещё не даёт своей основной архитектурной ценности.
+
+Дополнительный ретест `FinderWidget-Test01` показал более раннюю ошибку момента запуска: первый `cluster-contracts/note-discovery` worktree был создан от Product Part pre-code lane до того, как основной workspace получил materialized Application Skeleton и verified Quality Gates. Такой worktree не имеет будущей code filesystem, hook/gate surface и актуального parent/main state. Его draft artifacts можно использовать как seed/reference, но эту lane нельзя считать правильной базой для дальнейшего cluster/module/code workflow.
 
 ## 2. Направление решения
 
@@ -29,6 +32,7 @@ Product Part worktree lane владеет:
 - локальными коммитами Product Part agent;
 - user-review evidence до принятого merge/checkpoint в main;
 - later lead order-plan turn, если lane принадлежит lead Product Part.
+- только pre-code planning lifecycle до accepted brief/order-plan checkpoint; lane не владеет cluster/module documents и не является undo/refactor mechanism после checkpoint.
 
 Downstream cluster worktree владеет:
 
@@ -40,7 +44,11 @@ Downstream cluster worktree владеет:
 
 Основной workspace не должен получать downstream cluster artifacts как финальный merge, пока cluster worktree не создал code boundary, необходимую для следующего integration step. Doc-only copy допустим только если он явно называется review snapshot или planning checkpoint, но никогда не `merged`.
 
+Downstream cluster/module worktree должен создаваться только от актуального accepted main checkpoint после materialized Application Skeleton и verified Quality Gates. Это гарантирует, что draft contracts, facade classes, module specs и последующий код создаются рядом с реальной code filesystem и проверяются теми же gates, которые будут применяться к integration result.
+
 Product Part brief является более ранним исключением с другим смыслом: это не code-ready merge downstream-узла, а accepted planning checkpoint, который нужен lead Product Part для построения `DevelopmentOrderPlan.v2`. Поэтому Core может последовательно переносить accepted `ProductPartDevelopmentBrief` из Product Part lane в main workspace, но обязан называть это accepted checkpoint/brief merge, а не downstream code integration.
+
+После accepted Product Part brief checkpoints и accepted lead `DevelopmentOrderPlan.v2` Core должен считать Product Part pre-code lanes завершёнными. Старые worktrees можно удалить/закрыть; если пользователь позже возвращается к brief или order plan, Core создаёт новую revision lane от текущего accepted main, а не оживляет старую lane.
 
 Защитное состояние, реализованное к релизу `1.2.509`:
 
@@ -135,9 +143,13 @@ lead product-part lane
 
 Такой слой не заменяет будущие cluster/module worktrees, а подготавливает их runtime contract: create lane, run agent, show session in main tree, accept artifact, merge/copy checkpoint sequentially, clear/undo lane safely.
 
+Граница Product Part lane заканчивается на accepted planning checkpoint. Она не должна открывать cluster/module draft sessions, `ClusterFacadeContract`, `ModuleSpecification` или code-ready artifacts. После принятия всех Product Part briefs и lead order plan Core возвращается в основной workspace, продолжает/завершает Application Skeleton и Quality Gates, и только затем создаёт downstream cluster/module lanes от актуальной verified базы.
+
 ## 6. Cluster worktree и параллельность модулей
 
 Первая реализация не обязана выделять каждый module в отдельный worktree. Cluster worktree может быть начальной execution surface для cluster facade и всех принадлежащих ему module specifications/facades. Это сохраняет цельный контекст и не создаёт преждевременную orchestration complexity.
+
+Cluster worktree стартует не из Product Part pre-code lane, а из актуального accepted main после materialized Application Skeleton и verified Quality Gates. Accepted Product Part briefs и lead order plan используются как inline seed/context, но не как рабочая файловая база.
 
 Параллельная module work должна быть оптимизацией второго уровня:
 
@@ -157,9 +169,11 @@ lead product-part lane
 2. Переименовать или разделить текущий doc-only cluster contract transfer так, чтобы он не отображался как final merge. Защитное поведение реализовано в `1.2.488` как `boundary_accepted`.
 3. Заменить `ClusterSpecification` на facade-centered cluster boundary model.
 4. Перевести Product Part pre-code agents в deterministic worktree lanes и возвращать accepted briefs в main только sequential Core-owned checkpoint commits.
-5. Добавить Core-owned wave runner, который выполняет принятый `DevelopmentOrderPlan.v2` дальше первой cluster-contract wave.
-6. Добавить downstream node executors для standalone modules, cluster module specifications, cluster facade code и более поздней implementation work.
-7. Добавить merge-ready gates, которые требуют code artifacts и validation evidence перед возвратом downstream work в main workspace.
+5. Закрывать Product Part pre-code lanes после accepted brief/order-plan checkpoint в main; старые lanes не использовать как undo/refactor state.
+6. Запретить старт cluster/module document generation из Product Part pre-code lanes до materialized Application Skeleton и verified Quality Gates.
+7. Добавить Core-owned wave runner, который выполняет принятый `DevelopmentOrderPlan.v2` дальше первой cluster-contract wave от verified main base.
+8. Добавить downstream node executors для standalone modules, cluster module specifications, cluster facade code и более поздней implementation work.
+9. Добавить merge-ready gates, которые требуют code artifacts и validation evidence перед возвратом downstream work в main workspace.
 
 ## 8. Первый защитный шаг
 
@@ -189,6 +203,8 @@ cluster worktree opened
 
 Standalone modules должны следовать тому же правилу. Standalone module не должен возвращаться в main как финальный результат, пока его specification, facade boundary/class где нужно, code и validation evidence не присутствуют. Разница только в форме subtree: cluster возвращает всё принадлежащее cluster содержимое вместе; standalone module возвращает своё standalone-содержимое.
 
+Следующий защитный шаг должен остановить преждевременное создание downstream cluster/module worktrees из Product Part pre-code lanes. После accepted Product Part brief/order-plan checkpoint Core должен закрыть Product Part lanes и ждать verified main base для cluster/module execution.
+
 ## 9. Словарь merge-состояний
 
 Рефакторинг должен зарезервировать `merged` для реальной mainline integration code-ready downstream content.
@@ -201,7 +217,35 @@ Standalone modules должны следовать тому же правилу.
 - `code_ready`: downstream tree имеет необходимые code artifacts и local validation evidence.
 - `merged`: Core интегрировал downstream code-ready result в основной workspace.
 
-## 10. Открытые вопросы
+## 10. Refactor And Change Management Model
+
+Development Tree не должен превращаться в путь в один конец. При этом Core не должен пытаться скриптами заранее закодировать все возможные варианты смыслового рефакторинга. Устойчивый контракт разделяет deterministic orchestration и agent reasoning.
+
+Default policy: **additive-first**. Новая функция по умолчанию создаётся как новый Product Part, Cluster или Module. Уже принятые Product Parts, Clusters и Modules считаются стабильными boundaries; их меняем только если новый additive boundary не решает задачу или создаёт более опасный обход.
+
+Existing-node changes допускаются только через explicit managed change scope:
+
+1. user intent формулирует изменение;
+2. AI impact/planning agent создаёт schema-valid `Change Proposal` / `Impact Plan`;
+3. Core валидирует proposal формально: affected nodes, scope, dependency impact, outdated propagation, required lanes, expected gates;
+4. пользователь принимает scope;
+5. Core создаёт short-lived affected lanes от текущего accepted main;
+6. agents правят документы/код только в approved scope;
+7. Core запускает gates, фиксирует commits и обновляет managed state.
+
+Core остаётся authority для state machine, Git/worktree lifecycle, locks, task ids, commits, artifact schemas, user gates, validation и merge/checkpoint decisions. AI не заменяет Core и не получает право свободно мутировать проект. AI отвечает за смысловое предложение: какие nodes добавить, изменить, deprecate, в каком порядке мигрировать и какие риски есть.
+
+Undo/refactor не должен опираться на сохранённые старые worktree lanes. Accepted truth живёт в main: accepted artifacts, Git commits, managed decisions and validation evidence. Если нужно вернуться к принятому Product Part brief, order plan, cluster boundary или module spec, Core создаёт новую revision lane от актуального main, а не оживляет старую рабочую директорию.
+
+Application Skeleton и Quality Gates пересчитываются по impact, а не всегда целиком:
+
+- добавление нового Product Part/Cluster/Module обычно требует incremental skeleton patch: новые folders, entrypoints, package/workspace links where needed;
+- Quality Gates обычно остаются прежними и просто проверяют расширенную codebase;
+- пересчёт Quality Gates нужен только при смене stack, package topology, gate policy, hooks/scripts или enforcement surface.
+
+Такой подход оставляет Core scriptable для транзакций и gates, но вводит AI impact planner там, где скрипт не может надёжно понять смысл API, алгоритма, boundary drift или cross-Product-Part migration.
+
+## 11. Открытые вопросы
 
 - Нужно ли копировать accepted cluster facade contract в main как видимый review snapshot, или он должен оставаться только внутри cluster worktree до появления code? Текущий защитный ответ: не копировать draft document в main; Core может писать только явный boundary-accepted coordination evidence, пока code не существует.
 - Какой минимальный code artifact делает cluster worktree merge-ready: facade class stub, facade плюс module facade stubs или полностью реализованный cluster slice?
