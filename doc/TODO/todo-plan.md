@@ -8,15 +8,15 @@
   "planId": "product-part-lane-closeout-implementation-2026-06-14",
   "branch": "main",
   "baseHead": "5f388460e",
-  "lastRecordedCommit": "736e01015",
+  "lastRecordedCommit": "8d2e404eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md",
-  "currentTaskId": "product-part-lane-closeout.phase6.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.513",
+  "currentTaskId": "product-part-lane-closeout.phase6.release-build.task1",
+  "expectedCommitMessage": "chore: build release 1.2.513",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.513",
-    "preCommitHead": "736e01015",
+    "expectedCommitMessage": "chore: build release 1.2.513",
+    "preCommitHead": "8d2e404eb",
     "stage": "commit_pending",
-    "taskId": "product-part-lane-closeout.phase6.release-docs.task1"
+    "taskId": "product-part-lane-closeout.phase6.release-build.task1"
   }
 }
 ```
@@ -89,12 +89,12 @@
 ### Stream: Release Notes
 
 14. [DONE] `product-part-lane-closeout.phase6.release-docs.task1` Update README and CHANGELOG for the next release version before building release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.513`).
-15. [PENDING] Git Commit: `docs: prepare release 1.2.513` (hash: TBD)
+15. [DONE] Git Commit: `docs: prepare release 1.2.513` (hash: 8d2e404eb)
 
 ### Stream: Release Assembly
 
-16. [TODO] `product-part-lane-closeout.phase6.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.513`).
-17. [TODO] Git Commit: `chore: build release 1.2.513` (hash: TBD)
+16. [DONE] `product-part-lane-closeout.phase6.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.513`).
+17. [PENDING] Git Commit: `chore: build release 1.2.513` (hash: TBD)
 
 ## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
