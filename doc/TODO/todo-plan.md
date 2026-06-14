@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "47dca674b",
+  "lastRecordedCommit": "dbaf3e3d9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.attention-clear.task1",
-  "expectedCommitMessage": "fix: clear managed attention after user action",
+  "currentTaskId": "qg-rebootstrap.phase4.plan-state-repair.task1",
+  "expectedCommitMessage": "docs: repair attention fix plan state",
   "debt": {
-    "expectedCommitMessage": "fix: clear managed attention after user action",
-    "preCommitHead": "47dca674b",
+    "expectedCommitMessage": "docs: repair attention fix plan state",
+    "preCommitHead": "dbaf3e3d9",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.attention-clear.task1"
+    "taskId": "qg-rebootstrap.phase4.plan-state-repair.task1"
   }
 }
 ```
@@ -115,13 +115,19 @@
 ### Stream: Managed User Attention Clear
 
 27. [DONE] `qg-rebootstrap.phase4.attention-clear.task1` Исправить Core-owned user attention lifecycle: после любой реакции пользователя на managed review gate пульсирующая рамка должна сниматься сразу, а следующий managed gate должен снова открывать attention только новым Core-owned review-сообщением (scope: `packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/layout/**, AGENTS.md, doc/TODO/todo-plan.md`; expected commit: `fix: clear managed attention after user action`).
-28. [PENDING] Git Commit: `fix: clear managed attention after user action` (hash: TBD)
-29. [TODO] `qg-rebootstrap.phase4.attention-clear-verify.task1` Выполнить targeted regression tests/build для managed user attention cursor после acceptance/revision actions (scope: `packages/core, src/client/project-manager`; expected commit: none).
+28. [DONE] Git Commit: `fix: clear managed attention after user action` (hash: dbaf3e3d9)
+29. [DONE] `qg-rebootstrap.phase4.attention-clear-verify.task1` Выполнить targeted regression tests/build для managed user attention cursor после acceptance/revision actions (scope: `packages/core, src/client/project-manager`; expected commit: none). Result: passed: targeted attention tests; npm run lint; npm run build --workspace @codeai-hub/core; npm run typecheck:webview; pre-commit architecture/lint/knip
+
+### Stream: Release 1.2.512 Confirmation
+
+30. [DONE] `qg-rebootstrap.phase4.plan-state-repair.task1` Зафиксировать repaired active plan snapshot после failed pre-commit transaction и вернуть следующий шаг на release confirmation gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: repair attention fix plan state`).
+31. [PENDING] Git Commit: `docs: repair attention fix plan state` (hash: TBD)
+32. [TODO] `qg-rebootstrap.phase4.release-512-confirmation.task1` Запросить у пользователя явное подтверждение на сборку bugfix-релиза после исправления managed attention clear; без подтверждения не запускать release notes, version bump, `build-all.sh` или `build-release.sh` (scope: release confirmation gate; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-13)
 
 ### Stream: Closeout
 
-30. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-31. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
-32. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+33. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+34. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+35. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
