@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.517] - 2026-06-14
+### Fixed
+- **Project Manager refocuses the active Development Tree user gate when another node is selected.** The same active Product Part review gate can now pull the user back from `Application Skeleton` instead of being skipped as already focused.
+- **Development Tree user-gate dialog intents target exact Core dialog ids.** When Core exposes `dialogId`, `rootSessionId`, and `sessionId`, Project Manager includes them in the open intent so the Product Part dialog is selected directly.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+
 ## [1.2.516] - 2026-06-14
 ### Fixed
 - **Project Manager opens the active Development Tree user gate session.** When Core reports a Product Part review gate through `userGateCursor.activeUserGate`, the sidebar focus now also opens the Core-provided session instead of only highlighting the row while another workflow dialog stays visible.
