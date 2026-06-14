@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "0df40b4ff",
+  "lastRecordedCommit": "3176baea3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.dirty-gate.task1",
-  "expectedCommitMessage": "fix: allow product part documentation dirt before skeleton",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.515",
   "debt": {
-    "expectedCommitMessage": "fix: allow product part documentation dirt before skeleton",
-    "preCommitHead": "0df40b4ff",
+    "expectedCommitMessage": "docs: prepare release 1.2.515",
+    "preCommitHead": "3176baea3",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.dirty-gate.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-docs.task1"
   }
 }
 ```
@@ -99,14 +99,14 @@
 ### Stream: Product Part Dirty Gate
 
 15. [DONE] `devtree-main-doc-mode.phase7.dirty-gate.task1` Allow technical trunk dirty-gating to ignore main-workspace Product Part documentation paths while Product Part sessions are active (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`; expected commit: `fix: allow product part documentation dirt before skeleton`).
-16. [PENDING] Git Commit: `fix: allow product part documentation dirt before skeleton` (hash: TBD)
+16. [DONE] Git Commit: `fix: allow product part documentation dirt before skeleton` (hash: 3176baea3)
 
 ## Phase 7B - Release Rebuild (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Release Notes
 
-17. [TODO] `devtree-main-doc-mode.phase7.release-docs.task1` Update README and CHANGELOG for release `1.2.515` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.515`).
-18. [TODO] Git Commit: `docs: prepare release 1.2.515` (hash: TBD)
+17. [DONE] `devtree-main-doc-mode.phase7.release-docs.task1` Update README and CHANGELOG for release `1.2.515` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.515`).
+18. [PENDING] Git Commit: `docs: prepare release 1.2.515` (hash: TBD)
 
 ### Stream: Release Assembly
 

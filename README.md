@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.514** (Main Workspace Product Part Documentation)
+**Current Release — v1.2.515** (Product Part Dirty Gate)
+
+This bugfix release keeps `Application Skeleton` start unblocked while Product
+Part documentation agents are writing their main-workspace draft files.
+
+After accepting `Diagram Modules`, Product Part documentation files such as
+`ProductPartDevelopmentBrief.draft.md` and Product Part stage TODO ledgers are
+owned by the Development Tree node workflow. The technical trunk dirty gate now
+treats those Product Part documentation paths as neutral for `Application
+Skeleton` / `Quality Gates` startup instead of showing a workspace cleanup
+blocker.
+
+Retest focus: accept `Diagram Modules` in FinderWidget and let Product Part
+documentation sessions create dirty main-workspace draft/TODO files. The
+`Application Skeleton` card should still be startable, with no cleanup-required
+message for those Product Part documentation paths.
+
+**Previous Release — v1.2.514** (Main Workspace Product Part Documentation)
 
 This release reverts the Product Part documentation phase away from disposable
 pre-code worktrees. After accepting `Diagram Modules`, Core still bootstraps all
