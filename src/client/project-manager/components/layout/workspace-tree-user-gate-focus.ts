@@ -8,8 +8,11 @@ type UserGateCursorView = {
 };
 
 type UserGateSessionView = {
+  readonly dialogId?: string;
   readonly providerId?: string;
   readonly providerSessionId?: string | null;
+  readonly rootSessionId?: string;
+  readonly sessionId?: string;
 };
 
 type UserGateView = {
@@ -35,6 +38,7 @@ interface WorkspaceTreeUserGateFocusInput {
   readonly devTreeLockedNodes: readonly TreeNode[];
   readonly devTreeNodes: readonly TreeNode[];
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
+  readonly selectedNodeId: string | null;
   readonly trunkNodes: readonly TreeNode[];
 }
 
@@ -81,7 +85,10 @@ export const resolveActiveUserGateSessionIntent = (
   if (!(gate && providerId && providerSessionId && workspacePath && workspaceSlug)) {
     return null;
   }
-  return {
+  const targetDialogId = readString(gate.session?.dialogId);
+  const targetRootSessionId = readString(gate.session?.rootSessionId);
+  const targetSessionId = readString(gate.session?.sessionId);
+  const intent: SessionResumeIntent = {
     providerId,
     providerSessionId,
     workspacePath,
@@ -90,6 +97,12 @@ export const resolveActiveUserGateSessionIntent = (
     stage: readString(gate.workflowPath) ?? "diagram_modules",
     sessionKind: "collector",
     runSlug: null,
+  };
+  return {
+    ...intent,
+    ...(targetDialogId ? { targetDialogId } : {}),
+    ...(targetRootSessionId ? { targetRootSessionId } : {}),
+    ...(targetSessionId ? { targetSessionId } : {}),
   };
 };
 
@@ -135,6 +148,7 @@ export const useWorkspaceTreeUserGateFocus = ({
   devTreeLockedNodes,
   devTreeNodes,
   dispatchDialogOpenIntent,
+  selectedNodeId,
   trunkNodes,
 }: WorkspaceTreeUserGateFocusInput): void => {
   const lastFocusedGateKeyRef = useRef<string | null>(null);
@@ -145,7 +159,10 @@ export const useWorkspaceTreeUserGateFocus = ({
       return;
     }
     const gateFocusKey = activeGateFocusKey ?? activeGateNodeId;
-    if (lastFocusedGateKeyRef.current === gateFocusKey) {
+    if (
+      lastFocusedGateKeyRef.current === gateFocusKey &&
+      selectedNodeId === activeGateNodeId
+    ) {
       return;
     }
     const activeNode =

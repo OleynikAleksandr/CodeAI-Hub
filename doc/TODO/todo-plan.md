@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "a9178d88d",
+  "lastRecordedCommit": "c49c29f8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-build-1-2-516.task1",
-  "expectedCommitMessage": "chore: build release 1.2.516",
+  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-refocus.task1",
+  "expectedCommitMessage": "fix: refocus active development tree user gate",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.516",
-    "preCommitHead": "a9178d88d",
+    "expectedCommitMessage": "fix: refocus active development tree user gate",
+    "preCommitHead": "c49c29f8e",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-build-1-2-516.task1"
+    "taskId": "devtree-main-doc-mode.phase7.user-gate-refocus.task1"
   }
 }
 ```
@@ -152,16 +152,23 @@
 ### Stream: Release Assembly
 
 31. [DONE] `devtree-main-doc-mode.phase7.release-build-1-2-516.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.516`).
-32. [PENDING] Git Commit: `chore: build release 1.2.516` (hash: TBD)
+32. [DONE] Git Commit: `chore: build release 1.2.516` (hash: c49c29f8e)
 
 ## Phase 7G - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-33. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-516.task1` User installs release `1.2.516` and retests Application Skeleton running while a Product Part user gate becomes active; Project Manager should switch to the active Product Part session and show `Подтверждаю` there (scope: user workflow; expected commit: none).
+33. [BLOCKED] `devtree-main-doc-mode.phase7.acceptance-1-2-516.task1` User installs release `1.2.516` and retests Application Skeleton running while a Product Part user gate becomes active; Project Manager should switch to the active Product Part session and show `Подтверждаю` there (scope: user workflow; expected commit: none). Result: active Product Part gate is highlighted, but Project Manager can remain on Application Skeleton after the same gate was already focused once.
+
+## Phase 7H - Acceptance Defect Fix (owner: Codex, updated: 2026-06-14)
+
+### Stream: Development Tree User Gate Refocus
+
+34. [DONE] `devtree-main-doc-mode.phase7.user-gate-refocus.task1` Refocus the active Development Tree user gate when another node is currently selected, and make the dialog intent target the exact Core dialog/session ids (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: refocus active development tree user gate`).
+35. [PENDING] Git Commit: `fix: refocus active development tree user gate` (hash: TBD)
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-34. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+36. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

@@ -256,6 +256,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     devTreeLockedNodes,
     devTreeNodes,
     dispatchDialogOpenIntent,
+    selectedNodeId,
     trunkNodes,
   });
   const renderItemClass = (node: TreeNode) =>
@@ -428,7 +429,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <div className="pm-tree__empty">{emptyWorkspaceLabel}</div>
       ) : (
         <ul className="pm-tree__list">
-          {/* Documentation Tree — flat trunk rows */}
           <li className="pm-tree__separator" key="section:documentation">
             Documentation Tree
           </li>

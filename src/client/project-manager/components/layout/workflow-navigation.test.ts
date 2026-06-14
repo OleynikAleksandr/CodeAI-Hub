@@ -76,6 +76,42 @@ test("user gate focus resolves active development tree session intent", () => {
   );
 });
 
+test("user gate focus targets exact development tree dialog ids", () => {
+  assert.deepEqual(
+    resolveActiveUserGateSessionIntent(
+      {
+        activeUserGate: {
+          nodeId: "product-part:finder-widget-shell",
+          session: {
+            dialogId: "codex-shell-dialog",
+            providerId: "codexCli",
+            providerSessionId: "provider-session-1",
+            rootSessionId: "codex-shell-root",
+            sessionId: "runtime-shell-session",
+          },
+          workflowPath:
+            "development_tree/materialized/product-parts/finder-widget-shell",
+        },
+      },
+      "/tmp/FinderWidget-Test01",
+      "finderwidget-test01"
+    ),
+    {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-1",
+      targetDialogId: "codex-shell-dialog",
+      targetRootSessionId: "codex-shell-root",
+      targetSessionId: "runtime-shell-session",
+      workspacePath: "/tmp/FinderWidget-Test01",
+      workspaceSlug: "finderwidget-test01",
+      initiativeSlug: "finderwidget-test01",
+      stage: "development_tree/materialized/product-parts/finder-widget-shell",
+      sessionKind: "collector",
+      runSlug: null,
+    }
+  );
+});
+
 test("sidebar-only workflow navigation keeps stage routing consistent", async () => {
   const [
     mainAreaUtilsSource,
@@ -293,6 +329,16 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     workspaceTreeUserGateFocusSource.includes("lastFocusedGateKeyRef"),
     true,
     "active user gate focus must dedupe by gate identity, not just by node id"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes("selectedNodeId === activeGateNodeId"),
+    true,
+    "active user gate focus must refocus the same gate when another node is selected"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes("targetDialogId"),
+    true,
+    "active user gate dialog intent must target the exact Core dialog id when available"
   );
   assert.equal(
     workspaceTreeSource.includes("renderTypeMarkerControl"),
