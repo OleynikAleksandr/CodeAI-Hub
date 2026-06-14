@@ -30,7 +30,6 @@ import {
   attachValidationDirtyGate,
   readTechnicalStageDirtyStatus,
 } from "./technical-stage-dirty-gate";
-import { resolvePreliminaryReviewOpenStages } from "./workflow-preliminary-review-attention";
 import {
   normalizeClearedWorkflowProjection,
   workflowArtifactFileExists,
@@ -42,6 +41,7 @@ import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-
 import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
 import { hydrateTechnicalStageCompletionFromManagedWorkspace } from "./workflow-state-managed-stage-hydration";
 import { resolveWorkflowUserInputAttentionCursor } from "./workflow-user-input-attention";
+import { buildWorkflowUserInputDocumentationStages } from "./workflow-user-input-attention-stages";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
@@ -168,12 +168,6 @@ export class WorkflowStateService {
       stage: "virtual_simulation",
       fileName: "virtual-simulation.md",
     });
-    const preliminaryReviewOpenStages = resolvePreliminaryReviewOpenStages({
-      sessionManager: this.sessionManager,
-      workspaceRoot,
-      workspaceSlug: workspaceSlugResult.value,
-    });
-
     Promise.all([
       continuityPromise,
       descriptionPromise,
@@ -343,45 +337,17 @@ export class WorkflowStateService {
                     developmentTree,
                     userGateCursor: resolveWorkflowUserInputAttentionCursor({
                       developmentTree,
-                      documentationStages: [
-                        {
-                          progress: null,
-                          reviewOpen:
-                            preliminaryReviewOpenStages.has("description"),
-                          stage: "description",
-                        },
-                        {
-                          progress: null,
-                          reviewOpen:
-                            preliminaryReviewOpenStages.has(
-                              "virtual_simulation"
-                            ),
-                          stage: "virtual_simulation",
-                        },
-                        {
-                          progress: null,
-                          reviewOpen: managedReviewOpen.diagramModules,
-                          stage: "diagram_modules",
-                        },
-                        {
-                          progress:
+                      documentationStages:
+                        buildWorkflowUserInputDocumentationStages({
+                          applicationSkeletonProgress:
                             technicalStageProgress.applicationSkeletonProgress,
-                          reviewOpen: managedReviewOpen.applicationSkeleton,
-                          stage: "application_skeleton",
-                        },
-                        {
-                          artifactPaths:
-                            technicalStageProgress.qualityGatesProgress
-                              ? undefined
-                              : [
-                                  `.codeai-hub/${workspaceSlugResult.value}/quality_gates/quality-gates-research.md`,
-                                  `.codeai-hub/${workspaceSlugResult.value}/quality_gates/quality-gates-research.json`,
-                                ],
-                          progress: technicalStageProgress.qualityGatesProgress,
-                          reviewOpen: managedReviewOpen.qualityGates,
-                          stage: "quality_gates",
-                        },
-                      ],
+                          managedReviewOpen,
+                          qualityGatesProgress:
+                            technicalStageProgress.qualityGatesProgress,
+                          sessionManager: this.sessionManager,
+                          workspaceRoot,
+                          workspaceSlug: workspaceSlugResult.value,
+                        }),
                       workspaceSlug: workspaceSlugResult.value,
                     }),
                     technicalStageRewriteBoundary,

@@ -23,6 +23,7 @@ import {
   useWorkflowStateSnapshot,
   workflowStateStore,
 } from "../../services/workflow-state-store";
+import { shouldRefreshWorkflowStateForCoreEvent } from "./workflow-state-refresh-events";
 import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
@@ -142,8 +143,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   useEffect(
     () =>
       api.onCoreEvent((message) => {
-        const tag = message.type === "session:message" && message.payload && typeof message.payload === "object" ? (message.payload as { readonly tag?: unknown }).tag : null;
-        if (tag === "managed-workflow-user-review" || tag === "managed-workflow-complete") {
+        if (shouldRefreshWorkflowStateForCoreEvent(message)) {
           workflowStateStore.requestImmediatePoll();
         }
         const stage = readCoreStageActivation(message);

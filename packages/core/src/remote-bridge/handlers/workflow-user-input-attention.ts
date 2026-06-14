@@ -20,6 +20,7 @@ export interface WorkflowInputAttentionCursor {
 export interface WorkflowInputAttentionDocumentationStage {
   readonly artifactPaths?: readonly string[];
   readonly progress: { readonly substep?: string } | null;
+  readonly reviewActionPending?: boolean;
   readonly reviewOpen?: boolean;
   readonly stage: DocumentationGateStage;
 }
@@ -55,10 +56,14 @@ const normalizeActiveGate = (
 const createDocumentationUserGate = (params: {
   readonly artifactPaths?: readonly string[];
   readonly progress: { readonly substep?: string } | null;
+  readonly reviewActionPending?: boolean;
   readonly reviewOpen?: boolean;
   readonly stage: DocumentationGateStage;
   readonly workspaceSlug: string;
 }): Record<string, unknown> | null => {
+  if (params.reviewActionPending === true) {
+    return null;
+  }
   if (
     params.progress?.substep !== "awaiting_acceptance" &&
     params.reviewOpen !== true
@@ -92,6 +97,7 @@ export const resolveWorkflowUserInputAttentionCursor = (params: {
       createDocumentationUserGate({
         artifactPaths: stage.artifactPaths,
         progress: stage.progress,
+        reviewActionPending: stage.reviewActionPending,
         reviewOpen: stage.reviewOpen,
         stage: stage.stage,
         workspaceSlug: params.workspaceSlug,

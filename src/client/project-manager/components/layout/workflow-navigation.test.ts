@@ -31,6 +31,10 @@ const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
 );
+const WORKFLOW_STATE_REFRESH_EVENTS_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/workflow-state-refresh-events.ts"
+);
 const STAGE_PANEL_SYNC_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-stage-panel-sync.ts"
@@ -49,6 +53,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     workspaceTreeUserGateFocusSource,
     workspaceTreeSelectionSource,
     mainAreaWorkflowStateSource,
+    workflowStateRefreshEventsSource,
     stagePanelSyncSource,
     projectManagerStylesSource,
   ] = await Promise.all([
@@ -59,6 +64,7 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
       readFile(WORKSPACE_TREE_USER_GATE_FOCUS_PATH, "utf8"),
       readFile(WORKSPACE_TREE_SELECTION_PATH, "utf8"),
       readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
+      readFile(WORKFLOW_STATE_REFRESH_EVENTS_PATH, "utf8"),
       readFile(STAGE_PANEL_SYNC_PATH, "utf8"),
       readFile(PROJECT_MANAGER_STYLES_PATH, "utf8"),
     ]);
@@ -129,14 +135,24 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "stage panel sync must recover stage handoff from persisted workflow lastActive state"
   );
   assert.equal(
-    mainAreaSource.includes("managed-workflow-user-review"),
+    workflowStateRefreshEventsSource.includes("managed-workflow-user-review"),
     true,
     "managed workflow user review messages must trigger immediate workflow-state refresh"
   );
   assert.equal(
-    mainAreaSource.includes("managed-workflow-complete"),
+    workflowStateRefreshEventsSource.includes("managed-workflow-complete"),
     true,
     "managed workflow completion messages must trigger immediate workflow-state refresh"
+  );
+  assert.equal(
+    mainAreaSource.includes("shouldRefreshWorkflowStateForCoreEvent"),
+    true,
+    "main area must centralize workflow-state refresh event detection"
+  );
+  assert.equal(
+    workflowStateRefreshEventsSource.includes('message.payload.role === "user"'),
+    true,
+    "user review actions must trigger immediate workflow-state refresh without waiting for polling"
   );
   assert.equal(
     mainAreaSource.includes("workflowStateStore.requestImmediatePoll()"),

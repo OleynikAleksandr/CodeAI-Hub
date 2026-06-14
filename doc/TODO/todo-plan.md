@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "003e3d81a",
+  "lastRecordedCommit": "47dca674b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.release-511-build.task1",
-  "expectedCommitMessage": "chore: release 1.2.511",
+  "currentTaskId": "qg-rebootstrap.phase4.attention-clear.task1",
+  "expectedCommitMessage": "fix: clear managed attention after user action",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.511",
-    "preCommitHead": "003e3d81a",
+    "expectedCommitMessage": "fix: clear managed attention after user action",
+    "preCommitHead": "47dca674b",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.release-511-build.task1"
+    "taskId": "qg-rebootstrap.phase4.attention-clear.task1"
   }
 }
 ```
@@ -106,16 +106,22 @@
 22. [DONE] `qg-rebootstrap.phase4.rollback-boundary-docs.task1` Зафиксировать SSOT-инвариант: clear `Application Skeleton` / `Quality Gates` сохраняет Product Part Development Tree lanes, а clear `Diagram Modules` удаляет их как downstream state (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document skeleton clear product part boundary`).
 23. [DONE] Git Commit: `docs: document skeleton clear product part boundary` (hash: 003e3d81a)
 24. [DONE] `qg-rebootstrap.phase4.release-511-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.511`). Result: `./scripts/build-all.sh --allow-dirty` passed; `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX `codeai-hub-1.2.511.vsix` and 1.2.511 runtime tarballs are available.
-25. [PENDING] Git Commit: `chore: release 1.2.511` (hash: TBD)
+25. [DONE] Git Commit: `chore: release 1.2.511` (hash: 47dca674b)
 
 ### Stream: Release 1.2.511 User Retest
 
-26. [TODO] `qg-rebootstrap.phase4.release-511-user-retest.task1` Пользователь устанавливает и тестирует релиз `1.2.511`: clear `Application Skeleton` не должен удалять Product Part Development Tree sessions/lanes, clear `Diagram Modules` должен удалять их как downstream state (scope: manual retest; expected commit: none).
+26. [DONE] `qg-rebootstrap.phase4.release-511-user-retest.task1` Пользователь устанавливает и тестирует релиз `1.2.511`: clear `Application Skeleton` не должен удалять Product Part Development Tree sessions/lanes, clear `Diagram Modules` должен удалять их как downstream state (scope: manual retest; expected commit: none). Result: failed: managed review attention marker remains visible after user confirmation
+
+### Stream: Managed User Attention Clear
+
+27. [DONE] `qg-rebootstrap.phase4.attention-clear.task1` Исправить Core-owned user attention lifecycle: после любой реакции пользователя на managed review gate пульсирующая рамка должна сниматься сразу, а следующий managed gate должен снова открывать attention только новым Core-owned review-сообщением (scope: `packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/layout/**, AGENTS.md, doc/TODO/todo-plan.md`; expected commit: `fix: clear managed attention after user action`).
+28. [PENDING] Git Commit: `fix: clear managed attention after user action` (hash: TBD)
+29. [TODO] `qg-rebootstrap.phase4.attention-clear-verify.task1` Выполнить targeted regression tests/build для managed user attention cursor после acceptance/revision actions (scope: `packages/core, src/client/project-manager`; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-13)
 
 ### Stream: Closeout
 
-27. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-28. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
-29. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+30. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+31. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+32. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
