@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.517** (Development Tree User Gate Refocus)
+**Current Release — v1.2.518** (Development Tree User Gate Focus + Product Part Startup)
+
+This bugfix release makes Development Tree user-gate focus less aggressive and
+more reliable while Product Part documentation sessions start in parallel.
+
+Project Manager now auto-switches to an active user gate once per gate identity,
+does not keep pulling the user back after manual navigation, and retries the
+auto-open once when Core attaches the Product Part session id after the gate
+first appears. Product Part documentation bootstrap now starts all Product Part
+agent sessions before waiting for their initial turns to settle, so secondary
+parts such as `finder-widget-shell` should not lag behind the lead Product Part
+at startup.
+
+Retest focus: accept `Diagram Modules`, start `Application Skeleton`, and watch
+both Product Part documentation sessions start together. When
+`finder-widget-shell` reaches review, Project Manager should switch to that
+Product Part session once and show `Подтверждаю`, while manual navigation away
+from that gate remains respected.
+
+**Previous Release — v1.2.517** (Development Tree User Gate Refocus)
 
 This bugfix release makes Project Manager return to the active Product Part
 user-gate session even if that same gate was already focused once and the user

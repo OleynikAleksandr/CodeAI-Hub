@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.518] - 2026-06-14
+### Fixed
+- **Development Tree user-gate focus is one-shot again.** Project Manager no longer repeatedly pulls the user back to the same active Product Part gate after manual navigation.
+- **User-gate auto-open retries when the session appears.** The focus key now includes the Core-provided Product Part session identity, so a gate that appears before its session is attached can still open the session once it becomes available.
+- **Product Part documentation agents start concurrently.** Core starts all Product Part documentation sessions and sends their first prompts before waiting for initial turns to settle, reducing secondary Product Part startup lag.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`
+- `npm run build --workspace packages/core`
+- `npm run typecheck:webview`
+
 ## [1.2.517] - 2026-06-14
 ### Fixed
 - **Project Manager refocuses the active Development Tree user gate when another node is selected.** The same active Product Part review gate can now pull the user back from `Application Skeleton` instead of being skipped as already focused.

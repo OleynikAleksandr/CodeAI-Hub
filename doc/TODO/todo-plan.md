@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "ffb05d6fc",
+  "lastRecordedCommit": "63232b520",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-session-key.task1",
-  "expectedCommitMessage": "fix: reopen gate focus when session appears",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs-1-2-518.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.518",
   "debt": {
-    "expectedCommitMessage": "fix: reopen gate focus when session appears",
-    "preCommitHead": "ffb05d6fc",
+    "expectedCommitMessage": "docs: prepare release 1.2.518",
+    "preCommitHead": "63232b520",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.user-gate-session-key.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-docs-1-2-518.task1"
   }
 }
 ```
@@ -206,10 +206,32 @@
 ### Stream: Gate Session Availability
 
 46. [DONE] `devtree-main-doc-mode.phase7.user-gate-session-key.task1` Include the active gate session identity in the one-shot focus key so auto-open can fire when the session becomes available after the gate first appears, without refocusing after manual navigation (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: reopen gate focus when session appears`).
-47. [PENDING] Git Commit: `fix: reopen gate focus when session appears` (hash: TBD)
+47. [DONE] Git Commit: `fix: reopen gate focus when session appears` (hash: 63232b520)
+
+## Phase 7M - Release Rebuild (owner: Codex, updated: 2026-06-14)
+
+### Stream: Release Confirmation
+
+48. [DONE] `devtree-main-doc-mode.phase7.release-decision-1-2-518.task1` User confirms whether to build release `1.2.518` for retesting one-shot user-gate focus, late session availability, and concurrent Product Part agent startup (scope: user workflow; expected commit: none). Result: User confirmed release 1.2.518 build.
+
+### Stream: Release Notes
+
+49. [DONE] `devtree-main-doc-mode.phase7.release-docs-1-2-518.task1` Update README and CHANGELOG for release `1.2.518` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.518`).
+50. [PENDING] Git Commit: `docs: prepare release 1.2.518` (hash: TBD)
+
+### Stream: Release Assembly
+
+51. [TODO] `devtree-main-doc-mode.phase7.release-build-1-2-518.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.518`).
+52. [TODO] Git Commit: `chore: build release 1.2.518` (hash: TBD)
+
+## Phase 7N - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
+
+### Stream: User Retest
+
+53. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-518.task1` User installs release `1.2.518` and retests Application Skeleton running while Product Part user gates and Product Part sessions become active (scope: user workflow; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-48. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+54. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
