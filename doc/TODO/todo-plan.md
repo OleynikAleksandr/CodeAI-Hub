@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "1cf21e1f8",
+  "lastRecordedCommit": "01e7e13d1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase3.checkpoint.task1",
-  "expectedCommitMessage": "fix: skip product part lane checkpoints in main workspace",
+  "currentTaskId": "devtree-main-doc-mode.phase4.docs.task1",
+  "expectedCommitMessage": "docs: document main workspace product part documentation mode",
   "debt": {
-    "expectedCommitMessage": "fix: skip product part lane checkpoints in main workspace",
-    "preCommitHead": "1cf21e1f8",
+    "expectedCommitMessage": "docs: document main workspace product part documentation mode",
+    "preCommitHead": "01e7e13d1",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase3.checkpoint.task1"
+    "taskId": "devtree-main-doc-mode.phase4.docs.task1"
   }
 }
 ```
@@ -61,14 +61,14 @@
 ### Stream: Main Workspace Acceptance
 
 5. [DONE] `devtree-main-doc-mode.phase3.checkpoint.task1` Make Product Part accepted-brief/order-plan checkpoint helpers no-op when the Product Part session already runs in main, and update focused Product Part controller tests if needed (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: skip product part lane checkpoints in main workspace`).
-6. [PENDING] Git Commit: `fix: skip product part lane checkpoints in main workspace` (hash: TBD)
+6. [DONE] Git Commit: `fix: skip product part lane checkpoints in main workspace` (hash: 01e7e13d1)
 
 ## Phase 4 - Documentation Alignment (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Runtime Contract Docs
 
-7. [TODO] `devtree-main-doc-mode.phase4.docs.task1` Update canonical workflow docs and docs index for Product Part documentation mode in main workspace (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document main workspace product part documentation mode`).
-8. [TODO] Git Commit: `docs: document main workspace product part documentation mode` (hash: TBD)
+7. [DONE] `devtree-main-doc-mode.phase4.docs.task1` Update canonical workflow docs and docs index for Product Part documentation mode in main workspace (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document main workspace product part documentation mode`).
+8. [PENDING] Git Commit: `docs: document main workspace product part documentation mode` (hash: TBD)
 
 ## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-06-14)
 
