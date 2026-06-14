@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.513] - 2026-06-14
+### Changed
+- **Accepted lead Product Part order plans now close the pre-code lane in main.** Core checkpoints the accepted `DevelopmentOrderPlan` draft/JSON, Product Part TODO ledger, unlock state, and managed decision state from the lane worktree back into the main workspace.
+- **Product Part lane worktrees are removed after the final checkpoint.** The temporary Product Part pre-code worktree folders are no longer kept after accepted order-plan closeout.
+- **Cluster/Module sessions no longer start from Product Part acceptance.** Downstream Cluster/Module execution stays locked for a later verified-main phase, after Application Skeleton and Quality Gates exist in the main workspace.
+
+### Verification
+- `npx tsx --test packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.test.ts packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts packages/core/src/remote-bridge/handlers/product-part-development-brief-review-controller.lane.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-product-part-restart.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.512] - 2026-06-14
 ### Fixed
 - **Managed review attention now clears on explicit user action.** When the user presses `Подтверждаю` or sends a message after a managed review gate, Core suppresses the active `userGateCursor` until a new Core-owned review opens.

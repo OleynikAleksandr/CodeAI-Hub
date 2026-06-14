@@ -8,15 +8,15 @@
   "planId": "product-part-lane-closeout-implementation-2026-06-14",
   "branch": "main",
   "baseHead": "5f388460e",
-  "lastRecordedCommit": "66c0ef10b",
+  "lastRecordedCommit": "736e01015",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md",
-  "currentTaskId": "product-part-lane-closeout.phase5.compile-repair.task1",
-  "expectedCommitMessage": "fix: remove product part cluster gateway injection",
+  "currentTaskId": "product-part-lane-closeout.phase6.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.513",
   "debt": {
-    "expectedCommitMessage": "fix: remove product part cluster gateway injection",
-    "preCommitHead": "66c0ef10b",
+    "expectedCommitMessage": "docs: prepare release 1.2.513",
+    "preCommitHead": "736e01015",
     "stage": "commit_pending",
-    "taskId": "product-part-lane-closeout.phase5.compile-repair.task1"
+    "taskId": "product-part-lane-closeout.phase6.release-docs.task1"
   }
 }
 ```
@@ -82,14 +82,14 @@
 ### Stream: Compile Repair
 
 12. [DONE] `product-part-lane-closeout.phase5.compile-repair.task1` Remove the stale Product Part managed review handler gateway injection found by the core build (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: remove product part cluster gateway injection`).
-13. [PENDING] Git Commit: `fix: remove product part cluster gateway injection` (hash: TBD)
+13. [DONE] Git Commit: `fix: remove product part cluster gateway injection` (hash: 736e01015)
 
 ## Phase 6 - Release Build (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Release Notes
 
-14. [TODO] `product-part-lane-closeout.phase6.release-docs.task1` Update README and CHANGELOG for the next release version before building release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.513`).
-15. [TODO] Git Commit: `docs: prepare release 1.2.513` (hash: TBD)
+14. [DONE] `product-part-lane-closeout.phase6.release-docs.task1` Update README and CHANGELOG for the next release version before building release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.513`).
+15. [PENDING] Git Commit: `docs: prepare release 1.2.513` (hash: TBD)
 
 ### Stream: Release Assembly
 

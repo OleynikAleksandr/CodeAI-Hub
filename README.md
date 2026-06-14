@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.512** (Managed Review Attention Clear)
+**Current Release — v1.2.513** (Product Part Lane Closeout)
+
+This release changes the end of the Product Part pre-code lane. After the lead
+Product Part `DevelopmentOrderPlan` is accepted, Core checkpoints the accepted
+Product Part artifacts back into the main workspace, records that checkpoint,
+and removes the temporary Product Part worktree folders.
+
+Cluster and Module sessions no longer start from Product Part order-plan
+acceptance. Their downstream work stays locked until a later verified-main
+phase, after Application Skeleton and Quality Gates are available in the main
+workspace.
+
+Retest focus: accept the lead Product Part `DevelopmentOrderPlan`. The Product
+Part artifacts should appear in the main workspace, no Cluster/Module sessions
+should start, and the Product Part pre-code worktree folders should be removed.
+
+**Previous Release — v1.2.512** (Managed Review Attention Clear)
 
 This bugfix release clears the Core-owned managed review attention marker as
 soon as the user reacts to a review gate. Pressing `Подтверждаю` or sending a
