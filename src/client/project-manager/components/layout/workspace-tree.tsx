@@ -256,7 +256,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     devTreeLockedNodes,
     devTreeNodes,
     dispatchDialogOpenIntent,
-    selectedNodeId,
     trunkNodes,
   });
   const renderItemClass = (node: TreeNode) =>

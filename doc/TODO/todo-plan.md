@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "da0cac14d",
+  "lastRecordedCommit": "c1db9dfdc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-build-1-2-517.task1",
-  "expectedCommitMessage": "chore: build release 1.2.517",
+  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-focus-one-shot.task1",
+  "expectedCommitMessage": "fix: make development tree gate focus one-shot",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.517",
-    "preCommitHead": "da0cac14d",
+    "expectedCommitMessage": "fix: make development tree gate focus one-shot",
+    "preCommitHead": "c1db9dfdc",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-build-1-2-517.task1"
+    "taskId": "devtree-main-doc-mode.phase7.user-gate-focus-one-shot.task1"
   }
 }
 ```
@@ -183,16 +183,28 @@
 ### Stream: Release Assembly
 
 39. [DONE] `devtree-main-doc-mode.phase7.release-build-1-2-517.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.517`).
-40. [PENDING] Git Commit: `chore: build release 1.2.517` (hash: TBD)
+40. [DONE] Git Commit: `chore: build release 1.2.517` (hash: c1db9dfdc)
 
 ## Phase 7K - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-41. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-517.task1` User installs release `1.2.517` and retests Application Skeleton running while a Product Part user gate becomes active; Project Manager should switch to the active Product Part session and show `Подтверждаю` there (scope: user workflow; expected commit: none).
+41. [BLOCKED] `devtree-main-doc-mode.phase7.acceptance-1-2-517.task1` User installs release `1.2.517` and retests Application Skeleton running while a Product Part user gate becomes active; Project Manager should switch to the active Product Part session and show `Подтверждаю` there (scope: user workflow; expected commit: none). Result: focus now returns too aggressively after manual navigation and can open a Product Part branch with no visible session history; Product Part bootstrap still starts Product Part agents serially.
+
+## Phase 7L - Acceptance Defect Fix (owner: Codex, updated: 2026-06-14)
+
+### Stream: One-Shot Gate Focus
+
+42. [DONE] `devtree-main-doc-mode.phase7.user-gate-focus-one-shot.task1` Restore active Development Tree user-gate focus to one automatic switch per gate identity, without refocusing after the user manually selects another node (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: make development tree gate focus one-shot`).
+43. [PENDING] Git Commit: `fix: make development tree gate focus one-shot` (hash: TBD)
+
+### Stream: Product Part Agent Startup
+
+44. [TODO] `devtree-main-doc-mode.phase7.product-part-parallel-start.task1` Start Product Part documentation agents concurrently after shared Development Tree materialization, and update the Diagram Modules acceptance regression (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part agents concurrently`).
+45. [TODO] Git Commit: `fix: start product part agents concurrently` (hash: TBD)
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-42. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+46. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
