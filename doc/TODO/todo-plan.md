@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "63232b520",
+  "lastRecordedCommit": "7afb8817e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs-1-2-518.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.518",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-build-1-2-518.task1",
+  "expectedCommitMessage": "chore: build release 1.2.518",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.518",
-    "preCommitHead": "63232b520",
+    "expectedCommitMessage": "chore: build release 1.2.518",
+    "preCommitHead": "7afb8817e",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-docs-1-2-518.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-build-1-2-518.task1"
   }
 }
 ```
@@ -217,21 +217,26 @@
 ### Stream: Release Notes
 
 49. [DONE] `devtree-main-doc-mode.phase7.release-docs-1-2-518.task1` Update README and CHANGELOG for release `1.2.518` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.518`).
-50. [PENDING] Git Commit: `docs: prepare release 1.2.518` (hash: TBD)
+50. [DONE] Git Commit: `docs: prepare release 1.2.518` (hash: 7afb8817e)
 
 ### Stream: Release Assembly
 
-51. [TODO] `devtree-main-doc-mode.phase7.release-build-1-2-518.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.518`).
-52. [TODO] Git Commit: `chore: build release 1.2.518` (hash: TBD)
+51. [DONE] `devtree-main-doc-mode.phase7.release-build-1-2-518.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.518`). Result: `./scripts/build-all.sh --allow-dirty --version 1.2.518` passed with dirty allowance limited to the machine-managed active `doc/TODO/todo-plan.md` transition; provider/Core/UI/CEF launcher tarballs for `1.2.518` were copied to `doc/tmp/releases/`.
+52. [PENDING] Git Commit: `chore: build release 1.2.518` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+53. [TODO] `devtree-main-doc-mode.phase7.release-package-1-2-518.task1` Run final VSIX packaging for release `1.2.518` and record package evidence for user retest (scope: `codeai-hub-1.2.518.vsix, doc/TODO/todo-plan.md`; expected commit: `docs: record release 1.2.518 package`).
+54. [TODO] Git Commit: `docs: record release 1.2.518 package` (hash: TBD)
 
 ## Phase 7N - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-53. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-518.task1` User installs release `1.2.518` and retests Application Skeleton running while Product Part user gates and Product Part sessions become active (scope: user workflow; expected commit: none).
+55. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-518.task1` User installs release `1.2.518` and retests Application Skeleton running while Product Part user gates and Product Part sessions become active (scope: user workflow; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-54. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+56. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
