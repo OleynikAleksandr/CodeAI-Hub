@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "f2182bbfc",
+  "lastRecordedCommit": "0df40b4ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase6.release-build.task1",
-  "expectedCommitMessage": "chore: build release 1.2.514",
+  "currentTaskId": "devtree-main-doc-mode.phase7.dirty-gate.task1",
+  "expectedCommitMessage": "fix: allow product part documentation dirt before skeleton",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.514",
-    "preCommitHead": "f2182bbfc",
+    "expectedCommitMessage": "fix: allow product part documentation dirt before skeleton",
+    "preCommitHead": "0df40b4ff",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase6.release-build.task1"
+    "taskId": "devtree-main-doc-mode.phase7.dirty-gate.task1"
   }
 }
 ```
@@ -86,16 +86,41 @@
 ### Stream: Release Assembly
 
 12. [DONE] `devtree-main-doc-mode.phase6.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.514`).
-13. [PENDING] Git Commit: `chore: build release 1.2.514` (hash: TBD)
+13. [DONE] Git Commit: `chore: build release 1.2.514` (hash: 0df40b4ff)
 
 ## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-14. [TODO] `devtree-main-doc-mode.phase7.acceptance.task1` User installs release `1.2.514` and retests Product Part documentation bootstrap: sessions/artifacts in main workspace, no Product Part pre-code worktrees, lead order-plan barrier still works, no Cluster/Module sessions start (scope: user workflow; expected commit: none).
+14. [BLOCKED] `devtree-main-doc-mode.phase7.acceptance.task1` User installs release `1.2.514` and retests Product Part documentation bootstrap: sessions/artifacts in main workspace, no Product Part pre-code worktrees, lead order-plan barrier still works, no Cluster/Module sessions start (scope: user workflow; expected commit: none). Result: Application Skeleton start was blocked by dirty Product Part documentation files in the main workspace.
+
+## Phase 7A - Acceptance Defect Fix (owner: Codex, updated: 2026-06-14)
+
+### Stream: Product Part Dirty Gate
+
+15. [DONE] `devtree-main-doc-mode.phase7.dirty-gate.task1` Allow technical trunk dirty-gating to ignore main-workspace Product Part documentation paths while Product Part sessions are active (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`; expected commit: `fix: allow product part documentation dirt before skeleton`).
+16. [PENDING] Git Commit: `fix: allow product part documentation dirt before skeleton` (hash: TBD)
+
+## Phase 7B - Release Rebuild (owner: Codex, updated: 2026-06-14)
+
+### Stream: Release Notes
+
+17. [TODO] `devtree-main-doc-mode.phase7.release-docs.task1` Update README and CHANGELOG for release `1.2.515` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.515`).
+18. [TODO] Git Commit: `docs: prepare release 1.2.515` (hash: TBD)
+
+### Stream: Release Assembly
+
+19. [TODO] `devtree-main-doc-mode.phase7.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.515`).
+20. [TODO] Git Commit: `chore: build release 1.2.515` (hash: TBD)
+
+## Phase 7C - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
+
+### Stream: User Retest
+
+21. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-515.task1` User installs release `1.2.515` and retests Product Part documentation bootstrap plus Application Skeleton start with dirty Product Part docs present (scope: user workflow; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-15. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+22. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

@@ -23,7 +23,6 @@ const REWRITE_BOUNDARY_DIRTY_GATE_RE =
   /Rewrite boundary blocked [A-Za-z ]+-owned files/u;
 const CONTENT_READINESS_NOTE_RE =
   /Respond with a content-readiness note or blocker only/u;
-
 const writeWorkspaceFile = async (
   workspaceRoot: string,
   relativePath: string,
@@ -33,7 +32,6 @@ const writeWorkspaceFile = async (
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, content, "utf8");
 };
-
 const initCommittedWorkspace = async (workspaceRoot: string): Promise<void> => {
   await execFileAsync("git", ["init"], { cwd: workspaceRoot });
   await execFileAsync("git", ["config", "user.email", "test@example.com"], {
@@ -48,7 +46,6 @@ const initCommittedWorkspace = async (workspaceRoot: string): Promise<void> => {
     cwd: workspaceRoot,
   });
 };
-
 const createWorkflowState = (): WorkflowState =>
   ({
     stages: {
@@ -383,6 +380,16 @@ test("technical stage dirty status ignores volatile Core metadata after restart"
       workspaceRoot,
       "doc/TODO/stages/diagram-modules/todo-plan.md",
       "# Diagram Modules Managed TODO Plan\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/development_tree/materialized/product-parts/app/ProductPartDevelopmentBrief.draft.md`,
+      "# ProductPartDevelopmentBrief\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/development-tree/product-parts/app/todo-plan.md",
+      "# Product Part Plan\n"
     );
 
     const status = await readTechnicalStageDirtyStatus(

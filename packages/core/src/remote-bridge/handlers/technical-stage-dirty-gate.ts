@@ -34,7 +34,14 @@ const QUALITY_GATES_PATH_KEYS = new Set([
 const QG_TSCONFIG_RE = /^tsconfig\.qg(?:\.[a-z0-9-]+)?\.json$/u;
 const MANAGED_WORKSPACE_LEDGER_RE =
   /^doc\/TODO\/(?:workspace\.plan\.md|stages\/(?:application-skeleton|diagram-modules|quality-gates)\/todo-plan\.md)$/u;
+const DEVELOPMENT_TREE_PRODUCT_PART_TODO_RE =
+  /^doc\/TODO\/stages\/development-tree\/product-parts\/[^/]+\/todo-plan\.md$/u;
 const PATH_SEGMENT_SEPARATOR_RE = /[\\/]+/u;
+const PRODUCT_PART_DOCUMENTATION_FILENAMES = new Set([
+  "DevelopmentOrderPlan.draft.json",
+  "DevelopmentOrderPlan.draft.md",
+  "ProductPartDevelopmentBrief.draft.md",
+]);
 
 const isNonSemanticDiagramModulesSidecar = (
   file: string,
@@ -75,6 +82,32 @@ const isVolatileCoreMetadataPath = (
   file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/checkpoints/`) ||
   file === `.codeai-hub/${workspaceSlug}/workflow/state.json` ||
   file === `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`;
+
+const isDevelopmentTreeProductPartDocumentationPath = (
+  file: string,
+  workspaceSlug: string
+): boolean => {
+  const materializedRoot = `.codeai-hub/${workspaceSlug}/development_tree/materialized/product-parts/`;
+  if (file.startsWith(materializedRoot)) {
+    const parts = file.slice(materializedRoot.length).split("/");
+    return (
+      parts.length === 2 && PRODUCT_PART_DOCUMENTATION_FILENAMES.has(parts[1])
+    );
+  }
+  const managedRoot = `.codeai-hub/${workspaceSlug}/workflow/managed/development-tree-product-parts/`;
+  if (file.startsWith(managedRoot)) {
+    const filename = file.slice(managedRoot.length);
+    return !filename.includes("/") && filename.endsWith(".json");
+  }
+  return DEVELOPMENT_TREE_PRODUCT_PART_TODO_RE.test(file);
+};
+
+const isIgnoredTechnicalDirtyPath = (
+  file: string,
+  workspaceSlug: string
+): boolean =>
+  isVolatileCoreMetadataPath(file, workspaceSlug) ||
+  isDevelopmentTreeProductPartDocumentationPath(file, workspaceSlug);
 
 const parseGitStatusPath = (line: string): string | null => {
   const rawPath = line.slice(3).trim();
@@ -212,7 +245,7 @@ export const readTechnicalStageDirtyStatus = async (
     .split("\n")
     .map((line) => parseGitStatusPath(line))
     .filter((entry): entry is string => Boolean(entry))
-    .filter((file) => !isVolatileCoreMetadataPath(file, workspaceSlug));
+    .filter((file) => !isIgnoredTechnicalDirtyPath(file, workspaceSlug));
   const dirtyByStage: Record<TechnicalStageId, string[]> = {
     diagram_modules: [],
     application_skeleton: [],
