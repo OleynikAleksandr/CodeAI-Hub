@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "3176baea3",
+  "lastRecordedCommit": "329730cd1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.515",
+  "currentTaskId": "devtree-main-doc-mode.phase7.lock-label.task1",
+  "expectedCommitMessage": "fix: correct development tree lock prerequisite",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.515",
-    "preCommitHead": "3176baea3",
+    "expectedCommitMessage": "fix: correct development tree lock prerequisite",
+    "preCommitHead": "329730cd1",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-docs.task1"
+    "taskId": "devtree-main-doc-mode.phase7.lock-label.task1"
   }
 }
 ```
@@ -106,21 +106,31 @@
 ### Stream: Release Notes
 
 17. [DONE] `devtree-main-doc-mode.phase7.release-docs.task1` Update README and CHANGELOG for release `1.2.515` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.515`).
-18. [PENDING] Git Commit: `docs: prepare release 1.2.515` (hash: TBD)
+18. [DONE] Git Commit: `docs: prepare release 1.2.515` (hash: 329730cd1)
+
+### Stream: Development Tree Locked Label
+
+19. [DONE] `devtree-main-doc-mode.phase7.lock-label.task1` Point the locked Development Tree placeholder at `Diagram Modules` while that prerequisite is still missing (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`; expected commit: `fix: correct development tree lock prerequisite`).
+20. [PENDING] Git Commit: `fix: correct development tree lock prerequisite` (hash: TBD)
+
+### Stream: Release Notes Refresh
+
+21. [TODO] `devtree-main-doc-mode.phase7.release-notes-refresh.task1` Add the Development Tree locked-label fix to the `1.2.515` release notes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: refresh release 1.2.515 notes`).
+22. [TODO] Git Commit: `docs: refresh release 1.2.515 notes` (hash: TBD)
 
 ### Stream: Release Assembly
 
-19. [TODO] `devtree-main-doc-mode.phase7.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.515`).
-20. [TODO] Git Commit: `chore: build release 1.2.515` (hash: TBD)
+23. [TODO] `devtree-main-doc-mode.phase7.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.515`).
+24. [TODO] Git Commit: `chore: build release 1.2.515` (hash: TBD)
 
 ## Phase 7C - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-21. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-515.task1` User installs release `1.2.515` and retests Product Part documentation bootstrap plus Application Skeleton start with dirty Product Part docs present (scope: user workflow; expected commit: none).
+25. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-515.task1` User installs release `1.2.515` and retests Product Part documentation bootstrap plus Application Skeleton start with dirty Product Part docs present and the Development Tree lock placeholder before Diagram Modules acceptance (scope: user workflow; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-22. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+26. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

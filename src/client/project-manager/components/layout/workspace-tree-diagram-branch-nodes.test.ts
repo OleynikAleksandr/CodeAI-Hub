@@ -191,7 +191,7 @@ test("buildDiagramModulesBranchNodes projects development tree nodes from snapsh
   assert.equal(coreNode.children, undefined);
   assert.equal(
     buildDevelopmentTreeLockedNodes(createWorkflowState(), 0)[0]?.label,
-    "Locked until Quality\nGates Baseline\nis integrated"
+    "Locked until Diagram\nModules\nis accepted"
   );
 });
 
