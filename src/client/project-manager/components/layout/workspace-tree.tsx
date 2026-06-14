@@ -47,7 +47,6 @@ interface WorkspaceTreeProps {
   readonly workspacePath?: string;
   readonly workspaceSlug?: string;
 }
-
 export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,
   workspaceName,
@@ -247,24 +246,28 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? buildDevelopmentTreeLockedNodes(workflowState, 0)
       : [];
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
-  const { activeGateFocusKey, activeGateNodeId, queuedGateNodeIds } =
-    resolveUserGateNodeTargets(workflowState?.userGateCursor);
+  const userGateTargets = resolveUserGateNodeTargets(
+    workflowState?.userGateCursor,
+    workspacePath,
+    workspaceSlug
+  );
   useWorkspaceTreeUserGateFocus({
-    activeGateFocusKey,
-    activeGateNodeId,
+    ...userGateTargets,
     devTreeLockedNodes,
     devTreeNodes,
+    dispatchDialogOpenIntent,
     trunkNodes,
   });
-
   const renderItemClass = (node: TreeNode) =>
     [
       "pm-tree__item",
       `pm-tree__item--${node.status}`,
       node.nodeType ? `pm-tree__item--type-${node.nodeType}` : null,
       (node.isSelected || node.id === selectedNodeId) ? "pm-tree__item--selected" : null,
-      node.id === activeGateNodeId ? "pm-tree__item--user-gate-active" : null,
-      queuedGateNodeIds.has(node.id)
+      node.id === userGateTargets.activeGateNodeId
+        ? "pm-tree__item--user-gate-active"
+        : null,
+      userGateTargets.queuedGateNodeIds.has(node.id)
         ? "pm-tree__item--user-gate-queued"
         : null,
     ]

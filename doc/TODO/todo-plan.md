@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "fcc79b2d7",
+  "lastRecordedCommit": "eebbd3edb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-build.task1",
-  "expectedCommitMessage": "chore: build release 1.2.515",
+  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-focus.task1",
+  "expectedCommitMessage": "fix: open active development tree user gate session",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.515",
-    "preCommitHead": "fcc79b2d7",
+    "expectedCommitMessage": "fix: open active development tree user gate session",
+    "preCommitHead": "eebbd3edb",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-build.task1"
+    "taskId": "devtree-main-doc-mode.phase7.user-gate-focus.task1"
   }
 }
 ```
@@ -121,16 +121,47 @@
 ### Stream: Release Assembly
 
 23. [DONE] `devtree-main-doc-mode.phase7.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.515`).
-24. [PENDING] Git Commit: `chore: build release 1.2.515` (hash: TBD)
+24. [DONE] Git Commit: `chore: build release 1.2.515` (hash: eebbd3edb)
 
 ## Phase 7C - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-25. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-515.task1` User installs release `1.2.515` and retests Product Part documentation bootstrap plus Application Skeleton start with dirty Product Part docs present and the Development Tree lock placeholder before Diagram Modules acceptance (scope: user workflow; expected commit: none).
+25. [BLOCKED] `devtree-main-doc-mode.phase7.acceptance-1-2-515.task1` User installs release `1.2.515` and retests Product Part documentation bootstrap plus Application Skeleton start with dirty Product Part docs present and the Development Tree lock placeholder before Diagram Modules acceptance (scope: user workflow; expected commit: none). Result: Application Skeleton can start, but Project Manager does not auto-open the active Product Part user-gate session; the currently open Application Skeleton dialog shows the queued-gate lock and no `Подтверждаю` button.
+
+## Phase 7D - Acceptance Defect Fix (owner: Codex, updated: 2026-06-14)
+
+### Stream: Development Tree User Gate Focus
+
+26. [DONE] `devtree-main-doc-mode.phase7.user-gate-focus.task1` Auto-open the active Development Tree user-gate session from Core `userGateCursor.activeUserGate.session` after selecting the highlighted node (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: open active development tree user gate session`).
+27. [PENDING] Git Commit: `fix: open active development tree user gate session` (hash: TBD)
+
+## Phase 7E - Release Decision (owner: user, updated: 2026-06-14)
+
+### Stream: Release Confirmation
+
+28. [TODO] `devtree-main-doc-mode.phase7.release-decision-1-2-516.task1` User confirms whether to build release `1.2.516` for retesting the active Product Part user-gate auto-open fix (scope: user workflow; expected commit: none).
+
+## Phase 7F - Release Rebuild (owner: Codex, updated: 2026-06-14)
+
+### Stream: Release Notes
+
+29. [TODO] `devtree-main-doc-mode.phase7.release-docs-1-2-516.task1` Update README and CHANGELOG for release `1.2.516` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.516`).
+30. [TODO] Git Commit: `docs: prepare release 1.2.516` (hash: TBD)
+
+### Stream: Release Assembly
+
+31. [TODO] `devtree-main-doc-mode.phase7.release-build-1-2-516.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.516`).
+32. [TODO] Git Commit: `chore: build release 1.2.516` (hash: TBD)
+
+## Phase 7G - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
+
+### Stream: User Retest
+
+33. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-516.task1` User installs release `1.2.516` and retests Application Skeleton running while a Product Part user gate becomes active; Project Manager should switch to the active Product Part session and show `Подтверждаю` there (scope: user workflow; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-26. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+34. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

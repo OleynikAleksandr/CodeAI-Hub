@@ -1,9 +1,15 @@
 import { useEffect, useRef } from "react";
+import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 
 type UserGateCursorView = {
   readonly activeUserGate?: UserGateView | null;
-  readonly queuedUserGates?: readonly { readonly nodeId?: string }[];
+  readonly queuedUserGates?: readonly UserGateView[];
+};
+
+type UserGateSessionView = {
+  readonly providerId?: string;
+  readonly providerSessionId?: string | null;
 };
 
 type UserGateView = {
@@ -11,19 +17,24 @@ type UserGateView = {
   readonly expectedCommitMessage?: string;
   readonly id?: string;
   readonly nodeId?: string;
+  readonly session?: UserGateSessionView | null;
+  readonly workflowPath?: string;
 };
 
 interface UserGateNodeTargets {
   readonly activeGateFocusKey: string | null;
   readonly activeGateNodeId: string | null;
+  readonly activeGateSessionIntent: SessionResumeIntent | null;
   readonly queuedGateNodeIds: ReadonlySet<string>;
 }
 
 interface WorkspaceTreeUserGateFocusInput {
   readonly activeGateFocusKey: string | null;
   readonly activeGateNodeId: string | null;
+  readonly activeGateSessionIntent: SessionResumeIntent | null;
   readonly devTreeLockedNodes: readonly TreeNode[];
   readonly devTreeNodes: readonly TreeNode[];
+  readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly trunkNodes: readonly TreeNode[];
 }
 
@@ -59,6 +70,29 @@ const createUserGateFocusKey = (gate?: UserGateView | null): string | null => {
     .join("|");
 };
 
+export const resolveActiveUserGateSessionIntent = (
+  cursor: UserGateCursorView | null | undefined,
+  workspacePath: string | undefined,
+  workspaceSlug: string | null | undefined
+): SessionResumeIntent | null => {
+  const gate = cursor?.activeUserGate;
+  const providerId = readString(gate?.session?.providerId);
+  const providerSessionId = readString(gate?.session?.providerSessionId);
+  if (!(gate && providerId && providerSessionId && workspacePath && workspaceSlug)) {
+    return null;
+  }
+  return {
+    providerId,
+    providerSessionId,
+    workspacePath,
+    workspaceSlug,
+    initiativeSlug: workspaceSlug,
+    stage: readString(gate.workflowPath) ?? "diagram_modules",
+    sessionKind: "collector",
+    runSlug: null,
+  };
+};
+
 const findTreeNodeById = (
   nodes: readonly TreeNode[],
   nodeId: string
@@ -76,10 +110,17 @@ const findTreeNodeById = (
 };
 
 export const resolveUserGateNodeTargets = (
-  cursor?: UserGateCursorView | null
+  cursor?: UserGateCursorView | null,
+  workspacePath?: string,
+  workspaceSlug?: string | null
 ): UserGateNodeTargets => ({
   activeGateFocusKey: createUserGateFocusKey(cursor?.activeUserGate),
   activeGateNodeId: normalizeUserGateNodeId(cursor?.activeUserGate?.nodeId),
+  activeGateSessionIntent: resolveActiveUserGateSessionIntent(
+    cursor,
+    workspacePath,
+    workspaceSlug
+  ),
   queuedGateNodeIds: new Set(
     (cursor?.queuedUserGates ?? [])
       .map((gate) => normalizeUserGateNodeId(gate.nodeId))
@@ -90,8 +131,10 @@ export const resolveUserGateNodeTargets = (
 export const useWorkspaceTreeUserGateFocus = ({
   activeGateFocusKey,
   activeGateNodeId,
+  activeGateSessionIntent,
   devTreeLockedNodes,
   devTreeNodes,
+  dispatchDialogOpenIntent,
   trunkNodes,
 }: WorkspaceTreeUserGateFocusInput): void => {
   const lastFocusedGateKeyRef = useRef<string | null>(null);
@@ -114,11 +157,16 @@ export const useWorkspaceTreeUserGateFocus = ({
     }
     lastFocusedGateKeyRef.current = gateFocusKey;
     activeNode.onSelect();
+    if (activeGateSessionIntent) {
+      dispatchDialogOpenIntent(activeGateSessionIntent);
+    }
   }, [
     activeGateFocusKey,
     activeGateNodeId,
+    activeGateSessionIntent,
     devTreeLockedNodes,
     devTreeNodes,
+    dispatchDialogOpenIntent,
     trunkNodes,
   ]);
 };

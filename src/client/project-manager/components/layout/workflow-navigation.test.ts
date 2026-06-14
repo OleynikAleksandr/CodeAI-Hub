@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import { resolveActiveUserGateSessionIntent } from "./workspace-tree-user-gate-focus";
 
 const MAIN_AREA_UTILS_PATH = path.resolve(
   process.cwd(),
@@ -43,6 +44,37 @@ const PROJECT_MANAGER_STYLES_PATH = path.resolve(
   process.cwd(),
   "packages/ui/project-manager/styles.css"
 );
+
+test("user gate focus resolves active development tree session intent", () => {
+  assert.deepEqual(
+    resolveActiveUserGateSessionIntent(
+      {
+        activeUserGate: {
+          nodeId: "product-part:finder-widget-shell",
+          session: {
+            providerId: "codexCli",
+            providerSessionId: "provider-session-1",
+          },
+          workflowPath:
+            "development-tree.product-part.finder-widget-shell.phase2.brief-review.task1",
+        },
+      },
+      "/tmp/FinderWidget-Test01",
+      "finderwidget-test01"
+    ),
+    {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-1",
+      workspacePath: "/tmp/FinderWidget-Test01",
+      workspaceSlug: "finderwidget-test01",
+      initiativeSlug: "finderwidget-test01",
+      stage:
+        "development-tree.product-part.finder-widget-shell.phase2.brief-review.task1",
+      sessionKind: "collector",
+      runSlug: null,
+    }
+  );
+});
 
 test("sidebar-only workflow navigation keeps stage routing consistent", async () => {
   const [
@@ -246,9 +278,16 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "active user gate focus must reuse the node's existing selection route"
   );
   assert.equal(
-    workspaceTreeSource.includes("activeGateFocusKey"),
+    workspaceTreeSource.includes("userGateTargets"),
     true,
     "workspace tree must pass a stable gate identity key for repeated gates on the same node"
+  );
+  assert.equal(
+    workspaceTreeUserGateFocusSource.includes(
+      "dispatchDialogOpenIntent(activeGateSessionIntent)"
+    ),
+    true,
+    "active user gate focus must open the Core-provided active gate session"
   );
   assert.equal(
     workspaceTreeUserGateFocusSource.includes("lastFocusedGateKeyRef"),
