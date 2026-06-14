@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.512] - 2026-06-14
+### Fixed
+- **Managed review attention now clears on explicit user action.** When the user presses `Подтверждаю` or sends a message after a managed review gate, Core suppresses the active `userGateCursor` until a new Core-owned review opens.
+- **Project Manager no longer waits for polling after user session messages.** User message events now request a fresh workflow-state snapshot, so the pulsing orange frame disappears immediately instead of lagging behind the confirmed/replied state.
+- **Regression coverage locks the behavior.** Core tests cover consumed managed review gates, and Project Manager tests cover the user-message refresh trigger.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-user-input-attention.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-action-attention.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run lint`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+
 ## [1.2.511] - 2026-06-14
 ### Fixed
 - **Clearing `Application Skeleton` no longer removes Product Part Development Tree lanes.** Workflow rollback now preserves Product Part pre-code artifacts, managed decisions, continuity chains, continuity index entries, and Development Tree TODO scaffolds when the cleared stage is `Application Skeleton` or `Quality Gates Baseline`.

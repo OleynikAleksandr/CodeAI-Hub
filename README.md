@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.511** (Application Skeleton Clear Boundary)
+**Current Release — v1.2.512** (Managed Review Attention Clear)
+
+This bugfix release clears the Core-owned managed review attention marker as
+soon as the user reacts to a review gate. Pressing `Подтверждаю` or sending a
+message after a managed review now suppresses the pulsing orange frame until
+Core opens a new review gate for that step.
+
+Project Manager also requests a fresh workflow-state snapshot immediately after
+user session messages, so the tree marker follows the explicit user action
+instead of waiting for the next polling interval.
+
+Retest focus: complete a managed review in `Diagram Modules`, `Quality Gates
+Baseline`, or a Product Part lane. After pressing `Подтверждаю` or sending a
+correction message, the pulsing attention frame should disappear immediately;
+it should appear again only when Core opens the next managed review.
+
+**Previous Release — v1.2.511** (Application Skeleton Clear Boundary)
 
 This bugfix release corrects workflow Clear/Undo isolation after the
 Development Tree starts. Clearing `Application Skeleton` or `Quality Gates

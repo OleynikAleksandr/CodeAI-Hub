@@ -8,15 +8,15 @@
   "planId": "quality-gates-product-part-rebootstrap-removal-2026-06-13",
   "branch": "main",
   "baseHead": "63349dc64",
-  "lastRecordedCommit": "dbaf3e3d9",
+  "lastRecordedCommit": "39794248c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_UserGateReviewCursor_Architecture.md",
-  "currentTaskId": "qg-rebootstrap.phase4.plan-state-repair.task1",
-  "expectedCommitMessage": "docs: repair attention fix plan state",
+  "currentTaskId": "qg-rebootstrap.phase4.release-512-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.512",
   "debt": {
-    "expectedCommitMessage": "docs: repair attention fix plan state",
-    "preCommitHead": "dbaf3e3d9",
+    "expectedCommitMessage": "docs: prepare release 1.2.512",
+    "preCommitHead": "39794248c",
     "stage": "commit_pending",
-    "taskId": "qg-rebootstrap.phase4.plan-state-repair.task1"
+    "taskId": "qg-rebootstrap.phase4.release-512-docs.task1"
   }
 }
 ```
@@ -121,13 +121,24 @@
 ### Stream: Release 1.2.512 Confirmation
 
 30. [DONE] `qg-rebootstrap.phase4.plan-state-repair.task1` Зафиксировать repaired active plan snapshot после failed pre-commit transaction и вернуть следующий шаг на release confirmation gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: repair attention fix plan state`).
-31. [PENDING] Git Commit: `docs: repair attention fix plan state` (hash: TBD)
-32. [TODO] `qg-rebootstrap.phase4.release-512-confirmation.task1` Запросить у пользователя явное подтверждение на сборку bugfix-релиза после исправления managed attention clear; без подтверждения не запускать release notes, version bump, `build-all.sh` или `build-release.sh` (scope: release confirmation gate; expected commit: none).
+31. [DONE] Git Commit: `docs: repair attention fix plan state` (hash: 39794248c)
+32. [DONE] `qg-rebootstrap.phase4.release-512-confirmation.task1` Запросить у пользователя явное подтверждение на сборку bugfix-релиза после исправления managed attention clear; без подтверждения не запускать release notes, version bump, `build-all.sh` или `build-release.sh` (scope: release confirmation gate; expected commit: none). Result: confirmed: user requested release 1.2.512 build
 
-## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-13)
+### Stream: Release 1.2.512 Build
+
+33. [DONE] `qg-rebootstrap.phase4.release-512-docs.task1` Подготовить README/CHANGELOG и active plan на будущую версию `1.2.512` перед `build-all.sh` (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.512`).
+34. [PENDING] Git Commit: `docs: prepare release 1.2.512` (hash: TBD)
+35. [TODO] `qg-rebootstrap.phase4.release-512-build.task1` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artifacts/status в плане (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.512`).
+36. [TODO] Git Commit: `chore: release 1.2.512` (hash: TBD)
+
+### Stream: Release 1.2.512 User Retest
+
+37. [TODO] `qg-rebootstrap.phase4.release-512-user-retest.task1` Пользователь устанавливает и тестирует релиз `1.2.512`: после `Подтверждаю` или пользовательского сообщения managed review attention frame должен сниматься сразу и появляться заново только на новом Core-owned review gate (scope: manual retest; expected commit: none).
+
+## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-33. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
-34. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
-35. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
+38. [TODO] `qg-rebootstrap.phase5.closeout.task1` После явного acceptance пользователя закрыть scope и оставить active plan в terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates rebootstrap removal scope`).
+39. [TODO] Git Commit: `docs: close quality gates rebootstrap removal scope` (hash: TBD)
+40. [TODO] `qg-rebootstrap.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: terminal NONE transition; expected commit: none).
