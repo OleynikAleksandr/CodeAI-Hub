@@ -295,6 +295,13 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "active user gate focus must dedupe by gate identity, not just by node id"
   );
   assert.equal(
+    workspaceTreeUserGateFocusSource.includes(
+      "readString(gate?.session?.providerSessionId)"
+    ),
+    true,
+    "active user gate focus must reopen once when the Core-provided session becomes available"
+  );
+  assert.equal(
     workspaceTreeUserGateFocusSource.includes("selectedNodeId === activeGateNodeId"),
     false,
     "active user gate focus must not refocus the same gate after manual navigation"

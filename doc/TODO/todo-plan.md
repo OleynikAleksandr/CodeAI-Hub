@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "8b584015d",
+  "lastRecordedCommit": "ffb05d6fc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.product-part-parallel-start.task1",
-  "expectedCommitMessage": "fix: start product part agents concurrently",
+  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-session-key.task1",
+  "expectedCommitMessage": "fix: reopen gate focus when session appears",
   "debt": {
-    "expectedCommitMessage": "fix: start product part agents concurrently",
-    "preCommitHead": "8b584015d",
+    "expectedCommitMessage": "fix: reopen gate focus when session appears",
+    "preCommitHead": "ffb05d6fc",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.product-part-parallel-start.task1"
+    "taskId": "devtree-main-doc-mode.phase7.user-gate-session-key.task1"
   }
 }
 ```
@@ -201,10 +201,15 @@
 ### Stream: Product Part Agent Startup
 
 44. [DONE] `devtree-main-doc-mode.phase7.product-part-parallel-start.task1` Start Product Part documentation agents concurrently after shared Development Tree materialization, and update the Diagram Modules acceptance regression (scope: `packages/core/src/remote-bridge/handlers/development-tree-product-part-precode-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: start product part agents concurrently`).
-45. [PENDING] Git Commit: `fix: start product part agents concurrently` (hash: TBD)
+45. [DONE] Git Commit: `fix: start product part agents concurrently` (hash: ffb05d6fc)
+
+### Stream: Gate Session Availability
+
+46. [DONE] `devtree-main-doc-mode.phase7.user-gate-session-key.task1` Include the active gate session identity in the one-shot focus key so auto-open can fire when the session becomes available after the gate first appears, without refocusing after manual navigation (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: reopen gate focus when session appears`).
+47. [PENDING] Git Commit: `fix: reopen gate focus when session appears` (hash: TBD)
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-46. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+48. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

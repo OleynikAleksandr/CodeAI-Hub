@@ -65,6 +65,7 @@ const createUserGateFocusKey = (gate?: UserGateView | null): string | null => {
     readString(gate?.id),
     readString(gate?.currentTaskId),
     readString(gate?.expectedCommitMessage),
+    readString(gate?.session?.providerSessionId),
   ]
     .filter((value): value is string => Boolean(value))
     .join("|");
