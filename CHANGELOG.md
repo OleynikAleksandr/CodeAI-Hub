@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.516] - 2026-06-14
+### Fixed
+- **Project Manager opens the active Development Tree user gate session.** When Core reports a Product Part review gate through `userGateCursor.activeUserGate`, the sidebar focus now also opens the Core-provided session instead of only highlighting the row while another workflow dialog stays visible.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+
 ## [1.2.515] - 2026-06-14
 ### Fixed
 - **Application Skeleton no longer blocks on Product Part documentation dirt.** Main-workspace Product Part documentation paths are now neutral for the technical-stage dirty gate, so Product Part agents can keep writing drafts/TODO ledgers while the trunk proceeds to Application Skeleton.

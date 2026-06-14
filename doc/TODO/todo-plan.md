@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "eebbd3edb",
+  "lastRecordedCommit": "8b37342b2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.user-gate-focus.task1",
-  "expectedCommitMessage": "fix: open active development tree user gate session",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs-1-2-516.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.516",
   "debt": {
-    "expectedCommitMessage": "fix: open active development tree user gate session",
-    "preCommitHead": "eebbd3edb",
+    "expectedCommitMessage": "docs: prepare release 1.2.516",
+    "preCommitHead": "8b37342b2",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.user-gate-focus.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-docs-1-2-516.task1"
   }
 }
 ```
@@ -134,20 +134,20 @@
 ### Stream: Development Tree User Gate Focus
 
 26. [DONE] `devtree-main-doc-mode.phase7.user-gate-focus.task1` Auto-open the active Development Tree user-gate session from Core `userGateCursor.activeUserGate.session` after selecting the highlighted node (scope: `src/client/project-manager/components/layout/workspace-tree-user-gate-focus.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit: `fix: open active development tree user gate session`).
-27. [PENDING] Git Commit: `fix: open active development tree user gate session` (hash: TBD)
+27. [DONE] Git Commit: `fix: open active development tree user gate session` (hash: 8b37342b2)
 
 ## Phase 7E - Release Decision (owner: user, updated: 2026-06-14)
 
 ### Stream: Release Confirmation
 
-28. [TODO] `devtree-main-doc-mode.phase7.release-decision-1-2-516.task1` User confirms whether to build release `1.2.516` for retesting the active Product Part user-gate auto-open fix (scope: user workflow; expected commit: none).
+28. [DONE] `devtree-main-doc-mode.phase7.release-decision-1-2-516.task1` User confirms whether to build release `1.2.516` for retesting the active Product Part user-gate auto-open fix (scope: user workflow; expected commit: none). Result: User confirmed release 1.2.516 build.
 
 ## Phase 7F - Release Rebuild (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Release Notes
 
-29. [TODO] `devtree-main-doc-mode.phase7.release-docs-1-2-516.task1` Update README and CHANGELOG for release `1.2.516` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.516`).
-30. [TODO] Git Commit: `docs: prepare release 1.2.516` (hash: TBD)
+29. [DONE] `devtree-main-doc-mode.phase7.release-docs-1-2-516.task1` Update README and CHANGELOG for release `1.2.516` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.516`).
+30. [PENDING] Git Commit: `docs: prepare release 1.2.516` (hash: TBD)
 
 ### Stream: Release Assembly
 
