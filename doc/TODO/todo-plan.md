@@ -8,15 +8,15 @@
   "planId": "product-part-lane-closeout-implementation-2026-06-14",
   "branch": "main",
   "baseHead": "5f388460e",
-  "lastRecordedCommit": "4432e8d30",
+  "lastRecordedCommit": "d097d6b83",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md",
-  "currentTaskId": "product-part-lane-closeout.phase2.plan-writer.task1",
-  "expectedCommitMessage": "fix: stop lead product part plans before cluster coordination",
+  "currentTaskId": "product-part-lane-closeout.phase3.order-plan.task1",
+  "expectedCommitMessage": "fix: finalize product part order plans in main workspace",
   "debt": {
-    "expectedCommitMessage": "fix: stop lead product part plans before cluster coordination",
-    "preCommitHead": "4432e8d30",
+    "expectedCommitMessage": "fix: finalize product part order plans in main workspace",
+    "preCommitHead": "d097d6b83",
     "stage": "commit_pending",
-    "taskId": "product-part-lane-closeout.phase2.plan-writer.task1"
+    "taskId": "product-part-lane-closeout.phase3.order-plan.task1"
   }
 }
 ```
@@ -52,14 +52,14 @@
 ### Stream: Generated Product Part Todo Plans
 
 3. [DONE] `product-part-lane-closeout.phase2.plan-writer.task1` Remove the generated downstream coordination phase from lead Product Part pre-code plans and update its focused test (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.test.ts`; expected commit: `fix: stop lead product part plans before cluster coordination`).
-4. [PENDING] Git Commit: `fix: stop lead product part plans before cluster coordination` (hash: TBD)
+4. [DONE] Git Commit: `fix: stop lead product part plans before cluster coordination` (hash: d097d6b83)
 
 ## Phase 3 - Product Part Final Checkpoint (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Order Plan Acceptance
 
-5. [TODO] `product-part-lane-closeout.phase3.order-plan.task1` Finalize accepted lead Product Part order plans by checkpointing accepted artifacts to main, cleaning Product Part worktrees, and moving the managed plan to user-return instead of downstream coordination (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: finalize product part order plans in main workspace`).
-6. [TODO] Git Commit: `fix: finalize product part order plans in main workspace` (hash: TBD)
+5. [DONE] `product-part-lane-closeout.phase3.order-plan.task1` Finalize accepted lead Product Part order plans by checkpointing accepted artifacts to main, cleaning Product Part worktrees, and moving the managed plan to user-return instead of downstream coordination (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: finalize product part order plans in main workspace`).
+6. [PENDING] Git Commit: `fix: finalize product part order plans in main workspace` (hash: TBD)
 
 ### Stream: Cluster Wave Guard
 

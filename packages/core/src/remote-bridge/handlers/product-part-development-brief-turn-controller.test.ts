@@ -47,12 +47,10 @@ const LEAD_ORDER_REVIEW_DONE_RE =
   /\[DONE\] `development-tree\.product-part\.engine\.phase4\.order-plan-review\.task1`/u;
 const LEAD_ORDER_REVIEW_GIT_COMMIT_RE =
   /Git Commit: `docs: accept lead development order plan` \(hash: [a-f0-9]+\)/u;
-const DOWNSTREAM_IN_PROGRESS_RE =
-  /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase5\.downstream-coordination\.task1`/u;
-const DOWNSTREAM_EXPECTED_COMMIT_RE =
-  /"expectedCommitMessage": "chore: coordinate engine downstream development"/u;
-const DOWNSTREAM_GIT_COMMIT_RE =
-  /Git Commit: `chore: coordinate engine downstream development` \(hash: TBD\)/u;
+const RETURN_AFTER_ORDER_PLAN_RE =
+  /\[IN_PROGRESS\] `development-tree\.product-part\.engine\.phase-return\.user-return\.task1`/u;
+const ORDER_PLAN_EXPECTED_COMMIT_NULL_RE = /"expectedCommitMessage": null/u;
+const NO_DOWNSTREAM_COORDINATION_RE = /downstream-coordination/u;
 const DEVELOPMENT_ORDER_PLAN_RE = /DevelopmentOrderPlan/u;
 const DEVELOPMENT_ORDER_PLAN_V2_RE = /codeai-development-order-plan-v2/u;
 const STATUS_ACCEPTED_RE = /^status: accepted$/mu;
@@ -423,7 +421,7 @@ test("Lead Product Part order plan handoff opens user review", async () => {
   }
 });
 
-test("Lead Product Part order plan review acceptance opens downstream coordination", async () => {
+test("Lead Product Part order plan review acceptance closes Product Part lane", async () => {
   const workspaceRoot = await prepareOrderPlanReviewWorkspace();
   try {
     const result = await acceptReview(workspaceRoot);
@@ -432,9 +430,9 @@ test("Lead Product Part order plan review acceptance opens downstream coordinati
     const plan = await readFile(path.join(workspaceRoot, PLAN_PATH), "utf8");
     assert.match(plan, LEAD_ORDER_REVIEW_DONE_RE);
     assert.match(plan, LEAD_ORDER_REVIEW_GIT_COMMIT_RE);
-    assert.match(plan, DOWNSTREAM_IN_PROGRESS_RE);
-    assert.match(plan, DOWNSTREAM_EXPECTED_COMMIT_RE);
-    assert.match(plan, DOWNSTREAM_GIT_COMMIT_RE);
+    assert.match(plan, RETURN_AFTER_ORDER_PLAN_RE);
+    assert.match(plan, ORDER_PLAN_EXPECTED_COMMIT_NULL_RE);
+    assert.doesNotMatch(plan, NO_DOWNSTREAM_COORDINATION_RE);
     const unlockState = await readFile(
       path.join(workspaceRoot, UNLOCK_STATE_PATH),
       "utf8"
