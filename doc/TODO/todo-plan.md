@@ -4,50 +4,101 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "downstream-execution-refactor-strategy-doc-2026-06-14",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "product-part-lane-closeout-implementation-2026-06-14",
   "branch": "main",
-  "baseHead": "17e593ebf",
-  "lastRecordedCommit": "dff6c8609",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
-  "debt": null
+  "baseHead": "5f388460e",
+  "lastRecordedCommit": "5f388460e",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md",
+  "currentTaskId": "product-part-lane-closeout.phase1.plan.task1",
+  "expectedCommitMessage": "docs: plan product part lane closeout implementation",
+  "debt": {
+    "expectedCommitMessage": "docs: plan product part lane closeout implementation",
+    "preCommitHead": "5f388460e",
+    "stage": "commit_pending",
+    "taskId": "product-part-lane-closeout.phase1.plan.task1"
+  }
 }
 ```
 <!-- codeai-plan-state:end -->
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md`
 - **Read this context before implementation:**
   - `doc/TODO/todo-plan.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md`
 
-## Правила выполнения
+## Execution Rules
 
-- Scope is documentation-only.
-- Do not edit production code in this intake.
-- Commit through `npm run plan:commit -- "<expected commit message>"`.
-- Keep this active plan open after the documentation update until user acceptance.
+- Scope is the Product Part pre-code lane closeout runtime only.
+- Do not implement cluster/module downstream execution in this cycle.
+- Each implementation task changes at most 3 source/doc files.
+- Use `npm run plan:commit -- "<expected commit message>"` for commit-backed tasks.
+- Final release build is explicitly requested by the user in this cycle.
 
-## Phase 1 — Downstream Execution Strategy Documentation (owner: Codex, updated: 2026-06-14)
+## Phase 1 - Operational Planning (owner: Codex, updated: 2026-06-14)
 
-### Stream: Planning Document Update
+### Stream: Planning Source And Todo Slice
 
-1. [DONE] `planning-intake.downstream-refactor-doc.phase1.task1` Update the downstream execution refactor planning document with the accepted short-lived Product Part lane and AI impact-planning model (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_DownstreamExecutionRefactor_Architecture.md`; expected commit: `docs: update downstream execution refactor strategy`).
-2. [DONE] Git Commit: `docs: update downstream execution refactor strategy` (hash: dff6c8609)
+1. [DONE] `product-part-lane-closeout.phase1.plan.task1` Create the operational planning document and this implementation todo slice (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md`; expected commit: `docs: plan product part lane closeout implementation`).
+2. [PENDING] Git Commit: `docs: plan product part lane closeout implementation` (hash: TBD)
 
-### Stream: Tooling Verification
+## Phase 2 - Product Part Plan Boundary (owner: Codex, updated: 2026-06-14)
 
-3. [DONE] `planning-intake.downstream-refactor-doc.phase1.verify.task1` Verify Markdown UTF-8/readback and run plan validation after the documentation commit (scope: commands only; expected commit: none). Result: Markdown readback and plan validation completed after documentation commit.
+### Stream: Generated Product Part Todo Plans
 
-### Stream: User Workflow Acceptance Testing
+3. [TODO] `product-part-lane-closeout.phase2.plan-writer.task1` Remove the generated downstream coordination phase from lead Product Part pre-code plans and update its focused test (scope: `packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.ts, packages/core/src/development-tree/product-part-workflow/product-part-development-brief-plan-writer.test.ts`; expected commit: `fix: stop lead product part plans before cluster coordination`).
+4. [TODO] Git Commit: `fix: stop lead product part plans before cluster coordination` (hash: TBD)
 
-4. [DONE] `planning-intake.downstream-refactor-doc.phase1.acceptance.task1` User reviews the updated planning document and either accepts it or requests corrections (scope: user workflow; expected commit: none). Result: User accepted the updated downstream execution refactor strategy document.
+## Phase 3 - Product Part Final Checkpoint (owner: Codex, updated: 2026-06-14)
 
-### Stream: Scope Closeout
+### Stream: Order Plan Acceptance
 
-5. [DONE] `planning-intake.downstream-refactor-doc.phase1.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Result: Scope closed by Plan Orchestrator; start a new plan only from NONE state.
+5. [TODO] `product-part-lane-closeout.phase3.order-plan.task1` Finalize accepted lead Product Part order plans by checkpointing accepted artifacts to main, cleaning Product Part worktrees, and moving the managed plan to user-return instead of downstream coordination (scope: `packages/core/src/remote-bridge/handlers/product-part-brief-lane-checkpoint.ts, packages/core/src/remote-bridge/handlers/product-part-development-order-plan-review-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`; expected commit: `fix: finalize product part order plans in main workspace`).
+6. [TODO] Git Commit: `fix: finalize product part order plans in main workspace` (hash: TBD)
+
+### Stream: Cluster Wave Guard
+
+7. [TODO] `product-part-lane-closeout.phase3.handler.task1` Remove Product Part acceptance-side cluster wave bootstrap dispatch and update its focused handler test (scope: `packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.ts, packages/core/src/remote-bridge/handlers/product-part-managed-review-decision-handler.test.ts`; expected commit: `fix: block cluster wave bootstrap after product part acceptance`).
+8. [TODO] Git Commit: `fix: block cluster wave bootstrap after product part acceptance` (hash: TBD)
+
+## Phase 4 - Documentation Alignment (owner: Codex, updated: 2026-06-14)
+
+### Stream: Runtime Contract Docs
+
+9. [TODO] `product-part-lane-closeout.phase4.docs.task1` Document the accepted Product Part lane closeout runtime in the canonical workflow docs (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: document product part lane closeout runtime`).
+10. [TODO] Git Commit: `docs: document product part lane closeout runtime` (hash: TBD)
+
+## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-06-14)
+
+### Stream: Targeted Verification
+
+11. [TODO] `product-part-lane-closeout.phase5.verify.task1` Run targeted Product Part lane closeout tests and the affected core build (scope: commands only; expected commit: none).
+
+## Phase 6 - Release Build (owner: Codex, updated: 2026-06-14)
+
+### Stream: Release Notes
+
+12. [TODO] `product-part-lane-closeout.phase6.release-docs.task1` Update README and CHANGELOG for the next release version before building release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.513`).
+13. [TODO] Git Commit: `docs: prepare release 1.2.513` (hash: TBD)
+
+### Stream: Release Assembly
+
+14. [TODO] `product-part-lane-closeout.phase6.release-build.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.513`).
+15. [TODO] Git Commit: `chore: build release 1.2.513` (hash: TBD)
+
+## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
+
+### Stream: User Retest
+
+16. [TODO] `product-part-lane-closeout.phase7.acceptance.task1` User installs the new release and retests Product Part order-plan acceptance: no cluster sessions start, accepted Product Part artifacts are in main, and Product Part worktree folders are removed (scope: user workflow; expected commit: none).
+
+## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
+
+### Stream: Closeout
+
+17. [TODO] `product-part-lane-closeout.phase8.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
