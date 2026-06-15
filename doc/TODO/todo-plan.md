@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "856a9f6ab",
+  "lastRecordedCommit": "391402f72",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream7.task1",
-  "expectedCommitMessage": "test: cover stopped managed repair unlock",
+  "currentTaskId": "phase1.stream8.task1",
+  "expectedCommitMessage": "docs: record order plan stop unlock verification",
   "debt": {
-    "expectedCommitMessage": "test: cover stopped managed repair unlock",
-    "preCommitHead": "856a9f6ab",
+    "expectedCommitMessage": "docs: record order plan stop unlock verification",
+    "preCommitHead": "391402f72",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7.task1"
+    "taskId": "phase1.stream8.task1"
   }
 }
 ```
@@ -79,12 +79,14 @@
 ### Stream: Stop Unlock Regression Tests
 
 13. [DONE] `phase1.stream7.task1` Add focused regression coverage for Stop releasing input in managed repair sessions. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts`; expected commit: `test: cover stopped managed repair unlock`)
-14. [PENDING] `phase1.stream7.commit1` Git Commit: `test: cover stopped managed repair unlock` (hash: TBD)
+14. [DONE] `phase1.stream7.commit1` Git Commit: `test: cover stopped managed repair unlock` (hash: 391402f72)
 
 ### Stream: Combined Tooling Verification
 
-15. [TODO] `phase1.stream8.task1` Run targeted tests and Core build for the validator and stop/unlock fixes. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock verification`)
-16. [TODO] `phase1.stream8.commit1` Git Commit: `docs: record order plan stop unlock verification` (hash: TBD)
+15. [DONE] `phase1.stream8.task1` Run targeted tests and Core build for the validator and stop/unlock fixes. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock verification`)
+    - Evidence 2026-06-15: `npx tsx --test packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts` passed 6/6 tests.
+    - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
+16. [PENDING] `phase1.stream8.commit1` Git Commit: `docs: record order plan stop unlock verification` (hash: TBD)
 
 ### Stream: Release Build
 
