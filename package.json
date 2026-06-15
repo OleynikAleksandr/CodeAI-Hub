@@ -104,8 +104,8 @@
     "url": "https://github.com/OleynikAleksandr/CodeAI-Hub.git"
   },
   "devDependencies": {
-    "@google/gemini-cli": "^0.16.0",
-    "@google/gemini-cli-core": "^0.16.0",
+    "@google/gemini-cli": "0.46.0",
+    "@google/gemini-cli-core": "0.46.0",
     "@types/node": "^22.7.4",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",

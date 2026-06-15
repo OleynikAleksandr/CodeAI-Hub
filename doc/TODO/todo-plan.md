@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "f21b25265",
+  "lastRecordedCommit": "7ee184cf3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5.task1",
-  "expectedCommitMessage": "test: verify audit automation cleanup",
+  "currentTaskId": "phase1.stream5a.task1",
+  "expectedCommitMessage": "chore: update gemini cli dependencies",
   "debt": {
-    "expectedCommitMessage": "test: verify audit automation cleanup",
-    "preCommitHead": "f21b25265",
+    "expectedCommitMessage": "chore: update gemini cli dependencies",
+    "preCommitHead": "7ee184cf3",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5.task1"
+    "taskId": "phase1.stream5a.task1"
   }
 }
 ```
@@ -70,14 +70,28 @@
 ### Stream: Tooling Verification
 
 13. [DONE] `phase1.stream5.task1` Run targeted verification for the changed gates and touched packages. (scope: `package.json, packages/core/package.json, package-lock.json`; expected commit: `test: verify audit automation cleanup`)
-14. [PENDING] `phase1.stream5.commit1` Git Commit: `test: verify audit automation cleanup` (hash: TBD)
+14. [DONE] `phase1.stream5.commit1` Git Commit: `test: verify audit automation cleanup` (hash: 7ee184cf3)
+
+### Stream: Gemini Dependency Correction
+
+15. [DONE] `phase1.stream5a.task1` Align repository Gemini CLI/Core dev dependencies with the installed provider version 0.46.0. (scope: `package.json, packages/Gemini_Module/package.json, package-lock.json`; expected commit: `chore: update gemini cli dependencies`)
+16. [PENDING] `phase1.stream5a.commit1` Git Commit: `chore: update gemini cli dependencies` (hash: TBD)
+17. [TODO] `phase1.stream5a.task2` Restore the Gemini compatibility layer for the 0.46.0 internal package layout. (scope: `packages/Gemini_Module/src/runtime/gemini-cli-compat-types.d.ts, packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts`; expected commit: `fix: restore gemini cli 0.46 compatibility`)
+18. [TODO] `phase1.stream5a.commit2` Git Commit: `fix: restore gemini cli 0.46 compatibility` (hash: TBD)
+
+### Stream: Release Build
+
+19. [TODO] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
+20. [TODO] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: TBD)
+21. [TODO] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
+22. [TODO] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-15. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
-16. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
+23. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
+24. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-17. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
-18. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
+25. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
+26. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)

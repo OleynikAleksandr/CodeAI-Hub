@@ -17,9 +17,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.7",
+    "@google/gemini-cli": "0.46.0",
+    "@google/gemini-cli-core": "0.46.0",
     "@google/genai": "^1.16.0",
-    "@google/gemini-cli": "^0.17.0",
-    "@google/gemini-cli-core": "^0.17.0",
     "@types/node": "^20.11.0",
     "husky": "^9.1.7",
     "lefthook": "^2.0.4",
