@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "da5b18404",
+  "lastRecordedCommit": "c281819d5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6e.task1",
-  "expectedCommitMessage": "fix: ignore completed preliminary review gates",
+  "currentTaskId": "phase1.stream6e.task2",
+  "expectedCommitMessage": "test: verify stale user gate cursor fix",
   "debt": {
-    "expectedCommitMessage": "fix: ignore completed preliminary review gates",
-    "preCommitHead": "da5b18404",
+    "expectedCommitMessage": "test: verify stale user gate cursor fix",
+    "preCommitHead": "c281819d5",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6e.task1"
+    "taskId": "phase1.stream6e.task2"
   }
 }
 ```
@@ -158,9 +158,11 @@
 ### Stream: Acceptance Bugfix - Stale User Gate Cursor
 
 65. [DONE] `phase1.stream6e.task1` Ignore stale preliminary review gates after a downstream review is already open. (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention-stages.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts`; expected commit: `fix: ignore completed preliminary review gates`)
-66. [PENDING] `phase1.stream6e.commit1` Git Commit: `fix: ignore completed preliminary review gates` (hash: TBD)
-67. [TODO] `phase1.stream6e.task2` Run targeted verification for stale queued user-gate cursor handling. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core`; expected commit: `test: verify stale user gate cursor fix`)
-68. [TODO] `phase1.stream6e.commit2` Git Commit: `test: verify stale user gate cursor fix` (hash: TBD)
+66. [DONE] `phase1.stream6e.commit1` Git Commit: `fix: ignore completed preliminary review gates` (hash: c281819d5)
+67. [DONE] `phase1.stream6e.task2` Run targeted verification for stale queued user-gate cursor handling. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core`; expected commit: `test: verify stale user gate cursor fix`)
+    - Evidence 2026-06-15: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-action-attention.test.ts` passed 12/12 tests.
+    - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
+68. [PENDING] `phase1.stream6e.commit2` Git Commit: `test: verify stale user gate cursor fix` (hash: TBD)
 
 ### Stream: Release Rebuild 1.2.523
 
