@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "1975f9ee7",
+  "lastRecordedCommit": "9d035065a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream9.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.524 release notes",
+  "currentTaskId": "phase1.stream9.task2",
+  "expectedCommitMessage": "chore: build release 1.2.524",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.524 release notes",
-    "preCommitHead": "1975f9ee7",
+    "expectedCommitMessage": "chore: build release 1.2.524",
+    "preCommitHead": "9d035065a",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9.task1"
+    "taskId": "phase1.stream9.task2"
   }
 }
 ```
@@ -91,9 +91,13 @@
 ### Stream: Release Build
 
 17. [DONE] `phase1.stream9.task1` Prepare release notes for the confirmed 1.2.524 release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.524 release notes`)
-18. [PENDING] `phase1.stream9.commit1` Git Commit: `docs: prepare 1.2.524 release notes` (hash: TBD)
-19. [TODO] `phase1.stream9.task2` Build the confirmed release after both fixes are verified. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.524`)
-20. [TODO] `phase1.stream9.commit2` Git Commit: `chore: build release 1.2.524` (hash: TBD)
+18. [DONE] `phase1.stream9.commit1` Git Commit: `docs: prepare 1.2.524 release notes` (hash: 9d035065a)
+19. [DONE] `phase1.stream9.task2` Build the confirmed release after both fixes are verified. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.524`)
+    - Evidence 2026-06-15: `./scripts/build-all.sh --allow-dirty` passed for `1.2.524`; dirty input was the active `doc/TODO/todo-plan.md` post-commit transition state.
+    - Evidence 2026-06-15: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.524`, including SDK exclusions, local artefact validation, markdown links, duplication advisory check, production dependency pruning, VSIX package creation and VSIX runtime package surface verification.
+    - VSIX: `codeai-hub-1.2.524.vsix`, sha256 `6d6e392a68c746e7abb430a9a7cb3a374794efae21eac22df69525f6dbf3893d`.
+    - Tarballs in `doc/tmp/releases/`: `claude-module-1.2.524.tar.bz2`, `codex-module-1.2.524.tar.bz2`, `gemini-module-1.2.524.tar.bz2`, `glm-claude-code-module-1.2.524.tar.bz2`, `kimi-module-1.2.524.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.524.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.524.tar.bz2`, `vscode-webview-1.2.524.tar.bz2`, `project-manager-1.2.524.tar.bz2`.
+20. [PENDING] `phase1.stream9.commit2` Git Commit: `chore: build release 1.2.524` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
