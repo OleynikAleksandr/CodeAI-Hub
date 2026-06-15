@@ -4,31 +4,80 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
-  "branch": "main",
-  "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "463fcbd65",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
-  "debt": null
+  "executionScopeStatus": "ACTIVE",
+  "planId": "audit-automation-cleanup-part1-2026-06-15",
+  "branch": "codex/audit-gates-cleanup",
+  "baseHead": "8928ccf31",
+  "lastRecordedCommit": "8928ccf31",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
+  "currentTaskId": "phase1.stream1.task1",
+  "expectedCommitMessage": "docs: plan audit automation cleanup",
+  "debt": {
+    "expectedCommitMessage": "docs: plan audit automation cleanup",
+    "preCommitHead": "8928ccf31",
+    "stage": "commit_pending",
+    "taskId": "phase1.stream1.task1"
+  }
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-development-tree-main-workspace-documentation-mode-2026-06-14.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md`
-- **Last recorded commit:** `463fcbd65`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Only this list is the context source for this execution cycle.
 
-## Start Next Scope
+## Execution Rules
 
-There is no active execution scope. Before starting new implementation work:
+- Required reading before each fix: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
+- Keep each microtask to no more than 3 files, excluding `doc/TODO/todo-plan.md`.
+- Every implementation task is followed by a separate `Git Commit: ...` item.
+- Use `npm run plan:commit -- "<expected commit message>"`; do not bypass hooks.
+- Release build is out of scope for this part unless the user explicitly asks for it.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 1 - Audit Automation Part 1 (owner: Codex, updated: 2026-06-15)
+
+### Stream: Plan Setup
+
+1. [DONE] `phase1.stream1.task1` Create the accepted audit automation part 1 planning source and active execution plan. (scope: `doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan audit automation cleanup`)
+2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan audit automation cleanup` (hash: TBD)
+
+### Stream: Automatic Gates
+
+3. [TODO] `phase1.stream2.task1` Add low-noise automatic checks for audit gaps: runtime security audit, workspace duplication guard, and CI coverage for duplicate/link/security checks. (scope: `package.json, .github/workflows/ci.yml, .husky/pre-push`; expected commit: `chore: automate audit gap checks`)
+4. [TODO] `phase1.stream2.commit1` Git Commit: `chore: automate audit gap checks` (hash: TBD)
+
+### Stream: Runtime Security Patch
+
+5. [TODO] `phase1.stream3.task1` Patch low-risk Core runtime dependency advisories without changing provider internals. (scope: `packages/core/package.json, package-lock.json`; expected commit: `fix: patch core runtime dependencies`)
+6. [TODO] `phase1.stream3.commit1` Git Commit: `fix: patch core runtime dependencies` (hash: TBD)
+
+### Stream: Manual Cleanup
+
+7. [TODO] `phase1.stream4.task1` Remove stale tracked TODO zip archive residue. (scope: `.gitignore, doc/TODO/Archive.zip`; expected commit: `chore: remove stale todo archive zip`)
+8. [TODO] `phase1.stream4.commit1` Git Commit: `chore: remove stale todo archive zip` (hash: TBD)
+9. [TODO] `phase1.stream4.task2` Remove two audit noise patterns from source without changing behavior. (scope: `packages/Claude_Module/src/installer/sdk-installer.ts, src/client/project-manager/api.ts`; expected commit: `chore: remove audit noise patterns`)
+10. [TODO] `phase1.stream4.commit2` Git Commit: `chore: remove audit noise patterns` (hash: TBD)
+11. [TODO] `phase1.stream4.task3` Trim redundant Knip entry config hints. (scope: `knip.json`; expected commit: `chore: trim knip audit config`)
+12. [TODO] `phase1.stream4.commit3` Git Commit: `chore: trim knip audit config` (hash: TBD)
+
+### Stream: Tooling Verification
+
+13. [TODO] `phase1.stream5.task1` Run targeted verification for the changed gates and touched packages. (scope: `package.json, packages/core/package.json, package-lock.json`; expected commit: `test: verify audit automation cleanup`)
+14. [TODO] `phase1.stream5.commit1` Git Commit: `test: verify audit automation cleanup` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+15. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
+16. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
+
+### Stream: Scope Closeout
+
+17. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
+18. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
