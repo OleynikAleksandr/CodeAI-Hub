@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.521] - 2026-06-15
+### Fixed
+- **Existing GLM-Claude-Code settings migrate from legacy model aliases.** Persisted `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` values now normalize to `glm-5.2` in Settings UI, Core model identity and runtime `ANTHROPIC_DEFAULT_*_MODEL` export.
+
+### Verification
+- `npx tsx src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`
+- `npm run typecheck:webview`
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
+- `node --test packages/core/dist/config/provider-settings-snapshot.test.js`
+- Real workspace settings snapshot with `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` maps to `glm-5.2` for UI and Core.
+
 ## [1.2.520] - 2026-06-15
 ### Changed
 - **Kimi defaults now target Kimi K2.7 Code.** Provider registries, Core defaults, Project Manager capture/start surfaces, Session UI fallback labels and active SSOT docs now use `kimi-k2.7-code`.

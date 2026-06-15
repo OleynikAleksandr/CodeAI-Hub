@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "719cd7db4",
+  "lastRecordedCommit": "8c03600ca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6a.task4",
-  "expectedCommitMessage": "test: verify legacy glm alias normalization",
+  "currentTaskId": "phase1.stream6b.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.521 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify legacy glm alias normalization",
-    "preCommitHead": "719cd7db4",
+    "expectedCommitMessage": "docs: prepare 1.2.521 release notes",
+    "preCommitHead": "8c03600ca",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6a.task4"
+    "taskId": "phase1.stream6b.task1"
   }
 }
 ```
@@ -126,12 +126,12 @@
     - Evidence 2026-06-15: `npx tsx src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts` passed, including legacy GLM alias mapping to `glm-5.2`.
     - Evidence 2026-06-15: `npm run typecheck:webview`, `npm run build --workspace=@codeai-hub/claude-module`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`, and `node --test packages/core/dist/config/provider-settings-snapshot.test.js` passed.
     - Evidence 2026-06-15: the real workspace settings snapshot that still contains `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` now maps to `glm-5.2` for UI default/opus/sonnet/haiku and Core default model.
-52. [PENDING] `phase1.stream6a.commit4` Git Commit: `test: verify legacy glm alias normalization` (hash: TBD)
+52. [DONE] `phase1.stream6a.commit4` Git Commit: `test: verify legacy glm alias normalization` (hash: 8c03600ca)
 
 ### Stream: Release Rebuild 1.2.521
 
-53. [TODO] `phase1.stream6b.task1` Prepare release documentation for version 1.2.521 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.521 release notes`)
-54. [TODO] `phase1.stream6b.commit1` Git Commit: `docs: prepare 1.2.521 release notes` (hash: TBD)
+53. [DONE] `phase1.stream6b.task1` Prepare release documentation for version 1.2.521 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.521 release notes`)
+54. [PENDING] `phase1.stream6b.commit1` Git Commit: `docs: prepare 1.2.521 release notes` (hash: TBD)
 55. [TODO] `phase1.stream6b.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.521`)
 56. [TODO] `phase1.stream6b.commit2` Git Commit: `chore: build release 1.2.521` (hash: TBD)
 

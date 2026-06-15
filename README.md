@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.520** (Provider Model Updates + Audit Gate Cleanup)
+**Current Release — v1.2.521** (GLM 5.2 Legacy Settings Migration)
+
+This bugfix release upgrades existing GLM-Claude-Code persisted settings that
+still contain `glm-5.1`, `glm-5-turbo`, or `glm-4.5-air` aliases. Settings UI,
+Core model identity and runtime environment export now normalize those legacy
+aliases to `glm-5.2`.
+
+Retest focus: open Settings -> GLM-Claude-Code after installing over `1.2.520`.
+The Opus, Sonnet, Haiku and Default model fields should all show `glm-5.2`, and
+the session model badge should show `GLM 5.2 / Claude Code`.
+
+**Previous Release — v1.2.520** (Provider Model Updates + Audit Gate Cleanup)
 
 This release updates provider defaults before the rebuilt package: Kimi now
 targets `kimi-k2.7-code`, GLM-Claude-Code targets `glm-5.2` across runtime,
