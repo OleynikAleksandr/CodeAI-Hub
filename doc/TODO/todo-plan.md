@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "47436db6e",
+  "lastRecordedCommit": "58a83de16",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-package-1-2-518.task1",
-  "expectedCommitMessage": "docs: record release 1.2.518 package",
+  "currentTaskId": "devtree-main-doc-mode.phase7.input-thinking-lock.task1",
+  "expectedCommitMessage": "fix: lock input during thinking stream",
   "debt": {
-    "expectedCommitMessage": "docs: record release 1.2.518 package",
-    "preCommitHead": "47436db6e",
+    "expectedCommitMessage": "fix: lock input during thinking stream",
+    "preCommitHead": "58a83de16",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-package-1-2-518.task1"
+    "taskId": "devtree-main-doc-mode.phase7.input-thinking-lock.task1"
   }
 }
 ```
@@ -227,16 +227,23 @@
 ### Stream: VSIX Packaging
 
 53. [DONE] `devtree-main-doc-mode.phase7.release-package-1-2-518.task1` Run final VSIX packaging for release `1.2.518` and record package evidence for user retest (scope: `codeai-hub-1.2.518.vsix, doc/TODO/todo-plan.md`; expected commit: `docs: record release 1.2.518 package`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.518`; required markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`. VSIX: `codeai-hub-1.2.518.vsix` (5.3M).
-54. [PENDING] Git Commit: `docs: record release 1.2.518 package` (hash: TBD)
+54. [DONE] Git Commit: `docs: record release 1.2.518 package` (hash: 58a83de16)
 
 ## Phase 7N - User Workflow Acceptance Testing (owner: user, updated: 2026-06-14)
 
 ### Stream: User Retest
 
-55. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-518.task1` User installs release `1.2.518` and retests Application Skeleton running while Product Part user gates and Product Part sessions become active (scope: user workflow; expected commit: none).
+55. [BLOCKED] `devtree-main-doc-mode.phase7.acceptance-1-2-518.task1` User installs release `1.2.518` and retests Application Skeleton running while Product Part user gates and Product Part sessions become active (scope: user workflow; expected commit: none). Result: Product Part user-gate flow improved, but the Finder Widget session can show provider thinking while the user input remains unlocked.
+
+## Phase 7O - Acceptance Defect Fix (owner: Codex, updated: 2026-06-15)
+
+### Stream: Session Input Thinking Lock
+
+57. [DONE] `devtree-main-doc-mode.phase7.input-thinking-lock.task1` Keep the session input locked while the active session's latest raw message is a thinking bubble even if the status snapshot has already flipped to idle (scope: `src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx`; expected commit: `fix: lock input during thinking stream`). Result: targeted regression passed, `npm run build:webview` passed, and `npm run typecheck:webview` passed.
+58. [PENDING] Git Commit: `fix: lock input during thinking stream` (hash: TBD)
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-56. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+59. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

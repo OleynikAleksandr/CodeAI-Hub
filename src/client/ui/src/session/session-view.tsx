@@ -5,7 +5,11 @@ import type {
 } from "../../../../types/claude-model-registry";
 import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
-import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
+import type {
+  SessionMessage,
+  SessionRecord,
+  SessionSnapshot,
+} from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
 import { resolveDisplayContent } from "./dialog-panel-message-utils";
 import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
@@ -38,6 +42,18 @@ const RESUMING_LOCK_REASONS = new Set([
   "report_in_progress",
   "resume_bootstrap",
 ] as const);
+
+const isThinkingTurnMessage = (message: SessionMessage | undefined): boolean =>
+  message?.role === "thinking" ||
+  (message?.role === "assistant" && message.tag === "thinking");
+
+const resolveThinkingInputConnectionState = (
+  connectionState: ConnectionState,
+  latestMessage: SessionMessage | undefined
+): ConnectionState =>
+  connectionState === "idle" && isThinkingTurnMessage(latestMessage)
+    ? "running"
+    : connectionState;
 
 export const isSessionResumeLockReason = (
   reason: string | undefined
@@ -196,12 +212,15 @@ const SessionViewBody = ({
     activeSession?.status.continuityLock?.active === true || terminalNoResume;
   const resumingLockActive =
     continuityLockActive && isSessionResumeLockReason(continuityLockReason);
-  const inputConnectionState = resolveInputConnectionState({
-    connectionState,
-    bindingStatus: activeSession?.binding.status ?? null,
-    continuityLockActive,
-    continuityLockReason,
-  });
+  const inputConnectionState = resolveThinkingInputConnectionState(
+    resolveInputConnectionState({
+      connectionState,
+      bindingStatus: activeSession?.binding.status ?? null,
+      continuityLockActive,
+      continuityLockReason,
+    }),
+    activeSession?.messages.at(-1)
+  );
   const effectiveContinuityLockActive =
     continuityLockActive || managedReviewPendingId !== null;
   const queueConnectionState: ConnectionState =

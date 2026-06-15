@@ -2,6 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import type { ProviderStackId } from "../../../../types/provider";
+import type {
+  SessionMessage,
+  SessionRecord,
+  SessionSnapshot,
+} from "../../../../types/session";
 
 interface BrowserLikeGlobal {
   addEventListener: (...args: unknown[]) => void;
@@ -80,6 +86,73 @@ const renderInputPanel = async (overrides?: {
   );
 };
 
+const createMessage = (
+  id: string,
+  role: SessionMessage["role"],
+  content: string,
+  tag?: string
+): SessionMessage => ({
+  id,
+  role,
+  content,
+  createdAt: Number(id),
+  ...(tag ? { tag } : {}),
+});
+
+const renderSessionView = async (
+  messages: readonly SessionMessage[]
+): Promise<string> => {
+  ensureBrowserLikeGlobals();
+  (globalThis as typeof globalThis & { React?: unknown }).React = await import(
+    "react"
+  );
+  const SessionView = (await import("./session-view")).default;
+  const binding = { providerSessionId: null, status: "ready" as const };
+  const session: SessionRecord = {
+    id: "session-1",
+    title: "Session",
+    providerIds: ["claudeCodeCli"],
+    workspacePath: "/workspace",
+    stage: null,
+    runSlug: null,
+    sessionKind: null,
+    createdAt: 1,
+    binding,
+  };
+  const snapshot: SessionSnapshot = {
+    binding,
+    draft: "",
+    messages,
+    status: {
+      connectionState: "idle",
+      providerSummary: "Claude",
+      tokenUsage: { used: 0, limit: 1 },
+      updatedAt: 1,
+    },
+    todos: [],
+  };
+
+  return renderToStaticMarkup(
+    createElement(SessionView, {
+      activeSessionId: session.id,
+      coreConnectionStatus: "ready",
+      onCloseSession: () => {
+        // noop
+      },
+      onSelectSession: () => {
+        // noop
+      },
+      onSendMessage: () => {
+        // noop
+      },
+      providerLabels: new Map<ProviderStackId, string>(),
+      sessions: [session],
+      showEmptyState: true,
+      snapshots: { [session.id]: snapshot },
+    })
+  );
+};
+
 test("InputPanel shows continuity placeholder when continuity lock is active", async () => {
   const html = await renderInputPanel({
     connectionState: "idle",
@@ -129,6 +202,22 @@ test("InputPanel disables fieldset while running", async () => {
     html.includes("Agent is resuming your session… Please wait."),
     false
   );
+});
+
+test("SessionView locks input while idle snapshot ends with thinking", async () => {
+  const thinkingHtml = await renderSessionView([
+    createMessage("1", "user", "Build it"),
+    createMessage("2", "assistant", "Thinking", "thinking"),
+  ]);
+  const finalHtml = await renderSessionView([
+    createMessage("1", "user", "Build it"),
+    createMessage("2", "assistant", "Thinking", "thinking"),
+    createMessage("3", "assistant", "Done"),
+  ]);
+
+  assert.equal(thinkingHtml.includes("<fieldset disabled"), true);
+  assert.equal(thinkingHtml.includes("Agent is working… Please wait."), true);
+  assert.equal(finalHtml.includes("<fieldset disabled"), false);
 });
 
 test("InputPanel keeps working copy when connection stays blocked after continuity flag clears", async () => {
