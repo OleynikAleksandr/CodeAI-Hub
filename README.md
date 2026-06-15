@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.521** (GLM 5.2 Legacy Settings Migration)
+**Current Release — v1.2.522** (Workspace Context Prompt Guard)
+
+This bugfix release adds a Core-owned workspace context envelope to provider
+prompts. Every agent now receives the canonical workspace name, slug and
+absolute root before `.codeai-hub/...` artifact instructions, so relative
+workflow targets are resolved against the active workspace instead of an
+external input document location.
+
+Retest focus: start a managed workflow session from a workspace while supplying
+external file references from another folder. The generated `.codeai-hub/...`
+artifacts should be written under the active workspace root, and the provider
+prompt/log should include the workspace context block.
+
+**Previous Release — v1.2.521** (GLM 5.2 Legacy Settings Migration)
 
 This bugfix release upgrades existing GLM-Claude-Code persisted settings that
 still contain `glm-5.1`, `glm-5-turbo`, or `glm-4.5-air` aliases. Settings UI,

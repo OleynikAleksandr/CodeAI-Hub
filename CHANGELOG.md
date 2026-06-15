@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.522] - 2026-06-15
+### Fixed
+- **Provider prompts now include the active workspace context.** Core prepends the canonical workspace name, slug and absolute root before `.codeai-hub/...` artifact instructions so agents resolve relative workflow outputs inside the active workspace, even when user materials contain external absolute paths.
+
+### Verification
+- `npx tsx --test --test-name-pattern "workspace context|outbound sends|rebinds stop-invalidated|unlock continuity locks|contextless" packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.521] - 2026-06-15
 ### Fixed
 - **Existing GLM-Claude-Code settings migrate from legacy model aliases.** Persisted `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` values now normalize to `glm-5.2` in Settings UI, Core model identity and runtime `ANTHROPIC_DEFAULT_*_MODEL` export.

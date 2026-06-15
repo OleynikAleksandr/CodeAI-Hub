@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "83eae591a",
+  "lastRecordedCommit": "64d37c85f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6c.task2",
-  "expectedCommitMessage": "test: verify workspace context prompts",
+  "currentTaskId": "phase1.stream6d.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.522 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify workspace context prompts",
-    "preCommitHead": "83eae591a",
+    "expectedCommitMessage": "docs: prepare 1.2.522 release notes",
+    "preCommitHead": "64d37c85f",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6c.task2"
+    "taskId": "phase1.stream6d.task1"
   }
 }
 ```
@@ -143,12 +143,12 @@
     - Evidence 2026-06-15: `npx tsx --test --test-name-pattern "workspace context|outbound sends|rebinds stop-invalidated|unlock continuity locks|contextless" packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts` passed.
     - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
     - Evidence 2026-06-15: `npm run plan:commit -- "fix: add workspace context to provider prompts"` passed `.husky/pre-commit` architecture, lint, Knip, and format gates before creating commit `83eae591a`.
-60. [PENDING] `phase1.stream6c.commit2` Git Commit: `test: verify workspace context prompts` (hash: TBD)
+60. [DONE] `phase1.stream6c.commit2` Git Commit: `test: verify workspace context prompts` (hash: 64d37c85f)
 
 ### Stream: Release Rebuild 1.2.522
 
-61. [TODO] `phase1.stream6d.task1` Prepare release documentation for version 1.2.522 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.522 release notes`)
-62. [TODO] `phase1.stream6d.commit1` Git Commit: `docs: prepare 1.2.522 release notes` (hash: TBD)
+61. [DONE] `phase1.stream6d.task1` Prepare release documentation for version 1.2.522 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.522 release notes`)
+62. [PENDING] `phase1.stream6d.commit1` Git Commit: `docs: prepare 1.2.522 release notes` (hash: TBD)
 63. [TODO] `phase1.stream6d.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.522`)
 64. [TODO] `phase1.stream6d.commit2` Git Commit: `chore: build release 1.2.522` (hash: TBD)
 
