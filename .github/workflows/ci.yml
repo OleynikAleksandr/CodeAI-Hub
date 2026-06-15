@@ -33,6 +33,19 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Runtime dependency security audit
+        run: npm run check:security
+
+      - name: Duplication check
+        run: npm run check:dup
+
+      - name: Markdown links
+        run: npm run check:links
+
+      - name: Full dependency security audit (advisory)
+        continue-on-error: true
+        run: npm run check:security:all
+
       # Knip is run as advisory on CI only (pre-commit hook keeps it strict
       # locally). It currently exits non-zero on the Ubuntu runner with no
       # visible output, even though the same Node version, lockfile, and

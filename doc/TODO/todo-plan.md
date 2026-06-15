@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "8928ccf31",
+  "lastRecordedCommit": "54caeab06",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan audit automation cleanup",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "chore: automate audit gap checks",
   "debt": {
-    "expectedCommitMessage": "docs: plan audit automation cleanup",
-    "preCommitHead": "8928ccf31",
+    "expectedCommitMessage": "chore: automate audit gap checks",
+    "preCommitHead": "54caeab06",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -46,12 +46,12 @@
 ### Stream: Plan Setup
 
 1. [DONE] `phase1.stream1.task1` Create the accepted audit automation part 1 planning source and active execution plan. (scope: `doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan audit automation cleanup`)
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan audit automation cleanup` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan audit automation cleanup` (hash: 54caeab06)
 
 ### Stream: Automatic Gates
 
-3. [TODO] `phase1.stream2.task1` Add low-noise automatic checks for audit gaps: runtime security audit, workspace duplication guard, and CI coverage for duplicate/link/security checks. (scope: `package.json, .github/workflows/ci.yml, .husky/pre-push`; expected commit: `chore: automate audit gap checks`)
-4. [TODO] `phase1.stream2.commit1` Git Commit: `chore: automate audit gap checks` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Add low-noise automatic checks for audit gaps: runtime security audit, workspace duplication guard, and CI coverage for duplicate/link/security checks. (scope: `package.json, .github/workflows/ci.yml, .husky/pre-push`; expected commit: `chore: automate audit gap checks`)
+4. [PENDING] `phase1.stream2.commit1` Git Commit: `chore: automate audit gap checks` (hash: TBD)
 
 ### Stream: Runtime Security Patch
 

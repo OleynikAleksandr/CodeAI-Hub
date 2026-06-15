@@ -8,7 +8,13 @@ node ./scripts/plan-orchestrator/plan-hook-pre-push.mjs
 
 echo "🔁 Running duplication check (jscpd)..."
 npm run -s check:dup || {
-  echo "❌ jscpd threshold exceeded (3%). Fix duplications or adjust scripts/check).";
+  echo "❌ jscpd threshold exceeded. Fix duplications or adjust the audit scope.";
+  exit 1;
+}
+
+echo "🔒 Checking runtime dependency audit..."
+npm run -s check:security || {
+  echo "❌ Runtime dependency audit failed. Patch production dependencies.";
   exit 1;
 }
 
