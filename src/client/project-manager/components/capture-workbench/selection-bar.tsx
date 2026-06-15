@@ -18,7 +18,7 @@ const PROVIDER_DEFAULTS: Record<
 > = {
   claude: { model: "sonnet", reasoning: "thinking-high" },
   codex: { model: "gpt-5.4-mini", reasoning: "reasoning-high" },
-  kimi: { model: "kimi-for-coding", reasoning: "default" },
+  kimi: { model: "kimi-k2.7-code", reasoning: "default" },
   glmClaudeCode: { model: "glm-5.1", reasoning: "thinking-high" },
 };
 

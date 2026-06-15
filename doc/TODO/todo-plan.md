@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "be2b8aaf2",
+  "lastRecordedCommit": "b11db71cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5c.task2",
-  "expectedCommitMessage": "chore: update kimi ui model default to 2.7",
+  "currentTaskId": "phase1.stream5c.task3",
+  "expectedCommitMessage": "chore: update kimi capture model default to 2.7",
   "debt": {
-    "expectedCommitMessage": "chore: update kimi ui model default to 2.7",
-    "preCommitHead": "be2b8aaf2",
+    "expectedCommitMessage": "chore: update kimi capture model default to 2.7",
+    "preCommitHead": "b11db71cc",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5c.task2"
+    "taskId": "phase1.stream5c.task3"
   }
 }
 ```
@@ -84,9 +84,9 @@
 19. [DONE] `phase1.stream5c.task1` Update Kimi provider model registry and Core default to Kimi K2.7 Code. (scope: `packages/Kimi_Module/src/types/kimi-model-capabilities.ts, src/types/kimi-model-registry.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `chore: update kimi model default to 2.7`)
 20. [DONE] `phase1.stream5c.commit1` Git Commit: `chore: update kimi model default to 2.7` (hash: be2b8aaf2)
 21. [DONE] `phase1.stream5c.task2` Update Kimi UI/provider defaults and tests. (scope: `packages/core/src/provider-registry, src/client/ui/src/session, src/client/project-manager`; expected commit: `chore: update kimi ui model default to 2.7`)
-22. [PENDING] `phase1.stream5c.commit2` Git Commit: `chore: update kimi ui model default to 2.7` (hash: TBD)
-23. [TODO] `phase1.stream5c.task3` Update Kimi capture defaults to Kimi K2.7 Code. (scope: `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/shared/stage-start-model-selection.ts`; expected commit: `chore: update kimi capture model default to 2.7`)
-24. [TODO] `phase1.stream5c.commit3` Git Commit: `chore: update kimi capture model default to 2.7` (hash: TBD)
+22. [DONE] `phase1.stream5c.commit2` Git Commit: `chore: update kimi ui model default to 2.7` (hash: b11db71cc)
+23. [DONE] `phase1.stream5c.task3` Update Kimi capture defaults to Kimi K2.7 Code. (scope: `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/shared/stage-start-model-selection.ts`; expected commit: `chore: update kimi capture model default to 2.7`)
+24. [PENDING] `phase1.stream5c.commit3` Git Commit: `chore: update kimi capture model default to 2.7` (hash: TBD)
 25. [TODO] `phase1.stream5c.task4` Update GLM runtime and Core turn defaults to GLM 5.2. (scope: `packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-model-capabilities.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `chore: update glm runtime default to 5.2`)
 26. [TODO] `phase1.stream5c.commit4` Git Commit: `chore: update glm runtime default to 5.2` (hash: TBD)
 27. [TODO] `phase1.stream5c.task5` Update GLM provider descriptors and persisted settings defaults to GLM 5.2. (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `chore: update glm settings defaults to 5.2`)
