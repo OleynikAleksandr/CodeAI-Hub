@@ -90,3 +90,41 @@ test("GLM-Claude-Code probe profile reads persisted workspace settings path", as
     await rm(dir, { force: true, recursive: true });
   }
 });
+
+test("GLM-Claude-Code probe profile upgrades legacy persisted model aliases", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "glm-legacy-settings-"));
+  const settingsPath = path.join(dir, "settings.json");
+  try {
+    await writeFile(
+      settingsPath,
+      JSON.stringify({
+        providers: {
+          glmClaudeCode: {
+            apiKey: "persisted-secret",
+            haikuModel: "glm-4.5-air",
+            opusModel: "glm-5.1",
+            sonnetModel: "glm-5-turbo",
+          },
+        },
+      }),
+      "utf8"
+    );
+
+    const profile = await buildGlmClaudeCodeRuntimeProbeProfile({
+      env: {
+        CODEAI_GLM_CLAUDE_CODE_CONFIG_PATH: path.join(
+          dir,
+          "global-config.json"
+        ),
+        CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH: settingsPath,
+      },
+      home: path.join(dir, "home"),
+    });
+
+    assert.equal(profile.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, "glm-5.2");
+    assert.equal(profile.env.ANTHROPIC_DEFAULT_OPUS_MODEL, "glm-5.2");
+    assert.equal(profile.env.ANTHROPIC_DEFAULT_SONNET_MODEL, "glm-5.2");
+  } finally {
+    await rm(dir, { force: true, recursive: true });
+  }
+});

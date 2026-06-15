@@ -20,6 +20,11 @@ export const GLM_CLAUDE_CODE_SESSION_TITLE = "CodeAI GLM Claude Code";
 const GLM_CLAUDE_CODE_DEFAULT_TIMEOUT_MS = 3_000_000;
 const GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV =
   "CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH";
+const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
+  "glm-5.1",
+  "glm-5-turbo",
+  "glm-4.5-air",
+]);
 
 const DEFAULT_PROVIDER_HOME = path.join(
   homedir(),
@@ -83,6 +88,14 @@ export interface GlmClaudeCodeRuntimeProfileOptions {
 const trimOptional = (value: string | undefined): string | null => {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
+};
+
+const normalizeGlmClaudeCodeModel = (
+  value: string | null | undefined,
+  fallback: string
+): string => {
+  const modelId = trimOptional(value ?? undefined) ?? fallback;
+  return LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId) ? fallback : modelId;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -231,18 +244,18 @@ export const buildGlmClaudeCodeRuntimeProbeProfile = async (
     apiKey.config.baseUrl ??
     workspaceSettings.baseUrl ??
     GLM_CLAUDE_CODE_DEFAULT_BASE_URL;
-  const opusModelId =
-    apiKey.config.opusModel ??
-    workspaceSettings.opusModel ??
-    GLM_CLAUDE_CODE_MODEL_ID;
-  const sonnetModelId =
-    apiKey.config.sonnetModel ??
-    workspaceSettings.sonnetModel ??
-    GLM_CLAUDE_CODE_DEFAULT_SONNET_MODEL_ID;
-  const haikuModelId =
-    apiKey.config.haikuModel ??
-    workspaceSettings.haikuModel ??
-    GLM_CLAUDE_CODE_DEFAULT_HAIKU_MODEL_ID;
+  const opusModelId = normalizeGlmClaudeCodeModel(
+    apiKey.config.opusModel ?? workspaceSettings.opusModel,
+    GLM_CLAUDE_CODE_MODEL_ID
+  );
+  const sonnetModelId = normalizeGlmClaudeCodeModel(
+    apiKey.config.sonnetModel ?? workspaceSettings.sonnetModel,
+    GLM_CLAUDE_CODE_DEFAULT_SONNET_MODEL_ID
+  );
+  const haikuModelId = normalizeGlmClaudeCodeModel(
+    apiKey.config.haikuModel ?? workspaceSettings.haikuModel,
+    GLM_CLAUDE_CODE_DEFAULT_HAIKU_MODEL_ID
+  );
   const timeoutMs =
     apiKey.config.timeoutMs ??
     workspaceSettings.timeoutMs ??
