@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "c281819d5",
+  "lastRecordedCommit": "d23c3f573",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6e.task2",
-  "expectedCommitMessage": "test: verify stale user gate cursor fix",
+  "currentTaskId": "phase1.stream6f.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.523 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify stale user gate cursor fix",
-    "preCommitHead": "c281819d5",
+    "expectedCommitMessage": "docs: prepare 1.2.523 release notes",
+    "preCommitHead": "d23c3f573",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6e.task2"
+    "taskId": "phase1.stream6f.task1"
   }
 }
 ```
@@ -162,12 +162,12 @@
 67. [DONE] `phase1.stream6e.task2` Run targeted verification for stale queued user-gate cursor handling. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core`; expected commit: `test: verify stale user gate cursor fix`)
     - Evidence 2026-06-15: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-action-attention.test.ts` passed 12/12 tests.
     - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
-68. [PENDING] `phase1.stream6e.commit2` Git Commit: `test: verify stale user gate cursor fix` (hash: TBD)
+68. [DONE] `phase1.stream6e.commit2` Git Commit: `test: verify stale user gate cursor fix` (hash: d23c3f573)
 
 ### Stream: Release Rebuild 1.2.523
 
-69. [TODO] `phase1.stream6f.task1` Prepare release documentation for version 1.2.523 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.523 release notes`)
-70. [TODO] `phase1.stream6f.commit1` Git Commit: `docs: prepare 1.2.523 release notes` (hash: TBD)
+69. [DONE] `phase1.stream6f.task1` Prepare release documentation for version 1.2.523 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.523 release notes`)
+70. [PENDING] `phase1.stream6f.commit1` Git Commit: `docs: prepare 1.2.523 release notes` (hash: TBD)
 71. [TODO] `phase1.stream6f.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.523`)
 72. [TODO] `phase1.stream6f.commit2` Git Commit: `chore: build release 1.2.523` (hash: TBD)
 

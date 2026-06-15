@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.523] - 2026-06-15
+### Fixed
+- **Stale preliminary review gates no longer block downstream reviews.** When Core has already opened a managed downstream review, old Description or Virtual Simulation review messages are ignored for `userGateCursor`, preventing queued review bubbles and locked input on the current actionable step.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-user-action-attention.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.522] - 2026-06-15
 ### Fixed
 - **Provider prompts now include the active workspace context.** Core prepends the canonical workspace name, slug and absolute root before `.codeai-hub/...` artifact instructions so agents resolve relative workflow outputs inside the active workspace, even when user materials contain external absolute paths.

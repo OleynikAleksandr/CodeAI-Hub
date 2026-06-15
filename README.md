@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.522** (Workspace Context Prompt Guard)
+**Current Release — v1.2.523** (Stale User Gate Cursor Fix)
+
+This bugfix release prevents stale preliminary review gates from blocking the
+current downstream workflow review. If Application Skeleton or another managed
+technical review is already active, old Description/Virtual Simulation review
+messages no longer keep the Project Manager input locked in a queued state.
+
+Retest focus: continue the FinderWidget-Test01 flow from Application Skeleton.
+The active review should show the confirm action when it is the current Core
+gate, and completed upstream steps should not keep flashing as the required
+user attention target.
+
+**Previous Release — v1.2.522** (Workspace Context Prompt Guard)
 
 This bugfix release adds a Core-owned workspace context envelope to provider
 prompts. Every agent now receives the canonical workspace name, slug and
