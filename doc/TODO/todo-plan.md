@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "7ea43491c",
+  "lastRecordedCommit": "b594c308b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "fix: allow filled order plan agent-fill blocks",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "test: cover order plan markdown completion validation",
   "debt": {
-    "expectedCommitMessage": "fix: allow filled order plan agent-fill blocks",
-    "preCommitHead": "7ea43491c",
+    "expectedCommitMessage": "test: cover order plan markdown completion validation",
+    "preCommitHead": "b594c308b",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream3.task1"
   }
 }
 ```
@@ -52,12 +52,12 @@
 ### Stream: Validator Fix
 
 3. [DONE] `phase1.stream2.task1` Fix DevelopmentOrderPlan Markdown completion validation and repair diagnostics. (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts`; expected commit: `fix: allow filled order plan agent-fill blocks`)
-4. [PENDING] `phase1.stream2.commit1` Git Commit: `fix: allow filled order plan agent-fill blocks` (hash: TBD)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `fix: allow filled order plan agent-fill blocks` (hash: b594c308b)
 
 ### Stream: Regression Tests
 
-5. [TODO] `phase1.stream3.task1` Add focused regression coverage for filled agent-fill wrappers and sentinel residue. (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts`; expected commit: `test: cover order plan markdown completion validation`)
-6. [TODO] `phase1.stream3.commit1` Git Commit: `test: cover order plan markdown completion validation` (hash: TBD)
+5. [DONE] `phase1.stream3.task1` Add focused regression coverage for filled agent-fill wrappers and sentinel residue. (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts`; expected commit: `test: cover order plan markdown completion validation`)
+6. [PENDING] `phase1.stream3.commit1` Git Commit: `test: cover order plan markdown completion validation` (hash: TBD)
 
 ### Stream: Tooling Verification
 
