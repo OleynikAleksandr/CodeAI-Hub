@@ -42,6 +42,12 @@ const MANAGED_CORE_GATED_STAGES = new Set([
   "diagram_modules",
   "quality_gates",
 ] as const);
+const DEVELOPMENT_TREE_PRODUCT_PART_STAGE_RE =
+  /^development_tree\/materialized\/product-parts\/[^/]+$/u;
+
+const isManagedCoreGatedStage = (stage: string): boolean =>
+  MANAGED_CORE_GATED_STAGES.has(stage as never) ||
+  DEVELOPMENT_TREE_PRODUCT_PART_STAGE_RE.test(stage);
 
 /**
  * Owns the "managed core-gated" input lock. Managed technical sessions enter
@@ -89,7 +95,7 @@ export class ManagedCoreGatedLockController {
       !(
         session?.workspacePath &&
         session.stage &&
-        MANAGED_CORE_GATED_STAGES.has(session.stage as never)
+        isManagedCoreGatedStage(session.stage)
       )
     ) {
       return false;

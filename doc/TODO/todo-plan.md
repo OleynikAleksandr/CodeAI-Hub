@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "27b95aa23",
+  "lastRecordedCommit": "47df9f759",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream5.task1",
-  "expectedCommitMessage": "docs: expand order plan stop unlock scope",
+  "currentTaskId": "phase1.stream6.task1",
+  "expectedCommitMessage": "fix: unlock stopped managed repair sessions",
   "debt": {
-    "expectedCommitMessage": "docs: expand order plan stop unlock scope",
-    "preCommitHead": "27b95aa23",
+    "expectedCommitMessage": "fix: unlock stopped managed repair sessions",
+    "preCommitHead": "47df9f759",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5.task1"
+    "taskId": "phase1.stream6.task1"
   }
 }
 ```
@@ -69,12 +69,12 @@
 ### Stream: Stop Unlock Scope Expansion
 
 9. [DONE] `phase1.stream5.task1` Capture the user-reported stop/unlock deadlock and expand this hotfix scope before release. (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md`; expected commit: `docs: expand order plan stop unlock scope`)
-10. [PENDING] `phase1.stream5.commit1` Git Commit: `docs: expand order plan stop unlock scope` (hash: TBD)
+10. [DONE] `phase1.stream5.commit1` Git Commit: `docs: expand order plan stop unlock scope` (hash: 47df9f759)
 
 ### Stream: Stop Unlock Fix
 
-11. [TODO] `phase1.stream6.task1` Fix Stop handling so a stopped managed repair turn releases session input. (scope: `packages/core/src/remote-bridge/handlers/**`; expected commit: `fix: unlock stopped managed repair sessions`)
-12. [TODO] `phase1.stream6.commit1` Git Commit: `fix: unlock stopped managed repair sessions` (hash: TBD)
+11. [DONE] `phase1.stream6.task1` Fix Stop handling so a stopped managed repair turn releases session input. (scope: `packages/core/src/remote-bridge/handlers/**`; expected commit: `fix: unlock stopped managed repair sessions`)
+12. [PENDING] `phase1.stream6.commit1` Git Commit: `fix: unlock stopped managed repair sessions` (hash: TBD)
 
 ### Stream: Stop Unlock Regression Tests
 
