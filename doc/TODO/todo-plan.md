@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "eb246daab",
+  "lastRecordedCommit": "7ea43491c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan development order validator hotfix",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "fix: allow filled order plan agent-fill blocks",
   "debt": {
-    "expectedCommitMessage": "docs: plan development order validator hotfix",
-    "preCommitHead": "eb246daab",
+    "expectedCommitMessage": "fix: allow filled order plan agent-fill blocks",
+    "preCommitHead": "7ea43491c",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -47,12 +47,12 @@
 ### Stream: Plan Setup
 
 1. [DONE] `phase1.stream1.task1` Create the accepted hotfix planning source and active execution plan. (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan development order validator hotfix`)
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan development order validator hotfix` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan development order validator hotfix` (hash: 7ea43491c)
 
 ### Stream: Validator Fix
 
-3. [TODO] `phase1.stream2.task1` Fix DevelopmentOrderPlan Markdown completion validation and repair diagnostics. (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts`; expected commit: `fix: allow filled order plan agent-fill blocks`)
-4. [TODO] `phase1.stream2.commit1` Git Commit: `fix: allow filled order plan agent-fill blocks` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Fix DevelopmentOrderPlan Markdown completion validation and repair diagnostics. (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.ts`; expected commit: `fix: allow filled order plan agent-fill blocks`)
+4. [PENDING] `phase1.stream2.commit1` Git Commit: `fix: allow filled order plan agent-fill blocks` (hash: TBD)
 
 ### Stream: Regression Tests
 

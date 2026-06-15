@@ -37,7 +37,7 @@ const PLAN_END = "<!-- codeai-plan-state:end -->";
 const PLAN_START = "<!-- codeai-plan-state:start -->";
 const PRODUCT_PART_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)$/u;
-const SENTINEL_RE = /CODEAI_AGENT_FILL_SENTINEL|agent-fill/u;
+const SENTINEL_RE = /CODEAI_AGENT_FILL_SENTINEL/u;
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -358,8 +358,13 @@ export class ProductPartDevelopmentOrderPlanTurnController {
       return diagnostics;
     }
     const markdown = await readText(params.workspaceRoot, params.orderPlanPath);
-    if (markdown.trim().length < 20 || SENTINEL_RE.test(markdown)) {
-      diagnostics.push(`${ORDER_PLAN_FILE_NAME}: draft content is incomplete.`);
+    if (markdown.trim().length < 20) {
+      diagnostics.push(`${ORDER_PLAN_FILE_NAME}: draft content is too short.`);
+    }
+    if (SENTINEL_RE.test(markdown)) {
+      diagnostics.push(
+        `${ORDER_PLAN_FILE_NAME}: replace remaining CODEAI_AGENT_FILL_SENTINEL text before validation.`
+      );
     }
     try {
       const json = parseOrderPlanJson(
