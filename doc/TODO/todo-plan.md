@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "58a83de16",
+  "lastRecordedCommit": "3475ab370",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.input-thinking-lock.task1",
-  "expectedCommitMessage": "fix: lock input during thinking stream",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs-1-2-519.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.519",
   "debt": {
-    "expectedCommitMessage": "fix: lock input during thinking stream",
-    "preCommitHead": "58a83de16",
+    "expectedCommitMessage": "docs: prepare release 1.2.519",
+    "preCommitHead": "3475ab370",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.input-thinking-lock.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-docs-1-2-519.task1"
   }
 }
 ```
@@ -240,10 +240,39 @@
 ### Stream: Session Input Thinking Lock
 
 57. [DONE] `devtree-main-doc-mode.phase7.input-thinking-lock.task1` Keep the session input locked while the active session's latest raw message is a thinking bubble even if the status snapshot has already flipped to idle (scope: `src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx`; expected commit: `fix: lock input during thinking stream`). Result: targeted regression passed, `npm run build:webview` passed, and `npm run typecheck:webview` passed.
-58. [PENDING] Git Commit: `fix: lock input during thinking stream` (hash: TBD)
+58. [DONE] Git Commit: `fix: lock input during thinking stream` (hash: 3475ab370)
+
+## Phase 7P - Release Decision (owner: user, updated: 2026-06-15)
+
+### Stream: Release Confirmation
+
+59. [DONE] `devtree-main-doc-mode.phase7.release-decision-1-2-519.task1` User confirms whether to build release `1.2.519` for retesting the Finder Widget input lock while provider thinking is visible (scope: user workflow; expected commit: none). Result: User confirmed release 1.2.519 build.
+
+## Phase 7Q - Release Rebuild (owner: Codex, updated: 2026-06-15)
+
+### Stream: Release Notes
+
+60. [DONE] `devtree-main-doc-mode.phase7.release-docs-1-2-519.task1` Update README and CHANGELOG for release `1.2.519` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.519`).
+61. [PENDING] Git Commit: `docs: prepare release 1.2.519` (hash: TBD)
+
+### Stream: Release Assembly
+
+62. [TODO] `devtree-main-doc-mode.phase7.release-build-1-2-519.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.519`).
+63. [TODO] Git Commit: `chore: build release 1.2.519` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+64. [TODO] `devtree-main-doc-mode.phase7.release-package-1-2-519.task1` Run final VSIX packaging for release `1.2.519` and record package evidence for user retest (scope: `codeai-hub-1.2.519.vsix, doc/TODO/todo-plan.md`; expected commit: `docs: record release 1.2.519 package`).
+65. [TODO] Git Commit: `docs: record release 1.2.519 package` (hash: TBD)
+
+## Phase 7R - User Workflow Acceptance Testing (owner: user, updated: 2026-06-15)
+
+### Stream: User Retest
+
+66. [TODO] `devtree-main-doc-mode.phase7.acceptance-1-2-519.task1` User installs release `1.2.519` and retests Finder Widget session input locking while provider thinking is visible (scope: user workflow; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-14)
 
 ### Stream: Closeout
 
-59. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.
+67. [TODO] `devtree-main-doc-mode.phase8.closeout.anchor` Reserved post-acceptance closeout anchor; do not execute automatically unless the user accepts the release and asks to close this scope.

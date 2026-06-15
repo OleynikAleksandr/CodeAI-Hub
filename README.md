@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.518** (Development Tree User Gate Focus + Product Part Startup)
+**Current Release — v1.2.519** (Session Input Thinking Lock)
+
+This bugfix release keeps the Project Manager session input locked while a
+provider thinking/reasoning bubble is still the latest visible turn, even if the
+session status snapshot has already flipped back to idle.
+
+Retest focus: in the Finder Widget Product Part session, when Claude shows a
+`Thinking` bubble after user approval, the input field should remain blocked
+with `Agent is working… Please wait.` until a non-thinking response arrives.
+
+**Previous Release — v1.2.518** (Development Tree User Gate Focus + Product Part Startup)
 
 This bugfix release makes Development Tree user-gate focus less aggressive and
 more reliable while Product Part documentation sessions start in parallel.

@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.519] - 2026-06-15
+### Fixed
+- **Project Manager locks session input during visible thinking.** If the active session's latest raw message is a thinking bubble, the input stays in the working state even when the status snapshot has already returned to idle.
+
+### Verification
+- `npm exec -- tsx src/client/ui/src/session/input-panel.test.tsx`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.518] - 2026-06-14
 ### Fixed
 - **Development Tree user-gate focus is one-shot again.** Project Manager no longer repeatedly pulls the user back to the same active Product Part gate after manual navigation.
