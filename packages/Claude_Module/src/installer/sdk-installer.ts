@@ -76,6 +76,8 @@ export class SDKInstaller {
 
   loadModule<TModule = unknown>(): Promise<TModule> {
     const moduleUrl = pathToFileURL(this.moduleEntryPath).href;
+    // ponytail: keep native import; TS commonjs output turns direct
+    // import(file://) into require(file://).
     const dynamicImport = new Function("url", "return import(url);") as (
       url: string
     ) => Promise<TModule>;

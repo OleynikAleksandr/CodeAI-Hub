@@ -469,7 +469,6 @@ class ProjectManagerApi {
 
   private handleSocketClose(): void {
     this.coreRestartTracker.handleSocketClose();
-    console.log("[ProjectManagerApi] Disconnected. Reconnecting...");
   }
 
   private handleSocketMessage(data: string): void {
@@ -486,7 +485,6 @@ class ProjectManagerApi {
 
   private handleSocketOpen(): void {
     this.coreRestartTracker.handleSocketOpen();
-    console.log("[ProjectManagerApi] Connected to Core");
     this.outgoingQueue.flush((message) => {
       if (!this.socketLifecycle.send(JSON.stringify(message))) {
         throw new Error("Socket not ready");
