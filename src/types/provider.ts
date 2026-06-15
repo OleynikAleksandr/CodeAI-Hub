@@ -30,7 +30,7 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Using your authentication Claude Code CLI",
   codexCli: "Using your authentication Codex CLI",
   geminiCli: "Using your authentication Gemini CLI",
-  glmClaudeCode: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
+  glmClaudeCode: "Using GLM 5.2 through Claude Agent SDK-compatible runtime",
   kimiCode: "Using your authentication Kimi CLI",
   localModels: "Runs downloaded LM Studio models on this Mac",
 };

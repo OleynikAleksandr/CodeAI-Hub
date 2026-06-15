@@ -10,7 +10,8 @@ type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi K2.7 Code";
-const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.1 / Claude Code";
+const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.2 / Claude Code";
+const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
 const KIMI_DEFAULT_MODEL_ID = "kimi-k2.7-code";
 const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
 
@@ -57,12 +58,15 @@ const formatKimiSessionModelDisplayName = (
   modelId: string
 ): string => {
   const baseModelId = resolveKimiBaseModelId(modelId);
+  if (providerId === "glmClaudeCode") {
+    return baseModelId === GLM_CLAUDE_CODE_MODEL_ID
+      ? GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME
+      : formatModelDisplayName(baseModelId);
+  }
   if (baseModelId !== KIMI_DEFAULT_MODEL_ID) {
     return formatModelDisplayName(baseModelId);
   }
-  return providerId === "glmClaudeCode"
-    ? GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME
-    : KIMI_DEFAULT_MODEL_DISPLAY_NAME;
+  return KIMI_DEFAULT_MODEL_DISPLAY_NAME;
 };
 
 const resolveFallbackModelDisplayName = (
@@ -178,7 +182,11 @@ export const buildModelInfo = (
         ? settings.providers.glmClaudeCode?.defaultModel
         : settings.providers.kimi?.defaultModel;
     const modelId =
-      effectiveModelId ?? settingsModelId ?? KIMI_DEFAULT_MODEL_ID;
+      effectiveModelId ??
+      settingsModelId ??
+      (providerId === "glmClaudeCode"
+        ? GLM_CLAUDE_CODE_MODEL_ID
+        : KIMI_DEFAULT_MODEL_ID);
     return {
       providerId,
       providerName: getDefaultProviderTitle(providerId),

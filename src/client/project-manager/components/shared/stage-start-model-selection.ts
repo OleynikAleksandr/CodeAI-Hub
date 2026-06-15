@@ -41,9 +41,10 @@ type LocalTranslationEngineCatalog = {
   readonly engineId: string;
 };
 
-const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.1 / Claude Code";
+const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
+const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.2 / Claude Code";
 const GLM_CLAUDE_CODE_MODEL_DESCRIPTION =
-  "GLM 5.1 exposed through the Claude Agent SDK-compatible runtime.";
+  "GLM 5.2 exposed through the Claude Agent SDK-compatible runtime.";
 const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
 const DEFAULT_LOCAL_MODEL_ID = "local-model";
 
@@ -100,11 +101,13 @@ export const getStartCardModelOptions = (
     }));
   }
   if (providerId === "glmClaudeCode") {
-    return KIMI_RECOMMENDED_MODELS.map((model) => ({
+    return [
+      {
       description: GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
-      id: model.id,
+        id: GLM_CLAUDE_CODE_MODEL_ID,
       label: GLM_CLAUDE_CODE_MODEL_LABEL,
-    }));
+      },
+    ];
   }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({
     description: model.description,
@@ -185,12 +188,17 @@ export const resolveDefaultStartCardModelSelection = (
         DEFAULT_CODEX_REASONING_LEVEL,
     };
   }
-  if (providerId === "kimiCode" || providerId === "glmClaudeCode") {
+  if (providerId === "glmClaudeCode") {
     return {
       modelId:
-        (providerId === "glmClaudeCode"
-          ? settings?.providers.glmClaudeCode?.defaultModel
-          : settings?.providers.kimi?.defaultModel) ?? DEFAULT_KIMI_MODEL_ID,
+        settings?.providers.glmClaudeCode?.defaultModel ??
+        GLM_CLAUDE_CODE_MODEL_ID,
+      reasoning: "default",
+    };
+  }
+  if (providerId === "kimiCode") {
+    return {
+      modelId: settings?.providers.kimi?.defaultModel ?? DEFAULT_KIMI_MODEL_ID,
       reasoning: "default",
     };
   }
