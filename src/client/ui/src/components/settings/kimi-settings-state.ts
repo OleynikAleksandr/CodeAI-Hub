@@ -29,9 +29,9 @@ export interface GlmClaudeCodeSettings {
 const DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH =
   "~/.codeai-hub/providers/glm-claude-code/config.json";
 const DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
-const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.1";
-const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5-turbo";
-const DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-4.5-air";
+const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
+const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
+const DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
 
 const mapOptionalString = (value: unknown, fallback: string): string =>
   typeof value === "string" && value.trim().length > 0

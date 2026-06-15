@@ -13,7 +13,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isGlmClaudeCodeCaptureModelId = (
   value: string
 ): value is NativeRequestCaptureModelId =>
-  value === "glm-5.1" || value === "glm-5-turbo" || value === "glm-4.5-air";
+  value === "glm-5.2";
 
 export const isNativeRequestCaptureProviderId = (
   value: unknown
@@ -37,7 +37,7 @@ const resolveDefaultCaptureModelId = (
     const modelId = settings.providers.glmClaudeCode?.defaultModel;
     return modelId && isGlmClaudeCodeCaptureModelId(modelId)
       ? modelId
-      : "glm-5.1";
+      : "glm-5.2";
   }
   return settings.providers.kimi?.defaultModel ?? "kimi-k2.7-code";
 };
