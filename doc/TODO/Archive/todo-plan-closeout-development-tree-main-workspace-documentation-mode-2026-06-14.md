@@ -1,3 +1,18 @@
+# Plan Closeout: development-tree-main-workspace-documentation-mode-2026-06-14
+
+**Created:** 2026-06-15T08:26:06.167Z
+**Acceptance:** User accepted release 1.2.519; scope can be closed.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** devtree-main-doc-mode.phase8.closeout.task1
+**Expected Commit:** docs: close main workspace documentation mode scope
+**Last Recorded Commit:** e17c43f29
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
   "currentTaskId": "devtree-main-doc-mode.phase8.closeout.task1",
   "expectedCommitMessage": "docs: close main workspace documentation mode scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close main workspace documentation mode scope",
-    "preCommitHead": "e17c43f29",
-    "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase8.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -275,6 +285,7 @@
 
 ### Stream: Closeout
 
-67. [DONE] `devtree-main-doc-mode.phase8.closeout.task1` Archive the accepted active plan and planning source, update documentation index links, and close this scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-closeout-development-tree-main-workspace-documentation-mode-2026-06-14.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md`; expected commit: `docs: close main workspace documentation mode scope`).
-68. [PENDING] Git Commit: `docs: close main workspace documentation mode scope` (hash: TBD)
+67. [IN_PROGRESS] `devtree-main-doc-mode.phase8.closeout.task1` Archive the accepted active plan and planning source, update documentation index links, and close this scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-closeout-development-tree-main-workspace-documentation-mode-2026-06-14.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md`; expected commit: `docs: close main workspace documentation mode scope`).
+68. [TODO] Git Commit: `docs: close main workspace documentation mode scope` (hash: TBD)
 69. [TODO] `devtree-main-doc-mode.phase8.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
