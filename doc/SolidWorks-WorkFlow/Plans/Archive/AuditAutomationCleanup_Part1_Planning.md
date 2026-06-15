@@ -1,6 +1,6 @@
 # Audit Automation Cleanup Part 1 Planning
 
-**Status:** Accepted by user request on 2026-06-15.
+**Status:** Closed after user acceptance of release `1.2.523` on 2026-06-15.
 **Scope type:** maintenance / audit remediation.
 
 ## Goal
@@ -27,6 +27,16 @@ Implement the first, low-risk part of the audit cleanup:
 - Broad jscpd clone refactoring. Existing package-level duplication needs classification before edits.
 - Release build. This part ends with tooling verification and user acceptance.
 
+## Scope Expansion During Execution
+
+After the initial audit remediation, the user explicitly expanded this cycle to include:
+
+- Gemini CLI/Core alignment at `0.46.0`;
+- Kimi model update to `kimi-k2-0711-preview` / user-facing Kimi 2.7;
+- GLM-Claude-Code model update to GLM-5.2 labels/defaults and invocation smoke tests;
+- provider prompt workspace-name clarity for managed agents;
+- release `1.2.523` stale user-gate cursor fix, where Core ignores completed upstream preliminary review gates while a downstream managed review gate is open.
+
 ## Verification
 
 - `npm run plan:validate`
@@ -36,3 +46,10 @@ Implement the first, low-risk part of the audit cleanup:
 - `npm run check:knip`
 - `npm run lint`
 - `npm run build --workspace=@codeai-hub/core`
+
+## Closeout Result
+
+- Release `1.2.523` was built and accepted by the user.
+- New automatic coverage now includes runtime dependency security checks and CI-visible duplicate/link/security gates.
+- Simple audit findings were fixed manually without broad clone refactoring.
+- The active plan was archived as `doc/TODO/Archive/todo-plan-closeout-audit-automation-cleanup-part1-2026-06-15.md`.

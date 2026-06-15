@@ -1,3 +1,18 @@
+# Plan Closeout: audit-automation-cleanup-part1-2026-06-15
+
+**Created:** 2026-06-15T17:29:20.785Z
+**Acceptance:** user tested release 1.2.523 and accepted release/scope closeout on 2026-06-15
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/audit-gates-cleanup
+**Current Task:** phase1.stream7.task1
+**Expected Commit:** docs: close audit automation cleanup scope
+**Last Recorded Commit:** 3fb8354d8
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/AuditAutomationCleanup_Part1_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/AuditAutomationCleanup_Part1_Planning.md",
   "currentTaskId": "phase1.stream7.task1",
   "expectedCommitMessage": "docs: close audit automation cleanup scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close audit automation cleanup scope",
-    "preCommitHead": "3fb8354d8",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream7.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -182,8 +192,7 @@
 
 ### Stream: Scope Closeout
 
-75. [DONE] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md`; expected commit: `docs: close audit automation cleanup scope`)
-    - Evidence 2026-06-15: `npm run plan:closeout -- "user tested release 1.2.523 and accepted release/scope closeout on 2026-06-15"` wrote `doc/TODO/Archive/todo-plan-closeout-audit-automation-cleanup-part1-2026-06-15.md` and moved the planning source to `doc/SolidWorks-WorkFlow/Plans/Archive/AuditAutomationCleanup_Part1_Planning.md`.
-    - Evidence 2026-06-15: `Docs_Index.md` and `Checklists/PeriodicAudit.md` now record the accepted release `1.2.523` audit cleanup cycle.
-76. [PENDING] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
+75. [IN_PROGRESS] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md`; expected commit: `docs: close audit automation cleanup scope`)
+76. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
 77. [TODO] `phase1.stream7.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````

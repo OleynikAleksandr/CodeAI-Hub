@@ -10,7 +10,10 @@
 - Если ручной гейт `check:dup` / `check:knip` / `check:links` подозрительно пополз вверх между релизами (sign что долг накапливается).
 - Когда в архиве `doc/TODO/Archive/` появляется 3+ подряд `todo-plan-*` без cleanup-цикла.
 
-**Прецедент:** `doc/TODO/Archive/todo-plan-1.2.10-audit-cleanup.md` — первый полноценный audit cycle.
+**Прецеденты:**
+
+- `doc/TODO/Archive/todo-plan-1.2.10-audit-cleanup.md` — первый полноценный audit cycle.
+- `doc/TODO/Archive/todo-plan-closeout-audit-automation-cleanup-part1-2026-06-15.md` — audit automation cleanup, accepted in release `1.2.523`.
 
 ## Шаг 1. Baseline гейтов
 
@@ -91,5 +94,6 @@ npx jscpd --threshold 0 --silent --reporters json --output /tmp/jscpd-audit src 
 ## Track record
 
 - **1.2.10 (2026-04-17):** первый полноценный аудит. 4 направления (A docs+config / B loc keys / C duplication / D process). Итог: 7 loc ключей удалено, 3 extract-рефактора, `check:dup` 2.06% → 1.97%, новый SSOT invariant о acceptable parallel-scaffolding duplication.
+- **1.2.523 (2026-06-15):** audit automation cleanup. Итог: runtime dependency security check, duplicate/link/security CI visibility, workspace-wide duplicate regression guard, low-risk dependency patches, stale archive cleanup, provider model/version follow-ups, workspace prompt clarity, stale user-gate cursor fix.
 
 *При следующем аудите добавь свой cycle сюда.*

@@ -68,7 +68,7 @@
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Checklists (periodic workflows)
-- `Checklists/PeriodicAudit.md` — чек-лист периодического аудита кодовой базы (раз в 3-5 релизов): parallel audit passes для dead code + broken docs links, jscpd классификация top-20 клонов по 6 категориям (LEGIT-PROVIDER / LEGIT-BOUNDARY / LEGIT-SIMILAR-BUT-DIVERGING / EXTRACT-EASY / EXTRACT-COMPLEX / WITHIN-FILE-BUG), trzy-проход grep для локализационных ключей перед deletion, execution через отдельный cycle с planning-doc + todo-plan. Precedent: 1.2.10 Audit Cleanup.
+- `Checklists/PeriodicAudit.md` — чек-лист периодического аудита кодовой базы (раз в 3-5 релизов): parallel audit passes для dead code + broken docs links, jscpd классификация top-20 клонов по 6 категориям (LEGIT-PROVIDER / LEGIT-BOUNDARY / LEGIT-SIMILAR-BUT-DIVERGING / EXTRACT-EASY / EXTRACT-COMPLEX / WITHIN-FILE-BUG), trzy-проход grep для локализационных ключей перед deletion, execution через отдельный cycle с planning-doc + todo-plan. Precedents: 1.2.10 Audit Cleanup, 1.2.523 Audit Automation Cleanup.
 - `Checklists/RuntimeReliabilityReviewRemediation.md` — обобщение двух runtime reliability review-пакетов (`message (1).txt`, `review.txt`) и двух remediation циклов (`1.2.103`, `1.2.111`): finding matrix, причины повторных замечаний после первого refactor, triage protocol, runtime reliability closeout checklist, reporting template для будущих overlapping reviews.
 
 ### Contracts (compat / legacy filenames)
@@ -81,6 +81,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Archive/AuditAutomationCleanup_Part1_Planning.md` — archived accepted planning source for release `1.2.523`: audit automation cleanup, runtime dependency security checks, CI-visible duplicate/link/security gates, low-risk dependency patches, stale archive cleanup, Gemini/Kimi/GLM model-version follow-ups, workspace prompt clarity, and stale user-gate cursor fix.
 - `Plans/Archive/Claude_Thinking_Default_And_PM_Startup_Audit_2026-06-01.md` — archived accepted user-request planning summary for release `1.2.431`: Claude thinking enabled by default for new/missing settings, Project Manager first paint before provider warmup, deferred first-open provider version checks, and provider warmup `core:state` refresh after status changes.
 - `Plans/Archive/Local_Models_LMStudio_Module_Planning.md` — archived accepted planning source for releases `1.2.392` through `1.2.405`: LM Studio local models as selectable translation engines and workflow-agent providers, Core-owned LM Studio loading with `codeaihub-*` identifiers, purpose-specific TTL, idle cleanup, and deferred download/delete controls.
 - `Plans/Archive/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md` — archived accepted planning source for releases `1.2.379` through `1.2.391`: Gemini/Kimi/GLM-Claude-Code provider readiness after the workspace-owned provider-home refactor, GLM global config bootstrap/preservation, provider runtime capsule alignment, global/workspace settings split, residual boundary cleanup, and managed workflow input locking.
