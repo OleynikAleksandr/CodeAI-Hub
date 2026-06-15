@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type { CliArgs } from "../runtime/gemini-cli-compat";
 import { GeminiSessionBootstrapper } from "./gemini-session-bootstrapper";
 
 interface LoadCliConfigCall {

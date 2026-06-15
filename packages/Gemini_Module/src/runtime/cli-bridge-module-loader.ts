@@ -2,14 +2,21 @@ import { existsSync, readFileSync } from "node:fs";
 import nodeModule from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import {
   type GeminiStorageModule,
   patchGeminiStorageGlobalDir,
   resolveGeminiProviderGeminiDir,
 } from "./cli-bridge-provider-home";
 import type { GeminiCliModules } from "./cli-types";
+import type {
+  CompletedToolCall,
+  CoreToolSchedulerModule,
+  GeminiCliConfigModule,
+  GeminiCliExtensionEnablementModule,
+  GeminiCliExtensionModule,
+  GeminiCliSettingsModule,
+  ToolCallRequestInfo,
+} from "./gemini-cli-compat";
 
 const { createRequire } = nodeModule;
 
@@ -158,7 +165,7 @@ const readCompatSettingsFile = (filePath: string): Record<string, unknown> => {
 
 const createCompatConfigModule = async (
   cliCoreRoot: string
-): Promise<typeof import("@google/gemini-cli/dist/src/config/config")> => {
+): Promise<GeminiCliConfigModule> => {
   const coreConfigModule = await findAndLoadModule<
     typeof import("@google/gemini-cli-core/dist/src/config/config")
   >(cliCoreRoot, [
@@ -235,12 +242,12 @@ const createCompatConfigModule = async (
     },
   };
 
-  return compatModule as typeof import("@google/gemini-cli/dist/src/config/config");
+  return compatModule as GeminiCliConfigModule;
 };
 
 const createCompatSettingsModule = (
   _cliRoot: string
-): typeof import("@google/gemini-cli/dist/src/config/settings") => {
+): GeminiCliSettingsModule => {
   return {
     loadSettings: (workspaceDir = process.cwd()) => {
       const userSettingsPath = path.join(
@@ -261,7 +268,7 @@ const createCompatSettingsModule = (
     migrateDeprecatedSettings: () => {
       // Bundle-only Gemini CLI no longer exposes the old migrator API.
     },
-  } as unknown as typeof import("@google/gemini-cli/dist/src/config/settings");
+  } as GeminiCliSettingsModule;
 };
 
 const loadAndPatchGeminiStorageModule = async (
@@ -301,15 +308,14 @@ interface ModernSchedulerConstructorLike {
 
 const createCompatToolSchedulerModule = async (
   cliCoreRoot: string
-): Promise<
-  typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
-> => {
-  const legacyScheduler = await tryFindAndLoadModule<
-    typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
-  >(cliCoreRoot, [
-    ["dist", "src", "core", "coreToolScheduler.js"],
-    ["dist", "core", "coreToolScheduler.js"],
-  ]);
+): Promise<CoreToolSchedulerModule> => {
+  const legacyScheduler = await tryFindAndLoadModule<CoreToolSchedulerModule>(
+    cliCoreRoot,
+    [
+      ["dist", "src", "core", "coreToolScheduler.js"],
+      ["dist", "core", "coreToolScheduler.js"],
+    ]
+  );
   if (legacyScheduler.module) {
     return legacyScheduler.module;
   }
@@ -359,7 +365,7 @@ const createCompatToolSchedulerModule = async (
 
   return {
     CoreToolScheduler: CoreToolSchedulerCompat,
-  } as unknown as typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler");
+  } as CoreToolSchedulerModule;
 };
 
 export const loadGeminiModules = async (
@@ -376,9 +382,7 @@ export const loadGeminiModules = async (
     thoughtUtils,
     sessionUtils,
   ] = await Promise.all([
-    tryFindAndLoadModule<
-      typeof import("@google/gemini-cli/dist/src/config/config")
-    >(cliRoot, [
+    tryFindAndLoadModule<GeminiCliConfigModule>(cliRoot, [
       ["dist", "src", "config", "config.js"],
       ["dist", "config", "config.js"],
     ]),
@@ -417,10 +421,8 @@ export const loadGeminiModules = async (
   return {
     config,
     settings,
-    extension:
-      {} as typeof import("@google/gemini-cli/dist/src/config/extension"),
-    extensionEnablement:
-      {} as typeof import("@google/gemini-cli/dist/src/config/extensions/extensionEnablement"),
+    extension: {} as GeminiCliExtensionModule,
+    extensionEnablement: {} as GeminiCliExtensionEnablementModule,
     contentGenerator,
     toolScheduler,
     turn,

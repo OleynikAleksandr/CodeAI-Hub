@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
-import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { ThoughtSummary } from "@google/gemini-cli-core/dist/src/utils/thoughtUtils";
 import type { UsageMetadata } from "@google/genai";
+import type { ToolCallRequestInfo } from "../runtime/gemini-cli-compat";
 import type { ActiveSession } from "../session/types";
 import type { GeminiSessionEvent } from "../types";
 import type { ThoughtTranslatorService } from "./thought-translator-service";

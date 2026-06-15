@@ -1,7 +1,9 @@
 import type { Config } from "@google/gemini-cli-core/dist/src/config/config";
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type {
+  CompletedToolCall,
+  ToolCallRequestInfo,
+} from "../runtime/gemini-cli-compat";
 import type { ModuleReporter } from "../types";
 
 // AgentLoopContext shape expected by CoreToolScheduler@0.35.0.

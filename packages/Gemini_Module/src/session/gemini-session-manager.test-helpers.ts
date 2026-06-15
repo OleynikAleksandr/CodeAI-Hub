@@ -1,7 +1,9 @@
-import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type {
+  CliArgs,
+  CompletedToolCall,
+  ToolCallRequestInfo,
+} from "../runtime/gemini-cli-compat";
 
 export type StreamPlan =
   | readonly unknown[]

@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type {
+  CompletedToolCall,
+  ToolCallRequestInfo,
+} from "../runtime/gemini-cli-compat";
 import { GeminiToolExecutorFacade } from "./gemini-tool-executor-facade";
 
 const createToolRequest = (): ToolCallRequestInfo => ({

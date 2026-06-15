@@ -1,12 +1,14 @@
-import type * as CliConfigModule from "@google/gemini-cli/dist/src/config/config";
-import type * as CliExtensionModule from "@google/gemini-cli/dist/src/config/extension";
-import type * as CliExtensionEnablementModule from "@google/gemini-cli/dist/src/config/extensions/extensionEnablement";
-import type * as CliSettingsModule from "@google/gemini-cli/dist/src/config/settings";
 import type * as CoreContentModule from "@google/gemini-cli-core/dist/src/core/contentGenerator";
-import type * as ToolSchedulerModule from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type * as TurnModule from "@google/gemini-cli-core/dist/src/core/turn";
 import type * as ThoughtUtilsModule from "@google/gemini-cli-core/dist/src/utils/thoughtUtils";
 import type { GeminiCliBridgeMetadata } from "../types";
+import type {
+  CoreToolSchedulerModule,
+  GeminiCliConfigModule,
+  GeminiCliExtensionEnablementModule,
+  GeminiCliExtensionModule,
+  GeminiCliSettingsModule,
+  GeminiTurnModule,
+} from "./gemini-cli-compat";
 
 export interface GeminiConversationMessage {
   readonly content?: unknown;
@@ -44,15 +46,15 @@ export interface GeminiSessionUtilsModule {
 }
 
 export interface GeminiCliModules {
-  readonly config: typeof CliConfigModule;
+  readonly config: GeminiCliConfigModule;
   readonly contentGenerator: typeof CoreContentModule;
-  readonly extension: typeof CliExtensionModule;
-  readonly extensionEnablement: typeof CliExtensionEnablementModule;
+  readonly extension: GeminiCliExtensionModule;
+  readonly extensionEnablement: GeminiCliExtensionEnablementModule;
   readonly sessionUtils: GeminiSessionUtilsModule | null;
-  readonly settings: typeof CliSettingsModule;
+  readonly settings: GeminiCliSettingsModule;
   readonly thoughtUtils: typeof ThoughtUtilsModule;
-  readonly toolScheduler: typeof ToolSchedulerModule;
-  readonly turn: typeof TurnModule;
+  readonly toolScheduler: CoreToolSchedulerModule;
+  readonly turn: GeminiTurnModule;
 }
 
 export interface GeminiCliBridge {

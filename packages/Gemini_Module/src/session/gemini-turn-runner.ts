@@ -1,11 +1,11 @@
-import type {
-  ServerGeminiStreamEvent,
-  ToolCallRequestInfo,
-} from "@google/gemini-cli-core/dist/src/core/turn";
 import type { Part, UsageMetadata } from "@google/genai";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
 import type { ThoughtTranslatorService } from "../messaging/thought-translator-service";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type {
+  ServerGeminiStreamEvent,
+  ToolCallRequestInfo,
+} from "../runtime/gemini-cli-compat";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
 import { GeminiSessionLifecycle } from "./gemini-session-lifecycle";
 import type {

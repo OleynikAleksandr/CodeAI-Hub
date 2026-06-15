@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client";
 import {
   bootstrapGeminiProviderHomeFromLegacyAuth,
   resolveGeminiProviderGeminiDir,
@@ -28,11 +27,12 @@ const GEMINI_ENV_KEYS_TO_CLEAR = [
 const GEMINI_START_CHAT_PATCH_FLAG = "__codeaiHubStartChatPatchApplied";
 const GEMINI_LOOP_RECOVERY_PATCH_FLAG = "__codeaiHubLoopRecoveryPatchApplied";
 
-type PatchableGeminiClient = GeminiClient & {
+interface PatchableGeminiClient {
   _recoverFromLoop?: (...args: unknown[]) => unknown;
+  startChat?: (...args: unknown[]) => Promise<unknown>;
   [GEMINI_LOOP_RECOVERY_PATCH_FLAG]?: boolean;
   [GEMINI_START_CHAT_PATCH_FLAG]?: boolean;
-};
+}
 
 interface GeminiSessionBootstrapResult {
   readonly providerSessionId: string | null;
@@ -97,12 +97,16 @@ export class GeminiSessionBootstrapper {
       modelId: resolvedSettings.resolvedModel,
       thinkingLevel: resolvedSettings.resolvedThinkingLevel,
     };
-    this.monkeyPatchGeminiClient(client, runtimeTurnConfig, options.reporter);
+    this.monkeyPatchGeminiClient(
+      client as unknown as PatchableGeminiClient,
+      runtimeTurnConfig,
+      options.reporter
+    );
 
     if (requestedResumeSessionId) {
       await this.hydrateResumedChat(
         config,
-        client,
+        client as unknown as PatchableGeminiClient,
         requestedResumeSessionId,
         options.reporter
       );
@@ -197,9 +201,7 @@ export class GeminiSessionBootstrapper {
     client[GEMINI_START_CHAT_PATCH_FLAG] = true;
     const originalStartChat = client.startChat.bind(client);
 
-    client.startChat = async (
-      ...args: Parameters<typeof originalStartChat>
-    ) => {
+    client.startChat = async (...args: unknown[]) => {
       const chat = await originalStartChat(...args);
       const chatAny = chat as unknown as {
         generationConfig?: {

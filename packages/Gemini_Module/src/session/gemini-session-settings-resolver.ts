@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
-import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type { CliArgs } from "../runtime/gemini-cli-compat";
 import type { SessionCreationOptions } from "./types";
 
 const DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 300_000;

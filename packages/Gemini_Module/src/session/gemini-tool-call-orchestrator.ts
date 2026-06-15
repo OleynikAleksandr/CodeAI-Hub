@@ -1,6 +1,8 @@
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { Part } from "@google/genai";
+import type {
+  CompletedToolCall,
+  ToolCallRequestInfo,
+} from "../runtime/gemini-cli-compat";
 import type { GeminiSessionEvent } from "../types";
 import type { GeminiToolExecutorFacade } from "./gemini-tool-executor-facade";
 import type { ActiveSession } from "./types";

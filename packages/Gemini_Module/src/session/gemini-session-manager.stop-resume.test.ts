@@ -3,11 +3,11 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type {
   GeminiCliModules,
   GeminiConversationRecord,
 } from "../runtime/cli-types";
+import type { CliArgs } from "../runtime/gemini-cli-compat";
 import { GeminiSessionManager } from "./gemini-session-manager";
 
 interface ResumeChatCall {

@@ -1,8 +1,8 @@
+import type { GeminiCliModules } from "../runtime/cli-types";
 import type {
   GeminiEventType,
   ServerGeminiStreamEvent,
-} from "@google/gemini-cli-core/dist/src/core/turn";
-import type { GeminiCliModules } from "../runtime/cli-types";
+} from "../runtime/gemini-cli-compat";
 import type { ActiveSession } from "../session/types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
 import type {

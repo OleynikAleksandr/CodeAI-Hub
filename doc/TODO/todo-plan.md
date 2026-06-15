@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "7ee184cf3",
+  "lastRecordedCommit": "9a2af9634",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5a.task1",
-  "expectedCommitMessage": "chore: update gemini cli dependencies",
+  "currentTaskId": "phase1.stream5a.task2",
+  "expectedCommitMessage": "fix: restore gemini cli 0.46 compatibility",
   "debt": {
-    "expectedCommitMessage": "chore: update gemini cli dependencies",
-    "preCommitHead": "7ee184cf3",
+    "expectedCommitMessage": "fix: restore gemini cli 0.46 compatibility",
+    "preCommitHead": "9a2af9634",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5a.task1"
+    "taskId": "phase1.stream5a.task2"
   }
 }
 ```
@@ -75,9 +75,9 @@
 ### Stream: Gemini Dependency Correction
 
 15. [DONE] `phase1.stream5a.task1` Align repository Gemini CLI/Core dev dependencies with the installed provider version 0.46.0. (scope: `package.json, packages/Gemini_Module/package.json, package-lock.json`; expected commit: `chore: update gemini cli dependencies`)
-16. [PENDING] `phase1.stream5a.commit1` Git Commit: `chore: update gemini cli dependencies` (hash: TBD)
-17. [TODO] `phase1.stream5a.task2` Restore the Gemini compatibility layer for the 0.46.0 internal package layout. (scope: `packages/Gemini_Module/src/runtime/gemini-cli-compat-types.d.ts, packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts`; expected commit: `fix: restore gemini cli 0.46 compatibility`)
-18. [TODO] `phase1.stream5a.commit2` Git Commit: `fix: restore gemini cli 0.46 compatibility` (hash: TBD)
+16. [DONE] `phase1.stream5a.commit1` Git Commit: `chore: update gemini cli dependencies` (hash: 9a2af9634)
+17. [DONE] `phase1.stream5a.task2` Restore the Gemini compatibility layer for the 0.46.0 internal package layout. (scope: `packages/Gemini_Module/src/runtime/**, packages/Gemini_Module/src/session/**, packages/Gemini_Module/src/messaging/**`; expected commit: `fix: restore gemini cli 0.46 compatibility`)
+18. [PENDING] `phase1.stream5a.commit2` Git Commit: `fix: restore gemini cli 0.46 compatibility` (hash: TBD)
 
 ### Stream: Release Build
 
