@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "544f6268a",
+  "lastRecordedCommit": "719cd7db4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6a.task3",
-  "expectedCommitMessage": "fix: normalize legacy glm runtime aliases",
+  "currentTaskId": "phase1.stream6a.task4",
+  "expectedCommitMessage": "test: verify legacy glm alias normalization",
   "debt": {
-    "expectedCommitMessage": "fix: normalize legacy glm runtime aliases",
-    "preCommitHead": "544f6268a",
+    "expectedCommitMessage": "test: verify legacy glm alias normalization",
+    "preCommitHead": "719cd7db4",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6a.task3"
+    "taskId": "phase1.stream6a.task4"
   }
 }
 ```
@@ -121,9 +121,12 @@
 47. [DONE] `phase1.stream6a.task2` Normalize legacy GLM persisted settings aliases in Core turn settings. (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-settings-snapshot.test.ts`; expected commit: `fix: normalize legacy glm core aliases`)
 48. [DONE] `phase1.stream6a.commit2` Git Commit: `fix: normalize legacy glm core aliases` (hash: 544f6268a)
 49. [DONE] `phase1.stream6a.task3` Normalize legacy GLM aliases before runtime environment export. (scope: `packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts`; expected commit: `fix: normalize legacy glm runtime aliases`)
-50. [PENDING] `phase1.stream6a.commit3` Git Commit: `fix: normalize legacy glm runtime aliases` (hash: TBD)
-51. [TODO] `phase1.stream6a.task4` Run targeted verification for the GLM alias migration fix. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/**, packages/Claude_Module/src/glm-claude-code/**`; expected commit: `test: verify legacy glm alias normalization`)
-52. [TODO] `phase1.stream6a.commit4` Git Commit: `test: verify legacy glm alias normalization` (hash: TBD)
+50. [DONE] `phase1.stream6a.commit3` Git Commit: `fix: normalize legacy glm runtime aliases` (hash: 719cd7db4)
+51. [DONE] `phase1.stream6a.task4` Run targeted verification for the GLM alias migration fix. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/**, packages/Claude_Module/src/glm-claude-code/**`; expected commit: `test: verify legacy glm alias normalization`)
+    - Evidence 2026-06-15: `npx tsx src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts` passed, including legacy GLM alias mapping to `glm-5.2`.
+    - Evidence 2026-06-15: `npm run typecheck:webview`, `npm run build --workspace=@codeai-hub/claude-module`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`, and `node --test packages/core/dist/config/provider-settings-snapshot.test.js` passed.
+    - Evidence 2026-06-15: the real workspace settings snapshot that still contains `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` now maps to `glm-5.2` for UI default/opus/sonnet/haiku and Core default model.
+52. [PENDING] `phase1.stream6a.commit4` Git Commit: `test: verify legacy glm alias normalization` (hash: TBD)
 
 ### Stream: Release Rebuild 1.2.521
 
