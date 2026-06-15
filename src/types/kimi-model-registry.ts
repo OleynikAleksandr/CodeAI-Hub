@@ -1,4 +1,4 @@
-export type KimiModelId = "kimi-for-coding";
+export type KimiModelId = "kimi-k2.7-code";
 export type KimiModelStatus = "active";
 export type KimiModelTier = "coding";
 
@@ -14,9 +14,9 @@ export interface KimiModelDescriptor {
 
 export const KIMI_RECOMMENDED_MODELS = [
   {
-    id: "kimi-for-coding",
-    displayName: "Kimi 2.6 / Kimi Code",
-    description: "Kimi CLI coding model exposed through Wire mode.",
+    id: "kimi-k2.7-code",
+    displayName: "Kimi K2.7 Code",
+    description: "Kimi K2.7 Code model exposed through Wire mode.",
     status: "active",
     supportsReasoningControl: false,
     supportsThinkingDisplaySummarized: false,
@@ -24,7 +24,7 @@ export const KIMI_RECOMMENDED_MODELS = [
   },
 ] as const satisfies readonly KimiModelDescriptor[];
 
-export const DEFAULT_KIMI_MODEL_ID: KimiModelId = "kimi-for-coding";
+export const DEFAULT_KIMI_MODEL_ID: KimiModelId = "kimi-k2.7-code";
 
 export const KIMI_MODEL_ID_SET = new Set<KimiModelId>(
   KIMI_RECOMMENDED_MODELS.map((model) => model.id)

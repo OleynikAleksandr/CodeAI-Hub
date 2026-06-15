@@ -1,4 +1,4 @@
-export type KimiModelId = "kimi-for-coding";
+export type KimiModelId = "kimi-k2.7-code";
 
 export interface KimiModelCapabilities {
   readonly displayName: string;
@@ -9,8 +9,8 @@ export interface KimiModelCapabilities {
 
 export const KIMI_MODEL_CAPABILITIES = [
   {
-    modelId: "kimi-for-coding",
-    displayName: "Kimi 2.6 / Kimi Code",
+    modelId: "kimi-k2.7-code",
+    displayName: "Kimi K2.7 Code",
     supportsReasoningControl: false,
     supportsThinkingDisplaySummarized: false,
   },
@@ -23,7 +23,7 @@ const CAPABILITIES_BY_MODEL_ID = new Map<KimiModelId, KimiModelCapabilities>(
   ])
 );
 
-export const DEFAULT_KIMI_MODEL_ID: KimiModelId = "kimi-for-coding";
+export const DEFAULT_KIMI_MODEL_ID: KimiModelId = "kimi-k2.7-code";
 
 export const listKimiModelCapabilities = (): readonly KimiModelCapabilities[] =>
   KIMI_MODEL_CAPABILITIES;

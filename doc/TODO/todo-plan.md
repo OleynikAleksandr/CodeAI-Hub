@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "9a2af9634",
+  "lastRecordedCommit": "45d7718c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5a.task2",
-  "expectedCommitMessage": "fix: restore gemini cli 0.46 compatibility",
+  "currentTaskId": "phase1.stream5c.task1",
+  "expectedCommitMessage": "chore: update kimi model default to 2.7",
   "debt": {
-    "expectedCommitMessage": "fix: restore gemini cli 0.46 compatibility",
-    "preCommitHead": "9a2af9634",
+    "expectedCommitMessage": "chore: update kimi model default to 2.7",
+    "preCommitHead": "45d7718c2",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5a.task2"
+    "taskId": "phase1.stream5c.task1"
   }
 }
 ```
@@ -77,21 +77,46 @@
 15. [DONE] `phase1.stream5a.task1` Align repository Gemini CLI/Core dev dependencies with the installed provider version 0.46.0. (scope: `package.json, packages/Gemini_Module/package.json, package-lock.json`; expected commit: `chore: update gemini cli dependencies`)
 16. [DONE] `phase1.stream5a.commit1` Git Commit: `chore: update gemini cli dependencies` (hash: 9a2af9634)
 17. [DONE] `phase1.stream5a.task2` Restore the Gemini compatibility layer for the 0.46.0 internal package layout. (scope: `packages/Gemini_Module/src/runtime/**, packages/Gemini_Module/src/session/**, packages/Gemini_Module/src/messaging/**`; expected commit: `fix: restore gemini cli 0.46 compatibility`)
-18. [PENDING] `phase1.stream5a.commit2` Git Commit: `fix: restore gemini cli 0.46 compatibility` (hash: TBD)
+18. [DONE] `phase1.stream5a.commit2` Git Commit: `fix: restore gemini cli 0.46 compatibility` (hash: 45d7718c2)
+
+### Stream: Provider Model Version Update
+
+19. [DONE] `phase1.stream5c.task1` Update Kimi provider model registry and Core default to Kimi K2.7 Code. (scope: `packages/Kimi_Module/src/types/kimi-model-capabilities.ts, src/types/kimi-model-registry.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `chore: update kimi model default to 2.7`)
+20. [PENDING] `phase1.stream5c.commit1` Git Commit: `chore: update kimi model default to 2.7` (hash: TBD)
+21. [TODO] `phase1.stream5c.task2` Update Kimi UI/provider defaults and registry alignment tests. (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, src/client/ui/src/session/model-info-builder.ts, src/client/project-manager/services/kimi-model-registry-alignment.test.ts`; expected commit: `chore: update kimi ui model default to 2.7`)
+22. [TODO] `phase1.stream5c.commit2` Git Commit: `chore: update kimi ui model default to 2.7` (hash: TBD)
+23. [TODO] `phase1.stream5c.task3` Update Kimi capture defaults to Kimi K2.7 Code. (scope: `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/shared/stage-start-model-selection.ts`; expected commit: `chore: update kimi capture model default to 2.7`)
+24. [TODO] `phase1.stream5c.commit3` Git Commit: `chore: update kimi capture model default to 2.7` (hash: TBD)
+25. [TODO] `phase1.stream5c.task4` Update GLM runtime and Core turn defaults to GLM 5.2. (scope: `packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-model-capabilities.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `chore: update glm runtime default to 5.2`)
+26. [TODO] `phase1.stream5c.commit4` Git Commit: `chore: update glm runtime default to 5.2` (hash: TBD)
+27. [TODO] `phase1.stream5c.task5` Update GLM provider descriptors and persisted settings defaults to GLM 5.2. (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `chore: update glm settings defaults to 5.2`)
+28. [TODO] `phase1.stream5c.commit5` Git Commit: `chore: update glm settings defaults to 5.2` (hash: TBD)
+29. [TODO] `phase1.stream5c.task6` Update GLM settings and capture UI defaults to GLM 5.2. (scope: `src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/native-request-capture-state.ts, src/client/project-manager/components/settings/project-manager-settings-host-message.ts`; expected commit: `chore: update glm settings ui model to 5.2`)
+30. [TODO] `phase1.stream5c.commit6` Git Commit: `chore: update glm settings ui model to 5.2` (hash: TBD)
+31. [TODO] `phase1.stream5c.task7` Update GLM picker labels and settings copy to GLM 5.2. (scope: `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/ui/src/components/settings/glm-claude-code-settings-card.tsx`; expected commit: `chore: update glm provider model labels to 5.2`)
+32. [TODO] `phase1.stream5c.commit7` Git Commit: `chore: update glm provider model labels to 5.2` (hash: TBD)
+33. [TODO] `phase1.stream5c.task8` Update provider start-card/session/provider labels for GLM 5.2. (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/ui/src/session/model-info-builder.ts, src/types/provider.ts`; expected commit: `chore: update glm provider surfaces to 5.2`)
+34. [TODO] `phase1.stream5c.commit8` Git Commit: `chore: update glm provider surfaces to 5.2` (hash: TBD)
+35. [TODO] `phase1.stream5c.task9` Update active provider model SSOT docs. (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `docs: update provider model ssot`)
+36. [TODO] `phase1.stream5c.commit9` Git Commit: `docs: update provider model ssot` (hash: TBD)
+37. [TODO] `phase1.stream5c.task10` Update model references in the system architecture and docs index. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update provider model reference index`)
+38. [TODO] `phase1.stream5c.commit10` Git Commit: `docs: update provider model reference index` (hash: TBD)
+39. [TODO] `phase1.stream5c.task11` Run live smoke tests against Kimi K2.7 Code and GLM 5.2 and record only non-secret results. (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify latest provider model access`)
+40. [TODO] `phase1.stream5c.commit11` Git Commit: `test: verify latest provider model access` (hash: TBD)
 
 ### Stream: Release Build
 
-19. [TODO] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
-20. [TODO] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: TBD)
-21. [TODO] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
-22. [TODO] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
+41. [TODO] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
+42. [TODO] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: TBD)
+43. [TODO] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
+44. [TODO] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-23. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
-24. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
+45. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
+46. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-25. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
-26. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
+47. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
+48. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
