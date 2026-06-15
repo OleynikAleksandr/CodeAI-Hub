@@ -32,11 +32,21 @@ const DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
 const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
 const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
 const DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
+const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
+  "glm-5.1",
+  "glm-5-turbo",
+  "glm-4.5-air",
+]);
 
 const mapOptionalString = (value: unknown, fallback: string): string =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : fallback;
+
+const mapGlmClaudeCodeModel = (value: unknown, fallback: string): string => {
+  const modelId = mapOptionalString(value, fallback);
+  return LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId) ? fallback : modelId;
+};
 
 export const mapKimiSettings = (
   value: RawKimiSettings | undefined,
@@ -62,19 +72,19 @@ export const mapGlmClaudeCodeSettings = (
     value?.configPath,
     DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH
   ),
-  defaultModel: mapOptionalString(
+  defaultModel: mapGlmClaudeCodeModel(
     value?.defaultModel,
     DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
   ),
-  haikuModel: mapOptionalString(
+  haikuModel: mapGlmClaudeCodeModel(
     value?.haikuModel,
     DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL
   ),
-  opusModel: mapOptionalString(
+  opusModel: mapGlmClaudeCodeModel(
     value?.opusModel,
     DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
   ),
-  sonnetModel: mapOptionalString(
+  sonnetModel: mapGlmClaudeCodeModel(
     value?.sonnetModel,
     DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL
   ),

@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "7b7971c44",
+  "lastRecordedCommit": "7c355f0e1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5b.task2",
-  "expectedCommitMessage": "chore: build release 1.2.520",
+  "currentTaskId": "phase1.stream6a.task1",
+  "expectedCommitMessage": "fix: normalize legacy glm settings aliases",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.520",
-    "preCommitHead": "7b7971c44",
+    "expectedCommitMessage": "fix: normalize legacy glm settings aliases",
+    "preCommitHead": "7c355f0e1",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5b.task2"
+    "taskId": "phase1.stream6a.task1"
   }
 }
 ```
@@ -112,14 +112,32 @@
 41. [DONE] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
 42. [DONE] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: 7b7971c44)
 43. [DONE] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
-44. [PENDING] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
+44. [DONE] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: 7c355f0e1)
+
+### Stream: Acceptance Bugfix - GLM Legacy Aliases
+
+45. [DONE] `phase1.stream6a.task1` Normalize legacy GLM persisted settings aliases in the UI settings mapper. (scope: `src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`; expected commit: `fix: normalize legacy glm settings aliases`)
+46. [PENDING] `phase1.stream6a.commit1` Git Commit: `fix: normalize legacy glm settings aliases` (hash: TBD)
+47. [TODO] `phase1.stream6a.task2` Normalize legacy GLM persisted settings aliases in Core turn settings. (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-settings-snapshot.test.ts`; expected commit: `fix: normalize legacy glm core aliases`)
+48. [TODO] `phase1.stream6a.commit2` Git Commit: `fix: normalize legacy glm core aliases` (hash: TBD)
+49. [TODO] `phase1.stream6a.task3` Normalize legacy GLM aliases before runtime environment export. (scope: `packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts`; expected commit: `fix: normalize legacy glm runtime aliases`)
+50. [TODO] `phase1.stream6a.commit3` Git Commit: `fix: normalize legacy glm runtime aliases` (hash: TBD)
+51. [TODO] `phase1.stream6a.task4` Run targeted verification for the GLM alias migration fix. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/**, packages/Claude_Module/src/glm-claude-code/**`; expected commit: `test: verify legacy glm alias normalization`)
+52. [TODO] `phase1.stream6a.commit4` Git Commit: `test: verify legacy glm alias normalization` (hash: TBD)
+
+### Stream: Release Rebuild 1.2.521
+
+53. [TODO] `phase1.stream6b.task1` Prepare release documentation for version 1.2.521 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.521 release notes`)
+54. [TODO] `phase1.stream6b.commit1` Git Commit: `docs: prepare 1.2.521 release notes` (hash: TBD)
+55. [TODO] `phase1.stream6b.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.521`)
+56. [TODO] `phase1.stream6b.commit2` Git Commit: `chore: build release 1.2.521` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-45. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
-46. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
+57. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
+58. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-47. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
-48. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
+59. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
+60. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
