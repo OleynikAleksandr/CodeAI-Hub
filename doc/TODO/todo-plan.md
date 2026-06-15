@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "69d5c7733",
+  "lastRecordedCommit": "61a11b530",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5c.task9",
-  "expectedCommitMessage": "docs: update provider model ssot",
+  "currentTaskId": "phase1.stream5c.task10",
+  "expectedCommitMessage": "docs: update provider model reference index",
   "debt": {
-    "expectedCommitMessage": "docs: update provider model ssot",
-    "preCommitHead": "69d5c7733",
+    "expectedCommitMessage": "docs: update provider model reference index",
+    "preCommitHead": "61a11b530",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5c.task9"
+    "taskId": "phase1.stream5c.task10"
   }
 }
 ```
@@ -98,9 +98,9 @@
 33. [DONE] `phase1.stream5c.task8` Update provider start-card/session/provider labels for GLM 5.2. (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/ui/src/session/model-info-builder.ts, src/types/provider.ts`; expected commit: `chore: update glm provider surfaces to 5.2`)
 34. [DONE] `phase1.stream5c.commit8` Git Commit: `chore: update glm provider surfaces to 5.2` (hash: 69d5c7733)
 35. [DONE] `phase1.stream5c.task9` Update active provider model SSOT docs. (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `docs: update provider model ssot`)
-36. [PENDING] `phase1.stream5c.commit9` Git Commit: `docs: update provider model ssot` (hash: TBD)
-37. [TODO] `phase1.stream5c.task10` Update model references in the system architecture and docs index. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update provider model reference index`)
-38. [TODO] `phase1.stream5c.commit10` Git Commit: `docs: update provider model reference index` (hash: TBD)
+36. [DONE] `phase1.stream5c.commit9` Git Commit: `docs: update provider model ssot` (hash: 61a11b530)
+37. [DONE] `phase1.stream5c.task10` Update model references in the system architecture and docs index. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update provider model reference index`)
+38. [PENDING] `phase1.stream5c.commit10` Git Commit: `docs: update provider model reference index` (hash: TBD)
 39. [TODO] `phase1.stream5c.task11` Run live smoke tests against Kimi K2.7 Code and GLM 5.2 and record only non-secret results. (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify latest provider model access`)
 40. [TODO] `phase1.stream5c.commit11` Git Commit: `test: verify latest provider model access` (hash: TBD)
 

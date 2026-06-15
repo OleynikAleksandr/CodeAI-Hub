@@ -296,7 +296,7 @@
   - `wire/kimi-wire-process.ts` + `wire/kimi-wire-router.ts` = `kimi --wire` process bridge and JSON-RPC router; stdout frames become correlated responses/events and malformed frames stay provider diagnostics
   - `session/kimi-session-lifecycle.ts` = create/resume/send/cancel/close lifecycle plus typed `KIMI_SESSION_STALE_BINDING` recovery signal
   - `messaging/kimi-event-normalizer.ts` + `messaging/kimi-request-failure-normalizer.ts` = provider event/request/failure normalization before Core sees the provider surface
-  - `types/kimi-model-capabilities.ts` = shared Kimi model capability registry; current default is `kimi-for-coding`, with no reasoning/thinking effort dimension in this release
+  - `types/kimi-model-capabilities.ts` = shared Kimi model capability registry; current default is `kimi-k2.7-code`, with no reasoning/thinking effort dimension in this release
 - Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
   - `claude-sdk-manager.ts` derives the active turn model from Core-applied turn config on send path; `handlers/session-request-handler-applied-turn-config.ts` resolves Claude `defaultModel` from the shared persisted settings snapshot before outbound send, so Claude no longer falls back to a stale process-start env alias when Settings change during a live Core session
   - CodeAI Hub-managed Claude turns now keep filesystem `settingSources` empty, which places the provider in full SDK isolation mode and blocks parent-directory `CLAUDE.md` / settings discovery from the active workspace path
