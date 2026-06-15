@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "8b4a8c2fa",
+  "lastRecordedCommit": "aef381ca5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream4.task2",
-  "expectedCommitMessage": "chore: remove audit noise patterns",
+  "currentTaskId": "phase1.stream4.task3",
+  "expectedCommitMessage": "chore: trim knip audit config",
   "debt": {
-    "expectedCommitMessage": "chore: remove audit noise patterns",
-    "preCommitHead": "8b4a8c2fa",
+    "expectedCommitMessage": "chore: trim knip audit config",
+    "preCommitHead": "aef381ca5",
     "stage": "commit_pending",
-    "taskId": "phase1.stream4.task2"
+    "taskId": "phase1.stream4.task3"
   }
 }
 ```
@@ -63,9 +63,9 @@
 7. [DONE] `phase1.stream4.task1` Remove stale tracked TODO zip archive residue. (scope: `.gitignore, doc/TODO/Archive.zip`; expected commit: `chore: remove stale todo archive zip`)
 8. [DONE] `phase1.stream4.commit1` Git Commit: `chore: remove stale todo archive zip` (hash: 8b4a8c2fa)
 9. [DONE] `phase1.stream4.task2` Remove two audit noise patterns from source without changing behavior. (scope: `packages/Claude_Module/src/installer/sdk-installer.ts, src/client/project-manager/api.ts`; expected commit: `chore: remove audit noise patterns`)
-10. [PENDING] `phase1.stream4.commit2` Git Commit: `chore: remove audit noise patterns` (hash: TBD)
-11. [TODO] `phase1.stream4.task3` Trim redundant Knip entry config hints. (scope: `knip.json`; expected commit: `chore: trim knip audit config`)
-12. [TODO] `phase1.stream4.commit3` Git Commit: `chore: trim knip audit config` (hash: TBD)
+10. [DONE] `phase1.stream4.commit2` Git Commit: `chore: remove audit noise patterns` (hash: aef381ca5)
+11. [DONE] `phase1.stream4.task3` Trim redundant Knip entry config hints. (scope: `knip.json`; expected commit: `chore: trim knip audit config`)
+12. [PENDING] `phase1.stream4.commit3` Git Commit: `chore: trim knip audit config` (hash: TBD)
 
 ### Stream: Tooling Verification
 
