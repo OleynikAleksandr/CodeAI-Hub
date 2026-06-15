@@ -1,7 +1,7 @@
 # GLM-Claude-Code Provider Module — Module (SSOT)
 
 ## Назначение
-GLM-Claude-Code provider module подключает GLM 5.1 к Core через Claude Code-compatible runtime. Это отдельный runtime-вариант для проверки моделей Z.AI/GLM в тех же workflow-условиях, где уже работает Claude Agent SDK path.
+GLM-Claude-Code provider module подключает GLM 5.2 к Core через Claude Code-compatible runtime. Это отдельный runtime-вариант для проверки моделей Z.AI/GLM в тех же workflow-условиях, где уже работает Claude Agent SDK path.
 
 Модуль заменяет закрытый эксперимент `Kimi-Claude-Code`. Native Kimi Wire provider (`kimiCode`) остается единственным Kimi-вариантом в продуктовых поверхностях, а GLM-Claude-Code получает собственный provider id, home, settings/config и user-facing label.
 
@@ -18,9 +18,9 @@ GLM-Claude-Code provider module подключает GLM 5.1 к Core через 
 ## Внешний контракт
 - Provider id в Core/UI catalog: `glmClaudeCode`.
 - User-facing provider label: `GLM-Claude-Code`.
-- Default model id: `glm-5.1`.
-- Secondary model ids: `glm-5-turbo`, `glm-4.5-air`.
-- Status/session model label: `GLM 5.1 / Claude-Code`.
+- Default model id: `glm-5.2`.
+- Claude-compatible opus/sonnet/haiku alias defaults: `glm-5.2`.
+- Status/session model label: `GLM 5.2 / Claude-Code`.
 - Runtime client family: Claude Code SDK/protocol.
 - Model/account family: Z.AI / GLM Anthropic-compatible endpoint.
 - Core registry resolves the standalone installed provider runtime `~/.codeai-hub/providers/glm-claude-code/<version>` before any bundled fallback; external code must enter through `GlmClaudeCodeProviderAdapter` and must not import runtime/auth/session internals directly.
@@ -55,7 +55,7 @@ GLM-Claude-Code provider module подключает GLM 5.1 к Core через 
 
 ## Model identity and settings
 - Settings persist under `providers.glmClaudeCode`, separate from `providers.claude`, `providers.kimi`, and all native provider settings.
-- Settings expose config path, API-key guidance, base URL and model defaults for `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air`.
+- Settings expose config path, API-key guidance, base URL and model defaults for `glm-5.2`.
 - Reasoning effort is not a proven GLM-Claude-Code setting until live provider behavior confirms support.
 - Core-applied turn config remains authoritative for outbound sends. Settings are defaults only and must not become Project Manager-local truth.
 - Provider inheritance between managed workflow steps must preserve `glmClaudeCode` and must not fall back to `claudeCode`, `kimiCode`, or another default provider.

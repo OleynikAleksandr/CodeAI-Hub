@@ -75,9 +75,9 @@ Settings snapshot reads may be cached only as short, path-scoped read-through sn
 Kimi provider settings are split by runtime:
 
 - `providers.kimi` belongs to the native Kimi Wire/CLI provider.
-- `providers.glmClaudeCode` belongs to GLM 5.1 through the Claude Code-compatible runtime.
+- `providers.glmClaudeCode` belongs to GLM 5.2 through the Claude Code-compatible runtime.
 
-Both may default to the same base model (`kimi-for-coding`), but they must remain separate persisted defaults because they run under different provider process/session/turn envelopes.
+They must remain separate persisted defaults because they run under different provider process/session/turn envelopes: native Kimi defaults to `kimi-k2.7-code`, while GLM-Claude-Code defaults to `glm-5.2`.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled`, `reasoningEngineId` / `reasoningLanguage` (the dedicated reasoning translation pair after the UI/Reasoning translation split) и их deprecated legacy aliases `translationEngineId` / `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity. Both legacy aliases are threaded with the same resolved value as the canonical reasoning fields until the provider adapters finish migrating.
 

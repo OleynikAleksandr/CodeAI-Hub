@@ -1,7 +1,7 @@
 # Kimi Provider Module — Module (SSOT)
 
 ## Назначение
-Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как обычного workflow-провайдера CodeAI Hub: Core создаёт и резюмирует provider sessions, отправляет user turns через Wire transport, принимает нормализованные lifecycle/message/request events, управляет model identity через shared settings, а Project Manager остаётся только UI-проекцией provider state.
+Kimi provider module подключает Kimi K2.7 Code к Core как обычного workflow-провайдера CodeAI Hub: Core создаёт и резюмирует provider sessions, отправляет user turns через Wire transport, принимает нормализованные lifecycle/message/request events, управляет model identity через shared settings, а Project Manager остаётся только UI-проекцией provider state.
 
 ## Где живёт код
 - Provider package: `packages/Kimi_Module/`
@@ -16,8 +16,8 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 ## Внешний контракт
 - Provider id в Core/UI catalog: `kimiCode`.
 - User-facing provider label: `Kimi`.
-- Default model id: `kimi-for-coding`.
-- Status/settings label: `Kimi 2.6 / Kimi Code`.
+- Default model id: `kimi-k2.7-code`.
+- Status/settings label: `Kimi K2.7 Code`.
 - Core registry creates the adapter through the provider descriptor/module loader path; external code must enter the module through `KimiProviderAdapter` and must not import Wire/process/session internals directly.
 - Kimi model switch in the first release is display-only in Session UI: status-line picker can render the selected Kimi model, but Kimi does not receive a provider-native live switch command until a verified Wire/runtime switch contract exists.
 
@@ -82,7 +82,7 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 - Kimi provider theme id is `kimi`; CSS/design tokens define its accent/fill/border/soft states for Project Manager and Session UI.
 
 ## Usage limits
-- Kimi usage limits are read from `GET https://api.kimi.com/coding/v1/usages` with the existing `~/.kimi/config.toml` `providers.kimi-for-coding.api_key`.
+- Kimi usage limits are read from `GET https://api.kimi.com/coding/v1/usages` with the existing `~/.kimi/config.toml` `providers.kimi-for-coding.api_key`; this is the Kimi CLI auth section, not the CodeAI model id.
 - The API key is read locally and sent only as an `Authorization: Bearer ...` header to the Kimi endpoint. It must not be logged, persisted into CodeAI settings, or copied into diagnostic artifacts.
 - Live payload mapping:
   - `limits[0].detail.used/limit/resetTime` → `usageLimits.currentSession`, label `5h`;
