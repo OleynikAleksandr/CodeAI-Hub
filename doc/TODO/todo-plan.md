@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "54caeab06",
+  "lastRecordedCommit": "8ca09ba4c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "chore: automate audit gap checks",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "fix: patch core runtime dependencies",
   "debt": {
-    "expectedCommitMessage": "chore: automate audit gap checks",
-    "preCommitHead": "54caeab06",
+    "expectedCommitMessage": "fix: patch core runtime dependencies",
+    "preCommitHead": "8ca09ba4c",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream3.task1"
   }
 }
 ```
@@ -51,12 +51,12 @@
 ### Stream: Automatic Gates
 
 3. [DONE] `phase1.stream2.task1` Add low-noise automatic checks for audit gaps: runtime security audit, workspace duplication guard, and CI coverage for duplicate/link/security checks. (scope: `package.json, .github/workflows/ci.yml, .husky/pre-push`; expected commit: `chore: automate audit gap checks`)
-4. [PENDING] `phase1.stream2.commit1` Git Commit: `chore: automate audit gap checks` (hash: TBD)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `chore: automate audit gap checks` (hash: 8ca09ba4c)
 
 ### Stream: Runtime Security Patch
 
-5. [TODO] `phase1.stream3.task1` Patch low-risk Core runtime dependency advisories without changing provider internals. (scope: `packages/core/package.json, package-lock.json`; expected commit: `fix: patch core runtime dependencies`)
-6. [TODO] `phase1.stream3.commit1` Git Commit: `fix: patch core runtime dependencies` (hash: TBD)
+5. [DONE] `phase1.stream3.task1` Patch low-risk Core runtime dependency advisories without changing provider internals. (scope: `packages/core/package.json, package-lock.json`; expected commit: `fix: patch core runtime dependencies`)
+6. [PENDING] `phase1.stream3.commit1` Git Commit: `fix: patch core runtime dependencies` (hash: TBD)
 
 ### Stream: Manual Cleanup
 
