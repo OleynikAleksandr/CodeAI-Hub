@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "524775907",
+  "lastRecordedCommit": "373c39a56",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5c.task6",
-  "expectedCommitMessage": "chore: update glm settings ui model to 5.2",
+  "currentTaskId": "phase1.stream5c.task7",
+  "expectedCommitMessage": "chore: update glm provider model labels to 5.2",
   "debt": {
-    "expectedCommitMessage": "chore: update glm settings ui model to 5.2",
-    "preCommitHead": "524775907",
+    "expectedCommitMessage": "chore: update glm provider model labels to 5.2",
+    "preCommitHead": "373c39a56",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5c.task6"
+    "taskId": "phase1.stream5c.task7"
   }
 }
 ```
@@ -92,9 +92,9 @@
 27. [DONE] `phase1.stream5c.task5` Update GLM provider descriptors and persisted settings defaults to GLM 5.2. (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `chore: update glm settings defaults to 5.2`)
 28. [DONE] `phase1.stream5c.commit5` Git Commit: `chore: update glm settings defaults to 5.2` (hash: 524775907)
 29. [DONE] `phase1.stream5c.task6` Update GLM settings and capture UI defaults to GLM 5.2. (scope: `src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/native-request-capture-state.ts, src/client/project-manager/components/settings/project-manager-settings-host-message.ts`; expected commit: `chore: update glm settings ui model to 5.2`)
-30. [PENDING] `phase1.stream5c.commit6` Git Commit: `chore: update glm settings ui model to 5.2` (hash: TBD)
-31. [TODO] `phase1.stream5c.task7` Update GLM picker labels and settings copy to GLM 5.2. (scope: `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/ui/src/components/settings/glm-claude-code-settings-card.tsx`; expected commit: `chore: update glm provider model labels to 5.2`)
-32. [TODO] `phase1.stream5c.commit7` Git Commit: `chore: update glm provider model labels to 5.2` (hash: TBD)
+30. [DONE] `phase1.stream5c.commit6` Git Commit: `chore: update glm settings ui model to 5.2` (hash: 373c39a56)
+31. [DONE] `phase1.stream5c.task7` Update GLM picker labels and settings copy to GLM 5.2. (scope: `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/ui/src/components/settings/glm-claude-code-settings-card.tsx`; expected commit: `chore: update glm provider model labels to 5.2`)
+32. [PENDING] `phase1.stream5c.commit7` Git Commit: `chore: update glm provider model labels to 5.2` (hash: TBD)
 33. [TODO] `phase1.stream5c.task8` Update provider start-card/session/provider labels for GLM 5.2. (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/ui/src/session/model-info-builder.ts, src/types/provider.ts`; expected commit: `chore: update glm provider surfaces to 5.2`)
 34. [TODO] `phase1.stream5c.commit8` Git Commit: `chore: update glm provider surfaces to 5.2` (hash: TBD)
 35. [TODO] `phase1.stream5c.task9` Update active provider model SSOT docs. (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `docs: update provider model ssot`)

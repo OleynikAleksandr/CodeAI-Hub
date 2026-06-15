@@ -5,7 +5,7 @@ const MODEL_OPTIONS: Record<string, readonly string[]> = {
   claude: ["sonnet", "opus", "haiku"],
   codex: ["gpt-5.4-mini", "gpt-5.2"],
   kimi: ["kimi-k2.7-code"],
-  glmClaudeCode: ["glm-5.1"],
+  glmClaudeCode: ["glm-5.2"],
 };
 
 const REASONING_OPTIONS: Record<string, readonly string[]> = {

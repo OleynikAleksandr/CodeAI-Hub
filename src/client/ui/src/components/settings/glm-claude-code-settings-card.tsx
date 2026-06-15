@@ -86,8 +86,8 @@ const GlmClaudeCodeSettingsCard: FC<GlmClaudeCodeSettingsCardProps> = ({
   return (
     <SettingsCard title="GLM-Claude-Code">
       <p style={descriptionStyles}>
-        Runs GLM 5.1 through the Claude Agent SDK-compatible runtime as model
-        glm-5.1.
+        Runs GLM 5.2 through the Claude Agent SDK-compatible runtime as model
+        glm-5.2.
       </p>
       <label style={displaySyncToggleStyles}>
         <input
