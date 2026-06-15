@@ -7776,16 +7776,16 @@
   // src/types/kimi-model-registry.ts
   var KIMI_RECOMMENDED_MODELS = [
     {
-      id: "kimi-for-coding",
-      displayName: "Kimi 2.6 / Kimi Code",
-      description: "Kimi CLI coding model exposed through Wire mode.",
+      id: "kimi-k2.7-code",
+      displayName: "Kimi K2.7 Code",
+      description: "Kimi K2.7 Code model exposed through Wire mode.",
       status: "active",
       supportsReasoningControl: false,
       supportsThinkingDisplaySummarized: false,
       tier: "coding"
     }
   ];
-  var DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
+  var DEFAULT_KIMI_MODEL_ID = "kimi-k2.7-code";
   var KIMI_MODEL_ID_SET = new Set(
     KIMI_RECOMMENDED_MODELS.map((model) => model.id)
   );
@@ -7793,9 +7793,9 @@
   // src/client/ui/src/components/settings/kimi-settings-state.ts
   var DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH = "~/.codeai-hub/providers/glm-claude-code/config.json";
   var DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
-  var DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.1";
-  var DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5-turbo";
-  var DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-4.5-air";
+  var DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
+  var DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
+  var DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
   var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
   var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
     autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
@@ -8360,7 +8360,7 @@
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
-    glmClaudeCode: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
+    glmClaudeCode: "Using GLM 5.2 through Claude Agent SDK-compatible runtime",
     kimiCode: "Using your authentication Kimi CLI",
     localModels: "Runs downloaded LM Studio models on this Mac"
   };

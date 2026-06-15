@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "cd7389d79",
+  "lastRecordedCommit": "7b7971c44",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5b.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.520 release notes",
+  "currentTaskId": "phase1.stream5b.task2",
+  "expectedCommitMessage": "chore: build release 1.2.520",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.520 release notes",
-    "preCommitHead": "cd7389d79",
+    "expectedCommitMessage": "chore: build release 1.2.520",
+    "preCommitHead": "7b7971c44",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5b.task1"
+    "taskId": "phase1.stream5b.task2"
   }
 }
 ```
@@ -110,9 +110,9 @@
 ### Stream: Release Build
 
 41. [DONE] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
-42. [PENDING] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: TBD)
-43. [TODO] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
-44. [TODO] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
+42. [DONE] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: 7b7971c44)
+43. [DONE] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
+44. [PENDING] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
