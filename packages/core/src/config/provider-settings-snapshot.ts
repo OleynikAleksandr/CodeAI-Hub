@@ -58,11 +58,24 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
+const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
+const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
+  "glm-5.1",
+  "glm-5-turbo",
+  "glm-4.5-air",
+]);
 
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : undefined;
+
+const normalizeGlmClaudeCodeModel = (value: unknown): unknown => {
+  const modelId = normalizeOptionalString(value);
+  return modelId && LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId)
+    ? DEFAULT_GLM_CLAUDE_CODE_MODEL_ID
+    : value;
+};
 
 const normalizeLocalizationLanguage = (
   value: unknown,
@@ -178,7 +191,7 @@ export const loadGlmClaudeCodeSettingsSnapshot = (
   }
 
   return {
-    defaultModel: glmClaudeCode.defaultModel,
+    defaultModel: normalizeGlmClaudeCodeModel(glmClaudeCode.defaultModel),
     thinkingDisplaySyncEnabled: glmClaudeCode.thinkingDisplaySyncEnabled,
   };
 };

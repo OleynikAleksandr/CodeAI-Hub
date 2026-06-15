@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "7c355f0e1",
+  "lastRecordedCommit": "b580dc4a8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6a.task1",
-  "expectedCommitMessage": "fix: normalize legacy glm settings aliases",
+  "currentTaskId": "phase1.stream6a.task2",
+  "expectedCommitMessage": "fix: normalize legacy glm core aliases",
   "debt": {
-    "expectedCommitMessage": "fix: normalize legacy glm settings aliases",
-    "preCommitHead": "7c355f0e1",
+    "expectedCommitMessage": "fix: normalize legacy glm core aliases",
+    "preCommitHead": "b580dc4a8",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6a.task1"
+    "taskId": "phase1.stream6a.task2"
   }
 }
 ```
@@ -117,9 +117,9 @@
 ### Stream: Acceptance Bugfix - GLM Legacy Aliases
 
 45. [DONE] `phase1.stream6a.task1` Normalize legacy GLM persisted settings aliases in the UI settings mapper. (scope: `src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`; expected commit: `fix: normalize legacy glm settings aliases`)
-46. [PENDING] `phase1.stream6a.commit1` Git Commit: `fix: normalize legacy glm settings aliases` (hash: TBD)
-47. [TODO] `phase1.stream6a.task2` Normalize legacy GLM persisted settings aliases in Core turn settings. (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-settings-snapshot.test.ts`; expected commit: `fix: normalize legacy glm core aliases`)
-48. [TODO] `phase1.stream6a.commit2` Git Commit: `fix: normalize legacy glm core aliases` (hash: TBD)
+46. [DONE] `phase1.stream6a.commit1` Git Commit: `fix: normalize legacy glm settings aliases` (hash: b580dc4a8)
+47. [DONE] `phase1.stream6a.task2` Normalize legacy GLM persisted settings aliases in Core turn settings. (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-settings-snapshot.test.ts`; expected commit: `fix: normalize legacy glm core aliases`)
+48. [PENDING] `phase1.stream6a.commit2` Git Commit: `fix: normalize legacy glm core aliases` (hash: TBD)
 49. [TODO] `phase1.stream6a.task3` Normalize legacy GLM aliases before runtime environment export. (scope: `packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts`; expected commit: `fix: normalize legacy glm runtime aliases`)
 50. [TODO] `phase1.stream6a.commit3` Git Commit: `fix: normalize legacy glm runtime aliases` (hash: TBD)
 51. [TODO] `phase1.stream6a.task4` Run targeted verification for the GLM alias migration fix. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/**, packages/Claude_Module/src/glm-claude-code/**`; expected commit: `test: verify legacy glm alias normalization`)

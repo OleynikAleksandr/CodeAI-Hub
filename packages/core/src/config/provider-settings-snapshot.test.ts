@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { JsonFileSnapshotCache } from "./json-file-snapshot-cache";
+import { loadGlmClaudeCodeSettingsSnapshot } from "./provider-settings-snapshot";
 
 const createCacheHarness = (snapshots: Map<string, string>) => {
   let nowMs = 0;
@@ -67,4 +71,30 @@ test("JsonFileSnapshotCache caches malformed snapshots as null per path", () => 
 
   assert.equal(harness.cache.readObject(malformedPath)?.defaultModel, "claude");
   assert.deepEqual(harness.reads, [malformedPath, arrayPath, malformedPath]);
+});
+
+test("loadGlmClaudeCodeSettingsSnapshot upgrades legacy default model aliases", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "glm-core-settings-"));
+  const settingsPath = path.join(dir, "settings.json");
+  try {
+    await writeFile(
+      settingsPath,
+      JSON.stringify({
+        providers: {
+          glmClaudeCode: {
+            defaultModel: "glm-5.1",
+            thinkingDisplaySyncEnabled: true,
+          },
+        },
+      }),
+      "utf8"
+    );
+
+    assert.equal(
+      loadGlmClaudeCodeSettingsSnapshot(settingsPath)?.defaultModel,
+      "glm-5.2"
+    );
+  } finally {
+    await rm(dir, { force: true, recursive: true });
+  }
 });
