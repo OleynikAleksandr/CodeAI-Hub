@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "d23c3f573",
+  "lastRecordedCommit": "2dd4816f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6f.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.523 release notes",
+  "currentTaskId": "phase1.stream6f.task2",
+  "expectedCommitMessage": "chore: build release 1.2.523",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.523 release notes",
-    "preCommitHead": "d23c3f573",
+    "expectedCommitMessage": "chore: build release 1.2.523",
+    "preCommitHead": "2dd4816f4",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6f.task1"
+    "taskId": "phase1.stream6f.task2"
   }
 }
 ```
@@ -167,9 +167,12 @@
 ### Stream: Release Rebuild 1.2.523
 
 69. [DONE] `phase1.stream6f.task1` Prepare release documentation for version 1.2.523 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.523 release notes`)
-70. [PENDING] `phase1.stream6f.commit1` Git Commit: `docs: prepare 1.2.523 release notes` (hash: TBD)
-71. [TODO] `phase1.stream6f.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.523`)
-72. [TODO] `phase1.stream6f.commit2` Git Commit: `chore: build release 1.2.523` (hash: TBD)
+70. [DONE] `phase1.stream6f.commit1` Git Commit: `docs: prepare 1.2.523 release notes` (hash: 2dd4816f4)
+71. [DONE] `phase1.stream6f.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.523`)
+    - Evidence 2026-06-15: `./scripts/build-all.sh` completed for unified version `1.2.523`, producing provider, Core, launcher and UI tarballs.
+    - Evidence 2026-06-15: `./scripts/build-release.sh --use-current-version --allow-dirty` completed, including architecture check, type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication advisory, VSIX runtime surface verification and package-size check.
+    - Evidence 2026-06-15: VSIX `codeai-hub-1.2.523.vsix` created at 5.3M with SHA-256 `df87d44c8b5573addd296f02b8cb4efd7b1093bbf482eb6ff8bc422d849654bc`; `doc/tmp/releases/` contains all 1.2.523 provider/Core/launcher/UI tarballs.
+72. [PENDING] `phase1.stream6f.commit2` Git Commit: `chore: build release 1.2.523` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
