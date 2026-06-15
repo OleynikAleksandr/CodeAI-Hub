@@ -7796,7 +7796,16 @@
   var DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
   var DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
   var DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
+  var LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = /* @__PURE__ */ new Set([
+    "glm-5.1",
+    "glm-5-turbo",
+    "glm-4.5-air"
+  ]);
   var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
+  var mapGlmClaudeCodeModel = (value, fallback) => {
+    const modelId = mapOptionalString(value, fallback);
+    return LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId) ? fallback : modelId;
+  };
   var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
     autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
     defaultModel: DEFAULT_KIMI_MODEL_ID,
@@ -7811,19 +7820,19 @@
       value?.configPath,
       DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH
     ),
-    defaultModel: mapOptionalString(
+    defaultModel: mapGlmClaudeCodeModel(
       value?.defaultModel,
       DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
     ),
-    haikuModel: mapOptionalString(
+    haikuModel: mapGlmClaudeCodeModel(
       value?.haikuModel,
       DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL
     ),
-    opusModel: mapOptionalString(
+    opusModel: mapGlmClaudeCodeModel(
       value?.opusModel,
       DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
     ),
-    sonnetModel: mapOptionalString(
+    sonnetModel: mapGlmClaudeCodeModel(
       value?.sonnetModel,
       DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL
     ),

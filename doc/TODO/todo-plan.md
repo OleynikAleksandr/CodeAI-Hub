@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "8c03600ca",
+  "lastRecordedCommit": "675857ae0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6b.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.521 release notes",
+  "currentTaskId": "phase1.stream6b.task2",
+  "expectedCommitMessage": "chore: build release 1.2.521",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.521 release notes",
-    "preCommitHead": "8c03600ca",
+    "expectedCommitMessage": "chore: build release 1.2.521",
+    "preCommitHead": "675857ae0",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6b.task1"
+    "taskId": "phase1.stream6b.task2"
   }
 }
 ```
@@ -131,9 +131,9 @@
 ### Stream: Release Rebuild 1.2.521
 
 53. [DONE] `phase1.stream6b.task1` Prepare release documentation for version 1.2.521 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.521 release notes`)
-54. [PENDING] `phase1.stream6b.commit1` Git Commit: `docs: prepare 1.2.521 release notes` (hash: TBD)
-55. [TODO] `phase1.stream6b.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.521`)
-56. [TODO] `phase1.stream6b.commit2` Git Commit: `chore: build release 1.2.521` (hash: TBD)
+54. [DONE] `phase1.stream6b.commit1` Git Commit: `docs: prepare 1.2.521 release notes` (hash: 675857ae0)
+55. [DONE] `phase1.stream6b.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.521`)
+56. [PENDING] `phase1.stream6b.commit2` Git Commit: `chore: build release 1.2.521` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
