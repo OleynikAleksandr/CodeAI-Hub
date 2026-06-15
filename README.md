@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.519** (Session Input Thinking Lock)
+**Current Release — v1.2.520** (Provider Model Updates + Audit Gate Cleanup)
+
+This release updates provider defaults before the rebuilt package: Kimi now
+targets `kimi-k2.7-code`, GLM-Claude-Code targets `glm-5.2` across runtime,
+settings, capture, start cards and session labels, and Gemini CLI/Core stay
+aligned with 0.46.0.
+
+It also carries the first audit cleanup pass: low-noise automatic checks for
+security/gap coverage, stale archive cleanup, and dependency/tooling fixes.
+
+Retest focus: Settings and provider pickers should show Kimi K2.7 Code and GLM
+5.2, Gemini should start with the 0.46.0 compatibility layer, and provider live
+smoke has already confirmed Kimi CLI `kimi-k2.7-code` plus GLM response model
+`glm-5.2`.
+
+**Previous Release — v1.2.519** (Session Input Thinking Lock)
 
 This bugfix release keeps the Project Manager session input locked while a
 provider thinking/reasoning bubble is still the latest visible turn, even if the

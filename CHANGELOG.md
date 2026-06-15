@@ -8,6 +8,27 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.520] - 2026-06-15
+### Changed
+- **Kimi defaults now target Kimi K2.7 Code.** Provider registries, Core defaults, Project Manager capture/start surfaces, Session UI fallback labels and active SSOT docs now use `kimi-k2.7-code`.
+- **GLM-Claude-Code defaults now target GLM 5.2.** Runtime model aliases, Core/provider descriptors, persisted settings defaults, capture settings, start cards, Session UI labels and active SSOT docs now use `glm-5.2`.
+- **Gemini CLI/Core dependencies are aligned to 0.46.0.** The Gemini compatibility layer now works with the 0.46.0 package layout.
+- **Audit cleanup checks cover more non-gated risk.** Runtime security audit, duplicate/link/security CI coverage and pre-push checks now cover the audit gaps addressed in this scope.
+
+### Fixed
+- **New settings snapshots no longer seed Kimi with a GLM model id.**
+- **GLM start cards no longer derive model options or fallbacks from the Kimi registry.**
+
+### Verification
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `npm run build --workspace=@codeai-hub/gemini-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run check:links`
+- Live smoke: Kimi CLI with `--model kimi-k2.7-code` returned `MODEL_SMOKE_KIMI_27_OK` and provider logs included `kimi-k2.7-code`.
+- Live smoke: GLM Claude-compatible endpoint returned HTTP 200 with response model `glm-5.2` and `MODEL_SMOKE_GLM_52_OK`.
+
 ## [1.2.519] - 2026-06-15
 ### Fixed
 - **Project Manager locks session input during visible thinking.** If the active session's latest raw message is a thinking bubble, the input stays in the working state even when the status snapshot has already returned to idle.

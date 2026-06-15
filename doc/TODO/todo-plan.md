@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "228488403",
+  "lastRecordedCommit": "cd7389d79",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5c.task11",
-  "expectedCommitMessage": "test: verify latest provider model access",
+  "currentTaskId": "phase1.stream5b.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.520 release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify latest provider model access",
-    "preCommitHead": "228488403",
+    "expectedCommitMessage": "docs: prepare 1.2.520 release notes",
+    "preCommitHead": "cd7389d79",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5c.task11"
+    "taskId": "phase1.stream5b.task1"
   }
 }
 ```
@@ -105,12 +105,12 @@
     - Evidence 2026-06-15T13:43:38Z: GLM Claude-compatible live smoke via `https://api.z.ai/api/anthropic/v1/messages` returned HTTP 200, requested model `glm-5.2`, response model `glm-5.2`, sentinel `MODEL_SMOKE_GLM_52_OK`, latency 3036 ms.
     - Evidence 2026-06-15T13:44:24Z: direct raw Kimi coding endpoint returned HTTP 403 because Kimi For Coding is restricted to coding agents, so the verified application path is Kimi CLI/Wire.
     - Evidence 2026-06-15T13:44:30Z: Kimi CLI live smoke used a temporary config alias mapping `kimi-k2.7-code` to provider `kimi-for-coding`, ran `kimi --model kimi-k2.7-code`, returned sentinel `MODEL_SMOKE_KIMI_27_OK`, exit code 0, and provider-home logs contained `kimi-k2.7-code` 3 times. No API keys or response payloads were recorded.
-40. [PENDING] `phase1.stream5c.commit11` Git Commit: `test: verify latest provider model access` (hash: TBD)
+40. [DONE] `phase1.stream5c.commit11` Git Commit: `test: verify latest provider model access` (hash: cd7389d79)
 
 ### Stream: Release Build
 
-41. [TODO] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
-42. [TODO] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: TBD)
+41. [DONE] `phase1.stream5b.task1` Prepare release documentation for version 1.2.520 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.520 release notes`)
+42. [PENDING] `phase1.stream5b.commit1` Git Commit: `docs: prepare 1.2.520 release notes` (hash: TBD)
 43. [TODO] `phase1.stream5b.task2` Run the confirmed release build and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.520`)
 44. [TODO] `phase1.stream5b.commit2` Git Commit: `chore: build release 1.2.520` (hash: TBD)
 
