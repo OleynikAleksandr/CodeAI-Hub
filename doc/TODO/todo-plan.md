@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "c17026316",
+  "lastRecordedCommit": "da5b18404",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6d.task2",
-  "expectedCommitMessage": "chore: build release 1.2.522",
+  "currentTaskId": "phase1.stream6e.task1",
+  "expectedCommitMessage": "fix: ignore completed preliminary review gates",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.522",
-    "preCommitHead": "c17026316",
+    "expectedCommitMessage": "fix: ignore completed preliminary review gates",
+    "preCommitHead": "da5b18404",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6d.task2"
+    "taskId": "phase1.stream6e.task1"
   }
 }
 ```
@@ -153,14 +153,28 @@
     - Evidence 2026-06-15: `./scripts/build-all.sh` completed for unified version `1.2.522`, producing provider, Core, launcher and UI tarballs.
     - Evidence 2026-06-15: `./scripts/build-release.sh --use-current-version --allow-dirty` completed, including architecture check, type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication advisory, VSIX runtime surface verification and package-size check.
     - Evidence 2026-06-15: VSIX `codeai-hub-1.2.522.vsix` created at 5.3M with SHA-256 `36b22e85acd252711a6a1c1142ad982857e65680059924d8ab4b04a2decc2003`; `doc/tmp/releases/` contains all 1.2.522 provider/Core/launcher/UI tarballs.
-64. [PENDING] `phase1.stream6d.commit2` Git Commit: `chore: build release 1.2.522` (hash: TBD)
+64. [DONE] `phase1.stream6d.commit2` Git Commit: `chore: build release 1.2.522` (hash: da5b18404)
+
+### Stream: Acceptance Bugfix - Stale User Gate Cursor
+
+65. [DONE] `phase1.stream6e.task1` Ignore stale preliminary review gates after a downstream review is already open. (scope: `packages/core/src/remote-bridge/handlers/workflow-user-input-attention-stages.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts`; expected commit: `fix: ignore completed preliminary review gates`)
+66. [PENDING] `phase1.stream6e.commit1` Git Commit: `fix: ignore completed preliminary review gates` (hash: TBD)
+67. [TODO] `phase1.stream6e.task2` Run targeted verification for stale queued user-gate cursor handling. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-stale-user-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-user-input-attention.test.ts, packages/core`; expected commit: `test: verify stale user gate cursor fix`)
+68. [TODO] `phase1.stream6e.commit2` Git Commit: `test: verify stale user gate cursor fix` (hash: TBD)
+
+### Stream: Release Rebuild 1.2.523
+
+69. [TODO] `phase1.stream6f.task1` Prepare release documentation for version 1.2.523 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.523 release notes`)
+70. [TODO] `phase1.stream6f.commit1` Git Commit: `docs: prepare 1.2.523 release notes` (hash: TBD)
+71. [TODO] `phase1.stream6f.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.523`)
+72. [TODO] `phase1.stream6f.commit2` Git Commit: `chore: build release 1.2.523` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-65. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
-66. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
+73. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
+74. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-67. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
-68. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
+75. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
+76. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)

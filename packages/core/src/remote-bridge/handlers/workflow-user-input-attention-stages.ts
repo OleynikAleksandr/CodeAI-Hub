@@ -97,18 +97,28 @@ export const buildWorkflowUserInputDocumentationStages = (params: {
       workspaceSlug: params.workspaceSlug,
     }
   );
+  const managedReviewOpen =
+    params.managedReviewOpen.diagramModules ||
+    params.managedReviewOpen.applicationSkeleton ||
+    params.managedReviewOpen.qualityGates;
+  const virtualSimulationReviewOpen =
+    preliminaryReviewOpenStages.has("virtual_simulation") && !managedReviewOpen;
+  const descriptionReviewOpen =
+    preliminaryReviewOpenStages.has("description") &&
+    !virtualSimulationReviewOpen &&
+    !managedReviewOpen;
 
   return [
     {
       progress: null,
       reviewActionPending: reviewActionPendingStages.has("description"),
-      reviewOpen: preliminaryReviewOpenStages.has("description"),
+      reviewOpen: descriptionReviewOpen,
       stage: "description",
     },
     {
       progress: null,
       reviewActionPending: reviewActionPendingStages.has("virtual_simulation"),
-      reviewOpen: preliminaryReviewOpenStages.has("virtual_simulation"),
+      reviewOpen: virtualSimulationReviewOpen,
       stage: "virtual_simulation",
     },
     {
