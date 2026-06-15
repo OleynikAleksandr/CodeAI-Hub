@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "d693a868a",
+  "lastRecordedCommit": "83eae591a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6c.task1",
-  "expectedCommitMessage": "fix: add workspace context to provider prompts",
+  "currentTaskId": "phase1.stream6c.task2",
+  "expectedCommitMessage": "test: verify workspace context prompts",
   "debt": {
-    "expectedCommitMessage": "fix: add workspace context to provider prompts",
-    "preCommitHead": "d693a868a",
+    "expectedCommitMessage": "test: verify workspace context prompts",
+    "preCommitHead": "83eae591a",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6c.task1"
+    "taskId": "phase1.stream6c.task2"
   }
 }
 ```
@@ -138,9 +138,12 @@
 ### Stream: Acceptance Bugfix - Workflow Workspace Context
 
 57. [DONE] `phase1.stream6c.task1` Add Core-owned workspace context to provider prompt dispatch so every agent sees the canonical workspace name/root before artifact instructions. (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `fix: add workspace context to provider prompts`)
-58. [PENDING] `phase1.stream6c.commit1` Git Commit: `fix: add workspace context to provider prompts` (hash: TBD)
-59. [TODO] `phase1.stream6c.task2` Run targeted verification for workspace context prompt dispatch. (scope: `packages/core/src/remote-bridge/handlers/**, packages/core`; expected commit: `test: verify workspace context prompts`)
-60. [TODO] `phase1.stream6c.commit2` Git Commit: `test: verify workspace context prompts` (hash: TBD)
+58. [DONE] `phase1.stream6c.commit1` Git Commit: `fix: add workspace context to provider prompts` (hash: 83eae591a)
+59. [DONE] `phase1.stream6c.task2` Run targeted verification for workspace context prompt dispatch. (scope: `packages/core/src/remote-bridge/handlers/**, packages/core`; expected commit: `test: verify workspace context prompts`)
+    - Evidence 2026-06-15: `npx tsx --test --test-name-pattern "workspace context|outbound sends|rebinds stop-invalidated|unlock continuity locks|contextless" packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts` passed.
+    - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
+    - Evidence 2026-06-15: `npm run plan:commit -- "fix: add workspace context to provider prompts"` passed `.husky/pre-commit` architecture, lint, Knip, and format gates before creating commit `83eae591a`.
+60. [PENDING] `phase1.stream6c.commit2` Git Commit: `test: verify workspace context prompts` (hash: TBD)
 
 ### Stream: Release Rebuild 1.2.522
 
