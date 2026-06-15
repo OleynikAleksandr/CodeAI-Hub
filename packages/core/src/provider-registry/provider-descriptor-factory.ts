@@ -231,7 +231,7 @@ export const createGlmClaudeCodeAdapterInstance = (
     installerPaths: CLAUDE_INSTALLER_PATHS,
     workspace: {
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
-      defaultModel: "glm-5.1",
+      defaultModel: "glm-5.2",
       glmClaudeProjectSlug: `${capsule.workspaceSlug}-glm-claude-code`,
       providerHome: capsule.providerHomes["glm-claude-code"].absolutePath,
       settingsPath: capsule.settingsFile.absolutePath,
@@ -338,7 +338,7 @@ const buildGlmClaudeCodeDescriptor = (
     id: "glmClaudeCode",
     name: "GLM-Claude-Code",
     description:
-      "Requires separate Z.AI/GLM API key; runs GLM 5.1 through Claude Agent SDK-compatible runtime",
+      "Requires separate Z.AI/GLM API key; runs GLM 5.2 through Claude Agent SDK-compatible runtime",
     status: "active",
   };
   tryAttachAdapter(
