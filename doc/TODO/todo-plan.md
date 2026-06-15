@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "61a11b530",
+  "lastRecordedCommit": "228488403",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream5c.task10",
-  "expectedCommitMessage": "docs: update provider model reference index",
+  "currentTaskId": "phase1.stream5c.task11",
+  "expectedCommitMessage": "test: verify latest provider model access",
   "debt": {
-    "expectedCommitMessage": "docs: update provider model reference index",
-    "preCommitHead": "61a11b530",
+    "expectedCommitMessage": "test: verify latest provider model access",
+    "preCommitHead": "228488403",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5c.task10"
+    "taskId": "phase1.stream5c.task11"
   }
 }
 ```
@@ -100,9 +100,12 @@
 35. [DONE] `phase1.stream5c.task9` Update active provider model SSOT docs. (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `docs: update provider model ssot`)
 36. [DONE] `phase1.stream5c.commit9` Git Commit: `docs: update provider model ssot` (hash: 61a11b530)
 37. [DONE] `phase1.stream5c.task10` Update model references in the system architecture and docs index. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update provider model reference index`)
-38. [PENDING] `phase1.stream5c.commit10` Git Commit: `docs: update provider model reference index` (hash: TBD)
-39. [TODO] `phase1.stream5c.task11` Run live smoke tests against Kimi K2.7 Code and GLM 5.2 and record only non-secret results. (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify latest provider model access`)
-40. [TODO] `phase1.stream5c.commit11` Git Commit: `test: verify latest provider model access` (hash: TBD)
+38. [DONE] `phase1.stream5c.commit10` Git Commit: `docs: update provider model reference index` (hash: 228488403)
+39. [DONE] `phase1.stream5c.task11` Run live smoke tests against Kimi K2.7 Code and GLM 5.2 and record only non-secret results. (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify latest provider model access`)
+    - Evidence 2026-06-15T13:43:38Z: GLM Claude-compatible live smoke via `https://api.z.ai/api/anthropic/v1/messages` returned HTTP 200, requested model `glm-5.2`, response model `glm-5.2`, sentinel `MODEL_SMOKE_GLM_52_OK`, latency 3036 ms.
+    - Evidence 2026-06-15T13:44:24Z: direct raw Kimi coding endpoint returned HTTP 403 because Kimi For Coding is restricted to coding agents, so the verified application path is Kimi CLI/Wire.
+    - Evidence 2026-06-15T13:44:30Z: Kimi CLI live smoke used a temporary config alias mapping `kimi-k2.7-code` to provider `kimi-for-coding`, ran `kimi --model kimi-k2.7-code`, returned sentinel `MODEL_SMOKE_KIMI_27_OK`, exit code 0, and provider-home logs contained `kimi-k2.7-code` 3 times. No API keys or response payloads were recorded.
+40. [PENDING] `phase1.stream5c.commit11` Git Commit: `test: verify latest provider model access` (hash: TBD)
 
 ### Stream: Release Build
 
