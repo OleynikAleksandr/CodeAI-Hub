@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/codex-app-server-module",
-  "version": "1.2.518",
+  "version": "1.2.519",
   "description": "Codex app-server provider integration for CodeAI Hub core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "3475ab370",
+  "lastRecordedCommit": "dee6c110b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-docs-1-2-519.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.519",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-build-1-2-519.task1",
+  "expectedCommitMessage": "chore: build release 1.2.519",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.519",
-    "preCommitHead": "3475ab370",
+    "expectedCommitMessage": "chore: build release 1.2.519",
+    "preCommitHead": "dee6c110b",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-docs-1-2-519.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-build-1-2-519.task1"
   }
 }
 ```
@@ -253,12 +253,12 @@
 ### Stream: Release Notes
 
 60. [DONE] `devtree-main-doc-mode.phase7.release-docs-1-2-519.task1` Update README and CHANGELOG for release `1.2.519` before rebuilding release artifacts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.519`).
-61. [PENDING] Git Commit: `docs: prepare release 1.2.519` (hash: TBD)
+61. [DONE] Git Commit: `docs: prepare release 1.2.519` (hash: dee6c110b)
 
 ### Stream: Release Assembly
 
-62. [TODO] `devtree-main-doc-mode.phase7.release-build-1-2-519.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.519`).
-63. [TODO] Git Commit: `chore: build release 1.2.519` (hash: TBD)
+62. [DONE] `devtree-main-doc-mode.phase7.release-build-1-2-519.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.519`). Result: `./scripts/build-all.sh --allow-dirty --version 1.2.519` passed with dirty allowance limited to the machine-managed active `doc/TODO/todo-plan.md` transition; provider/Core/UI/CEF launcher tarballs for `1.2.519` were copied to `doc/tmp/releases/`.
+63. [PENDING] Git Commit: `chore: build release 1.2.519` (hash: TBD)
 
 ### Stream: VSIX Packaging
 
