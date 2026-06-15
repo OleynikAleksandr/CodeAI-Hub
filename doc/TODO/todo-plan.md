@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "8ca09ba4c",
+  "lastRecordedCommit": "137d50576",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "fix: patch core runtime dependencies",
+  "currentTaskId": "phase1.stream4.task1",
+  "expectedCommitMessage": "chore: remove stale todo archive zip",
   "debt": {
-    "expectedCommitMessage": "fix: patch core runtime dependencies",
-    "preCommitHead": "8ca09ba4c",
+    "expectedCommitMessage": "chore: remove stale todo archive zip",
+    "preCommitHead": "137d50576",
     "stage": "commit_pending",
-    "taskId": "phase1.stream3.task1"
+    "taskId": "phase1.stream4.task1"
   }
 }
 ```
@@ -56,12 +56,12 @@
 ### Stream: Runtime Security Patch
 
 5. [DONE] `phase1.stream3.task1` Patch low-risk Core runtime dependency advisories without changing provider internals. (scope: `packages/core/package.json, package-lock.json`; expected commit: `fix: patch core runtime dependencies`)
-6. [PENDING] `phase1.stream3.commit1` Git Commit: `fix: patch core runtime dependencies` (hash: TBD)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `fix: patch core runtime dependencies` (hash: 137d50576)
 
 ### Stream: Manual Cleanup
 
-7. [TODO] `phase1.stream4.task1` Remove stale tracked TODO zip archive residue. (scope: `.gitignore, doc/TODO/Archive.zip`; expected commit: `chore: remove stale todo archive zip`)
-8. [TODO] `phase1.stream4.commit1` Git Commit: `chore: remove stale todo archive zip` (hash: TBD)
+7. [DONE] `phase1.stream4.task1` Remove stale tracked TODO zip archive residue. (scope: `.gitignore, doc/TODO/Archive.zip`; expected commit: `chore: remove stale todo archive zip`)
+8. [PENDING] `phase1.stream4.commit1` Git Commit: `chore: remove stale todo archive zip` (hash: TBD)
 9. [TODO] `phase1.stream4.task2` Remove two audit noise patterns from source without changing behavior. (scope: `packages/Claude_Module/src/installer/sdk-installer.ts, src/client/project-manager/api.ts`; expected commit: `chore: remove audit noise patterns`)
 10. [TODO] `phase1.stream4.commit2` Git Commit: `chore: remove audit noise patterns` (hash: TBD)
 11. [TODO] `phase1.stream4.task3` Trim redundant Knip entry config hints. (scope: `knip.json`; expected commit: `chore: trim knip audit config`)
