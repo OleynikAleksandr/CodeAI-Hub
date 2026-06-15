@@ -143,12 +143,13 @@ test("SessionRequestHandler rebinds stop-invalidated sessions on the next send",
   assert.deepEqual(closeCalls, ["provider-session-before-stop"]);
   assert.deepEqual(createCalls, ["/tmp/core-stop-rebind-send"]);
   assert.deepEqual(subscribeCalls, ["provider-session-after-stop"]);
-  assert.deepEqual(sendCalls, [
-    {
-      providerSessionId: "provider-session-after-stop",
-      content: "resume after stop",
-    },
-  ]);
+  assert.equal(sendCalls.length, 1);
+  const sentContent = sendCalls[0]?.content ?? "";
+  assert.equal(
+    sentContent.includes("Workspace root: `/tmp/core-stop-rebind-send`") &&
+      sentContent.includes("resume after stop"),
+    true
+  );
   assert.deepEqual(harness.continuityUpdates, [
     {
       sessionId: session.id,

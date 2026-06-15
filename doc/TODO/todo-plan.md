@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "675857ae0",
+  "lastRecordedCommit": "d693a868a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream6b.task2",
-  "expectedCommitMessage": "chore: build release 1.2.521",
+  "currentTaskId": "phase1.stream6c.task1",
+  "expectedCommitMessage": "fix: add workspace context to provider prompts",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.521",
-    "preCommitHead": "675857ae0",
+    "expectedCommitMessage": "fix: add workspace context to provider prompts",
+    "preCommitHead": "d693a868a",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6b.task2"
+    "taskId": "phase1.stream6c.task1"
   }
 }
 ```
@@ -133,14 +133,28 @@
 53. [DONE] `phase1.stream6b.task1` Prepare release documentation for version 1.2.521 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.521 release notes`)
 54. [DONE] `phase1.stream6b.commit1` Git Commit: `docs: prepare 1.2.521 release notes` (hash: 675857ae0)
 55. [DONE] `phase1.stream6b.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.521`)
-56. [PENDING] `phase1.stream6b.commit2` Git Commit: `chore: build release 1.2.521` (hash: TBD)
+56. [DONE] `phase1.stream6b.commit2` Git Commit: `chore: build release 1.2.521` (hash: d693a868a)
+
+### Stream: Acceptance Bugfix - Workflow Workspace Context
+
+57. [DONE] `phase1.stream6c.task1` Add Core-owned workspace context to provider prompt dispatch so every agent sees the canonical workspace name/root before artifact instructions. (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `fix: add workspace context to provider prompts`)
+58. [PENDING] `phase1.stream6c.commit1` Git Commit: `fix: add workspace context to provider prompts` (hash: TBD)
+59. [TODO] `phase1.stream6c.task2` Run targeted verification for workspace context prompt dispatch. (scope: `packages/core/src/remote-bridge/handlers/**, packages/core`; expected commit: `test: verify workspace context prompts`)
+60. [TODO] `phase1.stream6c.commit2` Git Commit: `test: verify workspace context prompts` (hash: TBD)
+
+### Stream: Release Rebuild 1.2.522
+
+61. [TODO] `phase1.stream6d.task1` Prepare release documentation for version 1.2.522 before rebuilding artifacts. (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.522 release notes`)
+62. [TODO] `phase1.stream6d.commit1` Git Commit: `docs: prepare 1.2.522 release notes` (hash: TBD)
+63. [TODO] `phase1.stream6d.task2` Run the confirmed release rebuild and keep generated release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.522`)
+64. [TODO] `phase1.stream6d.commit2` Git Commit: `chore: build release 1.2.522` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-57. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
-58. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
+65. [TODO] `phase1.stream6.task1` Report results and wait for explicit user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record audit cleanup acceptance`)
+66. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record audit cleanup acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-59. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
-60. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)
+67. [TODO] `phase1.stream7.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close audit automation cleanup scope`)
+68. [TODO] `phase1.stream7.commit1` Git Commit: `docs: close audit automation cleanup scope` (hash: TBD)

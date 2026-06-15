@@ -61,12 +61,25 @@ test("SessionRequestHandler stop clears bootstrap locks and restores send path",
   assert.equal(api.continuityLockService.hasContext(sourceSession.id), false);
   assert.equal(api.continuityLockService.hasContext(targetSession.id), false);
   assert.equal(countContinuityUnlocks(harness, "resume_failed"), 2);
-  assert.deepEqual(sendCalls, [
-    {
-      providerSessionId: "provider-session-after-stop-lock",
-      content: "retry after stop",
-    },
-  ]);
+  assert.equal(sendCalls.length, 1);
+  assert.equal(
+    sendCalls[0]?.providerSessionId,
+    "provider-session-after-stop-lock"
+  );
+  assert.equal(
+    (sendCalls[0]?.content ?? "").startsWith("## CodeAI Hub Workspace Context"),
+    true
+  );
+  assert.equal(
+    (sendCalls[0]?.content ?? "").includes(
+      "Workspace root: `/tmp/core-stop-rollover-target`"
+    ),
+    true
+  );
+  assert.equal(
+    (sendCalls[0]?.content ?? "").includes("retry after stop"),
+    true
+  );
   assert.equal(
     harness.events.some((event) => {
       if (event.type !== "session:error") {

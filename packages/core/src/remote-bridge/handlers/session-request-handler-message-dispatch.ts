@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { ProviderRegistry } from "../../provider-registry";
 import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
 import type { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
@@ -36,6 +37,37 @@ const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
   "technical_stage_rewrite_in_progress";
 const TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES: ReadonlySet<string> =
   new Set<string>();
+const WORKSPACE_CONTEXT_HEADING = "## CodeAI Hub Workspace Context";
+const BACKTICK_RE = /`/gu;
+
+const inlineCode = (value: string): string =>
+  `\`${value.replace(BACKTICK_RE, "\\`")}\``;
+
+const buildProviderWorkspaceContextEnvelope = (
+  session: Session,
+  content: string
+): string => {
+  if (content.trimStart().startsWith(WORKSPACE_CONTEXT_HEADING)) {
+    return content;
+  }
+  const workspaceRoot = path.resolve(session.workspacePath);
+  const workspaceName = path.basename(workspaceRoot) || workspaceRoot;
+  return [
+    WORKSPACE_CONTEXT_HEADING,
+    `- Workspace name: ${inlineCode(workspaceName)}.`,
+    session.initiativeSlug
+      ? `- Workspace slug: ${inlineCode(session.initiativeSlug)}.`
+      : null,
+    session.stage ? `- Workflow stage: ${inlineCode(session.stage)}.` : null,
+    `- Workspace root: ${inlineCode(workspaceRoot)}.`,
+    "- Treat this workspace root as the only base directory for relative `.codeai-hub/...` workflow artifact paths.",
+    "- External absolute paths in user materials are input documents only; never reinterpret their parent directory as the workspace root.",
+    "",
+    content,
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
+};
 
 const extractStaleProviderSessionId = (error: unknown): string | null => {
   if (!(error instanceof Error)) {
@@ -131,13 +163,17 @@ export class SessionRequestHandlerMessageDispatch {
     }
 
     try {
+      const session = this.deps.sessionManager.getSession(sessionId);
+      const providerContent = session
+        ? buildProviderWorkspaceContextEnvelope(session, content)
+        : content;
       const providerTurnOptions = this.attachProviderTurnOptions(
         sessionId,
         resolved.binding.providerId
       );
       await this.providerSend.dispatch({
         adapter: resolved.adapter,
-        content,
+        content: providerContent,
         providerId: resolved.binding.providerId,
         providerSessionId: resolved.binding.providerSessionId,
         providerTurnOptions,
@@ -245,6 +281,10 @@ export class SessionRequestHandlerMessageDispatch {
           ) ?? null,
         userMessage: content,
       });
+      providerContent = buildProviderWorkspaceContextEnvelope(
+        session,
+        providerContent
+      );
       await this.deps.continuity.ensureTrackedOnOutboundMessage({
         sessionId,
         providerSessionId: resolved.binding.providerSessionId,

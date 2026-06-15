@@ -114,6 +114,78 @@ test("SessionRequestHandler keeps internal sends in provider turn lifecycle", as
   }
 });
 
+test("SessionRequestHandler sends workspace context with every provider prompt", async () => {
+  const harness = createHarness();
+  const sentMessages: string[] = [];
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/FinderWidget-Test01",
+    "provider-workspace-context",
+    {
+      initiativeSlug: "finderwidget-test01",
+      stage: "description",
+    }
+  );
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-workspace-context",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    sendMessage: (_providerSessionId: string, content: string) => {
+      sentMessages.push(content);
+      return Promise.resolve();
+    },
+  });
+
+  await harness.handler.handleMessage(
+    session.id,
+    "Read /tmp/FinderWidget-TestNotes/note.md and write the artifact."
+  );
+  await internals(harness.handler).sendInternalMessage(
+    session.id,
+    "Repair the missing artifact."
+  );
+
+  assert.equal(sentMessages.length, 2);
+  for (const content of sentMessages) {
+    assert.equal(content.startsWith("## CodeAI Hub Workspace Context"), true);
+    assert.equal(
+      content.includes("Workspace name: `FinderWidget-Test01`"),
+      true
+    );
+    assert.equal(
+      content.includes("Workspace slug: `finderwidget-test01`"),
+      true
+    );
+    assert.equal(content.includes("Workflow stage: `description`"), true);
+    assert.equal(
+      content.includes("Workspace root: `/tmp/FinderWidget-Test01`"),
+      true
+    );
+    assert.equal(
+      content.includes("relative `.codeai-hub/...` workflow artifact paths"),
+      true
+    );
+    assert.equal(
+      content.includes("External absolute paths in user materials"),
+      true
+    );
+  }
+  assert.equal(
+    (sentMessages[0] ?? "").includes("/tmp/FinderWidget-TestNotes/note.md"),
+    true
+  );
+  assert.equal(
+    (sentMessages[1] ?? "").includes("Repair the missing artifact"),
+    true
+  );
+  assert.equal(
+    session.messages.at(-1)?.content,
+    "Read /tmp/FinderWidget-TestNotes/note.md and write the artifact."
+  );
+});
+
 test("SessionRequestHandler routes switch_model through session model binding", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
@@ -272,7 +344,18 @@ test("SessionRequestHandler keeps outbound sends in running and rollback contrac
   const pendingSend = success.handler.handleMessage(successSession.id, "hello");
   await flushAsyncWork();
   assert.deepEqual(collectTurnStateSequence(success.events), ["running"]);
-  assert.deepEqual(sendCalls, ["hello"]);
+  assert.equal(sendCalls.length, 1);
+  assert.equal(
+    (sendCalls[0] ?? "").startsWith("## CodeAI Hub Workspace Context"),
+    true
+  );
+  assert.equal(
+    (sendCalls[0] ?? "").includes(
+      "Workspace root: `/tmp/core-immediate-running`"
+    ),
+    true
+  );
+  assert.equal((sendCalls[0] ?? "").includes("hello"), true);
   resolveSend();
   await pendingSend;
 
