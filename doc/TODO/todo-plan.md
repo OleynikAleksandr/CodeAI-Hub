@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "b594c308b",
+  "lastRecordedCommit": "b275017c8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "test: cover order plan markdown completion validation",
+  "currentTaskId": "phase1.stream4.task1",
+  "expectedCommitMessage": "docs: record order plan validator verification",
   "debt": {
-    "expectedCommitMessage": "test: cover order plan markdown completion validation",
-    "preCommitHead": "b594c308b",
+    "expectedCommitMessage": "docs: record order plan validator verification",
+    "preCommitHead": "b275017c8",
     "stage": "commit_pending",
-    "taskId": "phase1.stream3.task1"
+    "taskId": "phase1.stream4.task1"
   }
 }
 ```
@@ -57,12 +57,14 @@
 ### Stream: Regression Tests
 
 5. [DONE] `phase1.stream3.task1` Add focused regression coverage for filled agent-fill wrappers and sentinel residue. (scope: `packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts`; expected commit: `test: cover order plan markdown completion validation`)
-6. [PENDING] `phase1.stream3.commit1` Git Commit: `test: cover order plan markdown completion validation` (hash: TBD)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `test: cover order plan markdown completion validation` (hash: b275017c8)
 
 ### Stream: Tooling Verification
 
-7. [TODO] `phase1.stream4.task1` Run targeted tests and Core build after the fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan validator verification`)
-8. [TODO] `phase1.stream4.commit1` Git Commit: `docs: record order plan validator verification` (hash: TBD)
+7. [DONE] `phase1.stream4.task1` Run targeted tests and Core build after the fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan validator verification`)
+    - Evidence 2026-06-15: `npx tsx --test packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts` passed 3/3 tests.
+    - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
+8. [PENDING] `phase1.stream4.commit1` Git Commit: `docs: record order plan validator verification` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
