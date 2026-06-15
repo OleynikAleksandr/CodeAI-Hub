@@ -9,9 +9,9 @@ import type { Settings } from "../components/settings/settings-state-model";
 type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
-const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
+const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi K2.7 Code";
 const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.1 / Claude Code";
-const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
+const KIMI_DEFAULT_MODEL_ID = "kimi-k2.7-code";
 const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
 
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {

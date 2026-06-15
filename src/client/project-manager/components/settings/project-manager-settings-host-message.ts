@@ -39,7 +39,7 @@ const resolveDefaultCaptureModelId = (
       ? modelId
       : "glm-5.1";
   }
-  return settings.providers.kimi?.defaultModel ?? "kimi-for-coding";
+  return settings.providers.kimi?.defaultModel ?? "kimi-k2.7-code";
 };
 
 const isTemplateUpdateResolutionAction = (

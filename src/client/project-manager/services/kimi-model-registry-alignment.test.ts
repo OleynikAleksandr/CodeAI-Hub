@@ -54,11 +54,11 @@ test("Kimi model registry helpers resolve known and unknown ids", () => {
   assert.equal(isKnownKimiModelId("unknown-kimi-model"), false);
   assert.equal(
     findKimiModelDescriptor(DEFAULT_KIMI_MODEL_ID)?.displayName,
-    "Kimi 2.6 / Kimi Code"
+    "Kimi K2.7 Code"
   );
   assert.equal(
     findKimiModelCapabilities(DEFAULT_KIMI_MODEL_ID)?.displayName,
-    "Kimi 2.6 / Kimi Code"
+    "Kimi K2.7 Code"
   );
   assert.equal(findKimiModelDescriptor("unknown-kimi-model"), null);
   assert.equal(findKimiModelCapabilities("unknown-kimi-model"), null);

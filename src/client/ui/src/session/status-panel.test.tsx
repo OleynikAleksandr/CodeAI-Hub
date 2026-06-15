@@ -119,8 +119,8 @@ test("StatusPanel applies the Kimi provider class", () => {
       status: buildStatus({
         models: [
           {
-            modelDisplayName: "Kimi Code",
-            modelId: "kimi-for-coding",
+            modelDisplayName: "Kimi K2.7 Code",
+            modelId: "kimi-k2.7-code",
             providerId: "kimiCode" as const,
             providerName: "Kimi",
           },
@@ -130,7 +130,7 @@ test("StatusPanel applies the Kimi provider class", () => {
   );
 
   assert.equal(html.includes("session-status-button--kimi"), true);
-  assert.equal(html.includes("Kimi Code"), true);
+  assert.equal(html.includes("Kimi K2.7 Code"), true);
 });
 
 test("StatusPanel hides the reasoning chip when reasoning is missing", () => {
