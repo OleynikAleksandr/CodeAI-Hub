@@ -23,7 +23,7 @@ export const GLM_CLAUDE_CODE_MODEL_CAPABILITIES = [
   {
     contextWindowTelemetry: "unknown",
     defaultModel: true,
-    displayName: "GLM 5.1 via Claude Code",
+    displayName: "GLM 5.2 via Claude Code",
     modelId: GLM_CLAUDE_CODE_MODEL_ID,
     providerId: GLM_CLAUDE_CODE_PROVIDER_ID,
     supportsReasoningControl: false,

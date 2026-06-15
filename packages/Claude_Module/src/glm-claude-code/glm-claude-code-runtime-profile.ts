@@ -10,9 +10,9 @@ import type { ClaudeCodeRuntimeProfile } from "../sdk/claude-runtime-profile";
 import { CODEAI_CLAUDE_WORKFLOW_TOOLS } from "../sdk/claude-workflow-system-prompt";
 
 export const GLM_CLAUDE_CODE_PROVIDER_ID = "glmClaudeCode";
-export const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.1";
-const GLM_CLAUDE_CODE_DEFAULT_SONNET_MODEL_ID = "glm-5-turbo";
-const GLM_CLAUDE_CODE_DEFAULT_HAIKU_MODEL_ID = "glm-4.5-air";
+export const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
+const GLM_CLAUDE_CODE_DEFAULT_SONNET_MODEL_ID = "glm-5.2";
+const GLM_CLAUDE_CODE_DEFAULT_HAIKU_MODEL_ID = "glm-5.2";
 export const GLM_CLAUDE_CODE_DEFAULT_BASE_URL =
   "https://api.z.ai/api/anthropic";
 export const GLM_CLAUDE_CODE_DEFAULT_PROJECT_SLUG = "glm-claude-code";

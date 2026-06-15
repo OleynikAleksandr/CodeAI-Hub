@@ -123,7 +123,7 @@ const buildClaudeEffectiveModelId = (
     : `${baseModelId} thinking:off`;
 
 const DEFAULT_KIMI_MODEL_ID = "kimi-k2.7-code";
-const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.1";
+const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
 const DEFAULT_LOCAL_MODELS_MODEL_ID = "local-model";
 
 const resolveClaudeThinkingDisplaySyncEnabled = (
