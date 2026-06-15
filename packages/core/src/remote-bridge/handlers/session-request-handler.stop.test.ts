@@ -1,16 +1,46 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  countContinuityUnlocks,
   createDescriptionSession,
-  createHarness,
-  flushAsyncWork,
-  internals,
-  noop,
   registerBootstrapLock,
   setLifecycle,
   stubDescriptionDialogSync,
-} from "./session-request-handler.test";
+} from "./session-request-handler.test-continuity-helpers";
+import {
+  countContinuityUnlocks,
+  createHarness,
+  flushAsyncWork,
+  type HandlerHarness,
+  internals,
+  noop,
+} from "./session-request-handler.test-helpers";
+
+const hasRuntimeUnlock = (
+  harness: HandlerHarness,
+  sessionId: string
+): boolean =>
+  harness.runtimeLockUpdates.some(
+    (update) =>
+      update.sessionId === sessionId &&
+      update.active === false &&
+      update.reason === null
+  );
+
+const hasManagedInputGateUnlock = (harness: HandlerHarness): boolean =>
+  harness.events.some((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: { readonly data?: Record<string, unknown> };
+    };
+    const data = payload.event?.data;
+    return (
+      data?.kind === "managed_input_gate" &&
+      data.active === false &&
+      data.force === true
+    );
+  });
 
 test("SessionRequestHandler stop clears bootstrap locks and restores send path", async () => {
   const harness = createHarness();
@@ -111,30 +141,29 @@ test("SessionRequestHandler stop force-releases managed input gates", async () =
 
   await harness.handler.handleStop(session.id);
 
-  assert.equal(
-    harness.runtimeLockUpdates.some(
-      (update) =>
-        update.sessionId === session.id &&
-        update.active === false &&
-        update.reason === null
-    ),
-    true
+  assert.equal(hasRuntimeUnlock(harness, session.id), true);
+  assert.equal(hasManagedInputGateUnlock(harness), true);
+});
+
+test("SessionRequestHandler stop unlocks product part managed repairs", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "glmClaudeCode",
+    "/tmp/core-stop-product-part-managed-gate",
+    "provider-session-product-part-stop",
+    { stage: "development_tree/materialized/product-parts/finder-widget" }
   );
-  assert.equal(
-    harness.events.some((event) => {
-      if (event.type !== "session:stream") {
-        return false;
-      }
-      const payload = event.payload as {
-        readonly event?: { readonly data?: Record<string, unknown> };
-      };
-      const data = payload.event?.data;
-      return (
-        data?.kind === "managed_input_gate" &&
-        data.active === false &&
-        data.force === true
-      );
-    }),
-    true
-  );
+  harness.providerSessions.set(session.id, {
+    providerId: "glmClaudeCode",
+    providerSessionId: "provider-session-product-part-stop",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    closeSession: async () => Promise.resolve(),
+  });
+
+  await harness.handler.handleStop(session.id);
+
+  assert.equal(hasRuntimeUnlock(harness, session.id), true);
+  assert.equal(hasManagedInputGateUnlock(harness), true);
 });

@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "47df9f759",
+  "lastRecordedCommit": "856a9f6ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream6.task1",
-  "expectedCommitMessage": "fix: unlock stopped managed repair sessions",
+  "currentTaskId": "phase1.stream7.task1",
+  "expectedCommitMessage": "test: cover stopped managed repair unlock",
   "debt": {
-    "expectedCommitMessage": "fix: unlock stopped managed repair sessions",
-    "preCommitHead": "47df9f759",
+    "expectedCommitMessage": "test: cover stopped managed repair unlock",
+    "preCommitHead": "856a9f6ab",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6.task1"
+    "taskId": "phase1.stream7.task1"
   }
 }
 ```
@@ -74,12 +74,12 @@
 ### Stream: Stop Unlock Fix
 
 11. [DONE] `phase1.stream6.task1` Fix Stop handling so a stopped managed repair turn releases session input. (scope: `packages/core/src/remote-bridge/handlers/**`; expected commit: `fix: unlock stopped managed repair sessions`)
-12. [PENDING] `phase1.stream6.commit1` Git Commit: `fix: unlock stopped managed repair sessions` (hash: TBD)
+12. [DONE] `phase1.stream6.commit1` Git Commit: `fix: unlock stopped managed repair sessions` (hash: 856a9f6ab)
 
 ### Stream: Stop Unlock Regression Tests
 
-13. [TODO] `phase1.stream7.task1` Add focused regression coverage for Stop releasing input in managed repair sessions. (scope: `packages/core/src/remote-bridge/handlers/**/*.test.ts`; expected commit: `test: cover stopped managed repair unlock`)
-14. [TODO] `phase1.stream7.commit1` Git Commit: `test: cover stopped managed repair unlock` (hash: TBD)
+13. [DONE] `phase1.stream7.task1` Add focused regression coverage for Stop releasing input in managed repair sessions. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts`; expected commit: `test: cover stopped managed repair unlock`)
+14. [PENDING] `phase1.stream7.commit1` Git Commit: `test: cover stopped managed repair unlock` (hash: TBD)
 
 ### Stream: Combined Tooling Verification
 
