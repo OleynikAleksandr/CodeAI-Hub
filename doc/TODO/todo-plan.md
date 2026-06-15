@@ -8,15 +8,15 @@
   "planId": "audit-automation-cleanup-part1-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "8928ccf31",
-  "lastRecordedCommit": "aef381ca5",
+  "lastRecordedCommit": "f21b25265",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/AuditAutomationCleanup_Part1_Planning.md",
-  "currentTaskId": "phase1.stream4.task3",
-  "expectedCommitMessage": "chore: trim knip audit config",
+  "currentTaskId": "phase1.stream5.task1",
+  "expectedCommitMessage": "test: verify audit automation cleanup",
   "debt": {
-    "expectedCommitMessage": "chore: trim knip audit config",
-    "preCommitHead": "aef381ca5",
+    "expectedCommitMessage": "test: verify audit automation cleanup",
+    "preCommitHead": "f21b25265",
     "stage": "commit_pending",
-    "taskId": "phase1.stream4.task3"
+    "taskId": "phase1.stream5.task1"
   }
 }
 ```
@@ -65,12 +65,12 @@
 9. [DONE] `phase1.stream4.task2` Remove two audit noise patterns from source without changing behavior. (scope: `packages/Claude_Module/src/installer/sdk-installer.ts, src/client/project-manager/api.ts`; expected commit: `chore: remove audit noise patterns`)
 10. [DONE] `phase1.stream4.commit2` Git Commit: `chore: remove audit noise patterns` (hash: aef381ca5)
 11. [DONE] `phase1.stream4.task3` Trim redundant Knip entry config hints. (scope: `knip.json`; expected commit: `chore: trim knip audit config`)
-12. [PENDING] `phase1.stream4.commit3` Git Commit: `chore: trim knip audit config` (hash: TBD)
+12. [DONE] `phase1.stream4.commit3` Git Commit: `chore: trim knip audit config` (hash: f21b25265)
 
 ### Stream: Tooling Verification
 
-13. [TODO] `phase1.stream5.task1` Run targeted verification for the changed gates and touched packages. (scope: `package.json, packages/core/package.json, package-lock.json`; expected commit: `test: verify audit automation cleanup`)
-14. [TODO] `phase1.stream5.commit1` Git Commit: `test: verify audit automation cleanup` (hash: TBD)
+13. [DONE] `phase1.stream5.task1` Run targeted verification for the changed gates and touched packages. (scope: `package.json, packages/core/package.json, package-lock.json`; expected commit: `test: verify audit automation cleanup`)
+14. [PENDING] `phase1.stream5.commit1` Git Commit: `test: verify audit automation cleanup` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
