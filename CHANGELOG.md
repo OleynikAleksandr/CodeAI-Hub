@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.524] - 2026-06-15
+### Fixed
+- **Development Order Plan repair no longer loops on filled `agent-fill` blocks.** Core now treats only real `CODEAI_AGENT_FILL_SENTINEL` residue as incomplete draft content, so completed order-plan markdown can pass validation.
+- **Stop unlocks Product Part managed repair sessions.** Manual Stop now force-releases Core managed input gates for `development_tree/materialized/product-parts/...` sessions, preventing a stopped GLM/Kimi repair turn from leaving the Project Manager input disabled.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.523] - 2026-06-15
 ### Fixed
 - **Stale preliminary review gates no longer block downstream reviews.** When Core has already opened a managed downstream review, old Description or Virtual Simulation review messages are ignored for `userGateCursor`, preventing queued review bubbles and locked input on the current actionable step.

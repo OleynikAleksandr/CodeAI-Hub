@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "391402f72",
+  "lastRecordedCommit": "1975f9ee7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream8.task1",
-  "expectedCommitMessage": "docs: record order plan stop unlock verification",
+  "currentTaskId": "phase1.stream9.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.524 release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record order plan stop unlock verification",
-    "preCommitHead": "391402f72",
+    "expectedCommitMessage": "docs: prepare 1.2.524 release notes",
+    "preCommitHead": "1975f9ee7",
     "stage": "commit_pending",
-    "taskId": "phase1.stream8.task1"
+    "taskId": "phase1.stream9.task1"
   }
 }
 ```
@@ -86,20 +86,22 @@
 15. [DONE] `phase1.stream8.task1` Run targeted tests and Core build for the validator and stop/unlock fixes. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock verification`)
     - Evidence 2026-06-15: `npx tsx --test packages/core/src/remote-bridge/handlers/product-part-development-order-plan-turn-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts` passed 6/6 tests.
     - Evidence 2026-06-15: `npm run build --workspace=@codeai-hub/core` passed.
-16. [PENDING] `phase1.stream8.commit1` Git Commit: `docs: record order plan stop unlock verification` (hash: TBD)
+16. [DONE] `phase1.stream8.commit1` Git Commit: `docs: record order plan stop unlock verification` (hash: 1975f9ee7)
 
 ### Stream: Release Build
 
-17. [TODO] `phase1.stream9.task1` Build the confirmed release after both fixes are verified. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.524`)
-18. [TODO] `phase1.stream9.commit1` Git Commit: `chore: build release 1.2.524` (hash: TBD)
+17. [DONE] `phase1.stream9.task1` Prepare release notes for the confirmed 1.2.524 release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.524 release notes`)
+18. [PENDING] `phase1.stream9.commit1` Git Commit: `docs: prepare 1.2.524 release notes` (hash: TBD)
+19. [TODO] `phase1.stream9.task2` Build the confirmed release after both fixes are verified. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.524`)
+20. [TODO] `phase1.stream9.commit2` Git Commit: `chore: build release 1.2.524` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-19. [TODO] `phase1.stream10.task1` Report release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock acceptance`)
-20. [TODO] `phase1.stream10.commit1` Git Commit: `docs: record order plan stop unlock acceptance` (hash: TBD)
+21. [TODO] `phase1.stream10.task1` Report release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock acceptance`)
+22. [TODO] `phase1.stream10.commit1` Git Commit: `docs: record order plan stop unlock acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-21. [TODO] `phase1.stream11.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
-22. [TODO] `phase1.stream11.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
-23. [TODO] `phase1.stream11.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+23. [TODO] `phase1.stream11.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
+24. [TODO] `phase1.stream11.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
+25. [TODO] `phase1.stream11.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

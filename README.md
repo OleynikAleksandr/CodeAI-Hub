@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.523** (Stale User Gate Cursor Fix)
+**Current Release — v1.2.524** (Development Order Plan Stop Unlock Fix)
+
+This bugfix release fixes two Product Part managed workflow deadlocks found in
+FinderWidget-Test01. Filled `<!-- agent-fill -->` order-plan sections are no
+longer treated as incomplete sentinel placeholders, and Stop now force-releases
+Core managed input gates for Product Part repair sessions, including
+GLM-Claude-Code sessions.
+
+Retest focus: rerun the FinderWidget Product Part development-order flow with
+GLM-Claude-Code or Kimi. Repeated repair attempts should stop once the artifact
+is valid, and pressing Stop during a managed repair turn should unlock the
+input field so the user can write a manual message.
+
+**Previous Release — v1.2.523** (Stale User Gate Cursor Fix)
 
 This bugfix release prevents stale preliminary review gates from blocking the
 current downstream workflow review. If Application Skeleton or another managed
