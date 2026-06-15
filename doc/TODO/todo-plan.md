@@ -8,15 +8,15 @@
   "planId": "development-tree-main-workspace-documentation-mode-2026-06-14",
   "branch": "main",
   "baseHead": "4b16eed4e",
-  "lastRecordedCommit": "dee6c110b",
+  "lastRecordedCommit": "70ce3f5b8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_MainWorkspaceDocumentationMode_ImplementationPlan.md",
-  "currentTaskId": "devtree-main-doc-mode.phase7.release-build-1-2-519.task1",
-  "expectedCommitMessage": "chore: build release 1.2.519",
+  "currentTaskId": "devtree-main-doc-mode.phase7.release-package-1-2-519.task1",
+  "expectedCommitMessage": "docs: record release 1.2.519 package",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.519",
-    "preCommitHead": "dee6c110b",
+    "expectedCommitMessage": "docs: record release 1.2.519 package",
+    "preCommitHead": "70ce3f5b8",
     "stage": "commit_pending",
-    "taskId": "devtree-main-doc-mode.phase7.release-build-1-2-519.task1"
+    "taskId": "devtree-main-doc-mode.phase7.release-package-1-2-519.task1"
   }
 }
 ```
@@ -258,12 +258,12 @@
 ### Stream: Release Assembly
 
 62. [DONE] `devtree-main-doc-mode.phase7.release-build-1-2-519.task1` Run release assembly and record generated release artifacts/version changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.519`). Result: `./scripts/build-all.sh --allow-dirty --version 1.2.519` passed with dirty allowance limited to the machine-managed active `doc/TODO/todo-plan.md` transition; provider/Core/UI/CEF launcher tarballs for `1.2.519` were copied to `doc/tmp/releases/`.
-63. [PENDING] Git Commit: `chore: build release 1.2.519` (hash: TBD)
+63. [DONE] Git Commit: `chore: build release 1.2.519` (hash: 70ce3f5b8)
 
 ### Stream: VSIX Packaging
 
-64. [TODO] `devtree-main-doc-mode.phase7.release-package-1-2-519.task1` Run final VSIX packaging for release `1.2.519` and record package evidence for user retest (scope: `codeai-hub-1.2.519.vsix, doc/TODO/todo-plan.md`; expected commit: `docs: record release 1.2.519 package`).
-65. [TODO] Git Commit: `docs: record release 1.2.519 package` (hash: TBD)
+64. [DONE] `devtree-main-doc-mode.phase7.release-package-1-2-519.task1` Run final VSIX packaging for release `1.2.519` and record package evidence for user retest (scope: `codeai-hub-1.2.519.vsix, doc/TODO/todo-plan.md`; expected commit: `docs: record release 1.2.519 package`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.519`; required markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`. VSIX: `codeai-hub-1.2.519.vsix` (5.3M).
+65. [PENDING] Git Commit: `docs: record release 1.2.519 package` (hash: TBD)
 
 ## Phase 7R - User Workflow Acceptance Testing (owner: user, updated: 2026-06-15)
 
