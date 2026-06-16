@@ -15,6 +15,11 @@ const isGlmClaudeCodeCaptureModelId = (
 ): value is NativeRequestCaptureModelId =>
   value === "glm-5.2";
 
+const isOpenCodeCaptureModelId = (
+  value: string
+): value is NativeRequestCaptureModelId =>
+  value === "zai-coding-plan/glm-5.2" || value === "kimi-for-coding/k2p7";
+
 export const isNativeRequestCaptureProviderId = (
   value: unknown
 ): value is NativeRequestCaptureProviderId =>
@@ -39,6 +44,11 @@ const resolveDefaultCaptureModelId = (
       providerId === "glmOpenCode"
         ? settings.providers.glmOpenCode?.defaultModel
         : settings.providers.glmClaudeCode?.defaultModel;
+    if (providerId === "glmOpenCode") {
+      return modelId && isOpenCodeCaptureModelId(modelId)
+        ? modelId
+        : "zai-coding-plan/glm-5.2";
+    }
     return modelId && isGlmClaudeCodeCaptureModelId(modelId)
       ? modelId
       : "glm-5.2";

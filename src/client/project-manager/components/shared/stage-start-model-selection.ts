@@ -45,9 +45,18 @@ const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
 const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.2 / Claude Code";
 const GLM_CLAUDE_CODE_MODEL_DESCRIPTION =
   "GLM 5.2 exposed through the Claude Agent SDK-compatible runtime.";
-const GLM_OPENCODE_MODEL_LABEL = "GLM 5.2 / OpenCode";
-const GLM_OPENCODE_MODEL_DESCRIPTION =
-  "GLM 5.2 exposed through OpenCode with zai-coding-plan/glm-5.2.";
+const OPENCODE_MODELS = [
+  {
+    description: "GLM 5.2 exposed through OpenCode with zai-coding-plan/glm-5.2.",
+    id: "zai-coding-plan/glm-5.2",
+    label: "GLM 5.2 / Z.AI Coding Plan",
+  },
+  {
+    description: "Kimi K2.7 exposed through OpenCode with kimi-for-coding/k2p7.",
+    id: "kimi-for-coding/k2p7",
+    label: "Kimi K2.7 / Kimi For Coding",
+  },
+] as const;
 const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
 const DEFAULT_LOCAL_MODEL_ID = "local-model";
 
@@ -103,20 +112,17 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
-  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
+  if (providerId === "glmClaudeCode") {
     return [
       {
-        description:
-          providerId === "glmOpenCode"
-            ? GLM_OPENCODE_MODEL_DESCRIPTION
-            : GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
         id: GLM_CLAUDE_CODE_MODEL_ID,
-        label:
-          providerId === "glmOpenCode"
-            ? GLM_OPENCODE_MODEL_LABEL
-            : GLM_CLAUDE_CODE_MODEL_LABEL,
+        description: GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
+        label: GLM_CLAUDE_CODE_MODEL_LABEL,
       },
     ];
+  }
+  if (providerId === "glmOpenCode") {
+    return OPENCODE_MODELS;
   }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({
     description: model.description,
@@ -204,7 +210,9 @@ export const resolveDefaultStartCardModelSelection = (
         (providerId === "glmOpenCode"
           ? settings?.providers.glmOpenCode?.defaultModel
           : settings?.providers.glmClaudeCode?.defaultModel) ??
-        GLM_CLAUDE_CODE_MODEL_ID,
+        (providerId === "glmOpenCode"
+          ? "zai-coding-plan/glm-5.2"
+          : GLM_CLAUDE_CODE_MODEL_ID),
       reasoning: "default",
     };
   }

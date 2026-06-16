@@ -110,7 +110,7 @@ export const DEFAULT_SETTINGS_SNAPSHOT = {
     glmOpenCode: {
       apiKey: "",
       configPath: "~/.codeai-hub/providers/glm-opencode/config.json",
-      defaultModel: "glm-5.2",
+      defaultModel: "zai-coding-plan/glm-5.2",
       thinkingDisplaySyncEnabled: true,
     },
   },

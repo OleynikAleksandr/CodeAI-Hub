@@ -6,7 +6,7 @@ const MODEL_OPTIONS: Record<string, readonly string[]> = {
   codex: ["gpt-5.4-mini", "gpt-5.2"],
   kimi: ["kimi-k2.7-code"],
   glmClaudeCode: ["glm-5.2"],
-  glmOpenCode: ["glm-5.2"],
+  glmOpenCode: ["zai-coding-plan/glm-5.2", "kimi-for-coding/k2p7"],
 };
 
 const REASONING_OPTIONS: Record<string, readonly string[]> = {

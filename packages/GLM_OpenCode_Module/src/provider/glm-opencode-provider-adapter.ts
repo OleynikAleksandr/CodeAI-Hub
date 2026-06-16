@@ -1,4 +1,4 @@
-import type { ChildProcessWithoutNullStreams } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import type { GlmOpenCodeSessionEvent } from "./glm-opencode-output-normalizer";
 import { runGlmOpenCodeTurn } from "./glm-opencode-runner";
@@ -7,6 +7,8 @@ import {
   ensureGlmOpenCodeRuntimeProfile,
   GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
   GLM_OPENCODE_MODEL_ID,
+  KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR,
+  KIMI_OPENCODE_MODEL_ID,
 } from "./glm-opencode-runtime-profile";
 
 export const GLM_OPENCODE_PROVIDER_ID = "glmOpenCode" as const;
@@ -14,6 +16,8 @@ export type { GlmOpenCodeSessionEvent } from "./glm-opencode-output-normalizer";
 export {
   GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
   GLM_OPENCODE_MODEL_ID,
+  KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR,
+  KIMI_OPENCODE_MODEL_ID,
 } from "./glm-opencode-runtime-profile";
 
 export type GlmOpenCodeSessionListener = (
@@ -44,7 +48,7 @@ export interface GlmOpenCodeModuleOptions {
 }
 
 interface GlmOpenCodeSessionState {
-  childProcess?: ChildProcessWithoutNullStreams;
+  childProcess?: ChildProcess;
   readonly sessionId: string;
   readonly workspacePath?: string;
 }
@@ -69,10 +73,15 @@ const readAppliedTurnConfigModel = (
   );
 };
 
-const normalizeRequestedModel = (model: string | null): string | null =>
-  !model || model === GLM_OPENCODE_MODEL_ID
-    ? GLM_OPENCODE_DEFAULT_MODEL_SELECTOR
-    : model;
+const normalizeRequestedModel = (model: string | null): string | null => {
+  if (!model || model === GLM_OPENCODE_MODEL_ID) {
+    return GLM_OPENCODE_DEFAULT_MODEL_SELECTOR;
+  }
+  if (model === "kimi-k2.7-code" || model === KIMI_OPENCODE_MODEL_ID) {
+    return KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR;
+  }
+  return model;
+};
 
 export class GlmOpenCodeProviderAdapter {
   private readonly listeners = new Map<
@@ -97,7 +106,7 @@ export class GlmOpenCodeProviderAdapter {
     });
     ensureGlmOpenCodeRuntimeProfile(profile);
     this.initialized = true;
-    this.options.reporter?.info?.("GLM-OpenCode provider initialized", {
+    this.options.reporter?.info?.("OpenCode wrapper provider initialized", {
       command: profile.command,
       configPath: profile.configPath,
       modelSelector: profile.modelSelector,
@@ -110,7 +119,7 @@ export class GlmOpenCodeProviderAdapter {
 
   createSession(workspacePath?: string): Promise<string> {
     this.assertInitialized();
-    const sessionId = `glm-opencode-${randomUUID()}`;
+    const sessionId = `opencode-${randomUUID()}`;
     this.sessions.set(sessionId, {
       sessionId,
       workspacePath: workspacePath ?? this.options.workspace.workspacePath,
@@ -151,7 +160,7 @@ export class GlmOpenCodeProviderAdapter {
     this.assertInitialized();
     const trimmedContent = content.trim();
     if (trimmedContent.length === 0) {
-      throw new Error("Cannot send an empty GLM-OpenCode message.");
+      throw new Error("Cannot send an empty OpenCode wrapper message.");
     }
     const session = this.requireSession(sessionId);
     const profile = buildGlmOpenCodeRuntimeProfile({
@@ -227,7 +236,7 @@ export class GlmOpenCodeProviderAdapter {
       data: {
         collectedAt: new Date().toISOString(),
         kind: "usage_limits",
-        source: "glm-opencode",
+        source: "opencode",
         usageLimits: null,
       },
       providerScopeKey: "glmOpenCode:global",
@@ -238,14 +247,14 @@ export class GlmOpenCodeProviderAdapter {
 
   private assertInitialized(): void {
     if (!this.initialized) {
-      throw new Error("GLM-OpenCode provider is not initialized.");
+      throw new Error("OpenCode wrapper provider is not initialized.");
     }
   }
 
   private requireSession(sessionId: string): GlmOpenCodeSessionState {
     const session = this.sessions.get(sessionId);
     if (!session) {
-      throw new Error(`GLM-OpenCode session not found: ${sessionId}`);
+      throw new Error(`OpenCode wrapper session not found: ${sessionId}`);
     }
     return session;
   }

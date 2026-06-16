@@ -42,6 +42,7 @@ const DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
 const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
 const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
 const DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
+const DEFAULT_GLM_OPENCODE_MODEL = "zai-coding-plan/glm-5.2";
 const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
   "glm-5.1",
   "glm-5-turbo",
@@ -84,7 +85,7 @@ export const mapGlmClaudeCodeSettings = (
   ),
   defaultModel: mapGlmClaudeCodeModel(
     value?.defaultModel,
-    DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+    DEFAULT_GLM_OPENCODE_MODEL
   ),
   haikuModel: mapGlmClaudeCodeModel(
     value?.haikuModel,

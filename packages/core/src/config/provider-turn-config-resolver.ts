@@ -131,7 +131,7 @@ const buildClaudeEffectiveModelId = (
 
 const DEFAULT_KIMI_MODEL_ID = "kimi-k2.7-code";
 const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
-const DEFAULT_GLM_OPENCODE_MODEL_ID = "glm-5.2";
+const DEFAULT_GLM_OPENCODE_MODEL_ID = "zai-coding-plan/glm-5.2";
 const DEFAULT_LOCAL_MODELS_MODEL_ID = "local-model";
 
 const resolveClaudeThinkingDisplaySyncEnabled = (

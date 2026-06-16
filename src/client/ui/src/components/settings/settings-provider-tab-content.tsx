@@ -152,7 +152,7 @@ export const settingsTabs: ReadonlyArray<{
   { id: "gemini", label: "Gemini" },
   { id: "kimi", label: "Kimi" },
   { id: "glmClaudeCode", label: "GLM-Claude-Code" },
-  { id: "glmOpenCode", label: "GLM-OpenCode" },
+  { id: "glmOpenCode", label: "OpenCode" },
   { id: "localModels", label: "Local Models" },
   { id: "general", label: "General" },
 ];

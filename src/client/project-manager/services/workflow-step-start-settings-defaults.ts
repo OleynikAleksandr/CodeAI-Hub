@@ -75,7 +75,10 @@ const isGeminiThinkingLevel = (
 const isKimiModelId = (value: string): value is KimiModelId =>
   KIMI_MODEL_ID_SET.has(value as KimiModelId);
 
-const isGlmModelId = (value: string): boolean => value === "glm-5.2";
+const isGlmModelId = (value: string): boolean =>
+  value === "glm-5.2" ||
+  value === "zai-coding-plan/glm-5.2" ||
+  value === "kimi-for-coding/k2p7";
 
 const applyClaudeStartDefaults = (
   settings: Settings,
@@ -169,7 +172,10 @@ const applyGlmStartDefaults = (
       ...settings.providers,
       [providerId]: {
         ...(currentProviderSettings ?? {
-          defaultModel: "glm-5.2",
+          defaultModel:
+            providerId === "glmOpenCode"
+              ? "zai-coding-plan/glm-5.2"
+              : "glm-5.2",
           thinkingDisplaySyncEnabled: true,
         }),
         defaultModel: modelId,

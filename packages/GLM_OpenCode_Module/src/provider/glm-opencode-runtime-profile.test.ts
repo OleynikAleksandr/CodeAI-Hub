@@ -1,11 +1,18 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import {
   buildGlmOpenCodeRuntimeProfile,
   GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
+  KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR,
 } from "./glm-opencode-runtime-profile";
 
 test("runtime profile reads config and keeps glm-5.2 as OpenCode selector", () => {
@@ -31,6 +38,8 @@ test("runtime profile reads config and keeps glm-5.2 as OpenCode selector", () =
   assert.equal(profile.providerHomePath, providerHomePath);
   assert.equal(profile.environment.ZAI_API_KEY, "secret-key");
   assert.equal(profile.environment.HOME, path.join(providerHomePath, "home"));
+  assert.equal(existsSync(path.join(providerHomePath, "home")), true);
+  assert.equal(existsSync(path.join(providerHomePath, "cache")), true);
   const openCodeConfig = JSON.parse(
     readFileSync(
       path.join(providerHomePath, "config", "opencode", "opencode.json"),
@@ -44,18 +53,9 @@ test("runtime profile reads config and keeps glm-5.2 as OpenCode selector", () =
     )
   );
   assert.equal(openCodeConfig.model, "zai-coding-plan/glm-5.2");
-  assert.equal(
-    openCodeConfig.provider["zai-coding-plan"].options.baseURL,
-    "https://api.z.ai/api/coding/paas/v4"
-  );
-  assert.equal(
-    openCodeConfig.provider["zai-coding-plan"].options.timeout,
-    120_000
-  );
-  assert.equal(
-    openCodeConfig.provider["zai-coding-plan"].options.chunkTimeout,
-    60_000
-  );
+  assert.equal(openCodeConfig.small_model, "zai-coding-plan/glm-5.2");
+  assert.equal(openCodeConfig.agent["codeai-hub"].mode, "primary");
+  assert.equal(openCodeConfig.provider, undefined);
   assert.equal(openCodeAuth["zai-coding-plan"].key, "secret-key");
 });
 
@@ -73,7 +73,7 @@ test("runtime profile prefers environment key over config key", () => {
   assert.equal(profile.apiKey, "env-key");
 });
 
-test("runtime profile reads api key and model from workspace settings", () => {
+test("runtime profile reads api key and kimi model from workspace settings", () => {
   const root = mkdtempSync(path.join(tmpdir(), "glm-opencode-profile-"));
   const settingsPath = path.join(root, "settings.json");
   const providerHomePath = path.join(root, "home");
@@ -84,7 +84,7 @@ test("runtime profile reads api key and model from workspace settings", () => {
         glmOpenCode: {
           apiKey: "settings-key",
           configPath: path.join(root, "missing-config.json"),
-          defaultModel: "glm-5.2",
+          defaultModel: "kimi-k2.7-code",
         },
       },
     })
@@ -97,5 +97,43 @@ test("runtime profile reads api key and model from workspace settings", () => {
   });
 
   assert.equal(profile.apiKey, "settings-key");
-  assert.equal(profile.modelSelector, GLM_OPENCODE_DEFAULT_MODEL_SELECTOR);
+  assert.equal(profile.modelSelector, KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR);
+});
+
+test("runtime profile copies OpenCode app auth", () => {
+  const root = mkdtempSync(path.join(tmpdir(), "glm-opencode-profile-"));
+  const dataHome = path.join(root, "xdg-data");
+  const providerHomePath = path.join(root, "home");
+  mkdirSync(path.join(dataHome, "opencode"), { recursive: true });
+  writeFileSync(
+    path.join(dataHome, "opencode", "auth.json"),
+    JSON.stringify({
+      "zai-coding-plan": {
+        key: "opencode-app-key",
+        type: "api",
+      },
+      "kimi-for-coding": {
+        key: "kimi-opencode-app-key",
+        type: "api",
+      },
+    })
+  );
+
+  const profile = buildGlmOpenCodeRuntimeProfile({
+    configPath: path.join(root, "missing-config.json"),
+    environment: { PATH: "", XDG_DATA_HOME: dataHome },
+    providerHomePath,
+    settingsPath: path.join(root, "missing-settings.json"),
+  });
+
+  assert.equal(profile.apiKey, undefined);
+  assert.equal(profile.environment.ZAI_API_KEY, undefined);
+  const openCodeAuth = JSON.parse(
+    readFileSync(
+      path.join(providerHomePath, "data", "opencode", "auth.json"),
+      "utf8"
+    )
+  );
+  assert.equal(openCodeAuth["zai-coding-plan"].key, "opencode-app-key");
+  assert.equal(openCodeAuth["kimi-for-coding"].key, "kimi-opencode-app-key");
 });

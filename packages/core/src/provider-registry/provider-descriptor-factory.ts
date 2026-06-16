@@ -259,7 +259,7 @@ export const createGlmOpenCodeAdapterInstance = (
   const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
   return new options.glmOpenCodeAdapterCtor({
     workspace: {
-      defaultModel: "glm-5.2",
+      defaultModel: "zai-coding-plan/glm-5.2",
       providerHomePath: path.join(
         capsule.providersRoot.absolutePath,
         "glm-opencode",
@@ -268,7 +268,7 @@ export const createGlmOpenCodeAdapterInstance = (
       settingsPath: capsule.settingsFile.absolutePath,
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
     },
-    reporter: options.createReporter("glm-opencode"),
+    reporter: options.createReporter("opencode"),
   });
 };
 
@@ -393,15 +393,14 @@ const buildGlmOpenCodeDescriptor = (
         resolveProviderImmediateBindingCapability("glmOpenCode"),
     },
     id: "glmOpenCode",
-    name: "GLM-OpenCode",
-    description:
-      "Requires separate Z.AI/GLM API key; runs GLM 5.2 through OpenCode",
+    name: "OpenCode",
+    description: "Uses OpenCode CLI providers and models",
     status: "active",
   };
   tryAttachAdapter(
     () => createGlmOpenCodeAdapterInstance(options),
     descriptor,
-    "GLM-OpenCode components are unavailable.",
+    "OpenCode wrapper components are unavailable.",
     options.handleAdapterConstructionFailure
   );
   return descriptor;

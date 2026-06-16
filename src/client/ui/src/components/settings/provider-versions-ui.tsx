@@ -84,7 +84,7 @@ const resolveProviderLabel = (provider: Provider): string => {
     return "Codex";
   }
   if (provider === "glmOpenCode") {
-    return "GLM-OpenCode";
+    return "OpenCode";
   }
   return "Gemini";
 };

@@ -7,6 +7,8 @@ export {
   type GlmOpenCodeSessionEvent,
   type GlmOpenCodeSessionListener,
   type GlmOpenCodeWorkspaceOptions,
+  KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR,
+  KIMI_OPENCODE_MODEL_ID,
 } from "./provider/glm-opencode-provider-adapter";
 
 export {

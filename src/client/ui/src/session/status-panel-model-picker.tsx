@@ -31,10 +31,31 @@ interface StatusPanelModelPickerProps {
 
 const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
 const REASONING_PREFIX_PATTERN = /^(reasoning|thinking)\s+/;
-const GLM_OPENCODE_MODEL = {
+const OPENCODE_MODELS = [
+  {
+    defaultReasoning: "default",
+    displayName: "GLM 5.2 / Z.AI Coding Plan",
+    id: "zai-coding-plan/glm-5.2",
+    reasoningOptions: ["default"],
+  },
+  {
+    defaultReasoning: "default",
+    displayName: "Kimi K2.7 / Kimi For Coding",
+    id: "kimi-for-coding/k2p7",
+    reasoningOptions: ["default"],
+  },
+] as const;
+
+const OPEN_CODE_MODEL_ALIASES: Readonly<Record<string, string>> = {
+  "glm-5.2": "zai-coding-plan/glm-5.2",
+  "kimi-k2.7-code": "kimi-for-coding/k2p7",
+  k2p7: "kimi-for-coding/k2p7",
+};
+
+const FALLBACK_OPENCODE_MODEL = {
   defaultReasoning: "default",
-  displayName: "GLM 5.2 / OpenCode",
-  id: "glm-5.2",
+  displayName: "Custom OpenCode model",
+  id: "zai-coding-plan/glm-5.2",
   reasoningOptions: ["default"],
 } as const;
 
@@ -153,11 +174,30 @@ const buildKimiConfig = (currentModelId: string): PickerConfig => {
   };
 };
 
-const buildGlmOpenCodeConfig = (): PickerConfig => ({
-  currentModel: GLM_OPENCODE_MODEL,
-  currentReasoning: "default",
-  models: [GLM_OPENCODE_MODEL],
-});
+const buildGlmOpenCodeConfig = (currentModelId: string): PickerConfig => {
+  const baseModelId = normalizeBaseModelId(currentModelId);
+  const normalizedModelId = OPEN_CODE_MODEL_ALIASES[baseModelId] ?? baseModelId;
+  const knownModel = OPENCODE_MODELS.find(
+    (model) => model.id === normalizedModelId
+  );
+  const currentModel =
+    knownModel ??
+    (normalizedModelId
+      ? {
+          ...FALLBACK_OPENCODE_MODEL,
+          displayName: normalizedModelId,
+          id: normalizedModelId,
+        }
+      : OPENCODE_MODELS[0]);
+  const models = knownModel
+    ? OPENCODE_MODELS
+    : [currentModel, ...OPENCODE_MODELS];
+  return {
+    currentModel,
+    currentReasoning: "default",
+    models,
+  };
+};
 
 const buildLocalModelsConfig = (
   currentModelId: string,
@@ -200,7 +240,7 @@ const buildPickerConfig = (options: {
     return buildKimiConfig(options.currentModelId);
   }
   if (options.providerId === "glmOpenCode") {
-    return buildGlmOpenCodeConfig();
+    return buildGlmOpenCodeConfig(options.currentModelId);
   }
   if (options.providerId === "localModels") {
     return buildLocalModelsConfig(

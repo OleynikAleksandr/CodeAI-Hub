@@ -1,6 +1,7 @@
 import {
   accessSync,
   constants,
+  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -12,7 +13,10 @@ import path from "node:path";
 export const GLM_OPENCODE_MODEL_ID = "glm-5.2";
 const GLM_OPENCODE_PROVIDER_KEY = "zai-coding-plan";
 export const GLM_OPENCODE_DEFAULT_MODEL_SELECTOR = `${GLM_OPENCODE_PROVIDER_KEY}/${GLM_OPENCODE_MODEL_ID}`;
-const GLM_OPENCODE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
+export const KIMI_OPENCODE_MODEL_ID = "k2p7";
+const KIMI_OPENCODE_PROVIDER_KEY = "kimi-for-coding";
+export const KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR = `${KIMI_OPENCODE_PROVIDER_KEY}/${KIMI_OPENCODE_MODEL_ID}`;
+export const OPENCODE_WRAPPER_AGENT_NAME = "codeai-hub";
 export const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
   "~/.codeai-hub/providers/glm-opencode/config.json";
 export const DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH =
@@ -45,7 +49,7 @@ interface GlmOpenCodeWorkspaceSettings {
 }
 
 export interface GlmOpenCodeRuntimeProfile {
-  readonly apiKey: string;
+  readonly apiKey?: string;
   readonly command: string;
   readonly configPath: string;
   readonly environment: NodeJS.ProcessEnv;
@@ -103,10 +107,44 @@ const readWorkspaceSettings = (
     : {};
 };
 
-const normalizeModelSelector = (model: string | null): string =>
-  !model || model === GLM_OPENCODE_MODEL_ID
-    ? GLM_OPENCODE_DEFAULT_MODEL_SELECTOR
-    : model;
+const getOpenCodeAuthPathCandidates = (
+  environment: NodeJS.ProcessEnv
+): string[] => {
+  const xdgDataHome = readString(environment.XDG_DATA_HOME);
+  return [
+    ...(xdgDataHome
+      ? [path.join(expandHomePath(xdgDataHome), "opencode", "auth.json")]
+      : []),
+    path.join(os.homedir(), ".local", "share", "opencode", "auth.json"),
+  ];
+};
+
+const findReadableOpenCodeAuthPath = (
+  environment: NodeJS.ProcessEnv
+): string | null => {
+  for (const authPath of new Set(getOpenCodeAuthPathCandidates(environment))) {
+    if (!existsSync(authPath)) {
+      continue;
+    }
+    try {
+      accessSync(authPath, constants.R_OK);
+      return authPath;
+    } catch {
+      // Ignore unreadable auth candidates and continue scanning.
+    }
+  }
+  return null;
+};
+
+const normalizeModelSelector = (model: string | null): string => {
+  if (!model || model === GLM_OPENCODE_MODEL_ID) {
+    return GLM_OPENCODE_DEFAULT_MODEL_SELECTOR;
+  }
+  if (model === "kimi-k2.7-code" || model === KIMI_OPENCODE_MODEL_ID) {
+    return KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR;
+  }
+  return model;
+};
 
 const hasPathSeparator = (command: string): boolean =>
   command.includes("/") || command.includes("\\");
@@ -164,65 +202,77 @@ const resolveOpenCodeCommand = (
   return findExecutableOnPath("opencode", environment) ?? "opencode";
 };
 
-const resolveApiKey = (
+const resolveZaiApiKey = (
   config: GlmOpenCodeConfigFile,
   environment: NodeJS.ProcessEnv,
   workspaceSettings: GlmOpenCodeWorkspaceSettings
-): string => {
-  const apiKey =
-    readString(environment.ZAI_API_KEY) ??
-    readString(environment.ZHIPU_API_KEY) ??
-    readString(environment.Z_AI_API_KEY) ??
-    readString(environment.GLM_API_KEY) ??
-    readString(config.zaiApiKey) ??
-    readString(config.zAiApiKey) ??
-    readString(config.glmApiKey) ??
-    readString(config.apiKey) ??
-    readString(config.api_key) ??
-    readString(workspaceSettings.zaiApiKey) ??
-    readString(workspaceSettings.zAiApiKey) ??
-    readString(workspaceSettings.apiKey);
-  if (!apiKey) {
-    throw new Error(
-      "GLM-OpenCode API key is missing. Set ZAI_API_KEY or configure apiKey in the provider config."
-    );
-  }
-  return apiKey;
-};
+): string | null =>
+  readString(environment.ZAI_API_KEY) ??
+  readString(environment.ZHIPU_API_KEY) ??
+  readString(environment.Z_AI_API_KEY) ??
+  readString(environment.GLM_API_KEY) ??
+  readString(config.zaiApiKey) ??
+  readString(config.zAiApiKey) ??
+  readString(config.glmApiKey) ??
+  readString(config.apiKey) ??
+  readString(config.api_key) ??
+  readString(workspaceSettings.zaiApiKey) ??
+  readString(workspaceSettings.zAiApiKey) ??
+  readString(workspaceSettings.apiKey);
 
 const buildRuntimeEnvironment = (params: {
-  readonly apiKey: string;
   readonly baseEnvironment: NodeJS.ProcessEnv;
+  readonly modelSelector: string;
   readonly providerHomePath: string;
+  readonly zaiApiKey: string | null;
 }): NodeJS.ProcessEnv => {
   const runtimeHome = path.join(params.providerHomePath, "home");
+  const cacheHome = path.join(params.providerHomePath, "cache");
   const configHome = path.join(params.providerHomePath, "config");
   const dataHome = path.join(params.providerHomePath, "data");
   materializeOpenCodeRuntimeFiles({
-    apiKey: params.apiKey,
+    baseEnvironment: params.baseEnvironment,
+    cacheHome,
     configHome,
     dataHome,
+    modelSelector: params.modelSelector,
+    runtimeHome,
+    zaiApiKey: params.zaiApiKey,
   });
+  const optionalZaiKeyEnvironment = params.zaiApiKey
+    ? {
+        GLM_API_KEY: params.zaiApiKey,
+        ZAI_API_KEY: params.zaiApiKey,
+        ZHIPU_API_KEY: params.zaiApiKey,
+        Z_AI_API_KEY: params.zaiApiKey,
+      }
+    : {};
   return {
     ...params.baseEnvironment,
-    GLM_API_KEY: params.apiKey,
+    ...optionalZaiKeyEnvironment,
     HOME: runtimeHome,
-    XDG_CACHE_HOME: path.join(params.providerHomePath, "cache"),
+    OPENCODE_DISABLE_CLAUDE_CODE: "1",
+    OPENCODE_DISABLE_EXTERNAL_SKILLS: "1",
+    OPENCODE_DISABLE_PROJECT_CONFIG: "1",
+    XDG_CACHE_HOME: cacheHome,
     XDG_CONFIG_HOME: configHome,
     XDG_DATA_HOME: dataHome,
-    ZAI_API_KEY: params.apiKey,
-    ZHIPU_API_KEY: params.apiKey,
-    Z_AI_API_KEY: params.apiKey,
   };
 };
 
 const materializeOpenCodeRuntimeFiles = (params: {
-  readonly apiKey: string;
+  readonly baseEnvironment: NodeJS.ProcessEnv;
+  readonly cacheHome: string;
   readonly configHome: string;
   readonly dataHome: string;
+  readonly modelSelector: string;
+  readonly runtimeHome: string;
+  readonly zaiApiKey: string | null;
 }): void => {
   const configDir = path.join(params.configHome, "opencode");
   const dataDir = path.join(params.dataHome, "opencode");
+  mkdirSync(params.runtimeHome, { recursive: true });
+  mkdirSync(params.cacheHome, { recursive: true });
   mkdirSync(configDir, { recursive: true });
   mkdirSync(dataDir, { recursive: true });
   writeFileSync(
@@ -230,45 +280,48 @@ const materializeOpenCodeRuntimeFiles = (params: {
     `${JSON.stringify(
       {
         $schema: "https://opencode.ai/config.json",
-        enabled_providers: [GLM_OPENCODE_PROVIDER_KEY],
-        model: GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
-        provider: {
-          [GLM_OPENCODE_PROVIDER_KEY]: {
-            models: {
-              [GLM_OPENCODE_MODEL_ID]: {
-                name: "GLM 5.2",
-              },
-            },
-            name: "Z.AI Coding Plan",
-            npm: "@ai-sdk/openai-compatible",
-            options: {
-              baseURL: GLM_OPENCODE_BASE_URL,
-              chunkTimeout: 60_000,
-              timeout: 120_000,
-            },
+        agent: {
+          [OPENCODE_WRAPPER_AGENT_NAME]: {
+            mode: "primary",
+            prompt:
+              "You are a CodeAI Hub managed OpenCode agent. Follow the user task exactly, use the user's language for visible answers, and avoid extra commentary.",
           },
         },
-        small_model: GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
+        model: params.modelSelector,
+        small_model: params.modelSelector,
       },
       null,
       2
     )}\n`,
     "utf8"
   );
-  writeFileSync(
-    path.join(dataDir, "auth.json"),
-    `${JSON.stringify(
-      {
-        [GLM_OPENCODE_PROVIDER_KEY]: {
-          key: params.apiKey,
-          type: "api",
+  const isolatedAuthPath = path.join(dataDir, "auth.json");
+  const sourceAuthPath = findReadableOpenCodeAuthPath(params.baseEnvironment);
+  if (sourceAuthPath) {
+    copyFileSync(sourceAuthPath, isolatedAuthPath);
+  }
+  if (params.zaiApiKey) {
+    const existingAuth = existsSync(isolatedAuthPath)
+      ? JSON.parse(readFileSync(isolatedAuthPath, "utf8"))
+      : {};
+    writeFileSync(
+      isolatedAuthPath,
+      `${JSON.stringify(
+        {
+          ...(existingAuth && typeof existingAuth === "object"
+            ? existingAuth
+            : {}),
+          [GLM_OPENCODE_PROVIDER_KEY]: {
+            key: params.zaiApiKey,
+            type: "api",
+          },
         },
-      },
-      null,
-      2
-    )}\n`,
-    "utf8"
-  );
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+  }
 };
 
 export const buildGlmOpenCodeRuntimeProfile = (
@@ -287,7 +340,6 @@ export const buildGlmOpenCodeRuntimeProfile = (
       readString(config.providerHomePath) ??
       DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH
   );
-  const apiKey = resolveApiKey(config, environment, workspaceSettings);
   const modelSelector = normalizeModelSelector(
     options.defaultModel ??
       readString(config.defaultModel) ??
@@ -297,14 +349,16 @@ export const buildGlmOpenCodeRuntimeProfile = (
       readString(workspaceSettings.modelId) ??
       readString(workspaceSettings.model)
   );
+  const zaiApiKey = resolveZaiApiKey(config, environment, workspaceSettings);
   return {
-    apiKey,
+    ...(zaiApiKey ? { apiKey: zaiApiKey } : {}),
     command: resolveOpenCodeCommand(config, environment),
     configPath,
     environment: buildRuntimeEnvironment({
-      apiKey,
       baseEnvironment: environment,
+      modelSelector,
       providerHomePath,
+      zaiApiKey,
     }),
     modelSelector,
     providerHomePath,

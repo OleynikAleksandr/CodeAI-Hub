@@ -72,9 +72,10 @@ const GlmOpenCodeSettingsCard: FC<GlmOpenCodeSettingsCardProps> = ({
   };
 
   return (
-    <SettingsCard title="GLM-OpenCode">
+    <SettingsCard title="OpenCode">
       <p style={descriptionStyles}>
-        Runs GLM 5.2 through OpenCode as model zai-coding-plan/glm-5.2.
+        Runs models already configured in OpenCode. Tested selectors:
+        zai-coding-plan/glm-5.2 and kimi-for-coding/k2p7.
       </p>
       <label style={toggleStyles}>
         <input
@@ -88,17 +89,16 @@ const GlmOpenCodeSettingsCard: FC<GlmOpenCodeSettingsCardProps> = ({
         <div>
           <div style={titleStyles}>Reasoning in dialog</div>
           <div style={mutedTextStyles}>
-            Show GLM-OpenCode reasoning as a normal assistant bubble in the
-            dialog.
+            Show OpenCode reasoning as a normal assistant bubble in the dialog.
           </div>
         </div>
       </label>
       <label style={rowStyles}>
-        <span style={labelStyles}>API key</span>
+        <span style={labelStyles}>Optional Z.AI API key</span>
         <input
           autoComplete="off"
           onChange={(event) => updateSetting("apiKey", event.target.value)}
-          placeholder="Z.AI / GLM API key"
+          placeholder="Optional; OpenCode auth is used first"
           style={inputStyles}
           type="password"
           value={settings?.apiKey ?? ""}
@@ -114,7 +114,7 @@ const GlmOpenCodeSettingsCard: FC<GlmOpenCodeSettingsCardProps> = ({
         />
       </label>
       <label style={rowStyles}>
-        <span style={labelStyles}>Default model</span>
+        <span style={labelStyles}>Default OpenCode selector</span>
         <input
           onChange={(event) =>
             updateSetting("defaultModel", event.target.value)

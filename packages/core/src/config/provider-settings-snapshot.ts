@@ -64,10 +64,17 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
+const DEFAULT_GLM_OPENCODE_MODEL_ID = "zai-coding-plan/glm-5.2";
 const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
   "glm-5.1",
   "glm-5-turbo",
   "glm-4.5-air",
+]);
+const LEGACY_GLM_OPENCODE_MODEL_IDS = new Set([
+  "glm-5.1",
+  "glm-5-turbo",
+  "glm-4.5-air",
+  "glm-5.2",
 ]);
 
 const normalizeOptionalString = (value: unknown): string | undefined =>
@@ -79,6 +86,13 @@ const normalizeGlmClaudeCodeModel = (value: unknown): unknown => {
   const modelId = normalizeOptionalString(value);
   return modelId && LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId)
     ? DEFAULT_GLM_CLAUDE_CODE_MODEL_ID
+    : value;
+};
+
+const normalizeGlmOpenCodeModel = (value: unknown): unknown => {
+  const modelId = normalizeOptionalString(value);
+  return modelId && LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId)
+    ? DEFAULT_GLM_OPENCODE_MODEL_ID
     : value;
 };
 
@@ -210,7 +224,7 @@ export const loadGlmOpenCodeSettingsSnapshot = (
   }
 
   return {
-    defaultModel: normalizeGlmClaudeCodeModel(glmOpenCode.defaultModel),
+    defaultModel: normalizeGlmOpenCodeModel(glmOpenCode.defaultModel),
     thinkingDisplaySyncEnabled: glmOpenCode.thinkingDisplaySyncEnabled,
   };
 };

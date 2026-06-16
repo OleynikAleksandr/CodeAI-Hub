@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "74f48fd62",
+  "lastRecordedCommit": "3fc789ba8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream7a.task2",
-  "expectedCommitMessage": "docs: align glm opencode selector docs",
+  "currentTaskId": "phase1.stream7b.task1",
+  "expectedCommitMessage": "feat: repurpose glm opencode as opencode wrapper",
   "debt": {
-    "expectedCommitMessage": "docs: align glm opencode selector docs",
-    "preCommitHead": "74f48fd62",
+    "expectedCommitMessage": "feat: repurpose glm opencode as opencode wrapper",
+    "preCommitHead": "3fc789ba8",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7a.task2"
+    "taskId": "phase1.stream7b.task1"
   }
 }
 ```
@@ -45,7 +45,7 @@
 - Do not bypass Husky hooks or quality gates.
 - User already explicitly requested a new release for this scope; still record release evidence before handoff.
 
-## Phase 1 - GLM-OpenCode Provider (owner: Codex, updated: 2026-06-16)
+## Phase 1 - OpenCode Wrapper Provider (owner: Codex, updated: 2026-06-16)
 
 ### Stream: Planning Intake
 
@@ -82,28 +82,33 @@
 13. [DONE] `phase1.stream7a.task1` Align the GLM-OpenCode runtime selector with OpenCode 1.17.7 live model resolution. (scope: `packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align glm opencode model selector`)
 14. [DONE] `phase1.stream7a.commit1` Git Commit: `fix: align glm opencode model selector` (hash: 74f48fd62)
 15. [DONE] `phase1.stream7a.task2` Align GLM-OpenCode docs with the live OpenCode selector. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: align glm opencode selector docs`)
-16. [PENDING] `phase1.stream7a.commit2` Git Commit: `docs: align glm opencode selector docs` (hash: TBD)
+16. [DONE] `phase1.stream7a.commit2` Git Commit: `docs: align glm opencode selector docs` (hash: 3fc789ba8)
+
+### Stream: OpenCode Wrapper Pivot
+
+17. [DONE] `phase1.stream7b.task1` Repurpose the existing `glmOpenCode` surface into a user-facing OpenCode wrapper: use OpenCode-owned auth/runtime, close spawned stdin to avoid init hangs, expose tested selectors `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7`, and relabel Settings/PM surfaces from GLM-only wording to OpenCode. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md, doc/TODO/todo-plan.md, packages/GLM_OpenCode_Module/src/index.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-provider-adapter.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runner.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.test.ts, packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-recovery-coordinator.ts, packages/core/src/remote-bridge/handlers/settings-default-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/provider-selector.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/settings/project-manager-settings-host-message.ts, src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/ui/src/components/settings/glm-opencode-settings-card.tsx, src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/native-request-capture-state.ts, src/client/ui/src/components/settings/provider-versions-ui.tsx, src/client/ui/src/components/settings/provider-versions.tsx, src/client/ui/src/components/settings/settings-provider-tab-content.tsx, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/status-panel-model-picker.tsx, src/types/provider.ts`; expected commit: `feat: repurpose glm opencode as opencode wrapper`)
+18. [PENDING] `phase1.stream7b.commit1` Git Commit: `feat: repurpose glm opencode as opencode wrapper` (hash: TBD)
 
 ### Stream: Verification
 
-17. [TODO] `phase1.stream7.task1` Run targeted provider/Core/UI checks and live OpenCode smoke with `glm-5.2`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record glm opencode verification`)
-    - Planned checks: provider tests, Core registry/config tests, UI settings/provider picker tests, `npm run build --workspace=@codeai-hub/glm-opencode-module`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, and live smoke that confirms OpenCode runs `glm-5.2` and returns the requested response.
-18. [TODO] `phase1.stream7.commit1` Git Commit: `docs: record glm opencode verification` (hash: TBD)
+19. [TODO] `phase1.stream7.task1` Record targeted provider/Core/UI checks and live wrapper smoke for both tested OpenCode selectors. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper verification`)
+    - Planned checks: provider tests, Core registry/config tests, UI settings/provider picker tests, `npm run build --workspace=@codeai-hub/glm-opencode-module`, `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, and live adapter smoke that confirms the wrapper returns `WRAPPER_GLM_OK` from `zai-coding-plan/glm-5.2` and `WRAPPER_KIMI_OK` from `kimi-for-coding/k2p7`.
+20. [TODO] `phase1.stream7.commit1` Git Commit: `docs: record opencode wrapper verification` (hash: TBD)
 
 ### Stream: Release Build
 
-19. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
-20. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: TBD)
-21. [TODO] `phase1.stream8.task2` Build the confirmed release with GLM-OpenCode packaged and record release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm opencode release`)
-22. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: TBD)
+21. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
+22. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: TBD)
+23. [TODO] `phase1.stream8.task2` Build the confirmed release with GLM-OpenCode packaged and record release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm opencode release`)
+24. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-23. [TODO] `phase1.stream9.task1` Wait for user retest that `GLM-OpenCode` is selectable and can complete at least one workflow step without locking input. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record glm opencode acceptance`)
-24. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record glm opencode acceptance` (hash: TBD)
+25. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable and can complete at least one workflow step with GLM or Kimi without locking input. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
+26. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-25. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-26. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-27. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+27. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+28. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+29. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

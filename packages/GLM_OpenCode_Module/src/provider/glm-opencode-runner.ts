@@ -1,14 +1,17 @@
-import type { ChildProcessWithoutNullStreams } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import type { GlmOpenCodeSessionEvent } from "./glm-opencode-output-normalizer";
 import { normalizeOpenCodeJsonLine } from "./glm-opencode-output-normalizer";
-import type { GlmOpenCodeRuntimeProfile } from "./glm-opencode-runtime-profile";
+import {
+  type GlmOpenCodeRuntimeProfile,
+  OPENCODE_WRAPPER_AGENT_NAME,
+} from "./glm-opencode-runtime-profile";
 
 export interface GlmOpenCodeRunOptions {
   readonly content: string;
   readonly modelSelector: string;
-  readonly onChildProcess?: (child: ChildProcessWithoutNullStreams) => void;
+  readonly onChildProcess?: (child: ChildProcess) => void;
   readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
   readonly profile: GlmOpenCodeRuntimeProfile;
 }
@@ -32,6 +35,8 @@ const buildArgs = (options: GlmOpenCodeRunOptions): string[] => [
   "--dangerously-skip-permissions",
   "--format",
   "json",
+  "--agent",
+  OPENCODE_WRAPPER_AGENT_NAME,
   "--model",
   options.modelSelector,
   options.content,
@@ -102,6 +107,7 @@ export const runGlmOpenCodeTurn = (
     const child = spawn(options.profile.command, buildArgs(options), {
       cwd,
       env: options.profile.environment,
+      stdio: ["ignore", "pipe", "pipe"],
     });
     options.onChildProcess?.(child);
 

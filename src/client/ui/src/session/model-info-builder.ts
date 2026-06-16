@@ -13,6 +13,7 @@ type KimiLikeProviderId = "kimiCode" | "glmClaudeCode" | "glmOpenCode";
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi K2.7 Code";
 const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.2 / Claude Code";
 const GLM_OPENCODE_MODEL_DISPLAY_NAME = "GLM 5.2 / OpenCode";
+const KIMI_OPENCODE_MODEL_DISPLAY_NAME = "Kimi K2.7 / OpenCode";
 const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
 const KIMI_DEFAULT_MODEL_ID = "kimi-k2.7-code";
 const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
@@ -85,13 +86,25 @@ const formatKimiSessionModelDisplayName = (
   modelId: string
 ): string => {
   const baseModelId = resolveKimiBaseModelId(modelId);
-  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
-    const displayName =
-      providerId === "glmOpenCode"
-        ? GLM_OPENCODE_MODEL_DISPLAY_NAME
-        : GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME;
+  if (providerId === "glmOpenCode") {
+    if (
+      baseModelId === "zai-coding-plan/glm-5.2" ||
+      baseModelId === "glm-5.2"
+    ) {
+      return GLM_OPENCODE_MODEL_DISPLAY_NAME;
+    }
+    if (
+      baseModelId === "kimi-for-coding/k2p7" ||
+      baseModelId === "k2p7" ||
+      baseModelId === KIMI_DEFAULT_MODEL_ID
+    ) {
+      return KIMI_OPENCODE_MODEL_DISPLAY_NAME;
+    }
+    return formatModelDisplayName(baseModelId);
+  }
+  if (providerId === "glmClaudeCode") {
     return baseModelId === GLM_CLAUDE_CODE_MODEL_ID
-      ? displayName
+      ? GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME
       : formatModelDisplayName(baseModelId);
   }
   if (baseModelId !== KIMI_DEFAULT_MODEL_ID) {

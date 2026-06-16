@@ -188,7 +188,7 @@ const ProviderVersions = ({
   } else if (provider === "codex") {
     title = "Codex Versions";
   } else if (provider === "glmOpenCode") {
-    title = "GLM-OpenCode Versions";
+    title = "OpenCode Versions";
   }
 
   return (
