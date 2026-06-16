@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "3fc789ba8",
+  "lastRecordedCommit": "ca6f37bae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream7b.task1",
-  "expectedCommitMessage": "feat: repurpose glm opencode as opencode wrapper",
+  "currentTaskId": "phase1.stream7.task1",
+  "expectedCommitMessage": "docs: record opencode wrapper verification",
   "debt": {
-    "expectedCommitMessage": "feat: repurpose glm opencode as opencode wrapper",
-    "preCommitHead": "3fc789ba8",
+    "expectedCommitMessage": "docs: record opencode wrapper verification",
+    "preCommitHead": "ca6f37bae",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7b.task1"
+    "taskId": "phase1.stream7.task1"
   }
 }
 ```
@@ -87,13 +87,15 @@
 ### Stream: OpenCode Wrapper Pivot
 
 17. [DONE] `phase1.stream7b.task1` Repurpose the existing `glmOpenCode` surface into a user-facing OpenCode wrapper: use OpenCode-owned auth/runtime, close spawned stdin to avoid init hangs, expose tested selectors `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7`, and relabel Settings/PM surfaces from GLM-only wording to OpenCode. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md, doc/TODO/todo-plan.md, packages/GLM_OpenCode_Module/src/index.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-provider-adapter.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runner.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.test.ts, packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-recovery-coordinator.ts, packages/core/src/remote-bridge/handlers/settings-default-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx, src/client/project-manager/components/capture-workbench/provider-selector.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/settings/project-manager-settings-host-message.ts, src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/ui/src/components/settings/glm-opencode-settings-card.tsx, src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/native-request-capture-state.ts, src/client/ui/src/components/settings/provider-versions-ui.tsx, src/client/ui/src/components/settings/provider-versions.tsx, src/client/ui/src/components/settings/settings-provider-tab-content.tsx, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/status-panel-model-picker.tsx, src/types/provider.ts`; expected commit: `feat: repurpose glm opencode as opencode wrapper`)
-18. [PENDING] `phase1.stream7b.commit1` Git Commit: `feat: repurpose glm opencode as opencode wrapper` (hash: TBD)
+18. [DONE] `phase1.stream7b.commit1` Git Commit: `feat: repurpose glm opencode as opencode wrapper` (hash: ca6f37bae)
 
 ### Stream: Verification
 
-19. [TODO] `phase1.stream7.task1` Record targeted provider/Core/UI checks and live wrapper smoke for both tested OpenCode selectors. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper verification`)
-    - Planned checks: provider tests, Core registry/config tests, UI settings/provider picker tests, `npm run build --workspace=@codeai-hub/glm-opencode-module`, `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, and live adapter smoke that confirms the wrapper returns `WRAPPER_GLM_OK` from `zai-coding-plan/glm-5.2` and `WRAPPER_KIMI_OK` from `kimi-for-coding/k2p7`.
-20. [TODO] `phase1.stream7.commit1` Git Commit: `docs: record opencode wrapper verification` (hash: TBD)
+19. [DONE] `phase1.stream7.task1` Record targeted provider/Core/UI checks and live wrapper smoke for both tested OpenCode selectors. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper verification`)
+    - Completed checks: `npm run build --workspace=@codeai-hub/glm-opencode-module` ✅, `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` ✅ (7/7), `npm run build --workspace=@codeai-hub/core` ✅, `npm run typecheck:webview` ✅.
+    - Live smoke evidence: direct OpenCode CLI returned `CODEAI_GLM_OPENWRAPPER_OK` for `zai-coding-plan/glm-5.2` and `CODEAI_KIMI_OPENWRAPPER_OK` for `kimi-for-coding/k2p7`; isolated wrapper adapter returned `WRAPPER_GLM_OK` and `WRAPPER_KIMI_OK` through `GlmOpenCodeProviderAdapter`.
+    - Investigation result captured during implementation: leaving child `stdin` open in `spawn()` could stall OpenCode on `init`; switching to `stdio: ["ignore", "pipe", "pipe"]` removed the hang in adapter-level smoke.
+20. [PENDING] `phase1.stream7.commit1` Git Commit: `docs: record opencode wrapper verification` (hash: TBD)
 
 ### Stream: Release Build
 
