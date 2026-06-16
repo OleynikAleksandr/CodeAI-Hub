@@ -37,6 +37,24 @@ Stop must unlock the input for every workflow step when Core has stopped the
 turn and invalidated/rebound the provider binding; stale visible thinking text
 must not be treated as an active turn forever.
 
+Release `1.2.525` user testing confirmed the stale-thinking Stop unlock fix,
+but exposed a localization gap in a Kimi Description turn:
+
+- Localization settings resolved `reasoning`, `messagesForTheUser`, and
+  `artifactsForTheUser` to `ru`;
+- the Description runtime prompt contained the `Workflow runtime language
+  contract` with chat and artifact prose language `ru`;
+- Kimi still emitted a visible ordinary `assistant` progress update in English;
+- the translation overlay persisted Russian translations for `thinking`
+  messages only, not for the ordinary visible `assistant` update.
+
+The prompt contract is correct. Core must also localize ordinary visible
+assistant chat updates through the existing reasoning translation overlay so
+provider pre-tool progress text cannot leak in English when the provider ignores
+the chat-language instruction. The same rule applies to Core-generated dialog
+messages that are shown with `user` role for managed workflow continuity; actual
+human user input must stay untouched.
+
 ## Scope
 
 1. Keep rejecting actual sentinel residue.
@@ -47,6 +65,9 @@ must not be treated as an active turn forever.
 6. Add focused regression coverage for Stop-driven input release in the managed repair scenario.
 7. Fix shared input-state derivation so a stopped non-ready binding with a stale thinking bubble does not keep any step input locked.
 8. Add focused UI regression coverage for the stage-neutral Stop unlock scenario.
+9. Route ordinary visible assistant chat messages through the existing session reasoning translation overlay when a user-facing chat language is configured.
+10. Route Core-generated deferred `user` dialog messages through the same overlay without translating actual human user input.
+11. Add focused regression coverage for assistant chat translation policy selection and event-message overlay dispatch.
 
 ## Out of Scope
 
@@ -59,6 +80,7 @@ must not be treated as an active turn forever.
 - Targeted Core test for Product Part Development Order Plan validation.
 - Targeted Core test for Stop releasing managed repair session input.
 - Targeted UI/session-state test for stale thinking after Stop.
+- Targeted Core/session translation tests for ordinary assistant chat updates.
 - `npm run build --workspace=@codeai-hub/core`.
 - `npm run typecheck:webview`.
 - Plan validation and standard commit hooks.
