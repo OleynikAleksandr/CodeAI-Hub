@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "726884d4d",
+  "lastRecordedCommit": "08a73a229",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream5.task1",
-  "expectedCommitMessage": "feat: package glm opencode provider",
+  "currentTaskId": "phase1.stream6.task1",
+  "expectedCommitMessage": "docs: document glm opencode provider",
   "debt": {
-    "expectedCommitMessage": "feat: package glm opencode provider",
-    "preCommitHead": "726884d4d",
+    "expectedCommitMessage": "docs: document glm opencode provider",
+    "preCommitHead": "08a73a229",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5.task1"
+    "taskId": "phase1.stream6.task1"
   }
 }
 ```
@@ -70,12 +70,12 @@
 ### Stream: Packaging And Diagnostics
 
 9. [DONE] `phase1.stream5.task1` Add GLM-OpenCode manifest/build packaging plus minimal diagnostics/version detection for OpenCode `>=1.17.7`. (scope: `assets/providers/glm-opencode/**, scripts/build-*.sh, scripts/release-utils.sh, packages/core/src/remote-bridge/handlers/settings-provider-version-service.ts, src/extension-module/settings/**, src/client/ui/src/components/settings/provider-versions*, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `feat: package glm opencode provider`)
-10. [PENDING] `phase1.stream5.commit1` Git Commit: `feat: package glm opencode provider` (hash: TBD)
+10. [DONE] `phase1.stream5.commit1` Git Commit: `feat: package glm opencode provider` (hash: 08a73a229)
 
 ### Stream: Documentation Sync
 
-11. [TODO] `phase1.stream6.task1` Document the new GLM-OpenCode provider module and update architecture/index references. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document glm opencode provider`)
-12. [TODO] `phase1.stream6.commit1` Git Commit: `docs: document glm opencode provider` (hash: TBD)
+11. [DONE] `phase1.stream6.task1` Document the new GLM-OpenCode provider module and update architecture/index references. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document glm opencode provider`)
+12. [PENDING] `phase1.stream6.commit1` Git Commit: `docs: document glm opencode provider` (hash: TBD)
 
 ### Stream: Verification
 
