@@ -331,6 +331,13 @@ export const SettingsProviderTabContent: React.FC<
             settings.providers.glmOpenCode?.thinkingDisplaySyncEnabled
           }
         />
+        <ProviderVersions
+          autoUpdateEnabled={false}
+          onAutoUpdateChange={handleProviderAutoUpdateChange}
+          onUpdate={handleUpdateProvider}
+          provider="glmOpenCode"
+          versions={versions}
+        />
       </div>
     );
   }

@@ -6,6 +6,7 @@ import {
   formatCheckedAt,
   type Provider,
   resolveTargetLabel,
+  type UpdatableProvider,
   WarningBanner,
 } from "./provider-versions-ui";
 import SettingsCard from "./settings-card";
@@ -13,9 +14,12 @@ import type { UseSettingsStateResult } from "./use-settings-state";
 
 interface ProviderVersionsProps {
   readonly autoUpdateEnabled: boolean;
-  readonly onAutoUpdateChange: (provider: Provider, enabled: boolean) => void;
+  readonly onAutoUpdateChange: (
+    provider: UpdatableProvider,
+    enabled: boolean
+  ) => void;
   readonly onUpdate: (
-    provider: Provider,
+    provider: UpdatableProvider,
     target: "cli" | "sdk" | "core"
   ) => void;
   readonly provider: Provider;
@@ -82,6 +86,22 @@ const ProviderVersions = ({
         },
       ];
     }
+    if (provider === "glmOpenCode") {
+      const glmOpenCodeSnapshot = snapshot.glmOpenCode;
+      if (!glmOpenCodeSnapshot) {
+        return [];
+      }
+      return [
+        {
+          label: "OpenCode CLI",
+          packageName: glmOpenCodeSnapshot.cli.packageName,
+          currentVersion: glmOpenCodeSnapshot.cli.currentVersion,
+          latestVersion: glmOpenCodeSnapshot.cli.latestVersion,
+          target: undefined,
+          showUpdateButton: false,
+        },
+      ];
+    }
     const providerSnapshot =
       provider === "claude" ? snapshot.claude : snapshot.codex;
     if (!providerSnapshot) {
@@ -112,6 +132,9 @@ const ProviderVersions = ({
     }
     if (provider === "gemini") {
       return Boolean(snapshot.gemini);
+    }
+    if (provider === "glmOpenCode") {
+      return Boolean(snapshot.glmOpenCode);
     }
     return provider === "claude"
       ? Boolean(snapshot.claude)
@@ -154,7 +177,9 @@ const ProviderVersions = ({
       return;
     }
     setPendingTarget(null);
-    onUpdate(provider, target);
+    if (provider !== "glmOpenCode") {
+      onUpdate(provider, target);
+    }
   };
 
   let title = "Gemini Versions";
@@ -162,6 +187,8 @@ const ProviderVersions = ({
     title = "Claude Versions";
   } else if (provider === "codex") {
     title = "Codex Versions";
+  } else if (provider === "glmOpenCode") {
+    title = "GLM-OpenCode Versions";
   }
 
   return (
@@ -176,12 +203,14 @@ const ProviderVersions = ({
       title={title}
     >
       <WarningBanner provider={provider} />
-      <AutoUpdateToggle
-        disabled={versions.loading}
-        enabled={autoUpdateEnabled}
-        onToggle={(enabled) => onAutoUpdateChange(provider, enabled)}
-        provider={provider}
-      />
+      {provider === "glmOpenCode" ? null : (
+        <AutoUpdateToggle
+          disabled={versions.loading}
+          enabled={autoUpdateEnabled}
+          onToggle={(enabled) => onAutoUpdateChange(provider, enabled)}
+          provider={provider}
+        />
+      )}
       {versions.error ? <p style={errorStyles}>{versions.error}</p> : null}
       {versions.loading && !hasProviderVersions ? (
         <p style={statusStyles}>Loading version information…</p>

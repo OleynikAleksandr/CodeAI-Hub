@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 const execAsync = promisify(exec);
 const NPM_COMMAND = process.platform === "win32" ? "npm.cmd" : "npm";
 const EXEC_MAX_BUFFER_BYTES = 10 * 1_048_576;
+const VERSION_PATTERN = /\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?/;
 
 const describeExecError = (error: unknown): string => {
   if (error instanceof Error) {
@@ -78,6 +79,19 @@ export const readLatestVersion = async (
       return { version: cleaned };
     }
     return { version: null };
+  } catch (error) {
+    return { version: null, error: describeExecError(error) };
+  }
+};
+
+export const readCommandVersion = async (
+  command: string
+): Promise<{ version: string | null; error?: string }> => {
+  try {
+    const { stdout } = await execAsync(command, {
+      maxBuffer: EXEC_MAX_BUFFER_BYTES,
+    });
+    return { version: stdout.match(VERSION_PATTERN)?.[0] ?? null };
   } catch (error) {
     return { version: null, error: describeExecError(error) };
   }

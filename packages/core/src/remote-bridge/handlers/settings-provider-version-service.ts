@@ -12,6 +12,12 @@ const GEMINI_INSTALLER_PATHS = {
     "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@google\\gemini-cli\\",
 } as const;
 const NPM_COMMAND = process.platform === "win32" ? "npm.cmd" : "npm";
+const OPENCODE_VERSION_COMMAND =
+  process.platform === "win32"
+    ? "opencode.cmd --version"
+    : "opencode --version";
+const OPENCODE_LATEST_PACKAGE_NAME = "@opencode-ai/sdk";
+const VERSION_PATTERN = /\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?/;
 const execAsync = promisify(exec);
 
 const PACKAGE_MAP = {
@@ -26,6 +32,9 @@ const PACKAGE_MAP = {
   gemini: {
     cli: "@google/gemini-cli",
     core: "@google/gemini-cli-core",
+  },
+  glmOpenCode: {
+    cli: "opencode",
   },
 } as const;
 
@@ -67,10 +76,20 @@ export interface SettingsProviderVersionsSnapshot {
     readonly cli: VersionEntry;
     readonly core: VersionEntry;
   };
+  readonly glmOpenCode: {
+    readonly cli: VersionEntry;
+  };
 }
 
 const describeExecError = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
+
+const combineErrors = (
+  ...errors: readonly (string | undefined)[]
+): string | undefined => {
+  const messages = errors.filter((error): error is string => Boolean(error));
+  return messages.length > 0 ? messages.join("; ") : undefined;
+};
 
 const extractInstalledVersion = (
   packageName: string,
@@ -139,6 +158,33 @@ const readLatestVersion = async (
   } catch (error) {
     return { error: describeExecError(error), version: null };
   }
+};
+
+const readCommandVersion = async (
+  command: string
+): Promise<{ readonly error?: string; readonly version: string | null }> => {
+  try {
+    const { stdout } = await execAsync(command, {
+      maxBuffer: EXEC_MAX_BUFFER_BYTES,
+    });
+    return { version: stdout.match(VERSION_PATTERN)?.[0] ?? null };
+  } catch (error) {
+    return { error: describeExecError(error), version: null };
+  }
+};
+
+const readOpenCodeVersion = async (): Promise<PackageVersionResult> => {
+  const [installed, latest] = await Promise.all([
+    readCommandVersion(OPENCODE_VERSION_COMMAND),
+    readLatestVersion(OPENCODE_LATEST_PACKAGE_NAME),
+  ]);
+
+  return {
+    currentVersion: installed.version,
+    error: combineErrors(installed.error, latest.error),
+    latestVersion: latest.version,
+    packageName: PACKAGE_MAP.glmOpenCode.cli,
+  };
 };
 
 const installGlobalPackageLatest = async (
@@ -216,6 +262,9 @@ const buildSnapshot = (
       cli: get("gemini", "cli"),
       core: get("gemini", "core"),
     },
+    glmOpenCode: {
+      cli: get("glmOpenCode", "cli"),
+    },
   };
 };
 
@@ -231,6 +280,9 @@ export class SettingsProviderVersionService {
         }
         if (provider === "gemini" && target === "core") {
           return geminiVersions.core;
+        }
+        if (provider === "glmOpenCode" && target === "cli") {
+          return readOpenCodeVersion();
         }
         const installed = await readInstalledVersion(packageName);
         const latest = await readLatestVersion(packageName);
@@ -252,6 +304,9 @@ export class SettingsProviderVersionService {
   ): Promise<SettingsProviderVersionsSnapshot> {
     if (provider === "gemini") {
       return this.updateGeminiAll();
+    }
+    if (provider === "glmOpenCode") {
+      throw new Error("OpenCode CLI updates are managed outside CodeAI Hub.");
     }
     await installGlobalPackageLatest(resolvePackageName(provider, target));
     return this.loadSnapshot();

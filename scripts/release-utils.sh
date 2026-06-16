@@ -12,6 +12,7 @@ clean_release_dir() {
     "codex-module-*.tar.bz2"
     "gemini-module-*.tar.bz2"
     "glm-claude-code-module-*.tar.bz2"
+    "glm-opencode-module-*.tar.bz2"
     "kimi-module-*.tar.bz2"
     "vscode-webview-*.tar.bz2"
     "project-manager-*.tar.bz2"

@@ -11,6 +11,9 @@ export const PACKAGE_MAP = {
     cli: "@google/gemini-cli",
     core: "@google/gemini-cli-core",
   },
+  glmOpenCode: {
+    cli: "opencode",
+  },
 } as const;
 
 export type ProviderId = keyof typeof PACKAGE_MAP;
@@ -37,6 +40,9 @@ export interface ProviderVersionsSnapshot {
   readonly gemini: {
     readonly cli: VersionEntry;
     readonly core: VersionEntry;
+  };
+  readonly glmOpenCode: {
+    readonly cli: VersionEntry;
   };
 }
 
@@ -121,6 +127,9 @@ export const buildSnapshot = (
     gemini: {
       cli: get("gemini", "cli"),
       core: get("gemini", "core"),
+    },
+    glmOpenCode: {
+      cli: get("glmOpenCode", "cli"),
     },
     checkedAt: nowIso(),
   };

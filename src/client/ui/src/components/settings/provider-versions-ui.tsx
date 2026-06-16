@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
 import { useLocalization } from "../../app-host/use-localization";
 
-export type Provider = "claude" | "codex" | "gemini";
+export type Provider = "claude" | "codex" | "gemini" | "glmOpenCode";
+export type UpdatableProvider = Exclude<Provider, "glmOpenCode">;
 
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 const USER_MESSAGES_CATEGORY = "system_feedback";
@@ -61,6 +62,13 @@ const providerBannerStyles = (provider: Provider): CSSProperties => {
       color: "#9cf8ef",
     };
   }
+  if (provider === "glmOpenCode") {
+    return {
+      background: "#262f33",
+      border: "1px solid #49a6d8",
+      color: "#a9dcff",
+    };
+  }
   return {
     background: "#2c2a2d",
     border: "1px solid #ab34cb",
@@ -75,6 +83,9 @@ const resolveProviderLabel = (provider: Provider): string => {
   if (provider === "codex") {
     return "Codex";
   }
+  if (provider === "glmOpenCode") {
+    return "GLM-OpenCode";
+  }
   return "Gemini";
 };
 
@@ -84,6 +95,9 @@ export const resolveTargetLabel = (
 ): string => {
   if (provider === "gemini" && target === "core") {
     return "CLI Core";
+  }
+  if (provider === "glmOpenCode" && target === "cli") {
+    return "OpenCode CLI";
   }
   if (target === "cli") {
     return "CLI";
