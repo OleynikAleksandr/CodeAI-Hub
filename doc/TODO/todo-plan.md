@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "609d10aa6",
+  "lastRecordedCommit": "37a85a109",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream11.task1",
-  "expectedCommitMessage": "fix: unlock stopped stale thinking sessions",
+  "currentTaskId": "phase1.stream12.task1",
+  "expectedCommitMessage": "test: cover stopped stale thinking unlock",
   "debt": {
-    "expectedCommitMessage": "fix: unlock stopped stale thinking sessions",
-    "preCommitHead": "609d10aa6",
+    "expectedCommitMessage": "test: cover stopped stale thinking unlock",
+    "preCommitHead": "37a85a109",
     "stage": "commit_pending",
-    "taskId": "phase1.stream11.task1"
+    "taskId": "phase1.stream12.task1"
   }
 }
 ```
@@ -107,12 +107,12 @@
 ### Stream: Stale Thinking Stop Unlock Fix
 
 23. [DONE] `phase1.stream11.task1` Fix shared input-state derivation so a stopped stale thinking bubble cannot keep any step input locked. (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: unlock stopped stale thinking sessions`)
-24. [PENDING] `phase1.stream11.commit1` Git Commit: `fix: unlock stopped stale thinking sessions` (hash: TBD)
+24. [DONE] `phase1.stream11.commit1` Git Commit: `fix: unlock stopped stale thinking sessions` (hash: 37a85a109)
 
 ### Stream: Stale Thinking Stop Unlock Regression Tests
 
-25. [TODO] `phase1.stream12.task1` Add focused UI regression coverage for stage-neutral stale thinking after Stop. (scope: `src/client/ui/src/session/session-view.test.tsx`; expected commit: `test: cover stopped stale thinking unlock`)
-26. [TODO] `phase1.stream12.commit1` Git Commit: `test: cover stopped stale thinking unlock` (hash: TBD)
+25. [DONE] `phase1.stream12.task1` Add focused UI regression coverage for stage-neutral stale thinking after Stop. (scope: `src/client/ui/src/session/session-view.test.tsx`; expected commit: `test: cover stopped stale thinking unlock`)
+26. [PENDING] `phase1.stream12.commit1` Git Commit: `test: cover stopped stale thinking unlock` (hash: TBD)
 
 ### Stream: Stale Thinking Stop Unlock Verification
 
