@@ -4,12 +4,15 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  writeFileSync,
 } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
 export const GLM_OPENCODE_MODEL_ID = "glm-5.2";
-export const GLM_OPENCODE_DEFAULT_MODEL_SELECTOR = "zai-coding-plan/glm-5.2";
+const GLM_OPENCODE_PROVIDER_KEY = "zai-coding-plan";
+export const GLM_OPENCODE_DEFAULT_MODEL_SELECTOR = `${GLM_OPENCODE_PROVIDER_KEY}/${GLM_OPENCODE_MODEL_ID}`;
+const GLM_OPENCODE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
 export const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
   "~/.codeai-hub/providers/glm-opencode/config.json";
 export const DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH =
@@ -193,17 +196,79 @@ const buildRuntimeEnvironment = (params: {
   readonly providerHomePath: string;
 }): NodeJS.ProcessEnv => {
   const runtimeHome = path.join(params.providerHomePath, "home");
+  const configHome = path.join(params.providerHomePath, "config");
+  const dataHome = path.join(params.providerHomePath, "data");
+  materializeOpenCodeRuntimeFiles({
+    apiKey: params.apiKey,
+    configHome,
+    dataHome,
+  });
   return {
     ...params.baseEnvironment,
     GLM_API_KEY: params.apiKey,
     HOME: runtimeHome,
     XDG_CACHE_HOME: path.join(params.providerHomePath, "cache"),
-    XDG_CONFIG_HOME: path.join(params.providerHomePath, "config"),
-    XDG_DATA_HOME: path.join(params.providerHomePath, "data"),
+    XDG_CONFIG_HOME: configHome,
+    XDG_DATA_HOME: dataHome,
     ZAI_API_KEY: params.apiKey,
     ZHIPU_API_KEY: params.apiKey,
     Z_AI_API_KEY: params.apiKey,
   };
+};
+
+const materializeOpenCodeRuntimeFiles = (params: {
+  readonly apiKey: string;
+  readonly configHome: string;
+  readonly dataHome: string;
+}): void => {
+  const configDir = path.join(params.configHome, "opencode");
+  const dataDir = path.join(params.dataHome, "opencode");
+  mkdirSync(configDir, { recursive: true });
+  mkdirSync(dataDir, { recursive: true });
+  writeFileSync(
+    path.join(configDir, "opencode.json"),
+    `${JSON.stringify(
+      {
+        $schema: "https://opencode.ai/config.json",
+        enabled_providers: [GLM_OPENCODE_PROVIDER_KEY],
+        model: GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
+        provider: {
+          [GLM_OPENCODE_PROVIDER_KEY]: {
+            models: {
+              [GLM_OPENCODE_MODEL_ID]: {
+                name: "GLM 5.2",
+              },
+            },
+            name: "Z.AI Coding Plan",
+            npm: "@ai-sdk/openai-compatible",
+            options: {
+              baseURL: GLM_OPENCODE_BASE_URL,
+              chunkTimeout: 60_000,
+              timeout: 120_000,
+            },
+          },
+        },
+        small_model: GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+  writeFileSync(
+    path.join(dataDir, "auth.json"),
+    `${JSON.stringify(
+      {
+        [GLM_OPENCODE_PROVIDER_KEY]: {
+          key: params.apiKey,
+          type: "api",
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
 };
 
 export const buildGlmOpenCodeRuntimeProfile = (

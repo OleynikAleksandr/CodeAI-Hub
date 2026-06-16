@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -8,7 +8,7 @@ import {
   GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
 } from "./glm-opencode-runtime-profile";
 
-test("runtime profile reads config and maps glm-5.2 to OpenCode selector", () => {
+test("runtime profile reads config and keeps glm-5.2 as OpenCode selector", () => {
   const root = mkdtempSync(path.join(tmpdir(), "glm-opencode-profile-"));
   const configPath = path.join(root, "config.json");
   const providerHomePath = path.join(root, "home");
@@ -31,6 +31,32 @@ test("runtime profile reads config and maps glm-5.2 to OpenCode selector", () =>
   assert.equal(profile.providerHomePath, providerHomePath);
   assert.equal(profile.environment.ZAI_API_KEY, "secret-key");
   assert.equal(profile.environment.HOME, path.join(providerHomePath, "home"));
+  const openCodeConfig = JSON.parse(
+    readFileSync(
+      path.join(providerHomePath, "config", "opencode", "opencode.json"),
+      "utf8"
+    )
+  );
+  const openCodeAuth = JSON.parse(
+    readFileSync(
+      path.join(providerHomePath, "data", "opencode", "auth.json"),
+      "utf8"
+    )
+  );
+  assert.equal(openCodeConfig.model, "zai-coding-plan/glm-5.2");
+  assert.equal(
+    openCodeConfig.provider["zai-coding-plan"].options.baseURL,
+    "https://api.z.ai/api/coding/paas/v4"
+  );
+  assert.equal(
+    openCodeConfig.provider["zai-coding-plan"].options.timeout,
+    120_000
+  );
+  assert.equal(
+    openCodeConfig.provider["zai-coding-plan"].options.chunkTimeout,
+    60_000
+  );
+  assert.equal(openCodeAuth["zai-coding-plan"].key, "secret-key");
 });
 
 test("runtime profile prefers environment key over config key", () => {

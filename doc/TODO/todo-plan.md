@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "08a73a229",
+  "lastRecordedCommit": "a9eeeb110",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream6.task1",
-  "expectedCommitMessage": "docs: document glm opencode provider",
+  "currentTaskId": "phase1.stream7a.task1",
+  "expectedCommitMessage": "fix: align glm opencode model selector",
   "debt": {
-    "expectedCommitMessage": "docs: document glm opencode provider",
-    "preCommitHead": "08a73a229",
+    "expectedCommitMessage": "fix: align glm opencode model selector",
+    "preCommitHead": "a9eeeb110",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6.task1"
+    "taskId": "phase1.stream7a.task1"
   }
 }
 ```
@@ -75,28 +75,35 @@
 ### Stream: Documentation Sync
 
 11. [DONE] `phase1.stream6.task1` Document the new GLM-OpenCode provider module and update architecture/index references. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document glm opencode provider`)
-12. [PENDING] `phase1.stream6.commit1` Git Commit: `docs: document glm opencode provider` (hash: TBD)
+12. [DONE] `phase1.stream6.commit1` Git Commit: `docs: document glm opencode provider` (hash: a9eeeb110)
+
+### Stream: OpenCode Selector Repair
+
+13. [DONE] `phase1.stream7a.task1` Align the GLM-OpenCode runtime selector with OpenCode 1.17.7 live model resolution. (scope: `packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align glm opencode model selector`)
+14. [PENDING] `phase1.stream7a.commit1` Git Commit: `fix: align glm opencode model selector` (hash: TBD)
+15. [TODO] `phase1.stream7a.task2` Align GLM-OpenCode docs with the live OpenCode selector. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: align glm opencode selector docs`)
+16. [TODO] `phase1.stream7a.commit2` Git Commit: `docs: align glm opencode selector docs` (hash: TBD)
 
 ### Stream: Verification
 
-13. [TODO] `phase1.stream7.task1` Run targeted provider/Core/UI checks and live OpenCode smoke with `zai-coding-plan/glm-5.2`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record glm opencode verification`)
-    - Planned checks: provider tests, Core registry/config tests, UI settings/provider picker tests, `npm run build --workspace=@codeai-hub/glm-opencode-module`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, and live smoke that confirms `llm.provider=zai-coding-plan`, `llm.model=glm-5.2`.
-14. [TODO] `phase1.stream7.commit1` Git Commit: `docs: record glm opencode verification` (hash: TBD)
+17. [TODO] `phase1.stream7.task1` Run targeted provider/Core/UI checks and live OpenCode smoke with `glm-5.2`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record glm opencode verification`)
+    - Planned checks: provider tests, Core registry/config tests, UI settings/provider picker tests, `npm run build --workspace=@codeai-hub/glm-opencode-module`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, and live smoke that confirms OpenCode runs `glm-5.2` and returns the requested response.
+18. [TODO] `phase1.stream7.commit1` Git Commit: `docs: record glm opencode verification` (hash: TBD)
 
 ### Stream: Release Build
 
-15. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
-16. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: TBD)
-17. [TODO] `phase1.stream8.task2` Build the confirmed release with GLM-OpenCode packaged and record release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm opencode release`)
-18. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: TBD)
+19. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
+20. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: TBD)
+21. [TODO] `phase1.stream8.task2` Build the confirmed release with GLM-OpenCode packaged and record release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm opencode release`)
+22. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-19. [TODO] `phase1.stream9.task1` Wait for user retest that `GLM-OpenCode` is selectable and can complete at least one workflow step without locking input. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record glm opencode acceptance`)
-20. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record glm opencode acceptance` (hash: TBD)
+23. [TODO] `phase1.stream9.task1` Wait for user retest that `GLM-OpenCode` is selectable and can complete at least one workflow step without locking input. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record glm opencode acceptance`)
+24. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record glm opencode acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-21. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-22. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-23. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+25. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+26. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+27. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
