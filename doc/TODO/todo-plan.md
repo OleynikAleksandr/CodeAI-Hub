@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "22e92f073",
+  "lastRecordedCommit": "64ca3c082",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream14.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.525 release notes",
+  "currentTaskId": "phase1.stream15.task1",
+  "expectedCommitMessage": "chore: build release 1.2.525",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.525 release notes",
-    "preCommitHead": "22e92f073",
+    "expectedCommitMessage": "chore: build release 1.2.525",
+    "preCommitHead": "64ca3c082",
     "stage": "commit_pending",
-    "taskId": "phase1.stream14.task1"
+    "taskId": "phase1.stream15.task1"
   }
 }
 ```
@@ -124,12 +124,16 @@
 ### Stream: Follow-up Release Notes
 
 29. [DONE] `phase1.stream14.task1` Prepare release notes for the confirmed 1.2.525 release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.525 release notes`)
-30. [PENDING] `phase1.stream14.commit1` Git Commit: `docs: prepare 1.2.525 release notes` (hash: TBD)
+30. [DONE] `phase1.stream14.commit1` Git Commit: `docs: prepare 1.2.525 release notes` (hash: 64ca3c082)
 
 ### Stream: Follow-up Release Build
 
-31. [TODO] `phase1.stream15.task1` Build the next release after explicit user confirmation. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.525`)
-32. [TODO] `phase1.stream15.commit1` Git Commit: `chore: build release 1.2.525` (hash: TBD)
+31. [DONE] `phase1.stream15.task1` Build the next release after explicit user confirmation. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.525`)
+    - Evidence 2026-06-16: `./scripts/build-all.sh --allow-dirty` passed for `1.2.525`; dirty input was the active `doc/TODO/todo-plan.md` post-commit transition state.
+    - Evidence 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.525`, including architecture, type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication advisory check, production dependency pruning, VSIX package creation and VSIX runtime package surface verification.
+    - VSIX: `codeai-hub-1.2.525.vsix`, sha256 `b6775c06084e8a6d9097123ebd7d7d15916759b2d852a21d9791103cb700d5ab`.
+    - Tarballs in `doc/tmp/releases/`: `claude-module-1.2.525.tar.bz2`, `codex-module-1.2.525.tar.bz2`, `gemini-module-1.2.525.tar.bz2`, `glm-claude-code-module-1.2.525.tar.bz2`, `kimi-module-1.2.525.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.525.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.525.tar.bz2`, `vscode-webview-1.2.525.tar.bz2`, `project-manager-1.2.525.tar.bz2`.
+32. [PENDING] `phase1.stream15.commit1` Git Commit: `chore: build release 1.2.525` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
