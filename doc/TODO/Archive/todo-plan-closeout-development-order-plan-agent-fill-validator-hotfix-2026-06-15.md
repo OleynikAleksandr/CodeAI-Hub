@@ -1,3 +1,18 @@
+# Plan Closeout: development-order-plan-agent-fill-validator-hotfix-2026-06-15
+
+**Created:** 2026-06-16T08:25:48.164Z
+**Acceptance:** User accepted release 1.2.526 visible dialog translation results and requested the next GLM-OpenCode provider scope.
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/audit-gates-cleanup
+**Current Task:** phase1.stream23.task1
+**Expected Commit:** docs: close order plan validator hotfix scope
+**Last Recorded Commit:** 826fef33e
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
   "currentTaskId": "phase1.stream23.task1",
   "expectedCommitMessage": "docs: close order plan validator hotfix scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close order plan validator hotfix scope",
-    "preCommitHead": "826fef33e",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream23.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -178,6 +188,7 @@
 
 ### Stream: Scope Closeout
 
-47. [DONE] `phase1.stream23.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
-48. [PENDING] `phase1.stream23.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
+47. [IN_PROGRESS] `phase1.stream23.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
+48. [TODO] `phase1.stream23.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
 49. [TODO] `phase1.stream23.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
