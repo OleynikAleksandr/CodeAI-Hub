@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "26eae50b8",
+  "lastRecordedCommit": "41f33c1d4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9l.task2",
-  "expectedCommitMessage": "chore: build opencode default model release",
+  "currentTaskId": "phase1.stream9m.task1",
+  "expectedCommitMessage": "fix: translate mixed reasoning chunks",
   "debt": {
-    "expectedCommitMessage": "chore: build opencode default model release",
-    "preCommitHead": "26eae50b8",
+    "expectedCommitMessage": "fix: translate mixed reasoning chunks",
+    "preCommitHead": "41f33c1d4",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9l.task2"
+    "taskId": "phase1.stream9m.task1"
   }
 }
 ```
@@ -202,10 +202,19 @@
     - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.531.tar.bz2`, `codex-module-1.2.531.tar.bz2`, `gemini-module-1.2.531.tar.bz2`, `glm-opencode-module-1.2.531.tar.bz2`, `kimi-module-1.2.531.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.531.tar.bz2`, `vscode-webview-1.2.531.tar.bz2`, `project-manager-1.2.531.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.531.tar.bz2`.
     - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
     - VSIX created at repository root: `codeai-hub-1.2.531.vsix` (`5.4M`).
-62. [PENDING] `phase1.stream9l.commit2` Git Commit: `chore: build opencode default model release` (hash: TBD)
+62. [DONE] `phase1.stream9l.commit2` Git Commit: `chore: build opencode default model release` (hash: 41f33c1d4)
+
+### Stream: Mixed Reasoning Translation Repair
+
+63. [DONE] `phase1.stream9m.task1` Remove the target-language guard from the reasoning translation path so mixed English/Russian Kimi/OpenCode reasoning chunks still reach the selected reasoning translator. (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: translate mixed reasoning chunks`)
+64. [PENDING] `phase1.stream9m.commit1` Git Commit: `fix: translate mixed reasoning chunks` (hash: TBD)
+65. [TODO] `phase1.stream9m.task2` Record targeted verification and release-build evidence for the mixed reasoning translation fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare mixed reasoning translation release`)
+66. [TODO] `phase1.stream9m.commit2` Git Commit: `docs: prepare mixed reasoning translation release` (hash: TBD)
+67. [TODO] `phase1.stream9m.task3` Build the confirmed mixed reasoning translation release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build mixed reasoning translation release`)
+68. [TODO] `phase1.stream9m.commit3` Git Commit: `chore: build mixed reasoning translation release` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-63. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-64. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-65. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+69. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+70. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+71. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

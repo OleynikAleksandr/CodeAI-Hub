@@ -19,8 +19,6 @@ const TRANSLATION_PREVIEW_LENGTH = 160;
 const TRANSLATION_TIMEOUT_BASE_MS = 15_000;
 const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
 const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
-const CYRILLIC_CHARACTER_PATTERN = /[\u0400-\u052f]/u;
-const RUSSIAN_LANGUAGE_CODES = new Set(["ru", "ru-ru"]);
 
 export type SessionTranslationFacadeFactory = (options: {
   readonly reporter?: TranslationReporter;
@@ -84,13 +82,6 @@ const resolveTranslationTimeoutMs = (content: string): number =>
     TRANSLATION_TIMEOUT_BASE_MS +
       content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
   );
-
-const shouldSkipTranslationForTargetLanguage = (
-  text: string,
-  targetLanguage: string
-): boolean =>
-  RUSSIAN_LANGUAGE_CODES.has(targetLanguage) &&
-  CYRILLIC_CHARACTER_PATTERN.test(text);
 
 const defaultTranslationFacadeFactory: SessionTranslationFacadeFactory = (
   options
@@ -202,27 +193,6 @@ export class SessionTranslationFacade {
     });
   }
 
-  private logAlreadyLocalizedSkip(options: {
-    readonly candidate: SessionMessageTranslationCandidate;
-    readonly dispatcherAccepted: boolean;
-    readonly engineId: string;
-    readonly targetLanguage: string;
-  }): void {
-    this.logger.info("Session translation skipped before dispatch", {
-      sessionId: options.candidate.sessionId,
-      messageId: options.candidate.messageId,
-      role: options.candidate.role,
-      tag: options.candidate.tag,
-      contentLength: options.candidate.content.length,
-      preview: buildLogPreview(options.candidate.content),
-      policyEnabled: true,
-      dispatcherAccepted: options.dispatcherAccepted,
-      engineId: options.engineId,
-      targetLanguage: options.targetLanguage,
-      skipReason: "already_localized_for_target_language",
-    });
-  }
-
   private shouldSkipThinkingVisibility(options: {
     readonly candidate: SessionMessageTranslationCandidate;
     readonly dispatcherAccepted: boolean;
@@ -318,18 +288,6 @@ export class SessionTranslationFacade {
       return null;
     }
     const targetLanguage = policy.targetLanguage;
-
-    if (
-      shouldSkipTranslationForTargetLanguage(candidate.content, targetLanguage)
-    ) {
-      this.logAlreadyLocalizedSkip({
-        candidate,
-        dispatcherAccepted,
-        engineId: policy.engineId,
-        targetLanguage,
-      });
-      return null;
-    }
 
     if (dedupeKey) {
       const inFlightTranslation = this.inFlightTranslations.get(dedupeKey);
