@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.532** (Mixed Reasoning Translation Release)
+**Current Release — v1.2.533** (OpenCode Token Usage Release)
+
+This release wires OpenCode-backed GLM 5.2 and Kimi K2.7 sessions into the
+existing context-window token status panel. At the end of an OpenCode turn, the
+status panel now updates from `0 (100%)` to the model's used-token snapshot and
+known context limit.
+
+Retest focus: in FinderWidget-Test01, run an OpenCode-backed step with both
+Kimi K2.7 and GLM 5.2 and confirm that the bottom status panel updates the
+`Tokens` field after the model completes a turn.
+
+**Previous Release — v1.2.532** (Mixed Reasoning Translation Release)
 
 This release fixes mixed-language reasoning localization for OpenCode-backed
 models. Reasoning chunks that contain English analysis plus Russian quoted

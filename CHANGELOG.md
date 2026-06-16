@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.533] - 2026-06-16
+### Fixed
+- **OpenCode-backed sessions now report context-window token usage to the status panel.** GLM 5.2/OpenCode and Kimi K2.7/OpenCode emit the existing `token_usage` event shape after OpenCode returns assistant token counts, so the UI no longer stays at `0 (100%)` after a completed turn.
+- **OpenCode token usage is monotonic within a turn.** If OpenCode emits multiple token snapshots, CodeAI Hub keeps the highest used-token count instead of letting the status panel jump backward.
+
+### Verification
+- `npx ultracite check packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-turn-stream.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.test.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-output-normalizer.ts`
+- `npm run build --workspace=@codeai-hub/glm-opencode-module`
+- `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js`
+
 ## [1.2.532] - 2026-06-16
 ### Fixed
 - **Mixed-language OpenCode reasoning chunks now still go through the reasoning translator.** Core no longer skips thinking/syncing messages just because a fragment contains Cyrillic text quoted from the user's questionnaire.

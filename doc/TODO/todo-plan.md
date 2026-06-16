@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "73189c74f",
+  "lastRecordedCommit": "a6bb66c6b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9o.task1",
-  "expectedCommitMessage": "fix: report opencode token usage",
+  "currentTaskId": "phase1.stream9p.task1",
+  "expectedCommitMessage": "docs: prepare opencode token usage release",
   "debt": {
-    "expectedCommitMessage": "fix: report opencode token usage",
-    "preCommitHead": "73189c74f",
+    "expectedCommitMessage": "docs: prepare opencode token usage release",
+    "preCommitHead": "a6bb66c6b",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9o.task1"
+    "taskId": "phase1.stream9p.task1"
   }
 }
 ```
@@ -232,10 +232,17 @@
     - Result 2026-06-16: `npx ultracite check packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-turn-stream.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.test.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-output-normalizer.ts` passed.
     - Result 2026-06-16: `npm run build --workspace=@codeai-hub/glm-opencode-module` passed.
     - Result 2026-06-16: `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` passed (16/16).
-72. [PENDING] `phase1.stream9o.commit1` Git Commit: `fix: report opencode token usage` (hash: TBD)
+72. [DONE] `phase1.stream9o.commit1` Git Commit: `fix: report opencode token usage` (hash: a6bb66c6b)
+
+### Stream: OpenCode Token Usage Release Build
+
+73. [DONE] `phase1.stream9p.task1` Prepare release notes for the confirmed OpenCode token-usage release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode token usage release`)
+74. [PENDING] `phase1.stream9p.commit1` Git Commit: `docs: prepare opencode token usage release` (hash: TBD)
+75. [TODO] `phase1.stream9p.task2` Build the confirmed OpenCode token-usage release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode token usage release`)
+76. [TODO] `phase1.stream9p.commit2` Git Commit: `chore: build opencode token usage release` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-73. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-74. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-75. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+77. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+78. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+79. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
