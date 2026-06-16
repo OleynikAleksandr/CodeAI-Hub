@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "abc8680d6",
+  "lastRecordedCommit": "39f568f76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9m.task2",
-  "expectedCommitMessage": "docs: prepare mixed reasoning translation release",
+  "currentTaskId": "phase1.stream9m.task3",
+  "expectedCommitMessage": "chore: build mixed reasoning translation release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare mixed reasoning translation release",
-    "preCommitHead": "abc8680d6",
+    "expectedCommitMessage": "chore: build mixed reasoning translation release",
+    "preCommitHead": "39f568f76",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9m.task2"
+    "taskId": "phase1.stream9m.task3"
   }
 }
 ```
@@ -213,9 +213,13 @@
     - Result 2026-06-16: `npm run build --workspace=@codeai-hub/core` passed after the OpenCode module dist had been rebuilt.
     - Result 2026-06-16: `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.mixed-reasoning.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/session-translation/session-translation-dispatcher.test.js` passed.
     - Result 2026-06-16: `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` passed.
-66. [PENDING] `phase1.stream9m.commit2` Git Commit: `docs: prepare mixed reasoning translation release` (hash: TBD)
-67. [TODO] `phase1.stream9m.task3` Build the confirmed mixed reasoning translation release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build mixed reasoning translation release`)
-68. [TODO] `phase1.stream9m.commit3` Git Commit: `chore: build mixed reasoning translation release` (hash: TBD)
+66. [DONE] `phase1.stream9m.commit2` Git Commit: `docs: prepare mixed reasoning translation release` (hash: 39f568f76)
+67. [DONE] `phase1.stream9m.task3` Build the confirmed mixed reasoning translation release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build mixed reasoning translation release`)
+    - Result 2026-06-16: `./scripts/build-all.sh --allow-dirty` passed and prepared unified version `1.2.532`.
+    - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.532.tar.bz2`, `codex-module-1.2.532.tar.bz2`, `gemini-module-1.2.532.tar.bz2`, `glm-opencode-module-1.2.532.tar.bz2`, `kimi-module-1.2.532.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.532.tar.bz2`, `vscode-webview-1.2.532.tar.bz2`, `project-manager-1.2.532.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.532.tar.bz2`.
+    - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
+    - VSIX created at repository root: `codeai-hub-1.2.532.vsix` (`5.4M`).
+68. [PENDING] `phase1.stream9m.commit3` Git Commit: `chore: build mixed reasoning translation release` (hash: TBD)
 
 ### Stream: Scope Closeout
 
