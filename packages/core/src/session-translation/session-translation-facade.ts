@@ -3,13 +3,13 @@ import type {
   TranslationReporter,
 } from "@codeai-hub/translation";
 import type { Logger } from "../telemetry/logger";
-import { resolveTranslationRuntimeMetadata } from "../translation/claude-haiku-translation-engine";
 import { createCoreTranslationFacade } from "../translation/core-translation-facade-factory";
 import { computeSessionMessageSourceHash } from "./session-message-source-hash";
 import {
   type SessionTranslationDispatchCandidate,
   SessionTranslationDispatcher,
 } from "./session-translation-dispatcher";
+import { runSessionTranslationJob } from "./session-translation-job-runner";
 import {
   type SessionTranslationPolicyCategory,
   SessionTranslationPolicyResolver,
@@ -19,23 +19,8 @@ const TRANSLATION_PREVIEW_LENGTH = 160;
 const TRANSLATION_TIMEOUT_BASE_MS = 15_000;
 const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
 const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
-
-const APPLE_NATIVE_READINESS_ACTION_BY_ERROR_CODE: Readonly<
-  Record<string, string>
-> = {
-  apple_native_helper_failed: "recheck_apple_translation_setup",
-  apple_native_helper_unavailable: "build_or_install_apple_translation_helper",
-  apple_native_language_pack_missing: "download_translation_languages",
-  apple_native_language_pair_unsupported: "choose_supported_language_pair",
-  apple_native_request_failed: "recheck_apple_translation_setup",
-  apple_native_request_timeout: "recheck_apple_translation_setup",
-  apple_native_requires_macos: "update_macos",
-  apple_native_requires_macos_26: "update_macos_26",
-  apple_native_requires_xcode: "install_xcode_26",
-  supported_not_installed: "download_translation_languages",
-  unsupported: "choose_supported_language_pair",
-  xcode_not_ready: "install_xcode_26",
-};
+const CYRILLIC_CHARACTER_PATTERN = /[\u0400-\u052f]/u;
+const RUSSIAN_LANGUAGE_CODES = new Set(["ru", "ru-ru"]);
 
 export type SessionTranslationFacadeFactory = (options: {
   readonly reporter?: TranslationReporter;
@@ -100,26 +85,12 @@ const resolveTranslationTimeoutMs = (content: string): number =>
       content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
   );
 
-const resolveAppleNativeReadinessAction = (
-  errorCode: string | undefined
-): string | null =>
-  errorCode
-    ? (APPLE_NATIVE_READINESS_ACTION_BY_ERROR_CODE[errorCode] ?? null)
-    : null;
-
-const buildRuntimeMetadataLogFields = (
-  prefix: "requested" | "resolved",
-  engineId: string
-): Record<string, unknown> => {
-  const metadata = resolveTranslationRuntimeMetadata(engineId);
-  return {
-    [`${prefix}EngineModelId`]: metadata.modelId,
-    [`${prefix}EnginePersistSession`]: metadata.persistSession,
-    [`${prefix}EngineProjectSlug`]: metadata.projectSlug,
-    [`${prefix}EngineProviderId`]: metadata.providerId,
-    [`${prefix}EngineRuntimePath`]: metadata.runtimePath,
-  };
-};
+const shouldSkipTranslationForTargetLanguage = (
+  text: string,
+  targetLanguage: string
+): boolean =>
+  RUSSIAN_LANGUAGE_CODES.has(targetLanguage) &&
+  CYRILLIC_CHARACTER_PATTERN.test(text);
 
 const defaultTranslationFacadeFactory: SessionTranslationFacadeFactory = (
   options
@@ -160,7 +131,10 @@ export class SessionTranslationFacade {
   }
 
   private createTranslationReporter(
-    candidate: SessionMessageTranslationCandidate,
+    candidate: Pick<
+      SessionMessageTranslationCandidate,
+      "messageId" | "role" | "sessionId" | "tag"
+    >,
     sourceHash: string
   ): TranslationReporter {
     const baseMetadata = {
@@ -228,116 +202,57 @@ export class SessionTranslationFacade {
     });
   }
 
-  private async runTranslationJob(options: {
+  private logAlreadyLocalizedSkip(options: {
     readonly candidate: SessionMessageTranslationCandidate;
-    readonly policy: ReturnType<SessionTranslationPolicyResolver["resolve"]> & {
-      readonly enabled: true;
-      readonly targetLanguage: string;
-    };
-    readonly queuedAt: number;
-    readonly sourceHash: string;
-    readonly timeoutMs: number;
-  }): Promise<string | null> {
-    this.logger.info("Session translation dispatch started", {
+    readonly dispatcherAccepted: boolean;
+    readonly engineId: string;
+    readonly targetLanguage: string;
+  }): void {
+    this.logger.info("Session translation skipped before dispatch", {
       sessionId: options.candidate.sessionId,
       messageId: options.candidate.messageId,
       role: options.candidate.role,
       tag: options.candidate.tag,
-      sourceHash: options.sourceHash,
       contentLength: options.candidate.content.length,
       preview: buildLogPreview(options.candidate.content),
-      engineId: options.policy.engineId,
-      policyCategory: options.policy.category,
-      targetLanguage: options.policy.targetLanguage,
-      timeoutMs: options.timeoutMs,
-      queueWaitMs: Date.now() - options.queuedAt,
-      ...buildRuntimeMetadataLogFields("requested", options.policy.engineId),
-      ...this.dispatcher.snapshot(),
+      policyEnabled: true,
+      dispatcherAccepted: options.dispatcherAccepted,
+      engineId: options.engineId,
+      targetLanguage: options.targetLanguage,
+      skipReason: "already_localized_for_target_language",
     });
+  }
 
-    const translation = this.translationFacadeFactory({
-      reporter: this.createTranslationReporter(
-        options.candidate,
-        options.sourceHash
-      ),
-    });
-    const result = await translation.translate({
-      category: options.policy.category,
-      engineId: options.policy.engineId,
-      sourceLanguage: options.policy.sourceLanguage,
-      targetLanguage: options.policy.targetLanguage,
-      text: options.candidate.content,
-      timeoutMs: options.timeoutMs,
-    });
-    if (result.status !== "translated") {
-      this.logger.warn("Session translation returned non-translated result", {
-        sessionId: options.candidate.sessionId,
-        messageId: options.candidate.messageId,
-        role: options.candidate.role,
-        tag: options.candidate.tag,
-        sourceHash: options.sourceHash,
-        contentLength: options.candidate.content.length,
-        preview: buildLogPreview(options.candidate.content),
-        requestedEngineId: options.policy.engineId,
-        policyCategory: options.policy.category,
-        resolvedEngineId: result.engine,
-        targetLanguage: options.policy.targetLanguage,
-        timeoutMs: options.timeoutMs,
-        status: result.status,
-        errorCode: result.errorCode,
-        readinessAction: resolveAppleNativeReadinessAction(result.errorCode),
-        ...buildRuntimeMetadataLogFields("requested", options.policy.engineId),
-        ...buildRuntimeMetadataLogFields("resolved", result.engine),
-      });
-      return null;
+  private shouldSkipThinkingVisibility(options: {
+    readonly candidate: SessionMessageTranslationCandidate;
+    readonly dispatcherAccepted: boolean;
+    readonly settingsPath: string;
+    readonly thinkingCandidate: boolean;
+  }): boolean {
+    if (
+      !(
+        options.thinkingCandidate &&
+        options.candidate.providerId &&
+        !this.policyResolver.resolveThinkingVisibility(
+          options.settingsPath,
+          options.candidate.providerId
+        )
+      )
+    ) {
+      return false;
     }
-
-    const translatedContent = result.finalText.trim();
-    if (translatedContent.length === 0) {
-      this.logger.warn(
-        "Session translation produced empty translated content",
-        {
-          sessionId: options.candidate.sessionId,
-          messageId: options.candidate.messageId,
-          role: options.candidate.role,
-          tag: options.candidate.tag,
-          sourceHash: options.sourceHash,
-          contentLength: options.candidate.content.length,
-          preview: buildLogPreview(options.candidate.content),
-          requestedEngineId: options.policy.engineId,
-          policyCategory: options.policy.category,
-          resolvedEngineId: result.engine,
-          targetLanguage: options.policy.targetLanguage,
-          ...buildRuntimeMetadataLogFields(
-            "requested",
-            options.policy.engineId
-          ),
-          ...buildRuntimeMetadataLogFields("resolved", result.engine),
-        }
-      );
-      return null;
-    }
-
-    this.logger.info("Session translation completed", {
+    this.logger.info("Session translation skipped before dispatch", {
       sessionId: options.candidate.sessionId,
       messageId: options.candidate.messageId,
       role: options.candidate.role,
       tag: options.candidate.tag,
-      sourceHash: options.sourceHash,
-      sourceLength: options.candidate.content.length,
-      translatedLength: translatedContent.length,
+      contentLength: options.candidate.content.length,
       preview: buildLogPreview(options.candidate.content),
-      requestedEngineId: options.policy.engineId,
-      policyCategory: options.policy.category,
-      resolvedEngineId: result.engine,
-      targetLanguage: options.policy.targetLanguage,
-      timeoutMs: options.timeoutMs,
-      queueWaitMs: Date.now() - options.queuedAt,
-      ...buildRuntimeMetadataLogFields("requested", options.policy.engineId),
-      ...buildRuntimeMetadataLogFields("resolved", result.engine),
+      dispatcherAccepted: options.dispatcherAccepted,
+      providerId: options.candidate.providerId,
+      skipReason: "thinking_visibility_disabled",
     });
-
-    return translatedContent;
+    return true;
   }
 
   async translateDialogMessage(
@@ -351,24 +266,13 @@ export class SessionTranslationFacade {
     const dispatcherAccepted =
       this.dispatcher.shouldTranslateDialogMessage(candidate);
     if (
-      thinkingCandidate &&
-      candidate.providerId &&
-      !this.policyResolver.resolveThinkingVisibility(
-        settingsPath,
-        candidate.providerId
-      )
-    ) {
-      this.logger.info("Session translation skipped before dispatch", {
-        sessionId: candidate.sessionId,
-        messageId: candidate.messageId,
-        role: candidate.role,
-        tag: candidate.tag,
-        contentLength: candidate.content.length,
-        preview: buildLogPreview(candidate.content),
+      this.shouldSkipThinkingVisibility({
+        candidate,
         dispatcherAccepted,
-        providerId: candidate.providerId,
-        skipReason: "thinking_visibility_disabled",
-      });
+        settingsPath,
+        thinkingCandidate,
+      })
+    ) {
       return null;
     }
     if (!dispatcherAccepted) {
@@ -415,6 +319,18 @@ export class SessionTranslationFacade {
     }
     const targetLanguage = policy.targetLanguage;
 
+    if (
+      shouldSkipTranslationForTargetLanguage(candidate.content, targetLanguage)
+    ) {
+      this.logAlreadyLocalizedSkip({
+        candidate,
+        dispatcherAccepted,
+        engineId: policy.engineId,
+        targetLanguage,
+      });
+      return null;
+    }
+
     if (dedupeKey) {
       const inFlightTranslation = this.inFlightTranslations.get(dedupeKey);
       if (inFlightTranslation) {
@@ -457,17 +373,28 @@ export class SessionTranslationFacade {
       timeoutMs,
     });
 
+    const preview = buildLogPreview(candidate.content);
     const translationPromise = this.dispatcher.dispatch(() =>
-      this.runTranslationJob({
+      runSessionTranslationJob({
         candidate,
+        createTranslationReporter: (jobCandidate, jobSourceHash) =>
+          this.createTranslationReporter(
+            jobCandidate as SessionMessageTranslationCandidate,
+            jobSourceHash
+          ),
+        dispatcherSnapshot: this.dispatcher.snapshot(),
+        logger: this.logger,
         policy: {
-          ...policy,
-          enabled: true,
+          category: policy.category,
+          engineId: policy.engineId,
+          sourceLanguage: policy.sourceLanguage,
           targetLanguage,
         },
+        preview,
         queuedAt,
         sourceHash,
         timeoutMs,
+        translationFacadeFactory: this.translationFacadeFactory,
       })
     );
 
