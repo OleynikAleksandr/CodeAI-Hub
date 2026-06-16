@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.524** (Development Order Plan Stop Unlock Fix)
+**Current Release — v1.2.525** (Stale Thinking Stop Unlock Fix)
+
+This bugfix release fixes a Project Manager input lock that could survive Stop
+when the last visible provider bubble was `Thinking`. Session UI now treats
+stale thinking text as an active turn only while the provider binding is still
+ready, so stopped/rebound sessions unlock across all workflow steps.
+
+Retest focus: in FinderWidget-Test01, start any workflow step with a visible
+thinking bubble, press Stop, and confirm the input field unlocks so the user can
+write a manual message.
+
+**Previous Release — v1.2.524** (Development Order Plan Stop Unlock Fix)
 
 This bugfix release fixes two Product Part managed workflow deadlocks found in
 FinderWidget-Test01. Filled `<!-- agent-fill -->` order-plan sections are no

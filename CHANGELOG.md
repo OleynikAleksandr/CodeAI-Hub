@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.525] - 2026-06-16
+### Fixed
+- **Stop unlocks stale thinking sessions across workflow steps.** Project Manager now keeps `idle + Thinking` locked only while the provider binding is still ready, so stopped sessions with stale visible thinking text no longer leave the input disabled.
+
+### Verification
+- `npx tsx --test src/client/ui/src/session/session-view.test.tsx src/client/ui/src/session/input-panel.test.tsx`
+- `npm run typecheck:webview`
+
 ## [1.2.524] - 2026-06-15
 ### Fixed
 - **Development Order Plan repair no longer loops on filled `agent-fill` blocks.** Core now treats only real `CODEAI_AGENT_FILL_SENTINEL` residue as incomplete draft content, so completed order-plan markdown can pass validation.
