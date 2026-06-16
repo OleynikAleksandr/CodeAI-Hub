@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "8e0aa2fc9",
+  "lastRecordedCommit": "81b88909f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream21.task1",
-  "expectedCommitMessage": "chore: build release 1.2.526",
+  "currentTaskId": "phase1.stream22.task1",
+  "expectedCommitMessage": "docs: record visible dialog translation acceptance",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.526",
-    "preCommitHead": "8e0aa2fc9",
+    "expectedCommitMessage": "docs: record visible dialog translation acceptance",
+    "preCommitHead": "81b88909f",
     "stage": "commit_pending",
-    "taskId": "phase1.stream21.task1"
+    "taskId": "phase1.stream22.task1"
   }
 }
 ```
@@ -169,12 +169,12 @@
     - Evidence 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.526`, including architecture, type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication advisory check, production dependency pruning, VSIX package creation and VSIX runtime package surface verification.
     - VSIX: `codeai-hub-1.2.526.vsix`, sha256 `b589cddc9e22de0ef6ea2e023f9e53def612217730f5b69825852db0321a61b7`.
     - Tarballs in `doc/tmp/releases/`: `claude-module-1.2.526.tar.bz2`, `codex-module-1.2.526.tar.bz2`, `gemini-module-1.2.526.tar.bz2`, `glm-claude-code-module-1.2.526.tar.bz2`, `kimi-module-1.2.526.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.526.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.526.tar.bz2`, `vscode-webview-1.2.526.tar.bz2`, `project-manager-1.2.526.tar.bz2`.
-44. [PENDING] `phase1.stream21.commit1` Git Commit: `chore: build release 1.2.526` (hash: TBD)
+44. [DONE] `phase1.stream21.commit1` Git Commit: `chore: build release 1.2.526` (hash: 81b88909f)
 
 ### Stream: User Workflow Acceptance Testing
 
-45. [TODO] `phase1.stream22.task1` Report visible dialog translation release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation acceptance`)
-46. [TODO] `phase1.stream22.commit1` Git Commit: `docs: record visible dialog translation acceptance` (hash: TBD)
+45. [DONE] `phase1.stream22.task1` Report visible dialog translation release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation acceptance`)
+46. [PENDING] `phase1.stream22.commit1` Git Commit: `docs: record visible dialog translation acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
