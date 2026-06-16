@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "3ec494bc4",
+  "lastRecordedCommit": "b49e21e8d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan glm opencode provider",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "feat: add glm opencode provider module",
   "debt": {
-    "expectedCommitMessage": "docs: plan glm opencode provider",
-    "preCommitHead": "3ec494bc4",
+    "expectedCommitMessage": "feat: add glm opencode provider module",
+    "preCommitHead": "b49e21e8d",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -50,12 +50,12 @@
 ### Stream: Planning Intake
 
 1. [DONE] `phase1.stream1.task1` Create the GLM-OpenCode planning source and link it from the docs index. (scope: `doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan glm opencode provider`)
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan glm opencode provider` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan glm opencode provider` (hash: b49e21e8d)
 
 ### Stream: Provider Runtime
 
-3. [TODO] `phase1.stream2.task1` Add the dedicated GLM-OpenCode provider package with runtime profile, OpenCode process runner, adapter facade and focused runtime tests. (scope: `packages/GLM_OpenCode_Module/**, package.json, package-lock.json`; expected commit: `feat: add glm opencode provider module`)
-4. [TODO] `phase1.stream2.commit1` Git Commit: `feat: add glm opencode provider module` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Add the dedicated GLM-OpenCode provider package with runtime profile, OpenCode process runner, adapter facade and focused runtime tests. (scope: `packages/GLM_OpenCode_Module/**, package.json, package-lock.json`; expected commit: `feat: add glm opencode provider module`)
+4. [PENDING] `phase1.stream2.commit1` Git Commit: `feat: add glm opencode provider module` (hash: TBD)
 
 ### Stream: Core Registry
 
