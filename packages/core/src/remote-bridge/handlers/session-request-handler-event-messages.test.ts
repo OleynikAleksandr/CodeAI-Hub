@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { SessionManager } from "../../session-manager";
-import { computeSessionMessageSourceHash } from "../../session-translation/session-message-source-hash";
 import { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 
 const noop = (): void => {
@@ -14,16 +13,6 @@ const flushAsync = (): Promise<void> =>
   new Promise((resolve) => {
     setImmediate(resolve);
   });
-
-const waitFor = async (predicate: () => boolean): Promise<void> => {
-  for (let attempt = 0; attempt < 10; attempt += 1) {
-    if (predicate()) {
-      return;
-    }
-    await flushAsync();
-  }
-  assert.equal(predicate(), true);
-};
 
 const assertThinkingTranslationRouting = async (params: {
   readonly expectedProviderId: string;
@@ -75,6 +64,10 @@ const assertThinkingTranslationRouting = async (params: {
     } as never,
     sessionTranslation: {
       resolveThinkingVisibilityForProvider: captureVisibilityArgs,
+      shouldTranslateDialogMessage: (candidate: {
+        readonly role: string;
+        readonly tag?: string;
+      }) => candidate.role === "thinking" || candidate.tag === "thinking",
       translateDialogMessage: captureTranslationCandidate,
     } as never,
   });
@@ -129,6 +122,7 @@ test("SessionRequestHandlerEventMessages normalizes assistant content before per
     } as never,
     sessionTranslation: {
       resolveThinkingVisibilityForProvider: () => true,
+      shouldTranslateDialogMessage: () => false,
       translateDialogMessage: async () => null,
     } as never,
   });
@@ -197,6 +191,10 @@ test("SessionRequestHandlerEventMessages preserves append order during async per
     } as never,
     sessionTranslation: {
       resolveThinkingVisibilityForProvider: () => true,
+      shouldTranslateDialogMessage: (candidate: {
+        readonly role: string;
+        readonly tag?: string;
+      }) => candidate.role === "thinking" || candidate.tag === "thinking",
       translateDialogMessage: async () => null,
     } as never,
   });
@@ -230,116 +228,14 @@ test("SessionRequestHandlerEventMessages preserves append order during async per
   ]);
 });
 
-test("SessionRequestHandlerEventMessages translates Core system messages through overlay without changing source content", async () => {
+test("SessionRequestHandlerEventMessages does not translate Core system messages", async () => {
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
     "codex",
     "/tmp/core-message-localization",
     "provider-session-id"
   );
-  const storedMessages: Array<{
-    readonly content: string;
-    readonly id: string;
-  }> = [];
-  const storedTranslations: Array<{
-    readonly messageId: string;
-    readonly sourceHash: string;
-    readonly translatedContent: string;
-  }> = [];
-  const broadcasts: unknown[] = [];
-  const handler = new SessionRequestHandlerEventMessages({
-    broadcaster: (event) => {
-      broadcasts.push(event);
-    },
-    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
-    logger: {
-      error: noop,
-      info: noop,
-      warn: noop,
-    } as never,
-    sessionManager,
-    sessionStorage: {
-      appendMessage: (
-        _sessionId: string,
-        message: { readonly content: string; readonly id: string }
-      ) => {
-        storedMessages.push(message);
-        return Promise.resolve();
-      },
-      appendMessageTranslation: (
-        _sessionId: string,
-        translation: {
-          readonly messageId: string;
-          readonly sourceHash: string;
-          readonly translatedContent: string;
-        }
-      ) => {
-        storedTranslations.push(translation);
-        return Promise.resolve();
-      },
-    } as never,
-    sessionTranslation: {
-      resolveThinkingVisibilityForProvider: () => true,
-      translateDialogMessage: (candidate: {
-        readonly content: string;
-        readonly messageId: string;
-        readonly role: string;
-        readonly sessionId: string;
-      }) => {
-        assert.equal(candidate.role, "system");
-        return Promise.resolve({
-          messageId: candidate.messageId,
-          sessionId: candidate.sessionId,
-          sourceHash: computeSessionMessageSourceHash(candidate.content),
-          targetLanguage: "ru",
-          translatedContent: "Ядро приняло текущий артефакт.",
-        });
-      },
-    } as never,
-  });
-
-  handler.appendCoreMessage(session.id, {
-    content: "Core accepted the current artifact.",
-    tag: "managed-workflow-continuation",
-  });
-
-  await waitFor(() => storedTranslations.length === 1);
-
-  assert.equal(
-    session.messages[0]?.content,
-    "Core accepted the current artifact."
-  );
-  assert.equal(
-    storedMessages[0]?.content,
-    "Core accepted the current artifact."
-  );
-  assert.equal(storedTranslations[0]?.messageId, storedMessages[0]?.id);
-  assert.equal(
-    storedTranslations[0]?.translatedContent,
-    "Ядро приняло текущий артефакт."
-  );
-  assert.equal(
-    broadcasts.some(
-      (event) =>
-        (event as { type?: string }).type === "dialog:message_translation"
-    ),
-    true
-  );
-});
-
-test("SessionRequestHandlerEventMessages waits for latest Core system translation", async () => {
-  const sessionManager = new SessionManager();
-  const session = sessionManager.createSession(
-    "codex",
-    "/tmp/core-message-localization-tail",
-    "provider-session-id"
-  );
-  const storedTranslations: string[] = [];
-  let releaseTranslation: (() => void) | undefined;
-  let resolveTranslationStarted: (() => void) | undefined;
-  const translationStarted = new Promise<void>((resolve) => {
-    resolveTranslationStarted = resolve;
-  });
+  let translateCalls = 0;
   const handler = new SessionRequestHandlerEventMessages({
     broadcaster: noop,
     continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
@@ -351,47 +247,33 @@ test("SessionRequestHandlerEventMessages waits for latest Core system translatio
     sessionManager,
     sessionStorage: {
       appendMessage: () => Promise.resolve(),
-      appendMessageTranslation: (
-        _sessionId: string,
-        translation: { readonly translatedContent: string }
-      ) => {
-        storedTranslations.push(translation.translatedContent);
-        return Promise.resolve();
-      },
+      appendMessageTranslation: () => Promise.resolve(),
     } as never,
     sessionTranslation: {
       resolveThinkingVisibilityForProvider: () => true,
-      translateDialogMessage: async () => {
-        resolveTranslationStarted?.();
-        await new Promise<void>((resolve) => {
-          releaseTranslation = resolve;
-        });
-        return {
-          messageId: session.messages[0]?.id ?? "message-1",
-          sessionId: session.id,
-          sourceHash: "hash",
-          targetLanguage: "ru",
-          translatedContent: "Последнее системное сообщение.",
-        };
+      shouldTranslateDialogMessage: () => false,
+      translateDialogMessage: () => {
+        translateCalls += 1;
+        return Promise.resolve(null);
       },
     } as never,
   });
 
   handler.appendCoreMessage(session.id, {
-    content: "Latest system message.",
+    content: "Core accepted the current artifact.",
+    tag: "managed-workflow-continuation",
   });
 
-  const waitForPersistence = handler.waitForMessagePersistence(session.id);
+  await handler.waitForMessagePersistence(session.id);
 
-  await translationStarted;
-  await flushAsync();
-  assert.deepEqual(storedTranslations, []);
-  releaseTranslation?.();
-  await waitForPersistence;
-  assert.deepEqual(storedTranslations, ["Последнее системное сообщение."]);
+  assert.equal(
+    session.messages[0]?.content,
+    "Core accepted the current artifact."
+  );
+  assert.equal(translateCalls, 0);
 });
 
-test("SessionRequestHandlerEventMessages translates workflow validation blockers", async () => {
+test("SessionRequestHandlerEventMessages does not queue translation for workflow validation blockers", async () => {
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
     "codex",
@@ -414,24 +296,10 @@ test("SessionRequestHandlerEventMessages translates workflow validation blockers
     } as never,
     sessionTranslation: {
       resolveThinkingVisibilityForProvider: () => true,
-      translateDialogMessage: (candidate: {
-        readonly content: string;
-        readonly messageId: string;
-        readonly role: string;
-        readonly sessionId: string;
-        readonly tag?: string;
-      }) => {
+      shouldTranslateDialogMessage: () => false,
+      translateDialogMessage: (candidate: { readonly tag?: string }) => {
         translatedTags.push(candidate.tag);
-        assert.equal(candidate.role, "system");
-        assert.equal(candidate.tag, "managed-workflow-validation");
-        assert.match(candidate.content, WORKFLOW_BLOCKER_RE);
-        return Promise.resolve({
-          messageId: candidate.messageId,
-          sessionId: candidate.sessionId,
-          sourceHash: computeSessionMessageSourceHash(candidate.content),
-          targetLanguage: "ru",
-          translatedContent: "Шаг заблокирован: Git должен быть чистым.",
-        });
+        return Promise.resolve(null);
       },
     } as never,
   });
@@ -444,7 +312,8 @@ test("SessionRequestHandlerEventMessages translates workflow validation blockers
 
   await handler.waitForMessagePersistence(session.id);
 
-  assert.deepEqual(translatedTags, ["managed-workflow-validation"]);
+  assert.deepEqual(translatedTags, []);
+  assert.match(session.messages[0]?.content ?? "", WORKFLOW_BLOCKER_RE);
 });
 
 test("SessionRequestHandlerEventMessages passes workflow settings path for Kimi thinking translation", async () => {

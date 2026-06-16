@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "68f874c03",
+  "lastRecordedCommit": "56b0d2a76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9i.task2",
-  "expectedCommitMessage": "chore: build opencode localization fix release",
+  "currentTaskId": "phase1.stream9j.task1",
+  "expectedCommitMessage": "fix: restrict session translation to thinking",
   "debt": {
-    "expectedCommitMessage": "chore: build opencode localization fix release",
-    "preCommitHead": "68f874c03",
+    "expectedCommitMessage": "fix: restrict session translation to thinking",
+    "preCommitHead": "56b0d2a76",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9i.task2"
+    "taskId": "phase1.stream9j.task1"
   }
 }
 ```
@@ -169,10 +169,17 @@
 47. [DONE] `phase1.stream9i.task1` Prepare release notes for the confirmed OpenCode localization-guard fix release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode localization fix release notes`)
 48. [DONE] `phase1.stream9i.commit1` Git Commit: `docs: prepare opencode localization fix release notes` (hash: 68f874c03)
 49. [DONE] `phase1.stream9i.task2` Build the confirmed OpenCode localization-guard release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode localization fix release`)
-50. [PENDING] `phase1.stream9i.commit2` Git Commit: `chore: build opencode localization fix release` (hash: TBD)
+50. [DONE] `phase1.stream9i.commit2` Git Commit: `chore: build opencode localization fix release` (hash: 56b0d2a76)
+
+### Stream: Thinking-Only Session Translation
+
+51. [DONE] `phase1.stream9j.task1` Restrict session overlay translation to thinking/syncing messages only so ordinary provider replies stay on the prompt-selected language without post-hoc localization. (scope: `packages/core/src/session-translation/**, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restrict session translation to thinking`)
+52. [PENDING] `phase1.stream9j.commit1` Git Commit: `fix: restrict session translation to thinking` (hash: TBD)
+53. [TODO] `phase1.stream9j.task2` Record targeted verification that OpenCode/Kimi assistant replies no longer receive overlays while thinking translation still works. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record thinking-only translation verification`)
+54. [TODO] `phase1.stream9j.commit2` Git Commit: `docs: record thinking-only translation verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-51. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-52. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-53. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+55. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+56. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+57. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

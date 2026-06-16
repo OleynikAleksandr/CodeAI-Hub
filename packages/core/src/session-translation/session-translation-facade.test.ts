@@ -256,27 +256,26 @@ test("SessionTranslationFacade gives short reasoning translations at least 15 se
   }
 });
 
-test("SessionTranslationFacade uses Reasoning policy for Core system messages", async () => {
+test("SessionTranslationFacade skips Core system messages", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
     const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
-    let recordedRequest: TranslationRequest | undefined;
-    const translatedText = "Ядро приняло артефакт.";
+    let translateCalls = 0;
     const facade = new SessionTranslationFacade({
       logger: createSilentLogger(),
       settingsPath,
       translationFacadeFactory: () =>
         ({
-          translate: (request: TranslationRequest) => {
-            recordedRequest = request;
+          translate: () => {
+            translateCalls += 1;
             return Promise.resolve({
               engine: "anthropic-claude-haiku-4-5",
-              finalText: translatedText,
-              originalText: request.text,
+              finalText: "Не должно вызываться",
+              originalText: "Core accepted the artifact.",
               sourceLanguage: "en",
               status: "translated",
               targetLanguage: "ru",
-              translatedText,
+              translatedText: "Не должно вызываться",
             });
           },
         }) as unknown as TranslationFacade,
@@ -290,33 +289,29 @@ test("SessionTranslationFacade uses Reasoning policy for Core system messages", 
       tag: "managed-workflow-continuation",
     });
 
-    assert.equal(outcome?.translatedContent, translatedText);
-    assert.equal(outcome?.targetLanguage, "ru");
-    assert.ok(recordedRequest);
-    assert.equal(recordedRequest.category, "reasoning");
-    assert.equal(recordedRequest.targetLanguage, "ru");
+    assert.equal(outcome, null);
+    assert.equal(translateCalls, 0);
   } finally {
     await rm(homeDirectory, { recursive: true, force: true });
   }
 });
 
-test("SessionTranslationFacade uses Reasoning engine for visible assistant dialog", async () => {
+test("SessionTranslationFacade skips visible assistant dialog", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
     const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
-    const reasoningEngineId = loadReasoningTranslationEngineId(settingsPath);
-    let recordedRequest: TranslationRequest | undefined;
+    let translateCalls = 0;
     const facade = new SessionTranslationFacade({
       logger: createSilentLogger(),
       settingsPath,
       translationFacadeFactory: () =>
         ({
-          translate: (request: TranslationRequest) => {
-            recordedRequest = request;
+          translate: () => {
+            translateCalls += 1;
             return Promise.resolve({
-              engine: request.engineId,
+              engine: "anthropic-claude-haiku-4-5",
               finalText: "Проверю заметки.",
-              originalText: request.text,
+              originalText: "I need to check the referenced notes.",
               sourceLanguage: "en",
               status: "translated",
               targetLanguage: "ru",
@@ -334,9 +329,8 @@ test("SessionTranslationFacade uses Reasoning engine for visible assistant dialo
       sessionId: "sess-visible",
     });
 
-    assert.equal(outcome?.translatedContent, "Проверю заметки.");
-    assert.equal(recordedRequest?.category, "reasoning");
-    assert.equal(recordedRequest?.engineId, reasoningEngineId);
+    assert.equal(outcome, null);
+    assert.equal(translateCalls, 0);
   } finally {
     await rm(homeDirectory, { recursive: true, force: true });
   }

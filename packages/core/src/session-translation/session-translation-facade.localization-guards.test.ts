@@ -147,7 +147,7 @@ const createCapturingLogger = (): {
   };
 };
 
-test("SessionTranslationFacade skips duplicate localization when Russian dialog text is already Russian", async () => {
+test("SessionTranslationFacade skips ordinary assistant dialog before any localization check", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
     const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
@@ -174,23 +174,16 @@ test("SessionTranslationFacade skips duplicate localization when Russian dialog 
     });
 
     const outcome = await facade.translateDialogMessage({
-      content: "Готово — файл записан.",
-      messageId: "msg-ru-skip",
+      content:
+        "Я ознакомлюсь с тестовыми заметками, а затем напишу Final_Description.md.",
+      messageId: "msg-assistant-skip",
       providerId: "glmOpenCode",
       role: "assistant",
-      sessionId: "sess-ru-skip",
+      sessionId: "sess-assistant-skip",
     });
 
     assert.equal(outcome, null);
     assert.equal(translateCalls, 0);
-    assert.equal(
-      logger.info.some(
-        (entry) =>
-          entry.message === "Session translation skipped before dispatch" &&
-          entry.context?.skipReason === "already_localized_for_target_language"
-      ),
-      true
-    );
   } finally {
     await rm(homeDirectory, { recursive: true, force: true });
   }

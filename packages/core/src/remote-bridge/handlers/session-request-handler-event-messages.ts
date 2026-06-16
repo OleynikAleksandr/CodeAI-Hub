@@ -337,6 +337,15 @@ export class SessionRequestHandlerEventMessages {
     sessionId: string,
     message: PersistedSessionMessage
   ): Promise<void> {
+    if (
+      !this.deps.sessionTranslation.shouldTranslateDialogMessage({
+        content: message.content,
+        role: message.role,
+        tag: message.tag,
+      })
+    ) {
+      return;
+    }
     if (isThinkingDisplayMessage(message)) {
       this.deps.logger.info(
         "Thinking dialog message entered translation pipeline",
