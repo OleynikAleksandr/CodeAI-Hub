@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.528] - 2026-06-16
+### Changed
+- **Deprecated `GLM-Claude-Code` has been fully removed from the active product surface.** Core registries, Settings tabs, Project Manager provider pickers, packaging scripts, manifests, and active SSOT docs no longer expose the old Claude-compatible GLM provider.
+- **OpenCode is now the canonical GLM/Kimi wrapper runtime.** User-facing config and provider-home paths are documented and surfaced under `~/.codeai-hub/providers/opencode/...`, while runtime compatibility with older `glm-opencode` installs remains in the provider profile only.
+
+### Fixed
+- **Post-removal Core builds resolve workspace provider types again.** Core now keeps an explicit workspace type-resolution path for the built Claude module so provider cleanup does not break `@codeai-hub/core` TypeScript builds.
+- **Release notes and live docs no longer point users to removed GLM-Claude-Code paths.** README, changelog, docs index and module/architecture docs now point users to the active OpenCode surface and current config locations.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.527] - 2026-06-16
 ### Fixed
 - **`glmOpenCode` now behaves as a real OpenCode wrapper instead of a GLM-only skin.** User-facing labels, Settings, Session UI, start cards and Capture Workbench now treat the provider as `OpenCode`, while the verified selectors `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7` are available through the same wrapper surface.

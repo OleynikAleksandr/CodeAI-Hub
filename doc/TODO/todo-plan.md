@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "25b02d160",
+  "lastRecordedCommit": "fe1aaaa9a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9c.task1",
-  "expectedCommitMessage": "refactor: remove glm claude code provider",
+  "currentTaskId": "phase1.stream9d.task1",
+  "expectedCommitMessage": "docs: prepare opencode cleanup release notes",
   "debt": {
-    "expectedCommitMessage": "refactor: remove glm claude code provider",
-    "preCommitHead": "25b02d160",
+    "expectedCommitMessage": "docs: prepare opencode cleanup release notes",
+    "preCommitHead": "fe1aaaa9a",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9c.task1"
+    "taskId": "phase1.stream9d.task1"
   }
 }
 ```
@@ -119,15 +119,22 @@
 ### Stream: Remove Deprecated GLM Provider
 
 29. [DONE] `phase1.stream9c.task1` Remove the deprecated Claude-compatible GLM provider from Core registries, UI/Project Manager surfaces, packaging/runtime artifacts, provider capture paths, release scripts, active SSOT docs, live release notes, and the Core workspace type-resolution contract needed after provider deletion. (scope: `packages/Claude_Module/**, packages/core/src/**, packages/core/tsconfig.json, src/**, assets/providers/**, scripts/**, doc/**, README.md, CHANGELOG.md, media/react-chat.js, package.json, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `refactor: remove glm claude code provider`)
-30. [PENDING] `phase1.stream9c.commit1` Git Commit: `refactor: remove glm claude code provider` (hash: TBD)
+30. [DONE] `phase1.stream9c.commit1` Git Commit: `refactor: remove glm claude code provider` (hash: fe1aaaa9a)
+
+### Stream: Post-Fix Release Rebuild
+
+31. [DONE] `phase1.stream9d.task1` Prepare release notes for the confirmed post-fix OpenCode cleanup release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode cleanup release notes`)
+32. [PENDING] `phase1.stream9d.commit1` Git Commit: `docs: prepare opencode cleanup release notes` (hash: TBD)
+33. [TODO] `phase1.stream9d.task2` Build the confirmed post-fix release with OpenCode cleanup packaged and record release artifacts. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode cleanup release`)
+34. [TODO] `phase1.stream9d.commit2` Git Commit: `chore: build opencode cleanup release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-31. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable, emits translated reasoning when enabled, and switches correctly between GLM/Kimi selectors without exposing the removed deprecated provider. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
-32. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
+35. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable, emits translated reasoning when enabled, and switches correctly between GLM/Kimi selectors without exposing the removed deprecated provider. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
+36. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-33. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-34. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-35. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+37. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+38. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+39. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

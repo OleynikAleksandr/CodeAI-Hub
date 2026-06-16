@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.527** (OpenCode Wrapper Provider)
+**Current Release — v1.2.528** (OpenCode Cleanup Release)
+
+This release finishes the OpenCode migration. The deprecated
+`GLM-Claude-Code` provider has been removed from runtime registries, Settings,
+Project Manager provider pickers, packaging scripts, and active SSOT docs.
+`OpenCode` is now the only GLM/Kimi wrapper surface, with canonical user
+config/runtime paths under `~/.codeai-hub/providers/opencode/...` while the
+runtime still keeps a compatibility fallback for older `glm-opencode` installs.
+
+Retest focus: in FinderWidget-Test01, confirm `GLM-Claude-Code` no longer
+appears anywhere in Settings or workflow provider pickers, then run one
+workflow step through `OpenCode` with GLM and one with Kimi. Both should
+return visible output, reasoning translation should still work when enabled,
+and Stop/manual input unlock behavior should remain correct.
+
+**Previous Release — v1.2.527** (OpenCode Wrapper Provider)
 
 This release repurposes the existing `glmOpenCode` surface into a user-facing
 `OpenCode` wrapper. The wrapper now uses OpenCode-owned auth/runtime, exposes
@@ -15,7 +30,6 @@ Retest focus: in FinderWidget-Test01, select `OpenCode` in Settings or a step
 start card, then run one workflow step with GLM and one with Kimi. Both should
 return a visible answer, and Stop/manual input unlock behavior should remain
 correct.
-
 **Previous Release — v1.2.526** (Visible Dialog Translation Fix)
 
 This bugfix release routes provider-visible assistant progress updates and
