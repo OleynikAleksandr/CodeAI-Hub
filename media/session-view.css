@@ -474,6 +474,18 @@
   color: rgba(173, 178, 186, 0.7);
 }
 
+.session-dialog__content--thinking h1,
+.session-dialog__content--thinking h2,
+.session-dialog__content--thinking h3,
+.session-dialog__content--thinking h4,
+.session-dialog__content--thinking h5,
+.session-dialog__content--thinking h6 {
+  margin: 6px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
 .session-dialog__content--thinking-expanded {
   padding-bottom: 6px;
 }

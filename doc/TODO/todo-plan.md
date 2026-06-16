@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "39f568f76",
+  "lastRecordedCommit": "5190ba5cd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9m.task3",
-  "expectedCommitMessage": "chore: build mixed reasoning translation release",
+  "currentTaskId": "phase1.stream9n.task1",
+  "expectedCommitMessage": "fix: compact thinking markdown headings",
   "debt": {
-    "expectedCommitMessage": "chore: build mixed reasoning translation release",
-    "preCommitHead": "39f568f76",
+    "expectedCommitMessage": "fix: compact thinking markdown headings",
+    "preCommitHead": "5190ba5cd",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9m.task3"
+    "taskId": "phase1.stream9n.task1"
   }
 }
 ```
@@ -219,10 +219,15 @@
     - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.532.tar.bz2`, `codex-module-1.2.532.tar.bz2`, `gemini-module-1.2.532.tar.bz2`, `glm-opencode-module-1.2.532.tar.bz2`, `kimi-module-1.2.532.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.532.tar.bz2`, `vscode-webview-1.2.532.tar.bz2`, `project-manager-1.2.532.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.532.tar.bz2`.
     - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
     - VSIX created at repository root: `codeai-hub-1.2.532.vsix` (`5.4M`).
-68. [PENDING] `phase1.stream9m.commit3` Git Commit: `chore: build mixed reasoning translation release` (hash: TBD)
+68. [DONE] `phase1.stream9m.commit3` Git Commit: `chore: build mixed reasoning translation release` (hash: 5190ba5cd)
+
+### Stream: Thinking Typography Polish
+
+69. [DONE] `phase1.stream9n.task1` Make markdown headings inside Thinking/Reasoning bubbles compact bold section labels instead of large document headings. (scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: compact thinking markdown headings`)
+70. [PENDING] `phase1.stream9n.commit1` Git Commit: `fix: compact thinking markdown headings` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-69. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-70. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-71. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+71. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+72. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+73. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
