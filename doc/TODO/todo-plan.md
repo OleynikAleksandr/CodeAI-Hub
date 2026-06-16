@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "a3d19eb3d",
+  "lastRecordedCommit": "9cebd7de7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream8.task2",
-  "expectedCommitMessage": "chore: build glm opencode release",
+  "currentTaskId": "phase1.stream9a.task1",
+  "expectedCommitMessage": "fix: restore opencode reasoning events",
   "debt": {
-    "expectedCommitMessage": "chore: build glm opencode release",
-    "preCommitHead": "a3d19eb3d",
+    "expectedCommitMessage": "fix: restore opencode reasoning events",
+    "preCommitHead": "9cebd7de7",
     "stage": "commit_pending",
-    "taskId": "phase1.stream8.task2"
+    "taskId": "phase1.stream9a.task1"
   }
 }
 ```
@@ -102,15 +102,32 @@
 21. [DONE] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
 22. [DONE] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: a3d19eb3d)
 23. [DONE] `phase1.stream8.task2` Build the confirmed release with GLM-OpenCode packaged and record release artifacts. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm opencode release`)
-24. [PENDING] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: TBD)
+24. [DONE] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: 9cebd7de7)
 
 ### Stream: User Workflow Acceptance Testing
 
-25. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable and can complete at least one workflow step with GLM or Kimi without locking input. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
-26. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
+### Stream: OpenCode Reasoning Repair
+
+25. [DONE] `phase1.stream9a.task1` Restore OpenCode reasoning flow end-to-end so the wrapper requests thinking output, preserves OpenCode `reasoning` events, and forwards them into the existing Core/UI thinking pipeline. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/session-translation/**, doc/TODO/todo-plan.md`; expected commit: `fix: restore opencode reasoning events`)
+26. [PENDING] `phase1.stream9a.commit1` Git Commit: `fix: restore opencode reasoning events` (hash: TBD)
+
+### Stream: OpenCode Canonical Rename And Defaults
+
+27. [TODO] `phase1.stream9b.task1` Rename the OpenCode provider runtime/config home from `glm-opencode` to canonical `opencode`, migrate user-facing defaults to selector-aware Settings UX, and keep compatibility with existing `glm-opencode` installs and workspace capsules. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/**, src/client/ui/src/components/settings/**, src/client/project-manager/**, assets/providers/glm-opencode/**, scripts/build-*.sh, doc/TODO/todo-plan.md`; expected commit: `refactor: rename glm opencode runtime to opencode`)
+28. [TODO] `phase1.stream9b.commit1` Git Commit: `refactor: rename glm opencode runtime to opencode` (hash: TBD)
+
+### Stream: Remove GLM-Claude-Code
+
+29. [TODO] `phase1.stream9c.task1` Remove the deprecated `glmClaudeCode` provider from Core registries, UI/Project Manager surfaces, packaging/runtime artifacts, provider capture paths, release scripts, and active SSOT docs. (scope: `packages/Claude_Module/**, packages/core/src/**, src/**, assets/providers/glm-claude-code/**, scripts/**, doc/**, package.json, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `refactor: remove glm claude code provider`)
+30. [TODO] `phase1.stream9c.commit1` Git Commit: `refactor: remove glm claude code provider` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+31. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable, emits translated reasoning when enabled, and switches correctly between GLM/Kimi selectors without exposing the removed GLM-Claude-Code provider. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
+32. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-27. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-28. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-29. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+33. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+34. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+35. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

@@ -1,30 +1,11 @@
 import { normalizeTranslationTextFormatting } from "@codeai-hub/translation";
 import type { SessionManager, SessionRole } from "../../session-manager";
-import type {
-  SessionTranslationFacade,
-  SessionTranslationProviderId,
-} from "../../session-translation/session-translation-facade";
+import type { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
 import { resolveLiveAssistantTailDedupe } from "./session-request-handler-live-tail-dedupe";
-
-const resolveTranslationProviderId = (
-  providerId: string | undefined
-): SessionTranslationProviderId | undefined => {
-  if (
-    providerId === "claude" ||
-    providerId === "codex" ||
-    providerId === "gemini" ||
-    providerId === "kimi"
-  ) {
-    return providerId;
-  }
-  if (providerId === "kimiCode") {
-    return "kimi";
-  }
-  return undefined;
-};
+import { resolveTranslationProviderId } from "./session-request-handler-translation-provider-id";
 
 const MESSAGE_PREVIEW_LENGTH = 160;
 

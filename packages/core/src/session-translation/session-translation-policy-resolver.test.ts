@@ -374,3 +374,31 @@ test("SessionTranslationPolicyResolver keeps cached missing bootstrap until the 
     await rm(homeDirectory, { force: true, recursive: true });
   }
 });
+
+test("SessionTranslationPolicyResolver reads OpenCode thinking visibility from provider settings", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+
+  try {
+    const settingsPath = buildSettingsPath(homeDirectory);
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
+    await writeJsonSnapshot(settingsPath, {
+      ...createSettingsSnapshot(),
+      providers: {
+        glmOpenCode: {
+          thinkingDisplaySyncEnabled: false,
+        },
+      },
+    });
+
+    const resolver = new SessionTranslationPolicyResolver();
+
+    assert.equal(
+      resolver.resolveThinkingVisibility(settingsPath, "glmOpenCode"),
+      false
+    );
+    restoreGlobalSettingsPath();
+  } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});

@@ -51,7 +51,8 @@ export type SessionTranslationProviderId =
   | "claude"
   | "codex"
   | "gemini"
-  | "kimi";
+  | "kimi"
+  | "glmOpenCode";
 
 export interface SessionMessageTranslationCandidate
   extends SessionTranslationDispatchCandidate {

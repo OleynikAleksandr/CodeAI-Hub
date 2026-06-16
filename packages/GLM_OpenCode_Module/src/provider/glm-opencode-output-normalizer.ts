@@ -5,6 +5,7 @@ export interface GlmOpenCodeSessionEvent {
   readonly data?: Record<string, unknown>;
   readonly message?: string;
   readonly provider?: string;
+  readonly tag?: string;
   readonly timestamp?: string;
   readonly type: string;
   readonly uuid?: string;
@@ -30,6 +31,19 @@ const readJsonTextEvent = (payload: Record<string, unknown>): string | null => {
     return readText(part.text);
   }
   return readText(payload.text);
+};
+
+const readJsonReasoningEvent = (
+  payload: Record<string, unknown>
+): string | null => {
+  if (payload.type !== "reasoning") {
+    return null;
+  }
+  const part = payload.part;
+  if (isRecord(part)) {
+    return readText(part.text) ?? readText(part.reasoning);
+  }
+  return readText(payload.text) ?? readText(payload.reasoning);
 };
 
 const readJsonErrorEvent = (
@@ -74,6 +88,19 @@ export const normalizeOpenCodeJsonLine = (
         timestamp,
         type: "assistant",
         uuid: `${randomUUID()}::assistant`,
+      },
+    ];
+  }
+  const reasoning = readJsonReasoningEvent(payload);
+  if (reasoning) {
+    return [
+      {
+        content: reasoning,
+        provider: "glmOpenCode",
+        tag: "thinking",
+        timestamp,
+        type: "thinking",
+        uuid: `${randomUUID()}::thinking`,
       },
     ];
   }

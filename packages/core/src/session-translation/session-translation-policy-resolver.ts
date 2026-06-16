@@ -16,6 +16,7 @@ import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
+  loadGlmOpenCodeSettingsSnapshot,
   loadKimiSettingsSnapshot,
   loadReasoningLanguage,
   loadReasoningTranslationEngineId,
@@ -26,7 +27,8 @@ export type SessionThinkingVisibilityProviderId =
   | "claude"
   | "codex"
   | "gemini"
-  | "kimi";
+  | "kimi"
+  | "glmOpenCode";
 export type SessionTranslationPolicyCategory =
   | "messages_for_the_user"
   | "reasoning";
@@ -163,6 +165,12 @@ export class SessionTranslationPolicyResolver {
     if (providerId === "kimi") {
       const kimi = loadKimiSettingsSnapshot(settingsPath);
       return resolveThinkingVisibilityEnabled(kimi?.thinkingDisplaySyncEnabled);
+    }
+    if (providerId === "glmOpenCode") {
+      const openCode = loadGlmOpenCodeSettingsSnapshot(settingsPath);
+      return resolveThinkingVisibilityEnabled(
+        openCode?.thinkingDisplaySyncEnabled
+      );
     }
     const codex = loadCodexSettingsSnapshot(settingsPath);
     return (

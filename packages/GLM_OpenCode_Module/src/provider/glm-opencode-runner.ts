@@ -35,6 +35,7 @@ const buildArgs = (options: GlmOpenCodeRunOptions): string[] => [
   "--dangerously-skip-permissions",
   "--format",
   "json",
+  "--thinking",
   "--agent",
   OPENCODE_WRAPPER_AGENT_NAME,
   "--model",

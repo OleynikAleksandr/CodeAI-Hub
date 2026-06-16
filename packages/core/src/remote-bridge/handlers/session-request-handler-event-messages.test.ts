@@ -25,6 +25,78 @@ const waitFor = async (predicate: () => boolean): Promise<void> => {
   assert.equal(predicate(), true);
 };
 
+const assertThinkingTranslationRouting = async (params: {
+  readonly expectedProviderId: string;
+  readonly modelId: string;
+  readonly providerId: "glmOpenCode" | "kimiCode";
+  readonly sessionPath: string;
+}): Promise<void> => {
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    params.providerId,
+    params.sessionPath,
+    "provider-session-id"
+  );
+  sessionManager.setModelBinding(session.id, {
+    boundAt: "2026-06-16T07:19:31.139Z",
+    key: `session:${params.expectedProviderId}-workflow-settings-path`,
+    modelId: params.modelId,
+    providerId: params.providerId,
+    settingsPath: "/tmp/workflow/runtime/settings/settings.json",
+    source: "start_step_selection",
+    updatedAt: "2026-06-16T07:19:31.139Z",
+  });
+
+  let visibilityArgs: readonly unknown[] = [];
+  const translatedCandidates: Array<{
+    readonly providerId?: string;
+    readonly role: string;
+    readonly settingsPath?: string;
+    readonly tag?: string;
+  }> = [];
+  const captureVisibilityArgs = (...args: readonly unknown[]): boolean => {
+    visibilityArgs = args;
+    return true;
+  };
+  const captureTranslationCandidate = (
+    candidate: (typeof translatedCandidates)[number]
+  ): Promise<null> => {
+    translatedCandidates.push(candidate);
+    return Promise.resolve(null);
+  };
+  const handler = new SessionRequestHandlerEventMessages({
+    broadcaster: noop,
+    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
+    logger: { error: noop, info: noop, warn: noop } as never,
+    sessionManager,
+    sessionStorage: {
+      appendMessage: () => Promise.resolve(),
+      appendMessageTranslation: () => Promise.resolve(),
+    } as never,
+    sessionTranslation: {
+      resolveThinkingVisibilityForProvider: captureVisibilityArgs,
+      translateDialogMessage: captureTranslationCandidate,
+    } as never,
+  });
+
+  handler.appendProviderMessage(session.id, "thinking", {
+    content: "Reasoning text.",
+    tag: "thinking",
+  });
+  await handler.waitForMessagePersistence(session.id);
+  assert.deepEqual(visibilityArgs, [
+    params.expectedProviderId,
+    "/tmp/workflow/runtime/settings/settings.json",
+  ]);
+  assert.equal(translatedCandidates[0]?.providerId, params.expectedProviderId);
+  assert.equal(translatedCandidates[0]?.role, "thinking");
+  assert.equal(translatedCandidates[0]?.tag, "thinking");
+  assert.equal(
+    translatedCandidates[0]?.settingsPath,
+    "/tmp/workflow/runtime/settings/settings.json"
+  );
+};
+
 test("SessionRequestHandlerEventMessages normalizes assistant content before persistence and broadcast", async () => {
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
@@ -376,74 +448,19 @@ test("SessionRequestHandlerEventMessages translates workflow validation blockers
 });
 
 test("SessionRequestHandlerEventMessages passes workflow settings path for Kimi thinking translation", async () => {
-  const sessionManager = new SessionManager();
-  const session = sessionManager.createSession(
-    "kimiCode",
-    "/tmp/kimi-workflow-settings-path",
-    "provider-session-id"
-  );
-  sessionManager.setModelBinding(session.id, {
-    boundAt: "2026-05-28T07:19:31.139Z",
-    key: "session:kimi-workflow-settings-path",
+  await assertThinkingTranslationRouting({
+    expectedProviderId: "kimi",
     modelId: "kimi-for-coding",
     providerId: "kimiCode",
-    settingsPath: "/tmp/workflow/runtime/settings/settings.json",
-    source: "start_step_selection",
-    updatedAt: "2026-05-28T07:19:31.139Z",
+    sessionPath: "/tmp/kimi-workflow-settings-path",
   });
+});
 
-  let visibilityArgs: readonly unknown[] = [];
-  const translatedCandidates: Array<{
-    readonly providerId?: string;
-    readonly role: string;
-    readonly settingsPath?: string;
-    readonly tag?: string;
-  }> = [];
-  const handler = new SessionRequestHandlerEventMessages({
-    broadcaster: noop,
-    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
-    logger: {
-      error: noop,
-      info: noop,
-      warn: noop,
-    } as never,
-    sessionManager,
-    sessionStorage: {
-      appendMessage: () => Promise.resolve(),
-      appendMessageTranslation: () => Promise.resolve(),
-    } as never,
-    sessionTranslation: {
-      resolveThinkingVisibilityForProvider: (...args: readonly unknown[]) => {
-        visibilityArgs = args;
-        return true;
-      },
-      translateDialogMessage: (
-        candidate: (typeof translatedCandidates)[number]
-      ) => {
-        translatedCandidates.push(candidate);
-        return Promise.resolve(null);
-      },
-    } as never,
+test("SessionRequestHandlerEventMessages passes workflow settings path for OpenCode thinking translation", async () => {
+  await assertThinkingTranslationRouting({
+    expectedProviderId: "glmOpenCode",
+    modelId: "zai-coding-plan/glm-5.2",
+    providerId: "glmOpenCode",
+    sessionPath: "/tmp/opencode-workflow-settings-path",
   });
-
-  handler.appendProviderMessage(session.id, "thinking", {
-    content: "The user wants me to create the initial draft.",
-    tag: "thinking",
-  });
-
-  await handler.waitForMessagePersistence(session.id);
-
-  assert.deepEqual(visibilityArgs, [
-    "kimi",
-    "/tmp/workflow/runtime/settings/settings.json",
-  ]);
-  const translatedCandidate = translatedCandidates[0];
-  assert.ok(translatedCandidate);
-  assert.equal(translatedCandidate?.providerId, "kimi");
-  assert.equal(translatedCandidate?.role, "thinking");
-  assert.equal(translatedCandidate?.tag, "thinking");
-  assert.equal(
-    translatedCandidate?.settingsPath,
-    "/tmp/workflow/runtime/settings/settings.json"
-  );
 });
