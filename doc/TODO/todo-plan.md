@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "87712bbbf",
+  "lastRecordedCommit": "26eae50b8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9l.task1",
-  "expectedCommitMessage": "docs: prepare opencode default model release notes",
+  "currentTaskId": "phase1.stream9l.task2",
+  "expectedCommitMessage": "chore: build opencode default model release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare opencode default model release notes",
-    "preCommitHead": "87712bbbf",
+    "expectedCommitMessage": "chore: build opencode default model release",
+    "preCommitHead": "26eae50b8",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9l.task1"
+    "taskId": "phase1.stream9l.task2"
   }
 }
 ```
@@ -196,9 +196,13 @@
 ### Stream: OpenCode Default Model Release Build
 
 59. [DONE] `phase1.stream9l.task1` Prepare release notes for the confirmed OpenCode default-model release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode default model release notes`)
-60. [PENDING] `phase1.stream9l.commit1` Git Commit: `docs: prepare opencode default model release notes` (hash: TBD)
-61. [TODO] `phase1.stream9l.task2` Build the confirmed OpenCode default-model release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode default model release`)
-62. [TODO] `phase1.stream9l.commit2` Git Commit: `chore: build opencode default model release` (hash: TBD)
+60. [DONE] `phase1.stream9l.commit1` Git Commit: `docs: prepare opencode default model release notes` (hash: 26eae50b8)
+61. [DONE] `phase1.stream9l.task2` Build the confirmed OpenCode default-model release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode default model release`)
+    - Result 2026-06-16: `./scripts/build-all.sh --allow-dirty` passed and prepared unified version `1.2.531`.
+    - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.531.tar.bz2`, `codex-module-1.2.531.tar.bz2`, `gemini-module-1.2.531.tar.bz2`, `glm-opencode-module-1.2.531.tar.bz2`, `kimi-module-1.2.531.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.531.tar.bz2`, `vscode-webview-1.2.531.tar.bz2`, `project-manager-1.2.531.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.531.tar.bz2`.
+    - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
+    - VSIX created at repository root: `codeai-hub-1.2.531.vsix` (`5.4M`).
+62. [PENDING] `phase1.stream9l.commit2` Git Commit: `chore: build opencode default model release` (hash: TBD)
 
 ### Stream: Scope Closeout
 

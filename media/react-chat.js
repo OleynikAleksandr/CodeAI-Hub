@@ -7792,7 +7792,22 @@
 
   // src/client/ui/src/components/settings/kimi-settings-state.ts
   var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/opencode/config.json";
+  var GLM_OPENCODE_MODEL_OPTIONS = [
+    {
+      description: "Z.AI Coding Plan selector",
+      id: "zai-coding-plan/glm-5.2",
+      label: "GLM 5.2"
+    },
+    {
+      description: "Kimi for Coding selector",
+      id: "kimi-for-coding/k2p7",
+      label: "Kimi K2.7"
+    }
+  ];
   var DEFAULT_GLM_OPENCODE_MODEL = "zai-coding-plan/glm-5.2";
+  var GLM_OPENCODE_MODEL_IDS = new Set(
+    GLM_OPENCODE_MODEL_OPTIONS.map((option) => option.id)
+  );
   var LEGACY_GLM_OPENCODE_MODEL_IDS = /* @__PURE__ */ new Set([
     "glm-5.1",
     "glm-5-turbo",
@@ -7800,9 +7815,12 @@
     "glm-5.2"
   ]);
   var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
-  var mapGlmOpenCodeModel = (value, fallback) => {
-    const modelId = mapOptionalString(value, fallback);
-    return LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) ? fallback : modelId;
+  var mapGlmOpenCodeModel = (value) => {
+    const modelId = mapOptionalString(value, DEFAULT_GLM_OPENCODE_MODEL);
+    if (LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) || !GLM_OPENCODE_MODEL_IDS.has(modelId)) {
+      return DEFAULT_GLM_OPENCODE_MODEL;
+    }
+    return modelId;
   };
   var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
     autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
@@ -7817,10 +7835,7 @@
       value?.configPath,
       DEFAULT_GLM_OPENCODE_CONFIG_PATH
     ),
-    defaultModel: mapGlmOpenCodeModel(
-      value?.defaultModel,
-      DEFAULT_GLM_OPENCODE_MODEL
-    ),
+    defaultModel: mapGlmOpenCodeModel(value?.defaultModel),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
     )
