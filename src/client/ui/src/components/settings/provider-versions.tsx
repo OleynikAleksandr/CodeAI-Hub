@@ -100,6 +100,14 @@ const ProviderVersions = ({
           target: undefined,
           showUpdateButton: false,
         },
+        {
+          label: "OpenCode SDK",
+          packageName: glmOpenCodeSnapshot.sdk.packageName,
+          currentVersion: glmOpenCodeSnapshot.sdk.currentVersion,
+          latestVersion: glmOpenCodeSnapshot.sdk.latestVersion,
+          target: undefined,
+          showUpdateButton: false,
+        },
       ];
     }
     const providerSnapshot =

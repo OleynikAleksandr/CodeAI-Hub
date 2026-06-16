@@ -1,47 +1,27 @@
-import type { ChildProcess } from "node:child_process";
-import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import type { GlmOpenCodeSessionEvent } from "./glm-opencode-output-normalizer";
-import { normalizeOpenCodeJsonLine } from "./glm-opencode-output-normalizer";
+import type { GlmOpenCodeRuntimeProfile } from "./glm-opencode-runtime-profile";
+import { OpenCodeServerProcess } from "./glm-opencode-server-process";
 import {
-  type GlmOpenCodeRuntimeProfile,
-  OPENCODE_WRAPPER_AGENT_NAME,
-} from "./glm-opencode-runtime-profile";
+  abortOpenCodeRemoteSession,
+  createOpenCodeRemoteSession,
+  deleteOpenCodeRemoteSession,
+  streamOpenCodeTurn,
+} from "./glm-opencode-turn-stream";
 
 export interface GlmOpenCodeRunOptions {
   readonly content: string;
   readonly modelSelector: string;
-  readonly onChildProcess?: (child: ChildProcess) => void;
   readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
+  readonly onRemoteSessionId?: (sessionId: string) => void;
   readonly profile: GlmOpenCodeRuntimeProfile;
+  readonly remoteSessionId?: string;
 }
 
-const MAX_DIAGNOSTIC_LENGTH = 1500;
-const LINE_SPLIT_PATTERN = /\r?\n/u;
-
-interface GlmOpenCodeRunState {
-  assistantEvents: number;
-  terminalFailure: string | null;
+interface OpenCodeTurnState {
+  readonly abortController: AbortController;
+  aborted: boolean;
 }
-
-const trimDiagnosticTail = (value: string): string =>
-  value.trim().slice(-MAX_DIAGNOSTIC_LENGTH);
-
-const buildArgs = (options: GlmOpenCodeRunOptions): string[] => [
-  "--print-logs",
-  "--log-level",
-  "INFO",
-  "run",
-  "--dangerously-skip-permissions",
-  "--format",
-  "json",
-  "--thinking",
-  "--agent",
-  OPENCODE_WRAPPER_AGENT_NAME,
-  "--model",
-  options.modelSelector,
-  options.content,
-];
 
 const emitFailure = (options: GlmOpenCodeRunOptions, message: string): void => {
   options.onEvent({
@@ -51,22 +31,6 @@ const emitFailure = (options: GlmOpenCodeRunOptions, message: string): void => {
     type: "turn_failed",
     uuid: `${randomUUID()}::turn_failed`,
   });
-};
-
-const emitNormalizedLineEvents = (
-  line: string,
-  options: GlmOpenCodeRunOptions,
-  state: GlmOpenCodeRunState
-): void => {
-  for (const event of normalizeOpenCodeJsonLine(line)) {
-    if (event.type === "assistant") {
-      state.assistantEvents += 1;
-    }
-    if (event.type === "turn_failed") {
-      state.terminalFailure = event.message ?? "OpenCode reported an error.";
-    }
-    options.onEvent(event);
-  }
 };
 
 const emitCompleted = (options: GlmOpenCodeRunOptions): void => {
@@ -79,83 +43,80 @@ const emitCompleted = (options: GlmOpenCodeRunOptions): void => {
   });
 };
 
-const isSuccessfulClose = (
-  code: number | null,
-  signal: NodeJS.Signals | null,
-  state: GlmOpenCodeRunState
-): boolean =>
-  code === 0 && !signal && state.assistantEvents > 0 && !state.terminalFailure;
+export class GlmOpenCodeServerRuntime {
+  private readonly activeTurnByRemoteSessionId = new Map<
+    string,
+    OpenCodeTurnState
+  >();
+  private readonly server = new OpenCodeServerProcess();
 
-const buildCloseFailureDiagnostic = (params: {
-  readonly code: number | null;
-  readonly signal: NodeJS.Signals | null;
-  readonly state: GlmOpenCodeRunState;
-  readonly stderrTail: string;
-}): string => {
-  const reason =
-    params.state.terminalFailure ??
-    (params.signal
-      ? `OpenCode process stopped with signal ${params.signal}.`
-      : `OpenCode process exited with code ${params.code ?? "unknown"}.`);
-  return params.stderrTail ? `${reason}\n${params.stderrTail}` : reason;
-};
-
-export const runGlmOpenCodeTurn = (
-  options: GlmOpenCodeRunOptions
-): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const cwd = options.profile.workspacePath ?? process.cwd();
-    const child = spawn(options.profile.command, buildArgs(options), {
-      cwd,
-      env: options.profile.environment,
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    options.onChildProcess?.(child);
-
-    const state: GlmOpenCodeRunState = {
-      assistantEvents: 0,
-      terminalFailure: null,
+  async runTurn(options: GlmOpenCodeRunOptions): Promise<string> {
+    const handle = await this.server.getHandle(options.profile);
+    const remoteSessionId =
+      options.remoteSessionId ??
+      (await createOpenCodeRemoteSession(
+        handle.client,
+        options.profile.workspacePath
+      ));
+    options.onRemoteSessionId?.(remoteSessionId);
+    const turnState: OpenCodeTurnState = {
+      abortController: new AbortController(),
+      aborted: false,
     };
-    let stdoutBuffer = "";
-    let stderrTail = "";
-
-    child.stdout.setEncoding("utf8");
-    child.stdout.on("data", (chunk: string) => {
-      stdoutBuffer += chunk;
-      const lines = stdoutBuffer.split(LINE_SPLIT_PATTERN);
-      stdoutBuffer = lines.pop() ?? "";
-      for (const line of lines) {
-        emitNormalizedLineEvents(line, options, state);
-      }
-    });
-
-    child.stderr.setEncoding("utf8");
-    child.stderr.on("data", (chunk: string) => {
-      stderrTail = trimDiagnosticTail(`${stderrTail}${chunk}`);
-    });
-
-    child.on("error", (error) => {
-      const message = `Failed to start GLM-OpenCode runtime: ${error.message}`;
-      emitFailure(options, message);
-      reject(new Error(message));
-    });
-
-    child.on("close", (code, signal) => {
-      if (stdoutBuffer.trim().length > 0) {
-        emitNormalizedLineEvents(stdoutBuffer, options, state);
-      }
-      if (isSuccessfulClose(code, signal, state)) {
-        emitCompleted(options);
-        resolve();
-        return;
-      }
-      const diagnostic = buildCloseFailureDiagnostic({
-        code,
-        signal,
-        state,
-        stderrTail,
+    this.activeTurnByRemoteSessionId.set(remoteSessionId, turnState);
+    try {
+      await streamOpenCodeTurn({
+        abortSignal: turnState.abortController.signal,
+        client: handle.client,
+        content: options.content,
+        modelSelector: options.modelSelector,
+        onEvent: options.onEvent,
+        remoteSessionId,
+        serverUrl: handle.url,
+        workspacePath: options.profile.workspacePath,
       });
-      emitFailure(options, diagnostic);
-      reject(new Error(diagnostic));
-    });
-  });
+      emitCompleted(options);
+      return remoteSessionId;
+    } catch (error) {
+      let message = "OpenCode server transport failed.";
+      if (turnState.aborted) {
+        message = "OpenCode session aborted.";
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      emitFailure(options, message);
+      throw new Error(message);
+    } finally {
+      this.activeTurnByRemoteSessionId.delete(remoteSessionId);
+    }
+  }
+
+  async abortRemoteSession(
+    profile: GlmOpenCodeRuntimeProfile,
+    remoteSessionId: string
+  ): Promise<void> {
+    const turnState = this.activeTurnByRemoteSessionId.get(remoteSessionId);
+    if (turnState) {
+      turnState.aborted = true;
+      turnState.abortController.abort();
+    }
+    const handle = await this.server.getHandle(profile);
+    await abortOpenCodeRemoteSession(
+      handle.client,
+      remoteSessionId,
+      profile.workspacePath
+    ).catch(() => undefined);
+  }
+
+  async deleteRemoteSession(
+    profile: GlmOpenCodeRuntimeProfile,
+    remoteSessionId: string
+  ): Promise<void> {
+    const handle = await this.server.getHandle(profile);
+    await deleteOpenCodeRemoteSession(
+      handle.client,
+      remoteSessionId,
+      profile.workspacePath
+    ).catch(() => undefined);
+  }
+}

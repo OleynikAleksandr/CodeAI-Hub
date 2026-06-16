@@ -22,5 +22,6 @@ export interface ProviderVersions {
   };
   readonly glmOpenCode?: {
     readonly cli: VersionEntry;
+    readonly sdk: VersionEntry;
   };
 }

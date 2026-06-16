@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "9e5e7fed2",
+  "lastRecordedCommit": "f893f53b7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9d.task2",
-  "expectedCommitMessage": "chore: build opencode cleanup release",
+  "currentTaskId": "phase1.stream9e.task1",
+  "expectedCommitMessage": "feat: switch opencode wrapper to server sse transport",
   "debt": {
-    "expectedCommitMessage": "chore: build opencode cleanup release",
-    "preCommitHead": "9e5e7fed2",
+    "expectedCommitMessage": "feat: switch opencode wrapper to server sse transport",
+    "preCommitHead": "f893f53b7",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9d.task2"
+    "taskId": "phase1.stream9e.task1"
   }
 }
 ```
@@ -130,15 +130,32 @@
     - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.528.tar.bz2`, `codex-module-1.2.528.tar.bz2`, `gemini-module-1.2.528.tar.bz2`, `glm-opencode-module-1.2.528.tar.bz2`, `kimi-module-1.2.528.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.528.tar.bz2`, `vscode-webview-1.2.528.tar.bz2`, `project-manager-1.2.528.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.528.tar.bz2`.
     - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
     - VSIX created at repository root: `codeai-hub-1.2.528.vsix` (`5.3M`).
-34. [PENDING] `phase1.stream9d.commit2` Git Commit: `chore: build opencode cleanup release` (hash: TBD)
+34. [DONE] `phase1.stream9d.commit2` Git Commit: `chore: build opencode cleanup release` (hash: f893f53b7)
 
 ### Stream: User Workflow Acceptance Testing
 
 35. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable, emits translated reasoning when enabled, and switches correctly between GLM/Kimi selectors without exposing the removed deprecated provider. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
 36. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
 
+### Stream: OpenCode SSE Transport
+
+37. [DONE] `phase1.stream9e.task1` Replace the current OpenCode CLI `run --format json` wrapper path with OpenCode server/SSE transport, adopt the official `@opencode-ai/sdk` client package, and expose OpenCode SDK version diagnostics in Settings alongside the CLI version. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/remote-bridge/handlers/settings-provider-version-service.ts, src/client/ui/src/components/settings/provider-versions*.tsx, src/client/ui/src/components/settings/provider-versions-model.ts, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `feat: switch opencode wrapper to server sse transport`)
+38. [PENDING] `phase1.stream9e.commit1` Git Commit: `feat: switch opencode wrapper to server sse transport` (hash: TBD)
+
+### Stream: OpenCode SSE Verification
+
+39. [TODO] `phase1.stream9f.task1` Record targeted verification for the SSE-backed OpenCode wrapper, including live reasoning-stream evidence for GLM and Kimi selectors. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode sse verification`)
+40. [TODO] `phase1.stream9f.commit1` Git Commit: `docs: record opencode sse verification` (hash: TBD)
+
+### Stream: SSE Release Build
+
+41. [TODO] `phase1.stream9g.task1` Prepare release notes for the confirmed OpenCode SSE transport release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode sse release notes`)
+42. [TODO] `phase1.stream9g.commit1` Git Commit: `docs: prepare opencode sse release notes` (hash: TBD)
+43. [TODO] `phase1.stream9g.task2` Build the confirmed OpenCode SSE transport release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode sse release`)
+44. [TODO] `phase1.stream9g.commit2` Git Commit: `chore: build opencode sse release` (hash: TBD)
+
 ### Stream: Scope Closeout
 
-37. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-38. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-39. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+45. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+46. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+47. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

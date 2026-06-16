@@ -1,7 +1,6 @@
-import type { ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import type { GlmOpenCodeSessionEvent } from "./glm-opencode-output-normalizer";
-import { runGlmOpenCodeTurn } from "./glm-opencode-runner";
+import { GlmOpenCodeServerRuntime } from "./glm-opencode-runner";
 import {
   buildGlmOpenCodeRuntimeProfile,
   ensureGlmOpenCodeRuntimeProfile,
@@ -48,7 +47,7 @@ export interface GlmOpenCodeModuleOptions {
 }
 
 interface GlmOpenCodeSessionState {
-  childProcess?: ChildProcess;
+  remoteSessionId?: string;
   readonly sessionId: string;
   readonly workspacePath?: string;
 }
@@ -89,6 +88,7 @@ export class GlmOpenCodeProviderAdapter {
     Set<GlmOpenCodeSessionListener>
   >();
   private readonly options: GlmOpenCodeModuleOptions;
+  private readonly runtime = new GlmOpenCodeServerRuntime();
   private readonly sessions = new Map<string, GlmOpenCodeSessionState>();
   private initialized = false;
 
@@ -180,27 +180,37 @@ export class GlmOpenCodeProviderAdapter {
       type: "turn_started",
       uuid: `${randomUUID()}::turn_started`,
     });
-    await runGlmOpenCodeTurn({
-      content: trimmedContent,
-      modelSelector,
-      onChildProcess: (childProcess) => {
-        session.childProcess = childProcess;
-      },
-      onEvent: (event) => {
-        this.emit(sessionId, event);
-      },
-      profile,
-    }).finally(() => {
-      session.childProcess = undefined;
-    });
+    await this.runtime
+      .runTurn({
+        content: trimmedContent,
+        modelSelector,
+        onEvent: (event) => {
+          this.emit(sessionId, event);
+        },
+        onRemoteSessionId: (remoteSessionId) => {
+          session.remoteSessionId = remoteSessionId;
+        },
+        profile,
+        remoteSessionId: session.remoteSessionId,
+      })
+      .finally(() => undefined);
   }
 
-  closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     const session = this.sessions.get(sessionId);
-    session?.childProcess?.kill("SIGTERM");
+    if (session?.remoteSessionId) {
+      const profile = buildGlmOpenCodeRuntimeProfile({
+        configPath: this.options.workspace.configPath,
+        defaultModel: this.options.workspace.defaultModel,
+        providerHomePath: this.options.workspace.providerHomePath,
+        settingsPath: this.options.workspace.settingsPath,
+        workspacePath: session.workspacePath,
+      });
+      await this.runtime.abortRemoteSession(profile, session.remoteSessionId);
+      await this.runtime.deleteRemoteSession(profile, session.remoteSessionId);
+    }
     this.sessions.delete(sessionId);
     this.listeners.delete(sessionId);
-    return Promise.resolve();
   }
 
   captureNativeRequest(options: {

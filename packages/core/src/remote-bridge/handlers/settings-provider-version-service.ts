@@ -35,6 +35,7 @@ const PACKAGE_MAP = {
   },
   glmOpenCode: {
     cli: "opencode",
+    sdk: "@opencode-ai/sdk",
   },
 } as const;
 
@@ -78,6 +79,7 @@ export interface SettingsProviderVersionsSnapshot {
   };
   readonly glmOpenCode: {
     readonly cli: VersionEntry;
+    readonly sdk: VersionEntry;
   };
 }
 
@@ -187,6 +189,59 @@ const readOpenCodeVersion = async (): Promise<PackageVersionResult> => {
   };
 };
 
+const resolveOpenCodeProviderPackagePath = async (): Promise<string | null> => {
+  const root = path.join(homedir(), ".codeai-hub", "providers", "opencode");
+  try {
+    const version = (
+      await fs.readFile(path.join(root, "latest"), "utf8")
+    ).trim();
+    const packagePath = path.join(root, version, "package.json");
+    await fs.access(packagePath);
+    return packagePath;
+  } catch {
+    return null;
+  }
+};
+
+const readBundledPackageVersion = async (
+  packageName: string
+): Promise<{ readonly error?: string; readonly version: string | null }> => {
+  const packagePath = await resolveOpenCodeProviderPackagePath();
+  if (!packagePath) {
+    return {
+      error: "Installed OpenCode provider package.json was not found.",
+      version: null,
+    };
+  }
+  try {
+    const parsed = JSON.parse(await fs.readFile(packagePath, "utf8")) as {
+      readonly dependencies?: Record<string, unknown>;
+    };
+    const version = parsed.dependencies?.[packageName];
+    return {
+      version:
+        typeof version === "string" && version.trim().length > 0
+          ? version.trim()
+          : null,
+    };
+  } catch (error) {
+    return { error: describeExecError(error), version: null };
+  }
+};
+
+const readOpenCodeSdkVersion = async (): Promise<PackageVersionResult> => {
+  const [installed, latest] = await Promise.all([
+    readBundledPackageVersion(PACKAGE_MAP.glmOpenCode.sdk),
+    readLatestVersion(PACKAGE_MAP.glmOpenCode.sdk),
+  ]);
+  return {
+    currentVersion: installed.version,
+    error: combineErrors(installed.error, latest.error),
+    latestVersion: latest.version,
+    packageName: PACKAGE_MAP.glmOpenCode.sdk,
+  };
+};
+
 const installGlobalPackageLatest = async (
   packageName: string
 ): Promise<void> => {
@@ -264,6 +319,7 @@ const buildSnapshot = (
     },
     glmOpenCode: {
       cli: get("glmOpenCode", "cli"),
+      sdk: get("glmOpenCode", "sdk"),
     },
   };
 };
@@ -283,6 +339,9 @@ export class SettingsProviderVersionService {
         }
         if (provider === "glmOpenCode" && target === "cli") {
           return readOpenCodeVersion();
+        }
+        if (provider === "glmOpenCode" && target === "sdk") {
+          return readOpenCodeSdkVersion();
         }
         const installed = await readInstalledVersion(packageName);
         const latest = await readLatestVersion(packageName);

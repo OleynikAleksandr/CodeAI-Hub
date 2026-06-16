@@ -99,6 +99,9 @@ export const resolveTargetLabel = (
   if (provider === "glmOpenCode" && target === "cli") {
     return "OpenCode CLI";
   }
+  if (provider === "glmOpenCode" && target === "sdk") {
+    return "OpenCode SDK";
+  }
   if (target === "cli") {
     return "CLI";
   }
