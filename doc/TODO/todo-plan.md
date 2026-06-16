@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "ed7801107",
+  "lastRecordedCommit": "5a255fedd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream16.task1",
-  "expectedCommitMessage": "docs: expand visible dialog translation scope",
+  "currentTaskId": "phase1.stream17.task1",
+  "expectedCommitMessage": "fix: translate visible dialog updates",
   "debt": {
-    "expectedCommitMessage": "docs: expand visible dialog translation scope",
-    "preCommitHead": "ed7801107",
+    "expectedCommitMessage": "fix: translate visible dialog updates",
+    "preCommitHead": "5a255fedd",
     "stage": "commit_pending",
-    "taskId": "phase1.stream16.task1"
+    "taskId": "phase1.stream17.task1"
   }
 }
 ```
@@ -138,12 +138,12 @@
 ### Stream: Visible Dialog Translation Scope Expansion
 
 33. [DONE] `phase1.stream16.task1` Capture the user-reported Kimi Description English pre-tool update and Core-generated user-role dialog localization gap before acceptance. (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md`; expected commit: `docs: expand visible dialog translation scope`)
-34. [PENDING] `phase1.stream16.commit1` Git Commit: `docs: expand visible dialog translation scope` (hash: TBD)
+34. [DONE] `phase1.stream16.commit1` Git Commit: `docs: expand visible dialog translation scope` (hash: 5a255fedd)
 
 ### Stream: Visible Dialog Translation Fix
 
-35. [TODO] `phase1.stream17.task1` Allow ordinary visible assistant messages and Core-generated deferred user-role messages to enter the existing reasoning translation pipeline. (scope: `packages/core/src/session-translation/session-translation-dispatcher.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`; expected commit: `fix: translate visible dialog updates`)
-36. [TODO] `phase1.stream17.commit1` Git Commit: `fix: translate visible dialog updates` (hash: TBD)
+35. [DONE] `phase1.stream17.task1` Allow ordinary visible assistant messages and Core-generated deferred user-role messages to enter the existing reasoning translation pipeline. (scope: `packages/core/src/session-translation/session-translation-dispatcher.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: translate visible dialog updates`)
+36. [PENDING] `phase1.stream17.commit1` Git Commit: `fix: translate visible dialog updates` (hash: TBD)
 
 ### Stream: Visible Dialog Translation Regression Tests
 

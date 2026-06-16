@@ -25,9 +25,10 @@ export class SessionTranslationDispatcher {
     }
 
     return (
+      candidate.role === "assistant" ||
       candidate.role === "system" ||
       candidate.role === "thinking" ||
-      (candidate.role === "assistant" && candidate.tag === "thinking")
+      (candidate.role === "user" && candidate.tag === "core-deferred-user")
     );
   }
 

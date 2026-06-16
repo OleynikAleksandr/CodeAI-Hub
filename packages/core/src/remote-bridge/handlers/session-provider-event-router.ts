@@ -353,6 +353,7 @@ export class SessionProviderEventRouter {
     this.deps.appendDialogMessage(sessionId, {
       content,
       role: "user",
+      tag: "core-deferred-user",
       timestamp: readStringField(eventRecord, "timestamp") ?? undefined,
       uuid: readStringField(eventRecord, "uuid") ?? undefined,
     });
