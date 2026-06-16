@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.526] - 2026-06-16
+### Fixed
+- **Visible provider dialog updates use the reasoning translation overlay.** Ordinary assistant progress updates and Core-generated deferred user-role workflow messages now enter the session translation overlay, while actual human user input remains untouched.
+
+### Verification
+- `npx tsx --test packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.525] - 2026-06-16
 ### Fixed
 - **Stop unlocks stale thinking sessions across workflow steps.** Project Manager now keeps `idle + Thinking` locked only while the provider binding is still ready, so stopped sessions with stale visible thinking text no longer leave the input disabled.

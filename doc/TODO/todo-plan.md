@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "0a4d5409d",
+  "lastRecordedCommit": "2fd4f64ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream19.task1",
-  "expectedCommitMessage": "docs: record visible dialog translation verification",
+  "currentTaskId": "phase1.stream20.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.526 release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record visible dialog translation verification",
-    "preCommitHead": "0a4d5409d",
+    "expectedCommitMessage": "docs: prepare 1.2.526 release notes",
+    "preCommitHead": "2fd4f64ea",
     "stage": "commit_pending",
-    "taskId": "phase1.stream19.task1"
+    "taskId": "phase1.stream20.task1"
   }
 }
 ```
@@ -155,20 +155,25 @@
 39. [DONE] `phase1.stream19.task1` Run targeted Core translation tests and Core build for the visible dialog localization fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation verification`)
     - Evidence 2026-06-16: `npx tsx --test packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts` passed 15/15 tests.
     - Evidence 2026-06-16: `npm run build --workspace=@codeai-hub/core` passed.
-40. [PENDING] `phase1.stream19.commit1` Git Commit: `docs: record visible dialog translation verification` (hash: TBD)
+40. [DONE] `phase1.stream19.commit1` Git Commit: `docs: record visible dialog translation verification` (hash: 2fd4f64ea)
+
+### Stream: Follow-up Release Notes
+
+41. [DONE] `phase1.stream20.task1` Prepare release notes for the confirmed 1.2.526 release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.526 release notes`)
+42. [PENDING] `phase1.stream20.commit1` Git Commit: `docs: prepare 1.2.526 release notes` (hash: TBD)
 
 ### Stream: Follow-up Release Build
 
-41. [TODO] `phase1.stream20.task1` Build the next release after explicit user confirmation. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.526`)
-42. [TODO] `phase1.stream20.commit1` Git Commit: `chore: build release 1.2.526` (hash: TBD)
+43. [TODO] `phase1.stream21.task1` Build the confirmed 1.2.526 release after release notes are committed. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.526`)
+44. [TODO] `phase1.stream21.commit1` Git Commit: `chore: build release 1.2.526` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-43. [TODO] `phase1.stream21.task1` Report visible dialog translation release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation acceptance`)
-44. [TODO] `phase1.stream21.commit1` Git Commit: `docs: record visible dialog translation acceptance` (hash: TBD)
+45. [TODO] `phase1.stream22.task1` Report visible dialog translation release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation acceptance`)
+46. [TODO] `phase1.stream22.commit1` Git Commit: `docs: record visible dialog translation acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-45. [TODO] `phase1.stream22.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
-46. [TODO] `phase1.stream22.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
-47. [TODO] `phase1.stream22.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+47. [TODO] `phase1.stream23.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
+48. [TODO] `phase1.stream23.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
+49. [TODO] `phase1.stream23.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

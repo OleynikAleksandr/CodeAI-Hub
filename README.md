@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.525** (Stale Thinking Stop Unlock Fix)
+**Current Release — v1.2.526** (Visible Dialog Translation Fix)
+
+This bugfix release routes provider-visible assistant progress updates and
+Core-generated deferred user-role dialog messages through the existing reasoning
+translation overlay. Kimi, GLM and other providers can still ignore the chat
+language instruction, but Project Manager now patches those visible dialog
+messages into the user's configured reasoning language without translating
+actual human user input.
+
+Retest focus: in FinderWidget-Test01, run Description or Diagram Modules with
+Russian localization and a non-Russian provider response. Pre-tool assistant
+updates and Core/deferred user-role workflow messages should display in Russian
+through the session translation overlay.
+
+**Previous Release — v1.2.525** (Stale Thinking Stop Unlock Fix)
 
 This bugfix release fixes a Project Manager input lock that could survive Stop
 when the last visible provider bubble was `Thinking`. Session UI now treats
