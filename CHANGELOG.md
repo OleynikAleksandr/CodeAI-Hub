@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.530] - 2026-06-16
+### Fixed
+- **OpenCode dialog text no longer goes through duplicate `ru -> ru` localization.** Core now skips the session-translation overlay when the target language is Russian and the provider-visible dialog fragment is already Cyrillic.
+- **Marker-corrupted translation overlays are now rejected before they reach the UI.** If a translation result leaks `__CODEAI_HUB_LOCALIZATION_ENTRY__` markers, Core discards that overlay instead of patching gibberish into localized dialog content.
+- **The localization guard stays within the 500-line architecture limit.** Session translation job execution and the new OpenCode localization guard coverage were split into dedicated micro-files so the fix passes the architecture hook cleanly.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/core`
+- `npx ultracite check packages/core/src/session-translation/session-translation-facade.ts packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-facade.localization-guards.test.ts packages/core/src/session-translation/session-translation-job-runner.ts`
+- `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/session-translation/session-translation-policy-resolver.test.js packages/core/dist/session-translation/session-message-localization-projector.test.js`
+- Workspace evidence (`/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01`): the source OpenCode session JSONL remained readable Russian, while the previous corruption was isolated to `.translations.jsonl` overlays created from already-Russian assistant/live fragments.
+
 ## [1.2.529] - 2026-06-16
 ### Changed
 - **OpenCode wrapper now uses the official server/SSE transport.** The provider starts `opencode serve`, connects through `@opencode-ai/sdk/v2`, and reads `/event` SSE frames instead of depending on the old `opencode run --format json` line protocol.

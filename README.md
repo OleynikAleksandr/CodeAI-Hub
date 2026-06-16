@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.529** (OpenCode SSE Transport Release)
+**Current Release — v1.2.530** (OpenCode Localization Guard Release)
+
+This release fixes a localization regression introduced after the OpenCode SSE
+transport migration. Core no longer tries to re-translate OpenCode dialog
+messages that are already in Russian, and it now discards any translation
+overlay payload that leaks `__CODEAI_HUB_LOCALIZATION_ENTRY__` markers instead
+of patching that corrupted text into the UI.
+
+Retest focus: in FinderWidget-Test01, run an OpenCode-backed step in Russian
+with GLM or Kimi and confirm that normal assistant dialog text stays readable,
+reasoning still appears progressively, and no marker strings or fused
+"localization gibberish" appear in the session.
+
+**Previous Release — v1.2.529** (OpenCode SSE Transport Release)
 
 This release moves the OpenCode wrapper off the old `opencode run --format json`
 path and onto the OpenCode server/SSE transport, using the official

@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "7bf61d79f",
+  "lastRecordedCommit": "0c362e41d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9h.task1",
-  "expectedCommitMessage": "fix: guard opencode duplicate localization",
+  "currentTaskId": "phase1.stream9i.task1",
+  "expectedCommitMessage": "docs: prepare opencode localization fix release notes",
   "debt": {
-    "expectedCommitMessage": "fix: guard opencode duplicate localization",
-    "preCommitHead": "7bf61d79f",
+    "expectedCommitMessage": "docs: prepare opencode localization fix release notes",
+    "preCommitHead": "0c362e41d",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9h.task1"
+    "taskId": "phase1.stream9i.task1"
   }
 }
 ```
@@ -162,10 +162,17 @@
 ### Stream: OpenCode Localization Guard
 
 45. [DONE] `phase1.stream9h.task1` Prevent duplicate localization overlays for OpenCode dialog content by skipping translation when the source text already matches the target Russian chat language and by rejecting translation outputs that leak `__CODEAI_HUB_LOCALIZATION_ENTRY__` markers. (scope: `packages/core/src/session-translation/**, doc/TODO/todo-plan.md`; expected commit: `fix: guard opencode duplicate localization`)
-46. [PENDING] `phase1.stream9h.commit1` Git Commit: `fix: guard opencode duplicate localization` (hash: TBD)
+46. [DONE] `phase1.stream9h.commit1` Git Commit: `fix: guard opencode duplicate localization` (hash: 0c362e41d)
+
+### Stream: Localization Fix Release Build
+
+47. [DONE] `phase1.stream9i.task1` Prepare release notes for the confirmed OpenCode localization-guard fix release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode localization fix release notes`)
+48. [PENDING] `phase1.stream9i.commit1` Git Commit: `docs: prepare opencode localization fix release notes` (hash: TBD)
+49. [TODO] `phase1.stream9i.task2` Build the confirmed OpenCode localization-guard release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode localization fix release`)
+50. [TODO] `phase1.stream9i.commit2` Git Commit: `chore: build opencode localization fix release` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-47. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-48. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-49. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+51. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+52. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+53. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
