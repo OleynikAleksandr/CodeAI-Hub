@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "fe1aaaa9a",
+  "lastRecordedCommit": "9e5e7fed2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9d.task1",
-  "expectedCommitMessage": "docs: prepare opencode cleanup release notes",
+  "currentTaskId": "phase1.stream9d.task2",
+  "expectedCommitMessage": "chore: build opencode cleanup release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare opencode cleanup release notes",
-    "preCommitHead": "fe1aaaa9a",
+    "expectedCommitMessage": "chore: build opencode cleanup release",
+    "preCommitHead": "9e5e7fed2",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9d.task1"
+    "taskId": "phase1.stream9d.task2"
   }
 }
 ```
@@ -124,9 +124,13 @@
 ### Stream: Post-Fix Release Rebuild
 
 31. [DONE] `phase1.stream9d.task1` Prepare release notes for the confirmed post-fix OpenCode cleanup release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode cleanup release notes`)
-32. [PENDING] `phase1.stream9d.commit1` Git Commit: `docs: prepare opencode cleanup release notes` (hash: TBD)
-33. [TODO] `phase1.stream9d.task2` Build the confirmed post-fix release with OpenCode cleanup packaged and record release artifacts. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode cleanup release`)
-34. [TODO] `phase1.stream9d.commit2` Git Commit: `chore: build opencode cleanup release` (hash: TBD)
+32. [DONE] `phase1.stream9d.commit1` Git Commit: `docs: prepare opencode cleanup release notes` (hash: 9e5e7fed2)
+33. [DONE] `phase1.stream9d.task2` Build the confirmed post-fix release with OpenCode cleanup packaged and record release artifacts. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode cleanup release`)
+    - Result 2026-06-16: `./scripts/build-all.sh --allow-dirty` passed and prepared unified version `1.2.528`.
+    - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.528.tar.bz2`, `codex-module-1.2.528.tar.bz2`, `gemini-module-1.2.528.tar.bz2`, `glm-opencode-module-1.2.528.tar.bz2`, `kimi-module-1.2.528.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.528.tar.bz2`, `vscode-webview-1.2.528.tar.bz2`, `project-manager-1.2.528.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.528.tar.bz2`.
+    - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
+    - VSIX created at repository root: `codeai-hub-1.2.528.vsix` (`5.3M`).
+34. [PENDING] `phase1.stream9d.commit2` Git Commit: `chore: build opencode cleanup release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
