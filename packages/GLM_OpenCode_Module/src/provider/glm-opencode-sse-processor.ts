@@ -14,6 +14,7 @@ interface MessageInfoRecord {
   readonly id?: unknown;
   readonly role?: unknown;
   readonly sessionID?: unknown;
+  readonly tokens?: unknown;
 }
 
 interface MessagePartRecord {
@@ -21,6 +22,7 @@ interface MessagePartRecord {
   readonly messageID?: unknown;
   readonly sessionID?: unknown;
   readonly text?: unknown;
+  readonly tokens?: unknown;
   readonly type?: unknown;
 }
 
@@ -34,6 +36,7 @@ export interface AssistantPartAccumulator {
   readonly streamedReasoningPartIds: Set<string>;
   readonly textByPartId: Map<string, string>;
   readonly textOrder: string[];
+  tokenUsageUsed: number;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -44,6 +47,11 @@ const readRawText = (value: unknown): string | null =>
 
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const readNumber = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? value
+    : null;
 
 const readMessageInfo = (
   payload: OpenCodeEventPayload
@@ -68,6 +76,56 @@ const readMessagePart = (
 const readEventDelta = (payload: OpenCodeEventPayload): string | null => {
   const properties = payload.properties;
   return isRecord(properties) ? readRawText(properties.delta) : null;
+};
+
+const readOpenCodeTokenCount = (value: unknown): number | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const total = readNumber(value.total);
+  if (total !== null) {
+    return total;
+  }
+  const input = readNumber(value.input) ?? 0;
+  const output = readNumber(value.output) ?? 0;
+  const reasoning = readNumber(value.reasoning) ?? 0;
+  const used = input + output + reasoning;
+  return used > 0 ? used : null;
+};
+
+const emitOpenCodeTokenUsage = (params: {
+  readonly accumulator: AssistantPartAccumulator;
+  readonly contextWindowTokenLimit: number | null;
+  readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
+  readonly tokens: unknown;
+}): boolean => {
+  if (!params.contextWindowTokenLimit) {
+    return false;
+  }
+  const used = readOpenCodeTokenCount(params.tokens);
+  if (used === null) {
+    return false;
+  }
+  params.accumulator.tokenUsageUsed = Math.max(
+    params.accumulator.tokenUsageUsed,
+    used
+  );
+  params.onEvent({
+    data: {
+      kind: "token_usage",
+      limit: params.contextWindowTokenLimit,
+      used: params.accumulator.tokenUsageUsed,
+    },
+    provider: "glmOpenCode",
+    timestamp: new Date().toISOString(),
+    tokenUsage: {
+      limit: params.contextWindowTokenLimit,
+      used: params.accumulator.tokenUsageUsed,
+    },
+    type: "status",
+    uuid: `${randomUUID()}::token_usage`,
+  });
+  return true;
 };
 
 const buildSessionError = (
@@ -154,6 +212,9 @@ const ingestReasoningTail = (
 
 const handleMessageUpdated = (params: {
   readonly assistantMessageIds: Set<string>;
+  readonly accumulator: AssistantPartAccumulator;
+  readonly contextWindowTokenLimit: number | null;
+  readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
   readonly payload: OpenCodeEventPayload;
   readonly remoteSessionId: string;
 }): boolean => {
@@ -170,6 +231,12 @@ const handleMessageUpdated = (params: {
     return false;
   }
   params.assistantMessageIds.add(assistantMessageId);
+  emitOpenCodeTokenUsage({
+    accumulator: params.accumulator,
+    contextWindowTokenLimit: params.contextWindowTokenLimit,
+    onEvent: params.onEvent,
+    tokens: info.tokens,
+  });
   return true;
 };
 
@@ -194,6 +261,7 @@ export const resolveOpenCodeUnseenTextTail = (
 const handleAssistantPartUpdated = (params: {
   readonly accumulator: AssistantPartAccumulator;
   readonly assistantMessageIds: Set<string>;
+  readonly contextWindowTokenLimit: number | null;
   readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
   readonly payload: OpenCodeEventPayload;
 }): boolean => {
@@ -208,6 +276,15 @@ const handleAssistantPartUpdated = (params: {
     return false;
   }
   params.accumulator.partTypeByPartId.set(partId, partType);
+  if (partType === "step-finish") {
+    emitOpenCodeTokenUsage({
+      accumulator: params.accumulator,
+      contextWindowTokenLimit: params.contextWindowTokenLimit,
+      onEvent: params.onEvent,
+      tokens: part?.tokens,
+    });
+    return true;
+  }
   const partText = typeof part?.text === "string" ? part.text : "";
   if (partType === "reasoning") {
     appendOrderedText(
@@ -317,6 +394,7 @@ export const createAssistantPartAccumulator = (): AssistantPartAccumulator => ({
   streamedReasoningPartIds: new Set<string>(),
   textByPartId: new Map<string, string>(),
   textOrder: [],
+  tokenUsageUsed: 0,
 });
 
 export const emitFinalOpenCodeAssistantArtifacts = (
@@ -352,19 +430,26 @@ export const emitFinalOpenCodeAssistantArtifacts = (
 export const processOpenCodeSsePayload = (params: {
   readonly accumulator: AssistantPartAccumulator;
   readonly assistantMessageIds: Set<string>;
+  readonly contextWindowTokenLimit?: number | null;
   readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
   readonly payload: OpenCodeEventPayload;
   readonly remoteSessionId: string;
 }): "completed" | "continue" => {
   if (
     params.payload.type === "message.updated" &&
-    handleMessageUpdated(params)
+    handleMessageUpdated({
+      ...params,
+      contextWindowTokenLimit: params.contextWindowTokenLimit ?? null,
+    })
   ) {
     return "continue";
   }
   if (
     params.payload.type === "message.part.updated" &&
-    handleAssistantPartUpdated(params)
+    handleAssistantPartUpdated({
+      ...params,
+      contextWindowTokenLimit: params.contextWindowTokenLimit ?? null,
+    })
   ) {
     return "continue";
   }

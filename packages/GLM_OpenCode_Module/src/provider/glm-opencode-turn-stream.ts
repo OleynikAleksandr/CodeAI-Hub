@@ -1,3 +1,4 @@
+import type { GlmOpenCodeSessionEvent } from "./glm-opencode-output-normalizer";
 import type { OpencodeClient } from "./glm-opencode-sdk-loader";
 import type { OpenCodeEventPayload } from "./glm-opencode-sse-processor";
 import {
@@ -13,6 +14,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const OPENCODE_CONTEXT_LIMIT_BY_SELECTOR: Record<string, number> = {
+  "kimi-for-coding/k2p7": 262_144,
+  "zai-coding-plan/glm-5.2": 1_000_000,
+};
+
 const splitModelSelector = (
   modelSelector: string
 ): { readonly modelID: string; readonly providerID: string } => {
@@ -25,6 +31,10 @@ const splitModelSelector = (
     providerID: modelSelector.slice(0, separator),
   };
 };
+
+export const resolveOpenCodeContextWindowTokenLimit = (
+  modelSelector: string
+): number | null => OPENCODE_CONTEXT_LIMIT_BY_SELECTOR[modelSelector] ?? null;
 
 const buildEventUrl = (
   serverUrl: string,
@@ -97,16 +107,7 @@ export const streamOpenCodeTurn = async (params: {
   readonly client: OpencodeClient;
   readonly content: string;
   readonly modelSelector: string;
-  readonly onEvent: (event: {
-    readonly content?: string;
-    readonly data?: Record<string, unknown>;
-    readonly message?: string;
-    readonly provider?: string;
-    readonly tag?: string;
-    readonly timestamp?: string;
-    readonly type: string;
-    readonly uuid?: string;
-  }) => void;
+  readonly onEvent: (event: GlmOpenCodeSessionEvent) => void;
   readonly remoteSessionId: string;
   readonly serverUrl: string;
   readonly workspacePath?: string;
@@ -134,6 +135,9 @@ export const streamOpenCodeTurn = async (params: {
 
   const accumulator = createAssistantPartAccumulator();
   const assistantMessageIds = new Set<string>();
+  const contextWindowTokenLimit = resolveOpenCodeContextWindowTokenLimit(
+    params.modelSelector
+  );
   const decoder = new TextDecoder();
   const reader = streamResponse.body.getReader();
   let buffer = "";
@@ -155,6 +159,7 @@ export const streamOpenCodeTurn = async (params: {
         const status = processOpenCodeSsePayload({
           accumulator,
           assistantMessageIds,
+          contextWindowTokenLimit,
           onEvent: params.onEvent,
           payload,
           remoteSessionId: params.remoteSessionId,

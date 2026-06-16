@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "5190ba5cd",
+  "lastRecordedCommit": "73189c74f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9n.task1",
-  "expectedCommitMessage": "fix: compact thinking markdown headings",
+  "currentTaskId": "phase1.stream9o.task1",
+  "expectedCommitMessage": "fix: report opencode token usage",
   "debt": {
-    "expectedCommitMessage": "fix: compact thinking markdown headings",
-    "preCommitHead": "5190ba5cd",
+    "expectedCommitMessage": "fix: report opencode token usage",
+    "preCommitHead": "73189c74f",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9n.task1"
+    "taskId": "phase1.stream9o.task1"
   }
 }
 ```
@@ -224,10 +224,18 @@
 ### Stream: Thinking Typography Polish
 
 69. [DONE] `phase1.stream9n.task1` Make markdown headings inside Thinking/Reasoning bubbles compact bold section labels instead of large document headings. (scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: compact thinking markdown headings`)
-70. [PENDING] `phase1.stream9n.commit1` Git Commit: `fix: compact thinking markdown headings` (hash: TBD)
+70. [DONE] `phase1.stream9n.commit1` Git Commit: `fix: compact thinking markdown headings` (hash: 73189c74f)
+
+### Stream: OpenCode Token Usage Status
+
+71. [DONE] `phase1.stream9o.task1` Report OpenCode end-of-turn token usage to the existing session status panel for GLM and Kimi OpenCode selectors. (scope: `packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-turn-stream.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-output-normalizer.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: report opencode token usage`)
+    - Result 2026-06-16: `npx ultracite check packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-turn-stream.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-sse-processor.test.ts packages/GLM_OpenCode_Module/src/provider/glm-opencode-output-normalizer.ts` passed.
+    - Result 2026-06-16: `npm run build --workspace=@codeai-hub/glm-opencode-module` passed.
+    - Result 2026-06-16: `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` passed (16/16).
+72. [PENDING] `phase1.stream9o.commit1` Git Commit: `fix: report opencode token usage` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-71. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-72. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-73. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+73. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+74. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+75. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
