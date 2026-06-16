@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "a6bb66c6b",
+  "lastRecordedCommit": "a22ac5e41",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9p.task1",
-  "expectedCommitMessage": "docs: prepare opencode token usage release",
+  "currentTaskId": "phase1.stream9p.task2",
+  "expectedCommitMessage": "chore: build opencode token usage release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare opencode token usage release",
-    "preCommitHead": "a6bb66c6b",
+    "expectedCommitMessage": "chore: build opencode token usage release",
+    "preCommitHead": "a22ac5e41",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9p.task1"
+    "taskId": "phase1.stream9p.task2"
   }
 }
 ```
@@ -237,9 +237,13 @@
 ### Stream: OpenCode Token Usage Release Build
 
 73. [DONE] `phase1.stream9p.task1` Prepare release notes for the confirmed OpenCode token-usage release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode token usage release`)
-74. [PENDING] `phase1.stream9p.commit1` Git Commit: `docs: prepare opencode token usage release` (hash: TBD)
-75. [TODO] `phase1.stream9p.task2` Build the confirmed OpenCode token-usage release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode token usage release`)
-76. [TODO] `phase1.stream9p.commit2` Git Commit: `chore: build opencode token usage release` (hash: TBD)
+74. [DONE] `phase1.stream9p.commit1` Git Commit: `docs: prepare opencode token usage release` (hash: a22ac5e41)
+75. [DONE] `phase1.stream9p.task2` Build the confirmed OpenCode token-usage release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode token usage release`)
+    - Result 2026-06-16: `./scripts/build-all.sh --allow-dirty` passed and prepared unified version `1.2.533`.
+    - Tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.533.tar.bz2`, `codex-module-1.2.533.tar.bz2`, `gemini-module-1.2.533.tar.bz2`, `glm-opencode-module-1.2.533.tar.bz2`, `kimi-module-1.2.533.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.533.tar.bz2`, `vscode-webview-1.2.533.tar.bz2`, `project-manager-1.2.533.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.533.tar.bz2`.
+    - Result 2026-06-16: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `✅ VSIX runtime package surface verified`.
+    - VSIX created at repository root: `codeai-hub-1.2.533.vsix` (`5.4M`).
+76. [PENDING] `phase1.stream9p.commit2` Git Commit: `chore: build opencode token usage release` (hash: TBD)
 
 ### Stream: Scope Closeout
 
