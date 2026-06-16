@@ -8,6 +8,23 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.531] - 2026-06-16
+### Changed
+- **OpenCode Settings now has a default model selector.** The Settings tab lets users choose `GLM 5.2` or `Kimi K2.7` as the OpenCode default model, so questionnaire submission without a per-step card override no longer always starts GLM.
+
+### Fixed
+- **Session translation overlays are limited to thinking/syncing messages.** Ordinary assistant replies, Core validation messages and provider-visible system messages stay in the prompt-selected language instead of being translated a second time.
+- **Unsupported OpenCode default selectors fall back to GLM 5.2.** Legacy GLM aliases are normalized to the current OpenCode selector, while the supported Kimi selector is preserved.
+
+### Verification
+- `npx ultracite check packages/core/src/session-translation/session-translation-dispatcher.ts packages/core/src/session-translation/session-translation-dispatcher.test.ts packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-facade.localization-guards.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/session-translation/session-translation-dispatcher.test.js packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js`
+- `npx ultracite check src/client/ui/src/components/settings/glm-opencode-settings-card.tsx src/client/ui/src/components/settings/kimi-settings-state.ts src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.530] - 2026-06-16
 ### Fixed
 - **OpenCode dialog text no longer goes through duplicate `ru -> ru` localization.** Core now skips the session-translation overlay when the target language is Russian and the provider-visible dialog fragment is already Cyrillic.

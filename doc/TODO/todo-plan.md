@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "7d2f16f9e",
+  "lastRecordedCommit": "87712bbbf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9k.task2",
-  "expectedCommitMessage": "docs: record opencode default model setting verification",
+  "currentTaskId": "phase1.stream9l.task1",
+  "expectedCommitMessage": "docs: prepare opencode default model release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record opencode default model setting verification",
-    "preCommitHead": "7d2f16f9e",
+    "expectedCommitMessage": "docs: prepare opencode default model release notes",
+    "preCommitHead": "87712bbbf",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9k.task2"
+    "taskId": "phase1.stream9l.task1"
   }
 }
 ```
@@ -191,10 +191,17 @@
     - Build verification: `npm run typecheck:webview` ✅, `npm run build:webview` ✅, `npm run build:project-manager` ✅.
     - Hook verification: `npm run plan:commit -- "feat: add opencode default model setting"` completed the feature commit with architecture, lint, and knip gates green.
     - Coverage focus: OpenCode Settings now exposes the supported default selectors `GLM 5.2` and `Kimi K2.7`; settings mapping preserves Kimi, rejects unsupported selectors back to GLM, and questionnaire submission continues to read `settings.providers.glmOpenCode.defaultModel` when a card override is not provided.
-58. [PENDING] `phase1.stream9k.commit2` Git Commit: `docs: record opencode default model setting verification` (hash: TBD)
+58. [DONE] `phase1.stream9k.commit2` Git Commit: `docs: record opencode default model setting verification` (hash: 87712bbbf)
+
+### Stream: OpenCode Default Model Release Build
+
+59. [DONE] `phase1.stream9l.task1` Prepare release notes for the confirmed OpenCode default-model release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode default model release notes`)
+60. [PENDING] `phase1.stream9l.commit1` Git Commit: `docs: prepare opencode default model release notes` (hash: TBD)
+61. [TODO] `phase1.stream9l.task2` Build the confirmed OpenCode default-model release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode default model release`)
+62. [TODO] `phase1.stream9l.commit2` Git Commit: `chore: build opencode default model release` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-59. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-60. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-61. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+63. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+64. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+65. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
