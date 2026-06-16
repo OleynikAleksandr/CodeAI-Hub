@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "9d035065a",
+  "lastRecordedCommit": "7344528a3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream9.task2",
-  "expectedCommitMessage": "chore: build release 1.2.524",
+  "currentTaskId": "phase1.stream10.task1",
+  "expectedCommitMessage": "docs: expand stale thinking stop unlock scope",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.524",
-    "preCommitHead": "9d035065a",
+    "expectedCommitMessage": "docs: expand stale thinking stop unlock scope",
+    "preCommitHead": "7344528a3",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9.task2"
+    "taskId": "phase1.stream10.task1"
   }
 }
 ```
@@ -97,15 +97,40 @@
     - Evidence 2026-06-15: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.524`, including SDK exclusions, local artefact validation, markdown links, duplication advisory check, production dependency pruning, VSIX package creation and VSIX runtime package surface verification.
     - VSIX: `codeai-hub-1.2.524.vsix`, sha256 `6d6e392a68c746e7abb430a9a7cb3a374794efae21eac22df69525f6dbf3893d`.
     - Tarballs in `doc/tmp/releases/`: `claude-module-1.2.524.tar.bz2`, `codex-module-1.2.524.tar.bz2`, `gemini-module-1.2.524.tar.bz2`, `glm-claude-code-module-1.2.524.tar.bz2`, `kimi-module-1.2.524.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.524.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.524.tar.bz2`, `vscode-webview-1.2.524.tar.bz2`, `project-manager-1.2.524.tar.bz2`.
-20. [PENDING] `phase1.stream9.commit2` Git Commit: `chore: build release 1.2.524` (hash: TBD)
+20. [DONE] `phase1.stream9.commit2` Git Commit: `chore: build release 1.2.524` (hash: 7344528a3)
+
+### Stream: Stale Thinking Stop Unlock Scope Expansion
+
+21. [DONE] `phase1.stream10.task1` Capture the user-reported stale-thinking input lock after Stop and expand this hotfix scope for all workflow steps before acceptance. (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md`; expected commit: `docs: expand stale thinking stop unlock scope`)
+22. [PENDING] `phase1.stream10.commit1` Git Commit: `docs: expand stale thinking stop unlock scope` (hash: TBD)
+
+### Stream: Stale Thinking Stop Unlock Fix
+
+23. [TODO] `phase1.stream11.task1` Fix shared input-state derivation so a stopped stale thinking bubble cannot keep any step input locked. (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: unlock stopped stale thinking sessions`)
+24. [TODO] `phase1.stream11.commit1` Git Commit: `fix: unlock stopped stale thinking sessions` (hash: TBD)
+
+### Stream: Stale Thinking Stop Unlock Regression Tests
+
+25. [TODO] `phase1.stream12.task1` Add focused UI regression coverage for stage-neutral stale thinking after Stop. (scope: `src/client/ui/src/session/session-view.test.tsx`; expected commit: `test: cover stopped stale thinking unlock`)
+26. [TODO] `phase1.stream12.commit1` Git Commit: `test: cover stopped stale thinking unlock` (hash: TBD)
+
+### Stream: Stale Thinking Stop Unlock Verification
+
+27. [TODO] `phase1.stream13.task1` Run targeted UI tests and webview type-check for the stale thinking Stop unlock fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record stale thinking stop unlock verification`)
+28. [TODO] `phase1.stream13.commit1` Git Commit: `docs: record stale thinking stop unlock verification` (hash: TBD)
+
+### Stream: Follow-up Release Build
+
+29. [TODO] `phase1.stream14.task1` Build the next release after explicit user confirmation. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.525`)
+30. [TODO] `phase1.stream14.commit1` Git Commit: `chore: build release 1.2.525` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-21. [TODO] `phase1.stream10.task1` Report release results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock acceptance`)
-22. [TODO] `phase1.stream10.commit1` Git Commit: `docs: record order plan stop unlock acceptance` (hash: TBD)
+31. [TODO] `phase1.stream15.task1` Report fix results and wait for user acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record order plan stop unlock acceptance`)
+32. [TODO] `phase1.stream15.commit1` Git Commit: `docs: record order plan stop unlock acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-23. [TODO] `phase1.stream11.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
-24. [TODO] `phase1.stream11.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
-25. [TODO] `phase1.stream11.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+33. [TODO] `phase1.stream16.task1` Close the accepted scope and archive planning state after user acceptance. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close order plan validator hotfix scope`)
+34. [TODO] `phase1.stream16.commit1` Git Commit: `docs: close order plan validator hotfix scope` (hash: TBD)
+35. [TODO] `phase1.stream16.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
