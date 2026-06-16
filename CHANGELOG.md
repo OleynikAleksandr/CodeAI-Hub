@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.532] - 2026-06-16
+### Fixed
+- **Mixed-language OpenCode reasoning chunks now still go through the reasoning translator.** Core no longer skips thinking/syncing messages just because a fragment contains Cyrillic text quoted from the user's questionnaire.
+- **Ordinary dialog translation remains blocked before the localization path.** Assistant/user/system dialog messages are still rejected by the session translation dispatcher, so the fix only changes reasoning overlay behavior.
+
+### Verification
+- `npx ultracite check packages/core/src/session-translation/session-translation-facade.ts packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.mixed-reasoning.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/session-translation/session-translation-dispatcher.test.js`
+- `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js`
+
 ## [1.2.531] - 2026-06-16
 ### Changed
 - **OpenCode Settings now has a default model selector.** The Settings tab lets users choose `GLM 5.2` or `Kimi K2.7` as the OpenCode default model, so questionnaire submission without a per-step card override no longer always starts GLM.

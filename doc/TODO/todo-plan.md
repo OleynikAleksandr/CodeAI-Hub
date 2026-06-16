@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "41f33c1d4",
+  "lastRecordedCommit": "abc8680d6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9m.task1",
-  "expectedCommitMessage": "fix: translate mixed reasoning chunks",
+  "currentTaskId": "phase1.stream9m.task2",
+  "expectedCommitMessage": "docs: prepare mixed reasoning translation release",
   "debt": {
-    "expectedCommitMessage": "fix: translate mixed reasoning chunks",
-    "preCommitHead": "41f33c1d4",
+    "expectedCommitMessage": "docs: prepare mixed reasoning translation release",
+    "preCommitHead": "abc8680d6",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9m.task1"
+    "taskId": "phase1.stream9m.task2"
   }
 }
 ```
@@ -207,9 +207,13 @@
 ### Stream: Mixed Reasoning Translation Repair
 
 63. [DONE] `phase1.stream9m.task1` Remove the target-language guard from the reasoning translation path so mixed English/Russian Kimi/OpenCode reasoning chunks still reach the selected reasoning translator. (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: translate mixed reasoning chunks`)
-64. [PENDING] `phase1.stream9m.commit1` Git Commit: `fix: translate mixed reasoning chunks` (hash: TBD)
-65. [TODO] `phase1.stream9m.task2` Record targeted verification and release-build evidence for the mixed reasoning translation fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare mixed reasoning translation release`)
-66. [TODO] `phase1.stream9m.commit2` Git Commit: `docs: prepare mixed reasoning translation release` (hash: TBD)
+64. [DONE] `phase1.stream9m.commit1` Git Commit: `fix: translate mixed reasoning chunks` (hash: abc8680d6)
+65. [DONE] `phase1.stream9m.task2` Record targeted verification and release-build evidence for the mixed reasoning translation fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare mixed reasoning translation release`)
+    - Result 2026-06-16: `npx ultracite check packages/core/src/session-translation/session-translation-facade.ts packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts` passed.
+    - Result 2026-06-16: `npm run build --workspace=@codeai-hub/core` passed after the OpenCode module dist had been rebuilt.
+    - Result 2026-06-16: `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.mixed-reasoning.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/session-translation/session-translation-dispatcher.test.js` passed.
+    - Result 2026-06-16: `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` passed.
+66. [PENDING] `phase1.stream9m.commit2` Git Commit: `docs: prepare mixed reasoning translation release` (hash: TBD)
 67. [TODO] `phase1.stream9m.task3` Build the confirmed mixed reasoning translation release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build mixed reasoning translation release`)
 68. [TODO] `phase1.stream9m.commit3` Git Commit: `chore: build mixed reasoning translation release` (hash: TBD)
 

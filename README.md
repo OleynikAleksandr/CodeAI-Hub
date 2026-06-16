@@ -2,18 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.531** (OpenCode Default Model Release)
+**Current Release — v1.2.532** (Mixed Reasoning Translation Release)
+
+This release fixes mixed-language reasoning localization for OpenCode-backed
+models. Reasoning chunks that contain English analysis plus Russian quoted
+questionnaire text now still reach the selected reasoning translator instead of
+being skipped as already localized.
+
+Retest focus: in FinderWidget-Test01, run Description or Virtual Simulation
+through OpenCode/Kimi and confirm that mixed English/Russian thinking fragments
+are translated to Russian. Ordinary assistant replies should remain untouched.
+
+**Previous Release — v1.2.531** (OpenCode Default Model Release)
 
 This release keeps session localization scoped to OpenCode/Kimi thinking
 messages and adds an OpenCode default model selector in Settings. Users can now
 choose whether questionnaire submission without a per-step card override starts
 OpenCode with GLM 5.2 or Kimi K2.7.
-
-Retest focus: in FinderWidget-Test01, set OpenCode's default model to Kimi K2.7
-in Settings, submit Description without changing the step card model, and
-confirm the session starts through Kimi. Then switch the default back to GLM 5.2
-and confirm ordinary assistant replies stay un-translated while thinking remains
-localized.
 
 **Previous Release — v1.2.530** (OpenCode Localization Guard Release)
 
