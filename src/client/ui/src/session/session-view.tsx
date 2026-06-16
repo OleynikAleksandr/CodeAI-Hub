@@ -33,6 +33,7 @@ import {
 } from "./virtual-conversation";
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
+type BindingStatus = SessionSnapshot["binding"]["status"] | null;
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 const MANAGED_REVIEW_ACCEPTANCE_CONTENT = "подтверждаю";
 type SessionSendTurnOptions = Record<string, unknown>;
@@ -47,11 +48,14 @@ const isThinkingTurnMessage = (message: SessionMessage | undefined): boolean =>
   message?.role === "thinking" ||
   (message?.role === "assistant" && message.tag === "thinking");
 
-const resolveThinkingInputConnectionState = (
+export const resolveThinkingInputConnectionState = (
   connectionState: ConnectionState,
-  latestMessage: SessionMessage | undefined
+  latestMessage: SessionMessage | undefined,
+  bindingStatus: BindingStatus
 ): ConnectionState =>
-  connectionState === "idle" && isThinkingTurnMessage(latestMessage)
+  connectionState === "idle" &&
+  bindingStatus === "ready" &&
+  isThinkingTurnMessage(latestMessage)
     ? "running"
     : connectionState;
 
@@ -219,7 +223,8 @@ const SessionViewBody = ({
       continuityLockActive,
       continuityLockReason,
     }),
-    activeSession?.messages.at(-1)
+    activeSession?.messages.at(-1),
+    activeSession?.binding.status ?? null
   );
   const effectiveContinuityLockActive =
     continuityLockActive || managedReviewPendingId !== null;

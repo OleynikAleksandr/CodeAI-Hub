@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "7344528a3",
+  "lastRecordedCommit": "609d10aa6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream10.task1",
-  "expectedCommitMessage": "docs: expand stale thinking stop unlock scope",
+  "currentTaskId": "phase1.stream11.task1",
+  "expectedCommitMessage": "fix: unlock stopped stale thinking sessions",
   "debt": {
-    "expectedCommitMessage": "docs: expand stale thinking stop unlock scope",
-    "preCommitHead": "7344528a3",
+    "expectedCommitMessage": "fix: unlock stopped stale thinking sessions",
+    "preCommitHead": "609d10aa6",
     "stage": "commit_pending",
-    "taskId": "phase1.stream10.task1"
+    "taskId": "phase1.stream11.task1"
   }
 }
 ```
@@ -102,12 +102,12 @@
 ### Stream: Stale Thinking Stop Unlock Scope Expansion
 
 21. [DONE] `phase1.stream10.task1` Capture the user-reported stale-thinking input lock after Stop and expand this hotfix scope for all workflow steps before acceptance. (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md`; expected commit: `docs: expand stale thinking stop unlock scope`)
-22. [PENDING] `phase1.stream10.commit1` Git Commit: `docs: expand stale thinking stop unlock scope` (hash: TBD)
+22. [DONE] `phase1.stream10.commit1` Git Commit: `docs: expand stale thinking stop unlock scope` (hash: 609d10aa6)
 
 ### Stream: Stale Thinking Stop Unlock Fix
 
-23. [TODO] `phase1.stream11.task1` Fix shared input-state derivation so a stopped stale thinking bubble cannot keep any step input locked. (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: unlock stopped stale thinking sessions`)
-24. [TODO] `phase1.stream11.commit1` Git Commit: `fix: unlock stopped stale thinking sessions` (hash: TBD)
+23. [DONE] `phase1.stream11.task1` Fix shared input-state derivation so a stopped stale thinking bubble cannot keep any step input locked. (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: unlock stopped stale thinking sessions`)
+24. [PENDING] `phase1.stream11.commit1` Git Commit: `fix: unlock stopped stale thinking sessions` (hash: TBD)
 
 ### Stream: Stale Thinking Stop Unlock Regression Tests
 
