@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "7383b9dd8",
+  "lastRecordedCommit": "0a4d5409d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream18.task1",
-  "expectedCommitMessage": "test: cover visible dialog translation",
+  "currentTaskId": "phase1.stream19.task1",
+  "expectedCommitMessage": "docs: record visible dialog translation verification",
   "debt": {
-    "expectedCommitMessage": "test: cover visible dialog translation",
-    "preCommitHead": "7383b9dd8",
+    "expectedCommitMessage": "docs: record visible dialog translation verification",
+    "preCommitHead": "0a4d5409d",
     "stage": "commit_pending",
-    "taskId": "phase1.stream18.task1"
+    "taskId": "phase1.stream19.task1"
   }
 }
 ```
@@ -148,12 +148,14 @@
 ### Stream: Visible Dialog Translation Regression Tests
 
 37. [DONE] `phase1.stream18.task1` Add focused Core regression coverage for ordinary assistant messages and deferred Core user-role messages using the reasoning translation overlay. (scope: `packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/session-translation/session-translation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `test: cover visible dialog translation`)
-38. [PENDING] `phase1.stream18.commit1` Git Commit: `test: cover visible dialog translation` (hash: TBD)
+38. [DONE] `phase1.stream18.commit1` Git Commit: `test: cover visible dialog translation` (hash: 0a4d5409d)
 
 ### Stream: Visible Dialog Translation Verification
 
-39. [TODO] `phase1.stream19.task1` Run targeted Core translation tests and Core build for the visible dialog localization fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation verification`)
-40. [TODO] `phase1.stream19.commit1` Git Commit: `docs: record visible dialog translation verification` (hash: TBD)
+39. [DONE] `phase1.stream19.task1` Run targeted Core translation tests and Core build for the visible dialog localization fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record visible dialog translation verification`)
+    - Evidence 2026-06-16: `npx tsx --test packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts` passed 15/15 tests.
+    - Evidence 2026-06-16: `npm run build --workspace=@codeai-hub/core` passed.
+40. [PENDING] `phase1.stream19.commit1` Git Commit: `docs: record visible dialog translation verification` (hash: TBD)
 
 ### Stream: Follow-up Release Build
 
