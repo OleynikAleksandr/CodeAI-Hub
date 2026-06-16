@@ -49,6 +49,11 @@ export interface GlmClaudeCodeSettingsSnapshot {
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
+export interface GlmOpenCodeSettingsSnapshot {
+  readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
+}
+
 export interface LocalModelsSettingsSnapshot {
   readonly defaultModel?: unknown;
 }
@@ -193,6 +198,20 @@ export const loadGlmClaudeCodeSettingsSnapshot = (
   return {
     defaultModel: normalizeGlmClaudeCodeModel(glmClaudeCode.defaultModel),
     thinkingDisplaySyncEnabled: glmClaudeCode.thinkingDisplaySyncEnabled,
+  };
+};
+
+export const loadGlmOpenCodeSettingsSnapshot = (
+  settingsPath: string
+): GlmOpenCodeSettingsSnapshot | null => {
+  const glmOpenCode = loadProviderSnapshot(settingsPath, "glmOpenCode");
+  if (!glmOpenCode) {
+    return null;
+  }
+
+  return {
+    defaultModel: normalizeGlmClaudeCodeModel(glmOpenCode.defaultModel),
+    thinkingDisplaySyncEnabled: glmOpenCode.thinkingDisplaySyncEnabled,
   };
 };
 

@@ -27,6 +27,7 @@ const createCoordinator = (): ProviderRecoveryCoordinator =>
     createClaudeAdapter: () => createAdapter(async () => undefined),
     createCodexAdapter: () => createAdapter(async () => undefined),
     createGlmClaudeCodeAdapter: () => createAdapter(async () => undefined),
+    createGlmOpenCodeAdapter: () => createAdapter(async () => undefined),
     createKimiAdapter: () => createAdapter(async () => undefined),
     emitStatus: () => undefined,
     ensureGeminiAdapter: async () => undefined,

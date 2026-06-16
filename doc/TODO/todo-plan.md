@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "b49e21e8d",
+  "lastRecordedCommit": "6cca7a5b2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "feat: add glm opencode provider module",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "feat: register glm opencode provider",
   "debt": {
-    "expectedCommitMessage": "feat: add glm opencode provider module",
-    "preCommitHead": "b49e21e8d",
+    "expectedCommitMessage": "feat: register glm opencode provider",
+    "preCommitHead": "6cca7a5b2",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream3.task1"
   }
 }
 ```
@@ -55,12 +55,12 @@
 ### Stream: Provider Runtime
 
 3. [DONE] `phase1.stream2.task1` Add the dedicated GLM-OpenCode provider package with runtime profile, OpenCode process runner, adapter facade and focused runtime tests. (scope: `packages/GLM_OpenCode_Module/**, package.json, package-lock.json`; expected commit: `feat: add glm opencode provider module`)
-4. [PENDING] `phase1.stream2.commit1` Git Commit: `feat: add glm opencode provider module` (hash: TBD)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `feat: add glm opencode provider module` (hash: 6cca7a5b2)
 
 ### Stream: Core Registry
 
-5. [TODO] `phase1.stream3.task1` Register `glmOpenCode` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure classification. (scope: `packages/core/src/provider-registry/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/config/**`; expected commit: `feat: register glm opencode provider`)
-6. [TODO] `phase1.stream3.commit1` Git Commit: `feat: register glm opencode provider` (hash: TBD)
+5. [DONE] `phase1.stream3.task1` Register `glmOpenCode` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure classification. (scope: `packages/core/src/provider-registry/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/config/**, packages/core/package.json, package-lock.json`; expected commit: `feat: register glm opencode provider`)
+6. [PENDING] `phase1.stream3.commit1` Git Commit: `feat: register glm opencode provider` (hash: TBD)
 
 ### Stream: Settings And Selection Surfaces
 

@@ -2,7 +2,12 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
-type ProviderModuleId = "claude" | "codex" | "gemini" | "glm-claude-code";
+type ProviderModuleId =
+  | "claude"
+  | "codex"
+  | "gemini"
+  | "glm-claude-code"
+  | "glm-opencode";
 
 const PROVIDERS_ROOT = path.join(homedir(), ".codeai-hub", "providers");
 
@@ -97,3 +102,6 @@ export const resolveGeminiModulePath = (): string | undefined =>
 
 export const resolveGlmClaudeCodeModulePath = (): string | undefined =>
   resolveProviderModulePath("glm-claude-code", "GLM_CLAUDE_CODE_MODULE_PATH");
+
+export const resolveGlmOpenCodeModulePath = (): string | undefined =>
+  resolveProviderModulePath("glm-opencode", "GLM_OPENCODE_MODULE_PATH");

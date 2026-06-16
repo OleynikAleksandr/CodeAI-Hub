@@ -7,6 +7,7 @@ export type WorkspaceRuntimeProviderId =
   | "claude"
   | "gemini"
   | "glm-claude-code"
+  | "glm-opencode"
   | "kimi";
 
 export interface WorkspaceRuntimePath {
@@ -57,6 +58,7 @@ const PROVIDER_IDS = [
   "claude",
   "gemini",
   "glm-claude-code",
+  "glm-opencode",
   "kimi",
 ] as const;
 const DESCRIPTION_STAGE_ID = "description";
@@ -108,6 +110,12 @@ const WORKSPACE_SETTINGS_SEED = {
       haikuModel: "glm-5.2",
       opusModel: "glm-5.2",
       sonnetModel: "glm-5.2",
+      thinkingDisplaySyncEnabled: true,
+    },
+    glmOpenCode: {
+      apiKey: "",
+      configPath: "~/.codeai-hub/providers/glm-opencode/config.json",
+      defaultModel: "glm-5.2",
       thinkingDisplaySyncEnabled: true,
     },
   },

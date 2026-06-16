@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { KimiModuleOptions } from "@codeai-hub/kimi-module";
 import type { CoreConfig } from "../config";
@@ -13,6 +14,7 @@ import type {
   CodexAdapterCtor,
   GeminiAdapterCtor,
   GlmClaudeCodeAdapterCtor,
+  GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
   ProviderAdapter,
   ProviderDescriptor,
@@ -30,6 +32,7 @@ interface ProviderDescriptorFactoryOptions {
   readonly config: CoreConfig;
   readonly createReporter: (scope: string) => ModuleReporter;
   readonly glmClaudeCodeAdapterCtor: GlmClaudeCodeAdapterCtor;
+  readonly glmOpenCodeAdapterCtor: GlmOpenCodeAdapterCtor;
   readonly handleAdapterConstructionFailure: (
     descriptor: MutableProviderDescriptor,
     error: unknown,
@@ -107,6 +110,12 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
+  glmOpenCode: {
+    acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
+    syncsLabelFromAppliedConfig: true,
+  },
   localModels: {
     acceptsAppliedTurnConfig: true,
     appliedConfigIdentityKey: "effective_model_id",
@@ -129,11 +138,14 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   geminiCli: true,
   kimiCode: true,
   glmClaudeCode: false,
+  glmOpenCode: true,
   localModels: true,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
+const GLM_OPENCODE_CONFIG_PATH =
+  "~/.codeai-hub/providers/glm-opencode/config.json";
 const GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV =
   "CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH";
 
@@ -237,6 +249,28 @@ export const createGlmClaudeCodeAdapterInstance = (
       settingsPath: capsule.settingsFile.absolutePath,
     },
     reporter: options.createReporter("glm-claude-code"),
+  });
+};
+
+export const createGlmOpenCodeAdapterInstance = (
+  options: Pick<
+    ProviderDescriptorFactoryOptions,
+    "config" | "createReporter" | "glmOpenCodeAdapterCtor"
+  >
+): ProviderAdapter => {
+  const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
+  return new options.glmOpenCodeAdapterCtor({
+    workspace: {
+      configPath: GLM_OPENCODE_CONFIG_PATH,
+      defaultModel: "glm-5.2",
+      providerHomePath: path.join(
+        capsule.providersRoot.absolutePath,
+        "glm-opencode",
+        "home"
+      ),
+      workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
+    },
+    reporter: options.createReporter("glm-opencode"),
   });
 };
 
@@ -350,6 +384,31 @@ const buildGlmClaudeCodeDescriptor = (
   return descriptor;
 };
 
+const buildGlmOpenCodeDescriptor = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor => {
+  const descriptor: MutableProviderDescriptor = {
+    capabilities: {
+      modelSync: resolveProviderModelSyncCapabilities("glmOpenCode"),
+      requiresPostStopResume: false,
+      supportsImmediateBinding:
+        resolveProviderImmediateBindingCapability("glmOpenCode"),
+    },
+    id: "glmOpenCode",
+    name: "GLM-OpenCode",
+    description:
+      "Requires separate Z.AI/GLM API key; runs GLM 5.2 through OpenCode",
+    status: "active",
+  };
+  tryAttachAdapter(
+    () => createGlmOpenCodeAdapterInstance(options),
+    descriptor,
+    "GLM-OpenCode components are unavailable.",
+    options.handleAdapterConstructionFailure
+  );
+  return descriptor;
+};
+
 const buildLocalModelsDescriptor = (): ProviderDescriptor => ({
   adapter: new LocalModelsProviderAdapter(),
   capabilities: {
@@ -372,6 +431,7 @@ export const createProviderDescriptors = (
   buildGeminiDescriptor(),
   buildKimiDescriptor(options),
   buildGlmClaudeCodeDescriptor(options),
+  buildGlmOpenCodeDescriptor(options),
   buildLocalModelsDescriptor(),
 ];
 

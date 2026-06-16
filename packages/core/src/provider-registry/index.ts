@@ -16,6 +16,7 @@ import {
   createCodexAdapterInstance,
   createGeminiAdapterInstance,
   createGlmClaudeCodeAdapterInstance,
+  createGlmOpenCodeAdapterInstance,
   createKimiAdapterInstance,
   createProviderDescriptors,
   type KimiAdapterCtor,
@@ -25,18 +26,21 @@ import {
   resolveCodexModulePath,
   resolveGeminiModulePath,
   resolveGlmClaudeCodeModulePath,
+  resolveGlmOpenCodeModulePath,
 } from "./provider-installed-path-resolver";
 import {
   loadClaudeAdapterCtor,
   loadCodexAdapterCtor,
   loadGeminiAdapterCtor,
   loadGlmClaudeCodeAdapterCtor,
+  loadGlmOpenCodeAdapterCtor,
 } from "./provider-module-loader";
 import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
   GlmClaudeCodeAdapterCtor,
+  GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
   Provider,
   ProviderAdapter,
@@ -69,6 +73,7 @@ export class ProviderRegistry {
   private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
   private readonly kimiAdapterCtor: KimiAdapterCtor;
   private readonly glmClaudeCodeAdapterCtor: GlmClaudeCodeAdapterCtor;
+  private readonly glmOpenCodeAdapterCtor: GlmOpenCodeAdapterCtor;
   private readonly geminiWorkspacePath: string;
   private readonly geminiDefaultModel?: string;
   private readonly geminiThinkingLevelByModel: Record<string, string>;
@@ -103,6 +108,10 @@ export class ProviderRegistry {
     this.kimiAdapterCtor = loadBundledKimiAdapterCtor();
     this.glmClaudeCodeAdapterCtor = loadGlmClaudeCodeAdapterCtor(
       resolveGlmClaudeCodeModulePath(),
+      this.options.logger
+    );
+    this.glmOpenCodeAdapterCtor = loadGlmOpenCodeAdapterCtor(
+      resolveGlmOpenCodeModulePath(),
       this.options.logger
     );
     this.geminiAdapterCtorPromise = loadGeminiAdapterCtor(
@@ -149,6 +158,12 @@ export class ProviderRegistry {
           createReporter: (scope) => this.createReporter(scope),
           glmClaudeCodeAdapterCtor: this.glmClaudeCodeAdapterCtor,
         }),
+      createGlmOpenCodeAdapter: () =>
+        createGlmOpenCodeAdapterInstance({
+          config: this.options.config,
+          createReporter: (scope) => this.createReporter(scope),
+          glmOpenCodeAdapterCtor: this.glmOpenCodeAdapterCtor,
+        }),
       emitStatus: (event) => this.emitStatus(event),
       ensureGeminiAdapter: async () => {
         await this.ensureGeminiAdapter();
@@ -171,6 +186,7 @@ export class ProviderRegistry {
         ),
       kimiAdapterCtor: this.kimiAdapterCtor,
       glmClaudeCodeAdapterCtor: this.glmClaudeCodeAdapterCtor,
+      glmOpenCodeAdapterCtor: this.glmOpenCodeAdapterCtor,
     });
     for (const providerId of this.pendingRetryProviders) {
       this.recoveryScheduler.scheduleRetry(providerId);
