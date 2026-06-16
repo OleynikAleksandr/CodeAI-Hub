@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.528** (OpenCode Cleanup Release)
+**Current Release — v1.2.529** (OpenCode SSE Transport Release)
+
+This release moves the OpenCode wrapper off the old `opencode run --format json`
+path and onto the OpenCode server/SSE transport, using the official
+`@opencode-ai/sdk` client. The wrapper now consumes live `message.part.delta`
+events for assistant text and reasoning, exposes both OpenCode CLI and SDK
+versions in Settings, and keeps the OpenCode runtime on the canonical
+`~/.codeai-hub/providers/opencode/...` path with legacy fallback only for older
+installs.
+
+Retest focus: in FinderWidget-Test01, run one workflow step through `OpenCode`
+with GLM and one with Kimi. Both should show early visible output from the SSE
+transport, reasoning should appear before the final answer when the model emits
+it, and Settings should show both `OpenCode CLI` and `OpenCode SDK` version
+rows.
+
+**Previous Release — v1.2.528** (OpenCode Cleanup Release)
 
 This release finishes the OpenCode migration. The deprecated
 `GLM-Claude-Code` provider has been removed from runtime registries, Settings,

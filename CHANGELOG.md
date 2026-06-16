@@ -8,6 +8,25 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.529] - 2026-06-16
+### Changed
+- **OpenCode wrapper now uses the official server/SSE transport.** The provider starts `opencode serve`, connects through `@opencode-ai/sdk/v2`, and reads `/event` SSE frames instead of depending on the old `opencode run --format json` line protocol.
+- **Settings now surface OpenCode SDK diagnostics alongside the CLI version.** The OpenCode Settings version block now includes both `OpenCode CLI` and `OpenCode SDK`, with the SDK version sourced from the packaged provider bundle after install.
+
+### Fixed
+- **Native SDK loading no longer fails under the CommonJS provider runtime.** The wrapper uses native dynamic import for `@opencode-ai/sdk/v2`, avoiding the `ERR_PACKAGE_PATH_NOT_EXPORTED` failure caused by TypeScript lowering `import()` to `require(...)`.
+- **SSE responses no longer hang waiting for a terminal snapshot after prompt failure.** The wrapper now treats non-OK `promptAsync` responses as immediate failures instead of waiting forever for `session.idle`.
+- **Assistant/reasoning live deltas are now consumed from SSE.** The wrapper reads `message.part.delta` events, streams assistant tails immediately, and emits reasoning before the final answer when the provider exposes reasoning deltas.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-opencode-module`
+- `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- `npx ultracite check packages/GLM_OpenCode_Module/src/provider/... packages/core/src/remote-bridge/handlers/settings-provider-version-service.ts`
+- `npm run check:knip`
+- Live wrapper smoke (`workspace=/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01`): `glm-5.2` emitted live assistant chunks at ~6438ms, a reasoning event at ~6534ms, then final `GREATER`; `kimi-k2.7-code` emitted live assistant chunks at ~4569ms, a reasoning event at ~4669ms, then final `GREATER`.
+
 ## [1.2.528] - 2026-06-16
 ### Changed
 - **Deprecated `GLM-Claude-Code` has been fully removed from the active product surface.** Core registries, Settings tabs, Project Manager provider pickers, packaging scripts, manifests, and active SSOT docs no longer expose the old Claude-compatible GLM provider.

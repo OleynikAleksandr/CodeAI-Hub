@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "db461d935",
+  "lastRecordedCommit": "ce943ba63",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9f.task1",
-  "expectedCommitMessage": "docs: record opencode sse verification",
+  "currentTaskId": "phase1.stream9g.task1",
+  "expectedCommitMessage": "docs: prepare opencode sse release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record opencode sse verification",
-    "preCommitHead": "db461d935",
+    "expectedCommitMessage": "docs: prepare opencode sse release notes",
+    "preCommitHead": "ce943ba63",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9f.task1"
+    "taskId": "phase1.stream9g.task1"
   }
 }
 ```
@@ -150,12 +150,12 @@
     - Direct server/SSE evidence after the transport rewrite: raw `/event` stream emitted `message.part.delta` frames for assistant text and reasoning parts; the wrapper now consumes those deltas instead of waiting for a single late `message.part.updated` snapshot.
     - Live adapter smoke on committed tree (`workspace=/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01`): `glm-5.2` produced `assistant live` chunks at ~6438ms (`"GRE"`, `"ATER"`), then a `thinking` event at ~6534ms with the arithmetic reasoning summary, then final `assistant`=`GREATER` and `turn_completed`.
     - Live adapter smoke on committed tree (`workspace=/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01`): `kimi-k2.7-code` produced `assistant live` chunks at ~4569ms (`"GRE"`, `"ATER"`), then a `thinking` event at ~4669ms with the arithmetic reasoning summary, then final `assistant`=`GREATER` and `turn_completed`.
-40. [PENDING] `phase1.stream9f.commit1` Git Commit: `docs: record opencode sse verification` (hash: TBD)
+40. [DONE] `phase1.stream9f.commit1` Git Commit: `docs: record opencode sse verification` (hash: ce943ba63)
 
 ### Stream: SSE Release Build
 
-41. [TODO] `phase1.stream9g.task1` Prepare release notes for the confirmed OpenCode SSE transport release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode sse release notes`)
-42. [TODO] `phase1.stream9g.commit1` Git Commit: `docs: prepare opencode sse release notes` (hash: TBD)
+41. [DONE] `phase1.stream9g.task1` Prepare release notes for the confirmed OpenCode SSE transport release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare opencode sse release notes`)
+42. [PENDING] `phase1.stream9g.commit1` Git Commit: `docs: prepare opencode sse release notes` (hash: TBD)
 43. [TODO] `phase1.stream9g.task2` Build the confirmed OpenCode SSE transport release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build opencode sse release`)
 44. [TODO] `phase1.stream9g.commit2` Git Commit: `chore: build opencode sse release` (hash: TBD)
 
