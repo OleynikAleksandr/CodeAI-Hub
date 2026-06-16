@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "f893f53b7",
+  "lastRecordedCommit": "db461d935",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9e.task1",
-  "expectedCommitMessage": "feat: switch opencode wrapper to server sse transport",
+  "currentTaskId": "phase1.stream9f.task1",
+  "expectedCommitMessage": "docs: record opencode sse verification",
   "debt": {
-    "expectedCommitMessage": "feat: switch opencode wrapper to server sse transport",
-    "preCommitHead": "f893f53b7",
+    "expectedCommitMessage": "docs: record opencode sse verification",
+    "preCommitHead": "db461d935",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9e.task1"
+    "taskId": "phase1.stream9f.task1"
   }
 }
 ```
@@ -140,12 +140,17 @@
 ### Stream: OpenCode SSE Transport
 
 37. [DONE] `phase1.stream9e.task1` Replace the current OpenCode CLI `run --format json` wrapper path with OpenCode server/SSE transport, adopt the official `@opencode-ai/sdk` client package, and expose OpenCode SDK version diagnostics in Settings alongside the CLI version. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/remote-bridge/handlers/settings-provider-version-service.ts, src/client/ui/src/components/settings/provider-versions*.tsx, src/client/ui/src/components/settings/provider-versions-model.ts, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `feat: switch opencode wrapper to server sse transport`)
-38. [PENDING] `phase1.stream9e.commit1` Git Commit: `feat: switch opencode wrapper to server sse transport` (hash: TBD)
+38. [DONE] `phase1.stream9e.commit1` Git Commit: `feat: switch opencode wrapper to server sse transport` (hash: db461d935)
 
 ### Stream: OpenCode SSE Verification
 
-39. [TODO] `phase1.stream9f.task1` Record targeted verification for the SSE-backed OpenCode wrapper, including live reasoning-stream evidence for GLM and Kimi selectors. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode sse verification`)
-40. [TODO] `phase1.stream9f.commit1` Git Commit: `docs: record opencode sse verification` (hash: TBD)
+39. [DONE] `phase1.stream9f.task1` Record targeted verification for the SSE-backed OpenCode wrapper, including live reasoning-stream evidence for GLM and Kimi selectors. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode sse verification`)
+    - Targeted checks completed: `npm run build --workspace=@codeai-hub/glm-opencode-module` ✅, `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` ✅ (13/13), `npm run build --workspace=@codeai-hub/core` ✅, `npm run typecheck:webview` ✅, `npx ultracite check ...` ✅, `npm run check:knip` ✅.
+    - SDK/runtime verification: OpenCode wrapper now loads `@opencode-ai/sdk/v2` through native dynamic import, avoiding the CommonJS `ERR_PACKAGE_PATH_NOT_EXPORTED` failure that occurred when TypeScript lowered `import()` to `require(...)`.
+    - Direct server/SSE evidence after the transport rewrite: raw `/event` stream emitted `message.part.delta` frames for assistant text and reasoning parts; the wrapper now consumes those deltas instead of waiting for a single late `message.part.updated` snapshot.
+    - Live adapter smoke on committed tree (`workspace=/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01`): `glm-5.2` produced `assistant live` chunks at ~6438ms (`"GRE"`, `"ATER"`), then a `thinking` event at ~6534ms with the arithmetic reasoning summary, then final `assistant`=`GREATER` and `turn_completed`.
+    - Live adapter smoke on committed tree (`workspace=/Users/oleksandroliinyk/VSCODE/FinderWidget-Test01`): `kimi-k2.7-code` produced `assistant live` chunks at ~4569ms (`"GRE"`, `"ATER"`), then a `thinking` event at ~4669ms with the arithmetic reasoning summary, then final `assistant`=`GREATER` and `turn_completed`.
+40. [PENDING] `phase1.stream9f.commit1` Git Commit: `docs: record opencode sse verification` (hash: TBD)
 
 ### Stream: SSE Release Build
 
