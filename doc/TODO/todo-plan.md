@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "ca6f37bae",
+  "lastRecordedCommit": "02450ebfc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream7.task1",
-  "expectedCommitMessage": "docs: record opencode wrapper verification",
+  "currentTaskId": "phase1.stream8.task1",
+  "expectedCommitMessage": "docs: prepare glm opencode release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record opencode wrapper verification",
-    "preCommitHead": "ca6f37bae",
+    "expectedCommitMessage": "docs: prepare glm opencode release notes",
+    "preCommitHead": "02450ebfc",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7.task1"
+    "taskId": "phase1.stream8.task1"
   }
 }
 ```
@@ -95,12 +95,12 @@
     - Completed checks: `npm run build --workspace=@codeai-hub/glm-opencode-module` ✅, `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js` ✅ (7/7), `npm run build --workspace=@codeai-hub/core` ✅, `npm run typecheck:webview` ✅.
     - Live smoke evidence: direct OpenCode CLI returned `CODEAI_GLM_OPENWRAPPER_OK` for `zai-coding-plan/glm-5.2` and `CODEAI_KIMI_OPENWRAPPER_OK` for `kimi-for-coding/k2p7`; isolated wrapper adapter returned `WRAPPER_GLM_OK` and `WRAPPER_KIMI_OK` through `GlmOpenCodeProviderAdapter`.
     - Investigation result captured during implementation: leaving child `stdin` open in `spawn()` could stall OpenCode on `init`; switching to `stdio: ["ignore", "pipe", "pipe"]` removed the hang in adapter-level smoke.
-20. [PENDING] `phase1.stream7.commit1` Git Commit: `docs: record opencode wrapper verification` (hash: TBD)
+20. [DONE] `phase1.stream7.commit1` Git Commit: `docs: record opencode wrapper verification` (hash: 02450ebfc)
 
 ### Stream: Release Build
 
-21. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
-22. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: TBD)
+21. [DONE] `phase1.stream8.task1` Prepare release notes for the confirmed GLM-OpenCode release before version bump/build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm opencode release notes`)
+22. [PENDING] `phase1.stream8.commit1` Git Commit: `docs: prepare glm opencode release notes` (hash: TBD)
 23. [TODO] `phase1.stream8.task2` Build the confirmed release with GLM-OpenCode packaged and record release artifacts. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm opencode release`)
 24. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build glm opencode release` (hash: TBD)
 

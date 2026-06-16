@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.526** (Visible Dialog Translation Fix)
+**Current Release — v1.2.527** (OpenCode Wrapper Provider)
+
+This release repurposes the existing `glmOpenCode` surface into a user-facing
+`OpenCode` wrapper. The wrapper now uses OpenCode-owned auth/runtime, exposes
+the verified selectors `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7`
+through Settings, Session UI and Project Manager pickers, and closes child
+`stdin` so `opencode run` no longer stalls on `init` when launched through the
+CodeAI Hub adapter.
+
+Retest focus: in FinderWidget-Test01, select `OpenCode` in Settings or a step
+start card, then run one workflow step with GLM and one with Kimi. Both should
+return a visible answer, and Stop/manual input unlock behavior should remain
+correct.
+
+**Previous Release — v1.2.526** (Visible Dialog Translation Fix)
 
 This bugfix release routes provider-visible assistant progress updates and
 Core-generated deferred user-role dialog messages through the existing reasoning

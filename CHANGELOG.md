@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.527] - 2026-06-16
+### Fixed
+- **`glmOpenCode` now behaves as a real OpenCode wrapper instead of a GLM-only skin.** User-facing labels, Settings, Session UI, start cards and Capture Workbench now treat the provider as `OpenCode`, while the verified selectors `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7` are available through the same wrapper surface.
+- **OpenCode auth/runtime is now OpenCode-owned.** CodeAI Hub copies the OpenCode auth catalog into the isolated provider runtime and still merges an explicit Z.AI key override when present, so GLM and Kimi can both run through the same isolated wrapper profile.
+- **Adapter-launched `opencode run` no longer stalls on `init`.** The wrapper now starts OpenCode with closed child `stdin` (`stdio: ["ignore", "pipe", "pipe"]`), which removed the adapter-only hang while preserving successful live turns for both verified selectors.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-opencode-module`
+- `node --test packages/GLM_OpenCode_Module/dist/provider/*.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- Live wrapper smoke via `GlmOpenCodeProviderAdapter`: `WRAPPER_GLM_OK`, `WRAPPER_KIMI_OK`
+
 ## [1.2.526] - 2026-06-16
 ### Fixed
 - **Visible provider dialog updates use the reasoning translation overlay.** Ordinary assistant progress updates and Core-generated deferred user-role workflow messages now enter the session translation overlay, while actual human user input remains untouched.
