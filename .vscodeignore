@@ -52,3 +52,5 @@ media/*.css
 media/web-client/**
 node_modules/@codeai-hub/codex-app-server-module/**
 packages/Codex_AppServer_Module/**
+node_modules/@codeai-hub/glm-opencode-module/**
+packages/GLM_OpenCode_Module/**

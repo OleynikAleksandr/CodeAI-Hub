@@ -7792,10 +7792,12 @@
 
   // src/client/ui/src/components/settings/kimi-settings-state.ts
   var DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH = "~/.codeai-hub/providers/glm-claude-code/config.json";
+  var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/glm-opencode/config.json";
   var DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
   var DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
   var DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
   var DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
+  var DEFAULT_GLM_OPENCODE_MODEL = "zai-coding-plan/glm-5.2";
   var LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = /* @__PURE__ */ new Set([
     "glm-5.1",
     "glm-5-turbo",
@@ -7822,7 +7824,7 @@
     ),
     defaultModel: mapGlmClaudeCodeModel(
       value?.defaultModel,
-      DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+      DEFAULT_GLM_OPENCODE_MODEL
     ),
     haikuModel: mapGlmClaudeCodeModel(
       value?.haikuModel,
@@ -7835,6 +7837,20 @@
     sonnetModel: mapGlmClaudeCodeModel(
       value?.sonnetModel,
       DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL
+    ),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var mapGlmOpenCodeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
+    apiKey: mapOptionalString(value?.apiKey, ""),
+    configPath: mapOptionalString(
+      value?.configPath,
+      DEFAULT_GLM_OPENCODE_CONFIG_PATH
+    ),
+    defaultModel: mapGlmClaudeCodeModel(
+      value?.defaultModel,
+      DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
     ),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
@@ -7880,10 +7896,10 @@
   var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
   var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
   var CODEX_MODEL_IDS = new Set(
-    CODEX_SETTINGS_MODELS.map((model) => model.id)
+    CODEX_SETTINGS_MODELS.map(({ id }) => id)
   );
   var CODEX_REASONING_LEVEL_SET = new Set(
-    CODEX_REASONING_LEVELS.map((level) => level.name)
+    CODEX_REASONING_LEVELS.map(({ name }) => name)
   );
   var DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce((accumulator, model) => {
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
@@ -8056,9 +8072,11 @@
         value?.providers?.glmClaudeCode,
         mapThinkingDisplaySyncEnabled
       ),
-      localModels: mapLocalModelsSettings(
-        value?.providers?.localModels
-      )
+      glmOpenCode: mapGlmOpenCodeSettings(
+        value?.providers?.glmOpenCode,
+        mapThinkingDisplaySyncEnabled
+      ),
+      localModels: mapLocalModelsSettings(value?.providers?.localModels)
     }
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
@@ -8084,6 +8102,9 @@
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
     left.providers.glmClaudeCode,
     right.providers.glmClaudeCode
+  ) && areKimiProviderSettingsEqual(
+    left.providers.glmOpenCode,
+    right.providers.glmOpenCode
   ) && areLocalModelsSettingsEqual(
     left.providers.localModels,
     right.providers.localModels
@@ -8361,6 +8382,7 @@
     codexCli: "Codex",
     geminiCli: "Gemini",
     glmClaudeCode: "GLM-Claude-Code",
+    glmOpenCode: "OpenCode",
     kimiCode: "Kimi",
     localModels: "Local Models"
   };
@@ -8370,6 +8392,7 @@
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
     glmClaudeCode: "Using GLM 5.2 through Claude Agent SDK-compatible runtime",
+    glmOpenCode: "Using OpenCode providers and models",
     kimiCode: "Using your authentication Kimi CLI",
     localModels: "Runs downloaded LM Studio models on this Mac"
   };
@@ -8384,7 +8407,8 @@
     "claudeCodeCli",
     "codexCli",
     "geminiCli",
-    "localModels"
+    "localModels",
+    "glmOpenCode"
   ];
   var FALLBACK_PROVIDERS = DEFAULT_PROVIDER_IDS.map((providerId) => ({
     id: providerId,
@@ -8515,6 +8539,7 @@
     "geminiCli",
     "kimiCode",
     "glmClaudeCode",
+    "glmOpenCode",
     "localModels"
   ]);
   var isProviderDescriptorCandidate = (value) => {
@@ -9709,24 +9734,6 @@
       },
       [settings, updateSettings]
     );
-    const handleStrictSchemaTextChange = (0, import_react.useCallback)(
-      (value) => {
-        updateSettings(updateStrictSchemaText(settings, value));
-      },
-      [settings, updateSettings]
-    );
-    const handleStrictInstructionTextChange = (0, import_react.useCallback)(
-      (value) => {
-        updateSettings(updateStrictInstructionText(settings, value));
-      },
-      [settings, updateSettings]
-    );
-    const handleTextToSpeechRateChange = (0, import_react.useCallback)(
-      (rate) => {
-        updateSettings(updateTextToSpeechRate(settings, rate));
-      },
-      [settings, updateSettings]
-    );
     const handleGeminiDefaultModelChange = (0, import_react.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
@@ -9837,6 +9844,13 @@
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
+      handleGlmOpenCodeSettingsChange: (glmOpenCode) => updateSettings({
+        ...settings,
+        providers: { ...settings.providers, glmOpenCode }
+      }),
+      handleGlmOpenCodeThinkingDisplaySyncChange: (enabled) => updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "glmOpenCode", enabled)
+      ),
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,
       handleLocalizationEngineIdChange,
@@ -9848,9 +9862,9 @@
       handleProviderAutoUpdateChange,
       handleRestartCore,
       handleResponsePolicyModeChange,
-      handleStrictSchemaTextChange,
-      handleStrictInstructionTextChange,
-      handleTextToSpeechRateChange,
+      handleStrictSchemaTextChange: (value) => updateSettings(updateStrictSchemaText(settings, value)),
+      handleStrictInstructionTextChange: (value) => updateSettings(updateStrictInstructionText(settings, value)),
+      handleTextToSpeechRateChange: (rate) => updateSettings(updateTextToSpeechRate(settings, rate)),
       handleSave,
       handleReset,
       handleUpdateProvider
