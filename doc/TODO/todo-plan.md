@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "37a85a109",
+  "lastRecordedCommit": "06aec0757",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream12.task1",
-  "expectedCommitMessage": "test: cover stopped stale thinking unlock",
+  "currentTaskId": "phase1.stream13.task1",
+  "expectedCommitMessage": "docs: record stale thinking stop unlock verification",
   "debt": {
-    "expectedCommitMessage": "test: cover stopped stale thinking unlock",
-    "preCommitHead": "37a85a109",
+    "expectedCommitMessage": "docs: record stale thinking stop unlock verification",
+    "preCommitHead": "06aec0757",
     "stage": "commit_pending",
-    "taskId": "phase1.stream12.task1"
+    "taskId": "phase1.stream13.task1"
   }
 }
 ```
@@ -112,12 +112,14 @@
 ### Stream: Stale Thinking Stop Unlock Regression Tests
 
 25. [DONE] `phase1.stream12.task1` Add focused UI regression coverage for stage-neutral stale thinking after Stop. (scope: `src/client/ui/src/session/session-view.test.tsx`; expected commit: `test: cover stopped stale thinking unlock`)
-26. [PENDING] `phase1.stream12.commit1` Git Commit: `test: cover stopped stale thinking unlock` (hash: TBD)
+26. [DONE] `phase1.stream12.commit1` Git Commit: `test: cover stopped stale thinking unlock` (hash: 06aec0757)
 
 ### Stream: Stale Thinking Stop Unlock Verification
 
-27. [TODO] `phase1.stream13.task1` Run targeted UI tests and webview type-check for the stale thinking Stop unlock fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record stale thinking stop unlock verification`)
-28. [TODO] `phase1.stream13.commit1` Git Commit: `docs: record stale thinking stop unlock verification` (hash: TBD)
+27. [DONE] `phase1.stream13.task1` Run targeted UI tests and webview type-check for the stale thinking Stop unlock fix. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record stale thinking stop unlock verification`)
+    - Evidence 2026-06-16: `npx tsx --test src/client/ui/src/session/session-view.test.tsx src/client/ui/src/session/input-panel.test.tsx` passed 19/19 tests.
+    - Evidence 2026-06-16: `npm run typecheck:webview` passed.
+28. [PENDING] `phase1.stream13.commit1` Git Commit: `docs: record stale thinking stop unlock verification` (hash: TBD)
 
 ### Stream: Follow-up Release Build
 
