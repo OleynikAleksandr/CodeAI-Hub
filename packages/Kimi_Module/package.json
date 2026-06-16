@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/kimi-module",
-  "version": "1.2.529",
+  "version": "1.2.530",
   "description": "Kimi provider integration for CodeAI Hub core",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
