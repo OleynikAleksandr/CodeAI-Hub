@@ -67,3 +67,29 @@ test("settings mapping upgrades legacy OpenCode GLM aliases", () => {
     "zai-coding-plan/glm-5.2"
   );
 });
+
+test("settings mapping keeps supported OpenCode default selectors only", () => {
+  const kimiSettings = mapSettingsSnapshot({
+    providers: {
+      glmOpenCode: {
+        defaultModel: "kimi-for-coding/k2p7",
+      },
+    },
+  });
+  const invalidSettings = mapSettingsSnapshot({
+    providers: {
+      glmOpenCode: {
+        defaultModel: "custom-opencode/model",
+      },
+    },
+  });
+
+  assert.equal(
+    kimiSettings.providers.glmOpenCode?.defaultModel,
+    "kimi-for-coding/k2p7"
+  );
+  assert.equal(
+    invalidSettings.providers.glmOpenCode?.defaultModel,
+    "zai-coding-plan/glm-5.2"
+  );
+});

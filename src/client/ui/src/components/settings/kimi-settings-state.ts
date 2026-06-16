@@ -15,6 +15,10 @@ export interface KimiSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
 
+export type GlmOpenCodeModelId =
+  | "zai-coding-plan/glm-5.2"
+  | "kimi-for-coding/k2p7";
+
 export interface GlmOpenCodeSettings {
   readonly apiKey: string;
   readonly configPath: string;
@@ -24,7 +28,27 @@ export interface GlmOpenCodeSettings {
 
 const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
   "~/.codeai-hub/providers/opencode/config.json";
-const DEFAULT_GLM_OPENCODE_MODEL = "zai-coding-plan/glm-5.2";
+export const GLM_OPENCODE_MODEL_OPTIONS = [
+  {
+    description: "Z.AI Coding Plan selector",
+    id: "zai-coding-plan/glm-5.2",
+    label: "GLM 5.2",
+  },
+  {
+    description: "Kimi for Coding selector",
+    id: "kimi-for-coding/k2p7",
+    label: "Kimi K2.7",
+  },
+] as const satisfies readonly {
+  readonly description: string;
+  readonly id: GlmOpenCodeModelId;
+  readonly label: string;
+}[];
+const DEFAULT_GLM_OPENCODE_MODEL: GlmOpenCodeModelId =
+  "zai-coding-plan/glm-5.2";
+const GLM_OPENCODE_MODEL_IDS = new Set<string>(
+  GLM_OPENCODE_MODEL_OPTIONS.map((option) => option.id)
+);
 const LEGACY_GLM_OPENCODE_MODEL_IDS = new Set([
   "glm-5.1",
   "glm-5-turbo",
@@ -37,9 +61,15 @@ const mapOptionalString = (value: unknown, fallback: string): string =>
     ? value.trim()
     : fallback;
 
-const mapGlmOpenCodeModel = (value: unknown, fallback: string): string => {
-  const modelId = mapOptionalString(value, fallback);
-  return LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) ? fallback : modelId;
+const mapGlmOpenCodeModel = (value: unknown): GlmOpenCodeModelId => {
+  const modelId = mapOptionalString(value, DEFAULT_GLM_OPENCODE_MODEL);
+  if (
+    LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) ||
+    !GLM_OPENCODE_MODEL_IDS.has(modelId)
+  ) {
+    return DEFAULT_GLM_OPENCODE_MODEL;
+  }
+  return modelId as GlmOpenCodeModelId;
 };
 
 export const mapKimiSettings = (
@@ -65,10 +95,7 @@ export const mapGlmOpenCodeSettings = (
     value?.configPath,
     DEFAULT_GLM_OPENCODE_CONFIG_PATH
   ),
-  defaultModel: mapGlmOpenCodeModel(
-    value?.defaultModel,
-    DEFAULT_GLM_OPENCODE_MODEL
-  ),
+  defaultModel: mapGlmOpenCodeModel(value?.defaultModel),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled
   ),

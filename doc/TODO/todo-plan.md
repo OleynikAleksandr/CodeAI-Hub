@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "8946b0d50",
+  "lastRecordedCommit": "6c9594bf0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9j.task2",
-  "expectedCommitMessage": "docs: record thinking-only translation verification",
+  "currentTaskId": "phase1.stream9k.task1",
+  "expectedCommitMessage": "feat: add opencode default model setting",
   "debt": {
-    "expectedCommitMessage": "docs: record thinking-only translation verification",
-    "preCommitHead": "8946b0d50",
+    "expectedCommitMessage": "feat: add opencode default model setting",
+    "preCommitHead": "6c9594bf0",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9j.task2"
+    "taskId": "phase1.stream9k.task1"
   }
 }
 ```
@@ -180,10 +180,17 @@
     - Build verification: `npm run build --workspace=@codeai-hub/core` ✅.
     - Runtime contract verification: `node --test packages/core/dist/session-translation/session-translation-dispatcher.test.js packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` ✅ (17/17).
     - Coverage focus: ordinary `assistant` replies and Core validation/system messages no longer enter overlay translation; `thinking` messages still route through translation with provider-specific settings paths for both Kimi and OpenCode.
-54. [PENDING] `phase1.stream9j.commit2` Git Commit: `docs: record thinking-only translation verification` (hash: TBD)
+54. [DONE] `phase1.stream9j.commit2` Git Commit: `docs: record thinking-only translation verification` (hash: 6c9594bf0)
+
+### Stream: OpenCode Default Model Setting
+
+55. [DONE] `phase1.stream9k.task1` Add a Settings default model selector for OpenCode so questionnaire submission uses the chosen GLM or Kimi selector when no per-step card override is made. (scope: `src/client/ui/src/components/settings/glm-opencode-settings-card.tsx, src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add opencode default model setting`)
+56. [PENDING] `phase1.stream9k.commit1` Git Commit: `feat: add opencode default model setting` (hash: TBD)
+57. [TODO] `phase1.stream9k.task2` Record targeted Settings/OpenCode default-model verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode default model setting verification`)
+58. [TODO] `phase1.stream9k.commit2` Git Commit: `docs: record opencode default model setting verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-55. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-56. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
-57. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+59. [TODO] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+60. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+61. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

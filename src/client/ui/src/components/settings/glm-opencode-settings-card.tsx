@@ -1,7 +1,20 @@
 import type { CSSProperties, FC } from "react";
-import type { GlmOpenCodeSettings } from "./kimi-settings-state";
+import {
+  GLM_OPENCODE_MODEL_OPTIONS,
+  type GlmOpenCodeModelId,
+  type GlmOpenCodeSettings,
+} from "./kimi-settings-state";
 import SettingsCard from "./settings-card";
-import { descriptionStyles, noteStyles } from "./shared-model-card-styles";
+import {
+  descriptionStyles,
+  listStyles,
+  modelDescriptionStyles,
+  modelInfoStyles,
+  modelTitleStyles,
+  noteStyles,
+  rowBaseStyles,
+  rowSelectedStyles,
+} from "./shared-model-card-styles";
 
 interface GlmOpenCodeSettingsCardProps {
   readonly onSettingsChange?: (settings: GlmOpenCodeSettings) => void;
@@ -70,6 +83,12 @@ const GlmOpenCodeSettingsCard: FC<GlmOpenCodeSettingsCardProps> = ({
     }
     onSettingsChange?.({ ...settings, [key]: value });
   };
+  const updateDefaultModel = (defaultModel: GlmOpenCodeModelId) => {
+    if (!settings) {
+      return;
+    }
+    onSettingsChange?.({ ...settings, defaultModel });
+  };
 
   return (
     <SettingsCard title="OpenCode">
@@ -113,17 +132,36 @@ const GlmOpenCodeSettingsCard: FC<GlmOpenCodeSettingsCardProps> = ({
           value={settings?.configPath ?? ""}
         />
       </label>
-      <label style={rowStyles}>
-        <span style={labelStyles}>Default OpenCode selector</span>
-        <input
-          onChange={(event) =>
-            updateSetting("defaultModel", event.target.value)
-          }
-          style={inputStyles}
-          type="text"
-          value={settings?.defaultModel ?? ""}
-        />
-      </label>
+      <div style={rowStyles}>
+        <span style={labelStyles}>Default model</span>
+        <div style={listStyles}>
+          {GLM_OPENCODE_MODEL_OPTIONS.map((option) => {
+            const selected = settings?.defaultModel === option.id;
+            return (
+              <button
+                aria-pressed={selected}
+                key={option.id}
+                onClick={() => updateDefaultModel(option.id)}
+                style={{
+                  ...rowBaseStyles,
+                  border: "none",
+                  textAlign: "left",
+                  width: "100%",
+                  ...(selected ? rowSelectedStyles : {}),
+                }}
+                type="button"
+              >
+                <div style={modelInfoStyles}>
+                  <div style={modelTitleStyles}>{option.label}</div>
+                  <div style={modelDescriptionStyles}>
+                    {option.description}: {option.id}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
       <p style={noteStyles}>
         Uses isolated home at
         .codeai-hub/&lt;workspace&gt;/runtime/providers/opencode/home.
