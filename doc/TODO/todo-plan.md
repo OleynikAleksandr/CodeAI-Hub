@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "6c9594bf0",
+  "lastRecordedCommit": "7d2f16f9e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9k.task1",
-  "expectedCommitMessage": "feat: add opencode default model setting",
+  "currentTaskId": "phase1.stream9k.task2",
+  "expectedCommitMessage": "docs: record opencode default model setting verification",
   "debt": {
-    "expectedCommitMessage": "feat: add opencode default model setting",
-    "preCommitHead": "6c9594bf0",
+    "expectedCommitMessage": "docs: record opencode default model setting verification",
+    "preCommitHead": "7d2f16f9e",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9k.task1"
+    "taskId": "phase1.stream9k.task2"
   }
 }
 ```
@@ -185,9 +185,13 @@
 ### Stream: OpenCode Default Model Setting
 
 55. [DONE] `phase1.stream9k.task1` Add a Settings default model selector for OpenCode so questionnaire submission uses the chosen GLM or Kimi selector when no per-step card override is made. (scope: `src/client/ui/src/components/settings/glm-opencode-settings-card.tsx, src/client/ui/src/components/settings/kimi-settings-state.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add opencode default model setting`)
-56. [PENDING] `phase1.stream9k.commit1` Git Commit: `feat: add opencode default model setting` (hash: TBD)
-57. [TODO] `phase1.stream9k.task2` Record targeted Settings/OpenCode default-model verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode default model setting verification`)
-58. [TODO] `phase1.stream9k.commit2` Git Commit: `docs: record opencode default model setting verification` (hash: TBD)
+56. [DONE] `phase1.stream9k.commit1` Git Commit: `feat: add opencode default model setting` (hash: 7d2f16f9e)
+57. [DONE] `phase1.stream9k.task2` Record targeted Settings/OpenCode default-model verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode default model setting verification`)
+    - Completed checks: `npx ultracite check src/client/ui/src/components/settings/glm-opencode-settings-card.tsx src/client/ui/src/components/settings/kimi-settings-state.ts src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts` ✅.
+    - Build verification: `npm run typecheck:webview` ✅, `npm run build:webview` ✅, `npm run build:project-manager` ✅.
+    - Hook verification: `npm run plan:commit -- "feat: add opencode default model setting"` completed the feature commit with architecture, lint, and knip gates green.
+    - Coverage focus: OpenCode Settings now exposes the supported default selectors `GLM 5.2` and `Kimi K2.7`; settings mapping preserves Kimi, rejects unsupported selectors back to GLM, and questionnaire submission continues to read `settings.providers.glmOpenCode.defaultModel` when a card override is not provided.
+58. [PENDING] `phase1.stream9k.commit2` Git Commit: `docs: record opencode default model setting verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 
