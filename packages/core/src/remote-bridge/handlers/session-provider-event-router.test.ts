@@ -248,6 +248,7 @@ test("SessionProviderEventRouter appends deferred user_input when provider turn 
       payload: {
         content: "Core acceptance check failed for Diagram Modules.",
         role: "user",
+        tag: "core-deferred-user",
         timestamp: "2026-05-08T14:20:24.000Z",
         uuid: "core-feedback-1",
       },

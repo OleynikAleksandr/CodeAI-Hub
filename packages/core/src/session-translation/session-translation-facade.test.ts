@@ -13,7 +13,9 @@ import type {
   TranslationRequest,
   TranslationResult,
 } from "@codeai-hub/translation";
+import { loadReasoningTranslationEngineId } from "../config/provider-settings-snapshot";
 import { Logger } from "../telemetry/logger";
+import { resolveTranslationRuntimeMetadata } from "../translation/claude-haiku-translation-engine";
 import {
   SessionTranslationFacade,
   type SessionTranslationFacadeFactory,
@@ -298,6 +300,48 @@ test("SessionTranslationFacade uses Reasoning policy for Core system messages", 
   }
 });
 
+test("SessionTranslationFacade uses Reasoning engine for visible assistant dialog", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  try {
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
+    const reasoningEngineId = loadReasoningTranslationEngineId(settingsPath);
+    let recordedRequest: TranslationRequest | undefined;
+    const facade = new SessionTranslationFacade({
+      logger: createSilentLogger(),
+      settingsPath,
+      translationFacadeFactory: () =>
+        ({
+          translate: (request: TranslationRequest) => {
+            recordedRequest = request;
+            return Promise.resolve({
+              engine: request.engineId,
+              finalText: "Проверю заметки.",
+              originalText: request.text,
+              sourceLanguage: "en",
+              status: "translated",
+              targetLanguage: "ru",
+              translatedText: "Проверю заметки.",
+            });
+          },
+        }) as unknown as TranslationFacade,
+    });
+
+    const outcome = await facade.translateDialogMessage({
+      content: "I need to check the referenced notes.",
+      messageId: "assistant-visible",
+      providerId: "kimi",
+      role: "assistant",
+      sessionId: "sess-visible",
+    });
+
+    assert.equal(outcome?.translatedContent, "Проверю заметки.");
+    assert.equal(recordedRequest?.category, "reasoning");
+    assert.equal(recordedRequest?.engineId, reasoningEngineId);
+  } finally {
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
 test("SessionTranslationFacade reuses an in-flight translation for duplicate reasoning text", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
@@ -403,24 +447,30 @@ test("SessionTranslationFacade logs requested and resolved runtime metadata for 
         entry.message === "Session translation returned non-translated result"
     );
     assert.ok(mismatchLog);
-    assert.equal(
-      mismatchLog.context?.requestedEngineId,
-      "anthropic-claude-haiku-4-5"
-    );
+    const expectedEngineId = loadReasoningTranslationEngineId(settingsPath);
+    const expectedMetadata =
+      resolveTranslationRuntimeMetadata(expectedEngineId);
+    assert.equal(mismatchLog.context?.requestedEngineId, expectedEngineId);
     assert.equal(mismatchLog.context?.resolvedEngineId, "google-gtx");
-    assert.equal(mismatchLog.context?.requestedEngineProviderId, "claude");
     assert.equal(
       mismatchLog.context?.requestedEngineModelId,
-      "claude-haiku-4-5-20251001"
+      expectedMetadata.modelId
     );
     assert.equal(
       mismatchLog.context?.requestedEngineProjectSlug,
-      "translation-runtime-haiku"
+      expectedMetadata.projectSlug
     );
-    assert.equal(mismatchLog.context?.requestedEnginePersistSession, true);
+    assert.equal(
+      mismatchLog.context?.requestedEnginePersistSession,
+      expectedMetadata.persistSession
+    );
     assert.equal(
       mismatchLog.context?.requestedEngineRuntimePath,
-      "provider-owned"
+      expectedMetadata.runtimePath
+    );
+    assert.equal(
+      mismatchLog.context?.requestedEngineProviderId,
+      expectedMetadata.providerId
     );
     assert.equal(mismatchLog.context?.resolvedEngineProviderId, null);
     assert.equal(mismatchLog.context?.resolvedEngineRuntimePath, null);

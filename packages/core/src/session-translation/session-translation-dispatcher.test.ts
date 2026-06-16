@@ -25,3 +25,35 @@ test("SessionTranslationDispatcher allows two concurrent jobs", async () => {
   assert.deepEqual([first, second, third], ["first", "second", "third"]);
   assert.equal(maxActiveJobs, 2);
 });
+
+test("SessionTranslationDispatcher accepts visible assistant dialog", () => {
+  const dispatcher = new SessionTranslationDispatcher();
+
+  assert.equal(
+    dispatcher.shouldTranslateDialogMessage({
+      content: "I will check the referenced files.",
+      role: "assistant",
+    }),
+    true
+  );
+});
+
+test("SessionTranslationDispatcher translates only Core-deferred user dialog", () => {
+  const dispatcher = new SessionTranslationDispatcher();
+
+  assert.equal(
+    dispatcher.shouldTranslateDialogMessage({
+      content: "Core acceptance check failed.",
+      role: "user",
+      tag: "core-deferred-user",
+    }),
+    true
+  );
+  assert.equal(
+    dispatcher.shouldTranslateDialogMessage({
+      content: "Actual human input.",
+      role: "user",
+    }),
+    false
+  );
+});

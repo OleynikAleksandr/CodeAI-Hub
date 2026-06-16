@@ -8,15 +8,15 @@
   "planId": "development-order-plan-agent-fill-validator-hotfix-2026-06-15",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "eb246daab",
-  "lastRecordedCommit": "5a255fedd",
+  "lastRecordedCommit": "7383b9dd8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentOrderPlan_AgentFill_Validator_Hotfix.md",
-  "currentTaskId": "phase1.stream17.task1",
-  "expectedCommitMessage": "fix: translate visible dialog updates",
+  "currentTaskId": "phase1.stream18.task1",
+  "expectedCommitMessage": "test: cover visible dialog translation",
   "debt": {
-    "expectedCommitMessage": "fix: translate visible dialog updates",
-    "preCommitHead": "5a255fedd",
+    "expectedCommitMessage": "test: cover visible dialog translation",
+    "preCommitHead": "7383b9dd8",
     "stage": "commit_pending",
-    "taskId": "phase1.stream17.task1"
+    "taskId": "phase1.stream18.task1"
   }
 }
 ```
@@ -143,12 +143,12 @@
 ### Stream: Visible Dialog Translation Fix
 
 35. [DONE] `phase1.stream17.task1` Allow ordinary visible assistant messages and Core-generated deferred user-role messages to enter the existing reasoning translation pipeline. (scope: `packages/core/src/session-translation/session-translation-dispatcher.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: translate visible dialog updates`)
-36. [PENDING] `phase1.stream17.commit1` Git Commit: `fix: translate visible dialog updates` (hash: TBD)
+36. [DONE] `phase1.stream17.commit1` Git Commit: `fix: translate visible dialog updates` (hash: 7383b9dd8)
 
 ### Stream: Visible Dialog Translation Regression Tests
 
-37. [TODO] `phase1.stream18.task1` Add focused Core regression coverage for ordinary assistant messages and deferred Core user-role messages using the reasoning translation overlay. (scope: `packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`; expected commit: `test: cover visible dialog translation`)
-38. [TODO] `phase1.stream18.commit1` Git Commit: `test: cover visible dialog translation` (hash: TBD)
+37. [DONE] `phase1.stream18.task1` Add focused Core regression coverage for ordinary assistant messages and deferred Core user-role messages using the reasoning translation overlay. (scope: `packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/session-translation/session-translation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `test: cover visible dialog translation`)
+38. [PENDING] `phase1.stream18.commit1` Git Commit: `test: cover visible dialog translation` (hash: TBD)
 
 ### Stream: Visible Dialog Translation Verification
 
