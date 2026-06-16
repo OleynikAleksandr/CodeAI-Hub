@@ -43,6 +43,28 @@ const resolveGlmPathInChildProcess = (home: string): string | undefined => {
   return (JSON.parse(output) as { path?: string }).path;
 };
 
+const resolveOpenCodePathInChildProcess = (
+  home: string
+): string | undefined => {
+  const output = execFileSync(
+    process.execPath,
+    [
+      "-e",
+      "const resolver=require('./packages/core/dist/provider-registry/provider-installed-path-resolver.js'); console.log(JSON.stringify({path: resolver.resolveGlmOpenCodeModulePath()}));",
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        GLM_OPENCODE_MODULE_PATH: "",
+        HOME: home,
+      },
+    }
+  );
+  return (JSON.parse(output) as { path?: string }).path;
+};
+
 test("GLM module path resolves standalone installed provider package", () => {
   const home = mkdtempSync(path.join(tmpdir(), "codeai-glm-provider-home-"));
   try {
@@ -53,6 +75,34 @@ test("GLM module path resolves standalone installed provider package", () => {
     );
 
     assert.equal(resolveGlmPathInChildProcess(home), installRoot);
+  } finally {
+    rmSync(home, { force: true, recursive: true });
+  }
+});
+
+test("OpenCode module path resolves canonical opencode provider package and falls back to legacy glm-opencode", () => {
+  const home = mkdtempSync(
+    path.join(tmpdir(), "codeai-opencode-provider-home-")
+  );
+  try {
+    const canonicalInstallRoot = createProviderInstall(
+      home,
+      "opencode",
+      "1.2.999"
+    );
+    const legacyInstallRoot = createProviderInstall(
+      home,
+      "glm-opencode",
+      "1.2.998"
+    );
+
+    assert.equal(resolveOpenCodePathInChildProcess(home), canonicalInstallRoot);
+
+    rmSync(path.join(home, ".codeai-hub", "providers", "opencode"), {
+      force: true,
+      recursive: true,
+    });
+    assert.equal(resolveOpenCodePathInChildProcess(home), legacyInstallRoot);
   } finally {
     rmSync(home, { force: true, recursive: true });
   }

@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "9cebd7de7",
+  "lastRecordedCommit": "ec2403c85",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9a.task1",
-  "expectedCommitMessage": "fix: restore opencode reasoning events",
+  "currentTaskId": "phase1.stream9b.task1",
+  "expectedCommitMessage": "refactor: rename glm opencode runtime to opencode",
   "debt": {
-    "expectedCommitMessage": "fix: restore opencode reasoning events",
-    "preCommitHead": "9cebd7de7",
+    "expectedCommitMessage": "refactor: rename glm opencode runtime to opencode",
+    "preCommitHead": "ec2403c85",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9a.task1"
+    "taskId": "phase1.stream9b.task1"
   }
 }
 ```
@@ -109,12 +109,12 @@
 ### Stream: OpenCode Reasoning Repair
 
 25. [DONE] `phase1.stream9a.task1` Restore OpenCode reasoning flow end-to-end so the wrapper requests thinking output, preserves OpenCode `reasoning` events, and forwards them into the existing Core/UI thinking pipeline. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/session-translation/**, doc/TODO/todo-plan.md`; expected commit: `fix: restore opencode reasoning events`)
-26. [PENDING] `phase1.stream9a.commit1` Git Commit: `fix: restore opencode reasoning events` (hash: TBD)
+26. [DONE] `phase1.stream9a.commit1` Git Commit: `fix: restore opencode reasoning events` (hash: ec2403c85)
 
 ### Stream: OpenCode Canonical Rename And Defaults
 
-27. [TODO] `phase1.stream9b.task1` Rename the OpenCode provider runtime/config home from `glm-opencode` to canonical `opencode`, migrate user-facing defaults to selector-aware Settings UX, and keep compatibility with existing `glm-opencode` installs and workspace capsules. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/**, src/client/ui/src/components/settings/**, src/client/project-manager/**, assets/providers/glm-opencode/**, scripts/build-*.sh, doc/TODO/todo-plan.md`; expected commit: `refactor: rename glm opencode runtime to opencode`)
-28. [TODO] `phase1.stream9b.commit1` Git Commit: `refactor: rename glm opencode runtime to opencode` (hash: TBD)
+27. [DONE] `phase1.stream9b.task1` Rename the OpenCode provider runtime/config home from `glm-opencode` to canonical `opencode`, migrate user-facing defaults to selector-aware Settings UX, and keep compatibility with existing `glm-opencode` installs and workspace capsules. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/**, src/client/ui/src/components/settings/**, src/client/project-manager/**, assets/providers/glm-opencode/**, scripts/build-*.sh, doc/TODO/todo-plan.md`; expected commit: `refactor: rename glm opencode runtime to opencode`)
+28. [PENDING] `phase1.stream9b.commit1` Git Commit: `refactor: rename glm opencode runtime to opencode` (hash: TBD)
 
 ### Stream: Remove GLM-Claude-Code
 

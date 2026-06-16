@@ -37,7 +37,7 @@ export interface GlmOpenCodeSettings {
 const DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH =
   "~/.codeai-hub/providers/glm-claude-code/config.json";
 const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
-  "~/.codeai-hub/providers/glm-opencode/config.json";
+  "~/.codeai-hub/providers/opencode/config.json";
 const DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
 const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
 const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
@@ -48,6 +48,12 @@ const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
   "glm-5-turbo",
   "glm-4.5-air",
 ]);
+const LEGACY_GLM_OPENCODE_MODEL_IDS = new Set([
+  "glm-5.1",
+  "glm-5-turbo",
+  "glm-4.5-air",
+  "glm-5.2",
+]);
 
 const mapOptionalString = (value: unknown, fallback: string): string =>
   typeof value === "string" && value.trim().length > 0
@@ -57,6 +63,11 @@ const mapOptionalString = (value: unknown, fallback: string): string =>
 const mapGlmClaudeCodeModel = (value: unknown, fallback: string): string => {
   const modelId = mapOptionalString(value, fallback);
   return LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId) ? fallback : modelId;
+};
+
+const mapGlmOpenCodeModel = (value: unknown, fallback: string): string => {
+  const modelId = mapOptionalString(value, fallback);
+  return LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) ? fallback : modelId;
 };
 
 export const mapKimiSettings = (
@@ -113,9 +124,9 @@ export const mapGlmOpenCodeSettings = (
     value?.configPath,
     DEFAULT_GLM_OPENCODE_CONFIG_PATH
   ),
-  defaultModel: mapGlmClaudeCodeModel(
+  defaultModel: mapGlmOpenCodeModel(
     value?.defaultModel,
-    DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+    DEFAULT_GLM_OPENCODE_MODEL
   ),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled

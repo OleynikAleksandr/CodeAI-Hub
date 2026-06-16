@@ -61,6 +61,16 @@ const PROVIDER_IDS = [
   "glm-opencode",
   "kimi",
 ] as const;
+const PROVIDER_DIRECTORY_BY_ID: Readonly<
+  Record<WorkspaceRuntimeProviderId, string>
+> = {
+  codex: "codex",
+  claude: "claude",
+  gemini: "gemini",
+  "glm-claude-code": "glm-claude-code",
+  "glm-opencode": "opencode",
+  kimi: "kimi",
+};
 const DESCRIPTION_STAGE_ID = "description";
 const DESCRIPTION_QUESTIONNAIRE_SEED = "# Description Questionnaire\n\n";
 const WORKSPACE_SETTINGS_SEED = {
@@ -114,7 +124,7 @@ const WORKSPACE_SETTINGS_SEED = {
     },
     glmOpenCode: {
       apiKey: "",
-      configPath: "~/.codeai-hub/providers/glm-opencode/config.json",
+      configPath: "~/.codeai-hub/providers/opencode/config.json",
       defaultModel: "zai-coding-plan/glm-5.2",
       thinkingDisplaySyncEnabled: true,
     },
@@ -212,7 +222,7 @@ const buildProviderHomes = (
       workspaceRoot,
       workspaceSlug,
       "providers",
-      providerId,
+      PROVIDER_DIRECTORY_BY_ID[providerId],
       "home"
     ),
   ]);

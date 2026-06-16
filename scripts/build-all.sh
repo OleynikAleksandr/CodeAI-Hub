@@ -216,7 +216,7 @@ clean_local_artifacts() {
   done
 
   if [[ -d "$providers_root" ]]; then
-    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" ! -name "claude" ! -name "glm-claude-code" ! -name "glm-opencode" -exec rm -rf {} +
+    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" ! -name "claude" ! -name "glm-claude-code" ! -name "opencode" ! -name "glm-opencode" -exec rm -rf {} +
     if [[ -d "$providers_root/codex" ]]; then
       find "$providers_root/codex" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
     fi
@@ -226,8 +226,8 @@ clean_local_artifacts() {
     if [[ -d "$providers_root/glm-claude-code" ]]; then
       find "$providers_root/glm-claude-code" -mindepth 1 -maxdepth 1 ! -name "home" ! -name "config.json" -exec rm -rf {} +
     fi
-    if [[ -d "$providers_root/glm-opencode" ]]; then
-      find "$providers_root/glm-opencode" -mindepth 1 -maxdepth 1 ! -name "home" ! -name "config.json" -exec rm -rf {} +
+    if [[ -d "$providers_root/opencode" ]]; then
+      find "$providers_root/opencode" -mindepth 1 -maxdepth 1 ! -name "home" ! -name "config.json" -exec rm -rf {} +
     fi
   fi
 }

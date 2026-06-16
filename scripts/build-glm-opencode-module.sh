@@ -6,7 +6,7 @@ REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo 
 source "$SCRIPT_DIR/release-utils.sh"
 
 MODULE_DIR="$REPO_ROOT/packages/GLM_OpenCode_Module"
-INSTALL_ROOT="$HOME/.codeai-hub/providers/glm-opencode"
+INSTALL_ROOT="$HOME/.codeai-hub/providers/opencode"
 RELEASE_ROOT="$HOME/.codeai-hub/releases"
 MANIFEST_PATH="$REPO_ROOT/assets/providers/glm-opencode/manifest.json"
 

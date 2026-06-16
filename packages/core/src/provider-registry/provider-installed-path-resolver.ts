@@ -7,7 +7,8 @@ type ProviderModuleId =
   | "codex"
   | "gemini"
   | "glm-claude-code"
-  | "glm-opencode";
+  | "glm-opencode"
+  | "opencode";
 
 const PROVIDERS_ROOT = path.join(homedir(), ".codeai-hub", "providers");
 
@@ -68,14 +69,21 @@ const resolveInstalledProviderPathByScan = (
 const resolveInstalledProviderPath = (
   providerId: ProviderModuleId
 ): string | null => {
-  const providerRoot = path.join(PROVIDERS_ROOT, providerId);
-  if (!existsSync(providerRoot)) {
-    return null;
+  for (const candidateId of providerId === "opencode"
+    ? ["opencode", "glm-opencode"]
+    : [providerId]) {
+    const providerRoot = path.join(PROVIDERS_ROOT, candidateId);
+    if (!existsSync(providerRoot)) {
+      continue;
+    }
+    const installedPath =
+      resolveInstalledProviderPathFromPointer(providerRoot) ??
+      resolveInstalledProviderPathByScan(providerRoot);
+    if (installedPath) {
+      return installedPath;
+    }
   }
-  return (
-    resolveInstalledProviderPathFromPointer(providerRoot) ??
-    resolveInstalledProviderPathByScan(providerRoot)
-  );
+  return null;
 };
 
 const resolveModuleOverride = (environmentKey: string): string | undefined => {
@@ -104,4 +112,4 @@ export const resolveGlmClaudeCodeModulePath = (): string | undefined =>
   resolveProviderModulePath("glm-claude-code", "GLM_CLAUDE_CODE_MODULE_PATH");
 
 export const resolveGlmOpenCodeModulePath = (): string | undefined =>
-  resolveProviderModulePath("glm-opencode", "GLM_OPENCODE_MODULE_PATH");
+  resolveProviderModulePath("opencode", "GLM_OPENCODE_MODULE_PATH");

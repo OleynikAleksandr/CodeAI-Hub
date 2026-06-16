@@ -224,7 +224,7 @@ export class ProviderRecoveryCoordinator {
       case "glmClaudeCode":
         return 'GLM-Claude-Code is unavailable because it needs a separate Z.AI/GLM API key; Claude login is not reused. CodeAI Hub creates ~/.codeai-hub/providers/glm-claude-code/config.json automatically. Open that file and paste your key into the JSON field "apiKey", for example { "apiKey": "zai-..." }. Then use Settings → General → Restart Core to retry. You can also set CODEAI_GLM_CLAUDE_CODE_API_KEY, GLM_CLAUDE_CODE_API_KEY, or ZAI_API_KEY';
       case "glmOpenCode":
-        return 'OpenCode wrapper is unavailable. Confirm OpenCode is installed and that the needed provider is authenticated in OpenCode. CodeAI Hub copies the OpenCode auth catalog into its isolated runtime; for Z.AI you can still set ~/.codeai-hub/providers/glm-opencode/config.json { "apiKey": "zai-..." } or ZAI_API_KEY. Then use Settings -> General -> Restart Core to retry';
+        return 'OpenCode wrapper is unavailable. Confirm OpenCode is installed and that the needed provider is authenticated in OpenCode. CodeAI Hub copies the OpenCode auth catalog into its isolated runtime; for Z.AI you can still set ~/.codeai-hub/providers/opencode/config.json { "apiKey": "zai-..." } or ZAI_API_KEY. Then use Settings -> General -> Restart Core to retry';
       default:
         return "Claude CLI is unavailable. CodeAI Hub runs provider-home auth bootstrap automatically; if it still fails, run `claude /login`, then use Settings → General → Restart Core to retry. If it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core";
     }

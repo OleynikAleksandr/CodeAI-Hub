@@ -262,7 +262,7 @@ export const createGlmOpenCodeAdapterInstance = (
       defaultModel: "zai-coding-plan/glm-5.2",
       providerHomePath: path.join(
         capsule.providersRoot.absolutePath,
-        "glm-opencode",
+        "opencode",
         "home"
       ),
       settingsPath: capsule.settingsFile.absolutePath,

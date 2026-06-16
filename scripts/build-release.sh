@@ -327,7 +327,7 @@ if (typeof loaded.GlmClaudeCodeProviderAdapter !== "function") {
 NODE
 echo "✅ GLM-Claude-Code provider bundle loads with standalone provider package"
 
-GLM_OPENCODE_INSTALL_ROOT="$HOME/.codeai-hub/providers/glm-opencode/$VERSION"
+GLM_OPENCODE_INSTALL_ROOT="$HOME/.codeai-hub/providers/opencode/$VERSION"
 GLM_OPENCODE_MODULE_PATH="$GLM_OPENCODE_INSTALL_ROOT/dist/index.js" node <<'NODE'
 const loaded = require(process.env.GLM_OPENCODE_MODULE_PATH);
 if (typeof loaded.GlmOpenCodeProviderAdapter !== "function") {

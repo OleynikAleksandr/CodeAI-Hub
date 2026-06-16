@@ -11,6 +11,8 @@ import path from "node:path";
 import { test } from "node:test";
 import {
   buildGlmOpenCodeRuntimeProfile,
+  DEFAULT_GLM_OPENCODE_CONFIG_PATH,
+  DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH,
   GLM_OPENCODE_DEFAULT_MODEL_SELECTOR,
   KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR,
 } from "./glm-opencode-runtime-profile";
@@ -136,4 +138,44 @@ test("runtime profile copies OpenCode app auth", () => {
   );
   assert.equal(openCodeAuth["zai-coding-plan"].key, "opencode-app-key");
   assert.equal(openCodeAuth["kimi-for-coding"].key, "kimi-opencode-app-key");
+});
+
+test("runtime profile falls back to legacy glm-opencode paths when canonical opencode paths are absent", () => {
+  const root = mkdtempSync(path.join(tmpdir(), "glm-opencode-profile-"));
+  const legacyConfigRoot = path.join(
+    root,
+    ".codeai-hub",
+    "providers",
+    "glm-opencode"
+  );
+  const legacyConfigPath = path.join(legacyConfigRoot, "config.json");
+  const legacyProviderHomePath = path.join(legacyConfigRoot, "home");
+  mkdirSync(legacyConfigRoot, { recursive: true });
+  writeFileSync(
+    legacyConfigPath,
+    JSON.stringify({
+      apiKey: "legacy-key",
+      providerHomePath: legacyProviderHomePath,
+    })
+  );
+
+  const profile = buildGlmOpenCodeRuntimeProfile({
+    environment: { HOME: root, PATH: "" },
+  });
+
+  assert.equal(profile.configPath, legacyConfigPath);
+  assert.equal(profile.providerHomePath, legacyProviderHomePath);
+  assert.equal(profile.apiKey, "legacy-key");
+  assert.equal(
+    profile.environment.HOME,
+    path.join(legacyProviderHomePath, "home")
+  );
+  assert.equal(
+    DEFAULT_GLM_OPENCODE_CONFIG_PATH,
+    "~/.codeai-hub/providers/opencode/config.json"
+  );
+  assert.equal(
+    DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH,
+    "~/.codeai-hub/providers/opencode/home"
+  );
 });

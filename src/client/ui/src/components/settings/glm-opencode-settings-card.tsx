@@ -126,7 +126,7 @@ const GlmOpenCodeSettingsCard: FC<GlmOpenCodeSettingsCardProps> = ({
       </label>
       <p style={noteStyles}>
         Uses isolated home at
-        .codeai-hub/&lt;workspace&gt;/runtime/providers/glm-opencode/home.
+        .codeai-hub/&lt;workspace&gt;/runtime/providers/opencode/home.
       </p>
     </SettingsCard>
   );

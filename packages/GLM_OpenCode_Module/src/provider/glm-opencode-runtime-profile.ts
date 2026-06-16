@@ -18,8 +18,12 @@ const KIMI_OPENCODE_PROVIDER_KEY = "kimi-for-coding";
 export const KIMI_OPENCODE_DEFAULT_MODEL_SELECTOR = `${KIMI_OPENCODE_PROVIDER_KEY}/${KIMI_OPENCODE_MODEL_ID}`;
 export const OPENCODE_WRAPPER_AGENT_NAME = "codeai-hub";
 export const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
-  "~/.codeai-hub/providers/glm-opencode/config.json";
+  "~/.codeai-hub/providers/opencode/config.json";
 export const DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH =
+  "~/.codeai-hub/providers/opencode/home";
+const LEGACY_GLM_OPENCODE_CONFIG_PATH =
+  "~/.codeai-hub/providers/glm-opencode/config.json";
+const LEGACY_GLM_OPENCODE_PROVIDER_HOME_PATH =
   "~/.codeai-hub/providers/glm-opencode/home";
 
 interface GlmOpenCodeConfigFile {
@@ -67,9 +71,12 @@ export interface GlmOpenCodeRuntimeProfileOptions {
   readonly workspacePath?: string;
 }
 
-const expandHomePath = (value: string): string =>
+const expandHomePath = (
+  value: string,
+  homeDirectory: string = process.env.HOME ?? os.homedir()
+): string =>
   value === "~" || value.startsWith("~/")
-    ? path.join(os.homedir(), value.slice(2))
+    ? path.join(homeDirectory, value.slice(2))
     : value;
 
 const readString = (value: unknown): string | null =>
@@ -84,6 +91,23 @@ const readConfig = (configPath: string): GlmOpenCodeConfigFile => {
   return parsed && typeof parsed === "object" && !Array.isArray(parsed)
     ? (parsed as GlmOpenCodeConfigFile)
     : {};
+};
+
+const resolvePreferredPath = (
+  explicitPath: string | null,
+  defaultPath: string,
+  legacyPath: string,
+  homeDirectory?: string
+): string => {
+  if (explicitPath) {
+    return expandHomePath(explicitPath, homeDirectory);
+  }
+  const expandedDefault = expandHomePath(defaultPath, homeDirectory);
+  if (existsSync(expandedDefault)) {
+    return expandedDefault;
+  }
+  const expandedLegacy = expandHomePath(legacyPath, homeDirectory);
+  return existsSync(expandedLegacy) ? expandedLegacy : expandedDefault;
 };
 
 const readWorkspaceSettings = (
@@ -193,7 +217,7 @@ const resolveOpenCodeCommand = (
   const homeCandidates = [
     "~/.opencode/bin/opencode",
     "~/.npm-global/bin/opencode",
-  ].map(expandHomePath);
+  ].map((candidate) => expandHomePath(candidate));
   for (const candidate of homeCandidates) {
     if (isExecutable(candidate)) {
       return candidate;
@@ -329,16 +353,19 @@ export const buildGlmOpenCodeRuntimeProfile = (
 ): GlmOpenCodeRuntimeProfile => {
   const environment = options.environment ?? process.env;
   const workspaceSettings = readWorkspaceSettings(options.settingsPath);
-  const configPath = expandHomePath(
-    options.configPath ??
-      readString(workspaceSettings.configPath) ??
-      DEFAULT_GLM_OPENCODE_CONFIG_PATH
+  const homeDirectory = environment.HOME ?? os.homedir();
+  const configPath = resolvePreferredPath(
+    options.configPath ?? readString(workspaceSettings.configPath),
+    DEFAULT_GLM_OPENCODE_CONFIG_PATH,
+    LEGACY_GLM_OPENCODE_CONFIG_PATH,
+    homeDirectory
   );
   const config = readConfig(configPath);
-  const providerHomePath = expandHomePath(
-    options.providerHomePath ??
-      readString(config.providerHomePath) ??
-      DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH
+  const providerHomePath = resolvePreferredPath(
+    options.providerHomePath ?? readString(config.providerHomePath),
+    DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH,
+    LEGACY_GLM_OPENCODE_PROVIDER_HOME_PATH,
+    homeDirectory
   );
   const modelSelector = normalizeModelSelector(
     options.defaultModel ??
