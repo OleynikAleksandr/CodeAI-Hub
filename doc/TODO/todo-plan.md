@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "56b0d2a76",
+  "lastRecordedCommit": "8946b0d50",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9j.task1",
-  "expectedCommitMessage": "fix: restrict session translation to thinking",
+  "currentTaskId": "phase1.stream9j.task2",
+  "expectedCommitMessage": "docs: record thinking-only translation verification",
   "debt": {
-    "expectedCommitMessage": "fix: restrict session translation to thinking",
-    "preCommitHead": "56b0d2a76",
+    "expectedCommitMessage": "docs: record thinking-only translation verification",
+    "preCommitHead": "8946b0d50",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9j.task1"
+    "taskId": "phase1.stream9j.task2"
   }
 }
 ```
@@ -174,9 +174,13 @@
 ### Stream: Thinking-Only Session Translation
 
 51. [DONE] `phase1.stream9j.task1` Restrict session overlay translation to thinking/syncing messages only so ordinary provider replies stay on the prompt-selected language without post-hoc localization. (scope: `packages/core/src/session-translation/**, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restrict session translation to thinking`)
-52. [PENDING] `phase1.stream9j.commit1` Git Commit: `fix: restrict session translation to thinking` (hash: TBD)
-53. [TODO] `phase1.stream9j.task2` Record targeted verification that OpenCode/Kimi assistant replies no longer receive overlays while thinking translation still works. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record thinking-only translation verification`)
-54. [TODO] `phase1.stream9j.commit2` Git Commit: `docs: record thinking-only translation verification` (hash: TBD)
+52. [DONE] `phase1.stream9j.commit1` Git Commit: `fix: restrict session translation to thinking` (hash: 8946b0d50)
+53. [DONE] `phase1.stream9j.task2` Record targeted verification that OpenCode/Kimi assistant replies no longer receive overlays while thinking translation still works. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record thinking-only translation verification`)
+    - Completed checks: `npx ultracite check packages/core/src/session-translation/session-translation-dispatcher.ts packages/core/src/session-translation/session-translation-dispatcher.test.ts packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/session-translation/session-translation-facade.localization-guards.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` ✅.
+    - Build verification: `npm run build --workspace=@codeai-hub/core` ✅.
+    - Runtime contract verification: `node --test packages/core/dist/session-translation/session-translation-dispatcher.test.js packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` ✅ (17/17).
+    - Coverage focus: ordinary `assistant` replies and Core validation/system messages no longer enter overlay translation; `thinking` messages still route through translation with provider-specific settings paths for both Kimi and OpenCode.
+54. [PENDING] `phase1.stream9j.commit2` Git Commit: `docs: record thinking-only translation verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 
