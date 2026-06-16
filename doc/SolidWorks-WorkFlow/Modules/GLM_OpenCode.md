@@ -27,6 +27,10 @@ GLM-OpenCode provider module подключает GLM 5.2 как workflow-про
 - The global fallback/diagnostic provider home remains `~/.codeai-hub/providers/glm-opencode/home`.
 - Local provider config lives at `~/.codeai-hub/providers/glm-opencode/config.json`.
 - OpenCode process command defaults to `opencode` and may be overridden only by local config fields `openCodeCommand`, `opencodeCommand` or `opencodePath`.
+- CodeAI Hub materializes isolated OpenCode runtime files before each profile is used:
+  - `<providerHome>/config/opencode/opencode.json` declares provider id `zai-coding-plan`, model `glm-5.2`, adapter `@ai-sdk/openai-compatible`, `options.baseURL=https://api.z.ai/api/coding/paas/v4`, `timeout=120000`, and `chunkTimeout=60000`;
+  - `<providerHome>/data/opencode/auth.json` stores the runtime-only Z.AI API credential for `zai-coding-plan`.
+- The module must not rely on the user's global `~/.config/opencode/opencode.json` or `~/.local/share/opencode/auth.json`; those may not contain Z.AI.
 - Runtime launches one turn as:
   - `opencode --print-logs --log-level INFO run --dangerously-skip-permissions --format json --model zai-coding-plan/glm-5.2 <prompt>`
 - API key resolution order:
@@ -56,6 +60,7 @@ GLM-OpenCode provider module подключает GLM 5.2 как workflow-про
 - Native request capture is diagnostic-only for this provider. The adapter records the applied OpenCode model selector and config path; request matching targets `api.z.ai` with `/api/coding/paas/v4`.
 - Usage-limit telemetry is explicitly unavailable until Z.AI exposes and we verify a stable account/quota endpoint for this runtime.
 - Settings version diagnostics read the installed OpenCode CLI through `opencode --version`; CodeAI Hub must not try to update it through `npm install -g opencode`.
+- OpenCode provider/model diagnostics must be tested against the isolated provider home because global OpenCode credentials are not runtime truth for GLM-OpenCode.
 
 ## Packaging
 - GLM-OpenCode produces a standalone `glm-opencode-module-<version>.tar.bz2` provider tarball and `assets/providers/glm-opencode/manifest.json`.

@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "a9eeeb110",
+  "lastRecordedCommit": "74f48fd62",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream7a.task1",
-  "expectedCommitMessage": "fix: align glm opencode model selector",
+  "currentTaskId": "phase1.stream7a.task2",
+  "expectedCommitMessage": "docs: align glm opencode selector docs",
   "debt": {
-    "expectedCommitMessage": "fix: align glm opencode model selector",
-    "preCommitHead": "a9eeeb110",
+    "expectedCommitMessage": "docs: align glm opencode selector docs",
+    "preCommitHead": "74f48fd62",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7a.task1"
+    "taskId": "phase1.stream7a.task2"
   }
 }
 ```
@@ -80,9 +80,9 @@
 ### Stream: OpenCode Selector Repair
 
 13. [DONE] `phase1.stream7a.task1` Align the GLM-OpenCode runtime selector with OpenCode 1.17.7 live model resolution. (scope: `packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.ts, packages/GLM_OpenCode_Module/src/provider/glm-opencode-runtime-profile.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align glm opencode model selector`)
-14. [PENDING] `phase1.stream7a.commit1` Git Commit: `fix: align glm opencode model selector` (hash: TBD)
-15. [TODO] `phase1.stream7a.task2` Align GLM-OpenCode docs with the live OpenCode selector. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: align glm opencode selector docs`)
-16. [TODO] `phase1.stream7a.commit2` Git Commit: `docs: align glm opencode selector docs` (hash: TBD)
+14. [DONE] `phase1.stream7a.commit1` Git Commit: `fix: align glm opencode model selector` (hash: 74f48fd62)
+15. [DONE] `phase1.stream7a.task2` Align GLM-OpenCode docs with the live OpenCode selector. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: align glm opencode selector docs`)
+16. [PENDING] `phase1.stream7a.commit2` Git Commit: `docs: align glm opencode selector docs` (hash: TBD)
 
 ### Stream: Verification
 
