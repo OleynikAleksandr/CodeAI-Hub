@@ -7791,53 +7791,22 @@
   );
 
   // src/client/ui/src/components/settings/kimi-settings-state.ts
-  var DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH = "~/.codeai-hub/providers/glm-claude-code/config.json";
-  var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/glm-opencode/config.json";
-  var DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
-  var DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
-  var DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
-  var DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-5.2";
+  var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/opencode/config.json";
   var DEFAULT_GLM_OPENCODE_MODEL = "zai-coding-plan/glm-5.2";
-  var LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = /* @__PURE__ */ new Set([
+  var LEGACY_GLM_OPENCODE_MODEL_IDS = /* @__PURE__ */ new Set([
     "glm-5.1",
     "glm-5-turbo",
-    "glm-4.5-air"
+    "glm-4.5-air",
+    "glm-5.2"
   ]);
   var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
-  var mapGlmClaudeCodeModel = (value, fallback) => {
+  var mapGlmOpenCodeModel = (value, fallback) => {
     const modelId = mapOptionalString(value, fallback);
-    return LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId) ? fallback : modelId;
+    return LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) ? fallback : modelId;
   };
   var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
     autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
     defaultModel: DEFAULT_KIMI_MODEL_ID,
-    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
-      value?.thinkingDisplaySyncEnabled
-    )
-  });
-  var mapGlmClaudeCodeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
-    apiKey: mapOptionalString(value?.apiKey, ""),
-    baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_CLAUDE_CODE_BASE_URL),
-    configPath: mapOptionalString(
-      value?.configPath,
-      DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH
-    ),
-    defaultModel: mapGlmClaudeCodeModel(
-      value?.defaultModel,
-      DEFAULT_GLM_OPENCODE_MODEL
-    ),
-    haikuModel: mapGlmClaudeCodeModel(
-      value?.haikuModel,
-      DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL
-    ),
-    opusModel: mapGlmClaudeCodeModel(
-      value?.opusModel,
-      DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
-    ),
-    sonnetModel: mapGlmClaudeCodeModel(
-      value?.sonnetModel,
-      DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL
-    ),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
     )
@@ -7848,9 +7817,9 @@
       value?.configPath,
       DEFAULT_GLM_OPENCODE_CONFIG_PATH
     ),
-    defaultModel: mapGlmClaudeCodeModel(
+    defaultModel: mapGlmOpenCodeModel(
       value?.defaultModel,
-      DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+      DEFAULT_GLM_OPENCODE_MODEL
     ),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
@@ -8068,10 +8037,6 @@
         mapAutoUpdateSettings,
         mapThinkingDisplaySyncEnabled
       ),
-      glmClaudeCode: mapGlmClaudeCodeSettings(
-        value?.providers?.glmClaudeCode,
-        mapThinkingDisplaySyncEnabled
-      ),
       glmOpenCode: mapGlmOpenCodeSettings(
         value?.providers?.glmOpenCode,
         mapThinkingDisplaySyncEnabled
@@ -8100,9 +8065,6 @@
     right.thinkingLevelByModel
   ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
-    left.providers.glmClaudeCode,
-    right.providers.glmClaudeCode
-  ) && areKimiProviderSettingsEqual(
     left.providers.glmOpenCode,
     right.providers.glmOpenCode
   ) && areLocalModelsSettingsEqual(
@@ -8381,7 +8343,6 @@
     claudeCodeCli: "Claude",
     codexCli: "Codex",
     geminiCli: "Gemini",
-    glmClaudeCode: "GLM-Claude-Code",
     glmOpenCode: "OpenCode",
     kimiCode: "Kimi",
     localModels: "Local Models"
@@ -8391,7 +8352,6 @@
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
-    glmClaudeCode: "Using GLM 5.2 through Claude Agent SDK-compatible runtime",
     glmOpenCode: "Using OpenCode providers and models",
     kimiCode: "Using your authentication Kimi CLI",
     localModels: "Runs downloaded LM Studio models on this Mac"
@@ -8538,7 +8498,6 @@
     "codexCli",
     "geminiCli",
     "kimiCode",
-    "glmClaudeCode",
     "glmOpenCode",
     "localModels"
   ]);

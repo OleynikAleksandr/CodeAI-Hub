@@ -41,10 +41,6 @@ type LocalTranslationEngineCatalog = {
   readonly engineId: string;
 };
 
-const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
-const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.2 / Claude Code";
-const GLM_CLAUDE_CODE_MODEL_DESCRIPTION =
-  "GLM 5.2 exposed through the Claude Agent SDK-compatible runtime.";
 const OPENCODE_MODELS = [
   {
     description: "GLM 5.2 exposed through OpenCode with zai-coding-plan/glm-5.2.",
@@ -112,15 +108,6 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
-  if (providerId === "glmClaudeCode") {
-    return [
-      {
-        id: GLM_CLAUDE_CODE_MODEL_ID,
-        description: GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
-        label: GLM_CLAUDE_CODE_MODEL_LABEL,
-      },
-    ];
-  }
   if (providerId === "glmOpenCode") {
     return OPENCODE_MODELS;
   }
@@ -155,7 +142,6 @@ export const getStartCardReasoningOptions = (
   }
   if (
     providerId === "kimiCode" ||
-    providerId === "glmClaudeCode" ||
     providerId === "glmOpenCode" ||
     providerId === "localModels"
   ) {
@@ -204,15 +190,11 @@ export const resolveDefaultStartCardModelSelection = (
         DEFAULT_CODEX_REASONING_LEVEL,
     };
   }
-  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
+  if (providerId === "glmOpenCode") {
     return {
       modelId:
-        (providerId === "glmOpenCode"
-          ? settings?.providers.glmOpenCode?.defaultModel
-          : settings?.providers.glmClaudeCode?.defaultModel) ??
-        (providerId === "glmOpenCode"
-          ? "zai-coding-plan/glm-5.2"
-          : GLM_CLAUDE_CODE_MODEL_ID),
+        settings?.providers.glmOpenCode?.defaultModel ??
+        "zai-coding-plan/glm-5.2",
       reasoning: "default",
     };
   }

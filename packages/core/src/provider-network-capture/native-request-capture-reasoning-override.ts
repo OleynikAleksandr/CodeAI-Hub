@@ -1,9 +1,6 @@
 import type { ProviderNativeRequestCaptureAppliedTurnConfig } from "../provider-registry/provider-module-loader.types";
 
-type ReasoningOverrideProviderId =
-  | "claudeCodeCli"
-  | "codexCli"
-  | "glmClaudeCode";
+type ReasoningOverrideProviderId = "claudeCodeCli" | "codexCli";
 
 const CLAUDE_REASONING_EFFORTS = new Set([
   "low",
@@ -30,7 +27,7 @@ export const applyNativeRequestCaptureReasoningOverride = (options: {
     providerId: options.providerId,
     source: "switch_request" as const,
   };
-  if (providerId === "claudeCodeCli" || providerId === "glmClaudeCode") {
+  if (providerId === "claudeCodeCli") {
     return applyClaudeReasoningOverride(base, normalized);
   }
   return CODEX_REASONING_EFFORTS.has(normalized)
@@ -76,6 +73,4 @@ const normalizeReasoningOverride = (value: unknown): string | null => {
 const readReasoningOverrideProviderId = (
   value: string
 ): ReasoningOverrideProviderId | null =>
-  value === "claudeCodeCli" || value === "codexCli" || value === "glmClaudeCode"
-    ? value
-    : null;
+  value === "claudeCodeCli" || value === "codexCli" ? value : null;

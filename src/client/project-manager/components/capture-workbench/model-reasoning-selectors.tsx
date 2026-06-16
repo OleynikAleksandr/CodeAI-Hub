@@ -5,7 +5,6 @@ const MODEL_OPTIONS: Record<string, readonly string[]> = {
   claude: ["sonnet", "opus", "haiku"],
   codex: ["gpt-5.4-mini", "gpt-5.2"],
   kimi: ["kimi-k2.7-code"],
-  glmClaudeCode: ["glm-5.2"],
   glmOpenCode: ["zai-coding-plan/glm-5.2", "kimi-for-coding/k2p7"],
 };
 
@@ -21,12 +20,6 @@ const REASONING_OPTIONS: Record<string, readonly string[]> = {
   codex: ["reasoning-low", "reasoning-medium", "reasoning-high"],
   kimi: ["default"],
   glmOpenCode: ["default"],
-  glmClaudeCode: [
-    "thinking-off",
-    "thinking-low",
-    "thinking-medium",
-    "thinking-high",
-  ],
 };
 
 interface CaptureWorkbenchModelReasoningSelectorsProps {

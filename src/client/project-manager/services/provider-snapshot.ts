@@ -20,7 +20,6 @@ const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
   "codexCli",
   "geminiCli",
   "kimiCode",
-  "glmClaudeCode",
   "glmOpenCode",
   "localModels",
 ]);

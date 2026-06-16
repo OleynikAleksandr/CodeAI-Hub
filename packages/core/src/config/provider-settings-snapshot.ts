@@ -44,11 +44,6 @@ export interface KimiSettingsSnapshot {
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
-export interface GlmClaudeCodeSettingsSnapshot {
-  readonly defaultModel?: unknown;
-  readonly thinkingDisplaySyncEnabled?: unknown;
-}
-
 export interface GlmOpenCodeSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
@@ -63,13 +58,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
-const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
 const DEFAULT_GLM_OPENCODE_MODEL_ID = "zai-coding-plan/glm-5.2";
-const LEGACY_GLM_CLAUDE_CODE_MODEL_IDS = new Set([
-  "glm-5.1",
-  "glm-5-turbo",
-  "glm-4.5-air",
-]);
 const LEGACY_GLM_OPENCODE_MODEL_IDS = new Set([
   "glm-5.1",
   "glm-5-turbo",
@@ -81,13 +70,6 @@ const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : undefined;
-
-const normalizeGlmClaudeCodeModel = (value: unknown): unknown => {
-  const modelId = normalizeOptionalString(value);
-  return modelId && LEGACY_GLM_CLAUDE_CODE_MODEL_IDS.has(modelId)
-    ? DEFAULT_GLM_CLAUDE_CODE_MODEL_ID
-    : value;
-};
 
 const normalizeGlmOpenCodeModel = (value: unknown): unknown => {
   const modelId = normalizeOptionalString(value);
@@ -198,20 +180,6 @@ export const loadKimiSettingsSnapshot = (
   return {
     defaultModel: kimi.defaultModel,
     thinkingDisplaySyncEnabled: kimi.thinkingDisplaySyncEnabled,
-  };
-};
-
-export const loadGlmClaudeCodeSettingsSnapshot = (
-  settingsPath: string
-): GlmClaudeCodeSettingsSnapshot | null => {
-  const glmClaudeCode = loadProviderSnapshot(settingsPath, "glmClaudeCode");
-  if (!glmClaudeCode) {
-    return null;
-  }
-
-  return {
-    defaultModel: normalizeGlmClaudeCodeModel(glmClaudeCode.defaultModel),
-    thinkingDisplaySyncEnabled: glmClaudeCode.thinkingDisplaySyncEnabled,
   };
 };
 

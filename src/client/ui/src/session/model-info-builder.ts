@@ -8,13 +8,12 @@ import type { Settings } from "../components/settings/settings-state-model";
 
 type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
-type KimiLikeProviderId = "kimiCode" | "glmClaudeCode" | "glmOpenCode";
+type KimiLikeProviderId = "kimiCode" | "glmOpenCode";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi K2.7 Code";
-const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.2 / Claude Code";
 const GLM_OPENCODE_MODEL_DISPLAY_NAME = "GLM 5.2 / OpenCode";
 const KIMI_OPENCODE_MODEL_DISPLAY_NAME = "Kimi K2.7 / OpenCode";
-const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
+const GLM_OPENCODE_MODEL_ID = "zai-coding-plan/glm-5.2";
 const KIMI_DEFAULT_MODEL_ID = "kimi-k2.7-code";
 const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
 
@@ -59,17 +58,12 @@ const isSettingsBackedProviderId = (
 const isKimiLikeProviderId = (
   providerId: ProviderStackId
 ): providerId is KimiLikeProviderId =>
-  providerId === "kimiCode" ||
-  providerId === "glmClaudeCode" ||
-  providerId === "glmOpenCode";
+  providerId === "kimiCode" || providerId === "glmOpenCode";
 
 const resolveKimiLikeSettingsModelId = (
   providerId: KimiLikeProviderId,
   settings: Settings
 ): string | undefined => {
-  if (providerId === "glmClaudeCode") {
-    return settings.providers.glmClaudeCode?.defaultModel;
-  }
   if (providerId === "glmOpenCode") {
     return settings.providers.glmOpenCode?.defaultModel;
   }
@@ -79,7 +73,7 @@ const resolveKimiLikeSettingsModelId = (
 const resolveKimiLikeFallbackModelId = (
   providerId: KimiLikeProviderId
 ): string =>
-  providerId === "kimiCode" ? KIMI_DEFAULT_MODEL_ID : GLM_CLAUDE_CODE_MODEL_ID;
+  providerId === "kimiCode" ? KIMI_DEFAULT_MODEL_ID : GLM_OPENCODE_MODEL_ID;
 
 const formatKimiSessionModelDisplayName = (
   providerId: ProviderStackId,
@@ -101,11 +95,6 @@ const formatKimiSessionModelDisplayName = (
       return KIMI_OPENCODE_MODEL_DISPLAY_NAME;
     }
     return formatModelDisplayName(baseModelId);
-  }
-  if (providerId === "glmClaudeCode") {
-    return baseModelId === GLM_CLAUDE_CODE_MODEL_ID
-      ? GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME
-      : formatModelDisplayName(baseModelId);
   }
   if (baseModelId !== KIMI_DEFAULT_MODEL_ID) {
     return formatModelDisplayName(baseModelId);

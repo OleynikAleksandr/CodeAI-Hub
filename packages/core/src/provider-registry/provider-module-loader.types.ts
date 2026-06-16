@@ -1,7 +1,4 @@
-import type {
-  ClaudeModuleOptions,
-  GlmClaudeCodeProviderAdapterOptions,
-} from "@codeai-hub/claude-module";
+import type { ClaudeModuleOptions } from "@codeai-hub/claude-module";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
 import type { GlmOpenCodeModuleOptions } from "@codeai-hub/glm-opencode-module";
@@ -149,10 +146,6 @@ export type MutableProviderDescriptor = {
 
 export type ClaudeAdapterCtor = new (
   options: ClaudeModuleOptions
-) => ProviderAdapter;
-
-export type GlmClaudeCodeAdapterCtor = new (
-  options: GlmClaudeCodeProviderAdapterOptions
 ) => ProviderAdapter;
 
 export type CodexAdapterCtor = new (

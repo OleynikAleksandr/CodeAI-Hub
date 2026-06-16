@@ -28,10 +28,8 @@ import {
 } from "./general-response-mode/response-mode-state";
 import {
   areKimiProviderSettingsEqual,
-  type GlmClaudeCodeSettings,
   type GlmOpenCodeSettings,
   type KimiSettings,
-  mapGlmClaudeCodeSettings,
   mapGlmOpenCodeSettings,
   mapKimiSettings,
 } from "./kimi-settings-state";
@@ -122,7 +120,6 @@ export interface Settings {
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
-    readonly glmClaudeCode?: GlmClaudeCodeSettings;
     readonly glmOpenCode?: GlmOpenCodeSettings;
     readonly localModels?: LocalModelsSettings;
   };
@@ -376,10 +373,6 @@ export const mapSettingsSnapshot = (
       mapAutoUpdateSettings,
       mapThinkingDisplaySyncEnabled
     ),
-    glmClaudeCode: mapGlmClaudeCodeSettings(
-      value?.providers?.glmClaudeCode,
-      mapThinkingDisplaySyncEnabled
-    ),
     glmOpenCode: mapGlmOpenCodeSettings(
       value?.providers?.glmOpenCode,
       mapThinkingDisplaySyncEnabled
@@ -483,10 +476,6 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areCodexSettingsEqual(left.providers.codex, right.providers.codex) &&
   areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) &&
   areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) &&
-  areKimiProviderSettingsEqual(
-    left.providers.glmClaudeCode,
-    right.providers.glmClaudeCode
-  ) &&
   areKimiProviderSettingsEqual(
     left.providers.glmOpenCode,
     right.providers.glmOpenCode

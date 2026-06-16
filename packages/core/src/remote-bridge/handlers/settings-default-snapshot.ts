@@ -97,16 +97,6 @@ export const DEFAULT_SETTINGS_SNAPSHOT = {
       defaultModel: "kimi-k2.7-code",
       thinkingDisplaySyncEnabled: true,
     },
-    glmClaudeCode: {
-      apiKey: "",
-      baseUrl: "https://api.z.ai/api/anthropic",
-      configPath: "~/.codeai-hub/providers/glm-claude-code/config.json",
-      defaultModel: "glm-5.2",
-      haikuModel: "glm-5.2",
-      opusModel: "glm-5.2",
-      sonnetModel: "glm-5.2",
-      thinkingDisplaySyncEnabled: true,
-    },
     glmOpenCode: {
       apiKey: "",
       configPath: "~/.codeai-hub/providers/opencode/config.json",

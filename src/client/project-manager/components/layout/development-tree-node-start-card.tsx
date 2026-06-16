@@ -17,7 +17,6 @@ const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "glmClaudeCode" ||
   value === "glmOpenCode" ||
   value === "localModels";
 

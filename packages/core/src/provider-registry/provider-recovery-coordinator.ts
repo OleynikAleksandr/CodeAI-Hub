@@ -13,7 +13,6 @@ interface ProviderRecoveryCoordinatorOptions {
   readonly clearRetry: (providerId: string) => void;
   readonly createClaudeAdapter: () => ProviderAdapter;
   readonly createCodexAdapter: () => ProviderAdapter;
-  readonly createGlmClaudeCodeAdapter: () => ProviderAdapter;
   readonly createGlmOpenCodeAdapter: () => ProviderAdapter;
   readonly createKimiAdapter: () => ProviderAdapter;
   readonly emitStatus: (
@@ -171,8 +170,6 @@ export class ProviderRecoveryCoordinator {
         return this.options.createClaudeAdapter();
       case "kimiCode":
         return this.options.createKimiAdapter();
-      case "glmClaudeCode":
-        return this.options.createGlmClaudeCodeAdapter();
       case "glmOpenCode":
         return this.options.createGlmOpenCodeAdapter();
       default:
@@ -221,8 +218,6 @@ export class ProviderRecoveryCoordinator {
         return "Gemini CLI is unavailable. Run `gemini login`, confirm credentials, then use Settings → General → Restart Core to retry";
       case "kimiCode":
         return "Kimi CLI is unavailable. Confirm `kimi` is installed and logged in, then use Settings → General → Restart Core to retry";
-      case "glmClaudeCode":
-        return 'GLM-Claude-Code is unavailable because it needs a separate Z.AI/GLM API key; Claude login is not reused. CodeAI Hub creates ~/.codeai-hub/providers/glm-claude-code/config.json automatically. Open that file and paste your key into the JSON field "apiKey", for example { "apiKey": "zai-..." }. Then use Settings → General → Restart Core to retry. You can also set CODEAI_GLM_CLAUDE_CODE_API_KEY, GLM_CLAUDE_CODE_API_KEY, or ZAI_API_KEY';
       case "glmOpenCode":
         return 'OpenCode wrapper is unavailable. Confirm OpenCode is installed and that the needed provider is authenticated in OpenCode. CodeAI Hub copies the OpenCode auth catalog into its isolated runtime; for Z.AI you can still set ~/.codeai-hub/providers/opencode/config.json { "apiKey": "zai-..." } or ZAI_API_KEY. Then use Settings -> General -> Restart Core to retry';
       default:

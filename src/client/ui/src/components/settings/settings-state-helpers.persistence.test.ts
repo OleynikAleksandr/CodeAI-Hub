@@ -53,20 +53,17 @@ test("settings persistence round-trips LM Studio local translation engine ids", 
   assert.equal(remapped.general.localization.reasoningEngineId, localEngineId);
 });
 
-test("settings mapping upgrades legacy GLM-Claude-Code aliases", () => {
+test("settings mapping upgrades legacy OpenCode GLM aliases", () => {
   const settings = mapSettingsSnapshot({
     providers: {
-      glmClaudeCode: {
+      glmOpenCode: {
         defaultModel: "glm-5.1",
-        haikuModel: "glm-4.5-air",
-        opusModel: "glm-5.1",
-        sonnetModel: "glm-5-turbo",
       },
     },
   });
 
-  assert.equal(settings.providers.glmClaudeCode?.defaultModel, "glm-5.2");
-  assert.equal(settings.providers.glmClaudeCode?.haikuModel, "glm-5.2");
-  assert.equal(settings.providers.glmClaudeCode?.opusModel, "glm-5.2");
-  assert.equal(settings.providers.glmClaudeCode?.sonnetModel, "glm-5.2");
+  assert.equal(
+    settings.providers.glmOpenCode?.defaultModel,
+    "zai-coding-plan/glm-5.2"
+  );
 });

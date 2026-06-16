@@ -128,13 +128,6 @@ Important transport mapping:
 - `SDKInstaller.ensureInstalled()` отвечает за missing first-run install и executable/module path verification, но не делает скрытый latest-check на каждом старте. Обновление уже установленного Claude SDK/CLI принадлежит Core startup/manual settings policy (`SettingsProviderAutoUpdateService` / `settings:update-provider`).
 - Если токен истёк/401 — система должна завершить turn как failure и предоставить recovery hint (см. Phase 211).
 
-## GLM-Claude-Code boundary
-- GLM-Claude-Code (`glmClaudeCode`) is a separate provider id and runtime profile documented in `doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`.
-- The Claude provider remains subscription/OAuth based: `HOME=~/.codeai-hub/providers/claude/home`, `CLAUDE_USE_CLI_AUTH=true`, `CLAUDE_SUBSCRIPTION_MODE=true`, and Claude auth bootstrap must not read GLM/Z.AI API keys.
-- Reused Claude SDK helpers must be profile-driven. Adding GLM-Claude-Code must not weaken the normal Claude invariants: `settingSources: []`, CodeAI-owned `systemPrompt`, explicit workflow tools, provider-home isolation, and Claude usage/context readers.
-- Claude usage limits and `/context` telemetry belong only to the Claude provider. GLM-Claude-Code must render unavailable telemetry unless its own GLM/Z.AI account/source is proven and wired separately.
-- Capture evidence for GLM-Claude-Code may reuse the Claude native request capture service, but the target host/base URL and auth env are provider-profile facts, not changes to the Claude capture contract.
-
 ## Инварианты
 - Один user/internal turn = один `query(...)` запуск (one-shot), FIFO.
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.

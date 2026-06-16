@@ -76,7 +76,6 @@ const isKimiModelId = (value: string): value is KimiModelId =>
   KIMI_MODEL_ID_SET.has(value as KimiModelId);
 
 const isGlmModelId = (value: string): boolean =>
-  value === "glm-5.2" ||
   value === "zai-coding-plan/glm-5.2" ||
   value === "kimi-for-coding/k2p7";
 
@@ -156,13 +155,12 @@ const applyKimiStartDefaults = (
 
 const applyGlmStartDefaults = (
   settings: Settings,
-  providerId: "glmClaudeCode" | "glmOpenCode",
   modelId: string | null
 ): Settings | null => {
   if (!modelId || !isGlmModelId(modelId)) {
     return null;
   }
-  const currentProviderSettings = settings.providers[providerId];
+  const currentProviderSettings = settings.providers.glmOpenCode;
   if (currentProviderSettings?.defaultModel === modelId) {
     return null;
   }
@@ -170,12 +168,11 @@ const applyGlmStartDefaults = (
     ...settings,
     providers: {
       ...settings.providers,
-      [providerId]: {
+      glmOpenCode: {
         ...(currentProviderSettings ?? {
-          defaultModel:
-            providerId === "glmOpenCode"
-              ? "zai-coding-plan/glm-5.2"
-              : "glm-5.2",
+          apiKey: "",
+          configPath: "~/.codeai-hub/providers/opencode/config.json",
+          defaultModel: "zai-coding-plan/glm-5.2",
           thinkingDisplaySyncEnabled: true,
         }),
         defaultModel: modelId,
@@ -241,11 +238,8 @@ export const applyStartCardModelDefaults = (
   if (params.providerId === "kimiCode") {
     return applyKimiStartDefaults(settings, modelId);
   }
-  if (
-    params.providerId === "glmClaudeCode" ||
-    params.providerId === "glmOpenCode"
-  ) {
-    return applyGlmStartDefaults(settings, params.providerId, modelId);
+  if (params.providerId === "glmOpenCode") {
+    return applyGlmStartDefaults(settings, modelId);
   }
   return applyGeminiStartDefaults(settings, modelId, reasoning);
 };

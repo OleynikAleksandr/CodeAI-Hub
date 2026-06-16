@@ -8,7 +8,6 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
-  GlmClaudeCodeAdapterCtor,
   GlmOpenCodeAdapterCtor,
 } from "./provider-module-loader.types";
 
@@ -140,41 +139,6 @@ export const loadClaudeAdapterCtor = (
     readonly ClaudeProviderAdapter: ClaudeAdapterCtor;
   };
   return bundled.ClaudeProviderAdapter;
-};
-
-export const loadGlmClaudeCodeAdapterCtor = (
-  overridePath: string | undefined,
-  logger: Logger
-): GlmClaudeCodeAdapterCtor => {
-  if (overridePath) {
-    try {
-      const overrideEntry = path.join(overridePath, "dist", "index.js");
-      const loaded = dynamicRequire(overrideEntry) as {
-        readonly GlmClaudeCodeProviderAdapter?: GlmClaudeCodeAdapterCtor;
-      };
-      if (loaded?.GlmClaudeCodeProviderAdapter) {
-        logger.info("Loaded GLM-Claude-Code adapter from Claude override", {
-          overridePath,
-        });
-        return loaded.GlmClaudeCodeProviderAdapter;
-      }
-      logger.warn("Override path missing GlmClaudeCodeProviderAdapter export", {
-        overridePath,
-      });
-    } catch (error) {
-      logger.error(
-        "Failed to load GLM-Claude-Code module override",
-        error as Error,
-        {
-          overridePath,
-        }
-      );
-    }
-  }
-  const bundled = dynamicRequire("@codeai-hub/claude-module") as {
-    readonly GlmClaudeCodeProviderAdapter: GlmClaudeCodeAdapterCtor;
-  };
-  return bundled.GlmClaudeCodeProviderAdapter;
 };
 
 export const loadCodexAdapterCtor = (

@@ -148,13 +148,13 @@ test("SessionRequestHandler stop force-releases managed input gates", async () =
 test("SessionRequestHandler stop unlocks product part managed repairs", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
-    "glmClaudeCode",
+    "glmOpenCode",
     "/tmp/core-stop-product-part-managed-gate",
     "provider-session-product-part-stop",
     { stage: "development_tree/materialized/product-parts/finder-widget" }
   );
   harness.providerSessions.set(session.id, {
-    providerId: "glmClaudeCode",
+    providerId: "glmOpenCode",
     providerSessionId: "provider-session-product-part-stop",
     unsubscribe: noop,
   });

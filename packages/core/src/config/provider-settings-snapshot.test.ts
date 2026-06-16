@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { JsonFileSnapshotCache } from "./json-file-snapshot-cache";
-import { loadGlmClaudeCodeSettingsSnapshot } from "./provider-settings-snapshot";
+import { loadGlmOpenCodeSettingsSnapshot } from "./provider-settings-snapshot";
 
 const createCacheHarness = (snapshots: Map<string, string>) => {
   let nowMs = 0;
@@ -73,7 +73,7 @@ test("JsonFileSnapshotCache caches malformed snapshots as null per path", () => 
   assert.deepEqual(harness.reads, [malformedPath, arrayPath, malformedPath]);
 });
 
-test("loadGlmClaudeCodeSettingsSnapshot upgrades legacy default model aliases", async () => {
+test("loadGlmOpenCodeSettingsSnapshot upgrades legacy default model aliases", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "glm-core-settings-"));
   const settingsPath = path.join(dir, "settings.json");
   try {
@@ -81,7 +81,7 @@ test("loadGlmClaudeCodeSettingsSnapshot upgrades legacy default model aliases", 
       settingsPath,
       JSON.stringify({
         providers: {
-          glmClaudeCode: {
+          glmOpenCode: {
             defaultModel: "glm-5.1",
             thinkingDisplaySyncEnabled: true,
           },
@@ -91,8 +91,8 @@ test("loadGlmClaudeCodeSettingsSnapshot upgrades legacy default model aliases", 
     );
 
     assert.equal(
-      loadGlmClaudeCodeSettingsSnapshot(settingsPath)?.defaultModel,
-      "glm-5.2"
+      loadGlmOpenCodeSettingsSnapshot(settingsPath)?.defaultModel,
+      "zai-coding-plan/glm-5.2"
     );
   } finally {
     await rm(dir, { force: true, recursive: true });

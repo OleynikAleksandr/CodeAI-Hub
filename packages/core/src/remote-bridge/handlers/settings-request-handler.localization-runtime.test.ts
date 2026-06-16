@@ -109,7 +109,6 @@ const createSettings = (params: { readonly uiHelperText?: string } = {}) => {
       claude: {},
       codex: {},
       gemini: {},
-      glmClaudeCode: {},
       kimi: {},
     },
   };

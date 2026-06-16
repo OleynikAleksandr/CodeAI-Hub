@@ -2,7 +2,6 @@ export type KnownProviderStackId =
   | "claudeCodeCli"
   | "codexCli"
   | "geminiCli"
-  | "glmClaudeCode"
   | "glmOpenCode"
   | "kimiCode"
   | "localModels";
@@ -20,7 +19,6 @@ const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Claude",
   codexCli: "Codex",
   geminiCli: "Gemini",
-  glmClaudeCode: "GLM-Claude-Code",
   glmOpenCode: "OpenCode",
   kimiCode: "Kimi",
   localModels: "Local Models",
@@ -32,7 +30,6 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Using your authentication Claude Code CLI",
   codexCli: "Using your authentication Codex CLI",
   geminiCli: "Using your authentication Gemini CLI",
-  glmClaudeCode: "Using GLM 5.2 through Claude Agent SDK-compatible runtime",
   glmOpenCode: "Using OpenCode providers and models",
   kimiCode: "Using your authentication Kimi CLI",
   localModels: "Runs downloaded LM Studio models on this Mac",

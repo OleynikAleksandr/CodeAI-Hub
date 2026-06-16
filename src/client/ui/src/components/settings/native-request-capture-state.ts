@@ -6,15 +6,12 @@ export type NativeRequestCaptureProviderId =
   | "claude"
   | "codex"
   | "kimi"
-  | "glmClaudeCode"
   | "glmOpenCode";
-type GlmClaudeCodeModelId = "glm-5.2";
 type GlmOpenCodeModelId = "zai-coding-plan/glm-5.2" | "kimi-for-coding/k2p7";
 export type NativeRequestCaptureModelId =
   | ClaudeModelAliasId
   | CodexModelId
   | KimiModelId
-  | GlmClaudeCodeModelId
   | GlmOpenCodeModelId;
 export type NativeRequestCaptureScenarioId =
   | "description"

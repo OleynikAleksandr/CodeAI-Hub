@@ -1,57 +1,12 @@
-import { GlmClaudeCodeProviderAdapter as GlmClaudeCodeProviderAdapterImpl } from "./glm-claude-code/glm-claude-code-provider-adapter";
 import { ClaudeProviderAdapter as ClaudeProviderAdapterImpl } from "./provider/claude-provider-adapter";
 
-export {
-  type GlmClaudeCodeProbeFailureCategory,
-  type GlmClaudeCodeProbeStatus,
-  type GlmClaudeCodeRuntimeProbeResult,
-  GlmClaudeCodeRuntimeProbeRunner,
-  type GlmClaudeCodeRuntimeProbeRunnerOptions,
-} from "./diagnostics/glm-claude-code-runtime-probe-runner";
-export type {
-  GlmClaudeCodeProviderAdapterOptions,
-  GlmClaudeCodeSessionListener,
-  GlmClaudeCodeUsageLimitsFacadeBridge,
-  GlmClaudeCodeWorkspaceOptions,
-} from "./glm-claude-code/glm-claude-code-provider-adapter";
-export {
-  buildGlmClaudeCodeRuntimeProbeProfile,
-  buildGlmClaudeCodeRuntimeProfile,
-  extractGlmClaudeCodeApiKeyFromConfig,
-  GLM_CLAUDE_CODE_DEFAULT_BASE_URL,
-  GLM_CLAUDE_CODE_DEFAULT_PROJECT_SLUG,
-  GLM_CLAUDE_CODE_MODEL_ID,
-  GLM_CLAUDE_CODE_PROVIDER_ID,
-  GLM_CLAUDE_CODE_SESSION_TITLE,
-  type GlmClaudeCodeApiKeyResolution,
-  type GlmClaudeCodeApiKeySource,
-  type GlmClaudeCodeRuntimeProbeProfile,
-  type GlmClaudeCodeRuntimeProbeProfileOptions,
-  type GlmClaudeCodeRuntimeProfileOptions,
-  resolveGlmClaudeCodeApiKey,
-  resolveGlmClaudeCodeConfigPath,
-  resolveGlmClaudeCodeProjectPath,
-  resolveGlmClaudeCodeProviderHome,
-} from "./glm-claude-code/glm-claude-code-runtime-profile";
-export {
-  GlmClaudeCodeSDKAuthManager,
-  type GlmClaudeCodeSDKAuthManagerOptions,
-} from "./glm-claude-code/glm-claude-code-sdk-auth-manager";
 export {
   CLAUDE_MODEL_CAPABILITIES,
   type ClaudeModelAliasId,
   type ClaudeModelCapabilities,
   type ClaudeThinkingEffort,
-  DEFAULT_GLM_CLAUDE_CODE_MODEL_ID,
   findClaudeModelCapabilities,
-  findGlmClaudeCodeModelCapabilities,
-  GLM_CLAUDE_CODE_MODEL_CAPABILITIES,
-  type GlmClaudeCodeModelCapabilities,
-  type GlmClaudeCodeModelId,
-  type GlmClaudeCodeTelemetrySupport,
   isClaudeModelAliasId,
-  isKnownGlmClaudeCodeModelId,
-  listGlmClaudeCodeModelCapabilities,
 } from "./types";
 
 import type {
@@ -64,7 +19,6 @@ import type {
 } from "./types";
 
 const ClaudeProviderAdapter = ClaudeProviderAdapterImpl;
-const GlmClaudeCodeProviderAdapter = GlmClaudeCodeProviderAdapterImpl;
 type ClaudeInstallerPaths = ClaudeInstallerPathsType;
 type ClaudeModuleOptions = ClaudeModuleOptionsType;
 type ClaudeUsageLimitsFacadeBridge = ClaudeUsageLimitsFacadeBridgeType;
@@ -91,4 +45,4 @@ export type {
   ClaudeWorkspaceOptions,
   ModuleReporter,
 };
-export { ClaudeProviderAdapter, GlmClaudeCodeProviderAdapter };
+export { ClaudeProviderAdapter };

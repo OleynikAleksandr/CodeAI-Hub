@@ -46,16 +46,6 @@ export interface RawKimiSettings {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
-export interface RawGlmClaudeCodeSettings {
-  readonly apiKey?: unknown;
-  readonly baseUrl?: unknown;
-  readonly configPath?: unknown;
-  readonly defaultModel?: unknown;
-  readonly haikuModel?: unknown;
-  readonly opusModel?: unknown;
-  readonly sonnetModel?: unknown;
-  readonly thinkingDisplaySyncEnabled?: unknown;
-}
 export interface RawGlmOpenCodeSettings {
   readonly apiKey?: unknown;
   readonly configPath?: unknown;
@@ -107,7 +97,6 @@ export interface RawSettingsSnapshot {
     readonly codex?: RawCodexSettings;
     readonly gemini?: RawGeminiSettings;
     readonly kimi?: RawKimiSettings;
-    readonly glmClaudeCode?: RawGlmClaudeCodeSettings;
     readonly glmOpenCode?: RawGlmOpenCodeSettings;
     readonly localModels?: RawLocalModelsSettings;
   };

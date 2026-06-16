@@ -2,16 +2,14 @@
 
 **Дата:** 2026-06-16  
 **Статус:** planning  
-**Scope:** переиспользовать уже добавленный provider `glmOpenCode` как user-facing wrapper вокруг OpenCode CLI, чтобы через один provider запускать как минимум проверенные модели `zai-coding-plan/glm-5.2` и `kimi-for-coding/k2p7`, не меняя существующий `GLM-Claude-Code`.
+**Scope:** использовать provider `glmOpenCode` как user-facing wrapper вокруг OpenCode CLI, чтобы через один provider запускать как минимум проверенные модели `zai-coding-plan/glm-5.2` и `kimi-for-coding/k2p7`.
 
 ## 1. Решение
-
-`GLM-Claude-Code` оставляем как есть. Он полезен как Claude Agent SDK-compatible path и может снова заработать, если текущий сбой у Z.AI/Claude-wrapper временный.
 
 Добавляем отдельный OpenCode wrapper provider:
 
 - provider id: `glmOpenCode`;
-- runtime namespace: `glm-opencode`;
+- runtime namespace: `opencode`;
 - user-facing label: `OpenCode`;
 - default model: `zai-coding-plan/glm-5.2`;
 - tested OpenCode selectors:
@@ -30,20 +28,18 @@ assistant text: OPENCODE_GLM52_OK
 kimi-for-coding/k2p7 => CODEAI_KIMI_OPENWRAPPER_OK
 ```
 
-## 2. Почему не чинить GLM-Claude-Code этим scope
+## 2. Runtime boundary
 
-- `GLM-Claude-Code` использует Anthropic-compatible endpoint и Claude Agent SDK-compatible runtime.
 - `GLM-OpenCode` использует Z.AI Coding Plan Chat Completions endpoint через OpenCode.
-- Эти path имеют разные failure modes, разные auth/env и разные model-selector rules.
-
-Смешивание двух runtime внутри одного provider id ухудшит диагностику: по UI будет непонятно, какой transport реально работал. Поэтому новый provider должен быть отдельной строкой в Settings, provider picker, status/model chip, capture diagnostics и release artifacts.
+- Native Kimi остаётся отдельным Wire provider с provider id `kimiCode`.
+- OpenCode selectors остаются внутри одного provider id `glmOpenCode`, потому что transport/runtime у них общий.
 
 ## 3. Runtime и auth
 
 Локальная конфигурация:
 
 ```text
-~/.codeai-hub/providers/glm-opencode/config.json
+~/.codeai-hub/providers/opencode/config.json
 ```
 
 Минимальный формат:
@@ -64,7 +60,7 @@ Z.AI key resolution order для совместимости с `zai-coding-plan`
 3. `ZHIPU_API_KEY`
 4. `ZAI_API_KEY`
 5. `Z_AI_API_KEY`
-6. `~/.codeai-hub/providers/glm-opencode/config.json` field `apiKey`
+6. `~/.codeai-hub/providers/opencode/config.json` field `apiKey`
 
 Основной источник auth для wrapper:
 
@@ -85,8 +81,8 @@ Do not pass `--pure`: in local verification it removed the provider catalog and 
 
 ## 4. Provider-home and session contract
 
-- Global provider home: `~/.codeai-hub/providers/glm-opencode/home`.
-- Managed workspace home: `.codeai-hub/<workspaceSlug>/runtime/providers/glm-opencode/home`.
+- Global provider home: `~/.codeai-hub/providers/opencode/home`.
+- Managed workspace home: `.codeai-hub/<workspaceSlug>/runtime/providers/opencode/home`.
 - OpenCode process runs with `HOME` / `XDG_*` pointed at the selected provider home, but the isolated runtime receives a copied OpenCode auth catalog plus the generated `opencode.json`.
 - One Core send maps to one `opencode run` invocation for the selected logical session.
 - Child `stdin` must be closed (`stdio: ["ignore", "pipe", "pipe"]`); leaving it open can stall OpenCode on `init` even when the prompt is passed as an argument.
@@ -119,7 +115,7 @@ Core changes:
   - description `Uses OpenCode CLI providers and models`;
   - model sync enabled;
   - immediate binding only if the adapter can create a usable runtime session without spawning the model turn;
-- add installed path resolution and packaging path for `glm-opencode`;
+- add installed path resolution and packaging path for `opencode`;
 - add provider failure classification for:
   - missing key;
   - OpenCode binary not found/outdated;
@@ -138,7 +134,7 @@ Settings/defaults:
 
 `OpenCode` must appear in every user-facing provider selection surface:
 
-- Settings tabs, next to `GLM-Claude-Code`;
+- Settings tabs;
 - Description provider picker;
 - workflow step start cards;
 - Development Tree node start/revision cards;
@@ -155,7 +151,7 @@ The Settings card should show:
 - OpenCode binary/version status;
 - default selector value `zai-coding-plan/glm-5.2`;
 - tested alternative selector `kimi-for-coding/k2p7`;
-- short note that `GLM-Claude-Code` is a separate provider and is not modified by this setting.
+- short note that OpenCode authentication/runtime is independent from native Kimi and Claude.
 
 ## 8. OpenCode install/update policy
 
@@ -169,7 +165,7 @@ Minimum viable policy:
 2. Require version `>= 1.17.7` for `zai-coding-plan/glm-5.2` support.
 3. If missing/outdated, Settings shows an explicit fix instruction or update action.
 
-Deferred: owning a full bundled OpenCode install under `~/.codeai-hub/providers/glm-opencode/opencode`. Add it only if user-level OpenCode resolution proves unstable in release testing.
+Deferred: owning a full bundled OpenCode install under `~/.codeai-hub/providers/opencode/opencode`. Add it only if user-level OpenCode resolution proves unstable in release testing.
 
 ## 9. Diagnostics and live testing
 
@@ -215,10 +211,9 @@ Release build still requires separate explicit user confirmation before `build-a
 
 ## 11. Acceptance criteria
 
-- `GLM-Claude-Code` remains present and unchanged.
 - `OpenCode` is selectable in Settings and all workflow provider pickers.
 - A workflow step can run through OpenCode and returns a visible answer from `zai-coding-plan/glm-5.2` or `kimi-for-coding/k2p7`.
-- UI/model labels clearly distinguish `GLM-Claude-Code` from `OpenCode`.
+- UI/model labels clearly distinguish OpenCode GLM and OpenCode Kimi selectors.
 - Missing/outdated OpenCode and missing/limited Z.AI key fail with visible recovery text.
 - Stop/cancel never leaves the input locked after OpenCode process termination.
 - Release artifact includes `glm-opencode-module-<version>.tar.bz2`.

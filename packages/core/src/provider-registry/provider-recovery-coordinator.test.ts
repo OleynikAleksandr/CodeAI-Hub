@@ -7,11 +7,11 @@ import type {
 } from "./provider-module-loader.types";
 import { ProviderRecoveryCoordinator } from "./provider-recovery-coordinator";
 
-const CLAUDE_LOGIN_NOT_REUSED_PATTERN = /Claude login is not reused/;
-const GLM_CONFIG_PATH_PATTERN =
-  /~\/\.codeai-hub\/providers\/glm-claude-code\/config\.json/;
+const OPENCODE_AUTH_PATTERN = /OpenCode is installed/;
+const OPENCODE_CONFIG_PATH_PATTERN =
+  /~\/\.codeai-hub\/providers\/opencode\/config\.json/;
 const API_KEY_FIELD_PATTERN = /"apiKey"/;
-const RESTART_CORE_PATTERN = /Settings → General → Restart Core/;
+const RESTART_CORE_PATTERN = /Settings -> General -> Restart Core/;
 
 const createAdapter = (initialize: () => Promise<void>): ProviderAdapter => ({
   closeSession: async () => undefined,
@@ -26,7 +26,6 @@ const createCoordinator = (): ProviderRecoveryCoordinator =>
     clearRetry: () => undefined,
     createClaudeAdapter: () => createAdapter(async () => undefined),
     createCodexAdapter: () => createAdapter(async () => undefined),
-    createGlmClaudeCodeAdapter: () => createAdapter(async () => undefined),
     createGlmOpenCodeAdapter: () => createAdapter(async () => undefined),
     createKimiAdapter: () => createAdapter(async () => undefined),
     emitStatus: () => undefined,
@@ -37,12 +36,12 @@ const createCoordinator = (): ProviderRecoveryCoordinator =>
     scheduleRetry: () => undefined,
   });
 
-test("GLM recovery copy points to the generated config apiKey field", async () => {
+test("OpenCode recovery copy points to the generated config apiKey field", async () => {
   const descriptor: MutableProviderDescriptor = {
     adapter: createAdapter(() => Promise.reject(new Error("missing key"))),
-    description: "Requires a separate Z.AI/GLM API key",
-    id: "glmClaudeCode",
-    name: "GLM-Claude-Code",
+    description: "Uses OpenCode providers and models",
+    id: "glmOpenCode",
+    name: "OpenCode",
     status: "active",
   };
 
@@ -50,8 +49,8 @@ test("GLM recovery copy points to the generated config apiKey field", async () =
 
   assert.equal(descriptor.status, "inactive");
   assert.equal(descriptor.adapter, undefined);
-  assert.match(descriptor.statusMessage ?? "", CLAUDE_LOGIN_NOT_REUSED_PATTERN);
-  assert.match(descriptor.statusMessage ?? "", GLM_CONFIG_PATH_PATTERN);
+  assert.match(descriptor.statusMessage ?? "", OPENCODE_AUTH_PATTERN);
+  assert.match(descriptor.statusMessage ?? "", OPENCODE_CONFIG_PATH_PATTERN);
   assert.match(descriptor.statusMessage ?? "", API_KEY_FIELD_PATTERN);
   assert.match(descriptor.statusMessage ?? "", RESTART_CORE_PATTERN);
 });

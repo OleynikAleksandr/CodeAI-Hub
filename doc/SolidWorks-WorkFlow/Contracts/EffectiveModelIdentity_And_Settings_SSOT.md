@@ -72,12 +72,12 @@ Persisted user-facing settings state, из которого Core вычисля�
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth for a bound session identity.
 Settings snapshot reads may be cached only as short, path-scoped read-through snapshots. Core-owned settings save/reset/default-materialization paths must invalidate the canonical path immediately after write; provider-local fallback caches are bounded helpers and never become a second settings owner.
 
-Kimi provider settings are split by runtime:
+Kimi and OpenCode provider settings are split by runtime:
 
 - `providers.kimi` belongs to the native Kimi Wire/CLI provider.
-- `providers.glmClaudeCode` belongs to GLM 5.2 through the Claude Code-compatible runtime.
+- `providers.glmOpenCode` belongs to the OpenCode wrapper provider and may target `zai-coding-plan/glm-5.2` or `kimi-for-coding/k2p7`.
 
-They must remain separate persisted defaults because they run under different provider process/session/turn envelopes: native Kimi defaults to `kimi-k2.7-code`, while GLM-Claude-Code defaults to `glm-5.2`.
+They must remain separate persisted defaults because they run under different provider process/session/turn envelopes: native Kimi defaults to `kimi-k2.7-code`, while OpenCode defaults to `zai-coding-plan/glm-5.2`.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled`, `reasoningEngineId` / `reasoningLanguage` (the dedicated reasoning translation pair after the UI/Reasoning translation split) и их deprecated legacy aliases `translationEngineId` / `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity. Both legacy aliases are threaded with the same resolved value as the canonical reasoning fields until the provider adapters finish migrating.
 

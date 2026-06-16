@@ -264,7 +264,6 @@ const parseProviderId = (
     value === "claude" ||
     value === "codex" ||
     value === "kimi" ||
-    value === "glmClaudeCode" ||
     value === "glmOpenCode"
   ) {
     return value;
@@ -336,7 +335,6 @@ const parseProviderIdSafe = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "glmClaudeCode" ||
   value === "glmOpenCode";
 
 const loadScenarioPromptBuilder =

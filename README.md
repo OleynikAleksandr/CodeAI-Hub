@@ -47,10 +47,10 @@ This bugfix release fixes two Product Part managed workflow deadlocks found in
 FinderWidget-Test01. Filled `<!-- agent-fill -->` order-plan sections are no
 longer treated as incomplete sentinel placeholders, and Stop now force-releases
 Core managed input gates for Product Part repair sessions, including
-GLM-Claude-Code sessions.
+OpenCode GLM sessions.
 
 Retest focus: rerun the FinderWidget Product Part development-order flow with
-GLM-Claude-Code or Kimi. Repeated repair attempts should stop once the artifact
+OpenCode or Kimi. Repeated repair attempts should stop once the artifact
 is valid, and pressing Stop during a managed repair turn should unlock the
 input field so the user can write a manual message.
 
@@ -81,29 +81,29 @@ prompt/log should include the workspace context block.
 
 **Previous Release — v1.2.521** (GLM 5.2 Legacy Settings Migration)
 
-This bugfix release upgrades existing GLM-Claude-Code persisted settings that
-still contain `glm-5.1`, `glm-5-turbo`, or `glm-4.5-air` aliases. Settings UI,
-Core model identity and runtime environment export now normalize those legacy
-aliases to `glm-5.2`.
+This bugfix release upgrades legacy GLM persisted settings that still contain
+`glm-5.1`, `glm-5-turbo`, or `glm-4.5-air` aliases. Settings UI and Core model
+identity now normalize those older values to the OpenCode GLM selector.
 
-Retest focus: open Settings -> GLM-Claude-Code after installing over `1.2.520`.
-The Opus, Sonnet, Haiku and Default model fields should all show `glm-5.2`, and
-the session model badge should show `GLM 5.2 / Claude Code`.
+Retest focus: open Settings -> OpenCode after installing over `1.2.520`. The
+default selector should resolve to `zai-coding-plan/glm-5.2`, and the session
+model badge should show the OpenCode GLM model identity instead of a legacy
+alias.
 
 **Previous Release — v1.2.520** (Provider Model Updates + Audit Gate Cleanup)
 
 This release updates provider defaults before the rebuilt package: Kimi now
-targets `kimi-k2.7-code`, GLM-Claude-Code targets `glm-5.2` across runtime,
-settings, capture, start cards and session labels, and Gemini CLI/Core stay
-aligned with 0.46.0.
+targets `kimi-k2.7-code`, OpenCode GLM targets
+`zai-coding-plan/glm-5.2` across runtime, settings, capture, start cards and
+session labels, and Gemini CLI/Core stay aligned with 0.46.0.
 
 It also carries the first audit cleanup pass: low-noise automatic checks for
 security/gap coverage, stale archive cleanup, and dependency/tooling fixes.
 
-Retest focus: Settings and provider pickers should show Kimi K2.7 Code and GLM
-5.2, Gemini should start with the 0.46.0 compatibility layer, and provider live
-smoke has already confirmed Kimi CLI `kimi-k2.7-code` plus GLM response model
-`glm-5.2`.
+Retest focus: Settings and provider pickers should show Kimi K2.7 Code and the
+OpenCode GLM selector `zai-coding-plan/glm-5.2`, Gemini should start with the
+0.46.0 compatibility layer, and provider live smoke has already confirmed Kimi
+CLI `kimi-k2.7-code` plus GLM response model `glm-5.2`.
 
 **Previous Release — v1.2.519** (Session Input Thinking Lock)
 
@@ -1128,7 +1128,7 @@ cleanup before the next workflow action.
 **Previous Release — v1.2.452** (Provider-Native Session Rollback)
 
 This release fixes provider-native workflow session ownership for the runtime
-capsule. Codex, Claude, GLM-Claude-Code, Gemini, and Kimi session histories now
+capsule. Codex, Claude, OpenCode GLM, Gemini, and Kimi session histories now
 remain visible to Git when they are required for provider resume, including
 Gemini chat files stored under `.gemini/tmp/<workspace>/chats/*.jsonl`, while
 auth files, package caches, and non-session provider tmp files stay ignored.
@@ -1193,7 +1193,7 @@ This release repairs Clear/Undo runtime cleanup. When a workflow step is
 cleared, Core now removes downstream unified session histories and the matching
 provider-native runtime session files under the workspace provider homes. The
 cleanup covers real provider ids such as `codexCli`, `claudeCodeCli`,
-`geminiCli`, and `glmClaudeCode`, while preserving provider auth, settings, and
+`geminiCli`, and `glmOpenCode`, while preserving provider auth, settings, and
 cache files.
 
 **Previous Release — v1.2.444** (Product Part Agent Language And Session Repair)
@@ -1710,8 +1710,8 @@ because they may affect the generated design output.
 
 **Previous Release — v1.2.388** (Global Settings Split Hotfix)
 
-This hotfix preserves an existing GLM-Claude-Code global config at
-`~/.codeai-hub/providers/glm-claude-code/config.json` during install/runtime
+This hotfix preserves an existing OpenCode global config at
+`~/.codeai-hub/providers/opencode/config.json` during install/runtime
 bootstrap, so extension upgrades do not rewrite a user's API-key file.
 
 General user preferences are now split from workspace settings. Core-owned
@@ -1728,32 +1728,31 @@ by Project Registry and Workspace Runtime Capsule. When `CLAUDE_PROJECT_SLUG`
 is not provided, Core now derives the fallback slug from the workspace basename
 instead of sanitizing the full absolute path.
 
-GLM-Claude-Code therefore writes its provider home into the existing workspace
+OpenCode GLM therefore writes its provider home into the existing workspace
 capsule, for example
-`.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home`,
+`.codeai-hub/codeai-hub-codex-5-4/runtime/providers/opencode/home`,
 instead of creating a second `.codeai-hub/users-...` capsule for the same
 workspace.
 
 **Previous Release — v1.2.386** (GLM Config Bootstrap Hotfix)
 
-This hotfix creates the global GLM-Claude-Code config template automatically at
-`~/.codeai-hub/providers/glm-claude-code/config.json` during install/runtime
+This hotfix creates the global OpenCode config template automatically at
+`~/.codeai-hub/providers/opencode/config.json` during install/runtime
 bootstrap when it is missing. The template contains only the `apiKey` field and
 existing files are preserved, so user secrets are not overwritten.
 
 The provider picker recovery card now tells the user exactly where to paste the
 separate Z.AI/GLM API key: open
-`~/.codeai-hub/providers/glm-claude-code/config.json`, set JSON field
+`~/.codeai-hub/providers/opencode/config.json`, set JSON field
 `"apiKey"`, then use Settings -> General -> Restart Core. The card also makes
 clear that Claude login is not reused for GLM.
 
 **Previous Release — v1.2.385** (GLM Loader And Kimi Reasoning Hotfix)
 
-This hotfix makes Core prefer the standalone GLM-Claude-Code provider runtime
-installed under `~/.codeai-hub/providers/glm-claude-code/<version>` instead of
-loading GLM classes through the original Claude provider package. GLM keeps its
-own provider home/settings path while still using the Claude Agent
-SDK-compatible runtime; it still requires a separate Z.AI/GLM API key.
+This hotfix makes Core prefer the standalone OpenCode provider runtime
+installed under `~/.codeai-hub/providers/opencode/<version>` instead of loading
+GLM classes through the original Claude provider package. GLM keeps its own
+provider home/settings path and still requires a separate Z.AI/GLM API key.
 
 Kimi visible `Thinking`/reasoning bubbles and Core System translation now read
 the active workflow session settings path before falling back to global
@@ -1803,17 +1802,16 @@ Please wait.` is reserved for continuity/resume states.
 
 **Previous Release — v1.2.381** (GLM Settings Repair Hotfix)
 
-This hotfix repairs the remaining GLM-Claude-Code retest blocker found in
-v1.2.380. The GLM provider settings card now exposes a masked API key input and
-editable config/base/model fields, and Project Manager persists those values to
-the workspace settings source read by Core on Restart Core.
+This hotfix repairs the remaining OpenCode GLM retest blocker found in v1.2.380.
+The provider settings card now exposes a masked API key input and editable
+config/base/model fields, and Project Manager persists those values to the
+workspace settings source read by Core on Restart Core.
 
 **Earlier Release — v1.2.380** (Provider Retest Recovery Hotfix)
 
 This hotfix closes the provider retest regressions found after v1.2.379.
-GLM-Claude-Code is packaged as its own provider runtime artifact and gets its
-own workspace provider home while still running through the Claude-compatible
-client.
+OpenCode GLM is packaged as its own provider runtime artifact and gets its own
+workspace provider home.
 
 Gemini startup now creates a Core-owned shell session before provider bootstrap,
 reports startup timeout/readiness failures through provider recovery, and closes
@@ -1835,7 +1833,7 @@ first startup.
 
 Kimi now receives the active workspace path from Core instead of inheriting the
 Core process working directory, preventing `/.codeai-hub` runtime home
-resolution. GLM-Claude-Code now resolves non-empty workspace Settings values as
+resolution. OpenCode GLM now resolves non-empty workspace Settings values as
 a safe fallback after env/config sources, and the Description provider picker
 only enables providers that Core reports as truly active.
 

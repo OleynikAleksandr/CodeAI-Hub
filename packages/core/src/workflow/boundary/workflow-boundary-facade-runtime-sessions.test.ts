@@ -15,7 +15,7 @@ import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PROVIDER_SESSION_LOG_RE =
-  /runtime\/sessions\/unified\/glmClaudeCode\/glmclaudecode-description\.jsonl/u;
+  /runtime\/sessions\/unified\/glmOpenCode\/glmopencode-description\.jsonl/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-runtime-"));
@@ -54,13 +54,13 @@ test("WorkflowBoundaryFacade untracks dirty provider session transcripts and sti
     });
     const sessionLogPath = path.join(
       capsule.unifiedSessionsRoot.absolutePath,
-      "glmClaudeCode",
-      "glmclaudecode-description.jsonl"
+      "glmOpenCode",
+      "glmopencode-description.jsonl"
     );
     const translationsLogPath = path.join(
       capsule.unifiedSessionsRoot.absolutePath,
-      "glmClaudeCode",
-      "glmclaudecode-description.translations.jsonl"
+      "glmOpenCode",
+      "glmopencode-description.translations.jsonl"
     );
     await writeText(sessionLogPath, '{"message":"seed"}\n');
     await writeText(translationsLogPath, '{"message":"seed"}\n');

@@ -13,7 +13,6 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
-  GlmClaudeCodeAdapterCtor,
   GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
   ProviderAdapter,
@@ -31,7 +30,6 @@ interface ProviderDescriptorFactoryOptions {
   readonly codexAdapterCtor: CodexAdapterCtor;
   readonly config: CoreConfig;
   readonly createReporter: (scope: string) => ModuleReporter;
-  readonly glmClaudeCodeAdapterCtor: GlmClaudeCodeAdapterCtor;
   readonly glmOpenCodeAdapterCtor: GlmOpenCodeAdapterCtor;
   readonly handleAdapterConstructionFailure: (
     descriptor: MutableProviderDescriptor,
@@ -104,12 +102,6 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
-  glmClaudeCode: {
-    acceptsAppliedTurnConfig: true,
-    appliedConfigIdentityKey: "effective_model_id",
-    runtimeModelSelectionKey: "base_model_id",
-    syncsLabelFromAppliedConfig: true,
-  },
   glmOpenCode: {
     acceptsAppliedTurnConfig: true,
     appliedConfigIdentityKey: "effective_model_id",
@@ -137,15 +129,12 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   codexCli: false,
   geminiCli: true,
   kimiCode: true,
-  glmClaudeCode: false,
   glmOpenCode: true,
   localModels: true,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
-const GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV =
-  "CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH";
 
 const resolveWorkspaceSettingsPath = (config: CoreConfig): string =>
   resolveWorkspaceRuntimeCapsule({
@@ -226,29 +215,6 @@ export const createKimiAdapterInstance = (
     },
     reporter: options.createReporter("kimi"),
   });
-
-export const createGlmClaudeCodeAdapterInstance = (
-  options: Pick<
-    ProviderDescriptorFactoryOptions,
-    "config" | "createReporter" | "glmClaudeCodeAdapterCtor"
-  >
-): ProviderAdapter => {
-  const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
-  process.env[GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV] =
-    capsule.settingsFile.absolutePath;
-
-  return new options.glmClaudeCodeAdapterCtor({
-    installerPaths: CLAUDE_INSTALLER_PATHS,
-    workspace: {
-      workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
-      defaultModel: "glm-5.2",
-      glmClaudeProjectSlug: `${capsule.workspaceSlug}-glm-claude-code`,
-      providerHome: capsule.providerHomes["glm-claude-code"].absolutePath,
-      settingsPath: capsule.settingsFile.absolutePath,
-    },
-    reporter: options.createReporter("glm-claude-code"),
-  });
-};
 
 export const createGlmOpenCodeAdapterInstance = (
   options: Pick<
@@ -357,31 +323,6 @@ const buildKimiDescriptor = (
   return descriptor;
 };
 
-const buildGlmClaudeCodeDescriptor = (
-  options: ProviderDescriptorFactoryOptions
-): ProviderDescriptor => {
-  const descriptor: MutableProviderDescriptor = {
-    capabilities: {
-      modelSync: resolveProviderModelSyncCapabilities("glmClaudeCode"),
-      requiresPostStopResume: false,
-      supportsImmediateBinding:
-        resolveProviderImmediateBindingCapability("glmClaudeCode"),
-    },
-    id: "glmClaudeCode",
-    name: "GLM-Claude-Code",
-    description:
-      "Requires separate Z.AI/GLM API key; runs GLM 5.2 through Claude Agent SDK-compatible runtime",
-    status: "active",
-  };
-  tryAttachAdapter(
-    () => createGlmClaudeCodeAdapterInstance(options),
-    descriptor,
-    "GLM-Claude-Code components are unavailable.",
-    options.handleAdapterConstructionFailure
-  );
-  return descriptor;
-};
-
 const buildGlmOpenCodeDescriptor = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor => {
@@ -427,7 +368,6 @@ export const createProviderDescriptors = (
   buildCodexDescriptor(options),
   buildGeminiDescriptor(),
   buildKimiDescriptor(options),
-  buildGlmClaudeCodeDescriptor(options),
   buildGlmOpenCodeDescriptor(options),
   buildLocalModelsDescriptor(),
 ];

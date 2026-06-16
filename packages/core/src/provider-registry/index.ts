@@ -15,7 +15,6 @@ import {
   createClaudeAdapterInstance,
   createCodexAdapterInstance,
   createGeminiAdapterInstance,
-  createGlmClaudeCodeAdapterInstance,
   createGlmOpenCodeAdapterInstance,
   createKimiAdapterInstance,
   createProviderDescriptors,
@@ -25,21 +24,18 @@ import {
   resolveClaudeModulePath,
   resolveCodexModulePath,
   resolveGeminiModulePath,
-  resolveGlmClaudeCodeModulePath,
   resolveGlmOpenCodeModulePath,
 } from "./provider-installed-path-resolver";
 import {
   loadClaudeAdapterCtor,
   loadCodexAdapterCtor,
   loadGeminiAdapterCtor,
-  loadGlmClaudeCodeAdapterCtor,
   loadGlmOpenCodeAdapterCtor,
 } from "./provider-module-loader";
 import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
-  GlmClaudeCodeAdapterCtor,
   GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
   Provider,
@@ -72,7 +68,6 @@ export class ProviderRegistry {
   private readonly codexAdapterCtor: CodexAdapterCtor;
   private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
   private readonly kimiAdapterCtor: KimiAdapterCtor;
-  private readonly glmClaudeCodeAdapterCtor: GlmClaudeCodeAdapterCtor;
   private readonly glmOpenCodeAdapterCtor: GlmOpenCodeAdapterCtor;
   private readonly geminiWorkspacePath: string;
   private readonly geminiDefaultModel?: string;
@@ -106,10 +101,6 @@ export class ProviderRegistry {
       this.options.logger
     );
     this.kimiAdapterCtor = loadBundledKimiAdapterCtor();
-    this.glmClaudeCodeAdapterCtor = loadGlmClaudeCodeAdapterCtor(
-      resolveGlmClaudeCodeModulePath(),
-      this.options.logger
-    );
     this.glmOpenCodeAdapterCtor = loadGlmOpenCodeAdapterCtor(
       resolveGlmOpenCodeModulePath(),
       this.options.logger
@@ -152,12 +143,6 @@ export class ProviderRegistry {
           createReporter: (scope) => this.createReporter(scope),
           kimiAdapterCtor: this.kimiAdapterCtor,
         }),
-      createGlmClaudeCodeAdapter: () =>
-        createGlmClaudeCodeAdapterInstance({
-          config: this.options.config,
-          createReporter: (scope) => this.createReporter(scope),
-          glmClaudeCodeAdapterCtor: this.glmClaudeCodeAdapterCtor,
-        }),
       createGlmOpenCodeAdapter: () =>
         createGlmOpenCodeAdapterInstance({
           config: this.options.config,
@@ -185,7 +170,6 @@ export class ProviderRegistry {
           this.pendingRetryProviders
         ),
       kimiAdapterCtor: this.kimiAdapterCtor,
-      glmClaudeCodeAdapterCtor: this.glmClaudeCodeAdapterCtor,
       glmOpenCodeAdapterCtor: this.glmOpenCodeAdapterCtor,
     });
     for (const providerId of this.pendingRetryProviders) {

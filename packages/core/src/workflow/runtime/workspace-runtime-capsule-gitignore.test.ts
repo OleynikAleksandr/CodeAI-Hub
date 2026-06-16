@@ -92,13 +92,6 @@ test("workspace runtime gitignore ignores provider-native and unified runtime hi
       "claude-session.jsonl"
     ),
     path.posix.join(
-      capsule.providerHomes["glm-claude-code"].relativePath,
-      ".claude",
-      "projects",
-      "finderwidget-test01",
-      "glm-session.jsonl"
-    ),
-    path.posix.join(
       capsule.providerHomes.gemini.relativePath,
       ".gemini",
       "tmp",
@@ -190,7 +183,7 @@ test("workspace rollback ignore classifies the whole runtime capsule", () => {
     isWorkspaceRollbackIgnoredRuntimePath({
       capsule,
       relativePath:
-        ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.jsonl",
+        ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmOpenCode/glmopencode-description.jsonl",
     }),
     true
   );
@@ -198,7 +191,7 @@ test("workspace rollback ignore classifies the whole runtime capsule", () => {
     isWorkspaceRollbackIgnoredRuntimePath({
       capsule,
       relativePath:
-        ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.translations.jsonl",
+        ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmOpenCode/glmopencode-description.translations.jsonl",
     }),
     true
   );
@@ -250,13 +243,13 @@ test("workspace rollback ignore untracks runtime files while preserving workflow
     ),
     path.posix.join(
       capsule.unifiedSessionsRoot.relativePath,
-      "glmClaudeCode",
-      "glmclaudecode-description.jsonl"
+      "glmOpenCode",
+      "glmopencode-description.jsonl"
     ),
     path.posix.join(
       capsule.unifiedSessionsRoot.relativePath,
-      "glmClaudeCode",
-      "glmclaudecode-description.translations.jsonl"
+      "glmOpenCode",
+      "glmopencode-description.translations.jsonl"
     ),
   ];
   const workflowArtifactPaths = [

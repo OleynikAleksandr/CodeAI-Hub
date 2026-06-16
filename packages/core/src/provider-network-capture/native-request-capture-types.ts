@@ -2,7 +2,6 @@ export type NativeRequestCaptureProviderId =
   | "claude"
   | "codex"
   | "kimi"
-  | "glmClaudeCode"
   | "glmOpenCode";
 
 export type NativeRequestCaptureMode = "managed" | "vanilla";

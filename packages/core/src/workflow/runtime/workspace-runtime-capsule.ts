@@ -6,7 +6,6 @@ export type WorkspaceRuntimeProviderId =
   | "codex"
   | "claude"
   | "gemini"
-  | "glm-claude-code"
   | "glm-opencode"
   | "kimi";
 
@@ -57,7 +56,6 @@ const PROVIDER_IDS = [
   "codex",
   "claude",
   "gemini",
-  "glm-claude-code",
   "glm-opencode",
   "kimi",
 ] as const;
@@ -67,7 +65,6 @@ const PROVIDER_DIRECTORY_BY_ID: Readonly<
   codex: "codex",
   claude: "claude",
   gemini: "gemini",
-  "glm-claude-code": "glm-claude-code",
   "glm-opencode": "opencode",
   kimi: "kimi",
 };
@@ -110,16 +107,6 @@ const WORKSPACE_SETTINGS_SEED = {
     kimi: {
       autoUpdate: { enabled: false },
       defaultModel: "kimi-k2.7-code",
-      thinkingDisplaySyncEnabled: true,
-    },
-    glmClaudeCode: {
-      apiKey: "",
-      baseUrl: "https://api.z.ai/api/anthropic",
-      configPath: "~/.codeai-hub/providers/glm-claude-code/config.json",
-      defaultModel: "glm-5.2",
-      haikuModel: "glm-5.2",
-      opusModel: "glm-5.2",
-      sonnetModel: "glm-5.2",
       thinkingDisplaySyncEnabled: true,
     },
     glmOpenCode: {

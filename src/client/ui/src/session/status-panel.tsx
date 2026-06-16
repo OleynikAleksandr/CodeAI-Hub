@@ -38,7 +38,6 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   codexCli: "session-status-button--codex",
   geminiCli: "session-status-button--gemini",
   kimiCode: "session-status-button--glm",
-  glmClaudeCode: "session-status-button--glm",
   glmOpenCode: "session-status-button--glm",
 };
 

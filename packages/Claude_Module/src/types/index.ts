@@ -5,17 +5,6 @@ export interface ClaudeInstallerPaths {
 }
 
 export {
-  DEFAULT_GLM_CLAUDE_CODE_MODEL_ID,
-  findGlmClaudeCodeModelCapabilities,
-  GLM_CLAUDE_CODE_MODEL_CAPABILITIES,
-  type GlmClaudeCodeModelCapabilities,
-  type GlmClaudeCodeModelId,
-  type GlmClaudeCodeTelemetrySupport,
-  isKnownGlmClaudeCodeModelId,
-  listGlmClaudeCodeModelCapabilities,
-} from "../glm-claude-code/glm-claude-code-model-capabilities";
-
-export {
   CLAUDE_MODEL_CAPABILITIES,
   type ClaudeModelAliasId,
   type ClaudeModelCapabilities,

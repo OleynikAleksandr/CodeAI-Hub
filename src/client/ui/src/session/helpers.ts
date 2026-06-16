@@ -291,7 +291,6 @@ export const mapProviderTheme = (
     case "geminiCli":
       return "gemini";
     case "kimiCode":
-    case "glmClaudeCode":
     case "glmOpenCode":
       return "kimi";
     default:
@@ -337,11 +336,6 @@ export const resolveSessionThinkingDisplayEnabled = (options: {
     case "kimiCode":
       return (
         options.settings.providers.kimi?.thinkingDisplaySyncEnabled ?? true
-      );
-    case "glmClaudeCode":
-      return (
-        options.settings.providers.glmClaudeCode?.thinkingDisplaySyncEnabled ??
-        true
       );
     case "glmOpenCode":
       return (

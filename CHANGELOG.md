@@ -64,21 +64,19 @@ orchestrator removal.
 
 ## [1.2.521] - 2026-06-15
 ### Fixed
-- **Existing GLM-Claude-Code settings migrate from legacy model aliases.** Persisted `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` values now normalize to `glm-5.2` in Settings UI, Core model identity and runtime `ANTHROPIC_DEFAULT_*_MODEL` export.
+- **Legacy GLM settings migrate to the OpenCode GLM selector.** Persisted `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` values now normalize to `zai-coding-plan/glm-5.2` in Settings UI and Core model identity.
 
 ### Verification
 - `npx tsx src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`
 - `npm run typecheck:webview`
-- `npm run build --workspace=@codeai-hub/claude-module`
 - `npm run build --workspace=@codeai-hub/core`
-- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
 - `node --test packages/core/dist/config/provider-settings-snapshot.test.js`
-- Real workspace settings snapshot with `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` maps to `glm-5.2` for UI and Core.
+- Real workspace settings snapshot with `glm-5.1`, `glm-5-turbo`, and `glm-4.5-air` maps to `zai-coding-plan/glm-5.2` for UI and Core.
 
 ## [1.2.520] - 2026-06-15
 ### Changed
 - **Kimi defaults now target Kimi K2.7 Code.** Provider registries, Core defaults, Project Manager capture/start surfaces, Session UI fallback labels and active SSOT docs now use `kimi-k2.7-code`.
-- **GLM-Claude-Code defaults now target GLM 5.2.** Runtime model aliases, Core/provider descriptors, persisted settings defaults, capture settings, start cards, Session UI labels and active SSOT docs now use `glm-5.2`.
+- **OpenCode GLM defaults now target `zai-coding-plan/glm-5.2`.** Runtime model aliases, Core/provider descriptors, persisted settings defaults, capture settings, start cards, Session UI labels and active SSOT docs now use the canonical OpenCode selector.
 - **Gemini CLI/Core dependencies are aligned to 0.46.0.** The Gemini compatibility layer now works with the 0.46.0 package layout.
 - **Audit cleanup checks cover more non-gated risk.** Runtime security audit, duplicate/link/security CI coverage and pre-push checks now cover the audit gaps addressed in this scope.
 
@@ -884,7 +882,7 @@ orchestrator removal.
 
 ## [1.2.452] - 2026-06-04
 ### Fixed
-- **Provider-native workflow sessions are now tracked consistently across providers.** The workspace runtime capsule keeps Codex `home/sessions/**/*.jsonl`, Claude `home/.claude/projects/**/*.jsonl`, GLM-Claude-Code `home/.claude/projects/**/*.jsonl`, Gemini `home/.gemini/tmp/<workspace>/chats/*.jsonl`, and Kimi `home/wire.jsonl` visible to Git when they are required for provider resume.
+- **Provider-native workflow sessions are now tracked consistently across providers.** The workspace runtime capsule keeps Codex `home/sessions/**/*.jsonl`, Claude `home/.claude/projects/**/*.jsonl`, OpenCode GLM provider session state, Gemini `home/.gemini/tmp/<workspace>/chats/*.jsonl`, and Kimi `home/wire.jsonl` visible to Git when they are required for provider resume.
 - **Gemini chat history under provider `tmp` no longer disappears from rollback ownership.** The runtime capsule `.gitignore` re-includes Gemini chat JSONL files while leaving auth files, package caches, and non-session provider tmp/cache files ignored.
 
 ### Verification
@@ -960,7 +958,7 @@ orchestrator removal.
 ## [1.2.445] - 2026-06-02
 ### Fixed
 - **Clear/Undo now removes unified runtime histories.** Workflow clear deletes downstream `.codeai-hub/<workspace>/runtime/sessions/unified/**` session histories and translation overlays instead of only removing in-memory Core sessions.
-- **Clear/Undo now removes matching provider-native session files.** Core cleans matching native history files under `runtime/providers/**/home` for real provider ids such as `codexCli`, `claudeCodeCli`, `geminiCli`, and `glmClaudeCode`.
+- **Clear/Undo now removes matching provider-native session files.** Core cleans matching native history files under `runtime/providers/**/home` for real provider ids such as `codexCli`, `claudeCodeCli`, `geminiCli`, and `glmOpenCode`.
 - **Provider auth and cache files are preserved.** Cleanup targets workflow session histories and avoids provider credentials, settings, and cache files.
 
 ### Verification
@@ -1624,14 +1622,12 @@ orchestrator removal.
 
 ## [1.2.388] - 2026-05-28
 ### Fixed
-- **Existing GLM-Claude-Code config is preserved during upgrades.** Runtime bootstrap now returns immediately when `~/.codeai-hub/providers/glm-claude-code/config.json` already exists, avoiding any write-open attempt against a user's API-key file while keeping first-time template creation for missing configs.
+- **Existing OpenCode config is preserved during upgrades.** Runtime bootstrap now returns immediately when `~/.codeai-hub/providers/opencode/config.json` already exists, avoiding any write-open attempt against a user's API-key file while keeping first-time template creation for missing configs.
 - **General user settings moved to global app settings.** Core now persists `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech` in the global app settings file while workspace settings keep provider/model/runtime values only.
 - **Localization runtime is global.** Localization bundles, browser bootstrap payloads, and the user glossary now resolve under the global app localization root, and Project Manager saves the selected UI translation engine as canonical `general.localization.uiEngineId`.
 
 ### Tests
-- `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts`
 - `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts packages/core/src/session-translation/session-translation-policy-resolver.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts src/client/project-manager/components/settings/use-project-manager-settings.test.ts src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`
-- `npm run build --workspace @codeai-hub/claude-module`
 - `npm run build --workspace @codeai-hub/core`
 - `npm run typecheck:webview`
 - `npm run build:webview`
@@ -1639,7 +1635,7 @@ orchestrator removal.
 
 ## [1.2.387] - 2026-05-28
 ### Fixed
-- **GLM-Claude-Code uses the existing workspace capsule.** Core config now derives the fallback project slug from `path.basename(CLAUDE_WORKSPACE_PATH)` when `CLAUDE_PROJECT_SLUG` is missing, matching Project Registry and Workspace Runtime Capsule. GLM provider home now resolves to `.codeai-hub/<workspace-slug>/runtime/providers/glm-claude-code/home` instead of creating a second `.codeai-hub/users-...` capsule from the absolute workspace path.
+- **OpenCode GLM uses the existing workspace capsule.** Core config now derives the fallback project slug from `path.basename(CLAUDE_WORKSPACE_PATH)` when `CLAUDE_PROJECT_SLUG` is missing, matching Project Registry and Workspace Runtime Capsule. The provider home now resolves to `.codeai-hub/<workspace-slug>/runtime/providers/opencode/home` instead of creating a second `.codeai-hub/users-...` capsule from the absolute workspace path.
 
 ### Tests
 - `npx tsx --test packages/core/src/config/index.test.ts`
@@ -1650,26 +1646,22 @@ orchestrator removal.
 
 ## [1.2.386] - 2026-05-28
 ### Fixed
-- **GLM-Claude-Code config is created automatically.** Install/runtime bootstrap now creates `~/.codeai-hub/providers/glm-claude-code/config.json` with only `{ "apiKey": "" }` when the file is missing, while preserving any existing user config or secret.
-- **GLM provider card gives exact API-key instructions.** The unavailable-provider message now explains that Claude login is not reused and tells the user to paste the Z.AI/GLM key into the JSON field `"apiKey"` in `~/.codeai-hub/providers/glm-claude-code/config.json`, then restart Core.
+- **OpenCode config is created automatically.** Install/runtime bootstrap now creates `~/.codeai-hub/providers/opencode/config.json` with only `{ "apiKey": "" }` when the file is missing, while preserving any existing user config or secret.
+- **The provider card gives exact API-key instructions.** The unavailable-provider message now explains that Claude login is not reused and tells the user to paste the Z.AI/GLM key into the JSON field `"apiKey"` in `~/.codeai-hub/providers/opencode/config.json`, then restart Core.
 
 ### Tests
-- `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts packages/core/src/provider-registry/provider-recovery-coordinator.test.ts`
-- `npm run build --workspace @codeai-hub/claude-module`
 - `npm run build --workspace @codeai-hub/core`
-- `node --test packages/Claude_Module/dist/auth/glm-claude-code-auth-profile.test.js packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js packages/core/dist/provider-registry/provider-recovery-coordinator.test.js`
+- `node --test packages/core/dist/provider-registry/provider-recovery-coordinator.test.js`
 - Commit hooks: architecture, lint, knip, staged formatting
 
 ## [1.2.385] - 2026-05-28
 ### Fixed
-- **GLM-Claude-Code loads from its standalone provider runtime.** Core now resolves `~/.codeai-hub/providers/glm-claude-code/<version>` before any Claude-module fallback, so the installed GLM provider package is the adapter source while GLM keeps its separate provider home and settings contract.
+- **OpenCode GLM loads from its standalone provider runtime.** Core now resolves `~/.codeai-hub/providers/opencode/<version>` before any provider fallback, so the installed provider package is the adapter source while GLM keeps its separate provider home and settings contract.
 - **Kimi reasoning translation uses the active session settings path.** Visible `Thinking`/reasoning bubbles and Core System translation now resolve language/engine policy from `session.modelBinding.settingsPath` before falling back to default settings, preventing Kimi reasoning from skipping Russian translation with `missing_target_language`.
 
 ### Tests
 - `npm run build --workspace @codeai-hub/core`
-- `npm run build --workspace @codeai-hub/claude-module`
 - `node --test packages/core/dist/provider-registry/provider-installed-path-resolver.test.js packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-policy-resolver.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js`
-- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
 - Commit hooks: architecture, lint, knip, staged formatting
 
 ## [1.2.384] - 2026-05-28
@@ -1707,24 +1699,21 @@ orchestrator removal.
 
 ## [1.2.381] - 2026-05-27
 ### Fixed
-- **GLM-Claude-Code Settings can provide the API key.** The GLM provider settings card now exposes a masked API key input and editable config/base/model fields, and Project Manager persists the GLM settings object so Core can read `providers.glmClaudeCode.apiKey` after Save and Restart Core.
+- **OpenCode Settings can provide the API key.** The provider settings card now exposes a masked API key input and editable config/base/model fields, and Project Manager persists the GLM/OpenCode settings object so Core can read `providers.glmOpenCode.apiKey` after Save and Restart Core.
 
 ### Tests
-- `npm run build --workspace @codeai-hub/claude-module`
 - `npm run typecheck:webview`
-- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
 - Commit hooks: architecture, lint, knip, staged formatting
 
 ## [1.2.380] - 2026-05-27
 ### Fixed
-- **GLM-Claude-Code is a standalone provider artifact.** Release builds now produce and validate a `glm-claude-code` provider tarball/manifest, and workspace runtime capsules include a GLM-specific provider home distinct from original Claude.
+- **OpenCode GLM is a standalone provider artifact.** Release builds now produce and validate an OpenCode provider tarball/manifest, and workspace runtime capsules include an OpenCode-specific provider home.
 - **Gemini startup no longer strands workflow start.** Core creates an early shell session for new workflow stages, applies a provider-session startup timeout, cleans up late Gemini sessions, and routes startup failures through provider recovery instead of leaving Project Manager at `Session creation timed out`.
 - **Provider recovery clears failed startup shells.** Failed bootstrap now marks shell sessions failed even before a provider binding exists, so Codex/Claude/Kimi can be started after a Gemini startup failure or Core restart.
 - **System messages use Reasoning translation routing.** Core workflow/status/error messages now use the same translation category as Reasoning, and latest System messages wait for translation persistence before UI binding returns.
 - **Kimi Description handoff leaves Git clean.** Preliminary step acceptance enforces `.codeai-hub/state/` as ignored local runtime state before the clean-Git gate, preventing local timer metadata from blocking Virtual Simulation.
 
 ### Tests
-- `npm run build --workspace @codeai-hub/claude-module`
 - `npm run build --workspace @codeai-hub/core`
 - `npm run build --workspace @codeai-hub/kimi-module`
 - `npm run typecheck:webview`
@@ -1737,7 +1726,7 @@ orchestrator removal.
 ### Fixed
 - **Gemini workspace auth is bootstrapped before session startup.** The Gemini provider home now copies missing auth/settings files from an existing `~/.gemini` login into the active workspace `.gemini` runtime home and reports missing login auth clearly.
 - **Kimi runtime home follows the active workspace.** Core passes the configured workspace into Kimi adapter construction, Kimi avoids filesystem-root workspace fallbacks, and `~/.kimi/config.toml` remains the default credential source unless explicitly overridden.
-- **GLM-Claude-Code reads workspace Settings as an auth fallback.** Non-empty `providers.glmClaudeCode` workspace settings can provide API key/base URL/model defaults after env/config precedence, without writing secrets to tracked files.
+- **OpenCode GLM reads workspace Settings as an auth fallback.** Non-empty `providers.glmOpenCode` workspace settings can provide API key/base URL/model defaults after env/config precedence, without writing secrets to tracked files.
 - **Description provider picker shows truthful readiness.** Project Manager only enables providers that Core reports as active, while inactive/degraded providers keep their actionable recovery message visible.
 
 ### Tests
@@ -1746,8 +1735,6 @@ orchestrator removal.
 - `npm run build --workspace @codeai-hub/kimi-module`
 - `node --test packages/Kimi_Module/dist/provider/kimi-managed-agent-profile.test.js`
 - `npm run test --workspace @codeai-hub/kimi-module`
-- `npm run build --workspace @codeai-hub/claude-module`
-- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
 - `npm run build --workspace @codeai-hub/core`
 - `npm run typecheck:webview`
 - `npm run plan:validate`
@@ -2508,12 +2495,12 @@ orchestrator removal.
 
 ## [1.2.318] - 2026-05-19
 ### Changed
-- **Claude-Kimi is replaced by GLM-Claude-Code.** Active provider surfaces now expose native `Kimi` plus `GLM-Claude-Code`; the archived `kimiClaudeCode` experiment is no longer an active Settings/card/status/capture option.
-- **GLM-Claude-Code uses isolated config and provider home.** Runtime state lives under `~/.codeai-hub/providers/glm-claude-code/home`, and the user API key is read from `~/.codeai-hub/providers/glm-claude-code/config.json` or supported env vars without touching the real Claude home.
-- **GLM-Claude-Code reuses the Claude workflow runtime profile.** The provider keeps CodeAI-owned Claude workflow system instructions, `settingSources: []`, and the compact `Read` / `Write` / `Edit` tool profile.
+- **Claude-Kimi is replaced by the GLM/OpenCode surface.** Active provider surfaces now expose native `Kimi` plus the GLM surface that later evolved into `OpenCode`; the archived `kimiClaudeCode` experiment is no longer an active Settings/card/status/capture option.
+- **The GLM/OpenCode surface uses isolated config and provider home.** Runtime state lives under `~/.codeai-hub/providers/opencode/home`, and the user API key is read from `~/.codeai-hub/providers/opencode/config.json` or supported env vars without touching the real Claude home.
+- **The GLM/OpenCode surface reuses the workflow runtime profile.** The provider keeps CodeAI-owned workflow system instructions, `settingSources: []`, and the compact `Read` / `Write` / `Edit` tool profile.
 
 ### Fixed
-- **Native Kimi model defaults remain native Kimi.** Capture Workbench and session model identity use `kimi-for-coding` for Kimi and `glm-5.1` for GLM-Claude-Code.
+- **Native Kimi model defaults remain native Kimi.** Capture Workbench and session model identity use `kimi-for-coding` for Kimi and `glm-5.1` for the legacy GLM surface.
 - **Missing GLM API key fails explicitly.** The preflight returns `api_key_missing` instead of leaving a session in an ambiguous startup state.
 
 ### Tests

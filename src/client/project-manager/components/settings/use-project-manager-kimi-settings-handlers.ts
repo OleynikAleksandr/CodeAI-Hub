@@ -1,9 +1,6 @@
 import { useCallback } from "react";
 import type { KimiModelId } from "../../../../types/kimi-model-registry";
-import type {
-  GlmClaudeCodeSettings,
-  GlmOpenCodeSettings,
-} from "../../../ui/src/components/settings/kimi-settings-state";
+import type { GlmOpenCodeSettings } from "../../../ui/src/components/settings/kimi-settings-state";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
   updateKimiDefaultModel,
@@ -31,23 +28,6 @@ export const useProjectManagerKimiSettingsHandlers = ({
     },
     [settings, updateSettings]
   );
-  const handleGlmClaudeCodeThinkingDisplaySyncChange = useCallback(
-    (enabled: boolean) => {
-      updateSettings(
-        updateThinkingDisplaySyncEnabled(settings, "glmClaudeCode", enabled)
-      );
-    },
-    [settings, updateSettings]
-  );
-  const handleGlmClaudeCodeSettingsChange = useCallback(
-    (glmClaudeCode: GlmClaudeCodeSettings) => {
-      updateSettings({
-        ...settings,
-        providers: { ...settings.providers, glmClaudeCode },
-      });
-    },
-    [settings, updateSettings]
-  );
   const handleGlmOpenCodeThinkingDisplaySyncChange = useCallback(
     (enabled: boolean) => {
       updateSettings(
@@ -67,8 +47,6 @@ export const useProjectManagerKimiSettingsHandlers = ({
   );
 
   return {
-    handleGlmClaudeCodeSettingsChange,
-    handleGlmClaudeCodeThinkingDisplaySyncChange,
     handleGlmOpenCodeSettingsChange,
     handleGlmOpenCodeThinkingDisplaySyncChange,
     handleKimiDefaultModelChange,

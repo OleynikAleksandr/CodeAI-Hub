@@ -7,7 +7,6 @@ const PROVIDER_OPTIONS = [
   { value: "claude", label: "Claude", disabled: false },
   { value: "codex", label: "Codex", disabled: false },
   { value: "kimi", label: "Kimi", disabled: false },
-  { value: "glmClaudeCode", label: "GLM-Claude-Code", disabled: false },
   { value: "glmOpenCode", label: "OpenCode", disabled: false },
   { value: "gemini", label: "Gemini", disabled: true },
 ] as const;

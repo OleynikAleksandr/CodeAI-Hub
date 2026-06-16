@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "ec2403c85",
+  "lastRecordedCommit": "25b02d160",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream9b.task1",
-  "expectedCommitMessage": "refactor: rename glm opencode runtime to opencode",
+  "currentTaskId": "phase1.stream9c.task1",
+  "expectedCommitMessage": "refactor: remove glm claude code provider",
   "debt": {
-    "expectedCommitMessage": "refactor: rename glm opencode runtime to opencode",
-    "preCommitHead": "ec2403c85",
+    "expectedCommitMessage": "refactor: remove glm claude code provider",
+    "preCommitHead": "25b02d160",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9b.task1"
+    "taskId": "phase1.stream9c.task1"
   }
 }
 ```
@@ -29,7 +29,7 @@
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-  - `doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`
+  - `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md`
   - `doc/SolidWorks-WorkFlow/Modules/Kimi.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
   - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
@@ -114,16 +114,16 @@
 ### Stream: OpenCode Canonical Rename And Defaults
 
 27. [DONE] `phase1.stream9b.task1` Rename the OpenCode provider runtime/config home from `glm-opencode` to canonical `opencode`, migrate user-facing defaults to selector-aware Settings UX, and keep compatibility with existing `glm-opencode` installs and workspace capsules. (scope: `packages/GLM_OpenCode_Module/**, packages/core/src/**, src/client/ui/src/components/settings/**, src/client/project-manager/**, assets/providers/glm-opencode/**, scripts/build-*.sh, doc/TODO/todo-plan.md`; expected commit: `refactor: rename glm opencode runtime to opencode`)
-28. [PENDING] `phase1.stream9b.commit1` Git Commit: `refactor: rename glm opencode runtime to opencode` (hash: TBD)
+28. [DONE] `phase1.stream9b.commit1` Git Commit: `refactor: rename glm opencode runtime to opencode` (hash: 25b02d160)
 
-### Stream: Remove GLM-Claude-Code
+### Stream: Remove Deprecated GLM Provider
 
-29. [TODO] `phase1.stream9c.task1` Remove the deprecated `glmClaudeCode` provider from Core registries, UI/Project Manager surfaces, packaging/runtime artifacts, provider capture paths, release scripts, and active SSOT docs. (scope: `packages/Claude_Module/**, packages/core/src/**, src/**, assets/providers/glm-claude-code/**, scripts/**, doc/**, package.json, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `refactor: remove glm claude code provider`)
-30. [TODO] `phase1.stream9c.commit1` Git Commit: `refactor: remove glm claude code provider` (hash: TBD)
+29. [DONE] `phase1.stream9c.task1` Remove the deprecated Claude-compatible GLM provider from Core registries, UI/Project Manager surfaces, packaging/runtime artifacts, provider capture paths, release scripts, active SSOT docs, live release notes, and the Core workspace type-resolution contract needed after provider deletion. (scope: `packages/Claude_Module/**, packages/core/src/**, packages/core/tsconfig.json, src/**, assets/providers/**, scripts/**, doc/**, README.md, CHANGELOG.md, media/react-chat.js, package.json, package-lock.json, doc/TODO/todo-plan.md`; expected commit: `refactor: remove glm claude code provider`)
+30. [PENDING] `phase1.stream9c.commit1` Git Commit: `refactor: remove glm claude code provider` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-31. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable, emits translated reasoning when enabled, and switches correctly between GLM/Kimi selectors without exposing the removed GLM-Claude-Code provider. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
+31. [TODO] `phase1.stream9.task1` Wait for user retest that `OpenCode` is selectable, emits translated reasoning when enabled, and switches correctly between GLM/Kimi selectors without exposing the removed deprecated provider. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record opencode wrapper acceptance`)
 32. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record opencode wrapper acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout

@@ -14,6 +14,10 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@codeai-hub/claude-module": ["../Claude_Module/dist/index.d.ts"]
+    },
     "types": ["node"],
     "strictNullChecks": true
   },

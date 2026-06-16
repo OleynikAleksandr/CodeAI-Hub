@@ -87,7 +87,6 @@ const readProviderLabelPrefix = (
     case "geminiCli":
       return "gemini";
     case "kimiCode":
-    case "glmClaudeCode":
     case "glmOpenCode":
       return "kimi";
     default:

@@ -10,11 +10,6 @@ import type { UseProjectManagerSettingsResult } from "./use-project-manager-sett
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const isGlmClaudeCodeCaptureModelId = (
-  value: string
-): value is NativeRequestCaptureModelId =>
-  value === "glm-5.2";
-
 const isOpenCodeCaptureModelId = (
   value: string
 ): value is NativeRequestCaptureModelId =>
@@ -26,7 +21,6 @@ export const isNativeRequestCaptureProviderId = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "glmClaudeCode" ||
   value === "glmOpenCode";
 
 const resolveDefaultCaptureModelId = (
@@ -39,19 +33,11 @@ const resolveDefaultCaptureModelId = (
   if (providerId === "codex") {
     return settings.providers.codex.defaultModel;
   }
-  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
-    const modelId =
-      providerId === "glmOpenCode"
-        ? settings.providers.glmOpenCode?.defaultModel
-        : settings.providers.glmClaudeCode?.defaultModel;
-    if (providerId === "glmOpenCode") {
-      return modelId && isOpenCodeCaptureModelId(modelId)
-        ? modelId
-        : "zai-coding-plan/glm-5.2";
-    }
-    return modelId && isGlmClaudeCodeCaptureModelId(modelId)
+  if (providerId === "glmOpenCode") {
+    const modelId = settings.providers.glmOpenCode?.defaultModel;
+    return modelId && isOpenCodeCaptureModelId(modelId)
       ? modelId
-      : "glm-5.2";
+      : "zai-coding-plan/glm-5.2";
   }
   return settings.providers.kimi?.defaultModel ?? "kimi-k2.7-code";
 };
