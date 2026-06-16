@@ -21,6 +21,7 @@ const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
   "geminiCli",
   "kimiCode",
   "glmClaudeCode",
+  "glmOpenCode",
   "localModels",
 ]);
 

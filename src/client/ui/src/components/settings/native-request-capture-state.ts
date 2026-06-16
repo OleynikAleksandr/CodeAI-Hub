@@ -6,13 +6,16 @@ export type NativeRequestCaptureProviderId =
   | "claude"
   | "codex"
   | "kimi"
-  | "glmClaudeCode";
+  | "glmClaudeCode"
+  | "glmOpenCode";
 type GlmClaudeCodeModelId = "glm-5.2";
+type GlmOpenCodeModelId = "glm-5.2";
 export type NativeRequestCaptureModelId =
   | ClaudeModelAliasId
   | CodexModelId
   | KimiModelId
-  | GlmClaudeCodeModelId;
+  | GlmClaudeCodeModelId
+  | GlmOpenCodeModelId;
 export type NativeRequestCaptureScenarioId =
   | "description"
   | "virtual_simulation"

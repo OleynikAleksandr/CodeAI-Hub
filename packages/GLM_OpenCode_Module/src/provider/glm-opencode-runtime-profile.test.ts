@@ -46,3 +46,30 @@ test("runtime profile prefers environment key over config key", () => {
 
   assert.equal(profile.apiKey, "env-key");
 });
+
+test("runtime profile reads api key and model from workspace settings", () => {
+  const root = mkdtempSync(path.join(tmpdir(), "glm-opencode-profile-"));
+  const settingsPath = path.join(root, "settings.json");
+  const providerHomePath = path.join(root, "home");
+  writeFileSync(
+    settingsPath,
+    JSON.stringify({
+      providers: {
+        glmOpenCode: {
+          apiKey: "settings-key",
+          configPath: path.join(root, "missing-config.json"),
+          defaultModel: "glm-5.2",
+        },
+      },
+    })
+  );
+
+  const profile = buildGlmOpenCodeRuntimeProfile({
+    environment: { PATH: "" },
+    providerHomePath,
+    settingsPath,
+  });
+
+  assert.equal(profile.apiKey, "settings-key");
+  assert.equal(profile.modelSelector, GLM_OPENCODE_DEFAULT_MODEL_SELECTOR);
+});

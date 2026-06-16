@@ -21,7 +21,8 @@ export const isNativeRequestCaptureProviderId = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "glmClaudeCode";
+  value === "glmClaudeCode" ||
+  value === "glmOpenCode";
 
 const resolveDefaultCaptureModelId = (
   providerId: NativeRequestCaptureProviderId,
@@ -33,8 +34,11 @@ const resolveDefaultCaptureModelId = (
   if (providerId === "codex") {
     return settings.providers.codex.defaultModel;
   }
-  if (providerId === "glmClaudeCode") {
-    const modelId = settings.providers.glmClaudeCode?.defaultModel;
+  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
+    const modelId =
+      providerId === "glmOpenCode"
+        ? settings.providers.glmOpenCode?.defaultModel
+        : settings.providers.glmClaudeCode?.defaultModel;
     return modelId && isGlmClaudeCodeCaptureModelId(modelId)
       ? modelId
       : "glm-5.2";

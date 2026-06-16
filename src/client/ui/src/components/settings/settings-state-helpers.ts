@@ -3,6 +3,10 @@ import type {
   ClaudeThinkingEffort,
 } from "../../../../../types/claude-model-registry";
 import type {
+  CodexModelId,
+  CodexReasoningLevel,
+} from "../../../../../types/codex-model-registry";
+import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
@@ -10,10 +14,8 @@ import {
   DEFAULT_KIMI_MODEL_ID,
   type KimiModelId,
 } from "../../../../../types/kimi-model-registry";
+import type { GeneralResponseMode } from "./general-response-mode/response-mode-state";
 import type {
-  CodexModelId,
-  CodexReasoningLevel,
-  GeneralResponseMode,
   ProviderId,
   RawSettingsSnapshot,
   Settings,
@@ -118,7 +120,13 @@ export const updateCodexReasoning = (
 
 export const updateThinkingDisplaySyncEnabled = (
   settings: Settings,
-  provider: "claude" | "codex" | "gemini" | "kimi" | "glmClaudeCode",
+  provider:
+    | "claude"
+    | "codex"
+    | "gemini"
+    | "kimi"
+    | "glmClaudeCode"
+    | "glmOpenCode",
   enabled: boolean
 ): Settings => ({
   ...settings,

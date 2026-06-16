@@ -6,121 +6,16 @@ import {
 } from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
+import {
+  DEFAULT_LOCALIZATION_LANGUAGE,
+  DEFAULT_LOCALIZATION_SETTINGS,
+  DEFAULT_SETTINGS_SNAPSHOT,
+  DEFAULT_TRANSLATION_ENGINE_ID,
+} from "./settings-default-snapshot";
 import { normalizeClaudeThinkingSettings } from "./settings-request-handler-claude-thinking";
 import { applyLocalizationSettingsMigration } from "./settings-request-handler-localization-migration";
 
-const DEFAULT_LOCALIZATION_LANGUAGE = "en";
-const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 const UNSUPPORTED_CODEX_MODEL_ID = "gpt-5.3-codex";
-
-const DEFAULT_LOCALIZATION_SETTINGS = {
-  defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
-  categories: {
-    artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
-    interactiveTemplates: DEFAULT_LOCALIZATION_LANGUAGE,
-    messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
-    reasoning: DEFAULT_LOCALIZATION_LANGUAGE,
-    systemFeedback: DEFAULT_LOCALIZATION_LANGUAGE,
-    uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
-    uiInterface: DEFAULT_LOCALIZATION_LANGUAGE,
-    uiLabels: DEFAULT_LOCALIZATION_LANGUAGE,
-    userGuidance: DEFAULT_LOCALIZATION_LANGUAGE,
-    workflowTerms: DEFAULT_LOCALIZATION_LANGUAGE,
-  },
-  workflowTermsPolicy: "keep_english",
-  uiEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
-  reasoningEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
-  glossaryEnabled: true,
-} as const;
-
-const DEFAULT_SETTINGS_SNAPSHOT = {
-  general: {
-    coreControls: {
-      allowRestart: true,
-    },
-    localization: DEFAULT_LOCALIZATION_SETTINGS,
-    responsePolicy: {
-      mode: "hybrid",
-      strictOutput: {
-        schemaText: `${JSON.stringify(
-          {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              answer: {
-                type: "string",
-                description: "Final answer for the user. Markdown allowed.",
-              },
-            },
-            required: ["answer"],
-          },
-          null,
-          2
-        )}\n`,
-        instructionText: [
-          "You must respond with a JSON object that matches the provided schema.",
-          "Populate the field:",
-          "- answer: the user-facing answer.",
-          "Return only JSON, no extra text.",
-          "",
-          "User request:",
-        ].join("\n"),
-      },
-    },
-    textToSpeech: {
-      rate: 1,
-    },
-  },
-  providers: {
-    claude: {
-      thinking: {
-        enabled: true,
-        effort: "medium",
-      },
-      thinkingDisplaySyncEnabled: true,
-      autoUpdate: { enabled: false },
-      defaultModel: "sonnet",
-      sessionContinuity: { remainingPercentThreshold: 30 },
-    },
-    codex: {
-      autoUpdate: { enabled: false },
-      defaultModel: "gpt-5.4-mini",
-      reasoningByModel: {
-        "gpt-5.2": "medium",
-        "gpt-5.3-codex-spark": "medium",
-        "gpt-5.4-mini": "medium",
-        "gpt-5.4": "medium",
-        "gpt-5.5": "medium",
-      },
-      sessionContinuity: { remainingPercentThreshold: 30 },
-    },
-    gemini: {
-      autoUpdate: { enabled: false },
-      defaultModel: "gemini-3-pro-preview",
-      thinkingDisplaySyncEnabled: true,
-      thinkingLevelByModel: {},
-      sessionContinuity: {
-        remainingPercentThreshold: 30,
-        contextWindowTokenLimit: 300_000,
-      },
-    },
-    kimi: {
-      autoUpdate: { enabled: false },
-      defaultModel: "kimi-k2.7-code",
-      thinkingDisplaySyncEnabled: true,
-    },
-    glmClaudeCode: {
-      apiKey: "",
-      baseUrl: "https://api.z.ai/api/anthropic",
-      configPath: "~/.codeai-hub/providers/glm-claude-code/config.json",
-      defaultModel: "glm-5.2",
-      haikuModel: "glm-5.2",
-      opusModel: "glm-5.2",
-      sonnetModel: "glm-5.2",
-      thinkingDisplaySyncEnabled: true,
-    },
-  },
-} as const;
 
 export interface LocalizationComparisonSnapshot {
   readonly artifactsForTheUser: string;
@@ -169,6 +64,17 @@ const normalizeCodexProviderSettings = (
   delete reasoningByModel[UNSUPPORTED_CODEX_MODEL_ID];
   return { changed, defaultModel, reasoningByModel };
 };
+const mergeDisplaySyncProviderSettings = (
+  rawProvider: Record<string, unknown>,
+  defaultProvider: Record<string, unknown>
+): Record<string, unknown> => ({
+  ...defaultProvider,
+  ...rawProvider,
+  thinkingDisplaySyncEnabled:
+    typeof rawProvider.thinkingDisplaySyncEnabled === "boolean"
+      ? rawProvider.thinkingDisplaySyncEnabled
+      : true,
+});
 const normalizeLocalizationLanguage = (
   value: unknown,
   fallback: string
@@ -339,6 +245,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       readonly gemini: Record<string, unknown>;
       readonly kimi: Record<string, unknown>;
       readonly glmClaudeCode: Record<string, unknown>;
+      readonly glmOpenCode: Record<string, unknown>;
     };
   };
   const rawGeneral = isRecord(settings.general) ? settings.general : {};
@@ -355,6 +262,9 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
   const rawKimi = isRecord(rawProviders.kimi) ? rawProviders.kimi : {};
   const rawGlmClaudeCode = isRecord(rawProviders.glmClaudeCode)
     ? rawProviders.glmClaudeCode
+    : {};
+  const rawGlmOpenCode = isRecord(rawProviders.glmOpenCode)
+    ? rawProviders.glmOpenCode
     : {};
   const normalizedClaudeThinking = normalizeClaudeThinkingSettings({
     defaultThinkingSettings: defaults.providers.claude.thinking as {
@@ -414,7 +324,8 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       isRecord(rawProviders.codex) &&
       isRecord(rawProviders.gemini) &&
       isRecord(rawProviders.kimi) &&
-      isRecord(rawProviders.glmClaudeCode)
+      isRecord(rawProviders.glmClaudeCode) &&
+      isRecord(rawProviders.glmOpenCode)
     )
   ) {
     changed = true;
@@ -428,9 +339,9 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     changed = true;
   }
   if (
-    typeof rawGemini.thinkingDisplaySyncEnabled !== "boolean" ||
-    typeof rawKimi.thinkingDisplaySyncEnabled !== "boolean" ||
-    typeof rawGlmClaudeCode.thinkingDisplaySyncEnabled !== "boolean"
+    [rawGemini, rawKimi, rawGlmClaudeCode, rawGlmOpenCode].some(
+      (provider) => typeof provider.thinkingDisplaySyncEnabled !== "boolean"
+    )
   ) {
     changed = true;
   }
@@ -458,30 +369,22 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
           defaultModel: codexSettings.defaultModel,
           reasoningByModel: codexSettings.reasoningByModel,
         },
-        gemini: {
-          ...defaults.providers.gemini,
-          ...rawGemini,
-          thinkingDisplaySyncEnabled:
-            typeof rawGemini.thinkingDisplaySyncEnabled === "boolean"
-              ? rawGemini.thinkingDisplaySyncEnabled
-              : true,
-        },
-        kimi: {
-          ...defaults.providers.kimi,
-          ...rawKimi,
-          thinkingDisplaySyncEnabled:
-            typeof rawKimi.thinkingDisplaySyncEnabled === "boolean"
-              ? rawKimi.thinkingDisplaySyncEnabled
-              : true,
-        },
-        glmClaudeCode: {
-          ...defaults.providers.glmClaudeCode,
-          ...rawGlmClaudeCode,
-          thinkingDisplaySyncEnabled:
-            typeof rawGlmClaudeCode.thinkingDisplaySyncEnabled === "boolean"
-              ? rawGlmClaudeCode.thinkingDisplaySyncEnabled
-              : true,
-        },
+        gemini: mergeDisplaySyncProviderSettings(
+          rawGemini,
+          defaults.providers.gemini
+        ),
+        kimi: mergeDisplaySyncProviderSettings(
+          rawKimi,
+          defaults.providers.kimi
+        ),
+        glmClaudeCode: mergeDisplaySyncProviderSettings(
+          rawGlmClaudeCode,
+          defaults.providers.glmClaudeCode
+        ),
+        glmOpenCode: mergeDisplaySyncProviderSettings(
+          rawGlmOpenCode,
+          defaults.providers.glmOpenCode
+        ),
       },
     },
   };

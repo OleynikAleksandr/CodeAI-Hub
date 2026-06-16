@@ -3,6 +3,7 @@ export type KnownProviderStackId =
   | "codexCli"
   | "geminiCli"
   | "glmClaudeCode"
+  | "glmOpenCode"
   | "kimiCode"
   | "localModels";
 export type ProviderStackId = string;
@@ -20,6 +21,7 @@ const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   codexCli: "Codex",
   geminiCli: "Gemini",
   glmClaudeCode: "GLM-Claude-Code",
+  glmOpenCode: "GLM-OpenCode",
   kimiCode: "Kimi",
   localModels: "Local Models",
 };
@@ -31,6 +33,7 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   codexCli: "Using your authentication Codex CLI",
   geminiCli: "Using your authentication Gemini CLI",
   glmClaudeCode: "Using GLM 5.2 through Claude Agent SDK-compatible runtime",
+  glmOpenCode: "Using GLM 5.2 through OpenCode",
   kimiCode: "Using your authentication Kimi CLI",
   localModels: "Runs downloaded LM Studio models on this Mac",
 };

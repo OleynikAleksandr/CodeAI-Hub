@@ -45,6 +45,9 @@ const GLM_CLAUDE_CODE_MODEL_ID = "glm-5.2";
 const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.2 / Claude Code";
 const GLM_CLAUDE_CODE_MODEL_DESCRIPTION =
   "GLM 5.2 exposed through the Claude Agent SDK-compatible runtime.";
+const GLM_OPENCODE_MODEL_LABEL = "GLM 5.2 / OpenCode";
+const GLM_OPENCODE_MODEL_DESCRIPTION =
+  "GLM 5.2 exposed through OpenCode with zai-coding-plan/glm-5.2.";
 const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
 const DEFAULT_LOCAL_MODEL_ID = "local-model";
 
@@ -100,12 +103,18 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
-  if (providerId === "glmClaudeCode") {
+  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
     return [
       {
-      description: GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
+        description:
+          providerId === "glmOpenCode"
+            ? GLM_OPENCODE_MODEL_DESCRIPTION
+            : GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
         id: GLM_CLAUDE_CODE_MODEL_ID,
-      label: GLM_CLAUDE_CODE_MODEL_LABEL,
+        label:
+          providerId === "glmOpenCode"
+            ? GLM_OPENCODE_MODEL_LABEL
+            : GLM_CLAUDE_CODE_MODEL_LABEL,
       },
     ];
   }
@@ -141,6 +150,7 @@ export const getStartCardReasoningOptions = (
   if (
     providerId === "kimiCode" ||
     providerId === "glmClaudeCode" ||
+    providerId === "glmOpenCode" ||
     providerId === "localModels"
   ) {
     return [{ id: "default", label: "default" }];
@@ -188,10 +198,12 @@ export const resolveDefaultStartCardModelSelection = (
         DEFAULT_CODEX_REASONING_LEVEL,
     };
   }
-  if (providerId === "glmClaudeCode") {
+  if (providerId === "glmClaudeCode" || providerId === "glmOpenCode") {
     return {
       modelId:
-        settings?.providers.glmClaudeCode?.defaultModel ??
+        (providerId === "glmOpenCode"
+          ? settings?.providers.glmOpenCode?.defaultModel
+          : settings?.providers.glmClaudeCode?.defaultModel) ??
         GLM_CLAUDE_CODE_MODEL_ID,
       reasoning: "default",
     };

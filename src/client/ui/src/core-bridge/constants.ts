@@ -16,6 +16,7 @@ const DEFAULT_PROVIDER_IDS: ProviderStackId[] = [
   "codexCli",
   "geminiCli",
   "localModels",
+  "glmOpenCode",
 ];
 
 export const FALLBACK_PROVIDERS: ProviderStackDescriptor[] =

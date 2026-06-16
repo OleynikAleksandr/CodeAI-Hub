@@ -10,6 +10,7 @@ export const providerIdSet = new Set<ProviderStackId>([
   "geminiCli",
   "kimiCode",
   "glmClaudeCode",
+  "glmOpenCode",
   "localModels",
 ]);
 

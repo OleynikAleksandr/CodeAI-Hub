@@ -70,6 +70,7 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmClaudeCode" ||
+  value === "glmOpenCode" ||
   value === "localModels";
 
 const startService = new WorkflowStepStartService();

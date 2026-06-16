@@ -2,7 +2,8 @@ export type NativeRequestCaptureProviderId =
   | "claude"
   | "codex"
   | "kimi"
-  | "glmClaudeCode";
+  | "glmClaudeCode"
+  | "glmOpenCode";
 
 export type NativeRequestCaptureMode = "managed" | "vanilla";
 
@@ -83,10 +84,17 @@ export interface NativeRequestCaptureKimiAppliedInputEnvelope {
   readonly wireJsonlPath: string | null;
 }
 
+export interface NativeRequestCaptureGlmOpenCodeAppliedInputEnvelope {
+  readonly kind: "glm-opencode";
+  readonly modelSelector: string;
+  readonly userConfigPath: string;
+}
+
 export type NativeRequestCaptureAppliedInputEnvelope =
   | NativeRequestCaptureClaudeAppliedInputEnvelope
   | NativeRequestCaptureCodexAppliedInputEnvelope
-  | NativeRequestCaptureKimiAppliedInputEnvelope;
+  | NativeRequestCaptureKimiAppliedInputEnvelope
+  | NativeRequestCaptureGlmOpenCodeAppliedInputEnvelope;
 
 export interface NativeRequestCaptureAppliedInputEnvelopeRecord {
   readonly captureId: string;

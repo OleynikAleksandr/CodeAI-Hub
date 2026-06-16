@@ -4,12 +4,17 @@ import type {
   ClaudeThinkingEffort,
 } from "../../../../../types/claude-model-registry";
 import type {
+  CodexModelId,
+  CodexReasoningLevel,
+} from "../../../../../types/codex-model-registry";
+import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
 import { readBrowserLocalizationBootstrapSnapshot } from "../../app-host/localization-runtime-contract";
 import { createBootstrapSettings } from "../../shared-hooks/use-bootstrap-settings";
 import vscode from "../../vscode";
+import type { GeneralResponseMode } from "./general-response-mode/response-mode-state";
 import { startBrowserNativeRequestCapture } from "./native-request-capture-browser-runner";
 import {
   updateClaudeContinuityRemainingPercentThreshold,
@@ -32,9 +37,6 @@ import {
 } from "./settings-state-helpers";
 import {
   areSettingsEqual,
-  type CodexModelId,
-  type CodexReasoningLevel,
-  type GeneralResponseMode,
   mapSettingsSnapshot,
   type ProviderId,
   type Settings,
@@ -331,27 +333,6 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
-  const handleStrictSchemaTextChange = useCallback(
-    (value: string) => {
-      updateSettings(updateStrictSchemaText(settings, value));
-    },
-    [settings, updateSettings]
-  );
-
-  const handleStrictInstructionTextChange = useCallback(
-    (value: string) => {
-      updateSettings(updateStrictInstructionText(settings, value));
-    },
-    [settings, updateSettings]
-  );
-
-  const handleTextToSpeechRateChange = useCallback(
-    (rate: number) => {
-      updateSettings(updateTextToSpeechRate(settings, rate));
-    },
-    [settings, updateSettings]
-  );
-
   const handleGeminiDefaultModelChange = useCallback(
     (modelId: GeminiModelId) => {
       updateSettings(updateGeminiDefaultModel(settings, modelId));
@@ -475,6 +456,15 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleCodexReasoningChange,
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
+    handleGlmOpenCodeSettingsChange: (glmOpenCode) =>
+      updateSettings({
+        ...settings,
+        providers: { ...settings.providers, glmOpenCode },
+      }),
+    handleGlmOpenCodeThinkingDisplaySyncChange: (enabled) =>
+      updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "glmOpenCode", enabled)
+      ),
     handleLocalizationCategoryLanguageChange,
     handleLocalizationDefaultLanguageChange,
     handleLocalizationEngineIdChange,
@@ -487,9 +477,12 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleProviderAutoUpdateChange,
     handleRestartCore,
     handleResponsePolicyModeChange,
-    handleStrictSchemaTextChange,
-    handleStrictInstructionTextChange,
-    handleTextToSpeechRateChange,
+    handleStrictSchemaTextChange: (value) =>
+      updateSettings(updateStrictSchemaText(settings, value)),
+    handleStrictInstructionTextChange: (value) =>
+      updateSettings(updateStrictInstructionText(settings, value)),
+    handleTextToSpeechRateChange: (rate) =>
+      updateSettings(updateTextToSpeechRate(settings, rate)),
     handleSave,
     handleReset,
     handleUpdateProvider,

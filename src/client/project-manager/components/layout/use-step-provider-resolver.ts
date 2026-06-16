@@ -16,6 +16,7 @@ export const PROVIDER_STACK_TO_DESIGN_ID: Record<
   geminiCli: "gemini",
   kimiCode: "kimi",
   glmClaudeCode: "kimi",
+  glmOpenCode: "kimi",
 };
 
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
@@ -23,7 +24,8 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "glmClaudeCode";
+  value === "glmClaudeCode" ||
+  value === "glmOpenCode";
 
 const mapStackToDesignId = (
   providerId: ProviderStackId | null

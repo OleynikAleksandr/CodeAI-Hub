@@ -4,10 +4,15 @@ import type {
   ClaudeThinkingEffort,
 } from "../../../../types/claude-model-registry";
 import type {
+  CodexModelId,
+  CodexReasoningLevel,
+} from "../../../../types/codex-model-registry";
+import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../types/gemini-model-registry";
 import type { KimiModelId } from "../../../../types/kimi-model-registry";
+import type { GeneralResponseMode } from "../../../ui/src/components/settings/general-response-mode/response-mode-state";
 import type {
   UseSettingsStateResult,
   CoreControlState,
@@ -34,9 +39,6 @@ import {
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import {
   areSettingsEqual,
-  type CodexModelId,
-  type CodexReasoningLevel,
-  type GeneralResponseMode,
   type ProviderId,
   type Settings,
 } from "../../../ui/src/components/settings/settings-state-model";
@@ -356,18 +358,6 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-    const handleStrictSchemaTextChange = useCallback(
-      (value: string) => {
-        updateSettings(updateStrictSchemaText(settings, value));
-      },
-      [settings, updateSettings]
-    );
-    const handleStrictInstructionTextChange = useCallback(
-      (value: string) => {
-        updateSettings(updateStrictInstructionText(settings, value));
-      },
-      [settings, updateSettings]
-    );
     const handleGeminiDefaultModelChange = useCallback(
       (modelId: GeminiModelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
@@ -377,6 +367,8 @@ export const useProjectManagerSettingsState =
     const {
       handleGlmClaudeCodeSettingsChange,
       handleGlmClaudeCodeThinkingDisplaySyncChange,
+      handleGlmOpenCodeSettingsChange,
+      handleGlmOpenCodeThinkingDisplaySyncChange,
       handleKimiDefaultModelChange,
       handleKimiThinkingDisplaySyncChange,
     } = useProjectManagerKimiSettingsHandlers({ settings, updateSettings });
@@ -464,12 +456,14 @@ export const useProjectManagerSettingsState =
       handleGeminiDefaultModelChange,
       handleKimiDefaultModelChange,
       handleGlmClaudeCodeSettingsChange,
+      handleGlmOpenCodeSettingsChange,
       handleGeminiThinkingChange,
       handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
       handleGlmClaudeCodeThinkingDisplaySyncChange,
+      handleGlmOpenCodeThinkingDisplaySyncChange,
       handleKimiThinkingDisplaySyncChange,
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,
@@ -484,8 +478,10 @@ export const useProjectManagerSettingsState =
       handleProviderAutoUpdateChange,
       handleRestartCore: () => api.restartCore(),
       handleResponsePolicyModeChange,
-      handleStrictSchemaTextChange,
-      handleStrictInstructionTextChange,
+      handleStrictSchemaTextChange: (value) =>
+        updateSettings(updateStrictSchemaText(settings, value)),
+      handleStrictInstructionTextChange: (value) =>
+        updateSettings(updateStrictInstructionText(settings, value)),
       handleTextToSpeechRateChange: (rate) =>
         updateSettings(updateTextToSpeechRate(settings, rate)),
       handleSave: () => transport.save(settings),

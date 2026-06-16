@@ -18,6 +18,7 @@ const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmClaudeCode" ||
+  value === "glmOpenCode" ||
   value === "localModels";
 
 const resolveKindLabel = (kind: BranchNodeKind): string =>

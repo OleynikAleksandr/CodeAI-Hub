@@ -20,6 +20,7 @@ const PROVIDER_DEFAULTS: Record<
   codex: { model: "gpt-5.4-mini", reasoning: "reasoning-high" },
   kimi: { model: "kimi-k2.7-code", reasoning: "default" },
   glmClaudeCode: { model: "glm-5.2", reasoning: "thinking-high" },
+  glmOpenCode: { model: "glm-5.2", reasoning: "default" },
 };
 
 interface CaptureWorkbenchSelectionBarProps {

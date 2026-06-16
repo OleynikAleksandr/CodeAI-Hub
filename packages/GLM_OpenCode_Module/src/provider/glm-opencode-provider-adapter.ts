@@ -34,6 +34,7 @@ export interface GlmOpenCodeWorkspaceOptions {
   readonly configPath?: string;
   readonly defaultModel?: string;
   readonly providerHomePath?: string;
+  readonly settingsPath?: string;
   readonly workspacePath?: string;
 }
 
@@ -91,6 +92,7 @@ export class GlmOpenCodeProviderAdapter {
       configPath: this.options.workspace.configPath,
       defaultModel: this.options.workspace.defaultModel,
       providerHomePath: this.options.workspace.providerHomePath,
+      settingsPath: this.options.workspace.settingsPath,
       workspacePath: this.options.workspace.workspacePath,
     });
     ensureGlmOpenCodeRuntimeProfile(profile);
@@ -156,6 +158,7 @@ export class GlmOpenCodeProviderAdapter {
       configPath: this.options.workspace.configPath,
       defaultModel: this.options.workspace.defaultModel,
       providerHomePath: this.options.workspace.providerHomePath,
+      settingsPath: this.options.workspace.settingsPath,
       workspacePath: session.workspacePath,
     });
     ensureGlmOpenCodeRuntimeProfile(profile);
@@ -204,6 +207,7 @@ export class GlmOpenCodeProviderAdapter {
       defaultModel:
         options.selectedModelId ?? this.options.workspace.defaultModel,
       providerHomePath: this.options.workspace.providerHomePath,
+      settingsPath: this.options.workspace.settingsPath,
       workspacePath: this.options.workspace.workspacePath,
     });
     return Promise.resolve(

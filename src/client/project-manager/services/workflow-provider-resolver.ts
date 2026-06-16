@@ -14,6 +14,7 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmClaudeCode" ||
+  value === "glmOpenCode" ||
   value === "localModels";
 
 export const isResearchCapableProviderId = (

@@ -8,15 +8,15 @@
   "planId": "glm-opencode-provider-2026-06-16",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "6cca7a5b2",
+  "lastRecordedCommit": "cc23f80c6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "feat: register glm opencode provider",
+  "currentTaskId": "phase1.stream4.task1",
+  "expectedCommitMessage": "feat: expose glm opencode settings and selection",
   "debt": {
-    "expectedCommitMessage": "feat: register glm opencode provider",
-    "preCommitHead": "6cca7a5b2",
+    "expectedCommitMessage": "feat: expose glm opencode settings and selection",
+    "preCommitHead": "cc23f80c6",
     "stage": "commit_pending",
-    "taskId": "phase1.stream3.task1"
+    "taskId": "phase1.stream4.task1"
   }
 }
 ```
@@ -60,12 +60,12 @@
 ### Stream: Core Registry
 
 5. [DONE] `phase1.stream3.task1` Register `glmOpenCode` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure classification. (scope: `packages/core/src/provider-registry/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/config/**, packages/core/package.json, package-lock.json`; expected commit: `feat: register glm opencode provider`)
-6. [PENDING] `phase1.stream3.commit1` Git Commit: `feat: register glm opencode provider` (hash: TBD)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `feat: register glm opencode provider` (hash: cc23f80c6)
 
 ### Stream: Settings And Selection Surfaces
 
-7. [TODO] `phase1.stream4.task1` Add `providers.glmOpenCode` settings state, Settings tab/card, provider picker visibility, workflow defaults and provider labels/tints. (scope: `src/client/ui/src/components/settings/**, src/client/project-manager/**, src/types/provider.ts`; expected commit: `feat: expose glm opencode settings and selection`)
-8. [TODO] `phase1.stream4.commit1` Git Commit: `feat: expose glm opencode settings and selection` (hash: TBD)
+7. [DONE] `phase1.stream4.task1` Add `providers.glmOpenCode` settings state, Settings tab/card, provider picker visibility, workflow defaults and provider labels/tints. (scope: `src/client/ui/src/components/settings/**, src/client/ui/src/session/**, src/client/ui/src/core-bridge/constants.ts, src/client/project-manager/**, src/types/provider.ts, packages/core/src/provider-registry/**, packages/core/src/remote-bridge/handlers/settings-*.ts, packages/core/src/provider-network-capture/**, packages/GLM_OpenCode_Module/src/provider/**`; expected commit: `feat: expose glm opencode settings and selection`)
+8. [PENDING] `phase1.stream4.commit1` Git Commit: `feat: expose glm opencode settings and selection` (hash: TBD)
 
 ### Stream: Packaging And Diagnostics
 

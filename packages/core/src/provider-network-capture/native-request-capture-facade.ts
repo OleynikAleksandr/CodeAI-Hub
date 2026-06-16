@@ -37,6 +37,7 @@ const PROVIDER_RUNTIME_IDS: Readonly<
   codex: "codexCli",
   kimi: "kimiCode",
   glmClaudeCode: "glmClaudeCode",
+  glmOpenCode: "glmOpenCode",
 };
 
 const PROVIDER_TARGET_RULES: Readonly<
@@ -57,6 +58,7 @@ const PROVIDER_TARGET_RULES: Readonly<
   ],
   kimi: [],
   glmClaudeCode: [{ host: "api.z.ai", pathIncludes: "/api/anthropic" }],
+  glmOpenCode: [{ host: "api.z.ai", pathIncludes: "/api/coding/paas/v4" }],
 };
 
 interface ProviderAdapterLookup {
@@ -433,7 +435,8 @@ export const isNativeRequestCaptureProviderId = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "glmClaudeCode";
+  value === "glmClaudeCode" ||
+  value === "glmOpenCode";
 
 export const createCapturedProxyResult = (
   request: NativeRequestCaptureRequest

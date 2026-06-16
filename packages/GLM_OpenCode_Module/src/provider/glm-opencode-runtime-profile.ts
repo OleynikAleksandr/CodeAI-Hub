@@ -30,6 +30,17 @@ interface GlmOpenCodeConfigFile {
   readonly zaiApiKey?: unknown;
 }
 
+interface GlmOpenCodeWorkspaceSettings {
+  readonly apiKey?: unknown;
+  readonly configPath?: unknown;
+  readonly defaultModel?: unknown;
+  readonly model?: unknown;
+  readonly modelId?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
+  readonly zAiApiKey?: unknown;
+  readonly zaiApiKey?: unknown;
+}
+
 export interface GlmOpenCodeRuntimeProfile {
   readonly apiKey: string;
   readonly command: string;
@@ -45,6 +56,7 @@ export interface GlmOpenCodeRuntimeProfileOptions {
   readonly defaultModel?: string;
   readonly environment?: NodeJS.ProcessEnv;
   readonly providerHomePath?: string;
+  readonly settingsPath?: string;
   readonly workspacePath?: string;
 }
 
@@ -64,6 +76,27 @@ const readConfig = (configPath: string): GlmOpenCodeConfigFile => {
   const parsed: unknown = JSON.parse(raw);
   return parsed && typeof parsed === "object" && !Array.isArray(parsed)
     ? (parsed as GlmOpenCodeConfigFile)
+    : {};
+};
+
+const readWorkspaceSettings = (
+  settingsPath: string | undefined
+): GlmOpenCodeWorkspaceSettings => {
+  if (!(settingsPath && existsSync(settingsPath))) {
+    return {};
+  }
+  const parsed: unknown = JSON.parse(readFileSync(settingsPath, "utf8"));
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return {};
+  }
+  const providers = (parsed as { readonly providers?: unknown }).providers;
+  if (!providers || typeof providers !== "object" || Array.isArray(providers)) {
+    return {};
+  }
+  const settings = (providers as { readonly glmOpenCode?: unknown })
+    .glmOpenCode;
+  return settings && typeof settings === "object" && !Array.isArray(settings)
+    ? (settings as GlmOpenCodeWorkspaceSettings)
     : {};
 };
 
@@ -130,7 +163,8 @@ const resolveOpenCodeCommand = (
 
 const resolveApiKey = (
   config: GlmOpenCodeConfigFile,
-  environment: NodeJS.ProcessEnv
+  environment: NodeJS.ProcessEnv,
+  workspaceSettings: GlmOpenCodeWorkspaceSettings
 ): string => {
   const apiKey =
     readString(environment.ZAI_API_KEY) ??
@@ -141,7 +175,10 @@ const resolveApiKey = (
     readString(config.zAiApiKey) ??
     readString(config.glmApiKey) ??
     readString(config.apiKey) ??
-    readString(config.api_key);
+    readString(config.api_key) ??
+    readString(workspaceSettings.zaiApiKey) ??
+    readString(workspaceSettings.zAiApiKey) ??
+    readString(workspaceSettings.apiKey);
   if (!apiKey) {
     throw new Error(
       "GLM-OpenCode API key is missing. Set ZAI_API_KEY or configure apiKey in the provider config."
@@ -173,8 +210,11 @@ export const buildGlmOpenCodeRuntimeProfile = (
   options: GlmOpenCodeRuntimeProfileOptions = {}
 ): GlmOpenCodeRuntimeProfile => {
   const environment = options.environment ?? process.env;
+  const workspaceSettings = readWorkspaceSettings(options.settingsPath);
   const configPath = expandHomePath(
-    options.configPath ?? DEFAULT_GLM_OPENCODE_CONFIG_PATH
+    options.configPath ??
+      readString(workspaceSettings.configPath) ??
+      DEFAULT_GLM_OPENCODE_CONFIG_PATH
   );
   const config = readConfig(configPath);
   const providerHomePath = expandHomePath(
@@ -182,12 +222,15 @@ export const buildGlmOpenCodeRuntimeProfile = (
       readString(config.providerHomePath) ??
       DEFAULT_GLM_OPENCODE_PROVIDER_HOME_PATH
   );
-  const apiKey = resolveApiKey(config, environment);
+  const apiKey = resolveApiKey(config, environment, workspaceSettings);
   const modelSelector = normalizeModelSelector(
     options.defaultModel ??
       readString(config.defaultModel) ??
       readString(config.modelId) ??
-      readString(config.model)
+      readString(config.model) ??
+      readString(workspaceSettings.defaultModel) ??
+      readString(workspaceSettings.modelId) ??
+      readString(workspaceSettings.model)
   );
   return {
     apiKey,

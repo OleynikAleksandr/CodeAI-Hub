@@ -75,6 +75,8 @@ const isGeminiThinkingLevel = (
 const isKimiModelId = (value: string): value is KimiModelId =>
   KIMI_MODEL_ID_SET.has(value as KimiModelId);
 
+const isGlmModelId = (value: string): boolean => value === "glm-5.2";
+
 const applyClaudeStartDefaults = (
   settings: Settings,
   modelId: string | null,
@@ -125,35 +127,51 @@ const applyCodexStartDefaults = (
 
 const applyKimiStartDefaults = (
   settings: Settings,
-  providerId: ProviderStackId,
   modelId: string | null
 ): Settings | null => {
   if (!modelId || !isKimiModelId(modelId)) {
     return null;
   }
-  const providerSettingsKey =
-    providerId === "glmClaudeCode" ? "glmClaudeCode" : "kimi";
-  const currentProviderSettings = settings.providers[providerSettingsKey];
-  if (currentProviderSettings?.defaultModel === modelId) {
+  if (settings.providers.kimi?.defaultModel === modelId) {
     return null;
   }
-  const fallbackProviderSettings =
-    providerSettingsKey === "kimi"
-      ? {
-          autoUpdate: { enabled: false },
-          defaultModel: DEFAULT_KIMI_MODEL_ID,
-          thinkingDisplaySyncEnabled: true,
-        }
-      : {
-          defaultModel: DEFAULT_KIMI_MODEL_ID,
-          thinkingDisplaySyncEnabled: true,
-        };
   return {
     ...settings,
     providers: {
       ...settings.providers,
-      [providerSettingsKey]: {
-        ...(currentProviderSettings ?? fallbackProviderSettings),
+      kimi: {
+        ...(settings.providers.kimi ?? {
+          autoUpdate: { enabled: false },
+          defaultModel: DEFAULT_KIMI_MODEL_ID,
+          thinkingDisplaySyncEnabled: true,
+        }),
+        defaultModel: modelId,
+      },
+    },
+  };
+};
+
+const applyGlmStartDefaults = (
+  settings: Settings,
+  providerId: "glmClaudeCode" | "glmOpenCode",
+  modelId: string | null
+): Settings | null => {
+  if (!modelId || !isGlmModelId(modelId)) {
+    return null;
+  }
+  const currentProviderSettings = settings.providers[providerId];
+  if (currentProviderSettings?.defaultModel === modelId) {
+    return null;
+  }
+  return {
+    ...settings,
+    providers: {
+      ...settings.providers,
+      [providerId]: {
+        ...(currentProviderSettings ?? {
+          defaultModel: "glm-5.2",
+          thinkingDisplaySyncEnabled: true,
+        }),
         defaultModel: modelId,
       },
     },
@@ -214,11 +232,14 @@ export const applyStartCardModelDefaults = (
   if (params.providerId === "localModels") {
     return applyLocalModelsStartDefaults(settings, modelId);
   }
+  if (params.providerId === "kimiCode") {
+    return applyKimiStartDefaults(settings, modelId);
+  }
   if (
-    params.providerId === "kimiCode" ||
-    params.providerId === "glmClaudeCode"
+    params.providerId === "glmClaudeCode" ||
+    params.providerId === "glmOpenCode"
   ) {
-    return applyKimiStartDefaults(settings, params.providerId, modelId);
+    return applyGlmStartDefaults(settings, params.providerId, modelId);
   }
   return applyGeminiStartDefaults(settings, modelId, reasoning);
 };

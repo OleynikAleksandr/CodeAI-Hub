@@ -1,3 +1,4 @@
+import type { RawLocalModelsSettings } from "./local-models-settings-state";
 import type { RawTextToSpeechSettings } from "./text-to-speech-settings";
 
 export interface RawThinkingSettings {
@@ -55,6 +56,12 @@ export interface RawGlmClaudeCodeSettings {
   readonly sonnetModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
+export interface RawGlmOpenCodeSettings {
+  readonly apiKey?: unknown;
+  readonly configPath?: unknown;
+  readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
+}
 export interface RawCoreControlsSettings {
   readonly allowRestart?: unknown;
 }
@@ -101,5 +108,7 @@ export interface RawSettingsSnapshot {
     readonly gemini?: RawGeminiSettings;
     readonly kimi?: RawKimiSettings;
     readonly glmClaudeCode?: RawGlmClaudeCodeSettings;
+    readonly glmOpenCode?: RawGlmOpenCodeSettings;
+    readonly localModels?: RawLocalModelsSettings;
   };
 }

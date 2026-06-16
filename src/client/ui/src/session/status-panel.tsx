@@ -39,6 +39,7 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   geminiCli: "session-status-button--gemini",
   kimiCode: "session-status-button--glm",
   glmClaudeCode: "session-status-button--glm",
+  glmOpenCode: "session-status-button--glm",
 };
 
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>
@@ -137,6 +138,7 @@ const StatusPanel = ({
     model.providerId === "codexCli" ||
     model.providerId === "claudeCodeCli" ||
     model.providerId === "kimiCode" ||
+    model.providerId === "glmOpenCode" ||
     model.providerId === "localModels";
   const reasoningText =
     typeof model.reasoning === "string" && model.reasoning.length > 0
@@ -164,7 +166,7 @@ const StatusPanel = ({
       onSelectModel?.(modelId);
       return;
     }
-    if (model.providerId === "kimiCode") {
+    if (model.providerId === "kimiCode" || model.providerId === "glmOpenCode") {
       onSelectModel?.(modelId);
       return;
     }

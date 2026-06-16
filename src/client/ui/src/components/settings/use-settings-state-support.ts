@@ -3,10 +3,16 @@ import type {
   ClaudeThinkingEffort,
 } from "../../../../../types/claude-model-registry";
 import type {
+  CodexModelId,
+  CodexReasoningLevel,
+} from "../../../../../types/codex-model-registry";
+import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
 import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
+import type { GeneralResponseMode } from "./general-response-mode/response-mode-state";
+import type { GlmOpenCodeSettings } from "./kimi-settings-state";
 import type {
   NativeRequestCaptureModelId,
   NativeRequestCaptureProviderId,
@@ -14,9 +20,6 @@ import type {
   NativeRequestCaptureState,
 } from "./native-request-capture-state";
 import type {
-  CodexModelId,
-  CodexReasoningLevel,
-  GeneralResponseMode,
   ProviderId,
   ProviderVersions,
   RawSettingsSnapshot,
@@ -425,6 +428,12 @@ export interface UseSettingsStateResult {
     level: GeminiThinkingLevel
   ) => void;
   readonly handleGeminiThinkingDisplaySyncChange: (enabled: boolean) => void;
+  readonly handleGlmOpenCodeSettingsChange?: (
+    settings: GlmOpenCodeSettings
+  ) => void;
+  readonly handleGlmOpenCodeThinkingDisplaySyncChange?: (
+    enabled: boolean
+  ) => void;
   readonly handleLocalizationCategoryLanguageChange: (
     category: LocalizationCategoryKey,
     language: string

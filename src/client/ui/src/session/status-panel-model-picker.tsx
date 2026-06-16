@@ -31,6 +31,12 @@ interface StatusPanelModelPickerProps {
 
 const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
 const REASONING_PREFIX_PATTERN = /^(reasoning|thinking)\s+/;
+const GLM_OPENCODE_MODEL = {
+  defaultReasoning: "default",
+  displayName: "GLM 5.2 / OpenCode",
+  id: "glm-5.2",
+  reasoningOptions: ["default"],
+} as const;
 
 interface PickerModelOption {
   readonly defaultReasoning: string;
@@ -147,6 +153,12 @@ const buildKimiConfig = (currentModelId: string): PickerConfig => {
   };
 };
 
+const buildGlmOpenCodeConfig = (): PickerConfig => ({
+  currentModel: GLM_OPENCODE_MODEL,
+  currentReasoning: "default",
+  models: [GLM_OPENCODE_MODEL],
+});
+
 const buildLocalModelsConfig = (
   currentModelId: string,
   localModelOptions: readonly StatusPanelLocalModelOption[] = []
@@ -186,6 +198,9 @@ const buildPickerConfig = (options: {
   }
   if (options.providerId === "kimiCode") {
     return buildKimiConfig(options.currentModelId);
+  }
+  if (options.providerId === "glmOpenCode") {
+    return buildGlmOpenCodeConfig();
   }
   if (options.providerId === "localModels") {
     return buildLocalModelsConfig(

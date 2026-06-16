@@ -144,8 +144,6 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
-const GLM_OPENCODE_CONFIG_PATH =
-  "~/.codeai-hub/providers/glm-opencode/config.json";
 const GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV =
   "CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH";
 
@@ -261,13 +259,13 @@ export const createGlmOpenCodeAdapterInstance = (
   const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
   return new options.glmOpenCodeAdapterCtor({
     workspace: {
-      configPath: GLM_OPENCODE_CONFIG_PATH,
       defaultModel: "glm-5.2",
       providerHomePath: path.join(
         capsule.providersRoot.absolutePath,
         "glm-opencode",
         "home"
       ),
+      settingsPath: capsule.settingsFile.absolutePath,
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
     },
     reporter: options.createReporter("glm-opencode"),

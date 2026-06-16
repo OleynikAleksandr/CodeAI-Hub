@@ -42,6 +42,12 @@ export const PROVIDER_TINT_TOKENS: Record<ProviderStackId, ProviderTintTokens> =
       border: "rgba(37, 196, 128, 0.36)",
       badgeBackground: "rgba(37, 196, 128, 0.15)",
     },
+    glmOpenCode: {
+      accent: "rgba(113, 230, 205, 0.66)",
+      fill: "rgba(28, 203, 172, 0.10)",
+      border: "rgba(28, 203, 172, 0.36)",
+      badgeBackground: "rgba(28, 203, 172, 0.15)",
+    },
     localModels: {
       accent: "rgba(245, 216, 122, 0.68)",
       fill: "rgba(245, 216, 122, 0.10)",

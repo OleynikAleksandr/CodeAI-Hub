@@ -2,6 +2,7 @@ import { DEFAULT_KIMI_MODEL_ID } from "../../../../../types/kimi-model-registry"
 import type {
   RawAutoUpdateSettings,
   RawGlmClaudeCodeSettings,
+  RawGlmOpenCodeSettings,
   RawKimiSettings,
 } from "./settings-state-raw";
 
@@ -26,8 +27,17 @@ export interface GlmClaudeCodeSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
 
+export interface GlmOpenCodeSettings {
+  readonly apiKey: string;
+  readonly configPath: string;
+  readonly defaultModel: string;
+  readonly thinkingDisplaySyncEnabled: boolean;
+}
+
 const DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH =
   "~/.codeai-hub/providers/glm-claude-code/config.json";
+const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
+  "~/.codeai-hub/providers/glm-opencode/config.json";
 const DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
 const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.2";
 const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5.2";
@@ -93,7 +103,25 @@ export const mapGlmClaudeCodeSettings = (
   ),
 });
 
+export const mapGlmOpenCodeSettings = (
+  value: RawGlmOpenCodeSettings | undefined,
+  mapThinkingDisplaySyncEnabled: (value: unknown) => boolean
+): GlmOpenCodeSettings => ({
+  apiKey: mapOptionalString(value?.apiKey, ""),
+  configPath: mapOptionalString(
+    value?.configPath,
+    DEFAULT_GLM_OPENCODE_CONFIG_PATH
+  ),
+  defaultModel: mapGlmClaudeCodeModel(
+    value?.defaultModel,
+    DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+  ),
+  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+    value?.thinkingDisplaySyncEnabled
+  ),
+});
+
 export const areKimiProviderSettingsEqual = (
-  left: KimiSettings | GlmClaudeCodeSettings | undefined,
-  right: KimiSettings | GlmClaudeCodeSettings | undefined
+  left: KimiSettings | GlmClaudeCodeSettings | GlmOpenCodeSettings | undefined,
+  right: KimiSettings | GlmClaudeCodeSettings | GlmOpenCodeSettings | undefined
 ): boolean => JSON.stringify(left ?? null) === JSON.stringify(right ?? null);

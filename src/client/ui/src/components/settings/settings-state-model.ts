@@ -29,15 +29,16 @@ import {
 import {
   areKimiProviderSettingsEqual,
   type GlmClaudeCodeSettings,
+  type GlmOpenCodeSettings,
   type KimiSettings,
   mapGlmClaudeCodeSettings,
+  mapGlmOpenCodeSettings,
   mapKimiSettings,
 } from "./kimi-settings-state";
 import {
   areLocalModelsSettingsEqual,
   type LocalModelsSettings,
   mapLocalModelsSettings,
-  type RawLocalModelsSettings,
 } from "./local-models-settings-state";
 import type {
   RawAutoUpdateSettings,
@@ -54,15 +55,6 @@ import {
   mapTextToSpeechSettings,
   type TextToSpeechSettings,
 } from "./text-to-speech-settings";
-
-export type {
-  CodexModelId,
-  CodexReasoningLevel,
-} from "../../../../../types/codex-model-registry";
-export type {
-  GeneralResponseMode,
-  GeneralResponsePolicySettings,
-} from "./general-response-mode/response-mode-state";
 
 export type ProviderId = "claude" | "codex" | "gemini" | "kimi";
 
@@ -131,6 +123,7 @@ export interface Settings {
     readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
     readonly glmClaudeCode?: GlmClaudeCodeSettings;
+    readonly glmOpenCode?: GlmOpenCodeSettings;
     readonly localModels?: LocalModelsSettings;
   };
 }
@@ -145,10 +138,10 @@ const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 const CODEX_MODEL_IDS = new Set<string>(
-  CODEX_SETTINGS_MODELS.map((model) => model.id)
+  CODEX_SETTINGS_MODELS.map(({ id }) => id)
 );
 const CODEX_REASONING_LEVEL_SET = new Set<string>(
-  CODEX_REASONING_LEVELS.map((level) => level.name)
+  CODEX_REASONING_LEVELS.map(({ name }) => name)
 );
 const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
   Record<string, CodexReasoningLevel>
@@ -387,10 +380,11 @@ export const mapSettingsSnapshot = (
       value?.providers?.glmClaudeCode,
       mapThinkingDisplaySyncEnabled
     ),
-    localModels: mapLocalModelsSettings(
-      (value?.providers as { readonly localModels?: RawLocalModelsSettings })
-        ?.localModels
+    glmOpenCode: mapGlmOpenCodeSettings(
+      value?.providers?.glmOpenCode,
+      mapThinkingDisplaySyncEnabled
     ),
+    localModels: mapLocalModelsSettings(value?.providers?.localModels),
   },
 });
 
@@ -492,6 +486,10 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areKimiProviderSettingsEqual(
     left.providers.glmClaudeCode,
     right.providers.glmClaudeCode
+  ) &&
+  areKimiProviderSettingsEqual(
+    left.providers.glmOpenCode,
+    right.providers.glmOpenCode
   ) &&
   areLocalModelsSettingsEqual(
     left.providers.localModels,
