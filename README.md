@@ -2,7 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.535** (GLM Settings Crash Hotfix)
+**Current Release — v1.2.536** (Native GLM Transport Hotfix)
+
+This hotfix aligns the native `GLM` provider with the Z.AI/OpenCode preserved
+thinking contract. Native GLM requests now send `clear_thinking: false` when
+reasoning is enabled, preserve and replay `reasoning_content` across turns, and
+surface useful transport failure details instead of collapsing them to generic
+`fetch failed`.
+
+GLM Settings now expose only the real user-facing effort choices, `max` and
+`high`; turning reasoning off remains a separate toggle. Legacy saved values
+are normalized safely: `xhigh` maps to `max`, `medium`/`low` map to `high`, and
+`minimal`/`none` disable thinking.
+
+Retest focus: in FinderWidget-Test01, run Description and Virtual Simulation
+through native `GLM` with reasoning enabled, confirm progressive thinking,
+assistant output and bottom token usage; then disable reasoning for a new turn
+and confirm the turn completes without thinking chunks.
+
+**Previous Release — v1.2.535** (GLM Settings Crash Hotfix)
 
 This hotfix removes the native macOS/CEF select control from the GLM Settings
 reasoning level picker. GLM now uses the same custom React reasoning dialog

@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.536] - 2026-06-17
+### Fixed
+- **Native GLM now follows the Z.AI preserved-thinking contract.** Requests send `thinking.clear_thinking: false` when reasoning is enabled and replay assistant `reasoning_content` in later turns, matching the documented Coding Plan/OpenAI-compatible behavior.
+- **Native GLM transport failures are retryable and diagnosable.** Retryable opening failures and retryable HTTP statuses are retried without silently disabling reasoning or switching transport mode, and final failure messages preserve useful cause details such as `ECONNRESET`.
+- **GLM reasoning Settings now expose only real effort choices.** The UI shows `max` and `high`, while legacy saved values are normalized safely and `none`/`minimal` disable thinking through the explicit toggle path.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- Live native GLM smoke with reasoning `max`: assistant text, thinking chunks and token usage returned with `failed=0`.
+- Live native GLM smoke with thinking disabled: assistant text and token usage returned, thinking chunks `0`, `failed=0`.
+- Live native GLM two-turn smoke: preserved `reasoning_content` replay completed both turns with `failed=0`.
+
 ## [1.2.535] - 2026-06-17
 ### Fixed
 - **GLM Settings reasoning changes no longer crash Project Manager.** The GLM reasoning level control now follows the Codex/Gemini custom React dialog pattern instead of using a native `<select>` popup, avoiding the macOS CEF `NSApplication unrecognized selector` crash path.
