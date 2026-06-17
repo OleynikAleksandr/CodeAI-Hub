@@ -30,8 +30,16 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 ## Session lifecycle
 - One Core send maps to one streaming Chat Completions request.
 - The adapter keeps an in-memory session message list for the active Core provider session.
+- Assistant turns keep both user-visible `content` and provider `reasoning_content`; later requests replay `reasoning_content` unchanged in assistant messages for Z.AI/OpenAI-compatible preserved-thinking continuity.
 - `closeSession` aborts in-flight requests and removes local session state so Stop can unblock the dialog.
 - Every send must finish with `turn_completed` or `turn_failed`.
+
+## Request and reasoning contract
+- Native GLM uses the same Z.AI Coding Plan endpoint shape as OpenCode: `stream: true`, `thinking.type: "enabled"` and `thinking.clear_thinking: false` when reasoning is enabled.
+- When reasoning is disabled, the request sends `thinking.type: "disabled"` and omits `reasoning_effort`.
+- User-facing reasoning effort choices are only `max` and `high`. Legacy saved values are normalized: `xhigh` maps to `max`, `medium`/`low` map to `high`, and `minimal`/`none` disable thinking.
+- The provider may retry transient transport/opening failures and retryable HTTP statuses before SSE body processing starts. It must not silently downgrade the model, disable reasoning, or switch to non-streaming mode.
+- Failure messages must preserve useful transport details such as `ECONNRESET` or HTTP status so the dialog does not collapse different provider failures into generic `fetch failed`.
 
 ## Event normalization
 - SSE `choices[].delta.reasoning_content` becomes normalized `thinking` events tagged `thinking`.
@@ -43,6 +51,7 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 - Settings exposes a dedicated `GLM` tab, not the OpenCode tab.
 - Workflow provider pickers and start cards expose `glmNative` with model `glm-5.2`.
 - Session status displays `GLM 5.2 / GLM` and uses `providers.glmNative.thinkingDisplaySyncEnabled` for reasoning visibility.
+- Settings must present `thinkingEnabled` as the on/off control and `max`/`high` as the effort control; do not reintroduce cross-provider compatibility labels as selectable GLM values.
 - Project Manager must send raw provider/model intent to Core; it must not own separate workflow truth or rewrite `glmNative` to OpenCode/Kimi.
 
 ## Packaging
