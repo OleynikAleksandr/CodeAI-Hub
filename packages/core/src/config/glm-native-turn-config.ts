@@ -1,13 +1,6 @@
 import { loadGlmNativeSettingsSnapshot } from "./provider-settings-snapshot";
 
-export type GlmReasoningEffort =
-  | "max"
-  | "xhigh"
-  | "high"
-  | "medium"
-  | "low"
-  | "minimal"
-  | "none";
+export type GlmReasoningEffort = "max" | "high";
 
 export interface ResolvedGlmNativeTurnConfig {
   readonly baseModelId: string;
@@ -25,25 +18,27 @@ interface ResolveGlmNativeTurnConfigOptions {
 
 const DEFAULT_GLM_NATIVE_MODEL_ID = "glm-5.2";
 const DEFAULT_GLM_NATIVE_REASONING_EFFORT: GlmReasoningEffort = "max";
-const GLM_REASONING_EFFORTS = new Set<string>([
-  "max",
-  "xhigh",
-  "high",
-  "medium",
-  "low",
-  "minimal",
-  "none",
-]);
+const GLM_HIGH_REASONING_ALIASES = new Set(["high", "medium", "low"]);
+const GLM_MAX_REASONING_ALIASES = new Set(["max", "xhigh"]);
+const GLM_REASONING_OFF_ALIASES = new Set(["minimal", "none"]);
 
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : undefined;
 
-const normalizeGlmReasoningEffort = (value: unknown): GlmReasoningEffort =>
-  typeof value === "string" && GLM_REASONING_EFFORTS.has(value)
-    ? (value as GlmReasoningEffort)
-    : DEFAULT_GLM_NATIVE_REASONING_EFFORT;
+const normalizeGlmReasoningEffort = (value: unknown): GlmReasoningEffort => {
+  if (typeof value === "string" && GLM_HIGH_REASONING_ALIASES.has(value)) {
+    return "high";
+  }
+  if (typeof value === "string" && GLM_MAX_REASONING_ALIASES.has(value)) {
+    return "max";
+  }
+  return DEFAULT_GLM_NATIVE_REASONING_EFFORT;
+};
+
+const isGlmReasoningOff = (value: unknown): boolean =>
+  typeof value === "string" && GLM_REASONING_OFF_ALIASES.has(value);
 
 export const buildGlmNativeEffectiveModelId = (options: {
   readonly baseModelId: string;
@@ -62,10 +57,12 @@ export const resolveGlmNativeTurnConfig = (
     normalizeOptionalString(snapshot?.defaultModel) ??
     normalizeOptionalString(options.env.GLM_DEFAULT_MODEL) ??
     DEFAULT_GLM_NATIVE_MODEL_ID;
-  const thinkingEnabled = snapshot?.thinkingEnabled !== false;
-  const reasoningEffort = normalizeGlmReasoningEffort(
-    options.env.GLM_REASONING_EFFORT ?? snapshot?.reasoningEffort
-  );
+  const rawReasoningEffort =
+    options.env.GLM_REASONING_EFFORT ?? snapshot?.reasoningEffort;
+  const thinkingEnabled =
+    !isGlmReasoningOff(rawReasoningEffort) &&
+    snapshot?.thinkingEnabled !== false;
+  const reasoningEffort = normalizeGlmReasoningEffort(rawReasoningEffort);
 
   return {
     baseModelId: defaultModel,

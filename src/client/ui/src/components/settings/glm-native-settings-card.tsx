@@ -80,40 +80,10 @@ const GLM_REASONING_EFFORTS = [
     isDefault: true,
   },
   {
-    value: "xhigh",
-    label: "xhigh",
-    description: "Compatibility alias that maps to maximum GLM reasoning.",
-    useCase: "Use when matching other provider reasoning labels.",
-  },
-  {
     value: "high",
     label: "high",
     description: "Enhanced GLM reasoning.",
     useCase: "Use for faster turns that still need strong reasoning.",
-  },
-  {
-    value: "medium",
-    label: "medium",
-    description: "Compatibility level that Z.AI maps to high.",
-    useCase: "Use when keeping settings aligned with other providers.",
-  },
-  {
-    value: "low",
-    label: "low",
-    description: "Compatibility level that Z.AI maps to high.",
-    useCase: "Use only when matching a low-effort cross-provider preset.",
-  },
-  {
-    value: "minimal",
-    label: "minimal",
-    description: "Skips GLM thinking.",
-    useCase: "Use for simple prompts where reasoning is unnecessary.",
-  },
-  {
-    value: "none",
-    label: "none",
-    description: "Skips GLM thinking.",
-    useCase: "Use when you want the fastest non-reasoning response.",
   },
 ] as const satisfies readonly ProviderOptionDialogOption<GlmNativeReasoningEffort>[];
 
@@ -251,7 +221,7 @@ const GlmNativeSettingsCard: FC<GlmNativeSettingsCardProps> = ({
           onChange={setSelectedReasoning}
           options={GLM_REASONING_EFFORTS}
           selectedValue={selectedReasoning}
-          subtitle="Choose how much reasoning effort GLM should apply for new turns."
+          subtitle="Choose the real GLM 5.2 thinking effort for new turns."
           title="GLM 5.2 reasoning"
         />
       ) : null}

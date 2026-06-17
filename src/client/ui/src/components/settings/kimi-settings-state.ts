@@ -36,28 +36,15 @@ export interface GlmNativeSettings {
   readonly thinkingEnabled: boolean;
 }
 
-export type GlmNativeReasoningEffort =
-  | "max"
-  | "xhigh"
-  | "high"
-  | "medium"
-  | "low"
-  | "minimal"
-  | "none";
+export type GlmNativeReasoningEffort = "max" | "high";
 
 const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
   "~/.codeai-hub/providers/opencode/config.json";
 const DEFAULT_GLM_NATIVE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
 const DEFAULT_GLM_NATIVE_REASONING_EFFORT: GlmNativeReasoningEffort = "max";
-const GLM_NATIVE_REASONING_EFFORTS = new Set<string>([
-  "max",
-  "xhigh",
-  "high",
-  "medium",
-  "low",
-  "minimal",
-  "none",
-]);
+const GLM_NATIVE_HIGH_REASONING_ALIASES = new Set(["high", "medium", "low"]);
+const GLM_NATIVE_MAX_REASONING_ALIASES = new Set(["max", "xhigh"]);
+const GLM_NATIVE_REASONING_OFF_ALIASES = new Set(["minimal", "none"]);
 export const GLM_OPENCODE_MODEL_OPTIONS = [
   {
     description: "Z.AI Coding Plan selector",
@@ -98,10 +85,17 @@ const mapGlmNativeReasoningEffort = (
   value: unknown
 ): GlmNativeReasoningEffort => {
   const effort = mapOptionalString(value, DEFAULT_GLM_NATIVE_REASONING_EFFORT);
-  return GLM_NATIVE_REASONING_EFFORTS.has(effort)
-    ? (effort as GlmNativeReasoningEffort)
-    : DEFAULT_GLM_NATIVE_REASONING_EFFORT;
+  if (GLM_NATIVE_HIGH_REASONING_ALIASES.has(effort)) {
+    return "high";
+  }
+  if (GLM_NATIVE_MAX_REASONING_ALIASES.has(effort)) {
+    return "max";
+  }
+  return DEFAULT_GLM_NATIVE_REASONING_EFFORT;
 };
+
+const isGlmNativeReasoningOff = (value: unknown): boolean =>
+  typeof value === "string" && GLM_NATIVE_REASONING_OFF_ALIASES.has(value);
 
 const mapGlmOpenCodeModel = (value: unknown): GlmOpenCodeModelId => {
   const modelId = mapOptionalString(value, DEFAULT_GLM_OPENCODE_MODEL);
@@ -151,7 +145,9 @@ export const mapGlmNativeSettings = (
   baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_NATIVE_BASE_URL),
   defaultModel: "glm-5.2",
   reasoningEffort: mapGlmNativeReasoningEffort(value?.reasoningEffort),
-  thinkingEnabled: mapOptionalBoolean(value?.thinkingEnabled, true),
+  thinkingEnabled: isGlmNativeReasoningOff(value?.reasoningEffort)
+    ? false
+    : mapOptionalBoolean(value?.thinkingEnabled, true),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled
   ),

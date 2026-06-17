@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "db30483f2",
+  "lastRecordedCommit": "3bc6f845d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream11.task1",
-  "expectedCommitMessage": "fix: harden native glm reasoning transport",
+  "currentTaskId": "phase1.stream11.task2",
+  "expectedCommitMessage": "fix: align native glm reasoning settings",
   "debt": {
-    "expectedCommitMessage": "fix: harden native glm reasoning transport",
-    "preCommitHead": "db30483f2",
+    "expectedCommitMessage": "fix: align native glm reasoning settings",
+    "preCommitHead": "3bc6f845d",
     "stage": "commit_pending",
-    "taskId": "phase1.stream11.task1"
+    "taskId": "phase1.stream11.task2"
   }
 }
 ```
@@ -114,9 +114,9 @@
 ### Stream: GLM Native Retest Fix
 
 25. [DONE] `phase1.stream11.task1` Harden native GLM request compatibility after retest showed `fetch failed`, keeping reasoning enabled and preserving provider failure diagnostics. (scope: `packages/GLM_Module/**, doc/TODO/todo-plan.md`; expected commit: `fix: harden native glm reasoning transport`)
-26. [PENDING] `phase1.stream11.commit1` Git Commit: `fix: harden native glm reasoning transport` (hash: TBD)
-27. [TODO] `phase1.stream11.task2` Align native GLM Settings/Core reasoning controls with the real Z.AI/OpenCode high/max contract and legacy off aliases. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/glm-native-turn-config.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align native glm reasoning settings`)
-28. [TODO] `phase1.stream11.commit2` Git Commit: `fix: align native glm reasoning settings` (hash: TBD)
+26. [DONE] `phase1.stream11.commit1` Git Commit: `fix: harden native glm reasoning transport` (hash: 3bc6f845d)
+27. [DONE] `phase1.stream11.task2` Align native GLM Settings/Core reasoning controls with the real Z.AI/OpenCode high/max contract and legacy off aliases. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/glm-native-turn-config.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align native glm reasoning settings`)
+28. [PENDING] `phase1.stream11.commit2` Git Commit: `fix: align native glm reasoning settings` (hash: TBD)
 29. [TODO] `phase1.stream11.task3` Document native GLM reasoning transport findings from the OpenCode comparison. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document native glm reasoning transport`)
 30. [TODO] `phase1.stream11.commit3` Git Commit: `docs: document native glm reasoning transport` (hash: TBD)
 
