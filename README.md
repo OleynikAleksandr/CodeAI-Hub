@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.533** (OpenCode Token Usage Release)
+**Current Release — v1.2.534** (Native GLM Provider Release)
+
+This release adds a native `GLM` provider backed directly by the Z.AI GLM 5.2
+Coding Chat Completions API. The provider streams assistant text, reasoning and
+token usage without going through OpenCode or Claude, and Settings now expose
+GLM reasoning controls: reasoning enabled/disabled, reasoning level and whether
+reasoning is shown in the dialog. Defaults are reasoning enabled, dialog display
+enabled and `max` reasoning effort.
+
+Retest focus: in FinderWidget-Test01, select `GLM`, confirm Settings shows the
+new reasoning controls, run Description/Virtual Simulation through GLM 5.2, and
+verify progressive reasoning plus final token usage in the bottom status panel.
+
+**Previous Release — v1.2.533** (OpenCode Token Usage Release)
 
 This release wires OpenCode-backed GLM 5.2 and Kimi K2.7 sessions into the
 existing context-window token status panel. At the end of an OpenCode turn, the

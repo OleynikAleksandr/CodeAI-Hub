@@ -8,6 +8,23 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.534] - 2026-06-17
+### Added
+- **Native `GLM` provider for GLM 5.2.** CodeAI Hub can now run GLM 5.2 directly through the Z.AI Coding Chat Completions API, streaming assistant text, reasoning chunks and token usage without OpenCode or Claude in the provider path.
+- **GLM Settings now expose reasoning controls.** The `GLM` tab includes reasoning enabled/disabled, reasoning effort (`max`, `xhigh`, `high`, `medium`, `low`, `minimal`, `none`) and reasoning-in-dialog display controls. Defaults are reasoning enabled, display enabled and `max`.
+
+### Fixed
+- **GLM native turns apply the Settings reasoning level to API requests.** Core passes the selected reasoning controls into the GLM turn config, and the GLM module sends `thinking.type` plus `reasoning_effort` to Z.AI.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+- Live native GLM smoke via `packages/GLM_Module/dist/index.js`: model `glm-5.2`, assistant chunks, reasoning chunks and token usage event returned successfully.
+
 ## [1.2.533] - 2026-06-16
 ### Fixed
 - **OpenCode-backed sessions now report context-window token usage to the status panel.** GLM 5.2/OpenCode and Kimi K2.7/OpenCode emit the existing `token_usage` event shape after OpenCode returns assistant token counts, so the UI no longer stays at `0 (100%)` after a completed turn.

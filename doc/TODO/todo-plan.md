@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "0dc8abac9",
+  "lastRecordedCommit": "65f6141ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream7.task1",
-  "expectedCommitMessage": "feat: add glm reasoning controls",
+  "currentTaskId": "phase1.stream8.task1",
+  "expectedCommitMessage": "docs: prepare native glm release notes",
   "debt": {
-    "expectedCommitMessage": "feat: add glm reasoning controls",
-    "preCommitHead": "0dc8abac9",
+    "expectedCommitMessage": "docs: prepare native glm release notes",
+    "preCommitHead": "65f6141ff",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7.task1"
+    "taskId": "phase1.stream8.task1"
   }
 }
 ```
@@ -90,12 +90,12 @@
 ### Stream: GLM Reasoning Controls
 
 13. [DONE] `phase1.stream7.task1` Add native GLM reasoning enablement, effort level and dialog display controls before release. (scope: `src/client/ui/src/components/settings/**, src/client/project-manager/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/GLM_Module/**, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `feat: add glm reasoning controls`)
-14. [PENDING] `phase1.stream7.commit1` Git Commit: `feat: add glm reasoning controls` (hash: TBD)
+14. [DONE] `phase1.stream7.commit1` Git Commit: `feat: add glm reasoning controls` (hash: 65f6141ff)
 
 ### Stream: Release Build
 
-15. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
-16. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: TBD)
+15. [DONE] `phase1.stream8.task1` Prepare release notes for the confirmed native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
+16. [PENDING] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: TBD)
 17. [TODO] `phase1.stream8.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
 18. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
 
