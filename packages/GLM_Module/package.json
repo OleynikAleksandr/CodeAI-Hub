@@ -1,0 +1,37 @@
+{
+  "name": "@codeai-hub/glm-module",
+  "version": "1.2.533",
+  "description": "Native GLM provider integration for CodeAI Hub core",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "commonjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "test": "node --test dist/provider/*.test.js"
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "keywords": [
+    "codeai-hub",
+    "glm",
+    "provider",
+    "zai"
+  ],
+  "author": "CodeAI Hub",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.7",
+    "@types/node": "^20.11.0",
+    "husky": "^9.1.7",
+    "lefthook": "^2.0.4",
+    "lint-staged": "^16.2.7",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3",
+    "ultracite": "^7.3.2"
+  }
+}

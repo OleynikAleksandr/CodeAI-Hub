@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "9059a03eb",
+  "lastRecordedCommit": "f52682d33",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan native glm provider",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "feat: add native glm provider module",
   "debt": {
-    "expectedCommitMessage": "docs: plan native glm provider",
-    "preCommitHead": "9059a03eb",
+    "expectedCommitMessage": "feat: add native glm provider module",
+    "preCommitHead": "f52682d33",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -49,12 +49,12 @@
 ### Stream: Planning Intake
 
 1. [DONE] `phase1.stream1.task1` Create the native GLM provider planning source and link it from the docs index. (scope: `doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan native glm provider`)
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan native glm provider` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan native glm provider` (hash: f52682d33)
 
 ### Stream: Provider Runtime
 
-3. [TODO] `phase1.stream2.task1` Add the dedicated GLM provider package with native fetch/SSE runtime, reasoning/content normalization, token usage mapping and focused tests. (scope: `packages/GLM_Module/**, package.json, package-lock.json`; expected commit: `feat: add native glm provider module`)
-4. [TODO] `phase1.stream2.commit1` Git Commit: `feat: add native glm provider module` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Add the dedicated GLM provider package with native fetch/SSE runtime, reasoning/content normalization, token usage mapping and focused tests. (scope: `packages/GLM_Module/**, package.json, package-lock.json`; expected commit: `feat: add native glm provider module`)
+4. [PENDING] `phase1.stream2.commit1` Git Commit: `feat: add native glm provider module` (hash: TBD)
 
 ### Stream: Core Registry
 
