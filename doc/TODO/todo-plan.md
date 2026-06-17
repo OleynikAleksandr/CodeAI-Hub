@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "9659a0cdb",
+  "lastRecordedCommit": "25023ebe3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream12.task1",
-  "expectedCommitMessage": "docs: prepare native glm transport release",
+  "currentTaskId": "phase1.stream12.task2",
+  "expectedCommitMessage": "chore: build native glm transport release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare native glm transport release",
-    "preCommitHead": "9659a0cdb",
+    "expectedCommitMessage": "chore: build native glm transport release",
+    "preCommitHead": "25023ebe3",
     "stage": "commit_pending",
-    "taskId": "phase1.stream12.task1"
+    "taskId": "phase1.stream12.task2"
   }
 }
 ```
@@ -123,9 +123,9 @@
 ### Stream: Native GLM Transport Hotfix Release
 
 31. [DONE] `phase1.stream12.task1` Prepare release notes for the confirmed native GLM transport/reasoning hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm transport release`)
-32. [PENDING] `phase1.stream12.commit1` Git Commit: `docs: prepare native glm transport release` (hash: TBD)
-33. [TODO] `phase1.stream12.task2` Build the confirmed native GLM transport/reasoning hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm transport release`)
-34. [TODO] `phase1.stream12.commit2` Git Commit: `chore: build native glm transport release` (hash: TBD)
+32. [DONE] `phase1.stream12.commit1` Git Commit: `docs: prepare native glm transport release` (hash: 25023ebe3)
+33. [DONE] `phase1.stream12.task2` Build the confirmed native GLM transport/reasoning hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm transport release`)
+34. [PENDING] `phase1.stream12.commit2` Git Commit: `chore: build native glm transport release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 

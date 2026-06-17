@@ -7794,15 +7794,9 @@
   var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/opencode/config.json";
   var DEFAULT_GLM_NATIVE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
   var DEFAULT_GLM_NATIVE_REASONING_EFFORT = "max";
-  var GLM_NATIVE_REASONING_EFFORTS = /* @__PURE__ */ new Set([
-    "max",
-    "xhigh",
-    "high",
-    "medium",
-    "low",
-    "minimal",
-    "none"
-  ]);
+  var GLM_NATIVE_HIGH_REASONING_ALIASES = /* @__PURE__ */ new Set(["high", "medium", "low"]);
+  var GLM_NATIVE_MAX_REASONING_ALIASES = /* @__PURE__ */ new Set(["max", "xhigh"]);
+  var GLM_NATIVE_REASONING_OFF_ALIASES = /* @__PURE__ */ new Set(["minimal", "none"]);
   var GLM_OPENCODE_MODEL_OPTIONS = [
     {
       description: "Z.AI Coding Plan selector",
@@ -7829,8 +7823,15 @@
   var mapOptionalBoolean = (value, fallback) => typeof value === "boolean" ? value : fallback;
   var mapGlmNativeReasoningEffort = (value) => {
     const effort = mapOptionalString(value, DEFAULT_GLM_NATIVE_REASONING_EFFORT);
-    return GLM_NATIVE_REASONING_EFFORTS.has(effort) ? effort : DEFAULT_GLM_NATIVE_REASONING_EFFORT;
+    if (GLM_NATIVE_HIGH_REASONING_ALIASES.has(effort)) {
+      return "high";
+    }
+    if (GLM_NATIVE_MAX_REASONING_ALIASES.has(effort)) {
+      return "max";
+    }
+    return DEFAULT_GLM_NATIVE_REASONING_EFFORT;
   };
+  var isGlmNativeReasoningOff = (value) => typeof value === "string" && GLM_NATIVE_REASONING_OFF_ALIASES.has(value);
   var mapGlmOpenCodeModel = (value) => {
     const modelId = mapOptionalString(value, DEFAULT_GLM_OPENCODE_MODEL);
     if (LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) || !GLM_OPENCODE_MODEL_IDS.has(modelId)) {
@@ -7861,7 +7862,7 @@
     baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_NATIVE_BASE_URL),
     defaultModel: "glm-5.2",
     reasoningEffort: mapGlmNativeReasoningEffort(value?.reasoningEffort),
-    thinkingEnabled: mapOptionalBoolean(value?.thinkingEnabled, true),
+    thinkingEnabled: isGlmNativeReasoningOff(value?.reasoningEffort) ? false : mapOptionalBoolean(value?.thinkingEnabled, true),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
     )
