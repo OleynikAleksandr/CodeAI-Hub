@@ -8,16 +8,11 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "3df539f91",
+  "lastRecordedCommit": "af4ce1e76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream21.task2",
-  "expectedCommitMessage": "chore: build native glm workflow tool release",
-  "debt": {
-    "expectedCommitMessage": "chore: build native glm workflow tool release",
-    "preCommitHead": "3df539f91",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream21.task2"
-  }
+  "currentTaskId": "phase1.stream22.task1",
+  "expectedCommitMessage": "docs: record native glm acceptance",
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -197,7 +192,7 @@
 55. [DONE] `phase1.stream21.task1` Prepare release notes for the confirmed native GLM workflow tool runtime hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm workflow tool release`)
 56. [DONE] `phase1.stream21.commit1` Git Commit: `docs: prepare native glm workflow tool release` (hash: 3df539f91)
 57. [DONE] `phase1.stream21.task2` Build the confirmed native GLM workflow tool runtime hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm workflow tool release`)
-58. [PENDING] `phase1.stream21.commit2` Git Commit: `chore: build native glm workflow tool release` (hash: TBD)
+58. [DONE] `phase1.stream21.commit2` Git Commit: `chore: build native glm workflow tool release` (hash: af4ce1e76)
 
 #### Release evidence (2026-06-17)
 - `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.539` and copied release artifacts into `doc/tmp/releases/`.
@@ -205,7 +200,7 @@
 
 ### Stream: User Workflow Acceptance Testing
 
-59. [TODO] `phase1.stream22.task1` Wait for user retest that native `GLM` writes managed artifacts through the workflow tool runtime, streams reasoning/answers coherently, reports token usage, and keeps global GLM settings after the workflow tool runtime hotfix release. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+59. [IN_PROGRESS] `phase1.stream22.task1` Wait for user retest that native `GLM` writes managed artifacts through the workflow tool runtime, streams reasoning/answers coherently, reports token usage, and keeps global GLM settings after the workflow tool runtime hotfix release. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
 60. [TODO] `phase1.stream22.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
