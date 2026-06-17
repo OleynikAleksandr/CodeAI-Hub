@@ -122,6 +122,8 @@ const WORKSPACE_SETTINGS_SEED = {
       apiKey: "",
       baseUrl: "https://api.z.ai/api/coding/paas/v4",
       defaultModel: "glm-5.2",
+      reasoningEffort: "max",
+      thinkingEnabled: true,
       thinkingDisplaySyncEnabled: true,
     },
   },

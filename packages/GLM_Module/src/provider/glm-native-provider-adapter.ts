@@ -28,7 +28,9 @@ export interface GlmWorkspaceOptions {
   readonly baseUrl?: string;
   readonly defaultModel?: string;
   readonly providerHomePath?: string;
+  readonly reasoningEffort?: string;
   readonly settingsPath?: string;
+  readonly thinkingEnabled?: boolean;
   readonly workspacePath?: string;
 }
 
@@ -77,6 +79,26 @@ const readAppliedTurnConfigModel = (
     readString(applied?.effectiveModelId) ??
     readString(turnOptions?.selectedModelId)
   );
+};
+
+const readAppliedTurnConfigReasoning = (
+  turnOptions?: Record<string, unknown>
+): string | null => {
+  const applied = isRecord(turnOptions?.appliedTurnConfig)
+    ? turnOptions.appliedTurnConfig
+    : null;
+  return readString(applied?.reasoningEffort);
+};
+
+const readAppliedTurnConfigThinkingEnabled = (
+  turnOptions?: Record<string, unknown>
+): boolean | null => {
+  const applied = isRecord(turnOptions?.appliedTurnConfig)
+    ? turnOptions.appliedTurnConfig
+    : null;
+  return typeof applied?.thinkingEnabled === "boolean"
+    ? applied.thinkingEnabled
+    : null;
 };
 
 const buildGlmFailureMessage = (error: unknown): string => {
@@ -164,6 +186,9 @@ export class GlmProviderAdapter {
     }
     const profile = this.buildProfile({
       defaultModel: readAppliedTurnConfigModel(turnOptions) ?? undefined,
+      reasoningEffort: readAppliedTurnConfigReasoning(turnOptions) ?? undefined,
+      thinkingEnabled:
+        readAppliedTurnConfigThinkingEnabled(turnOptions) ?? undefined,
       workspacePath: session.workspacePath,
     });
     const abortController = new AbortController();
@@ -225,9 +250,11 @@ export class GlmProviderAdapter {
           ...options.session.messages,
           { role: "user", content: options.userContent },
         ],
-        reasoning_effort: "high",
+        reasoning_effort: options.profile.reasoningEffort,
         stream: true,
-        thinking: { type: "enabled" },
+        thinking: {
+          type: options.profile.thinkingEnabled ? "enabled" : "disabled",
+        },
       }),
       signal: options.abortController.signal,
     });
@@ -267,12 +294,21 @@ export class GlmProviderAdapter {
   }
 
   private buildProfile(
-    override?: Pick<GlmWorkspaceOptions, "defaultModel" | "workspacePath">
+    override?: Pick<
+      GlmWorkspaceOptions,
+      "defaultModel" | "reasoningEffort" | "thinkingEnabled" | "workspacePath"
+    >
   ): GlmRuntimeProfile {
     return buildGlmRuntimeProfile({
       ...this.options.workspace,
       ...(override?.defaultModel
         ? { defaultModel: override.defaultModel }
+        : {}),
+      ...(override?.reasoningEffort
+        ? { reasoningEffort: override.reasoningEffort }
+        : {}),
+      ...(typeof override?.thinkingEnabled === "boolean"
+        ? { thinkingEnabled: override.thinkingEnabled }
         : {}),
       ...(override?.workspacePath
         ? { workspacePath: override.workspacePath }

@@ -31,12 +31,33 @@ export interface GlmNativeSettings {
   readonly apiKey: string;
   readonly baseUrl: string;
   readonly defaultModel: "glm-5.2";
+  readonly reasoningEffort: GlmNativeReasoningEffort;
   readonly thinkingDisplaySyncEnabled: boolean;
+  readonly thinkingEnabled: boolean;
 }
+
+export type GlmNativeReasoningEffort =
+  | "max"
+  | "xhigh"
+  | "high"
+  | "medium"
+  | "low"
+  | "minimal"
+  | "none";
 
 const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
   "~/.codeai-hub/providers/opencode/config.json";
 const DEFAULT_GLM_NATIVE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
+const DEFAULT_GLM_NATIVE_REASONING_EFFORT: GlmNativeReasoningEffort = "max";
+const GLM_NATIVE_REASONING_EFFORTS = new Set<string>([
+  "max",
+  "xhigh",
+  "high",
+  "medium",
+  "low",
+  "minimal",
+  "none",
+]);
 export const GLM_OPENCODE_MODEL_OPTIONS = [
   {
     description: "Z.AI Coding Plan selector",
@@ -69,6 +90,18 @@ const mapOptionalString = (value: unknown, fallback: string): string =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : fallback;
+
+const mapOptionalBoolean = (value: unknown, fallback: boolean): boolean =>
+  typeof value === "boolean" ? value : fallback;
+
+const mapGlmNativeReasoningEffort = (
+  value: unknown
+): GlmNativeReasoningEffort => {
+  const effort = mapOptionalString(value, DEFAULT_GLM_NATIVE_REASONING_EFFORT);
+  return GLM_NATIVE_REASONING_EFFORTS.has(effort)
+    ? (effort as GlmNativeReasoningEffort)
+    : DEFAULT_GLM_NATIVE_REASONING_EFFORT;
+};
 
 const mapGlmOpenCodeModel = (value: unknown): GlmOpenCodeModelId => {
   const modelId = mapOptionalString(value, DEFAULT_GLM_OPENCODE_MODEL);
@@ -117,6 +150,8 @@ export const mapGlmNativeSettings = (
   apiKey: mapOptionalString(value?.apiKey, ""),
   baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_NATIVE_BASE_URL),
   defaultModel: "glm-5.2",
+  reasoningEffort: mapGlmNativeReasoningEffort(value?.reasoningEffort),
+  thinkingEnabled: mapOptionalBoolean(value?.thinkingEnabled, true),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled
   ),

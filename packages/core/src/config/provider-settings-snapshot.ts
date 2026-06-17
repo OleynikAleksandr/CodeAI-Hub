@@ -51,7 +51,9 @@ export interface GlmOpenCodeSettingsSnapshot {
 
 export interface GlmNativeSettingsSnapshot {
   readonly defaultModel?: unknown;
+  readonly reasoningEffort?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
+  readonly thinkingEnabled?: unknown;
 }
 
 export interface LocalModelsSettingsSnapshot {
@@ -212,6 +214,8 @@ export const loadGlmNativeSettingsSnapshot = (
 
   return {
     defaultModel: glmNative.defaultModel,
+    reasoningEffort: glmNative.reasoningEffort,
+    thinkingEnabled: glmNative.thinkingEnabled,
     thinkingDisplaySyncEnabled: glmNative.thinkingDisplaySyncEnabled,
   };
 };

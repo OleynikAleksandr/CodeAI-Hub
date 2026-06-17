@@ -13,7 +13,9 @@ export interface GlmRuntimeProfileInput {
   readonly baseUrl?: string;
   readonly defaultModel?: string;
   readonly providerHomePath?: string;
+  readonly reasoningEffort?: string;
   readonly settingsPath?: string;
+  readonly thinkingEnabled?: boolean;
   readonly workspacePath?: string;
 }
 
@@ -23,7 +25,9 @@ export interface GlmRuntimeProfile {
   readonly chatCompletionsUrl: string;
   readonly model: string;
   readonly providerHomePath: string;
+  readonly reasoningEffort: string;
   readonly settingsPath?: string;
+  readonly thinkingEnabled: boolean;
   readonly workspacePath?: string;
 }
 
@@ -32,6 +36,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const readBoolean = (value: unknown): boolean | null =>
+  typeof value === "boolean" ? value : null;
 
 const readSettingsProvider = (
   settingsPath: string | undefined
@@ -80,6 +87,15 @@ export const buildGlmRuntimeProfile = (
     readString(settings?.defaultModel) ??
     readString(settings?.model) ??
     GLM_DEFAULT_MODEL;
+  const reasoningEffort =
+    readString(input.reasoningEffort) ??
+    readString(settings?.reasoningEffort) ??
+    readString(process.env.GLM_REASONING_EFFORT) ??
+    "max";
+  const thinkingEnabled =
+    readBoolean(input.thinkingEnabled) ??
+    readBoolean(settings?.thinkingEnabled) ??
+    true;
   const providerHomePath = resolveProviderHomePath(input.providerHomePath);
   return {
     apiKey,
@@ -87,6 +103,8 @@ export const buildGlmRuntimeProfile = (
     chatCompletionsUrl: `${baseUrl}/chat/completions`,
     model,
     providerHomePath,
+    reasoningEffort,
+    thinkingEnabled,
     ...(input.settingsPath ? { settingsPath: input.settingsPath } : {}),
     ...(input.workspacePath ? { workspacePath: input.workspacePath } : {}),
   };

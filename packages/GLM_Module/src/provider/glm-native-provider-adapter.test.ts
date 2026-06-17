@@ -53,7 +53,14 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     await adapter.sendMessage(sessionId, "hello");
 
     assert.equal(bodies.length, 1);
-    assert.equal(JSON.parse(bodies[0] as string).model, "glm-5.2");
+    const body = JSON.parse(bodies[0] as string) as {
+      readonly model: string;
+      readonly reasoning_effort: string;
+      readonly thinking: { readonly type: string };
+    };
+    assert.equal(body.model, "glm-5.2");
+    assert.equal(body.reasoning_effort, "max");
+    assert.deepEqual(body.thinking, { type: "enabled" });
     assert.deepEqual(
       events.map((event) => (event as { type: string }).type),
       [
@@ -76,6 +83,38 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
       totalTokens: 5,
       used: 5,
     });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("GlmProviderAdapter applies per-turn reasoning controls", async () => {
+  const originalFetch = globalThis.fetch;
+  const bodies: string[] = [];
+  globalThis.fetch = ((_url, init) => {
+    bodies.push(String(init?.body ?? ""));
+    return Promise.resolve(createResponse(["[DONE]"]));
+  }) as typeof fetch;
+
+  try {
+    const adapter = new GlmProviderAdapter({
+      workspace: { apiKey: "test-key" },
+    });
+    await adapter.initialize();
+    const sessionId = await adapter.createSession();
+    await adapter.sendMessage(sessionId, "hello", {
+      appliedTurnConfig: {
+        reasoningEffort: "none",
+        thinkingEnabled: false,
+      },
+    });
+
+    const body = JSON.parse(bodies[0] as string) as {
+      readonly reasoning_effort: string;
+      readonly thinking: { readonly type: string };
+    };
+    assert.equal(body.reasoning_effort, "none");
+    assert.deepEqual(body.thinking, { type: "disabled" });
   } finally {
     globalThis.fetch = originalFetch;
   }

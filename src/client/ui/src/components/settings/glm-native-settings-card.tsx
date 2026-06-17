@@ -1,5 +1,8 @@
 import type { CSSProperties, FC } from "react";
-import type { GlmNativeSettings } from "./kimi-settings-state";
+import type {
+  GlmNativeReasoningEffort,
+  GlmNativeSettings,
+} from "./kimi-settings-state";
 import SettingsCard from "./settings-card";
 import {
   descriptionStyles,
@@ -59,13 +62,26 @@ const inputStyles: CSSProperties = {
   padding: "4px 8px",
 };
 
+const GLM_REASONING_EFFORTS: readonly GlmNativeReasoningEffort[] = [
+  "max",
+  "xhigh",
+  "high",
+  "medium",
+  "low",
+  "minimal",
+  "none",
+];
+
 const GlmNativeSettingsCard: FC<GlmNativeSettingsCardProps> = ({
   onSettingsChange,
   onThinkingDisplaySyncChange,
   settings,
   thinkingDisplaySyncEnabled = true,
 }) => {
-  const updateSetting = (key: keyof GlmNativeSettings, value: string) => {
+  const updateSetting = (
+    key: keyof GlmNativeSettings,
+    value: GlmNativeSettings[keyof GlmNativeSettings]
+  ) => {
     if (settings) {
       onSettingsChange?.({ ...settings, [key]: value });
     }
@@ -76,6 +92,43 @@ const GlmNativeSettingsCard: FC<GlmNativeSettingsCardProps> = ({
       <p style={descriptionStyles}>
         Runs GLM 5.2 through the native Z.AI Coding Chat Completions API.
       </p>
+      <label style={toggleStyles}>
+        <input
+          checked={settings?.thinkingEnabled ?? true}
+          onChange={(event) =>
+            updateSetting("thinkingEnabled", event.target.checked)
+          }
+          style={checkboxStyles}
+          type="checkbox"
+        />
+        <div>
+          <div style={{ fontSize: "13px", fontWeight: 600 }}>
+            Reasoning enabled
+          </div>
+          <div style={mutedTextStyles}>
+            Send GLM requests with thinking enabled.
+          </div>
+        </div>
+      </label>
+      <label style={rowStyles}>
+        <span style={labelStyles}>Reasoning level</span>
+        <select
+          onChange={(event) =>
+            updateSetting(
+              "reasoningEffort",
+              event.target.value as GlmNativeReasoningEffort
+            )
+          }
+          style={inputStyles}
+          value={settings?.reasoningEffort ?? "max"}
+        >
+          {GLM_REASONING_EFFORTS.map((effort) => (
+            <option key={effort} value={effort}>
+              {effort}
+            </option>
+          ))}
+        </select>
+      </label>
       <label style={toggleStyles}>
         <input
           checked={thinkingDisplaySyncEnabled}

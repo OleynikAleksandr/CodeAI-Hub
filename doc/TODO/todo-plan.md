@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "8d76295ac",
+  "lastRecordedCommit": "0dc8abac9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream6.task1",
-  "expectedCommitMessage": "docs: record native glm verification",
+  "currentTaskId": "phase1.stream7.task1",
+  "expectedCommitMessage": "feat: add glm reasoning controls",
   "debt": {
-    "expectedCommitMessage": "docs: record native glm verification",
-    "preCommitHead": "8d76295ac",
+    "expectedCommitMessage": "feat: add glm reasoning controls",
+    "preCommitHead": "0dc8abac9",
     "stage": "commit_pending",
-    "taskId": "phase1.stream6.task1"
+    "taskId": "phase1.stream7.task1"
   }
 }
 ```
@@ -74,7 +74,7 @@
 ### Stream: Verification
 
 11. [DONE] `phase1.stream6.task1` Record targeted builds/tests and live GLM 5.2 smoke evidence for assistant output, reasoning and token usage. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm verification`)
-12. [PENDING] `phase1.stream6.commit1` Git Commit: `docs: record native glm verification` (hash: TBD)
+12. [DONE] `phase1.stream6.commit1` Git Commit: `docs: record native glm verification` (hash: 0dc8abac9)
 
 #### Verification evidence (2026-06-17)
 - `npm run build --workspace=@codeai-hub/glm-module` — passed.
@@ -87,20 +87,25 @@
 - `./scripts/build-glm-module.sh --version 1.2.533` — passed; installed `~/.codeai-hub/providers/glm-native/1.2.533` and updated `assets/providers/glm-native/manifest.json`.
 - Live native GLM smoke via `packages/GLM_Module/dist/index.js` using OpenCode `zai-coding-plan` auth key without printing the secret — passed: model `glm-5.2`, assistant chunks `12`, thinking chunks `52`, token usage events `1`, failure events `0`, assistant preview `GLM_NATIVE_SMOKE_OK This model is glm-5.2.`
 
+### Stream: GLM Reasoning Controls
+
+13. [DONE] `phase1.stream7.task1` Add native GLM reasoning enablement, effort level and dialog display controls before release. (scope: `src/client/ui/src/components/settings/**, src/client/project-manager/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/GLM_Module/**, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `feat: add glm reasoning controls`)
+14. [PENDING] `phase1.stream7.commit1` Git Commit: `feat: add glm reasoning controls` (hash: TBD)
+
 ### Stream: Release Build
 
-13. [TODO] `phase1.stream7.task1` Prepare release notes after user confirms the native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
-14. [TODO] `phase1.stream7.commit1` Git Commit: `docs: prepare native glm release notes` (hash: TBD)
-15. [TODO] `phase1.stream7.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
-16. [TODO] `phase1.stream7.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
+15. [TODO] `phase1.stream8.task1` Prepare release notes for the confirmed native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
+16. [TODO] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: TBD)
+17. [TODO] `phase1.stream8.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
+18. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-17. [TODO] `phase1.stream8.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
-18. [TODO] `phase1.stream8.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+19. [TODO] `phase1.stream9.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+20. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-19. [TODO] `phase1.stream9.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
-20. [TODO] `phase1.stream9.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
-21. [TODO] `phase1.stream9.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+21. [TODO] `phase1.stream10.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+22. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+23. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

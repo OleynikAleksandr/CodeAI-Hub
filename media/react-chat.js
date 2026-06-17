@@ -7793,6 +7793,16 @@
   // src/client/ui/src/components/settings/kimi-settings-state.ts
   var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/opencode/config.json";
   var DEFAULT_GLM_NATIVE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
+  var DEFAULT_GLM_NATIVE_REASONING_EFFORT = "max";
+  var GLM_NATIVE_REASONING_EFFORTS = /* @__PURE__ */ new Set([
+    "max",
+    "xhigh",
+    "high",
+    "medium",
+    "low",
+    "minimal",
+    "none"
+  ]);
   var GLM_OPENCODE_MODEL_OPTIONS = [
     {
       description: "Z.AI Coding Plan selector",
@@ -7816,6 +7826,11 @@
     "glm-5.2"
   ]);
   var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
+  var mapOptionalBoolean = (value, fallback) => typeof value === "boolean" ? value : fallback;
+  var mapGlmNativeReasoningEffort = (value) => {
+    const effort = mapOptionalString(value, DEFAULT_GLM_NATIVE_REASONING_EFFORT);
+    return GLM_NATIVE_REASONING_EFFORTS.has(effort) ? effort : DEFAULT_GLM_NATIVE_REASONING_EFFORT;
+  };
   var mapGlmOpenCodeModel = (value) => {
     const modelId = mapOptionalString(value, DEFAULT_GLM_OPENCODE_MODEL);
     if (LEGACY_GLM_OPENCODE_MODEL_IDS.has(modelId) || !GLM_OPENCODE_MODEL_IDS.has(modelId)) {
@@ -7845,6 +7860,8 @@
     apiKey: mapOptionalString(value?.apiKey, ""),
     baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_NATIVE_BASE_URL),
     defaultModel: "glm-5.2",
+    reasoningEffort: mapGlmNativeReasoningEffort(value?.reasoningEffort),
+    thinkingEnabled: mapOptionalBoolean(value?.thinkingEnabled, true),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
     )

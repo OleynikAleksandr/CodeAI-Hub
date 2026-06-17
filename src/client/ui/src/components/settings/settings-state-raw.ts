@@ -56,7 +56,9 @@ export interface RawGlmNativeSettings {
   readonly apiKey?: unknown;
   readonly baseUrl?: unknown;
   readonly defaultModel?: unknown;
+  readonly reasoningEffort?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
+  readonly thinkingEnabled?: unknown;
 }
 export interface RawCoreControlsSettings {
   readonly allowRestart?: unknown;

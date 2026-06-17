@@ -201,6 +201,8 @@ const applyGlmNativeStartDefaults = (
           apiKey: "",
           baseUrl: "https://api.z.ai/api/coding/paas/v4",
           defaultModel: "glm-5.2",
+          reasoningEffort: "max",
+          thinkingEnabled: true,
           thinkingDisplaySyncEnabled: true,
         }),
         defaultModel: modelId,
