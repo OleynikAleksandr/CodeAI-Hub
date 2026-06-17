@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "8cba2d0a3",
+  "lastRecordedCommit": "e79c1e7a6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream10.task1",
-  "expectedCommitMessage": "docs: prepare glm settings crash hotfix release",
+  "currentTaskId": "phase1.stream10.task2",
+  "expectedCommitMessage": "chore: build glm settings crash hotfix release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare glm settings crash hotfix release",
-    "preCommitHead": "8cba2d0a3",
+    "expectedCommitMessage": "chore: build glm settings crash hotfix release",
+    "preCommitHead": "e79c1e7a6",
     "stage": "commit_pending",
-    "taskId": "phase1.stream10.task1"
+    "taskId": "phase1.stream10.task2"
   }
 }
 ```
@@ -107,9 +107,9 @@
 ### Stream: GLM Settings Crash Hotfix Release
 
 21. [DONE] `phase1.stream10.task1` Prepare release notes for the GLM Settings native select crash hotfix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm settings crash hotfix release`)
-22. [PENDING] `phase1.stream10.commit1` Git Commit: `docs: prepare glm settings crash hotfix release` (hash: TBD)
-23. [TODO] `phase1.stream10.task2` Build the GLM Settings crash hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build glm settings crash hotfix release`)
-24. [TODO] `phase1.stream10.commit2` Git Commit: `chore: build glm settings crash hotfix release` (hash: TBD)
+22. [DONE] `phase1.stream10.commit1` Git Commit: `docs: prepare glm settings crash hotfix release` (hash: e79c1e7a6)
+23. [DONE] `phase1.stream10.task2` Build the GLM Settings crash hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build glm settings crash hotfix release`)
+24. [PENDING] `phase1.stream10.commit2` Git Commit: `chore: build glm settings crash hotfix release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
