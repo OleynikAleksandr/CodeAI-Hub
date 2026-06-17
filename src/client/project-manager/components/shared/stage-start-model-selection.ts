@@ -53,6 +53,11 @@ const OPENCODE_MODELS = [
     label: "Kimi K2.7 / Kimi For Coding",
   },
 ] as const;
+const GLM_NATIVE_MODEL = {
+  description: "Native Z.AI GLM Coding Chat Completions model.",
+  id: "glm-5.2",
+  label: "GLM 5.2",
+} as const;
 const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
 const DEFAULT_LOCAL_MODEL_ID = "local-model";
 
@@ -111,6 +116,9 @@ export const getStartCardModelOptions = (
   if (providerId === "glmOpenCode") {
     return OPENCODE_MODELS;
   }
+  if (providerId === "glmNative") {
+    return [GLM_NATIVE_MODEL];
+  }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({
     description: model.description,
     id: model.id,
@@ -142,6 +150,7 @@ export const getStartCardReasoningOptions = (
   }
   if (
     providerId === "kimiCode" ||
+    providerId === "glmNative" ||
     providerId === "glmOpenCode" ||
     providerId === "localModels"
   ) {
@@ -195,6 +204,12 @@ export const resolveDefaultStartCardModelSelection = (
       modelId:
         settings?.providers.glmOpenCode?.defaultModel ??
         "zai-coding-plan/glm-5.2",
+      reasoning: "default",
+    };
+  }
+  if (providerId === "glmNative") {
+    return {
+      modelId: settings?.providers.glmNative?.defaultModel ?? "glm-5.2",
       reasoning: "default",
     };
   }

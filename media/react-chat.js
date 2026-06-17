@@ -7792,6 +7792,7 @@
 
   // src/client/ui/src/components/settings/kimi-settings-state.ts
   var DEFAULT_GLM_OPENCODE_CONFIG_PATH = "~/.codeai-hub/providers/opencode/config.json";
+  var DEFAULT_GLM_NATIVE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
   var GLM_OPENCODE_MODEL_OPTIONS = [
     {
       description: "Z.AI Coding Plan selector",
@@ -7836,6 +7837,14 @@
       DEFAULT_GLM_OPENCODE_CONFIG_PATH
     ),
     defaultModel: mapGlmOpenCodeModel(value?.defaultModel),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var mapGlmNativeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
+    apiKey: mapOptionalString(value?.apiKey, ""),
+    baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_NATIVE_BASE_URL),
+    defaultModel: "glm-5.2",
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
     )
@@ -8056,6 +8065,10 @@
         value?.providers?.glmOpenCode,
         mapThinkingDisplaySyncEnabled
       ),
+      glmNative: mapGlmNativeSettings(
+        value?.providers?.glmNative,
+        mapThinkingDisplaySyncEnabled
+      ),
       localModels: mapLocalModelsSettings(value?.providers?.localModels)
     }
   });
@@ -8082,6 +8095,9 @@
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
     left.providers.glmOpenCode,
     right.providers.glmOpenCode
+  ) && areKimiProviderSettingsEqual(
+    left.providers.glmNative,
+    right.providers.glmNative
   ) && areLocalModelsSettingsEqual(
     left.providers.localModels,
     right.providers.localModels
@@ -8358,6 +8374,7 @@
     claudeCodeCli: "Claude",
     codexCli: "Codex",
     geminiCli: "Gemini",
+    glmNative: "GLM",
     glmOpenCode: "OpenCode",
     kimiCode: "Kimi",
     localModels: "Local Models"
@@ -8367,6 +8384,7 @@
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
+    glmNative: "Uses the native Z.AI GLM API",
     glmOpenCode: "Using OpenCode providers and models",
     kimiCode: "Using your authentication Kimi CLI",
     localModels: "Runs downloaded LM Studio models on this Mac"
@@ -8383,6 +8401,7 @@
     "codexCli",
     "geminiCli",
     "localModels",
+    "glmNative",
     "glmOpenCode"
   ];
   var FALLBACK_PROVIDERS = DEFAULT_PROVIDER_IDS.map((providerId) => ({
@@ -8513,6 +8532,7 @@
     "codexCli",
     "geminiCli",
     "kimiCode",
+    "glmNative",
     "glmOpenCode",
     "localModels"
   ]);
@@ -9824,6 +9844,13 @@
       }),
       handleGlmOpenCodeThinkingDisplaySyncChange: (enabled) => updateSettings(
         updateThinkingDisplaySyncEnabled(settings, "glmOpenCode", enabled)
+      ),
+      handleGlmNativeSettingsChange: (glmNative) => updateSettings({
+        ...settings,
+        providers: { ...settings.providers, glmNative }
+      }),
+      handleGlmNativeThinkingDisplaySyncChange: (enabled) => updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "glmNative", enabled)
       ),
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,

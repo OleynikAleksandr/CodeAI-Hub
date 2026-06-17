@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "50484161c",
+  "lastRecordedCommit": "c609e906b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "feat: register native glm provider",
+  "currentTaskId": "phase1.stream4.task1",
+  "expectedCommitMessage": "feat: expose native glm settings and selection",
   "debt": {
-    "expectedCommitMessage": "feat: register native glm provider",
-    "preCommitHead": "50484161c",
+    "expectedCommitMessage": "feat: expose native glm settings and selection",
+    "preCommitHead": "c609e906b",
     "stage": "commit_pending",
-    "taskId": "phase1.stream3.task1"
+    "taskId": "phase1.stream4.task1"
   }
 }
 ```
@@ -59,12 +59,12 @@
 ### Stream: Core Registry
 
 5. [DONE] `phase1.stream3.task1` Register `glmNative` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure recovery. (scope: `packages/core/package.json, package-lock.json, packages/core/src/provider-registry/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: register native glm provider`)
-6. [PENDING] `phase1.stream3.commit1` Git Commit: `feat: register native glm provider` (hash: TBD)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `feat: register native glm provider` (hash: c609e906b)
 
 ### Stream: Settings And Selection Surfaces
 
-7. [TODO] `phase1.stream4.task1` Add `providers.glmNative` settings state, Settings card, provider picker visibility, workflow defaults and provider labels. (scope: `src/types/provider.ts, src/client/ui/src/components/settings/**, src/client/project-manager/**`; expected commit: `feat: expose native glm settings and selection`)
-8. [TODO] `phase1.stream4.commit1` Git Commit: `feat: expose native glm settings and selection` (hash: TBD)
+7. [DONE] `phase1.stream4.task1` Add `providers.glmNative` settings state, Settings card, provider picker visibility, workflow defaults and provider labels. (scope: `src/types/provider.ts, src/client/ui/src/components/settings/**, src/client/ui/src/core-bridge/**, src/client/ui/src/session/**, src/client/project-manager/**, media/react-chat.js`; expected commit: `feat: expose native glm settings and selection`)
+8. [PENDING] `phase1.stream4.commit1` Git Commit: `feat: expose native glm settings and selection` (hash: TBD)
 
 ### Stream: Packaging And Documentation
 

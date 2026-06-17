@@ -12,7 +12,10 @@ import type {
 } from "../../../../../types/gemini-model-registry";
 import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import type { GeneralResponseMode } from "./general-response-mode/response-mode-state";
-import type { GlmOpenCodeSettings } from "./kimi-settings-state";
+import type {
+  GlmNativeSettings,
+  GlmOpenCodeSettings,
+} from "./kimi-settings-state";
 import type {
   NativeRequestCaptureModelId,
   NativeRequestCaptureProviderId,
@@ -428,6 +431,12 @@ export interface UseSettingsStateResult {
     level: GeminiThinkingLevel
   ) => void;
   readonly handleGeminiThinkingDisplaySyncChange: (enabled: boolean) => void;
+  readonly handleGlmNativeSettingsChange?: (
+    settings: GlmNativeSettings
+  ) => void;
+  readonly handleGlmNativeThinkingDisplaySyncChange?: (
+    enabled: boolean
+  ) => void;
   readonly handleGlmOpenCodeSettingsChange?: (
     settings: GlmOpenCodeSettings
   ) => void;

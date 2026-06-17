@@ -360,6 +360,8 @@ export const useProjectManagerSettingsState =
     const {
       handleGlmOpenCodeSettingsChange,
       handleGlmOpenCodeThinkingDisplaySyncChange,
+      handleGlmNativeSettingsChange,
+      handleGlmNativeThinkingDisplaySyncChange,
       handleKimiDefaultModelChange,
       handleKimiThinkingDisplaySyncChange,
     } = useProjectManagerKimiSettingsHandlers({ settings, updateSettings });
@@ -447,12 +449,14 @@ export const useProjectManagerSettingsState =
       handleGeminiDefaultModelChange,
       handleKimiDefaultModelChange,
       handleGlmOpenCodeSettingsChange,
+      handleGlmNativeSettingsChange,
       handleGeminiThinkingChange,
       handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
       handleGlmOpenCodeThinkingDisplaySyncChange,
+      handleGlmNativeThinkingDisplaySyncChange,
       handleKimiThinkingDisplaySyncChange,
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,

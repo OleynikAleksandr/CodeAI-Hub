@@ -465,6 +465,15 @@ export const useSettingsState = (): UseSettingsStateResult => {
       updateSettings(
         updateThinkingDisplaySyncEnabled(settings, "glmOpenCode", enabled)
       ),
+    handleGlmNativeSettingsChange: (glmNative) =>
+      updateSettings({
+        ...settings,
+        providers: { ...settings.providers, glmNative },
+      }),
+    handleGlmNativeThinkingDisplaySyncChange: (enabled) =>
+      updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "glmNative", enabled)
+      ),
     handleLocalizationCategoryLanguageChange,
     handleLocalizationDefaultLanguageChange,
     handleLocalizationEngineIdChange,

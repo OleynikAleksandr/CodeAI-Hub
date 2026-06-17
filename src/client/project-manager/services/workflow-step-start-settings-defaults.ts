@@ -181,6 +181,34 @@ const applyGlmStartDefaults = (
   };
 };
 
+const applyGlmNativeStartDefaults = (
+  settings: Settings,
+  modelId: string | null
+): Settings | null => {
+  if (modelId !== "glm-5.2") {
+    return null;
+  }
+  const currentProviderSettings = settings.providers.glmNative;
+  if (currentProviderSettings?.defaultModel === modelId) {
+    return null;
+  }
+  return {
+    ...settings,
+    providers: {
+      ...settings.providers,
+      glmNative: {
+        ...(currentProviderSettings ?? {
+          apiKey: "",
+          baseUrl: "https://api.z.ai/api/coding/paas/v4",
+          defaultModel: "glm-5.2",
+          thinkingDisplaySyncEnabled: true,
+        }),
+        defaultModel: modelId,
+      },
+    },
+  };
+};
+
 const applyGeminiStartDefaults = (
   settings: Settings,
   modelId: string | null,
@@ -240,6 +268,9 @@ export const applyStartCardModelDefaults = (
   }
   if (params.providerId === "glmOpenCode") {
     return applyGlmStartDefaults(settings, modelId);
+  }
+  if (params.providerId === "glmNative") {
+    return applyGlmNativeStartDefaults(settings, modelId);
   }
   return applyGeminiStartDefaults(settings, modelId, reasoning);
 };

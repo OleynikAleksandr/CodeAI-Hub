@@ -1,6 +1,7 @@
 import { DEFAULT_KIMI_MODEL_ID } from "../../../../../types/kimi-model-registry";
 import type {
   RawAutoUpdateSettings,
+  RawGlmNativeSettings,
   RawGlmOpenCodeSettings,
   RawKimiSettings,
 } from "./settings-state-raw";
@@ -26,8 +27,16 @@ export interface GlmOpenCodeSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
 
+export interface GlmNativeSettings {
+  readonly apiKey: string;
+  readonly baseUrl: string;
+  readonly defaultModel: "glm-5.2";
+  readonly thinkingDisplaySyncEnabled: boolean;
+}
+
 const DEFAULT_GLM_OPENCODE_CONFIG_PATH =
   "~/.codeai-hub/providers/opencode/config.json";
+const DEFAULT_GLM_NATIVE_BASE_URL = "https://api.z.ai/api/coding/paas/v4";
 export const GLM_OPENCODE_MODEL_OPTIONS = [
   {
     description: "Z.AI Coding Plan selector",
@@ -101,7 +110,19 @@ export const mapGlmOpenCodeSettings = (
   ),
 });
 
+export const mapGlmNativeSettings = (
+  value: RawGlmNativeSettings | undefined,
+  mapThinkingDisplaySyncEnabled: (value: unknown) => boolean
+): GlmNativeSettings => ({
+  apiKey: mapOptionalString(value?.apiKey, ""),
+  baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_NATIVE_BASE_URL),
+  defaultModel: "glm-5.2",
+  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+    value?.thinkingDisplaySyncEnabled
+  ),
+});
+
 export const areKimiProviderSettingsEqual = (
-  left: KimiSettings | GlmOpenCodeSettings | undefined,
-  right: KimiSettings | GlmOpenCodeSettings | undefined
+  left: KimiSettings | GlmOpenCodeSettings | GlmNativeSettings | undefined,
+  right: KimiSettings | GlmOpenCodeSettings | GlmNativeSettings | undefined
 ): boolean => JSON.stringify(left ?? null) === JSON.stringify(right ?? null);

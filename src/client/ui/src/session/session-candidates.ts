@@ -9,6 +9,7 @@ export const providerIdSet = new Set<ProviderStackId>([
   "codexCli",
   "geminiCli",
   "kimiCode",
+  "glmNative",
   "glmOpenCode",
   "localModels",
 ]);

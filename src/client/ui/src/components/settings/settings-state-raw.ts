@@ -52,6 +52,12 @@ export interface RawGlmOpenCodeSettings {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
+export interface RawGlmNativeSettings {
+  readonly apiKey?: unknown;
+  readonly baseUrl?: unknown;
+  readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
+}
 export interface RawCoreControlsSettings {
   readonly allowRestart?: unknown;
 }
@@ -98,6 +104,7 @@ export interface RawSettingsSnapshot {
     readonly gemini?: RawGeminiSettings;
     readonly kimi?: RawKimiSettings;
     readonly glmOpenCode?: RawGlmOpenCodeSettings;
+    readonly glmNative?: RawGlmNativeSettings;
     readonly localModels?: RawLocalModelsSettings;
   };
 }

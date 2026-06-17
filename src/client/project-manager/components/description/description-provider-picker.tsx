@@ -83,7 +83,7 @@ export const DescriptionProviderPicker = ({
   const description = t(
     USER_MESSAGES_CATEGORY,
     "pm.description.provider_picker.description",
-    "Description supports Claude, Codex, Gemini, Kimi, OpenCode, and Local Models. The provider must be installed and authenticated."
+    "Description supports Claude, Codex, Gemini, Kimi, GLM, OpenCode, and Local Models. The provider must be installed and authenticated."
   );
   const noProvidersStatus = t(
     USER_MESSAGES_CATEGORY,

@@ -45,6 +45,14 @@ const OPENCODE_MODELS = [
     reasoningOptions: ["default"],
   },
 ] as const;
+const GLM_NATIVE_MODELS = [
+  {
+    defaultReasoning: "default",
+    displayName: "GLM 5.2 / GLM",
+    id: "glm-5.2",
+    reasoningOptions: ["default"],
+  },
+] as const;
 
 const OPEN_CODE_MODEL_ALIASES: Readonly<Record<string, string>> = {
   "glm-5.2": "zai-coding-plan/glm-5.2",
@@ -199,6 +207,12 @@ const buildGlmOpenCodeConfig = (currentModelId: string): PickerConfig => {
   };
 };
 
+const buildGlmNativeConfig = (): PickerConfig => ({
+  currentModel: GLM_NATIVE_MODELS[0],
+  currentReasoning: "default",
+  models: GLM_NATIVE_MODELS,
+});
+
 const buildLocalModelsConfig = (
   currentModelId: string,
   localModelOptions: readonly StatusPanelLocalModelOption[] = []
@@ -241,6 +255,9 @@ const buildPickerConfig = (options: {
   }
   if (options.providerId === "glmOpenCode") {
     return buildGlmOpenCodeConfig(options.currentModelId);
+  }
+  if (options.providerId === "glmNative") {
+    return buildGlmNativeConfig();
   }
   if (options.providerId === "localModels") {
     return buildLocalModelsConfig(

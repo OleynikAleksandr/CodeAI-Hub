@@ -6,8 +6,12 @@ import CodexDefaultModelCard from "./codex-default-model/codex-default-model-car
 import GeminiDefaultModelCard from "./gemini-default-model/gemini-default-model-card";
 import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./general-settings";
+import GlmNativeSettingsCard from "./glm-native-settings-card";
 import GlmOpenCodeSettingsCard from "./glm-opencode-settings-card";
-import type { GlmOpenCodeSettings } from "./kimi-settings-state";
+import type {
+  GlmNativeSettings,
+  GlmOpenCodeSettings,
+} from "./kimi-settings-state";
 import KimiSettingsTab from "./kimi-settings-tab";
 import LocalizationSettingsCard from "./localization-settings-card";
 import ProviderVersions from "./provider-versions";
@@ -37,6 +41,10 @@ export type SettingsViewState = UseSettingsStateResult & {
     settings: GlmOpenCodeSettings
   ) => void;
   readonly handleGlmOpenCodeThinkingDisplaySyncChange?: SettingsBooleanHandler;
+  readonly handleGlmNativeSettingsChange?: (
+    settings: GlmNativeSettings
+  ) => void;
+  readonly handleGlmNativeThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleKimiThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
@@ -48,6 +56,7 @@ export type SettingsTab =
   | "codex"
   | "gemini"
   | "kimi"
+  | "glmNative"
   | "glmOpenCode"
   | "localModels"
   | "general";
@@ -142,6 +151,7 @@ export const settingsTabs: ReadonlyArray<{
   { id: "codex", label: "Codex" },
   { id: "gemini", label: "Gemini" },
   { id: "kimi", label: "Kimi" },
+  { id: "glmNative", label: "GLM" },
   { id: "glmOpenCode", label: "OpenCode" },
   { id: "localModels", label: "Local Models" },
   { id: "general", label: "General" },
@@ -171,6 +181,8 @@ export const SettingsProviderTabContent: React.FC<
     handleKimiDefaultModelChange,
     handleGlmOpenCodeSettingsChange,
     handleGlmOpenCodeThinkingDisplaySyncChange,
+    handleGlmNativeSettingsChange,
+    handleGlmNativeThinkingDisplaySyncChange,
     handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
@@ -308,6 +320,21 @@ export const SettingsProviderTabContent: React.FC<
           onUpdate={handleUpdateProvider}
           provider="glmOpenCode"
           versions={versions}
+        />
+      </div>
+    );
+  }
+
+  if (activeTab === "glmNative") {
+    return (
+      <div style={stackStyles}>
+        <GlmNativeSettingsCard
+          onSettingsChange={handleGlmNativeSettingsChange}
+          onThinkingDisplaySyncChange={handleGlmNativeThinkingDisplaySyncChange}
+          settings={settings.providers.glmNative}
+          thinkingDisplaySyncEnabled={
+            settings.providers.glmNative?.thinkingDisplaySyncEnabled
+          }
         />
       </div>
     );

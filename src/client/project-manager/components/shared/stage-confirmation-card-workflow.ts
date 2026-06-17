@@ -45,6 +45,7 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
+  value === "glmNative" ||
   value === "glmOpenCode";
 
 export const resolveUpstreamArtifactInfo = (

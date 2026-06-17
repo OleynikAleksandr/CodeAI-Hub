@@ -120,7 +120,13 @@ export const updateCodexReasoning = (
 
 export const updateThinkingDisplaySyncEnabled = (
   settings: Settings,
-  provider: "claude" | "codex" | "gemini" | "kimi" | "glmOpenCode",
+  provider:
+    | "claude"
+    | "codex"
+    | "gemini"
+    | "kimi"
+    | "glmOpenCode"
+    | "glmNative",
   enabled: boolean
 ): Settings => ({
   ...settings,

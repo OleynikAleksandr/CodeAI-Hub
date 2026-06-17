@@ -1,6 +1,9 @@
 import { useCallback } from "react";
 import type { KimiModelId } from "../../../../types/kimi-model-registry";
-import type { GlmOpenCodeSettings } from "../../../ui/src/components/settings/kimi-settings-state";
+import type {
+  GlmNativeSettings,
+  GlmOpenCodeSettings,
+} from "../../../ui/src/components/settings/kimi-settings-state";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
   updateKimiDefaultModel,
@@ -45,8 +48,27 @@ export const useProjectManagerKimiSettingsHandlers = ({
     },
     [settings, updateSettings]
   );
+  const handleGlmNativeThinkingDisplaySyncChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "glmNative", enabled)
+      );
+    },
+    [settings, updateSettings]
+  );
+  const handleGlmNativeSettingsChange = useCallback(
+    (glmNative: GlmNativeSettings) => {
+      updateSettings({
+        ...settings,
+        providers: { ...settings.providers, glmNative },
+      });
+    },
+    [settings, updateSettings]
+  );
 
   return {
+    handleGlmNativeSettingsChange,
+    handleGlmNativeThinkingDisplaySyncChange,
     handleGlmOpenCodeSettingsChange,
     handleGlmOpenCodeThinkingDisplaySyncChange,
     handleKimiDefaultModelChange,

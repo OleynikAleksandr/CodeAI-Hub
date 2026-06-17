@@ -8,12 +8,14 @@ import type { Settings } from "../components/settings/settings-state-model";
 
 type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
-type KimiLikeProviderId = "kimiCode" | "glmOpenCode";
+type KimiLikeProviderId = "kimiCode" | "glmNative" | "glmOpenCode";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi K2.7 Code";
+const GLM_NATIVE_MODEL_DISPLAY_NAME = "GLM 5.2 / GLM";
 const GLM_OPENCODE_MODEL_DISPLAY_NAME = "GLM 5.2 / OpenCode";
 const KIMI_OPENCODE_MODEL_DISPLAY_NAME = "Kimi K2.7 / OpenCode";
 const GLM_OPENCODE_MODEL_ID = "zai-coding-plan/glm-5.2";
+const GLM_NATIVE_MODEL_ID = "glm-5.2";
 const KIMI_DEFAULT_MODEL_ID = "kimi-k2.7-code";
 const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
 
@@ -58,7 +60,9 @@ const isSettingsBackedProviderId = (
 const isKimiLikeProviderId = (
   providerId: ProviderStackId
 ): providerId is KimiLikeProviderId =>
-  providerId === "kimiCode" || providerId === "glmOpenCode";
+  providerId === "kimiCode" ||
+  providerId === "glmNative" ||
+  providerId === "glmOpenCode";
 
 const resolveKimiLikeSettingsModelId = (
   providerId: KimiLikeProviderId,
@@ -67,19 +71,32 @@ const resolveKimiLikeSettingsModelId = (
   if (providerId === "glmOpenCode") {
     return settings.providers.glmOpenCode?.defaultModel;
   }
+  if (providerId === "glmNative") {
+    return settings.providers.glmNative?.defaultModel;
+  }
   return settings.providers.kimi?.defaultModel;
 };
 
 const resolveKimiLikeFallbackModelId = (
   providerId: KimiLikeProviderId
-): string =>
-  providerId === "kimiCode" ? KIMI_DEFAULT_MODEL_ID : GLM_OPENCODE_MODEL_ID;
+): string => {
+  if (providerId === "kimiCode") {
+    return KIMI_DEFAULT_MODEL_ID;
+  }
+  if (providerId === "glmNative") {
+    return GLM_NATIVE_MODEL_ID;
+  }
+  return GLM_OPENCODE_MODEL_ID;
+};
 
 const formatKimiSessionModelDisplayName = (
   providerId: ProviderStackId,
   modelId: string
 ): string => {
   const baseModelId = resolveKimiBaseModelId(modelId);
+  if (providerId === "glmNative") {
+    return GLM_NATIVE_MODEL_DISPLAY_NAME;
+  }
   if (providerId === "glmOpenCode") {
     if (
       baseModelId === "zai-coding-plan/glm-5.2" ||

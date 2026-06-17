@@ -13,6 +13,7 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
+  value === "glmNative" ||
   value === "glmOpenCode" ||
   value === "localModels";
 
@@ -21,6 +22,7 @@ export const isResearchCapableProviderId = (
 ): boolean =>
   providerId === "codexCli" ||
   providerId === "claudeCodeCli" ||
+  providerId === "glmNative" ||
   providerId === "localModels";
 
 const resolveProviderIdFromDescription = (

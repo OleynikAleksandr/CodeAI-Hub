@@ -37,6 +37,7 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   claudeCodeCli: "session-status-button--claude",
   codexCli: "session-status-button--codex",
   geminiCli: "session-status-button--gemini",
+  glmNative: "session-status-button--glm",
   kimiCode: "session-status-button--glm",
   glmOpenCode: "session-status-button--glm",
 };
@@ -137,6 +138,7 @@ const StatusPanel = ({
     model.providerId === "codexCli" ||
     model.providerId === "claudeCodeCli" ||
     model.providerId === "kimiCode" ||
+    model.providerId === "glmNative" ||
     model.providerId === "glmOpenCode" ||
     model.providerId === "localModels";
   const reasoningText =
@@ -165,7 +167,11 @@ const StatusPanel = ({
       onSelectModel?.(modelId);
       return;
     }
-    if (model.providerId === "kimiCode" || model.providerId === "glmOpenCode") {
+    if (
+      model.providerId === "kimiCode" ||
+      model.providerId === "glmNative" ||
+      model.providerId === "glmOpenCode"
+    ) {
       onSelectModel?.(modelId);
       return;
     }

@@ -28,8 +28,10 @@ import {
 } from "./general-response-mode/response-mode-state";
 import {
   areKimiProviderSettingsEqual,
+  type GlmNativeSettings,
   type GlmOpenCodeSettings,
   type KimiSettings,
+  mapGlmNativeSettings,
   mapGlmOpenCodeSettings,
   mapKimiSettings,
 } from "./kimi-settings-state";
@@ -121,6 +123,7 @@ export interface Settings {
     readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
     readonly glmOpenCode?: GlmOpenCodeSettings;
+    readonly glmNative?: GlmNativeSettings;
     readonly localModels?: LocalModelsSettings;
   };
 }
@@ -377,6 +380,10 @@ export const mapSettingsSnapshot = (
       value?.providers?.glmOpenCode,
       mapThinkingDisplaySyncEnabled
     ),
+    glmNative: mapGlmNativeSettings(
+      value?.providers?.glmNative,
+      mapThinkingDisplaySyncEnabled
+    ),
     localModels: mapLocalModelsSettings(value?.providers?.localModels),
   },
 });
@@ -479,6 +486,10 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areKimiProviderSettingsEqual(
     left.providers.glmOpenCode,
     right.providers.glmOpenCode
+  ) &&
+  areKimiProviderSettingsEqual(
+    left.providers.glmNative,
+    right.providers.glmNative
   ) &&
   areLocalModelsSettingsEqual(
     left.providers.localModels,
