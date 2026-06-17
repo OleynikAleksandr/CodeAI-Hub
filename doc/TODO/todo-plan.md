@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "72091df3e",
+  "lastRecordedCommit": "ae1337a04",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream18.task1",
-  "expectedCommitMessage": "docs: prepare native glm live chunk release",
+  "currentTaskId": "phase1.stream18.task2",
+  "expectedCommitMessage": "chore: build native glm live chunk release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare native glm live chunk release",
-    "preCommitHead": "72091df3e",
+    "expectedCommitMessage": "chore: build native glm live chunk release",
+    "preCommitHead": "ae1337a04",
     "stage": "commit_pending",
-    "taskId": "phase1.stream18.task1"
+    "taskId": "phase1.stream18.task2"
   }
 }
 ```
@@ -169,9 +169,13 @@
 ### Stream: Native GLM Live Chunk Hotfix Release
 
 47. [DONE] `phase1.stream18.task1` Prepare release notes for the confirmed native GLM live chunk aggregation hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm live chunk release`)
-48. [PENDING] `phase1.stream18.commit1` Git Commit: `docs: prepare native glm live chunk release` (hash: TBD)
-49. [TODO] `phase1.stream18.task2` Build the confirmed native GLM live chunk aggregation hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm live chunk release`)
-50. [TODO] `phase1.stream18.commit2` Git Commit: `chore: build native glm live chunk release` (hash: TBD)
+48. [DONE] `phase1.stream18.commit1` Git Commit: `docs: prepare native glm live chunk release` (hash: ae1337a04)
+49. [DONE] `phase1.stream18.task2` Build the confirmed native GLM live chunk aggregation hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm live chunk release`)
+50. [PENDING] `phase1.stream18.commit2` Git Commit: `chore: build native glm live chunk release` (hash: TBD)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.538` and copied release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.538.vsix` (`5.4M`).
 
 ### Stream: User Workflow Acceptance Testing
 
