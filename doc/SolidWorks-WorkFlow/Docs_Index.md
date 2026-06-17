@@ -81,6 +81,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/GLM_Native_Provider_Planning_RU.md` — active planning source for the native `glmNative` provider: direct Z.AI Coding Chat Completions transport for `glm-5.2`, Core-owned reasoning/content/usage events, and OpenCode/Claude-independent runtime control.
 - `Plans/Archive/GLM_OpenCode_Provider_Planning_RU.md` — archived accepted planning source for the `glmOpenCode` user-facing OpenCode wrapper with verified `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7` selectors.
 - `Plans/Archive/AuditAutomationCleanup_Part1_Planning.md` — archived accepted planning source for release `1.2.523`: audit automation cleanup, runtime dependency security checks, CI-visible duplicate/link/security gates, low-risk dependency patches, stale archive cleanup, Gemini/Kimi/GLM model-version follow-ups, workspace prompt clarity, and stale user-gate cursor fix.
 - `Plans/Archive/Claude_Thinking_Default_And_PM_Startup_Audit_2026-06-01.md` — archived accepted user-request planning summary for release `1.2.431`: Claude thinking enabled by default for new/missing settings, Project Manager first paint before provider warmup, deferred first-open provider version checks, and provider warmup `core:state` refresh after status changes.

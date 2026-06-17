@@ -4,31 +4,92 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "glm-opencode-provider-2026-06-16",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
-  "baseHead": "3ec494bc4",
-  "lastRecordedCommit": "b07389aeb",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/GLM_OpenCode_Provider_Planning_RU.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
-  "debt": null
+  "baseHead": "9059a03eb",
+  "lastRecordedCommit": "9059a03eb",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
+  "currentTaskId": "phase1.stream1.task1",
+  "expectedCommitMessage": "docs: plan native glm provider",
+  "debt": {
+    "expectedCommitMessage": "docs: plan native glm provider",
+    "preCommitHead": "9059a03eb",
+    "stage": "commit_pending",
+    "taskId": "phase1.stream1.task1"
+  }
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-glm-opencode-provider-2026-06-16.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/GLM_OpenCode_Provider_Planning_RU.md`
-- **Last recorded commit:** `b07389aeb`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Kimi.md`
+  - `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Only this list is the context source for this execution cycle.
 
-## Start Next Scope
+## Execution Rules
 
-There is no active execution scope. Before starting new implementation work:
+- **Required reading before each fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Each implementation task is paired with a separate `Git Commit` item.
+- Keep each implementation task scoped to no more than 3 files or one tightly bounded package/surface.
+- Use `npm run plan:commit -- "<expected commit message>"` for planned commits.
+- Do not bypass Husky hooks or quality gates.
+- Release build requires a separate confirmation before `build-all.sh` / `build-release.sh`.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 1 - Native GLM Provider (owner: Codex, updated: 2026-06-17)
+
+### Stream: Planning Intake
+
+1. [DONE] `phase1.stream1.task1` Create the native GLM provider planning source and link it from the docs index. (scope: `doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan native glm provider`)
+2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan native glm provider` (hash: TBD)
+
+### Stream: Provider Runtime
+
+3. [TODO] `phase1.stream2.task1` Add the dedicated GLM provider package with native fetch/SSE runtime, reasoning/content normalization, token usage mapping and focused tests. (scope: `packages/GLM_Module/**, package.json, package-lock.json`; expected commit: `feat: add native glm provider module`)
+4. [TODO] `phase1.stream2.commit1` Git Commit: `feat: add native glm provider module` (hash: TBD)
+
+### Stream: Core Registry
+
+5. [TODO] `phase1.stream3.task1` Register `glmNative` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure recovery. (scope: `packages/core/src/provider-registry/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: register native glm provider`)
+6. [TODO] `phase1.stream3.commit1` Git Commit: `feat: register native glm provider` (hash: TBD)
+
+### Stream: Settings And Selection Surfaces
+
+7. [TODO] `phase1.stream4.task1` Add `providers.glmNative` settings state, Settings card, provider picker visibility, workflow defaults and provider labels. (scope: `src/types/provider.ts, src/client/ui/src/components/settings/**, src/client/project-manager/**`; expected commit: `feat: expose native glm settings and selection`)
+8. [TODO] `phase1.stream4.commit1` Git Commit: `feat: expose native glm settings and selection` (hash: TBD)
+
+### Stream: Packaging And Documentation
+
+9. [TODO] `phase1.stream5.task1` Add native GLM release packaging and module SSOT documentation. (scope: `assets/providers/glm-native/**, scripts/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `feat: package native glm provider`)
+10. [TODO] `phase1.stream5.commit1` Git Commit: `feat: package native glm provider` (hash: TBD)
+
+### Stream: Verification
+
+11. [TODO] `phase1.stream6.task1` Record targeted builds/tests and live GLM 5.2 smoke evidence for assistant output, reasoning and token usage. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm verification`)
+12. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record native glm verification` (hash: TBD)
+
+### Stream: Release Build
+
+13. [TODO] `phase1.stream7.task1` Prepare release notes after user confirms the native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
+14. [TODO] `phase1.stream7.commit1` Git Commit: `docs: prepare native glm release notes` (hash: TBD)
+15. [TODO] `phase1.stream7.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
+16. [TODO] `phase1.stream7.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+17. [TODO] `phase1.stream8.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+18. [TODO] `phase1.stream8.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: Scope Closeout
+
+19. [TODO] `phase1.stream9.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+20. [TODO] `phase1.stream9.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+21. [TODO] `phase1.stream9.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
