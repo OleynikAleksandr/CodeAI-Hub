@@ -297,6 +297,10 @@
   - `session/kimi-session-lifecycle.ts` = create/resume/send/cancel/close lifecycle plus typed `KIMI_SESSION_STALE_BINDING` recovery signal
   - `messaging/kimi-event-normalizer.ts` + `messaging/kimi-request-failure-normalizer.ts` = provider event/request/failure normalization before Core sees the provider surface
   - `types/kimi-model-capabilities.ts` = shared Kimi model capability registry; current default is `kimi-k2.7-code`, with no reasoning/thinking effort dimension in this release
+- GLM Native provider cluster: `packages/GLM_Module/`
+  - `provider/glm-native-provider-adapter.ts` = Core-facing facade for `glmNative`; owns native Z.AI Chat Completions sends, in-memory provider session history, stop/abort cleanup, reasoning/content events and token usage events.
+  - `provider/glm-native-runtime-profile.ts` = resolves active workspace `providers.glmNative` settings, `ZAI_API_KEY`/compatible env fallback, base URL, default `glm-5.2`, workspace provider home `.codeai-hub/<workspaceSlug>/runtime/providers/glm-native/home`, and global fallback `~/.codeai-hub/providers/glm-native/home`.
+  - `provider/glm-native-sse-parser.ts` = maps provider SSE `reasoning_content`, `content` and `usage` payloads into normalized Core event inputs; account quota/5-hour/weekly telemetry remains unavailable until a verified Z.AI quota endpoint is implemented.
 - GLM-OpenCode provider cluster: `packages/GLM_OpenCode_Module/`
   - `provider/glm-opencode-provider-adapter.ts` = Core-facing facade; owns `glmOpenCode` sessions, workspace-bound provider home/config, one-turn OpenCode process lifecycle, unavailable usage-limits broadcast, and diagnostic applied-input envelope.
   - `provider/glm-opencode-runtime-profile.ts` = resolves `ZAI_API_KEY`, active workspace `providers.glmOpenCode` settings, fallback `~/.codeai-hub/providers/opencode/config.json`, OpenCode command, the `zai-coding-plan/glm-5.2` model selector, and isolated OpenCode `opencode.json` / `auth.json` files under the provider home so runtime does not depend on global OpenCode credentials.

@@ -45,6 +45,7 @@ native/**
 dist/cef-launcher/**
 packages/Claude_Module/**
 packages/Gemini_Module/**
+packages/GLM_Module/**
 packages/Kimi_Module/**
 packages/**
 media/react-chat.js
@@ -53,4 +54,5 @@ media/web-client/**
 node_modules/@codeai-hub/codex-app-server-module/**
 packages/Codex_AppServer_Module/**
 node_modules/@codeai-hub/glm-opencode-module/**
+node_modules/@codeai-hub/glm-module/**
 packages/GLM_OpenCode_Module/**

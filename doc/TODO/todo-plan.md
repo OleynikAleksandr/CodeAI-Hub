@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "c609e906b",
+  "lastRecordedCommit": "3275abef7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream4.task1",
-  "expectedCommitMessage": "feat: expose native glm settings and selection",
+  "currentTaskId": "phase1.stream5.task1",
+  "expectedCommitMessage": "feat: package native glm provider",
   "debt": {
-    "expectedCommitMessage": "feat: expose native glm settings and selection",
-    "preCommitHead": "c609e906b",
+    "expectedCommitMessage": "feat: package native glm provider",
+    "preCommitHead": "3275abef7",
     "stage": "commit_pending",
-    "taskId": "phase1.stream4.task1"
+    "taskId": "phase1.stream5.task1"
   }
 }
 ```
@@ -64,12 +64,12 @@
 ### Stream: Settings And Selection Surfaces
 
 7. [DONE] `phase1.stream4.task1` Add `providers.glmNative` settings state, Settings card, provider picker visibility, workflow defaults and provider labels. (scope: `src/types/provider.ts, src/client/ui/src/components/settings/**, src/client/ui/src/core-bridge/**, src/client/ui/src/session/**, src/client/project-manager/**, media/react-chat.js`; expected commit: `feat: expose native glm settings and selection`)
-8. [PENDING] `phase1.stream4.commit1` Git Commit: `feat: expose native glm settings and selection` (hash: TBD)
+8. [DONE] `phase1.stream4.commit1` Git Commit: `feat: expose native glm settings and selection` (hash: 3275abef7)
 
 ### Stream: Packaging And Documentation
 
-9. [TODO] `phase1.stream5.task1` Add native GLM release packaging and module SSOT documentation. (scope: `assets/providers/glm-native/**, scripts/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `feat: package native glm provider`)
-10. [TODO] `phase1.stream5.commit1` Git Commit: `feat: package native glm provider` (hash: TBD)
+9. [DONE] `phase1.stream5.task1` Add native GLM release packaging and module SSOT documentation. (scope: `.vscodeignore, assets/providers/glm-native/**, scripts/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: package native glm provider`)
+10. [PENDING] `phase1.stream5.commit1` Git Commit: `feat: package native glm provider` (hash: TBD)
 
 ### Stream: Verification
 

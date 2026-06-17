@@ -118,6 +118,7 @@ npm run build --workspace=@codeai-hub/agent-shared >/dev/null
 npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-app-server-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
+npm run build --workspace=@codeai-hub/glm-module >/dev/null
 npm run build --workspace=@codeai-hub/glm-opencode-module >/dev/null
 npm run build --workspace=@codeai-hub/kimi-module >/dev/null
 npm run build --workspace=@codeai-hub/initiatives >/dev/null
@@ -147,6 +148,7 @@ echo "📦 Packing provider tarballs..."
 CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 CODEX_APP_SERVER_TARBALL=$(npm pack --workspace=@codeai-hub/codex-app-server-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 GEMINI_TARBALL=$(npm pack --workspace=@codeai-hub/gemini-module --pack-destination "$TARBALL_STAGE" | tail -n1)
+GLM_TARBALL=$(npm pack --workspace=@codeai-hub/glm-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 GLM_OPENCODE_TARBALL=$(npm pack --workspace=@codeai-hub/glm-opencode-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 KIMI_TARBALL=$(npm pack --workspace=@codeai-hub/kimi-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 INITIATIVES_TARBALL=$(npm pack --workspace=@codeai-hub/initiatives --pack-destination "$TARBALL_STAGE" | tail -n1)
@@ -186,6 +188,7 @@ mkdir -p "$APP_STAGE/tarballs"
 cp "$TARBALL_STAGE/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$CODEX_APP_SERVER_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$GEMINI_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$GLM_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$GLM_OPENCODE_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$KIMI_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$INITIATIVES_TARBALL" "$APP_STAGE/tarballs/"
@@ -204,6 +207,7 @@ const rewrite = new Map([
   ["@codeai-hub/claude-module", "codeai-hub-claude-module"],
   ["@codeai-hub/codex-app-server-module", "codeai-hub-codex-app-server-module"],
   ["@codeai-hub/gemini-module", "codeai-hub-gemini-module"],
+  ["@codeai-hub/glm-module", "codeai-hub-glm-module"],
   ["@codeai-hub/glm-opencode-module", "codeai-hub-glm-opencode-module"],
   ["@codeai-hub/kimi-module", "codeai-hub-kimi-module"],
   ["@codeai-hub/initiatives", "codeai-hub-initiatives"],

@@ -13,7 +13,7 @@
 3. `System/ManagedDocumentationCommitOwnership.md` (suspended historical pointer)
 4. `Clusters/Project_Manager.md`
 5. `Clusters/CoreOrchestrator.md`
-6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Kimi.md`, `Modules/GLM_OpenCode.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Kimi.md`, `Modules/GLM_Native.md`, `Modules/GLM_OpenCode.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 7. `Contracts/` (только по ссылкам из документов выше)
 8. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 9. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
@@ -40,6 +40,7 @@
 - `Modules/Codex_ProviderInvocationFlags.md` — SSOT actual Codex App Server startup flags, JSON-RPC `initialize` / `thread/start` / `thread/resume` / `turn/start` payloads, model/reasoning resolution, provider-home env, and native request capture parity.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Kimi.md` — SSOT Kimi K2.7 Code provider module, including Wire transport, workspace-scoped `KIMI_SHARE_DIR=.codeai-hub/<workspaceSlug>/runtime/providers/kimi/home` for workflow sessions, legacy unscoped provider-home fallback, auth config reference, stale-binding recovery, unavailable usage-limits boundary, UI/provider surfaces, and Wire-evidence diagnostic capture.
+- `Modules/GLM_Native.md` — SSOT native `glmNative` provider module: direct Z.AI Coding Chat Completions transport for `glm-5.2`, workspace-scoped `glm-native` provider home, reasoning/content/usage SSE normalization, Settings/selection surfaces, and standalone `glm-module-<version>.tar.bz2` packaging.
 - `Modules/GLM_OpenCode.md` — SSOT OpenCode wrapper provider module: `glmOpenCode` provider id, generated isolated OpenCode config/auth, verified `zai-coding-plan/glm-5.2` and `kimi-for-coding/k2p7` selectors, read-only OpenCode CLI version diagnostics, and explicit unavailable telemetry boundary.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Localization.md` — SSOT persistent UI localization module, including user-facing categories and the code-owned internal-instructions boundary with explicit localized prompt materialization exceptions.
