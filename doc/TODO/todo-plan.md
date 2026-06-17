@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "e79c1e7a6",
+  "lastRecordedCommit": "db30483f2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream10.task2",
-  "expectedCommitMessage": "chore: build glm settings crash hotfix release",
+  "currentTaskId": "phase1.stream11.task1",
+  "expectedCommitMessage": "fix: harden native glm reasoning transport",
   "debt": {
-    "expectedCommitMessage": "chore: build glm settings crash hotfix release",
-    "preCommitHead": "e79c1e7a6",
+    "expectedCommitMessage": "fix: harden native glm reasoning transport",
+    "preCommitHead": "db30483f2",
     "stage": "commit_pending",
-    "taskId": "phase1.stream10.task2"
+    "taskId": "phase1.stream11.task1"
   }
 }
 ```
@@ -109,15 +109,24 @@
 21. [DONE] `phase1.stream10.task1` Prepare release notes for the GLM Settings native select crash hotfix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm settings crash hotfix release`)
 22. [DONE] `phase1.stream10.commit1` Git Commit: `docs: prepare glm settings crash hotfix release` (hash: e79c1e7a6)
 23. [DONE] `phase1.stream10.task2` Build the GLM Settings crash hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build glm settings crash hotfix release`)
-24. [PENDING] `phase1.stream10.commit2` Git Commit: `chore: build glm settings crash hotfix release` (hash: TBD)
+24. [DONE] `phase1.stream10.commit2` Git Commit: `chore: build glm settings crash hotfix release` (hash: db30483f2)
+
+### Stream: GLM Native Retest Fix
+
+25. [DONE] `phase1.stream11.task1` Harden native GLM request compatibility after retest showed `fetch failed`, keeping reasoning enabled and preserving provider failure diagnostics. (scope: `packages/GLM_Module/**, doc/TODO/todo-plan.md`; expected commit: `fix: harden native glm reasoning transport`)
+26. [PENDING] `phase1.stream11.commit1` Git Commit: `fix: harden native glm reasoning transport` (hash: TBD)
+27. [TODO] `phase1.stream11.task2` Align native GLM Settings/Core reasoning controls with the real Z.AI/OpenCode high/max contract and legacy off aliases. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/glm-native-turn-config.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align native glm reasoning settings`)
+28. [TODO] `phase1.stream11.commit2` Git Commit: `fix: align native glm reasoning settings` (hash: TBD)
+29. [TODO] `phase1.stream11.task3` Document native GLM reasoning transport findings from the OpenCode comparison. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document native glm reasoning transport`)
+30. [TODO] `phase1.stream11.commit3` Git Commit: `docs: document native glm reasoning transport` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-25. [TODO] `phase1.stream11.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
-26. [TODO] `phase1.stream11.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+31. [TODO] `phase1.stream12.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+32. [TODO] `phase1.stream12.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-27. [TODO] `phase1.stream12.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
-28. [TODO] `phase1.stream12.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
-29. [TODO] `phase1.stream12.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+33. [TODO] `phase1.stream13.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+34. [TODO] `phase1.stream13.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+35. [TODO] `phase1.stream13.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

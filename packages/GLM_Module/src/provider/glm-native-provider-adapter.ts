@@ -56,10 +56,37 @@ export interface GlmSessionEvent {
 
 interface GlmSessionState {
   readonly abortControllers: Set<AbortController>;
-  readonly messages: Array<{ readonly content: string; readonly role: string }>;
+  readonly messages: GlmSessionMessage[];
   readonly sessionId: string;
   readonly workspacePath?: string;
 }
+
+interface GlmSessionMessage {
+  readonly content: string;
+  readonly reasoning_content?: string;
+  readonly role: string;
+}
+
+interface GlmAssistantTurn {
+  readonly content: string;
+  readonly reasoningContent: string;
+}
+
+interface GlmRequestFailure extends Error {
+  code?: string;
+  status?: number;
+}
+
+const GLM_MAX_REQUEST_ATTEMPTS = 3;
+const GLM_RETRY_DELAY_MS = 750;
+const RETRYABLE_ERROR_CODES = new Set([
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "ETIMEDOUT",
+  "UND_ERR_CONNECT_TIMEOUT",
+  "UND_ERR_SOCKET",
+]);
+const RETRYABLE_HTTP_STATUSES = new Set([429, 500, 502, 503, 504, 529]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -67,12 +94,23 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const readNumber = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value) ? value : null;
+
+const readErrorCause = (error: Error): unknown =>
+  (error as Error & { readonly cause?: unknown }).cause;
+
+const readAppliedTurnConfig = (
+  turnOptions?: Record<string, unknown>
+): Record<string, unknown> | null =>
+  isRecord(turnOptions?.appliedTurnConfig)
+    ? turnOptions.appliedTurnConfig
+    : null;
+
 const readAppliedTurnConfigModel = (
   turnOptions?: Record<string, unknown>
 ): string | null => {
-  const applied = isRecord(turnOptions?.appliedTurnConfig)
-    ? turnOptions.appliedTurnConfig
-    : null;
+  const applied = readAppliedTurnConfig(turnOptions);
   return (
     readString(applied?.baseModelId) ??
     readString(applied?.modelId) ??
@@ -84,18 +122,14 @@ const readAppliedTurnConfigModel = (
 const readAppliedTurnConfigReasoning = (
   turnOptions?: Record<string, unknown>
 ): string | null => {
-  const applied = isRecord(turnOptions?.appliedTurnConfig)
-    ? turnOptions.appliedTurnConfig
-    : null;
+  const applied = readAppliedTurnConfig(turnOptions);
   return readString(applied?.reasoningEffort);
 };
 
 const readAppliedTurnConfigThinkingEnabled = (
   turnOptions?: Record<string, unknown>
 ): boolean | null => {
-  const applied = isRecord(turnOptions?.appliedTurnConfig)
-    ? turnOptions.appliedTurnConfig
-    : null;
+  const applied = readAppliedTurnConfig(turnOptions);
   return typeof applied?.thinkingEnabled === "boolean"
     ? applied.thinkingEnabled
     : null;
@@ -106,10 +140,21 @@ const buildGlmFailureMessage = (error: unknown): string => {
     return "GLM request was stopped.";
   }
   if (error instanceof Error) {
-    return error.message;
+    const causeValue = readErrorCause(error);
+    const cause = isRecord(causeValue) ? causeValue : null;
+    const causeCode = readString(cause?.code);
+    const causeMessage = readString(cause?.message);
+    if (causeCode || causeMessage) {
+      return `${error.message} (${[causeCode, causeMessage].filter(Boolean).join(": ")})`;
+    }
+    const status = readNumber((error as GlmRequestFailure).status);
+    return status ? `${error.message} (HTTP ${status})` : error.message;
   }
   return String(error);
 };
+
+const delay = (milliseconds: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 export class GlmProviderAdapter {
   private readonly listeners = new Map<string, Set<(event: unknown) => void>>();
@@ -194,9 +239,8 @@ export class GlmProviderAdapter {
     const abortController = new AbortController();
     session.abortControllers.add(abortController);
     this.emit(sessionId, this.buildEvent("turn_started"));
-    let assistantContent = "";
     try {
-      assistantContent = await this.streamTurn({
+      const assistantTurn = await this.streamTurn({
         abortController,
         profile,
         session,
@@ -204,10 +248,13 @@ export class GlmProviderAdapter {
         userContent,
       });
       session.messages.push({ role: "user", content: userContent });
-      if (assistantContent.trim().length > 0) {
+      if (assistantTurn.content.trim().length > 0) {
         session.messages.push({
           role: "assistant",
-          content: assistantContent,
+          content: assistantTurn.content,
+          ...(assistantTurn.reasoningContent.trim().length > 0
+            ? { reasoning_content: assistantTurn.reasoningContent }
+            : {}),
         });
       }
       this.emit(sessionId, this.buildEvent("turn_completed"));
@@ -237,34 +284,18 @@ export class GlmProviderAdapter {
     readonly session: GlmSessionState;
     readonly sessionId: string;
     readonly userContent: string;
-  }): Promise<string> {
-    const response = await fetch(options.profile.chatCompletionsUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${options.profile.apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: options.profile.model,
-        messages: [
-          ...options.session.messages,
-          { role: "user", content: options.userContent },
-        ],
-        reasoning_effort: options.profile.reasoningEffort,
-        stream: true,
-        thinking: {
-          type: options.profile.thinkingEnabled ? "enabled" : "disabled",
-        },
-      }),
-      signal: options.abortController.signal,
+  }): Promise<GlmAssistantTurn> {
+    const requestBody = this.buildRequestBody(options);
+    const response = await this.openGlmResponseWithRetry({
+      abortController: options.abortController,
+      profile: options.profile,
+      requestBody,
     });
-    if (!response.ok) {
-      throw new Error(await this.readResponseError(response));
-    }
     if (!response.body) {
       throw new Error("GLM response did not include a stream body.");
     }
     let assistantContent = "";
+    let reasoningContent = "";
     for await (const data of readSseDataFrames(
       response.body as AsyncIterable<Uint8Array>
     )) {
@@ -273,6 +304,7 @@ export class GlmProviderAdapter {
         continue;
       }
       if (chunk.reasoning) {
+        reasoningContent += chunk.reasoning;
         this.emit(options.sessionId, {
           ...this.buildEvent("thinking"),
           content: chunk.reasoning,
@@ -290,7 +322,72 @@ export class GlmProviderAdapter {
         this.emitTokenUsage(options.sessionId, chunk.usage);
       }
     }
-    return assistantContent;
+    return { content: assistantContent, reasoningContent };
+  }
+
+  private buildRequestBody(options: {
+    readonly profile: GlmRuntimeProfile;
+    readonly session: GlmSessionState;
+    readonly userContent: string;
+  }): Record<string, unknown> {
+    const body: Record<string, unknown> = {
+      model: options.profile.model,
+      messages: [
+        ...options.session.messages,
+        { role: "user", content: options.userContent },
+      ],
+      stream: true,
+      thinking: {
+        type: options.profile.thinkingEnabled ? "enabled" : "disabled",
+        ...(options.profile.thinkingEnabled ? { clear_thinking: false } : {}),
+      },
+    };
+    if (options.profile.thinkingEnabled) {
+      body.reasoning_effort = options.profile.reasoningEffort;
+    }
+    return body;
+  }
+
+  private async openGlmResponseWithRetry(options: {
+    readonly abortController: AbortController;
+    readonly profile: GlmRuntimeProfile;
+    readonly requestBody: Record<string, unknown>;
+  }): Promise<Response> {
+    for (let attempt = 1; attempt <= GLM_MAX_REQUEST_ATTEMPTS; attempt += 1) {
+      try {
+        const response = await fetch(options.profile.chatCompletionsUrl, {
+          body: JSON.stringify(options.requestBody),
+          headers: {
+            Authorization: `Bearer ${options.profile.apiKey}`,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          signal: options.abortController.signal,
+        });
+        if (!response.ok) {
+          throw await this.buildHttpError(response);
+        }
+        return response;
+      } catch (error) {
+        if (
+          attempt >= GLM_MAX_REQUEST_ATTEMPTS ||
+          options.abortController.signal.aborted ||
+          !this.isRetryableGlmFailure(error)
+        ) {
+          throw error;
+        }
+        this.options.reporter?.warn?.(
+          "Retrying transient GLM request failure",
+          {
+            attempt,
+            message: buildGlmFailureMessage(error),
+            nextAttempt: attempt + 1,
+          }
+        );
+        await delay(GLM_RETRY_DELAY_MS * attempt);
+      }
+    }
+    throw new Error("GLM request failed before a fetch attempt was made.");
   }
 
   private buildProfile(
@@ -342,6 +439,31 @@ export class GlmProviderAdapter {
       return `GLM request failed with HTTP ${response.status}.`;
     }
     return `GLM request failed with HTTP ${response.status}: ${text.trim()}`;
+  }
+
+  private async buildHttpError(response: Response): Promise<GlmRequestFailure> {
+    const error = new Error(
+      await this.readResponseError(response)
+    ) as GlmRequestFailure;
+    error.status = response.status;
+    return error;
+  }
+
+  private isRetryableGlmFailure(error: unknown): boolean {
+    if (!(error instanceof Error)) {
+      return false;
+    }
+    const failure = error as GlmRequestFailure;
+    if (
+      typeof failure.status === "number" &&
+      RETRYABLE_HTTP_STATUSES.has(failure.status)
+    ) {
+      return true;
+    }
+    const causeValue = readErrorCause(error);
+    const cause = isRecord(causeValue) ? causeValue : null;
+    const code = readString(failure.code) ?? readString(cause?.code);
+    return Boolean(code && RETRYABLE_ERROR_CODES.has(code));
   }
 
   private buildEvent(type: string): GlmSessionEvent {

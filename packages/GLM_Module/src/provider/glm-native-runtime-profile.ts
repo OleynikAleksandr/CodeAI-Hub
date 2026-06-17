@@ -7,6 +7,9 @@ export const GLM_DEFAULT_MODEL = "glm-5.2";
 export const GLM_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
 
 const TRAILING_SLASH_PATTERN = /\/+$/u;
+const GLM_HIGH_REASONING_ALIASES = new Set(["high", "medium", "low"]);
+const GLM_MAX_REASONING_ALIASES = new Set(["max", "xhigh"]);
+const GLM_REASONING_OFF_ALIASES = new Set(["minimal", "none"]);
 
 export interface GlmRuntimeProfileInput {
   readonly apiKey?: string;
@@ -67,6 +70,19 @@ const resolveProviderHomePath = (
   providerHomePath ??
   path.join(os.homedir(), ".codeai-hub", "providers", "glm-native", "home");
 
+const normalizeReasoningEffort = (value: string | null): "high" | "max" => {
+  if (value && GLM_HIGH_REASONING_ALIASES.has(value)) {
+    return "high";
+  }
+  if (value && GLM_MAX_REASONING_ALIASES.has(value)) {
+    return "max";
+  }
+  return "max";
+};
+
+const isReasoningOffAlias = (value: string | null): boolean =>
+  Boolean(value && GLM_REASONING_OFF_ALIASES.has(value));
+
 export const buildGlmRuntimeProfile = (
   input: GlmRuntimeProfileInput
 ): GlmRuntimeProfile => {
@@ -87,15 +103,17 @@ export const buildGlmRuntimeProfile = (
     readString(settings?.defaultModel) ??
     readString(settings?.model) ??
     GLM_DEFAULT_MODEL;
-  const reasoningEffort =
+  const rawReasoningEffort =
     readString(input.reasoningEffort) ??
     readString(settings?.reasoningEffort) ??
     readString(process.env.GLM_REASONING_EFFORT) ??
     "max";
+  const reasoningEffort = normalizeReasoningEffort(rawReasoningEffort);
   const thinkingEnabled =
-    readBoolean(input.thinkingEnabled) ??
-    readBoolean(settings?.thinkingEnabled) ??
-    true;
+    !isReasoningOffAlias(rawReasoningEffort) &&
+    (readBoolean(input.thinkingEnabled) ??
+      readBoolean(settings?.thinkingEnabled) ??
+      true);
   const providerHomePath = resolveProviderHomePath(input.providerHomePath);
   return {
     apiKey,
