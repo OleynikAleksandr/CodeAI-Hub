@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "812ebf2ca",
+  "lastRecordedCommit": "461afb7cf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream15.task1",
-  "expectedCommitMessage": "docs: prepare native glm runtime settings hotfix release",
+  "currentTaskId": "phase1.stream15.task2",
+  "expectedCommitMessage": "chore: build native glm runtime settings hotfix release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare native glm runtime settings hotfix release",
-    "preCommitHead": "812ebf2ca",
+    "expectedCommitMessage": "chore: build native glm runtime settings hotfix release",
+    "preCommitHead": "461afb7cf",
     "stage": "commit_pending",
-    "taskId": "phase1.stream15.task1"
+    "taskId": "phase1.stream15.task2"
   }
 }
 ```
@@ -145,9 +145,13 @@
 ### Stream: Native GLM Runtime Settings Hotfix Release
 
 39. [DONE] `phase1.stream15.task1` Prepare release notes for the confirmed native GLM runtime settings hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm runtime settings hotfix release`)
-40. [PENDING] `phase1.stream15.commit1` Git Commit: `docs: prepare native glm runtime settings hotfix release` (hash: TBD)
-41. [TODO] `phase1.stream15.task2` Build the confirmed native GLM runtime settings hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm runtime settings hotfix release`)
-42. [TODO] `phase1.stream15.commit2` Git Commit: `chore: build native glm runtime settings hotfix release` (hash: TBD)
+40. [DONE] `phase1.stream15.commit1` Git Commit: `docs: prepare native glm runtime settings hotfix release` (hash: 461afb7cf)
+41. [DONE] `phase1.stream15.task2` Build the confirmed native GLM runtime settings hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm runtime settings hotfix release`)
+42. [PENDING] `phase1.stream15.commit2` Git Commit: `chore: build native glm runtime settings hotfix release` (hash: TBD)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.537` and copied 10 release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.537.vsix` (`5.4M`).
 
 ### Stream: User Workflow Acceptance Testing
 
