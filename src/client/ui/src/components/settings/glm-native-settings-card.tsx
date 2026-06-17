@@ -1,11 +1,20 @@
 import type { CSSProperties, FC } from "react";
+import { useState } from "react";
 import type {
   GlmNativeReasoningEffort,
   GlmNativeSettings,
 } from "./kimi-settings-state";
 import SettingsCard from "./settings-card";
 import {
+  ProviderOptionDialog,
+  type ProviderOptionDialogOption,
+  providerOptionDialogButtonStyles,
+} from "./shared/provider-option-dialog";
+import {
   descriptionStyles,
+  modelControlButtonStyles,
+  modelControlLabelStyles,
+  modelControlRowStyles,
   modelDescriptionStyles,
   modelInfoStyles,
   modelTitleStyles,
@@ -62,15 +71,54 @@ const inputStyles: CSSProperties = {
   padding: "4px 8px",
 };
 
-const GLM_REASONING_EFFORTS: readonly GlmNativeReasoningEffort[] = [
-  "max",
-  "xhigh",
-  "high",
-  "medium",
-  "low",
-  "minimal",
-  "none",
-];
+const GLM_REASONING_EFFORTS = [
+  {
+    value: "max",
+    label: "max",
+    description: "Maximum GLM 5.2 reasoning depth.",
+    useCase: "Default for managed workflow steps and complex planning.",
+    isDefault: true,
+  },
+  {
+    value: "xhigh",
+    label: "xhigh",
+    description: "Compatibility alias that maps to maximum GLM reasoning.",
+    useCase: "Use when matching other provider reasoning labels.",
+  },
+  {
+    value: "high",
+    label: "high",
+    description: "Enhanced GLM reasoning.",
+    useCase: "Use for faster turns that still need strong reasoning.",
+  },
+  {
+    value: "medium",
+    label: "medium",
+    description: "Compatibility level that Z.AI maps to high.",
+    useCase: "Use when keeping settings aligned with other providers.",
+  },
+  {
+    value: "low",
+    label: "low",
+    description: "Compatibility level that Z.AI maps to high.",
+    useCase: "Use only when matching a low-effort cross-provider preset.",
+  },
+  {
+    value: "minimal",
+    label: "minimal",
+    description: "Skips GLM thinking.",
+    useCase: "Use for simple prompts where reasoning is unnecessary.",
+  },
+  {
+    value: "none",
+    label: "none",
+    description: "Skips GLM thinking.",
+    useCase: "Use when you want the fastest non-reasoning response.",
+  },
+] as const satisfies readonly ProviderOptionDialogOption<GlmNativeReasoningEffort>[];
+
+const { cancelButtonStyles, saveButtonStyles } =
+  providerOptionDialogButtonStyles;
 
 const GlmNativeSettingsCard: FC<GlmNativeSettingsCardProps> = ({
   onSettingsChange,
@@ -78,6 +126,11 @@ const GlmNativeSettingsCard: FC<GlmNativeSettingsCardProps> = ({
   settings,
   thinkingDisplaySyncEnabled = true,
 }) => {
+  const [reasoningDialogOpen, setReasoningDialogOpen] = useState(false);
+  const [selectedReasoning, setSelectedReasoning] =
+    useState<GlmNativeReasoningEffort>(settings?.reasoningEffort ?? "max");
+  const currentReasoning = settings?.reasoningEffort ?? "max";
+
   const updateSetting = (
     key: keyof GlmNativeSettings,
     value: GlmNativeSettings[keyof GlmNativeSettings]
@@ -88,92 +141,121 @@ const GlmNativeSettingsCard: FC<GlmNativeSettingsCardProps> = ({
   };
 
   return (
-    <SettingsCard title="GLM">
-      <p style={descriptionStyles}>
-        Runs GLM 5.2 through the native Z.AI Coding Chat Completions API.
-      </p>
-      <label style={toggleStyles}>
-        <input
-          checked={settings?.thinkingEnabled ?? true}
-          onChange={(event) =>
-            updateSetting("thinkingEnabled", event.target.checked)
-          }
-          style={checkboxStyles}
-          type="checkbox"
-        />
-        <div>
-          <div style={{ fontSize: "13px", fontWeight: 600 }}>
-            Reasoning enabled
+    <>
+      <SettingsCard title="GLM">
+        <p style={descriptionStyles}>
+          Runs GLM 5.2 through the native Z.AI Coding Chat Completions API.
+        </p>
+        <label style={toggleStyles}>
+          <input
+            checked={settings?.thinkingEnabled ?? true}
+            onChange={(event) =>
+              updateSetting("thinkingEnabled", event.target.checked)
+            }
+            style={checkboxStyles}
+            type="checkbox"
+          />
+          <div>
+            <div style={{ fontSize: "13px", fontWeight: 600 }}>
+              Reasoning enabled
+            </div>
+            <div style={mutedTextStyles}>
+              Send GLM requests with thinking enabled.
+            </div>
           </div>
-          <div style={mutedTextStyles}>
-            Send GLM requests with thinking enabled.
+        </label>
+        <div style={modelControlRowStyles}>
+          <span style={modelControlLabelStyles}>Configure reasoning:</span>
+          <button
+            onClick={() => {
+              setSelectedReasoning(currentReasoning);
+              setReasoningDialogOpen(true);
+            }}
+            style={modelControlButtonStyles}
+            type="button"
+          >
+            {currentReasoning}
+          </button>
+        </div>
+        <label style={toggleStyles}>
+          <input
+            checked={thinkingDisplaySyncEnabled}
+            onChange={(event) =>
+              onThinkingDisplaySyncChange?.(event.target.checked)
+            }
+            style={checkboxStyles}
+            type="checkbox"
+          />
+          <div>
+            <div style={{ fontSize: "13px", fontWeight: 600 }}>
+              Reasoning in dialog
+            </div>
+            <div style={mutedTextStyles}>
+              Show GLM reasoning as a normal assistant bubble in the dialog.
+            </div>
+          </div>
+        </label>
+        <label style={rowStyles}>
+          <span style={labelStyles}>Z.AI API key</span>
+          <input
+            autoComplete="off"
+            onChange={(event) => updateSetting("apiKey", event.target.value)}
+            placeholder="zai-..."
+            style={inputStyles}
+            type="password"
+            value={settings?.apiKey ?? ""}
+          />
+        </label>
+        <label style={rowStyles}>
+          <span style={labelStyles}>Base URL</span>
+          <input
+            onChange={(event) => updateSetting("baseUrl", event.target.value)}
+            style={inputStyles}
+            type="text"
+            value={settings?.baseUrl ?? ""}
+          />
+        </label>
+        <div style={{ ...rowBaseStyles, ...rowSelectedStyles, border: "none" }}>
+          <div style={modelInfoStyles}>
+            <div style={modelTitleStyles}>GLM 5.2</div>
+            <div style={modelDescriptionStyles}>glm-5.2</div>
           </div>
         </div>
-      </label>
-      <label style={rowStyles}>
-        <span style={labelStyles}>Reasoning level</span>
-        <select
-          onChange={(event) =>
-            updateSetting(
-              "reasoningEffort",
-              event.target.value as GlmNativeReasoningEffort
-            )
+      </SettingsCard>
+      {reasoningDialogOpen ? (
+        <ProviderOptionDialog
+          ariaLabel="GLM reasoning effort"
+          footer={
+            <>
+              <button
+                onClick={() => setReasoningDialogOpen(false)}
+                style={cancelButtonStyles}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  updateSetting("reasoningEffort", selectedReasoning);
+                  setReasoningDialogOpen(false);
+                }}
+                style={saveButtonStyles}
+                type="button"
+              >
+                Save
+              </button>
+            </>
           }
-          style={inputStyles}
-          value={settings?.reasoningEffort ?? "max"}
-        >
-          {GLM_REASONING_EFFORTS.map((effort) => (
-            <option key={effort} value={effort}>
-              {effort}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label style={toggleStyles}>
-        <input
-          checked={thinkingDisplaySyncEnabled}
-          onChange={(event) =>
-            onThinkingDisplaySyncChange?.(event.target.checked)
-          }
-          style={checkboxStyles}
-          type="checkbox"
+          name="glm-reasoning"
+          onCancel={() => setReasoningDialogOpen(false)}
+          onChange={setSelectedReasoning}
+          options={GLM_REASONING_EFFORTS}
+          selectedValue={selectedReasoning}
+          subtitle="Choose how much reasoning effort GLM should apply for new turns."
+          title="GLM 5.2 reasoning"
         />
-        <div>
-          <div style={{ fontSize: "13px", fontWeight: 600 }}>
-            Reasoning in dialog
-          </div>
-          <div style={mutedTextStyles}>
-            Show GLM reasoning as a normal assistant bubble in the dialog.
-          </div>
-        </div>
-      </label>
-      <label style={rowStyles}>
-        <span style={labelStyles}>Z.AI API key</span>
-        <input
-          autoComplete="off"
-          onChange={(event) => updateSetting("apiKey", event.target.value)}
-          placeholder="zai-..."
-          style={inputStyles}
-          type="password"
-          value={settings?.apiKey ?? ""}
-        />
-      </label>
-      <label style={rowStyles}>
-        <span style={labelStyles}>Base URL</span>
-        <input
-          onChange={(event) => updateSetting("baseUrl", event.target.value)}
-          style={inputStyles}
-          type="text"
-          value={settings?.baseUrl ?? ""}
-        />
-      </label>
-      <div style={{ ...rowBaseStyles, ...rowSelectedStyles, border: "none" }}>
-        <div style={modelInfoStyles}>
-          <div style={modelTitleStyles}>GLM 5.2</div>
-          <div style={modelDescriptionStyles}>glm-5.2</div>
-        </div>
-      </div>
-    </SettingsCard>
+      ) : null}
+    </>
   );
 };
 

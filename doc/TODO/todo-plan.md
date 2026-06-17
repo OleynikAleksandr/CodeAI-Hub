@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "3cb3fcd29",
+  "lastRecordedCommit": "172c248ef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream8.task2",
-  "expectedCommitMessage": "chore: build native glm release",
+  "currentTaskId": "phase1.stream9.task1",
+  "expectedCommitMessage": "fix: replace glm reasoning native select",
   "debt": {
-    "expectedCommitMessage": "chore: build native glm release",
-    "preCommitHead": "3cb3fcd29",
+    "expectedCommitMessage": "fix: replace glm reasoning native select",
+    "preCommitHead": "172c248ef",
     "stage": "commit_pending",
-    "taskId": "phase1.stream8.task2"
+    "taskId": "phase1.stream9.task1"
   }
 }
 ```
@@ -97,15 +97,20 @@
 15. [DONE] `phase1.stream8.task1` Prepare release notes for the confirmed native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
 16. [DONE] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: 3cb3fcd29)
 17. [DONE] `phase1.stream8.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
-18. [PENDING] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
+18. [DONE] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: 172c248ef)
+
+### Stream: GLM Settings Crash Fix
+
+19. [DONE] `phase1.stream9.task1` Replace the GLM reasoning native select with the Codex-style custom reasoning dialog to avoid Project Manager/CEF native popup crashes. (scope: `src/client/ui/src/components/settings/glm-native-settings-card.tsx, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `fix: replace glm reasoning native select`)
+20. [PENDING] `phase1.stream9.commit1` Git Commit: `fix: replace glm reasoning native select` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-19. [TODO] `phase1.stream9.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
-20. [TODO] `phase1.stream9.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+21. [TODO] `phase1.stream10.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+22. [TODO] `phase1.stream10.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-21. [TODO] `phase1.stream10.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
-22. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
-23. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+23. [TODO] `phase1.stream11.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+24. [TODO] `phase1.stream11.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+25. [TODO] `phase1.stream11.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
