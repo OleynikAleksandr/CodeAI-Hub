@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.536** (Native GLM Transport Hotfix)
+**Current Release — v1.2.537** (Native GLM Runtime Settings Hotfix)
+
+This hotfix keeps native `GLM` connection settings global and hardens the GLM
+stream retry path. GLM API key and base URL are now stored once in
+`~/.codeai-hub/settings/settings.json` under `providers.glmNative`, while each
+workspace keeps only its model/reasoning display choices.
+
+Native GLM streaming now retries a reset connection if it happens before the
+first useful SSE event, so transient `ECONNRESET` failures before any assistant
+or thinking output do not immediately fail the managed turn.
+
+Retest focus: install the release, open a fresh workspace, confirm Settings ->
+GLM reuses the existing API key without re-entry, then run Description or
+Virtual Simulation through native `GLM` and confirm reasoning, final response
+and token usage appear.
+
+**Previous Release — v1.2.536** (Native GLM Transport Hotfix)
 
 This hotfix aligns the native `GLM` provider with the Z.AI/OpenCode preserved
 thinking contract. Native GLM requests now send `clear_thinking: false` when

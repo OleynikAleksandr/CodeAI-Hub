@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.537] - 2026-06-17
+### Fixed
+- **Native GLM connection settings are now global.** `apiKey` and `baseUrl` are stored in `~/.codeai-hub/settings/settings.json` under `providers.glmNative`, so new workspaces no longer require re-entering the same Z.AI key.
+- **Native GLM stream resets are retried before first output.** If Z.AI closes the SSE connection with a retryable reset before any thinking, assistant text or usage event is emitted, the provider retries the whole stream attempt instead of failing the turn immediately.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/config/provider-settings-snapshot.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- Live native GLM smoke with a large prompt: thinking, assistant text and token usage returned with no provider failure.
+
 ## [1.2.536] - 2026-06-17
 ### Fixed
 - **Native GLM now follows the Z.AI preserved-thinking contract.** Requests send `thinking.clear_thinking: false` when reasoning is enabled and replay assistant `reasoning_content` in later turns, matching the documented Coding Plan/OpenAI-compatible behavior.
