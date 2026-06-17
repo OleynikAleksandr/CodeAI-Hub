@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.538** (Native GLM Live Chunk Hotfix)
+**Current Release — v1.2.539** (Native GLM Workflow Tool Runtime Hotfix)
+
+This hotfix turns native `GLM` managed workflow turns into agent-capable turns.
+Native GLM now receives the CodeAI Hub system instruction plus an
+OpenAI-compatible `write_workflow_artifact` tool, parses streamed tool calls,
+writes canonical `.codeai-hub/...` artifacts safely inside the workspace, and
+continues the turn with `role: "tool"` feedback.
+
+Retest focus: run Description through native `GLM` and confirm the provider
+creates `.codeai-hub/<workspace>/description/Final_Description.md` instead of
+pasting the full artifact body into the assistant reply. Also confirm reasoning,
+assistant streaming and token usage still render normally.
+
+**Previous Release — v1.2.538** (Native GLM Live Chunk Hotfix)
 
 This hotfix fixes native `GLM` dialog streaming presentation. Assistant deltas
 are now emitted as live text so the existing dialog merge path renders one

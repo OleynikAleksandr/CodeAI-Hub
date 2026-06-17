@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.539] - 2026-06-17
+### Fixed
+- **Native GLM managed turns now receive system instructions and workflow tools.** Requests include the CodeAI Hub system prompt, `write_workflow_artifact`, `tool_choice: "auto"` and `tool_stream: true`, so GLM can create canonical `.codeai-hub/...` artifacts instead of pasting them into chat.
+- **Native GLM streamed tool calls are executed and replayed correctly.** The provider accumulates streamed `tool_calls`, writes only safe workspace-relative artifacts, sends `role: "tool"` feedback, and continues the turn.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-adapter-utils.ts packages/GLM_Module/src/provider/glm-native-agent-runtime.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts packages/GLM_Module/src/provider/glm-native-sse-parser.ts packages/GLM_Module/src/provider/glm-native-stream-reader.ts`
+
 ## [1.2.538] - 2026-06-17
 ### Fixed
 - **Native GLM assistant streaming now renders as one growing dialog bubble.** Assistant deltas are emitted with `tag: "live"`, using the existing UI merge path instead of creating one card per SSE frame.

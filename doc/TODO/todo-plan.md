@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "0ab9364d2",
+  "lastRecordedCommit": "13a845670",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream20.task1",
-  "expectedCommitMessage": "fix: add glm native workflow tool runtime",
+  "currentTaskId": "phase1.stream21.task1",
+  "expectedCommitMessage": "docs: prepare native glm workflow tool release",
   "debt": {
-    "expectedCommitMessage": "fix: add glm native workflow tool runtime",
-    "preCommitHead": "0ab9364d2",
+    "expectedCommitMessage": "docs: prepare native glm workflow tool release",
+    "preCommitHead": "13a845670",
     "stage": "commit_pending",
-    "taskId": "phase1.stream20.task1"
+    "taskId": "phase1.stream21.task1"
   }
 }
 ```
@@ -185,20 +185,27 @@
 ### Stream: GLM Native Workflow Tool Runtime
 
 53. [DONE] `phase1.stream20.task1` Add GLM Native system instructions, OpenAI-compatible tool schema, streamed tool-call parsing and a safe `.codeai-hub/...` artifact writer so managed workflow stages can create canonical artifacts instead of pasting them into chat. (scope: `packages/GLM_Module/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: add glm native workflow tool runtime`)
-54. [PENDING] `phase1.stream20.commit1` Git Commit: `fix: add glm native workflow tool runtime` (hash: TBD)
+54. [DONE] `phase1.stream20.commit1` Git Commit: `fix: add glm native workflow tool runtime` (hash: 13a845670)
 
 #### Verification evidence (2026-06-17)
 - `npm run build --workspace=@codeai-hub/glm-module` — passed after adding GLM Native system/tool runtime.
 - `npm test --workspace=@codeai-hub/glm-module` — passed: 13/13, including streamed `tool_calls`, `write_workflow_artifact`, creation of `.codeai-hub/demo/description/Final_Description.md`, and replay of `role: "tool"` into the follow-up request.
 - `npx ultracite check packages/GLM_Module/src/provider/glm-native-adapter-utils.ts packages/GLM_Module/src/provider/glm-native-agent-runtime.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts packages/GLM_Module/src/provider/glm-native-sse-parser.ts packages/GLM_Module/src/provider/glm-native-stream-reader.ts` — passed.
 
+### Stream: Native GLM Workflow Tool Runtime Release
+
+55. [DONE] `phase1.stream21.task1` Prepare release notes for the confirmed native GLM workflow tool runtime hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm workflow tool release`)
+56. [PENDING] `phase1.stream21.commit1` Git Commit: `docs: prepare native glm workflow tool release` (hash: TBD)
+57. [TODO] `phase1.stream21.task2` Build the confirmed native GLM workflow tool runtime hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm workflow tool release`)
+58. [TODO] `phase1.stream21.commit2` Git Commit: `chore: build native glm workflow tool release` (hash: TBD)
+
 ### Stream: User Workflow Acceptance Testing
 
-55. [TODO] `phase1.stream21.task1` Wait for user retest that native `GLM` writes managed artifacts through the workflow tool runtime, streams reasoning/answers coherently, reports token usage, and keeps global GLM settings. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
-56. [TODO] `phase1.stream21.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+59. [TODO] `phase1.stream22.task1` Wait for user retest that native `GLM` writes managed artifacts through the workflow tool runtime, streams reasoning/answers coherently, reports token usage, and keeps global GLM settings after the workflow tool runtime hotfix release. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+60. [TODO] `phase1.stream22.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-57. [TODO] `phase1.stream22.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
-58. [TODO] `phase1.stream22.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
-59. [TODO] `phase1.stream22.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+61. [TODO] `phase1.stream23.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+62. [TODO] `phase1.stream23.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+63. [TODO] `phase1.stream23.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
