@@ -1,3 +1,18 @@
+# Plan Closeout: glm-opencode-provider-2026-06-16
+
+**Created:** 2026-06-17T06:24:03.648Z
+**Acceptance:** User accepted OpenCode wrapper release 1.2.533 and requested a new native GLM provider scope on 2026-06-17.
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/audit-gates-cleanup
+**Current Task:** phase1.stream10.task1
+**Expected Commit:** docs: close glm opencode scope
+**Last Recorded Commit:** 473c19b74
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/GLM_OpenCode_Provider_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/GLM_OpenCode_Provider_Planning_RU.md",
   "currentTaskId": "phase1.stream10.task1",
   "expectedCommitMessage": "docs: close glm opencode scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close glm opencode scope",
-    "preCommitHead": "473c19b74",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream10.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -247,6 +257,7 @@
 
 ### Stream: Scope Closeout
 
-77. [DONE] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
-78. [PENDING] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
+77. [IN_PROGRESS] `phase1.stream10.task1` Close the GLM-OpenCode scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm opencode scope`)
+78. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close glm opencode scope` (hash: TBD)
 79. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
