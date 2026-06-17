@@ -100,6 +100,7 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     );
     assert.equal((events[1] as { content: string }).content, "plan");
     assert.equal((events[2] as { content: string }).content, "OK");
+    assert.equal((events[2] as { tag?: string }).tag, "live");
     assert.deepEqual((events[3] as { data: unknown }).data, {
       cachedTokens: 0,
       completionTokens: 2,
@@ -238,6 +239,60 @@ test("GlmProviderAdapter retries transient transport failures without changing r
   }
 });
 
+test("GlmProviderAdapter buffers thinking chunks and marks assistant deltas live", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (() =>
+    Promise.resolve(
+      createResponse([
+        JSON.stringify({ choices: [{ delta: { reasoning_content: "pla" } }] }),
+        JSON.stringify({ choices: [{ delta: { reasoning_content: "n" } }] }),
+        JSON.stringify({ choices: [{ delta: { content: "O" } }] }),
+        JSON.stringify({ choices: [{ delta: { content: "K" } }] }),
+        "[DONE]",
+      ])
+    )) as typeof fetch;
+
+  try {
+    const adapter = new GlmProviderAdapter({
+      workspace: { apiKey: "test-key" },
+    });
+    await adapter.initialize();
+    const sessionId = await adapter.createSession();
+    const events: Array<{
+      readonly content?: string;
+      readonly tag?: string;
+      readonly type: string;
+    }> = [];
+    adapter.subscribe(sessionId, (event) => {
+      events.push(
+        event as {
+          readonly content?: string;
+          readonly tag?: string;
+          readonly type: string;
+        }
+      );
+    });
+    await adapter.sendMessage(sessionId, "hello");
+
+    assert.deepEqual(
+      events.map((event) => event.type),
+      ["turn_started", "thinking", "assistant", "assistant", "turn_completed"]
+    );
+    assert.equal(events[1]?.content, "plan");
+    assert.deepEqual(
+      events
+        .filter((event) => event.type === "assistant")
+        .map((event) => [event.content, event.tag]),
+      [
+        ["O", "live"],
+        ["K", "live"],
+      ]
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("GlmProviderAdapter retries stream reset before first useful event", async () => {
   const originalFetch = globalThis.fetch;
   let attempts = 0;
@@ -259,11 +314,18 @@ test("GlmProviderAdapter retries stream reset before first useful event", async 
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
-    const events: Array<{ readonly content?: string; readonly type: string }> =
-      [];
+    const events: Array<{
+      readonly content?: string;
+      readonly tag?: string;
+      readonly type: string;
+    }> = [];
     adapter.subscribe(sessionId, (event) => {
       events.push(
-        event as { readonly content?: string; readonly type: string }
+        event as {
+          readonly content?: string;
+          readonly tag?: string;
+          readonly type: string;
+        }
       );
     });
     await adapter.sendMessage(sessionId, "hello");
@@ -274,6 +336,7 @@ test("GlmProviderAdapter retries stream reset before first useful event", async 
       ["turn_started", "assistant", "turn_completed"]
     );
     assert.equal(events[1]?.content, "OK");
+    assert.equal(events[1]?.tag, "live");
   } finally {
     globalThis.fetch = originalFetch;
   }

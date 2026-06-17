@@ -293,6 +293,7 @@ export class GlmProviderAdapter {
               this.emit(options.sessionId, {
                 ...this.buildEvent("assistant"),
                 content,
+                tag: "live",
               }),
             onThinking: (content) =>
               this.emit(options.sessionId, {

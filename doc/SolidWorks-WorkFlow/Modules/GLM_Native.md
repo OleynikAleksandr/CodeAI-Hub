@@ -43,8 +43,8 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 - Failure messages must preserve useful transport details such as `ECONNRESET` or HTTP status so the dialog does not collapse different provider failures into generic `fetch failed`.
 
 ## Event normalization
-- SSE `choices[].delta.reasoning_content` becomes normalized `thinking` events tagged `thinking`.
-- SSE `choices[].delta.content` becomes normalized assistant text.
+- SSE `choices[].delta.reasoning_content` is buffered into readable `thinking` events tagged `thinking`; raw provider micro-chunks must not become one visible line per SSE frame.
+- SSE `choices[].delta.content` becomes normalized assistant live text with `tag: "live"` so the existing dialog merge path renders one growing assistant bubble instead of one card per SSE frame.
 - SSE `usage.prompt_tokens`, `usage.completion_tokens`, and `usage.total_tokens` become provider token usage events with limit `1_000_000`.
 - Usage detail fields such as cached/reasoning tokens are provider diagnostics only unless Core promotes them through a shared token telemetry contract.
 

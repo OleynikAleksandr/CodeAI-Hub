@@ -16,13 +16,35 @@ export interface GlmStreamReadResult {
   readonly reasoningContent: string;
 }
 
+const THINKING_STREAM_FLUSH_MIN_CHARS = 900;
+const THINKING_STREAM_BOUNDARY_MIN_CHARS = 360;
+const THINKING_STREAM_BOUNDARY_REGEX = /(?:\n\n|[.!?。！？]\s*)$/u;
+
+const shouldFlushThinking = (content: string): boolean => {
+  if (content.length >= THINKING_STREAM_FLUSH_MIN_CHARS) {
+    return true;
+  }
+  return (
+    content.length >= THINKING_STREAM_BOUNDARY_MIN_CHARS &&
+    THINKING_STREAM_BOUNDARY_REGEX.test(content.trimEnd())
+  );
+};
+
 export const readGlmStreamResponse = async (
   body: AsyncIterable<Uint8Array>,
   handlers: GlmStreamHandlers
 ): Promise<GlmStreamReadResult> => {
   let assistantContent = "";
   let emittedUsefulEvent = false;
+  let pendingThinking = "";
   let reasoningContent = "";
+  const flushThinking = (): void => {
+    if (pendingThinking.length === 0) {
+      return;
+    }
+    handlers.onThinking(pendingThinking);
+    pendingThinking = "";
+  };
   for await (const data of readSseDataFrames(body)) {
     const chunk = parseGlmSseData(data);
     if (!chunk) {
@@ -31,9 +53,13 @@ export const readGlmStreamResponse = async (
     emittedUsefulEvent = true;
     if (chunk.reasoning) {
       reasoningContent += chunk.reasoning;
-      handlers.onThinking(chunk.reasoning);
+      pendingThinking += chunk.reasoning;
+      if (shouldFlushThinking(pendingThinking)) {
+        flushThinking();
+      }
     }
     if (chunk.content) {
+      flushThinking();
       assistantContent += chunk.content;
       handlers.onAssistant(chunk.content);
     }
@@ -41,5 +67,6 @@ export const readGlmStreamResponse = async (
       handlers.onUsage(chunk.usage);
     }
   }
+  flushThinking();
   return { content: assistantContent, emittedUsefulEvent, reasoningContent };
 };

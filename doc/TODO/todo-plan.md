@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "461afb7cf",
+  "lastRecordedCommit": "1fde3060b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream15.task2",
-  "expectedCommitMessage": "chore: build native glm runtime settings hotfix release",
+  "currentTaskId": "phase1.stream17.task1",
+  "expectedCommitMessage": "fix: aggregate native glm live chunks",
   "debt": {
-    "expectedCommitMessage": "chore: build native glm runtime settings hotfix release",
-    "preCommitHead": "461afb7cf",
+    "expectedCommitMessage": "fix: aggregate native glm live chunks",
+    "preCommitHead": "1fde3060b",
     "stage": "commit_pending",
-    "taskId": "phase1.stream15.task2"
+    "taskId": "phase1.stream17.task1"
   }
 }
 ```
@@ -147,7 +147,7 @@
 39. [DONE] `phase1.stream15.task1` Prepare release notes for the confirmed native GLM runtime settings hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm runtime settings hotfix release`)
 40. [DONE] `phase1.stream15.commit1` Git Commit: `docs: prepare native glm runtime settings hotfix release` (hash: 461afb7cf)
 41. [DONE] `phase1.stream15.task2` Build the confirmed native GLM runtime settings hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm runtime settings hotfix release`)
-42. [PENDING] `phase1.stream15.commit2` Git Commit: `chore: build native glm runtime settings hotfix release` (hash: TBD)
+42. [DONE] `phase1.stream15.commit2` Git Commit: `chore: build native glm runtime settings hotfix release` (hash: 1fde3060b)
 
 #### Release evidence (2026-06-17)
 - `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.537` and copied 10 release artifacts into `doc/tmp/releases/`.
@@ -155,11 +155,24 @@
 
 ### Stream: User Workflow Acceptance Testing
 
-43. [TODO] `phase1.stream16.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager after the runtime settings hotfix release. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+43. [BLOCKED] `phase1.stream16.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager after the runtime settings hotfix release. Retest on 2026-06-17 showed native GLM works, but thinking and assistant deltas are surfaced as raw chunks instead of coherent dialog bubbles. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
 44. [TODO] `phase1.stream16.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native Live Chunk Aggregation Fix
+
+45. [DONE] `phase1.stream17.task1` Buffer native GLM thinking deltas into readable chunks and mark assistant deltas as live so the existing dialog merge path renders one growing answer bubble instead of one card per SSE chunk. (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: aggregate native glm live chunks`)
+46. [PENDING] `phase1.stream17.commit1` Git Commit: `fix: aggregate native glm live chunks` (hash: TBD)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module && npm test --workspace=@codeai-hub/glm-module` — passed: 12/12, including buffered thinking chunks and assistant `tag: "live"` deltas for UI merge.
+
+### Stream: User Workflow Acceptance Testing
+
+47. [TODO] `phase1.stream18.task1` Wait for user retest that native `GLM` streams reasoning and assistant output as coherent dialog bubbles, reports token usage, and keeps global GLM settings. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+48. [TODO] `phase1.stream18.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-45. [TODO] `phase1.stream17.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
-46. [TODO] `phase1.stream17.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
-47. [TODO] `phase1.stream17.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+49. [TODO] `phase1.stream19.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+50. [TODO] `phase1.stream19.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+51. [TODO] `phase1.stream19.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
