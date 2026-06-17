@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "65f6141ff",
+  "lastRecordedCommit": "3cb3fcd29",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream8.task1",
-  "expectedCommitMessage": "docs: prepare native glm release notes",
+  "currentTaskId": "phase1.stream8.task2",
+  "expectedCommitMessage": "chore: build native glm release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare native glm release notes",
-    "preCommitHead": "65f6141ff",
+    "expectedCommitMessage": "chore: build native glm release",
+    "preCommitHead": "3cb3fcd29",
     "stage": "commit_pending",
-    "taskId": "phase1.stream8.task1"
+    "taskId": "phase1.stream8.task2"
   }
 }
 ```
@@ -95,9 +95,9 @@
 ### Stream: Release Build
 
 15. [DONE] `phase1.stream8.task1` Prepare release notes for the confirmed native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
-16. [PENDING] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: TBD)
-17. [TODO] `phase1.stream8.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
-18. [TODO] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
+16. [DONE] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: 3cb3fcd29)
+17. [DONE] `phase1.stream8.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
+18. [PENDING] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
