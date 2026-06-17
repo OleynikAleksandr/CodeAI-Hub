@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "3275abef7",
+  "lastRecordedCommit": "8d76295ac",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream5.task1",
-  "expectedCommitMessage": "feat: package native glm provider",
+  "currentTaskId": "phase1.stream6.task1",
+  "expectedCommitMessage": "docs: record native glm verification",
   "debt": {
-    "expectedCommitMessage": "feat: package native glm provider",
-    "preCommitHead": "3275abef7",
+    "expectedCommitMessage": "docs: record native glm verification",
+    "preCommitHead": "8d76295ac",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5.task1"
+    "taskId": "phase1.stream6.task1"
   }
 }
 ```
@@ -69,12 +69,23 @@
 ### Stream: Packaging And Documentation
 
 9. [DONE] `phase1.stream5.task1` Add native GLM release packaging and module SSOT documentation. (scope: `.vscodeignore, assets/providers/glm-native/**, scripts/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: package native glm provider`)
-10. [PENDING] `phase1.stream5.commit1` Git Commit: `feat: package native glm provider` (hash: TBD)
+10. [DONE] `phase1.stream5.commit1` Git Commit: `feat: package native glm provider` (hash: 8d76295ac)
 
 ### Stream: Verification
 
-11. [TODO] `phase1.stream6.task1` Record targeted builds/tests and live GLM 5.2 smoke evidence for assistant output, reasoning and token usage. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm verification`)
-12. [TODO] `phase1.stream6.commit1` Git Commit: `docs: record native glm verification` (hash: TBD)
+11. [DONE] `phase1.stream6.task1` Record targeted builds/tests and live GLM 5.2 smoke evidence for assistant output, reasoning and token usage. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm verification`)
+12. [PENDING] `phase1.stream6.commit1` Git Commit: `docs: record native glm verification` (hash: TBD)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module` — passed.
+- `npm test --workspace=@codeai-hub/glm-module` — passed earlier in this scope: 5/5 provider/SSE tests.
+- `npm run build --workspace=@codeai-hub/core` — passed after Core registry and packaging changes.
+- `npm run typecheck:webview` — passed after Settings/session UI changes.
+- `npm run build:webview` — passed and regenerated `media/react-chat.js`.
+- `npm run build:project-manager` — passed.
+- `bash -n scripts/build-glm-module.sh scripts/build-all.sh scripts/build-core.sh scripts/build-release.sh scripts/release-utils.sh` — passed.
+- `./scripts/build-glm-module.sh --version 1.2.533` — passed; installed `~/.codeai-hub/providers/glm-native/1.2.533` and updated `assets/providers/glm-native/manifest.json`.
+- Live native GLM smoke via `packages/GLM_Module/dist/index.js` using OpenCode `zai-coding-plan` auth key without printing the secret — passed: model `glm-5.2`, assistant chunks `12`, thinking chunks `52`, token usage events `1`, failure events `0`, assistant preview `GLM_NATIVE_SMOKE_OK This model is glm-5.2.`
 
 ### Stream: Release Build
 
