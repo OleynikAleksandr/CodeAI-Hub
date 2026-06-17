@@ -5,6 +5,7 @@ import { GlmProviderAdapter } from "./glm-native-provider-adapter";
 const encoder = new TextEncoder();
 const HTTP_529_PATTERN = /HTTP 529/u;
 const ECONNRESET_PATTERN = /ECONNRESET/u;
+const NATIVE_GLM_AGENT_PATTERN = /native GLM workflow agent/u;
 
 const createFetchError = (code: string, message: string): Error => {
   const error = new Error("fetch failed") as Error & {
@@ -74,20 +75,35 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     assert.equal(bodies.length, 1);
     const body = JSON.parse(bodies[0] as string) as {
       readonly model: string;
+      readonly messages: Array<{
+        readonly content: string;
+        readonly role: string;
+      }>;
       readonly reasoning_effort: string;
       readonly stream_options: { readonly include_usage: boolean };
       readonly thinking: {
         readonly clear_thinking: boolean;
         readonly type: string;
       };
+      readonly tool_choice: string;
+      readonly tool_stream: boolean;
+      readonly tools: Array<{
+        readonly function: { readonly name: string };
+        readonly type: string;
+      }>;
     };
     assert.equal(body.model, "glm-5.2");
+    assert.equal(body.messages[0]?.role, "system");
+    assert.match(body.messages[0]?.content ?? "", NATIVE_GLM_AGENT_PATTERN);
     assert.equal(body.reasoning_effort, "max");
     assert.deepEqual(body.stream_options, { include_usage: true });
     assert.deepEqual(body.thinking, {
       clear_thinking: false,
       type: "enabled",
     });
+    assert.equal(body.tool_choice, "auto");
+    assert.equal(body.tool_stream, true);
+    assert.equal(body.tools[0]?.function.name, "write_workflow_artifact");
     assert.deepEqual(
       events.map((event) => (event as { type: string }).type),
       [
@@ -180,7 +196,8 @@ test("GlmProviderAdapter replays assistant reasoning_content in later turns", as
         readonly role: string;
       }>;
     };
-    assert.deepEqual(secondBody.messages.slice(0, 3), [
+    assert.equal(secondBody.messages[0]?.role, "system");
+    assert.deepEqual(secondBody.messages.slice(1, 4), [
       { role: "user", content: "first" },
       { role: "assistant", content: "done", reasoning_content: "think" },
       { role: "user", content: "second" },

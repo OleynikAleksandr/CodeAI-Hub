@@ -9,6 +9,7 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 - Provider package: `packages/GLM_Module/`
 - Public Core-facing facade: `packages/GLM_Module/src/provider/glm-native-provider-adapter.ts`
 - Runtime profile: `packages/GLM_Module/src/provider/glm-native-runtime-profile.ts`
+- Agent runtime helpers: `packages/GLM_Module/src/provider/glm-native-agent-runtime.ts`
 - SSE parser: `packages/GLM_Module/src/provider/glm-native-sse-parser.ts`
 - Public module export: `packages/GLM_Module/src/index.ts`
 
@@ -29,14 +30,18 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 - The API key must not be logged, committed, copied into artifacts, or written into repository-tracked files.
 
 ## Session lifecycle
-- One Core send maps to one streaming Chat Completions request.
+- One Core send maps to one or more streaming Chat Completions requests when the model calls workflow tools.
 - The adapter keeps an in-memory session message list for the active Core provider session.
+- The adapter prepends a GLM Native system message to every request. The system message is owned by the provider module and tells the model to use Core-owned workflow tools for managed artifacts instead of pasting full artifact bodies into chat.
 - Assistant turns keep both user-visible `content` and provider `reasoning_content`; later requests replay `reasoning_content` unchanged in assistant messages for Z.AI/OpenAI-compatible preserved-thinking continuity.
+- Tool-call turns persist assistant `tool_calls` and matching `role: "tool"` results in the session history so later requests preserve the actual agent loop.
 - `closeSession` aborts in-flight requests and removes local session state so Stop can unblock the dialog.
 - Every send must finish with `turn_completed` or `turn_failed`.
 
 ## Request and reasoning contract
 - Native GLM uses the same Z.AI Coding Plan endpoint shape as OpenCode: `stream: true`, `thinking.type: "enabled"` and `thinking.clear_thinking: false` when reasoning is enabled.
+- Native GLM sends OpenAI-compatible `messages` with a dedicated `system` role, `tools`, `tool_choice: "auto"` and `tool_stream: true`.
+- The current native tool surface is intentionally narrow: `write_workflow_artifact(relative_path, content)`. It writes only workspace-relative paths under `.codeai-hub/...`, creates parent directories, and returns a JSON tool result. It is the required path for Description, Virtual Simulation, Diagram Modules, Application Skeleton and later managed workflow artifacts.
 - When reasoning is disabled, the request sends `thinking.type: "disabled"` and omits `reasoning_effort`.
 - User-facing reasoning effort choices are only `max` and `high`. Legacy saved values are normalized: `xhigh` maps to `max`, `medium`/`low` map to `high`, and `minimal`/`none` disable thinking.
 - The provider may retry transient transport/opening failures, retryable HTTP statuses, and interrupted SSE streams that fail before the first useful reasoning/content/usage event. It must not silently downgrade the model, disable reasoning, or switch to non-streaming mode.
@@ -45,6 +50,7 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 ## Event normalization
 - SSE `choices[].delta.reasoning_content` is buffered into readable `thinking` events tagged `thinking`; raw provider micro-chunks must not become one visible line per SSE frame.
 - SSE `choices[].delta.content` becomes normalized assistant live text with `tag: "live"` so the existing dialog merge path renders one growing assistant bubble instead of one card per SSE frame.
+- SSE `choices[].delta.tool_calls` is accumulated by streamed tool-call index into complete function call ids, names and JSON arguments before execution.
 - SSE `usage.prompt_tokens`, `usage.completion_tokens`, and `usage.total_tokens` become provider token usage events with limit `1_000_000`.
 - Usage detail fields such as cached/reasoning tokens are provider diagnostics only unless Core promotes them through a shared token telemetry contract.
 

@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "ae1337a04",
+  "lastRecordedCommit": "0ab9364d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream18.task2",
-  "expectedCommitMessage": "chore: build native glm live chunk release",
+  "currentTaskId": "phase1.stream20.task1",
+  "expectedCommitMessage": "fix: add glm native workflow tool runtime",
   "debt": {
-    "expectedCommitMessage": "chore: build native glm live chunk release",
-    "preCommitHead": "ae1337a04",
+    "expectedCommitMessage": "fix: add glm native workflow tool runtime",
+    "preCommitHead": "0ab9364d2",
     "stage": "commit_pending",
-    "taskId": "phase1.stream18.task2"
+    "taskId": "phase1.stream20.task1"
   }
 }
 ```
@@ -171,7 +171,7 @@
 47. [DONE] `phase1.stream18.task1` Prepare release notes for the confirmed native GLM live chunk aggregation hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm live chunk release`)
 48. [DONE] `phase1.stream18.commit1` Git Commit: `docs: prepare native glm live chunk release` (hash: ae1337a04)
 49. [DONE] `phase1.stream18.task2` Build the confirmed native GLM live chunk aggregation hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm live chunk release`)
-50. [PENDING] `phase1.stream18.commit2` Git Commit: `chore: build native glm live chunk release` (hash: TBD)
+50. [DONE] `phase1.stream18.commit2` Git Commit: `chore: build native glm live chunk release` (hash: 0ab9364d2)
 
 #### Release evidence (2026-06-17)
 - `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.538` and copied release artifacts into `doc/tmp/releases/`.
@@ -179,11 +179,26 @@
 
 ### Stream: User Workflow Acceptance Testing
 
-51. [TODO] `phase1.stream19.task1` Wait for user retest that native `GLM` streams reasoning and assistant output as coherent dialog bubbles, reports token usage, and keeps global GLM settings after the live chunk hotfix release. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+51. [BLOCKED] `phase1.stream19.task1` Wait for user retest that native `GLM` streams reasoning and assistant output as coherent dialog bubbles, reports token usage, and keeps global GLM settings after the live chunk hotfix release. Retest on 2026-06-17 showed streaming is fixed, but GLM Native still behaves as plain chat completion without system/tool runtime: it generated `Final_Description.md` in chat instead of writing the canonical artifact. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
 52. [TODO] `phase1.stream19.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native Workflow Tool Runtime
+
+53. [DONE] `phase1.stream20.task1` Add GLM Native system instructions, OpenAI-compatible tool schema, streamed tool-call parsing and a safe `.codeai-hub/...` artifact writer so managed workflow stages can create canonical artifacts instead of pasting them into chat. (scope: `packages/GLM_Module/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: add glm native workflow tool runtime`)
+54. [PENDING] `phase1.stream20.commit1` Git Commit: `fix: add glm native workflow tool runtime` (hash: TBD)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module` — passed after adding GLM Native system/tool runtime.
+- `npm test --workspace=@codeai-hub/glm-module` — passed: 13/13, including streamed `tool_calls`, `write_workflow_artifact`, creation of `.codeai-hub/demo/description/Final_Description.md`, and replay of `role: "tool"` into the follow-up request.
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-adapter-utils.ts packages/GLM_Module/src/provider/glm-native-agent-runtime.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts packages/GLM_Module/src/provider/glm-native-sse-parser.ts packages/GLM_Module/src/provider/glm-native-stream-reader.ts` — passed.
+
+### Stream: User Workflow Acceptance Testing
+
+55. [TODO] `phase1.stream21.task1` Wait for user retest that native `GLM` writes managed artifacts through the workflow tool runtime, streams reasoning/answers coherently, reports token usage, and keeps global GLM settings. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+56. [TODO] `phase1.stream21.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-53. [TODO] `phase1.stream20.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
-54. [TODO] `phase1.stream20.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
-55. [TODO] `phase1.stream20.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+57. [TODO] `phase1.stream22.task1` Close the native GLM provider scope after user acceptance and archive/update planning documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close native glm scope`)
+58. [TODO] `phase1.stream22.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+59. [TODO] `phase1.stream22.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

@@ -1,5 +1,7 @@
 import {
   type GlmTokenUsage,
+  type GlmToolCall,
+  type GlmToolCallDelta,
   parseGlmSseData,
   readSseDataFrames,
 } from "./glm-native-sse-parser";
@@ -14,6 +16,7 @@ export interface GlmStreamReadResult {
   readonly content: string;
   readonly emittedUsefulEvent: boolean;
   readonly reasoningContent: string;
+  readonly toolCalls: readonly GlmToolCall[];
 }
 
 const THINKING_STREAM_FLUSH_MIN_CHARS = 900;
@@ -30,6 +33,47 @@ const shouldFlushThinking = (content: string): boolean => {
   );
 };
 
+const applyToolCallDelta = (
+  calls: Map<
+    number,
+    {
+      arguments: string;
+      id?: string;
+      name?: string;
+      type?: string;
+    }
+  >,
+  delta: GlmToolCallDelta
+): void => {
+  const current = calls.get(delta.index) ?? { arguments: "" };
+  calls.set(delta.index, {
+    arguments: current.arguments + (delta.function?.arguments ?? ""),
+    id: delta.id ?? current.id,
+    name: delta.function?.name ?? current.name,
+    type: delta.type ?? current.type,
+  });
+};
+
+const buildToolCalls = (
+  calls: Map<number, { arguments: string; id?: string; name?: string }>
+): readonly GlmToolCall[] =>
+  [...calls.entries()]
+    .sort(([left], [right]) => left - right)
+    .flatMap(([index, call]) =>
+      call.name
+        ? [
+            {
+              function: {
+                arguments: call.arguments,
+                name: call.name,
+              },
+              id: call.id ?? `call_${index}`,
+              type: "function" as const,
+            },
+          ]
+        : []
+    );
+
 export const readGlmStreamResponse = async (
   body: AsyncIterable<Uint8Array>,
   handlers: GlmStreamHandlers
@@ -38,6 +82,10 @@ export const readGlmStreamResponse = async (
   let emittedUsefulEvent = false;
   let pendingThinking = "";
   let reasoningContent = "";
+  const toolCalls = new Map<
+    number,
+    { arguments: string; id?: string; name?: string }
+  >();
   const flushThinking = (): void => {
     if (pendingThinking.length === 0) {
       return;
@@ -63,10 +111,19 @@ export const readGlmStreamResponse = async (
       assistantContent += chunk.content;
       handlers.onAssistant(chunk.content);
     }
+    for (const toolCallDelta of chunk.toolCallDeltas ?? []) {
+      flushThinking();
+      applyToolCallDelta(toolCalls, toolCallDelta);
+    }
     if (chunk.usage) {
       handlers.onUsage(chunk.usage);
     }
   }
   flushThinking();
-  return { content: assistantContent, emittedUsefulEvent, reasoningContent };
+  return {
+    content: assistantContent,
+    emittedUsefulEvent,
+    reasoningContent,
+    toolCalls: buildToolCalls(toolCalls),
+  };
 };

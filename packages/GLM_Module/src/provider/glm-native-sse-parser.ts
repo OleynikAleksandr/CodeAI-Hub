@@ -9,7 +9,27 @@ export interface GlmTokenUsage {
 export interface GlmStreamChunk {
   readonly content?: string;
   readonly reasoning?: string;
+  readonly toolCallDeltas?: readonly GlmToolCallDelta[];
   readonly usage?: GlmTokenUsage;
+}
+
+export interface GlmToolCall {
+  readonly function: {
+    readonly arguments: string;
+    readonly name: string;
+  };
+  readonly id: string;
+  readonly type: "function";
+}
+
+export interface GlmToolCallDelta {
+  readonly function?: {
+    readonly arguments?: string;
+    readonly name?: string;
+  };
+  readonly id?: string;
+  readonly index: number;
+  readonly type?: string;
 }
 
 const FRAME_LINE_PATTERN = /\r?\n/u;
@@ -19,6 +39,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.length > 0 ? value : null;
+
+const readMaybeString = (value: unknown): string | undefined =>
+  typeof value === "string" ? value : undefined;
 
 const readNumber = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) && value >= 0
@@ -56,6 +79,45 @@ export const parseGlmUsage = (value: unknown): GlmTokenUsage | null => {
   };
 };
 
+const parseGlmToolCallDeltas = (
+  value: unknown
+): readonly GlmToolCallDelta[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  const deltas: GlmToolCallDelta[] = [];
+  for (const item of value) {
+    if (!isRecord(item)) {
+      continue;
+    }
+    const index = readNumber(item.index);
+    if (index === null) {
+      continue;
+    }
+    const fn = isRecord(item.function) ? item.function : null;
+    const argumentsDelta = readMaybeString(fn?.arguments);
+    const functionName = readString(fn?.name);
+    const id = readString(item.id);
+    const type = readString(item.type);
+    deltas.push({
+      ...(fn
+        ? {
+            function: {
+              ...(argumentsDelta === undefined
+                ? {}
+                : { arguments: argumentsDelta }),
+              ...(functionName ? { name: functionName } : {}),
+            },
+          }
+        : {}),
+      ...(id ? { id } : {}),
+      index,
+      ...(type ? { type } : {}),
+    });
+  }
+  return deltas;
+};
+
 export const parseGlmSseData = (data: string): GlmStreamChunk | null => {
   const trimmed = data.trim();
   if (trimmed.length === 0 || trimmed === "[DONE]") {
@@ -70,13 +132,15 @@ export const parseGlmSseData = (data: string): GlmStreamChunk | null => {
   const delta = isRecord(firstChoice?.delta) ? firstChoice.delta : null;
   const reasoning = readString(delta?.reasoning_content);
   const content = readString(delta?.content);
+  const toolCallDeltas = parseGlmToolCallDeltas(delta?.tool_calls);
   const usage = parseGlmUsage(parsed.usage);
-  if (!(reasoning || content || usage)) {
+  if (!(reasoning || content || toolCallDeltas.length > 0 || usage)) {
     return null;
   }
   return {
     ...(content ? { content } : {}),
     ...(reasoning ? { reasoning } : {}),
+    ...(toolCallDeltas.length > 0 ? { toolCallDeltas } : {}),
     ...(usage ? { usage } : {}),
   };
 };

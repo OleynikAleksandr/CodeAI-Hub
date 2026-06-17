@@ -1,5 +1,21 @@
 import { randomUUID } from "node:crypto";
 import {
+  buildGlmFailureMessage,
+  type GlmRequestFailure,
+  isRetryableGlmFailure,
+  readAppliedTurnConfigModel,
+  readAppliedTurnConfigReasoning,
+  readAppliedTurnConfigThinkingEnabled,
+} from "./glm-native-adapter-utils";
+import {
+  buildGlmNativeAssistantToolMessage,
+  buildGlmNativeSystemMessage,
+  executeGlmNativeToolCall,
+  GLM_NATIVE_MAX_TOOL_STEPS,
+  GLM_NATIVE_WORKFLOW_TOOLS,
+  type GlmSessionMessage,
+} from "./glm-native-agent-runtime";
+import {
   buildGlmRuntimeProfile,
   ensureGlmRuntimeProfile,
   GLM_CONTEXT_WINDOW_TOKEN_LIMIT,
@@ -50,97 +66,12 @@ interface GlmSessionState {
   readonly workspacePath?: string;
 }
 
-interface GlmSessionMessage {
-  readonly content: string;
-  readonly reasoning_content?: string;
-  readonly role: string;
-}
-
 interface GlmAssistantTurn {
-  readonly content: string;
-  readonly reasoningContent: string;
-}
-
-interface GlmRequestFailure extends Error {
-  code?: string;
-  status?: number;
+  readonly messages: readonly GlmSessionMessage[];
 }
 
 const GLM_MAX_REQUEST_ATTEMPTS = 3;
 const GLM_RETRY_DELAY_MS = 750;
-const RETRYABLE_ERROR_CODES = new Set([
-  "ECONNRESET",
-  "ECONNREFUSED",
-  "ETIMEDOUT",
-  "UND_ERR_CONNECT_TIMEOUT",
-  "UND_ERR_SOCKET",
-]);
-const RETRYABLE_HTTP_STATUSES = new Set([429, 500, 502, 503, 504, 529]);
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const readString = (value: unknown): string | null =>
-  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-
-const readNumber = (value: unknown): number | null =>
-  typeof value === "number" && Number.isFinite(value) ? value : null;
-
-const readErrorCause = (error: Error): unknown =>
-  (error as Error & { readonly cause?: unknown }).cause;
-
-const readAppliedTurnConfig = (
-  turnOptions?: Record<string, unknown>
-): Record<string, unknown> | null =>
-  isRecord(turnOptions?.appliedTurnConfig)
-    ? turnOptions.appliedTurnConfig
-    : null;
-
-const readAppliedTurnConfigModel = (
-  turnOptions?: Record<string, unknown>
-): string | null => {
-  const applied = readAppliedTurnConfig(turnOptions);
-  return (
-    readString(applied?.baseModelId) ??
-    readString(applied?.modelId) ??
-    readString(applied?.effectiveModelId) ??
-    readString(turnOptions?.selectedModelId)
-  );
-};
-
-const readAppliedTurnConfigReasoning = (
-  turnOptions?: Record<string, unknown>
-): string | null => {
-  const applied = readAppliedTurnConfig(turnOptions);
-  return readString(applied?.reasoningEffort);
-};
-
-const readAppliedTurnConfigThinkingEnabled = (
-  turnOptions?: Record<string, unknown>
-): boolean | null => {
-  const applied = readAppliedTurnConfig(turnOptions);
-  return typeof applied?.thinkingEnabled === "boolean"
-    ? applied.thinkingEnabled
-    : null;
-};
-
-const buildGlmFailureMessage = (error: unknown): string => {
-  if (error instanceof Error && error.name === "AbortError") {
-    return "GLM request was stopped.";
-  }
-  if (error instanceof Error) {
-    const causeValue = readErrorCause(error);
-    const cause = isRecord(causeValue) ? causeValue : null;
-    const causeCode = readString(cause?.code);
-    const causeMessage = readString(cause?.message);
-    if (causeCode || causeMessage) {
-      return `${error.message} (${[causeCode, causeMessage].filter(Boolean).join(": ")})`;
-    }
-    const status = readNumber((error as GlmRequestFailure).status);
-    return status ? `${error.message} (HTTP ${status})` : error.message;
-  }
-  return String(error);
-};
 
 const delay = (milliseconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -236,16 +167,7 @@ export class GlmProviderAdapter {
         sessionId,
         userContent,
       });
-      session.messages.push({ role: "user", content: userContent });
-      if (assistantTurn.content.trim().length > 0) {
-        session.messages.push({
-          role: "assistant",
-          content: assistantTurn.content,
-          ...(assistantTurn.reasoningContent.trim().length > 0
-            ? { reasoning_content: assistantTurn.reasoningContent }
-            : {}),
-        });
-      }
+      session.messages.push(...assistantTurn.messages);
       this.emit(sessionId, this.buildEvent("turn_completed"));
     } catch (error) {
       this.emit(sessionId, {
@@ -274,6 +196,48 @@ export class GlmProviderAdapter {
     readonly sessionId: string;
     readonly userContent: string;
   }): Promise<GlmAssistantTurn> {
+    const turnMessages: GlmSessionMessage[] = [
+      { role: "user", content: options.userContent },
+    ];
+    for (let step = 1; step <= GLM_NATIVE_MAX_TOOL_STEPS; step += 1) {
+      const result = await this.streamRequest({
+        abortController: options.abortController,
+        messages: [...options.session.messages, ...turnMessages],
+        profile: options.profile,
+        sessionId: options.sessionId,
+      });
+      if (result.toolCalls.length === 0) {
+        if (result.content.trim().length > 0) {
+          turnMessages.push({
+            content: result.content,
+            ...(result.reasoningContent.trim().length > 0
+              ? { reasoning_content: result.reasoningContent }
+              : {}),
+            role: "assistant",
+          });
+        }
+        return { messages: turnMessages };
+      }
+      const assistantToolMessage = buildGlmNativeAssistantToolMessage(result);
+      turnMessages.push(assistantToolMessage);
+      for (const toolCall of assistantToolMessage.tool_calls ?? []) {
+        turnMessages.push(
+          await executeGlmNativeToolCall(
+            toolCall,
+            options.session.workspacePath
+          )
+        );
+      }
+    }
+    throw new Error("GLM workflow tool loop exceeded the maximum step count.");
+  }
+
+  private async streamRequest(options: {
+    readonly abortController: AbortController;
+    readonly messages: readonly GlmSessionMessage[];
+    readonly profile: GlmRuntimeProfile;
+    readonly sessionId: string;
+  }) {
     const requestBody = this.buildRequestBody(options);
     for (let attempt = 1; attempt <= GLM_MAX_REQUEST_ATTEMPTS; attempt += 1) {
       let emittedUsefulEvent = false;
@@ -311,7 +275,7 @@ export class GlmProviderAdapter {
           emittedUsefulEvent ||
           attempt >= GLM_MAX_REQUEST_ATTEMPTS ||
           options.abortController.signal.aborted ||
-          !this.isRetryableGlmFailure(error)
+          !isRetryableGlmFailure(error)
         ) {
           throw error;
         }
@@ -327,15 +291,14 @@ export class GlmProviderAdapter {
   }
 
   private buildRequestBody(options: {
+    readonly messages: readonly GlmSessionMessage[];
     readonly profile: GlmRuntimeProfile;
-    readonly session: GlmSessionState;
-    readonly userContent: string;
   }): Record<string, unknown> {
     const body: Record<string, unknown> = {
       model: options.profile.model,
       messages: [
-        ...options.session.messages,
-        { role: "user", content: options.userContent },
+        buildGlmNativeSystemMessage(options.profile),
+        ...options.messages,
       ],
       stream: true,
       stream_options: { include_usage: true },
@@ -343,6 +306,9 @@ export class GlmProviderAdapter {
         type: options.profile.thinkingEnabled ? "enabled" : "disabled",
         ...(options.profile.thinkingEnabled ? { clear_thinking: false } : {}),
       },
+      tool_choice: "auto",
+      tool_stream: true,
+      tools: GLM_NATIVE_WORKFLOW_TOOLS,
     };
     if (options.profile.thinkingEnabled) {
       body.reasoning_effort = options.profile.reasoningEffort;
@@ -374,7 +340,7 @@ export class GlmProviderAdapter {
         if (
           attempt >= GLM_MAX_REQUEST_ATTEMPTS ||
           options.abortController.signal.aborted ||
-          !this.isRetryableGlmFailure(error)
+          !isRetryableGlmFailure(error)
         ) {
           throw error;
         }
@@ -449,23 +415,6 @@ export class GlmProviderAdapter {
     ) as GlmRequestFailure;
     error.status = response.status;
     return error;
-  }
-
-  private isRetryableGlmFailure(error: unknown): boolean {
-    if (!(error instanceof Error)) {
-      return false;
-    }
-    const failure = error as GlmRequestFailure;
-    if (
-      typeof failure.status === "number" &&
-      RETRYABLE_HTTP_STATUSES.has(failure.status)
-    ) {
-      return true;
-    }
-    const causeValue = readErrorCause(error);
-    const cause = isRecord(causeValue) ? causeValue : null;
-    const code = readString(failure.code) ?? readString(cause?.code);
-    return Boolean(code && RETRYABLE_ERROR_CODES.has(code));
   }
 
   private buildEvent(type: string): GlmSessionEvent {
