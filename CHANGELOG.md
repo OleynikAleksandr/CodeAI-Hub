@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.535] - 2026-06-17
+### Fixed
+- **GLM Settings reasoning changes no longer crash Project Manager.** The GLM reasoning level control now follows the Codex/Gemini custom React dialog pattern instead of using a native `<select>` popup, avoiding the macOS CEF `NSApplication unrecognized selector` crash path.
+
+### Verification
+- `npx ultracite check src/client/ui/src/components/settings/glm-native-settings-card.tsx doc/TODO/todo-plan.md`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.534] - 2026-06-17
 ### Added
 - **Native `GLM` provider for GLM 5.2.** CodeAI Hub can now run GLM 5.2 directly through the Z.AI Coding Chat Completions API, streaming assistant text, reasoning chunks and token usage without OpenCode or Claude in the provider path.

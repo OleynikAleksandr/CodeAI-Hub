@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.534** (Native GLM Provider Release)
+**Current Release — v1.2.535** (GLM Settings Crash Hotfix)
+
+This hotfix removes the native macOS/CEF select control from the GLM Settings
+reasoning level picker. GLM now uses the same custom React reasoning dialog
+pattern as Codex and Gemini, so changing reasoning from `max` to another level
+does not open a native popup inside Project Manager.
+
+Retest focus: open Settings -> GLM, click `Configure reasoning`, change from
+`max` to another level, save it, close/reopen Settings, and confirm Project
+Manager does not crash.
+
+**Previous Release — v1.2.534** (Native GLM Provider Release)
 
 This release adds a native `GLM` provider backed directly by the Z.AI GLM 5.2
 Coding Chat Completions API. The provider streams assistant text, reasoning and
