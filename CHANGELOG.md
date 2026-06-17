@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.538] - 2026-06-17
+### Fixed
+- **Native GLM assistant streaming now renders as one growing dialog bubble.** Assistant deltas are emitted with `tag: "live"`, using the existing UI merge path instead of creating one card per SSE frame.
+- **Native GLM reasoning chunks are buffered into readable thinking blocks.** Provider micro-frames are accumulated to paragraph/size boundaries before becoming visible `thinking` messages, avoiding one artificial line per raw chunk.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+
 ## [1.2.537] - 2026-06-17
 ### Fixed
 - **Native GLM connection settings are now global.** `apiKey` and `baseUrl` are stored in `~/.codeai-hub/settings/settings.json` under `providers.glmNative`, so new workspaces no longer require re-entering the same Z.AI key.

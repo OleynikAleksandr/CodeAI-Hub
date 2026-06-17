@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.537** (Native GLM Runtime Settings Hotfix)
+**Current Release — v1.2.538** (Native GLM Live Chunk Hotfix)
+
+This hotfix fixes native `GLM` dialog streaming presentation. Assistant deltas
+are now emitted as live text so the existing dialog merge path renders one
+growing answer bubble instead of one card per SSE chunk. GLM reasoning deltas
+are buffered into readable thinking chunks instead of becoming one visible line
+per provider micro-frame.
+
+Retest focus: run Description or Virtual Simulation through native `GLM` with
+reasoning display enabled. Confirm reasoning appears progressively as readable
+blocks, the final answer grows in one assistant card, token usage updates, and
+the global GLM API key remains available in a fresh workspace.
+
+**Previous Release — v1.2.537** (Native GLM Runtime Settings Hotfix)
 
 This hotfix keeps native `GLM` connection settings global and hardens the GLM
 stream retry path. GLM API key and base URL are now stored once in
