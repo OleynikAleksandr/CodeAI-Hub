@@ -2,12 +2,14 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { CodexProviderAdapter as BundledCodexProviderAdapter } from "@codeai-hub/codex-app-server-module";
+import type { GlmProviderAdapter as BundledGlmProviderAdapter } from "@codeai-hub/glm-module";
 import type { GlmOpenCodeProviderAdapter as BundledGlmOpenCodeProviderAdapter } from "@codeai-hub/glm-opencode-module";
 import type { Logger } from "../telemetry/logger";
 import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
+  GlmAdapterCtor,
   GlmOpenCodeAdapterCtor,
 } from "./provider-module-loader.types";
 
@@ -205,6 +207,35 @@ export const loadGlmOpenCodeAdapterCtor = (
     readonly GlmOpenCodeProviderAdapter: typeof BundledGlmOpenCodeProviderAdapter;
   };
   return bundled.GlmOpenCodeProviderAdapter as GlmOpenCodeAdapterCtor;
+};
+
+export const loadGlmAdapterCtor = (
+  overridePath: string | undefined,
+  logger: Logger
+): GlmAdapterCtor => {
+  if (overridePath) {
+    try {
+      const overrideEntry = path.join(overridePath, "dist", "index.js");
+      const loaded = dynamicRequire(overrideEntry) as {
+        readonly GlmProviderAdapter?: GlmAdapterCtor;
+      };
+      if (loaded?.GlmProviderAdapter) {
+        logger.info("Loaded GLM module from override path", { overridePath });
+        return loaded.GlmProviderAdapter;
+      }
+      logger.warn("Override path missing GlmProviderAdapter export", {
+        overridePath,
+      });
+    } catch (error) {
+      logger.error("Failed to load GLM module override", error as Error, {
+        overridePath,
+      });
+    }
+  }
+  const bundled = dynamicRequire("@codeai-hub/glm-module") as {
+    readonly GlmProviderAdapter: typeof BundledGlmProviderAdapter;
+  };
+  return bundled.GlmProviderAdapter as GlmAdapterCtor;
 };
 
 export const loadGeminiAdapterCtor = async (

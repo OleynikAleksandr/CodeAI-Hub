@@ -13,6 +13,7 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
+  GlmAdapterCtor,
   GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
   ProviderAdapter,
@@ -30,6 +31,7 @@ interface ProviderDescriptorFactoryOptions {
   readonly codexAdapterCtor: CodexAdapterCtor;
   readonly config: CoreConfig;
   readonly createReporter: (scope: string) => ModuleReporter;
+  readonly glmAdapterCtor: GlmAdapterCtor;
   readonly glmOpenCodeAdapterCtor: GlmOpenCodeAdapterCtor;
   readonly handleAdapterConstructionFailure: (
     descriptor: MutableProviderDescriptor,
@@ -108,6 +110,12 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
+  glmNative: {
+    acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
+    syncsLabelFromAppliedConfig: true,
+  },
   localModels: {
     acceptsAppliedTurnConfig: true,
     appliedConfigIdentityKey: "effective_model_id",
@@ -128,6 +136,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   claudeCodeCli: false,
   codexCli: false,
   geminiCli: true,
+  glmNative: true,
   kimiCode: true,
   glmOpenCode: true,
   localModels: true,
@@ -235,6 +244,24 @@ export const createGlmOpenCodeAdapterInstance = (
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
     },
     reporter: options.createReporter("opencode"),
+  });
+};
+
+export const createGlmAdapterInstance = (
+  options: Pick<
+    ProviderDescriptorFactoryOptions,
+    "config" | "createReporter" | "glmAdapterCtor"
+  >
+): ProviderAdapter => {
+  const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
+  return new options.glmAdapterCtor({
+    workspace: {
+      defaultModel: "glm-5.2",
+      providerHomePath: capsule.providerHomes["glm-native"].absolutePath,
+      settingsPath: capsule.settingsFile.absolutePath,
+      workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
+    },
+    reporter: options.createReporter("glm"),
   });
 };
 
@@ -347,6 +374,30 @@ const buildGlmOpenCodeDescriptor = (
   return descriptor;
 };
 
+const buildGlmDescriptor = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor => {
+  const descriptor: MutableProviderDescriptor = {
+    capabilities: {
+      modelSync: resolveProviderModelSyncCapabilities("glmNative"),
+      requiresPostStopResume: false,
+      supportsImmediateBinding:
+        resolveProviderImmediateBindingCapability("glmNative"),
+    },
+    id: "glmNative",
+    name: "GLM",
+    description: "Uses the native Z.AI GLM API",
+    status: "active",
+  };
+  tryAttachAdapter(
+    () => createGlmAdapterInstance(options),
+    descriptor,
+    "GLM native API components are unavailable.",
+    options.handleAdapterConstructionFailure
+  );
+  return descriptor;
+};
+
 const buildLocalModelsDescriptor = (): ProviderDescriptor => ({
   adapter: new LocalModelsProviderAdapter(),
   capabilities: {
@@ -368,6 +419,7 @@ export const createProviderDescriptors = (
   buildCodexDescriptor(options),
   buildGeminiDescriptor(),
   buildKimiDescriptor(options),
+  buildGlmDescriptor(options),
   buildGlmOpenCodeDescriptor(options),
   buildLocalModelsDescriptor(),
 ];

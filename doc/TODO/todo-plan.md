@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "f52682d33",
+  "lastRecordedCommit": "50484161c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "feat: add native glm provider module",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "feat: register native glm provider",
   "debt": {
-    "expectedCommitMessage": "feat: add native glm provider module",
-    "preCommitHead": "f52682d33",
+    "expectedCommitMessage": "feat: register native glm provider",
+    "preCommitHead": "50484161c",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream3.task1"
   }
 }
 ```
@@ -54,12 +54,12 @@
 ### Stream: Provider Runtime
 
 3. [DONE] `phase1.stream2.task1` Add the dedicated GLM provider package with native fetch/SSE runtime, reasoning/content normalization, token usage mapping and focused tests. (scope: `packages/GLM_Module/**, package.json, package-lock.json`; expected commit: `feat: add native glm provider module`)
-4. [PENDING] `phase1.stream2.commit1` Git Commit: `feat: add native glm provider module` (hash: TBD)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `feat: add native glm provider module` (hash: 50484161c)
 
 ### Stream: Core Registry
 
-5. [TODO] `phase1.stream3.task1` Register `glmNative` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure recovery. (scope: `packages/core/src/provider-registry/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: register native glm provider`)
-6. [TODO] `phase1.stream3.commit1` Git Commit: `feat: register native glm provider` (hash: TBD)
+5. [DONE] `phase1.stream3.task1` Register `glmNative` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure recovery. (scope: `packages/core/package.json, package-lock.json, packages/core/src/provider-registry/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: register native glm provider`)
+6. [PENDING] `phase1.stream3.commit1` Git Commit: `feat: register native glm provider` (hash: TBD)
 
 ### Stream: Settings And Selection Surfaces
 

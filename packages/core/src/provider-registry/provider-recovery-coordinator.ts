@@ -13,6 +13,7 @@ interface ProviderRecoveryCoordinatorOptions {
   readonly clearRetry: (providerId: string) => void;
   readonly createClaudeAdapter: () => ProviderAdapter;
   readonly createCodexAdapter: () => ProviderAdapter;
+  readonly createGlmAdapter: () => ProviderAdapter;
   readonly createGlmOpenCodeAdapter: () => ProviderAdapter;
   readonly createKimiAdapter: () => ProviderAdapter;
   readonly emitStatus: (
@@ -170,6 +171,8 @@ export class ProviderRecoveryCoordinator {
         return this.options.createClaudeAdapter();
       case "kimiCode":
         return this.options.createKimiAdapter();
+      case "glmNative":
+        return this.options.createGlmAdapter();
       case "glmOpenCode":
         return this.options.createGlmOpenCodeAdapter();
       default:
@@ -220,6 +223,8 @@ export class ProviderRecoveryCoordinator {
         return "Kimi CLI is unavailable. Confirm `kimi` is installed and logged in, then use Settings → General → Restart Core to retry";
       case "glmOpenCode":
         return 'OpenCode wrapper is unavailable. Confirm OpenCode is installed and that the needed provider is authenticated in OpenCode. CodeAI Hub copies the OpenCode auth catalog into its isolated runtime; for Z.AI you can still set ~/.codeai-hub/providers/opencode/config.json { "apiKey": "zai-..." } or ZAI_API_KEY. Then use Settings -> General -> Restart Core to retry';
+      case "glmNative":
+        return "GLM native API is unavailable. Set the Z.AI API key in Settings or export ZAI_API_KEY, then use Settings -> General -> Restart Core to retry";
       default:
         return "Claude CLI is unavailable. CodeAI Hub runs provider-home auth bootstrap automatically; if it still fails, run `claude /login`, then use Settings → General → Restart Core to retry. If it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core";
     }

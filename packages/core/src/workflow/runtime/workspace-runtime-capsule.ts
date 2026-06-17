@@ -6,6 +6,7 @@ export type WorkspaceRuntimeProviderId =
   | "codex"
   | "claude"
   | "gemini"
+  | "glm-native"
   | "glm-opencode"
   | "kimi";
 
@@ -56,6 +57,7 @@ const PROVIDER_IDS = [
   "codex",
   "claude",
   "gemini",
+  "glm-native",
   "glm-opencode",
   "kimi",
 ] as const;
@@ -65,6 +67,7 @@ const PROVIDER_DIRECTORY_BY_ID: Readonly<
   codex: "codex",
   claude: "claude",
   gemini: "gemini",
+  "glm-native": "glm-native",
   "glm-opencode": "opencode",
   kimi: "kimi",
 };
@@ -113,6 +116,12 @@ const WORKSPACE_SETTINGS_SEED = {
       apiKey: "",
       configPath: "~/.codeai-hub/providers/opencode/config.json",
       defaultModel: "zai-coding-plan/glm-5.2",
+      thinkingDisplaySyncEnabled: true,
+    },
+    glmNative: {
+      apiKey: "",
+      baseUrl: "https://api.z.ai/api/coding/paas/v4",
+      defaultModel: "glm-5.2",
       thinkingDisplaySyncEnabled: true,
     },
   },

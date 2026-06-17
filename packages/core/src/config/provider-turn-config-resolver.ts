@@ -16,6 +16,7 @@ import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
+  loadGlmNativeSettingsSnapshot,
   loadGlmOpenCodeSettingsSnapshot,
   loadKimiSettingsSnapshot,
   loadLocalModelsSettingsSnapshot,
@@ -89,6 +90,7 @@ export interface ResolvedProviderTurnConfig {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
+  readonly glmNative: ResolvedKimiTurnConfig;
   readonly glmOpenCode: ResolvedKimiTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
   readonly localModels: ResolvedKimiTurnConfig;
@@ -128,6 +130,7 @@ const buildClaudeEffectiveModelId = (
     : `${baseModelId} thinking:off`;
 
 const DEFAULT_KIMI_MODEL_ID = "kimi-k2.7-code";
+const DEFAULT_GLM_NATIVE_MODEL_ID = "glm-5.2";
 const DEFAULT_GLM_OPENCODE_MODEL_ID = "zai-coding-plan/glm-5.2";
 const DEFAULT_LOCAL_MODELS_MODEL_ID = "local-model";
 
@@ -279,6 +282,15 @@ const resolveGlmOpenCodeTurnConfig = (
     snapshot: loadGlmOpenCodeSettingsSnapshot(options.settingsPath),
   });
 
+const resolveGlmNativeTurnConfig = (
+  options: ProviderTurnConfigResolverOptions
+): ResolvedKimiTurnConfig =>
+  resolveSimpleProviderTurnConfig({
+    envDefaultModel: options.env.GLM_DEFAULT_MODEL,
+    fallbackModel: DEFAULT_GLM_NATIVE_MODEL_ID,
+    snapshot: loadGlmNativeSettingsSnapshot(options.settingsPath),
+  });
+
 const resolveLocalModelsTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedKimiTurnConfig => {
@@ -337,6 +349,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
+  readonly glmNative: ResolvedKimiTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
   readonly glmOpenCode: ResolvedKimiTurnConfig;
   readonly localModels: ResolvedKimiTurnConfig;
@@ -381,6 +394,13 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     effectiveModelId: resolved.glmOpenCode.effectiveModelId,
     thinkingDisplaySyncEnabled: resolved.glmOpenCode.thinkingDisplaySyncEnabled,
   },
+  glmNative: {
+    providerId: "glmNative",
+    baseModelId: resolved.glmNative.baseModelId,
+    defaultModel: resolved.glmNative.defaultModel,
+    effectiveModelId: resolved.glmNative.effectiveModelId,
+    thinkingDisplaySyncEnabled: resolved.glmNative.thinkingDisplaySyncEnabled,
+  },
   localModels: {
     providerId: "localModels",
     baseModelId: resolved.localModels.baseModelId,
@@ -398,12 +418,14 @@ const resolveProviderTurnConfig = (
   const gemini = resolveGeminiTurnConfig(options);
   const kimi = resolveKimiTurnConfig(options);
   const glmOpenCode = resolveGlmOpenCodeTurnConfig(options);
+  const glmNative = resolveGlmNativeTurnConfig(options);
   const localModels = resolveLocalModelsTurnConfig(options);
 
   return {
     claude,
     codex,
     gemini,
+    glmNative,
     kimi,
     glmOpenCode,
     localModels,
@@ -411,6 +433,7 @@ const resolveProviderTurnConfig = (
       claude,
       codex,
       gemini,
+      glmNative,
       kimi,
       glmOpenCode,
       localModels,

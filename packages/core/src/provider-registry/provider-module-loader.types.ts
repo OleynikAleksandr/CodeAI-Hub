@@ -1,6 +1,7 @@
 import type { ClaudeModuleOptions } from "@codeai-hub/claude-module";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
+import type { GlmModuleOptions } from "@codeai-hub/glm-module";
 import type { GlmOpenCodeModuleOptions } from "@codeai-hub/glm-opencode-module";
 import type { NativeRequestCaptureAppliedInputEnvelope } from "../provider-network-capture/native-request-capture-types";
 
@@ -159,3 +160,5 @@ export type GeminiAdapterCtor = new (
 export type GlmOpenCodeAdapterCtor = new (
   options: GlmOpenCodeModuleOptions
 ) => ProviderAdapter;
+
+export type GlmAdapterCtor = new (options: GlmModuleOptions) => ProviderAdapter;
