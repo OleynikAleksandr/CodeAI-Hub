@@ -10,6 +10,12 @@ const TRAILING_SLASH_PATTERN = /\/+$/u;
 const GLM_HIGH_REASONING_ALIASES = new Set(["high", "medium", "low"]);
 const GLM_MAX_REASONING_ALIASES = new Set(["max", "xhigh"]);
 const GLM_REASONING_OFF_ALIASES = new Set(["minimal", "none"]);
+const GLOBAL_SETTINGS_PATH = path.join(
+  os.homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
 
 export interface GlmRuntimeProfileInput {
   readonly apiKey?: string;
@@ -61,6 +67,11 @@ const readSettingsProvider = (
   }
 };
 
+const readGlobalSettingsProvider = (): Record<string, unknown> | null =>
+  readSettingsProvider(
+    readString(process.env.CODEAI_GLOBAL_SETTINGS_PATH) ?? GLOBAL_SETTINGS_PATH
+  );
+
 const stripTrailingSlash = (value: string): string =>
   value.replace(TRAILING_SLASH_PATTERN, "");
 
@@ -87,14 +98,17 @@ export const buildGlmRuntimeProfile = (
   input: GlmRuntimeProfileInput
 ): GlmRuntimeProfile => {
   const settings = readSettingsProvider(input.settingsPath);
+  const globalSettings = readGlobalSettingsProvider();
   const apiKey =
     readString(input.apiKey) ??
+    readString(globalSettings?.apiKey) ??
     readString(settings?.apiKey) ??
     readString(process.env.ZAI_API_KEY) ??
     readString(process.env.ZHIPU_API_KEY) ??
     readString(process.env.Z_AI_API_KEY);
   const baseUrl = stripTrailingSlash(
     readString(input.baseUrl) ??
+      readString(globalSettings?.baseUrl) ??
       readString(settings?.baseUrl) ??
       GLM_DEFAULT_BASE_URL
   );

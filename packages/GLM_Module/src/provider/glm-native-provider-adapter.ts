@@ -5,20 +5,12 @@ import {
   GLM_CONTEXT_WINDOW_TOKEN_LIMIT,
   type GlmRuntimeProfile,
 } from "./glm-native-runtime-profile";
-import {
-  type GlmTokenUsage,
-  parseGlmSseData,
-  readSseDataFrames,
-} from "./glm-native-sse-parser";
+import type { GlmTokenUsage } from "./glm-native-sse-parser";
+import { readGlmStreamResponse } from "./glm-native-stream-reader";
 
 export const GLM_NATIVE_PROVIDER_ID = "glmNative" as const;
 
 export interface ModuleReporter {
-  readonly error?: (
-    message: string,
-    error?: unknown,
-    metadata?: Record<string, unknown>
-  ) => void;
   readonly info?: (message: string, metadata?: Record<string, unknown>) => void;
   readonly warn?: (message: string, metadata?: Record<string, unknown>) => void;
 }
@@ -46,10 +38,7 @@ export interface GlmSessionEvent {
   readonly provider?: string;
   readonly tag?: string;
   readonly timestamp?: string;
-  readonly tokenUsage?: {
-    readonly limit: number;
-    readonly used: number;
-  };
+  readonly tokenUsage?: { readonly limit: number; readonly used: number };
   readonly type: string;
   readonly uuid?: string;
 }
@@ -286,43 +275,54 @@ export class GlmProviderAdapter {
     readonly userContent: string;
   }): Promise<GlmAssistantTurn> {
     const requestBody = this.buildRequestBody(options);
-    const response = await this.openGlmResponseWithRetry({
-      abortController: options.abortController,
-      profile: options.profile,
-      requestBody,
-    });
-    if (!response.body) {
-      throw new Error("GLM response did not include a stream body.");
-    }
-    let assistantContent = "";
-    let reasoningContent = "";
-    for await (const data of readSseDataFrames(
-      response.body as AsyncIterable<Uint8Array>
-    )) {
-      const chunk = parseGlmSseData(data);
-      if (!chunk) {
-        continue;
-      }
-      if (chunk.reasoning) {
-        reasoningContent += chunk.reasoning;
-        this.emit(options.sessionId, {
-          ...this.buildEvent("thinking"),
-          content: chunk.reasoning,
-          tag: "thinking",
+    for (let attempt = 1; attempt <= GLM_MAX_REQUEST_ATTEMPTS; attempt += 1) {
+      let emittedUsefulEvent = false;
+      try {
+        const response = await this.openGlmResponseWithRetry({
+          abortController: options.abortController,
+          profile: options.profile,
+          requestBody,
         });
-      }
-      if (chunk.content) {
-        assistantContent += chunk.content;
-        this.emit(options.sessionId, {
-          ...this.buildEvent("assistant"),
-          content: chunk.content,
+        if (!response.body) {
+          throw new Error("GLM response did not include a stream body.");
+        }
+        const result = await readGlmStreamResponse(
+          response.body as AsyncIterable<Uint8Array>,
+          {
+            onAssistant: (content) =>
+              this.emit(options.sessionId, {
+                ...this.buildEvent("assistant"),
+                content,
+              }),
+            onThinking: (content) =>
+              this.emit(options.sessionId, {
+                ...this.buildEvent("thinking"),
+                content,
+                tag: "thinking",
+              }),
+            onUsage: (usage) => this.emitTokenUsage(options.sessionId, usage),
+          }
+        );
+        emittedUsefulEvent = result.emittedUsefulEvent;
+        return result;
+      } catch (error) {
+        if (
+          emittedUsefulEvent ||
+          attempt >= GLM_MAX_REQUEST_ATTEMPTS ||
+          options.abortController.signal.aborted ||
+          !this.isRetryableGlmFailure(error)
+        ) {
+          throw error;
+        }
+        this.options.reporter?.warn?.("Retrying interrupted GLM stream", {
+          attempt,
+          message: buildGlmFailureMessage(error),
+          nextAttempt: attempt + 1,
         });
-      }
-      if (chunk.usage) {
-        this.emitTokenUsage(options.sessionId, chunk.usage);
+        await delay(GLM_RETRY_DELAY_MS * attempt);
       }
     }
-    return { content: assistantContent, reasoningContent };
+    throw new Error("GLM stream failed before a read attempt was made.");
   }
 
   private buildRequestBody(options: {
@@ -337,6 +337,7 @@ export class GlmProviderAdapter {
         { role: "user", content: options.userContent },
       ],
       stream: true,
+      stream_options: { include_usage: true },
       thinking: {
         type: options.profile.thinkingEnabled ? "enabled" : "disabled",
         ...(options.profile.thinkingEnabled ? { clear_thinking: false } : {}),

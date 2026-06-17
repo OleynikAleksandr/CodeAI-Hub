@@ -23,8 +23,9 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 ## Runtime profile and provider-home
 - Managed workspace runtime state lives under `.codeai-hub/<workspace-slug>/runtime/providers/glm-native/home`.
 - Global fallback provider home remains `~/.codeai-hub/providers/glm-native/home`.
-- Settings persist under `providers.glmNative` and include `apiKey`, `baseUrl`, `defaultModel`, and `thinkingDisplaySyncEnabled`.
-- API key resolution order: explicit Core options, `providers.glmNative.apiKey`, `ZAI_API_KEY`, `ZHIPU_API_KEY`, then `Z_AI_API_KEY`.
+- GLM Native connection settings (`apiKey`, `baseUrl`) are global under `~/.codeai-hub/settings/settings.json` at `providers.glmNative`, so new workspaces reuse the same Z.AI credentials.
+- Workspace settings still own workflow-local GLM choices such as `defaultModel`, `reasoningEffort`, `thinkingEnabled`, and `thinkingDisplaySyncEnabled`.
+- API key resolution order: explicit Core options, global `providers.glmNative.apiKey`, workspace `providers.glmNative.apiKey` for legacy migration, `ZAI_API_KEY`, `ZHIPU_API_KEY`, then `Z_AI_API_KEY`.
 - The API key must not be logged, committed, copied into artifacts, or written into repository-tracked files.
 
 ## Session lifecycle
@@ -38,7 +39,7 @@ Core остаётся владельцем workflow state, prompt/artifact contr
 - Native GLM uses the same Z.AI Coding Plan endpoint shape as OpenCode: `stream: true`, `thinking.type: "enabled"` and `thinking.clear_thinking: false` when reasoning is enabled.
 - When reasoning is disabled, the request sends `thinking.type: "disabled"` and omits `reasoning_effort`.
 - User-facing reasoning effort choices are only `max` and `high`. Legacy saved values are normalized: `xhigh` maps to `max`, `medium`/`low` map to `high`, and `minimal`/`none` disable thinking.
-- The provider may retry transient transport/opening failures and retryable HTTP statuses before SSE body processing starts. It must not silently downgrade the model, disable reasoning, or switch to non-streaming mode.
+- The provider may retry transient transport/opening failures, retryable HTTP statuses, and interrupted SSE streams that fail before the first useful reasoning/content/usage event. It must not silently downgrade the model, disable reasoning, or switch to non-streaming mode.
 - Failure messages must preserve useful transport details such as `ECONNRESET` or HTTP status so the dialog does not collapse different provider failures into generic `fetch failed`.
 
 ## Event normalization

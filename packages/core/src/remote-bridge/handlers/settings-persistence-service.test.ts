@@ -67,6 +67,13 @@ const readCodexReasoningByModel = (
   return codex.reasoningByModel as Record<string, unknown>;
 };
 
+const readGlmNativeSettings = (
+  settings: Record<string, unknown>
+): Record<string, unknown> => {
+  const providers = settings.providers as Record<string, unknown>;
+  return providers.glmNative as Record<string, unknown>;
+};
+
 const hasGeneralSettings = (settings: Record<string, unknown>): boolean =>
   typeof settings.general === "object" && settings.general !== null;
 
@@ -146,6 +153,56 @@ test("SettingsPersistenceService rejects unscoped writes and can seed global gen
     await readFile(globalSettingsPath, "utf8")
   ) as Record<string, unknown>;
   assert.equal(hasGeneralSettings(globalSettings), true);
+});
+
+test("SettingsPersistenceService keeps GLM native connection settings global", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
+  const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
+  const config = createConfig(globalSettingsPath);
+  const workspaceA = {
+    workspaceRoot: path.join(tempRoot, "workspace-a"),
+    workspaceSlug: "workspace-a",
+  };
+  const workspaceB = {
+    workspaceRoot: path.join(tempRoot, "workspace-b"),
+    workspaceSlug: "workspace-b",
+  };
+  const service = new SettingsPersistenceService({ config, logger });
+  const settings = cloneSettings(await service.load({ workspace: workspaceA }));
+  const glmNative = readGlmNativeSettings(settings);
+  glmNative.apiKey = "zai-global-key";
+  glmNative.baseUrl = "https://custom.z.ai/api/coding/paas/v4";
+  glmNative.reasoningEffort = "high";
+
+  await service.save(settings, { workspace: workspaceA });
+
+  const globalSettings = JSON.parse(
+    await readFile(globalSettingsPath, "utf8")
+  ) as Record<string, unknown>;
+  assert.deepEqual(readGlmNativeSettings(globalSettings), {
+    apiKey: "zai-global-key",
+    baseUrl: "https://custom.z.ai/api/coding/paas/v4",
+  });
+
+  const persistedWorkspaceA = JSON.parse(
+    await readFile(
+      resolveWorkspaceRuntimeCapsule(workspaceA).settingsFile.absolutePath,
+      "utf8"
+    )
+  ) as Record<string, unknown>;
+  assert.equal(readGlmNativeSettings(persistedWorkspaceA).apiKey, undefined);
+  assert.equal(readGlmNativeSettings(persistedWorkspaceA).baseUrl, undefined);
+  assert.equal(
+    readGlmNativeSettings(persistedWorkspaceA).reasoningEffort,
+    "high"
+  );
+
+  const loadedB = await service.load({ workspace: workspaceB });
+  assert.equal(readGlmNativeSettings(loadedB).apiKey, "zai-global-key");
+  assert.equal(
+    readGlmNativeSettings(loadedB).baseUrl,
+    "https://custom.z.ai/api/coding/paas/v4"
+  );
 });
 
 test("SettingsPersistenceService migrates unsupported Codex model settings", async () => {

@@ -27,6 +27,16 @@ const createResponse = (frames: readonly string[]): Response =>
     { status: 200 }
   );
 
+const createResettingResponse = (): Response =>
+  new Response(
+    new ReadableStream({
+      start(controller) {
+        controller.error(createFetchError("ECONNRESET", "read ECONNRESET"));
+      },
+    }),
+    { status: 200 }
+  );
+
 test("GlmProviderAdapter streams thinking, assistant content and token usage", async () => {
   const originalFetch = globalThis.fetch;
   const bodies: string[] = [];
@@ -65,6 +75,7 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     const body = JSON.parse(bodies[0] as string) as {
       readonly model: string;
       readonly reasoning_effort: string;
+      readonly stream_options: { readonly include_usage: boolean };
       readonly thinking: {
         readonly clear_thinking: boolean;
         readonly type: string;
@@ -72,6 +83,7 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     };
     assert.equal(body.model, "glm-5.2");
     assert.equal(body.reasoning_effort, "max");
+    assert.deepEqual(body.stream_options, { include_usage: true });
     assert.deepEqual(body.thinking, {
       clear_thinking: false,
       type: "enabled",
@@ -221,6 +233,47 @@ test("GlmProviderAdapter retries transient transport failures without changing r
       events.map((event) => event.type),
       ["turn_started", "turn_completed"]
     );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("GlmProviderAdapter retries stream reset before first useful event", async () => {
+  const originalFetch = globalThis.fetch;
+  let attempts = 0;
+  globalThis.fetch = (() => {
+    attempts += 1;
+    return Promise.resolve(
+      attempts === 1
+        ? createResettingResponse()
+        : createResponse([
+            JSON.stringify({ choices: [{ delta: { content: "OK" } }] }),
+            "[DONE]",
+          ])
+    );
+  }) as typeof fetch;
+
+  try {
+    const adapter = new GlmProviderAdapter({
+      workspace: { apiKey: "test-key" },
+    });
+    await adapter.initialize();
+    const sessionId = await adapter.createSession();
+    const events: Array<{ readonly content?: string; readonly type: string }> =
+      [];
+    adapter.subscribe(sessionId, (event) => {
+      events.push(
+        event as { readonly content?: string; readonly type: string }
+      );
+    });
+    await adapter.sendMessage(sessionId, "hello");
+
+    assert.equal(attempts, 2);
+    assert.deepEqual(
+      events.map((event) => event.type),
+      ["turn_started", "assistant", "turn_completed"]
+    );
+    assert.equal(events[1]?.content, "OK");
   } finally {
     globalThis.fetch = originalFetch;
   }

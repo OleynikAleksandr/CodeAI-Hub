@@ -243,6 +243,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       readonly claude: Record<string, unknown>;
       readonly codex: Record<string, unknown>;
       readonly gemini: Record<string, unknown>;
+      readonly glmNative: Record<string, unknown>;
       readonly kimi: Record<string, unknown>;
       readonly glmOpenCode: Record<string, unknown>;
     };
@@ -261,6 +262,9 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
   const rawKimi = isRecord(rawProviders.kimi) ? rawProviders.kimi : {};
   const rawGlmOpenCode = isRecord(rawProviders.glmOpenCode)
     ? rawProviders.glmOpenCode
+    : {};
+  const rawGlmNative = isRecord(rawProviders.glmNative)
+    ? rawProviders.glmNative
     : {};
   const normalizedClaudeThinking = normalizeClaudeThinkingSettings({
     defaultThinkingSettings: defaults.providers.claude.thinking as {
@@ -320,7 +324,8 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       isRecord(rawProviders.codex) &&
       isRecord(rawProviders.gemini) &&
       isRecord(rawProviders.kimi) &&
-      isRecord(rawProviders.glmOpenCode)
+      isRecord(rawProviders.glmOpenCode) &&
+      isRecord(rawProviders.glmNative)
     )
   ) {
     changed = true;
@@ -334,7 +339,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     changed = true;
   }
   if (
-    [rawGemini, rawKimi, rawGlmOpenCode].some(
+    [rawGemini, rawKimi, rawGlmOpenCode, rawGlmNative].some(
       (provider) => typeof provider.thinkingDisplaySyncEnabled !== "boolean"
     )
   ) {
@@ -375,6 +380,10 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
         glmOpenCode: mergeDisplaySyncProviderSettings(
           rawGlmOpenCode,
           defaults.providers.glmOpenCode
+        ),
+        glmNative: mergeDisplaySyncProviderSettings(
+          rawGlmNative,
+          defaults.providers.glmNative
         ),
       },
     },
