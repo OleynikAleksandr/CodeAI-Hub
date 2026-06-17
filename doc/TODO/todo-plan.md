@@ -8,15 +8,15 @@
   "planId": "glm-native-provider-2026-06-17",
   "branch": "codex/audit-gates-cleanup",
   "baseHead": "9059a03eb",
-  "lastRecordedCommit": "13a845670",
+  "lastRecordedCommit": "3df539f91",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Native_Provider_Planning_RU.md",
-  "currentTaskId": "phase1.stream21.task1",
-  "expectedCommitMessage": "docs: prepare native glm workflow tool release",
+  "currentTaskId": "phase1.stream21.task2",
+  "expectedCommitMessage": "chore: build native glm workflow tool release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare native glm workflow tool release",
-    "preCommitHead": "13a845670",
+    "expectedCommitMessage": "chore: build native glm workflow tool release",
+    "preCommitHead": "3df539f91",
     "stage": "commit_pending",
-    "taskId": "phase1.stream21.task1"
+    "taskId": "phase1.stream21.task2"
   }
 }
 ```
@@ -195,9 +195,13 @@
 ### Stream: Native GLM Workflow Tool Runtime Release
 
 55. [DONE] `phase1.stream21.task1` Prepare release notes for the confirmed native GLM workflow tool runtime hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm workflow tool release`)
-56. [PENDING] `phase1.stream21.commit1` Git Commit: `docs: prepare native glm workflow tool release` (hash: TBD)
-57. [TODO] `phase1.stream21.task2` Build the confirmed native GLM workflow tool runtime hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm workflow tool release`)
-58. [TODO] `phase1.stream21.commit2` Git Commit: `chore: build native glm workflow tool release` (hash: TBD)
+56. [DONE] `phase1.stream21.commit1` Git Commit: `docs: prepare native glm workflow tool release` (hash: 3df539f91)
+57. [DONE] `phase1.stream21.task2` Build the confirmed native GLM workflow tool runtime hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm workflow tool release`)
+58. [PENDING] `phase1.stream21.commit2` Git Commit: `chore: build native glm workflow tool release` (hash: TBD)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.539` and copied release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.539.vsix` (`5.4M`).
 
 ### Stream: User Workflow Acceptance Testing
 
