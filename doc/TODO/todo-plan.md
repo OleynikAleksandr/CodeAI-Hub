@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.closeout.task1",
-  "expectedCommitMessage": "docs: close provider prompt tooling scope",
+  "currentTaskId": "provider-tools.phase1.chat-heading-typography.task1",
+  "expectedCommitMessage": "fix: reduce standalone chat heading scale",
   "debt": null
 }
 ```
@@ -216,6 +216,12 @@
 112. [DONE] `provider-tools.phase1.release-build-588.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.588 test release`).
 113. [DONE] `provider-tools.phase1.release-build-588.commit1` Git Commit: `chore: build 1.2.588 test release` (hash: self)
 
+### Stream: Standalone Chat Heading Typography Follow-up
+114. [DONE] `provider-tools.phase1.chat-heading-typography-plan.task1` Add the screenshot-driven follow-up task for reducing oversized Markdown heading typography in standalone provider chat messages before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan standalone chat heading typography fix`).
+115. [DONE] `provider-tools.phase1.chat-heading-typography-plan.commit1` Git Commit: `docs: plan standalone chat heading typography fix` (hash: self)
+116. [IN_PROGRESS] `provider-tools.phase1.chat-heading-typography.task1` Reduce standalone chat rendered Markdown heading sizes by roughly 4x for provider/user-facing message cards while keeping normal body text unchanged (scope: `src/client/**/session/**, src/client/**/components/sessions/**, media/**/*.css, doc/TODO/todo-plan.md`; expected commit: `fix: reduce standalone chat heading scale`).
+117. [TODO] `provider-tools.phase1.chat-heading-typography.commit1` Git Commit: `fix: reduce standalone chat heading scale` (hash: TBD)
+
 ### Stream: Scope Closeout
-114. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-115. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+118. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+119. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
