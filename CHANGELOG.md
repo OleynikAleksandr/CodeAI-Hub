@@ -8,6 +8,28 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.586] - 2026-06-22
+### Fixed
+- **GLM Native follows Settings language choices in provider-visible
+  instructions.** Chat replies, progress/thinking summaries, and generated
+  artifact prose now receive explicit language codes from Core applied turn
+  config.
+- **GLM file search tools now work for smoke-test paths.** `grep_files`
+  supports file paths as well as directories, `glob_files` returns exact file
+  matches, and the process PATH includes common Homebrew locations for `rg`.
+- **GLM `apply_patch` no longer spawns a missing binary.** The provider now
+  applies Codex-style patch payloads through an in-process executor.
+- **GLM `web_fetch` flags likely JS-rendered shells.** Sparse HTML shells are
+  returned with `partial: true` and a warning instead of being presented as
+  complete page content.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/core`
+- `npm test --workspace=@codeai-hub/core`
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npm run plan:validate`
+
 ## [1.2.585] - 2026-06-22
 ### Changed
 - **GLM Native now exposes provider-owned executable tools.** Standalone GLM
