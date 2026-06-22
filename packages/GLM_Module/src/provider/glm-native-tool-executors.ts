@@ -1,5 +1,6 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { applyGlmNativePatch } from "./glm-native-patch-executor";
 import { runProcess, runShell } from "./glm-native-process";
 import type { GlmToolCall } from "./glm-native-sse-parser";
 
@@ -217,14 +218,7 @@ const executeApplyPatchTool = async (
   const cwd = resolveWorkspacePath(undefined, workspacePath, {
     allowMissing: true,
   });
-  const result = await runProcess(
-    "apply_patch",
-    [],
-    cwd,
-    30_000,
-    80_000,
-    patch
-  );
+  const result = await applyGlmNativePatch(patch, cwd);
   return { cwd, ...result };
 };
 
