@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/glm-opencode-module",
-  "version": "1.2.585",
+  "version": "1.2.586",
   "description": "GLM provider integration through OpenCode for CodeAI Hub core",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.release-build-586.task1",
-  "expectedCommitMessage": "chore: build 1.2.586 test release",
+  "currentTaskId": "provider-tools.phase1.acceptance-586.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -180,11 +180,11 @@
 ### Stream: Release Build 1.2.586
 89. [DONE] `provider-tools.phase1.release-docs-586.task1` Prepare README and CHANGELOG for the user-confirmed 1.2.586 GLM tool reliability test release before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.586 test release`).
 90. [DONE] `provider-tools.phase1.release-docs-586.commit1` Git Commit: `docs: prepare 1.2.586 test release` (hash: self)
-91. [IN_PROGRESS] `provider-tools.phase1.release-build-586.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.586 test release`).
-92. [TODO] `provider-tools.phase1.release-build-586.commit1` Git Commit: `chore: build 1.2.586 test release` (hash: TBD)
+91. [DONE] `provider-tools.phase1.release-build-586.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.586 test release`).
+92. [DONE] `provider-tools.phase1.release-build-586.commit1` Git Commit: `chore: build 1.2.586 test release` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing For 1.2.586
-93. [TODO] `provider-tools.phase1.acceptance-586.task1` User installs and retests the 1.2.586 release against GLM/Kimi standalone provider chats before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+93. [IN_PROGRESS] `provider-tools.phase1.acceptance-586.task1` User installs and retests the 1.2.586 release against GLM/Kimi standalone provider chats before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none).
 
 ### Stream: Scope Closeout
 94. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
