@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DescriptionQuestionnaireService } from "./description-questionnaire-service";
+import {
+  DescriptionQuestionnaireService,
+  shouldSeedQuestionnaire,
+} from "./description-questionnaire-service";
 
 const TEMPLATE = `# Project Name
 
@@ -172,6 +175,47 @@ Filled Title
     result.status === "ok" ? result.value.answers["meta.title"] : null,
     "Filled Title"
   );
+  assert.equal(
+    calls.some((call) =>
+      call.url.endsWith("/api/v1/orchestrator/workspace-file-write")
+    ),
+    false
+  );
+});
+
+test("shouldSeedQuestionnaire seeds only on missing, never on read error or ok", () => {
+  assert.equal(shouldSeedQuestionnaire("missing"), true);
+  assert.equal(shouldSeedQuestionnaire("error"), false);
+  assert.equal(shouldSeedQuestionnaire("ok"), false);
+});
+
+test("DescriptionQuestionnaireService does not overwrite questionnaire when the read fails", async () => {
+  installWindowConfig();
+  const calls: Array<{ readonly url: string }> = [];
+  const handlers: FetchHandler[] = [
+    async () => jsonResponse({ sessionId: "err-session" }),
+    async () => jsonResponse({ questionnaire: { templateMarkdown: TEMPLATE } }),
+    async () => jsonResponse({ error: "Internal" }, 500),
+  ];
+  Object.defineProperty(globalThis, "fetch", {
+    configurable: true,
+    value: async (input: string | URL, init?: RequestInit) => {
+      calls.push({ url: String(input) });
+      const handler = handlers.shift();
+      assert.ok(handler, `Unexpected fetch call to ${String(input)}`);
+      return await handler(String(input), init);
+    },
+  });
+
+  const service = new DescriptionQuestionnaireService();
+  const result = await service.load({
+    name: "Demo Err",
+    path: "/tmp/description-questionnaire-error",
+    slug: "demo-err",
+  });
+
+  assert.equal(result.status, "ok");
+  // A read failure must NOT cause the filled questionnaire to be overwritten.
   assert.equal(
     calls.some((call) =>
       call.url.endsWith("/api/v1/orchestrator/workspace-file-write")

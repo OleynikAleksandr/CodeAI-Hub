@@ -14,6 +14,8 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
+| BUG-2026-06-22-01 | OPEN | PM/Core/Standalone Chats | удаление workflow steps удаляет standalone workspace chat sessions, хотя chat-сессии должны жить отдельно от workflow tree | TBD |
+| BUG-2026-06-18-01 | FIXED | PM/UI/Description | заполненная анкета затирается пустым template при старте PM, когда чтение анкеты падает с ошибкой (не 404) | 1.2.547 |
 | BUG-2026-05-03-01 | FIXED | Codex Runtime | reopened Codex session gets `Provider codexCli unavailable`; `codex-cli 0.128.0` rejects `mcp_servers.*.enabled=false` startup overrides with `invalid transport` | 1.2.131 |
 | BUG-2026-04-27-02 | DEFERRED | Codex Runtime/UI | `gpt-5.3-codex-spark` runs after 1.2.96 but still shows no reasoning bubbles even after provider-home summary materialization | TBD |
 | BUG-2026-04-27-01 | FIXED | Codex Runtime/Translation | `gpt-5.3-codex-spark` падает с `unsupported_parameter` по `reasoning.summary` при выборе модели в Settings Codex; translation runtime also had explicit summary config risk | 1.2.96 |
@@ -73,6 +75,52 @@
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
 
 ---
+## BUG-2026-06-22-01 — PM/Core/Standalone Chats: workflow deletion removes standalone chat sessions
+
+**Status:** OPEN
+
+**Symptom:**
+- При удалении workflow steps / очистке workflow из Project Manager удаляются standalone workspace chat sessions.
+- Standalone chats создаются через Chat surface и не должны зависеть от жизненного цикла Documentation Tree / workflow steps.
+- Ожидаемое поведение: удаление любых workflow steps не удаляет standalone chat history, metadata, live bindings и возможность открыть чат из Chat list.
+
+**Root cause:** TBD
+
+**Fix:** TBD
+
+**Guards:** TBD; минимум нужен regression/smoke, который удаляет workflow steps и проверяет, что standalone chat list/history остаются доступны.
+
+**Commits:** TBD
+
+**Release:** TBD
+
+---
+## BUG-2026-06-18-01 — PM/UI/Description: заполненная анкета затирается template при старте PM на read-error
+
+**Status:** FIXED
+
+**Symptom:**
+- Начиная с некоторого релиза, при старте Project Manager в открываемом workspace заполненная анкета (`questionnaire.md`) затирается пустым шаблоном.
+- Раньше PM не трогал уже заполненную анкету.
+
+**Root cause:**
+- `DescriptionQuestionnaireService.load` (`src/client/project-manager/services/description-questionnaire-service.ts`) при старте читает анкету через `readWorkspaceFile`, который возвращает `status`: `ok` | `missing` | `error`.
+- Запись template была защищена условием `if (!existingContent)`, где `existingContent = status === "ok" ? content : null`. Это делает `existingContent` равным `null` И при `missing` (файла нет), И при `error` (чтение упало).
+- Если при старте чтение анкеты падает с `error` (тайминг старта / Core-endpoint ещё не готов), клиент ошибочно считает анкету отсутствующей и пишет пустой template поверх заполненной → потеря данных.
+- Коммит `065c9aa94` не виноват: он наоборот ужесточил guard (`!existingContent || rendered !== existing` → `!existingContent`). Корень — что `error` не отличается от `missing`.
+
+**Fix:**
+- Введена чистая функция `shouldSeedQuestionnaire(status)`, возвращающая `true` ТОЛЬКО при `status === "missing"` (явный 404).
+- Запись template теперь происходит только при `missing`; при `error` файл не трогается, заполненная анкета сохраняется.
+
+**Guards:**
+- Unit-тест `shouldSeedQuestionnaire` (`missing` → true, `error`/`ok` → false).
+- Integration-тест: при read-`error` write-endpoint не вызывается (анкета не затирается).
+
+**Commits:** `fix(pm): keep questionnaire when read fails`
+
+**Release:** 1.2.547
+
 ## BUG-2026-05-03-01 — Codex app-server startup fails on CLI 0.128 MCP config schema
 
 **Status:** FIXED

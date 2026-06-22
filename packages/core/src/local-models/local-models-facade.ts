@@ -18,6 +18,7 @@ import {
   type LocalModelRuntimePurpose,
   LocalModelsRuntimeLoadManager,
 } from "./local-models-runtime-load-manager";
+import { readLmStudioCompletionsText } from "./local-models-sse-reader";
 
 const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
 const DISCOVERY_TIMEOUT_MS = 5000;
@@ -86,16 +87,6 @@ interface LmsCliModelRecord {
   readonly publisher?: unknown;
   readonly sizeBytes?: unknown;
   readonly type?: unknown;
-}
-
-interface ChatCompletionChoice {
-  readonly message?: {
-    readonly content?: unknown;
-  };
-}
-
-interface ChatCompletionResponse {
-  readonly choices?: readonly ChatCompletionChoice[];
 }
 
 const resolveBaseUrl = (baseUrl?: string): string =>
@@ -195,15 +186,6 @@ const resolveLocalModelLanguages =
     DEFAULT_ENGINE_LANGUAGE_CATALOGS.find(
       (catalog) => catalog.engineId === "google-gtx"
     )?.languages ?? [];
-
-const parseChatCompletionText = (payload: unknown): string | null => {
-  if (!isRecord(payload)) {
-    return null;
-  }
-  const typedPayload = payload as ChatCompletionResponse;
-  const content = typedPayload.choices?.[0]?.message?.content;
-  return asString(content) ?? null;
-};
 
 const shouldDisableThinking = (model: LocalModelDescriptor): boolean =>
   QWEN_MODEL_PATTERN.test(model.modelKey) ||
@@ -318,7 +300,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
         });
         return createFallbackResult(request, this.id, "lmstudio_non_ok");
       }
-      const translatedText = parseChatCompletionText(await response.json());
+      const translatedText = await readLmStudioCompletionsText(response);
       if (!translatedText) {
         this.reporter?.warn?.("LM Studio translation response was empty", {
           engine: this.id,
@@ -360,7 +342,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
         },
       ],
       model: apiModelIdentifier,
-      stream: false,
+      stream: true,
       temperature: 0.1,
       top_p: 0.8,
     };

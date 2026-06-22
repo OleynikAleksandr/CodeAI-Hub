@@ -3,7 +3,10 @@ import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
 import type { GlmModuleOptions } from "@codeai-hub/glm-module";
 import type { GlmOpenCodeModuleOptions } from "@codeai-hub/glm-opencode-module";
-import type { NativeRequestCaptureAppliedInputEnvelope } from "../provider-network-capture/native-request-capture-types";
+import type {
+  NativeRequestCaptureAppliedInputEnvelope,
+  NativeRequestCaptureMode,
+} from "../provider-network-capture/native-request-capture-types";
 
 export type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
 
@@ -94,6 +97,7 @@ export type ProviderNativeRequestCaptureAppliedInputEnvelope =
 export interface ProviderNativeRequestCaptureOptions {
   readonly appliedTurnConfig?: ProviderNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
+  readonly captureMode?: NativeRequestCaptureMode;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
   readonly invocationPurpose?: ProviderNativeRequestCaptureInvocationPurpose;

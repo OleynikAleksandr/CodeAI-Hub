@@ -2,6 +2,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import type { WorkspaceProject } from "../../types";
+import { WorkspaceChatList } from "./workspace-chat-list";
 import { WorkspaceTree } from "./workspace-tree";
 
 const UI_LABELS_CATEGORY = "ui_interface";
@@ -33,15 +34,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNewWorkspace,
 }) => {
   const { t } = useLocalization();
+  const [sidebarMode, setSidebarMode] = useState<"workflow" | "chat">(
+    "workflow"
+  );
   const activeWorkspace = workspaces.find(
     (workspace) => workspace.id === selectedWorkspaceId
   );
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
-  const workspaceLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.sidebar.workspace.label",
-    "Workspace"
-  );
   const emptyWorkspaceLabel = t(
     UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.empty_label",
@@ -139,8 +138,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside className="pm-sidebar">
       <div className="pm-sidebar__context">
         <div className="pm-context-block">
-          <div className="pm-context-row">
-            <span className="pm-context-label">{workspaceLabel}</span>
+          <div className="pm-sidebar-mode" role="tablist">
+            <button
+              aria-selected={sidebarMode === "workflow"}
+              className={
+                sidebarMode === "workflow"
+                  ? "pm-sidebar-mode__button pm-sidebar-mode__button--active"
+                  : "pm-sidebar-mode__button"
+              }
+              onClick={() => setSidebarMode("workflow")}
+              role="tab"
+              type="button"
+            >
+              Workflow
+            </button>
+            <button
+              aria-selected={sidebarMode === "chat"}
+              className={
+                sidebarMode === "chat"
+                  ? "pm-sidebar-mode__button pm-sidebar-mode__button--active"
+                  : "pm-sidebar-mode__button"
+              }
+              onClick={() => setSidebarMode("chat")}
+              role="tab"
+              type="button"
+            >
+              Chat
+            </button>
           </div>
           <div className="pm-context-select">
             <button
@@ -225,12 +249,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
       ) : null}
-      <WorkspaceTree
-        selectedWorkspaceId={selectedWorkspaceId}
-        workspaceName={activeWorkspace?.name}
-        workspacePath={activeWorkspace?.path}
-        workspaceSlug={activeWorkspace?.slug}
-      />
+      {sidebarMode === "workflow" ? (
+        <WorkspaceTree
+          selectedWorkspaceId={selectedWorkspaceId}
+          workspaceName={activeWorkspace?.name}
+          workspacePath={activeWorkspace?.path}
+          workspaceSlug={activeWorkspace?.slug}
+        />
+      ) : (
+        <WorkspaceChatList
+          workspacePath={activeWorkspace?.path}
+          workspaceSlug={activeWorkspace?.slug}
+        />
+      )}
       <div className="pm-sidebar__footer">
         <button
           className="pm-sidebar__settings-button"

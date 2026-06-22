@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import type { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 import type { KimiWireRouter } from "../wire/kimi-wire-router";
 
@@ -6,14 +5,19 @@ export const KIMI_SESSION_STALE_BINDING_ERROR_CODE =
   "KIMI_SESSION_STALE_BINDING" as const;
 
 export interface KimiSessionLifecycleOptions {
+  readonly cwd: string;
+  readonly defaultModel?: string;
   readonly processBridge: KimiWireProcessBridge;
   readonly router: KimiWireRouter;
 }
 
 interface ActiveKimiSession {
-  readonly providerSessionId: string | null;
+  readonly providerSessionId: string;
   readonly runtimeSessionId: string;
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 export class KimiSessionStaleBindingError extends Error {
   readonly code = KIMI_SESSION_STALE_BINDING_ERROR_CODE;
@@ -35,9 +39,12 @@ export class KimiSessionLifecycle {
     this.options = options;
   }
 
-  async cancel(sessionId: string): Promise<void> {
-    this.requireSession(sessionId);
-    await this.options.router.request("cancel");
+  cancel(sessionId: string): Promise<void> {
+    const session = this.requireSession(sessionId);
+    this.options.router.notify("session/cancel", {
+      sessionId: session.providerSessionId,
+    });
+    return Promise.resolve();
   }
 
   async close(sessionId: string): Promise<void> {
@@ -50,9 +57,16 @@ export class KimiSessionLifecycle {
 
   async create(): Promise<string> {
     await this.ensureInitialized();
-    const runtimeSessionId = `kimi:${crypto.randomUUID()}`;
+    const response = await this.options.router.request("session/new", {
+      cwd: this.options.cwd,
+      mcpServers: [],
+    });
+    const providerSessionId = readProviderSessionId(response);
+    await this.applyDefaultModel(providerSessionId);
+    await this.applyThinkingConfig(providerSessionId);
+    const runtimeSessionId = this.toRuntimeSessionId(providerSessionId);
     this.activeSessions.set(runtimeSessionId, {
-      providerSessionId: null,
+      providerSessionId,
       runtimeSessionId,
     });
     return runtimeSessionId;
@@ -65,7 +79,16 @@ export class KimiSessionLifecycle {
     }
 
     await this.ensureInitialized();
-    const runtimeSessionId = `kimi:${normalizedProviderSessionId}`;
+    await this.options.router.request("session/resume", {
+      cwd: this.options.cwd,
+      mcpServers: [],
+      sessionId: normalizedProviderSessionId,
+    });
+    await this.applyDefaultModel(normalizedProviderSessionId);
+    await this.applyThinkingConfig(normalizedProviderSessionId);
+    const runtimeSessionId = this.toRuntimeSessionId(
+      normalizedProviderSessionId
+    );
     this.activeSessions.set(runtimeSessionId, {
       providerSessionId: normalizedProviderSessionId,
       runtimeSessionId,
@@ -74,13 +97,39 @@ export class KimiSessionLifecycle {
   }
 
   async send(sessionId: string, content: string): Promise<void> {
-    this.requireSession(sessionId);
+    const session = this.requireSession(sessionId);
     const trimmedContent = content.trim();
     if (trimmedContent.length === 0) {
       throw new Error("Cannot send an empty Kimi message.");
     }
-    await this.options.router.request("prompt", {
-      user_input: trimmedContent,
+    await this.options.router.request("session/prompt", {
+      prompt: [
+        {
+          text: trimmedContent,
+          type: "text",
+        },
+      ],
+      sessionId: session.providerSessionId,
+    });
+  }
+
+  private async applyDefaultModel(providerSessionId: string): Promise<void> {
+    const defaultModel = this.options.defaultModel?.trim();
+    if (!defaultModel) {
+      return;
+    }
+    await this.options.router.request("session/set_config_option", {
+      configId: "model",
+      sessionId: providerSessionId,
+      value: defaultModel,
+    });
+  }
+
+  private async applyThinkingConfig(providerSessionId: string): Promise<void> {
+    await this.options.router.request("session/set_config_option", {
+      configId: "thinking",
+      sessionId: providerSessionId,
+      value: "on",
     });
   }
 
@@ -90,16 +139,24 @@ export class KimiSessionLifecycle {
     }
     await this.options.processBridge.start();
     await this.options.router.request("initialize", {
-      capabilities: {
-        supports_question: true,
+      clientCapabilities: {
+        fs: {
+          readTextFile: false,
+          writeTextFile: false,
+        },
+        terminal: false,
       },
-      client: {
+      clientInfo: {
         name: "codeai-hub",
         version: "0.1.0",
       },
-      protocol_version: "1.10",
+      protocolVersion: 1,
     });
     this.initialized = true;
+  }
+
+  private toRuntimeSessionId(providerSessionId: string): string {
+    return `kimi:${providerSessionId}`;
   }
 
   private requireSession(sessionId: string): ActiveKimiSession {
@@ -110,3 +167,10 @@ export class KimiSessionLifecycle {
     return session;
   }
 }
+
+const readProviderSessionId = (response: unknown): string => {
+  if (isRecord(response) && typeof response.sessionId === "string") {
+    return response.sessionId;
+  }
+  throw new Error("Kimi ACP session/new did not return a session id.");
+};

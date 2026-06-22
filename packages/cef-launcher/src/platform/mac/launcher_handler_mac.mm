@@ -1,6 +1,7 @@
 #include "launcher_handler.h"
 
 #import <Cocoa/Cocoa.h>
+#import <QuartzCore/QuartzCore.h>
 
 #include <string>
 
@@ -12,10 +13,40 @@
 
 namespace {
 
+NSColor* ProjectManagerBackgroundColor() {
+  return [NSColor colorWithCalibratedRed:11.0 / 255.0
+                                   green:13.0 / 255.0
+                                    blue:18.0 / 255.0
+                                   alpha:1.0];
+}
+
 NSWindow* GetWindowForBrowser(CefRefPtr<CefBrowser> browser) {
   NSView* view = CAST_CEF_WINDOW_HANDLE_TO_NSVIEW(
       browser->GetHost()->GetWindowHandle());
   return [view window];
+}
+
+NSWindow* GetWindowForHandle(CefWindowHandle window_handle) {
+  NSView* view = CAST_CEF_WINDOW_HANDLE_TO_NSVIEW(window_handle);
+  return [view window];
+}
+
+void PaintNativeWindowDark(NSWindow* window) {
+  if (!window) {
+    return;
+  }
+
+  NSColor* background = ProjectManagerBackgroundColor();
+  [window setOpaque:YES];
+  [window setBackgroundColor:background];
+
+  NSView* content_view = [window contentView];
+  if (content_view) {
+    [content_view setWantsLayer:YES];
+    [[content_view layer] setBackgroundColor:[background CGColor]];
+    [content_view setNeedsDisplay:YES];
+  }
+  [window displayIfNeeded];
 }
 
 }  // namespace
@@ -92,6 +123,17 @@ void LauncherHandler::PlatformPersistWindowState(
 }
 
 namespace codeai::launcher {
+
+void PrepareNativePopupWindowForClose(CefWindowHandle window_handle) {
+  NSWindow* window = GetWindowForHandle(window_handle);
+  if (!window) {
+    return;
+  }
+
+  PaintNativeWindowDark(window);
+  [window setAnimationBehavior:NSWindowAnimationBehaviorNone];
+  [window orderOut:nil];
+}
 
 void RequestNativeApplicationTermination() {
   // Forwarding the red window-close button into -[NSApplication terminate:]

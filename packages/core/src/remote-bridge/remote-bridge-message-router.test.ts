@@ -49,9 +49,19 @@ test("RemoteBridgeMessageRouter exposes native request capture command and resul
     "message router must pass capture reasoning override to the facade"
   );
   assert.equal(
+    routerSource.includes("captureMode: readCaptureMode(payload.captureMode)"),
+    true,
+    "message router must pass capture mode to the facade"
+  );
+  assert.equal(
     typesSource.includes("readonly reasoning?: string | null"),
     true,
     "incoming bridge contract must include capture reasoning override"
+  );
+  assert.equal(
+    typesSource.includes('readonly captureMode?: "managed" | "vanilla" | null'),
+    true,
+    "incoming bridge contract must include capture mode"
   );
   assert.equal(
     typesSource.includes(

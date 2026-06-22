@@ -5,6 +5,7 @@ import type { SessionContinuityFacade } from "../../session-continuity/session-c
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { serializeSessionScope } from "../session-stream-contracts";
 import {
   type BridgeEvent,
   readAppliedProviderTurnConfig,
@@ -475,7 +476,10 @@ export class SessionRequestHandlerMessageDispatch {
       return false;
     }
 
-    this.deps.broadcaster({ type: "session:message", payload: userMessage });
+    this.deps.broadcaster({
+      type: "session:message",
+      payload: { ...userMessage, ...serializeSessionScope(session) },
+    });
     return true;
   }
 

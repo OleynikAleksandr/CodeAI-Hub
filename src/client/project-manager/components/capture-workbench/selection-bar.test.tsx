@@ -28,9 +28,9 @@ test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini di
     <CaptureWorkbenchSelectionBar
       selection={{
         step: "description",
-        provider: "claude",
-        model: "sonnet",
-        reasoning: "thinking-high",
+        provider: "codex",
+        model: "gpt-5.5",
+        reasoning: "reasoning-xhigh",
       }}
       stateClient={{
         loadSelection: async () => null,
@@ -45,10 +45,31 @@ test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini di
   assert.equal(markup.includes("Reasoning"), true);
   assert.equal(markup.includes("Gemini"), true);
   assert.equal(markup.includes("disabled=\"\""), true);
-  assert.equal(markup.includes("thinking high"), true);
+  assert.equal(markup.includes("GPT-5.5"), true);
+  assert.equal(markup.includes("GPT-5.3-Codex-Spark"), true);
+  assert.equal(markup.includes("reasoning xhigh"), true);
   assert.equal(markup.includes("aria-haspopup=\"listbox\""), true);
   assert.equal(markup.includes("<select"), false);
   assert.equal(markup.includes("<option"), false);
+});
+
+test("CaptureWorkbenchSelectionBar renders current Kimi registry models", () => {
+  const markup = renderToStaticMarkup(
+    <CaptureWorkbenchSelectionBar
+      selection={{
+        step: "description",
+        provider: "kimi",
+        model: "kimi-k2.7-code-highspeed",
+        reasoning: "default",
+      }}
+      stateClient={{
+        loadSelection: async () => null,
+        saveSelection: async () => undefined,
+      }}
+    />
+  );
+
+  assert.equal(markup.includes("Kimi K2.7 Code High Speed"), true);
 });
 
 test("CaptureWorkbenchSelectionBar selector source avoids native HTML selects", async () => {

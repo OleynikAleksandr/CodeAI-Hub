@@ -484,6 +484,7 @@ const requiredEntries = [
   "extension/node_modules/@codeai-hub/translation/package.json",
 ];
 const forbiddenEntries = [
+  "extension/.git",
   "extension/.github/",
   "extension/.nvmrc",
   "extension/native/",

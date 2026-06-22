@@ -1,4 +1,4 @@
-export type KimiModelId = "kimi-k2.7-code";
+export type KimiModelId = "kimi-k2.7-code" | "kimi-k2.7-code-highspeed";
 export type KimiModelStatus = "active";
 export type KimiModelTier = "coding";
 
@@ -16,7 +16,16 @@ export const KIMI_RECOMMENDED_MODELS = [
   {
     id: "kimi-k2.7-code",
     displayName: "Kimi K2.7 Code",
-    description: "Kimi K2.7 Code model exposed through Wire mode.",
+    description: "Kimi K2.7 Code model exposed through Kimi Code ACP.",
+    status: "active",
+    supportsReasoningControl: false,
+    supportsThinkingDisplaySummarized: false,
+    tier: "coding",
+  },
+  {
+    id: "kimi-k2.7-code-highspeed",
+    displayName: "Kimi K2.7 Code High Speed",
+    description: "Lower-latency Kimi K2.7 coding model exposed through ACP.",
     status: "active",
     supportsReasoningControl: false,
     supportsThinkingDisplaySummarized: false,

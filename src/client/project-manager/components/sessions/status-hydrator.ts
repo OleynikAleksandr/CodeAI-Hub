@@ -43,6 +43,7 @@ export const useProjectManagerCoreStatusHydrator = (params: {
     readonly sessionId: string;
     readonly messages: readonly unknown[];
   }) => void;
+  readonly rehydrateOnCoreState?: boolean;
 }) => {
   const [connection, setConnection] = useState<CoreConnectionState>({
     status: "connecting",
@@ -140,7 +141,10 @@ export const useProjectManagerCoreStatusHydrator = (params: {
     // reload histories, otherwise the PM session list becomes stale and clicks
     // can open “dead” sessions with empty history.
     const unsubscribe = api.onCoreEvent((message) => {
-      if (message.type !== "core:state") {
+      if (
+        message.type !== "core:state" ||
+        params.rehydrateOnCoreState === false
+      ) {
         return;
       }
       hydrateFromStatus(config);
@@ -157,7 +161,7 @@ export const useProjectManagerCoreStatusHydrator = (params: {
       );
       unsubscribe();
     };
-  }, [hydrateFromStatus]);
+  }, [hydrateFromStatus, params.rehydrateOnCoreState]);
 
   return connection;
 };

@@ -60,8 +60,8 @@ test("repairs commit-succeeded hash-missing debt", () => {
   });
   const parsed = parsePlanStateMarkdown(result.markdown);
 
-  assert.equal(result.reason, "commit_succeeded_hash_missing");
-  assert.equal(parsed.state.lastRecordedCommit, "abc1234");
+  assert.equal(result.reason, "commit_succeeded_local_debt_cleared");
+  assert.equal(parsed.state.lastRecordedCommit, "self");
   assert.equal(parsed.state.currentTaskId, "phase3.stream6.task1");
 });
 

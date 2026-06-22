@@ -34,7 +34,7 @@ export class KimiWireProcessBridge {
 
     return new Promise((resolve, reject) => {
       const command = this.options.command ?? "kimi";
-      const child = spawn(command, [...this.options.args, "--wire"], {
+      const child = spawn(command, [...this.options.args], {
         cwd: this.options.cwd,
         env: this.options.env,
         stdio: ["pipe", "pipe", "pipe"],
@@ -43,9 +43,7 @@ export class KimiWireProcessBridge {
 
       const rejectStartup = (error: Error): void => {
         this.cleanup();
-        reject(
-          new Error(`Kimi Wire process failed to start: ${error.message}`)
-        );
+        reject(new Error(`Kimi ACP process failed to start: ${error.message}`));
       };
 
       child.once("error", rejectStartup);
@@ -57,12 +55,10 @@ export class KimiWireProcessBridge {
       child.once("exit", (code, signal) => {
         this.cleanup();
         if (code !== 0 && code !== null) {
-          this.options.onStderr?.(
-            `Kimi Wire process exited with code ${code}.`
-          );
+          this.options.onStderr?.(`Kimi ACP process exited with code ${code}.`);
         } else if (signal) {
           this.options.onStderr?.(
-            `Kimi Wire process exited with signal ${signal}.`
+            `Kimi ACP process exited with signal ${signal}.`
           );
         }
       });
@@ -108,9 +104,7 @@ export class KimiWireProcessBridge {
 
   private requireChild(): ChildProcessWithoutNullStreams {
     if (!this.child) {
-      throw new Error(
-        "Cannot write to Kimi Wire process before it is started."
-      );
+      throw new Error("Cannot write to Kimi ACP process before it is started.");
     }
     return this.child;
   }

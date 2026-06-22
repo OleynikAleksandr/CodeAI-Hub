@@ -19,9 +19,21 @@ const SECTION_SOURCE_PATH = path.resolve(
 test("CaptureWorkbenchDiffRenderer renders prototype mode tabs and snapshot labels", () => {
   const markup = renderToStaticMarkup(
     <CaptureWorkbenchDiffRenderer
-      current={slotEntry("current", "2026-05-02T14:32:00.000Z", "1.2.124")}
-      previous={slotEntry("previous", "2026-05-02T11:08:00.000Z", "1.2.123")}
       provider="claude"
+      slot={{
+        managed: {
+          current: slotEntry("current", "2026-05-02T14:32:00.000Z", "1.2.124"),
+          previous: slotEntry("previous", "2026-05-02T11:08:00.000Z", "1.2.123"),
+        },
+        model: "sonnet",
+        provider: "claude",
+        reasoning: "thinking-high",
+        step: "description",
+        vanilla: {
+          current: slotEntry("vanilla", "2026-05-02T14:01:00.000Z", "1.2.124"),
+          previous: null,
+        },
+      }}
       stateClient={{
         readArtifactRecords: async () => [],
       }}
@@ -40,16 +52,19 @@ test("CaptureWorkbenchDiffRenderer keeps artifact-read and extractor wiring", as
   const sectionSource = await readFile(SECTION_SOURCE_PATH, "utf8");
 
   assert.equal(
-    rendererSource.includes("stateClient.readArtifactRecords(previous.jsonlPath)"),
+    rendererSource.includes("stateClient.readArtifactRecords(pair.left.jsonlPath)"),
     true
   );
   assert.equal(
-    rendererSource.includes("stateClient.readArtifactRecords(current.jsonlPath)"),
+    rendererSource.includes("stateClient.readArtifactRecords(pair.right.jsonlPath)"),
     true
   );
   assert.equal(rendererSource.includes("extractCodexDiffSections"), true);
   assert.equal(rendererSource.includes("extractClaudeDiffSections"), true);
   assert.equal(rendererSource.includes("buildCaptureWorkbenchDiffSection"), true);
+  assert.equal(rendererSource.includes('setMode("managed-vs-vanilla")'), true);
+  assert.equal(rendererSource.includes("slot?.vanilla.current"), true);
+  assert.equal(rendererSource.includes('leftLabel: "Vanilla"'), true);
   assert.equal(sectionSource.includes("section.collapsedByDefault"), true);
   assert.equal(sectionSource.includes("setExpanded((current) => !current)"), true);
 });

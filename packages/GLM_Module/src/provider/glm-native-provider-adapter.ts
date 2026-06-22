@@ -1,11 +1,15 @@
 import { randomUUID } from "node:crypto";
 import {
   buildGlmFailureMessage,
-  type GlmRequestFailure,
+  buildGlmHttpError,
+  buildGlmRequestHeaders,
+  delay,
+  GLM_MAX_REQUEST_ATTEMPTS,
   isRetryableGlmFailure,
   readAppliedTurnConfigModel,
   readAppliedTurnConfigReasoning,
   readAppliedTurnConfigThinkingEnabled,
+  readGlmRetryDelayMs,
 } from "./glm-native-adapter-utils";
 import {
   buildGlmNativeAssistantToolMessage,
@@ -21,8 +25,14 @@ import {
   GLM_CONTEXT_WINDOW_TOKEN_LIMIT,
   type GlmRuntimeProfile,
 } from "./glm-native-runtime-profile";
+import {
+  createGlmNativeSessionLogger,
+  type GlmNativeSessionLogger,
+  serializeGlmNativeLogValue,
+} from "./glm-native-session-log";
 import type { GlmTokenUsage } from "./glm-native-sse-parser";
 import { readGlmStreamResponse } from "./glm-native-stream-reader";
+import { readGlmUsageLimits } from "./glm-usage-limits-reader";
 
 export const GLM_NATIVE_PROVIDER_ID = "glmNative" as const;
 
@@ -69,12 +79,6 @@ interface GlmSessionState {
 interface GlmAssistantTurn {
   readonly messages: readonly GlmSessionMessage[];
 }
-
-const GLM_MAX_REQUEST_ATTEMPTS = 3;
-const GLM_RETRY_DELAY_MS = 750;
-
-const delay = (milliseconds: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 export class GlmProviderAdapter {
   private readonly listeners = new Map<string, Set<(event: unknown) => void>>();
@@ -156,12 +160,15 @@ export class GlmProviderAdapter {
         readAppliedTurnConfigThinkingEnabled(turnOptions) ?? undefined,
       workspacePath: session.workspacePath,
     });
+    const logger = createGlmNativeSessionLogger(profile, sessionId);
+    logger.write("turn_started", { turnOptions, userContent });
     const abortController = new AbortController();
     session.abortControllers.add(abortController);
     this.emit(sessionId, this.buildEvent("turn_started"));
     try {
       const assistantTurn = await this.streamTurn({
         abortController,
+        logger,
         profile,
         session,
         sessionId,
@@ -169,7 +176,9 @@ export class GlmProviderAdapter {
       });
       session.messages.push(...assistantTurn.messages);
       this.emit(sessionId, this.buildEvent("turn_completed"));
+      logger.write("turn_completed", { messages: assistantTurn.messages });
     } catch (error) {
+      logger.write("turn_failed", { error: serializeGlmNativeLogValue(error) });
       this.emit(sessionId, {
         ...this.buildEvent("turn_failed"),
         message: buildGlmFailureMessage(error),
@@ -189,8 +198,24 @@ export class GlmProviderAdapter {
     return Promise.resolve();
   }
 
+  // Core dispatches this on session lifecycle (duck-typed); reuses resolved profile.
+  async refreshUsageLimits(params: {
+    readonly broadcast: (event: unknown) => void;
+    readonly providerSessionId: string;
+    readonly runtimeSessionId: string;
+    readonly workspacePath: string;
+  }): Promise<void> {
+    const payload = await readGlmUsageLimits(
+      this.buildProfile({ workspacePath: params.workspacePath })
+    ).catch(() => null);
+    if (payload) {
+      params.broadcast(payload);
+    }
+  }
+
   private async streamTurn(options: {
     readonly abortController: AbortController;
+    readonly logger: GlmNativeSessionLogger;
     readonly profile: GlmRuntimeProfile;
     readonly session: GlmSessionState;
     readonly sessionId: string;
@@ -202,6 +227,7 @@ export class GlmProviderAdapter {
     for (let step = 1; step <= GLM_NATIVE_MAX_TOOL_STEPS; step += 1) {
       const result = await this.streamRequest({
         abortController: options.abortController,
+        logger: options.logger,
         messages: [...options.session.messages, ...turnMessages],
         profile: options.profile,
         sessionId: options.sessionId,
@@ -216,17 +242,23 @@ export class GlmProviderAdapter {
             role: "assistant",
           });
         }
+        options.logger.write("assistant_turn_completed", { result, step });
         return { messages: turnMessages };
       }
+      options.logger.write("tool_calls_received", {
+        result,
+        step,
+        toolCalls: result.toolCalls,
+      });
       const assistantToolMessage = buildGlmNativeAssistantToolMessage(result);
       turnMessages.push(assistantToolMessage);
       for (const toolCall of assistantToolMessage.tool_calls ?? []) {
-        turnMessages.push(
-          await executeGlmNativeToolCall(
-            toolCall,
-            options.session.workspacePath
-          )
+        const toolResult = await executeGlmNativeToolCall(
+          toolCall,
+          options.session.workspacePath
         );
+        options.logger.write("tool_result", { step, toolCall, toolResult });
+        turnMessages.push(toolResult);
       }
     }
     throw new Error("GLM workflow tool loop exceeded the maximum step count.");
@@ -234,6 +266,7 @@ export class GlmProviderAdapter {
 
   private async streamRequest(options: {
     readonly abortController: AbortController;
+    readonly logger: GlmNativeSessionLogger;
     readonly messages: readonly GlmSessionMessage[];
     readonly profile: GlmRuntimeProfile;
     readonly sessionId: string;
@@ -244,8 +277,11 @@ export class GlmProviderAdapter {
       try {
         const response = await this.openGlmResponseWithRetry({
           abortController: options.abortController,
+          attempt,
+          logger: options.logger,
           profile: options.profile,
           requestBody,
+          sessionId: options.sessionId,
         });
         if (!response.body) {
           throw new Error("GLM response did not include a stream body.");
@@ -259,6 +295,10 @@ export class GlmProviderAdapter {
                 content,
                 tag: "live",
               }),
+            onParsedChunk: (chunk, data) =>
+              options.logger.write("sse_parsed_chunk", { chunk, data }),
+            onRawFrame: (data) =>
+              options.logger.write("sse_raw_frame", { data }),
             onThinking: (content) =>
               this.emit(options.sessionId, {
                 ...this.buildEvent("thinking"),
@@ -269,6 +309,7 @@ export class GlmProviderAdapter {
           }
         );
         emittedUsefulEvent = result.emittedUsefulEvent;
+        options.logger.write("stream_result", { result });
         return result;
       } catch (error) {
         if (
@@ -284,7 +325,12 @@ export class GlmProviderAdapter {
           message: buildGlmFailureMessage(error),
           nextAttempt: attempt + 1,
         });
-        await delay(GLM_RETRY_DELAY_MS * attempt);
+        options.logger.write("stream_retry", {
+          attempt,
+          error: serializeGlmNativeLogValue(error),
+          nextAttempt: attempt + 1,
+        });
+        await delay(readGlmRetryDelayMs(error, attempt));
       }
     }
     throw new Error("GLM stream failed before a read attempt was made.");
@@ -318,44 +364,39 @@ export class GlmProviderAdapter {
 
   private async openGlmResponseWithRetry(options: {
     readonly abortController: AbortController;
+    readonly attempt: number;
+    readonly logger: GlmNativeSessionLogger;
     readonly profile: GlmRuntimeProfile;
     readonly requestBody: Record<string, unknown>;
+    readonly sessionId: string;
   }): Promise<Response> {
-    for (let attempt = 1; attempt <= GLM_MAX_REQUEST_ATTEMPTS; attempt += 1) {
-      try {
-        const response = await fetch(options.profile.chatCompletionsUrl, {
-          body: JSON.stringify(options.requestBody),
-          headers: {
-            Authorization: `Bearer ${options.profile.apiKey}`,
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          signal: options.abortController.signal,
-        });
-        if (!response.ok) {
-          throw await this.buildHttpError(response);
-        }
-        return response;
-      } catch (error) {
-        if (
-          attempt >= GLM_MAX_REQUEST_ATTEMPTS ||
-          options.abortController.signal.aborted ||
-          !isRetryableGlmFailure(error)
-        ) {
-          throw error;
-        }
-        this.options.reporter?.warn?.(
-          "Retrying transient GLM request failure",
-          {
-            attempt,
-            message: buildGlmFailureMessage(error),
-            nextAttempt: attempt + 1,
-          }
-        );
-        await delay(GLM_RETRY_DELAY_MS * attempt);
-      }
+    const headers = buildGlmRequestHeaders(
+      options.profile.apiKey,
+      options.sessionId
+    );
+    options.logger.write("http_request", {
+      attempt: options.attempt,
+      body: options.requestBody,
+      headers,
+      url: options.profile.chatCompletionsUrl,
+    });
+    const response = await fetch(options.profile.chatCompletionsUrl, {
+      body: JSON.stringify(options.requestBody),
+      headers,
+      method: "POST",
+      signal: options.abortController.signal,
+    });
+    options.logger.write("http_response", {
+      attempt: options.attempt,
+      headers: Object.fromEntries(response.headers.entries()),
+      ok: response.ok,
+      status: response.status,
+      statusText: response.statusText,
+    });
+    if (!response.ok) {
+      throw await buildGlmHttpError(response);
     }
-    throw new Error("GLM request failed before a fetch attempt was made.");
+    return response;
   }
 
   private buildProfile(
@@ -399,22 +440,6 @@ export class GlmProviderAdapter {
         used: usage.totalTokens,
       },
     });
-  }
-
-  private async readResponseError(response: Response): Promise<string> {
-    const text = await response.text().catch(() => "");
-    if (text.trim().length === 0) {
-      return `GLM request failed with HTTP ${response.status}.`;
-    }
-    return `GLM request failed with HTTP ${response.status}: ${text.trim()}`;
-  }
-
-  private async buildHttpError(response: Response): Promise<GlmRequestFailure> {
-    const error = new Error(
-      await this.readResponseError(response)
-    ) as GlmRequestFailure;
-    error.status = response.status;
-    return error;
   }
 
   private buildEvent(type: string): GlmSessionEvent {

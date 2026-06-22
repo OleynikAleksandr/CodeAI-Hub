@@ -390,6 +390,7 @@ type CoreIncomingMessage =
   | {
       readonly type: "settings:native-request-capture";
       readonly payload: {
+        readonly captureMode?: "managed" | "vanilla" | null;
         readonly modelId?: string | null;
         readonly providerId: NativeRequestCaptureProviderId;
         readonly reasoning?: string | null;

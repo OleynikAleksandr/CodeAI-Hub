@@ -22,6 +22,8 @@ const WORKFLOW_STAGE_DIRS = new Map<string, readonly string[]>([
   ["description", ["description"]],
   ["virtual_simulation", ["virtual_simulation"]],
   ["diagram_modules", ["diagram_modules", "diagram_modules/product-parts"]],
+  ["application_skeleton", ["application_skeleton"]],
+  ["quality_gates", ["quality_gates"]],
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -37,6 +39,19 @@ const readOptionalString = (value: unknown): string | null => {
 
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
+
+const ensureWorkflowDirectory = async (targetPath: string): Promise<void> => {
+  const current = await fs.stat(targetPath).catch(() => null);
+  if (current?.isDirectory()) {
+    return;
+  }
+  if (current?.isFile() && current.size === 0) {
+    await fs.rm(targetPath, { force: true });
+  } else if (current) {
+    throw new Error(`Workflow artifact path is not a directory: ${targetPath}`);
+  }
+  await fs.mkdir(targetPath, { recursive: true });
+};
 
 const parseWorkspaceSessionPayload = (
   payload: unknown
@@ -83,9 +98,9 @@ export const prepareWorkflowStageDirectories = async (params: {
     params.initiativeSlug
   );
   const stageDirs = WORKFLOW_STAGE_DIRS.get(params.stage ?? "") ?? [];
-  await fs.mkdir(workspaceRoot, { recursive: true });
+  await ensureWorkflowDirectory(workspaceRoot);
   for (const stageDir of stageDirs) {
-    await fs.mkdir(path.join(workspaceRoot, stageDir), { recursive: true });
+    await ensureWorkflowDirectory(path.join(workspaceRoot, stageDir));
   }
   if (
     params.runSlug &&
@@ -93,9 +108,8 @@ export const prepareWorkflowStageDirectories = async (params: {
     params.stage !== "description" &&
     WORKFLOW_STAGE_DIRS.has(params.stage)
   ) {
-    await fs.mkdir(
-      path.join(workspaceRoot, params.stage, "runs", params.runSlug),
-      { recursive: true }
+    await ensureWorkflowDirectory(
+      path.join(workspaceRoot, params.stage, "runs", params.runSlug)
     );
   }
 };

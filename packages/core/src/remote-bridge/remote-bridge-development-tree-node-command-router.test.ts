@@ -30,21 +30,25 @@ const commitWorkspace = async (workspaceRoot: string): Promise<void> => {
   );
 };
 
-const createRouter = () => {
+const createRouter = (
+  options: { readonly withSessionHandler?: boolean } = {}
+) => {
   const bootstrapped: Array<{
     readonly content: string;
     readonly sessionId: string;
     readonly stage: string;
   }> = [];
   const errors: Array<{ readonly code: string; readonly message: string }> = [];
-  const sessions: Array<{ readonly clientId: string; readonly stage: string }> =
-    [];
+  const sessions: Array<{
+    readonly clientId: string;
+    readonly payload: Record<string, unknown>;
+  }> = [];
   const sessionCreateRouter = {
     handle: (
       clientId: string,
-      incoming: { readonly payload: { readonly stage?: string | null } }
+      incoming: { readonly payload: Record<string, unknown> }
     ): Promise<void> => {
-      sessions.push({ clientId, stage: incoming.payload.stage ?? "" });
+      sessions.push({ clientId, payload: incoming.payload });
       return Promise.resolve();
     },
   } as unknown as RemoteBridgeSessionCreateRouter;
@@ -77,7 +81,10 @@ const createRouter = () => {
       sendCommandError: (_clientId, _command, message, code) => {
         errors.push({ code, message });
       },
-      sessionHandler: sessionHandler as unknown as SessionRequestHandler,
+      sessionHandler:
+        options.withSessionHandler === false
+          ? undefined
+          : (sessionHandler as unknown as SessionRequestHandler),
       sessionCreateRouter,
     }),
     sessions,
@@ -136,6 +143,51 @@ test("Development Tree node router allows Product Part nodes before downstream b
     const latestError = errors.at(-1) as { readonly code: string } | undefined;
     assert.equal(latestError?.code, "product_part_brief_pending");
     assert.equal(sessions.length, 0);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Development Tree node router fallback relies on settings for model selection", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-node-router-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const productPartWorkflowPath =
+    "development_tree/materialized/product-parts/core-runtime";
+  try {
+    await mkdir(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub",
+        workspaceSlug,
+        productPartWorkflowPath
+      ),
+      { recursive: true }
+    );
+    await writeFile(path.join(workspaceRoot, ".gitkeep"), "", "utf8");
+    await commitWorkspace(workspaceRoot);
+    const { errors, router, sessions } = createRouter({
+      withSessionHandler: false,
+    });
+    const staleClientPayload = {
+      modelId: "stale-one-shot-model",
+      providerId: "glmNative",
+      workspacePath: workspaceRoot,
+      workspaceSlug,
+      workflowPath: productPartWorkflowPath,
+    };
+
+    await router.handle("client-1", staleClientPayload);
+
+    assert.deepEqual(errors, []);
+    assert.equal(sessions.length, 1);
+    assert.equal(sessions[0]?.payload.providerId, "glmNative");
+    assert.equal(sessions[0]?.payload.stage, productPartWorkflowPath);
+    assert.equal(
+      Object.hasOwn(sessions[0]?.payload ?? {}, "modelSelection"),
+      false
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -198,6 +198,39 @@ test("CaptureWorkbenchRunner keeps translation on the direct capture path", asyn
   });
 });
 
+test("CaptureWorkbenchRunner marks vanilla captures without changing managed payloads", async () => {
+  const { createCaptureWorkbenchRunner } = await loadRunnerModule();
+  const harness = createHarness((call) =>
+    captureResult(call, {
+      jsonlPath: "/tmp/description.jsonl",
+      markdownPath: "/tmp/description.md",
+    })
+  );
+  const runner = createCaptureWorkbenchRunner(
+    {
+      artifactReader: {
+        readArtifactRecords: async () => [{ type: "capture_start" }],
+      },
+      transport: harness.transport,
+    },
+    { scenarioPromptBuilder: workflowPromptBuilder }
+  );
+  const input = {
+    context: {
+      workspacePath: "/workspace/demo",
+      workspaceSlug: "demo",
+    },
+    selection: SELECTION,
+  };
+
+  await runner.runManagedCapture(input);
+  await runner.runVanillaCapture(input);
+
+  assert.equal(harness.captureCalls[0]?.options?.captureMode, undefined);
+  assert.equal(harness.captureCalls[1]?.options?.captureMode, "vanilla");
+  assert.equal(harness.captureCalls[1]?.options?.scenarioId, "description");
+});
+
 test("CaptureWorkbenchRunner binds workflow-state transport for API receivers", async () => {
   const { createCaptureWorkbenchRunner } = await loadRunnerModule();
   const harness = createHarness((call) =>

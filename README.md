@@ -2,7 +2,531 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.539** (Native GLM Workflow Tool Runtime Hotfix)
+**Current Release — v1.2.584** (GLM EPIPE Retry Test)
+
+This release packages the GLM Native transport retry follow-up from the
+1.2.583 retest.
+
+GLM now treats provider `EPIPE: write EPIPE` disconnects as retryable, uses one
+non-nested retry loop with up to 8 attempts, and keeps retry delays short and
+non-increasing: 500 ms by default, with provider `retry-after` capped at
+1500 ms.
+
+Retest focus: install the VSIX, restart the app, open standalone GLM, repeat
+the tool-heavy investigation that previously failed after `web_search`, and
+confirm the turn retries instead of failing immediately with `fetch failed`.
+
+**Previous Release — v1.2.583** (GLM Executable Tool Surface Test)
+
+This release changes GLM Native from "Codex tools only described in the system
+prompt" to GLM/Z.AI-compatible function tools sent in the provider request.
+
+GLM now receives the full converted Codex-native tool list through `tools`,
+keeps the system prompt free of embedded tool JSON, allows up to 64 tool-loop
+steps, and locally executes `exec_command` plus `write_workflow_artifact`.
+Other declared Codex-compatible tools return explicit not-yet-wired results
+while we decide which executor bridges GLM should actually own.
+
+Retest focus: install the VSIX, restart the app, open standalone GLM and Kimi
+chats, ask GLM what executable tools it sees, and verify that GLM can inspect
+the workspace through `exec_command` instead of only writing
+`.codeai-hub/.gitkeep`.
+
+**Previous Release — v1.2.582** (GLM/Kimi Codex-Native Baseline Test)
+
+This release gives the GLM Native and Kimi provider system contexts the
+captured Codex-native system instructions plus the full captured Codex-native
+tool definition list for comparison testing.
+
+The executable provider tool surfaces remain provider-native: GLM still
+executes its `write_workflow_artifact` HTTP tool loop, and Kimi still executes
+the managed ACP file/shell tool profile.
+
+Retest focus: install the VSIX, restart the app, open standalone GLM and Kimi
+chats, ask each provider what system instructions/tools it sees, and compare
+their behavior before we decide what to remove from the Codex-native baseline.
+
+**Previous Release — v1.2.581** (Capture Workbench Retest Fix)
+
+This release fixes the Provider Native Request Capture Workbench retest path.
+Vanilla captures now keep their `vanilla` mode through the Project Manager to
+Core bridge, and the detached Workbench has a `Delete captures` action that
+clears old captured `.md`/`.jsonl` documents before taking fresh snapshots.
+
+It includes the 1.2.580 provider capture baseline and standalone Chat cleanup
+fixes.
+
+Retest focus: install the VSIX, restart the app, open Settings > General >
+Provider Native Request Capture, re-capture Managed and Vanilla snapshots for
+Codex and Claude, use `Delete captures`, and confirm the next captures are the
+only current documents. Then delete workflow steps and confirm standalone Chat
+sessions still remain available.
+
+**Previous Release — v1.2.580** (Provider Native Capture and Chat Cleanup Fix)
+
+This release moves the detached-window close-flash mitigation earlier in the
+macOS close lifecycle. Disposable CEF popup windows now prepare the native
+`NSWindow` directly from `CanClose`, before CEF starts browser teardown, and
+disable the AppKit close animation before ordering the window out.
+
+Retest focus: install the VSIX, restart the app, open a detached Chat window,
+then close it with the macOS red window button and confirm the final white
+content frame no longer appears during close.
+
+**Previous Release — v1.2.578** (Native Popup Close Flash Fix)
+
+This release moves the remaining detached-window close-flash mitigation down to
+the native macOS window layer. The CEF launcher now paints the AppKit `NSWindow`
+dark and orders it out before CEF tears down the browser view, preventing the
+native white backing frame from appearing during close.
+
+Retest focus: install the VSIX, restart the app, open a detached Chat window,
+then close it with the macOS red window button and confirm the white content
+rectangle no longer flashes during close.
+
+**Previous Release — v1.2.577** (Detached CEF Close Flash Fix)
+
+This release finishes the detached-window white-flash repair. The CEF launcher
+now hides disposable detached popup windows during `OnWindowClosing`, before the
+browser view teardown can expose the native white backing frame.
+
+Retest focus: install the VSIX, restart the app, open a detached Chat window,
+then close it with the macOS red window button and confirm the white content
+rectangle no longer flashes during close.
+
+**Previous Release — v1.2.576** (Sticky CEF Popup Dark Paint)
+
+This release hardens the remaining detached-window white-flash path. The CEF
+launcher now keeps the dark Project Manager background on the native CEF window
+and browser view after CEF theme resets, not only before the popup is first
+shown. This covers the extra open/close frame that could still appear white in
+detached Chat and diagram windows after `1.2.575`.
+
+Retest focus: install the VSIX, restart the app, open and close detached Chat
+windows several times, and confirm the white content rectangle no longer
+appears.
+
+**Previous Release — v1.2.575** (Standalone Chat First Restore and CEF Pre-Paint)
+
+This release fixes two retest issues found after `1.2.574`. Saved standalone
+Chats now wait for Core to restore the matching provider session and then open
+the detached window with the real live `sessionId`, so the first open after a
+Core restart no longer gets stuck on "Creating chat session...".
+
+Detached Project Manager/Chat CEF windows now set the dark Project Manager
+background on both the CEF window theme and browser view before the view is
+attached and shown. That covers the native/CEF pre-paint frame visible as a
+white content flash during open/close.
+
+Retest focus: install the VSIX, restart Core, open a saved standalone Chat once,
+and confirm it shows the session interface immediately. Then open and close
+detached Chat windows and confirm the white content rectangle no longer appears.
+
+**Previous Release — v1.2.574** (Standalone Chat Restore and Dark Window Boot)
+
+This release fixes two standalone Chat retest issues. Detached session windows
+now paint a dark background at both the HTML pre-paint layer and CEF browser
+layer, removing the white flash during open/close. Standalone chats also persist
+new histories under the provider session id instead of a transient runtime id,
+so saved Chat rows can recreate a live runtime session after Core restarts.
+
+Retest focus: install the VSIX, restart Core, create a new standalone Chat, send
+a message, restart Core again, then open the saved Chat row and confirm the
+detached interface and history return. Also open and close detached Chat windows
+and confirm the white flash is gone.
+
+**Previous Release — v1.2.573** (Detached Chat Window Isolation)
+
+This release fixes the remaining detached standalone Chat window coupling.
+Session windows scoped to one visible chat no longer full-rehydrate on unrelated
+Core `core:state` events from another new chat, and they keep the current
+snapshot if a status refresh temporarily omits that exact session. Existing
+messages and panels should stay visible while another detached chat is opening.
+
+Retest focus: install the VSIX, restart Core, open two detached standalone
+chats, then create a third chat from Project Manager. While the new chat is
+loading, confirm the already-open detached chat windows keep their interface and
+messages visible.
+
+**Previous Release — v1.2.572** (Standalone Chat Refresh and Replay Repair)
+
+This release fixes two standalone Chat retest issues. Detached standalone chat
+messages now carry session scope metadata, and Project Manager ignores those
+standalone events for workflow panel refreshes. GLM and local-model histories
+also coalesce persisted streamed assistant chunks when reopened, so one answer
+returns as one assistant card instead of many chunk cards.
+
+Retest focus: install the VSIX, restart Core, open Project Manager Chat mode,
+open a detached standalone chat, send a message, and confirm the main Project
+Manager workflow panels do not visibly refresh. Then close and reopen a GLM or
+local-model standalone chat and confirm assistant answers are not split into
+chunk-sized cards.
+
+**Previous Release — v1.2.571** (Standalone Chat Pending Window Attach)
+
+This release fixes the remaining New Chat detached-window attach path. Pending
+standalone Chat windows now normalize Core `session:created` events before
+matching them and also poll the workspace chat list for a matching `liveSessionId`.
+That removes the dependency on CEF cross-window `postMessage` delivery and lets
+the detached Session UI replace the "Creating chat session..." placeholder.
+
+Retest focus: install the VSIX, restart Core, open Project Manager Chat mode,
+click `New Chat`, choose any connected provider, and confirm the detached window
+leaves "Creating chat session..." and shows the Session UI without closing and
+reopening it from the chat list.
+
+**Previous Release — v1.2.570** (Standalone Chat Rename Persistence)
+
+This release fixes the remaining standalone Chat retest issue: manual Rename
+now persists after the chat list refreshes. Core keeps the history-backed
+provider session id when merging live sessions with saved workspace history, so
+Rename/Delete actions target the same `.meta.json` sidecar as the visible chat
+row instead of a temporary live-session alias.
+
+Retest focus: install the VSIX, restart Core, open Project Manager Chat mode,
+right-click an existing standalone chat, rename it, then trigger a refresh by
+sending a message or switching away and back. The custom title should remain.
+
+**Previous Release — v1.2.569** (Standalone Chat Launch Stability)
+
+This release fixes two retest issues in standalone Project Manager chats. New
+chat windows no longer open as a blank `about:blank` page before the session is
+ready; they now load the standalone Project Manager shell immediately and switch
+to the real session when Core reports it.
+
+Chat row Rename/Delete also no longer use native browser dialogs. The actions
+now use in-app React menu/dialog UI, avoiding the macOS CEF host crash seen when
+choosing Rename from the right-click menu.
+
+Retest focus: install the VSIX, restart Core, open Project Manager Chat mode,
+create a new chat, and confirm the detached window is not blank. Then right-click
+an existing chat, use Rename and Delete, and confirm Project Manager stays open
+and the list updates.
+
+**Previous Release — v1.2.568** (Standalone Chat Row Actions)
+
+This release completes the standalone Chat sidebar retest fixes. New chats open
+their detached Session UI immediately after provider selection, chat titles
+refresh as soon as the first message is sent, chat cards show only the provider
+on the second line, and right-clicking a chat now offers Rename and Delete.
+
+Rename stores a lightweight workspace-local metadata sidecar without changing
+provider history filenames, so existing provider session resume behavior stays
+stable.
+
+Retest focus: install the VSIX, restart Core, open Project Manager Chat mode,
+create a new chat, confirm its window opens automatically, send the first
+message, and confirm the sidebar title updates without switching modes. Use
+right-click Rename/Delete on a chat row and confirm the list updates.
+
+**Previous Release — v1.2.567** (Standalone Chat List Repair)
+
+This release fixes duplicate and stale rows in the Project Manager Chat sidebar
+after retesting standalone workspace chats. Translation overlay logs are no
+longer listed as chats, live standalone sessions are filtered to the selected
+workspace, and live/history aliases are merged so reopening a renamed provider
+chat opens the actual live Session UI instead of an empty resumed window.
+
+Retest focus: install the VSIX, restart Core, open Project Manager Chat mode,
+create standalone chats with Claude/Codex/GLM, send the first message, and
+confirm each real chat appears once. Reopen a renamed chat from the list; it
+should show its existing history, not an empty session.
+
+**Previous Release — v1.2.566** (Standalone Workspace Chats)
+
+This release adds a workspace-bound Chat mode to the Project Manager sidebar.
+The existing workspace selector stays in place; `Workflow` keeps the current
+Documentation Tree / Development Tree, while `Chat` shows `New Chat` and saved
+standalone chats for the selected workspace.
+
+Standalone chats open in detached Session UI windows, start through the same
+provider picker used by workflow sessions, and are not tied to a workflow step.
+Their history is stored under the selected workspace's `.codeai-hub/sessions`
+root and they use the selected provider's default system instructions and
+tooling instead of a workflow prompt pack.
+
+Retest focus: install the VSIX, restart Core, open Project Manager, switch the
+sidebar between `Workflow` and `Chat`, create a `New Chat` with any provider,
+then reopen it from the Chat list. Workflow sessions and the workspace dropdown
+should keep their previous behavior.
+
+**Previous Release — v1.2.565** (Kimi ACP Stream/Thinking Repair)
+
+This release fixes native Kimi ACP streaming after the Kimi Code CLI update.
+CodeAI now enables ACP `thinking` per session, buffers token-sized
+`agent_message_chunk` / `agent_thought_chunk` updates into normal dialog
+messages, and flushes the final buffered answer before turn completion.
+
+Retest focus: install the VSIX, restart Core, choose
+`Kimi K2.7 Code High Speed`, create a Kimi session, and send a short prompt
+that produces reasoning. The session should show reasoning and one growing
+assistant answer instead of one separate dialog card per chunk.
+
+**Previous Release — v1.2.564** (Kimi ACP Env Model Repair)
+
+This release fixes Kimi session creation with the new Kimi Code CLI ACP runtime
+by starting `kimi acp` with the selected CodeAI Kimi model injected through the
+CLI-supported `KIMI_MODEL_*` environment contract. `Kimi K2.7 Code` and
+`Kimi K2.7 Code High Speed` now create ACP sessions without sending unsupported
+raw model ids through `session/set_config_option`.
+
+Retest focus: install the VSIX, restart Core, choose Kimi in Settings or a
+workflow step, confirm `Kimi K2.7 Code High Speed` appears in Settings, step
+cards, and the status-line model picker, then create a Kimi session and send a
+short prompt. The session should bind and answer instead of failing with
+`Authentication required` or `spawn kimi ENOENT`.
+
+**Previous Release — v1.2.563** (Kimi ACP High Speed Repair)
+
+This release restores the native Kimi provider after the Kimi Code CLI update by
+starting the CLI through the ACP path, creating/resuming ACP sessions, and
+normalizing ACP stream updates into the regular session UI. Kimi settings and
+launch surfaces are now model-only, include `Kimi K2.7 Code High Speed`, and no
+longer expose the unsupported reasoning on/off toggle.
+
+Retest focus: install the VSIX, restart Core, choose Kimi in Settings or a
+workflow step, confirm `Kimi K2.7 Code High Speed` appears in Settings, step
+cards, and the status-line model picker, then create a Kimi session and confirm
+it no longer fails with `spawn kimi ENOENT`.
+
+**Previous Release — v1.2.562** (Persistent LM Studio Selected Models)
+
+This release fixes the LM Studio lifecycle for selected local models. The
+reasoning translation model selected as `lmstudio:*` and the Local Models
+workflow-agent default now load persistently during Project Manager startup and
+after Settings saves. Ordinary translation/workflow calls no longer eject the
+other selected worker; stale idle CodeAI-owned workers are cleaned only after a
+settings reconcile when they are no longer selected.
+
+Retest focus: start Project Manager with LM Studio running, select one local
+model for Reasoning translation and one for the Local Models provider, confirm
+both stay loaded in LM Studio, then change the Local Models default in Settings
+and confirm the new model loads while the old idle CodeAI-owned selection is
+the only stale worker eligible for unload.
+
+**Previous Release — v1.2.561** (Mainline Local Models Verification)
+
+This release packages the merged `main` state after the Local Models file tools,
+warmup, streamed tool turns, dialog dedupe, and Qwen artifact-loop fixes landed
+together. It is a verification release for user retest rather than a new
+functional change beyond the already-merged mainline commits.
+
+Retest focus: install the VSIX, run Project Manager with LM Studio available,
+confirm selected local models warm up best-effort, then run Local Models
+Description turns with Qwen/Gemma/GLM and confirm artifacts are written, live
+reasoning/assistant output appears once, and no repeated tool loop error is
+reported.
+
+**Previous Release — v1.2.560** (Qwen Artifact Tool Loop Fix)
+
+This release fixes the Qwen Local Models tool loop after a successful
+`write_workflow_artifact` call. Core now sends the post-write LM Studio follow-up
+without tools, so Qwen cannot repeatedly call the artifact writer until the
+provider hits the max-step guard. Empty post-write assistant follow-ups complete
+with a short success message for the orchestrator instead of surfacing as a
+provider failure.
+
+Retest focus: run the Qwen/qwen3.6.35b A3b Local Models Description turn and
+confirm the artifact is written, the provider does not report
+`LM Studio workflow tool loop exceeded the maximum step count`, and the
+orchestrator accepts the workflow result.
+
+**Previous Release — v1.2.559** (Qwen Dialog Stream Dedupe)
+
+This release fixes the Qwen Local Models dialog display path after streamed
+artifact-tool turns. The UI skips standalone whitespace-only live cards, keeps
+post-tool thinking in one visible reasoning card, and hides the stored final
+assistant snapshot after the live answer. Core and JSONL history remain
+unchanged so the orchestrator still receives the final assistant message.
+
+Retest focus: run the Qwen/qwen3.6.35b A3b Local Models Description turn and
+confirm the dialog shows one reasoning block, one assistant answer, and no empty
+Local Models card or duplicated final assistant bubble.
+
+**Previous Release — v1.2.558** (Dialog Final Dedupe)
+
+This release keeps the Local Models final assistant message available to Core
+and JSONL history while hiding the duplicated final bubble in the visible
+session dialog when it repeats the previous live assistant output. The fix is
+display-only: orchestrator inputs and stored session messages are unchanged.
+
+Retest focus: run a streamed Local Models workflow turn and confirm the dialog
+shows reasoning plus the live assistant answer once, without a second duplicated
+final bubble after generation completes.
+
+**Previous Release — v1.2.557** (Local Models Tool Streaming Fix)
+
+This release fixes the Local Models artifact-tool regression found in `1.2.556`:
+workspace-bound LM Studio turns now keep streaming reasoning and assistant text
+while tool-call arguments are accumulated silently for `write_workflow_artifact`.
+The dialog no longer waits for the file write before showing model output.
+
+Retest focus: run a Local Models workflow turn that writes an artifact and
+confirm reasoning plus assistant text appear progressively before the file write
+completes.
+
+**Previous Release — v1.2.556** (Local Models Tools + Warmup)
+
+This release gives workspace-bound Local Models sessions a minimal
+`write_workflow_artifact` tool through LM Studio's OpenAI-compatible chat
+endpoint, restricted to `.codeai-hub/**`, so local models can write workflow
+artifacts without shell, git, read-file, or arbitrary filesystem access. The
+legacy fenced-Markdown materialization path remains as fallback.
+
+Project Manager settings load now also schedules a non-blocking LM Studio
+warmup for the selected `lmstudio:*` reasoning translation model and the Local
+Models workflow default model. Warmup is best-effort: missing LM Studio or model
+load failures are logged/skipped and do not block startup.
+
+Retest focus: start Project Manager with LM Studio running, confirm the selected
+local reasoning/workflow models are preloaded, then run a Local Models workflow
+turn and confirm the artifact is written under `.codeai-hub/**`.
+
+**Previous Release — v1.2.555** (Verification Build)
+
+This was a verification-only release with no functional changes. It confirmed
+that the working tree builds and packages correctly after an exploratory scope
+(structured output for local models) was investigated and fully rolled back.
+Local Models behavior was identical to v1.2.554 (live assistant streaming,
+reasoning thinking channel, Description artifact written to disk, and the
+configurable request timeout via `CODEAI_LMSTUDIO_TIMEOUT_MS`).
+
+**Previous Release — v1.2.553** (Local Models Reasoning Polish)
+
+This release fixed the thinking-split artifact write (filename confirmed across
+the assistant+thinking turn) and coalesced reasoning into buffered blocks instead
+of one `thinking` message per `reasoning.delta`.
+
+**Previous Release — v1.2.552** (Local Models Reasoning + Artifact Fix)
+
+This release fixed a live-streaming artifact regression and added the Local
+Models reasoning channel: the SSE reader reads LM Studio `reasoning.delta` and
+the adapter emits `thinking` events, while the preliminary artifact gate
+reconstructs the latest answer from the live-stream tail before writing the
+canonical artifact.
+
+**Previous Release — v1.2.551** (Local Models Live Assistant Streaming)
+
+This release added incremental live streaming for the Local Models provider
+(LM Studio) on workflow-agent turns (`/api/v1/chat`): the provider emits
+`assistant` events with `tag: "live"` per `message.delta` chunk during
+generation, then one final non-live `assistant` event, reusing the
+provider-neutral Core/UI live-tail dedupe pipeline so assistant text appears
+progressively instead of one buffered block.
+
+**Previous Release — v1.2.548** (Application Skeleton Repair Loop Fix)
+
+This release fixes the Application Skeleton review loop found during fresh
+release testing. Core no longer rejects an otherwise valid Application Skeleton
+draft only because descriptive `repoShape` metadata is represented as an object
+instead of a string, and draft repair attempts now use the real managed task
+number so the existing 3-attempt repair limit opens a user review gate instead
+of continuing indefinitely.
+
+**Previous Release — v1.2.547** (Kimi Usage Limits + Questionnaire Fix)
+
+This release fixes two things. (1) Kimi 5h / Weekly plan usage-limit indicators
+now appear in the session top bar: the 5h bucket is read from the `remaining`
+field Kimi returns, and Core refreshes usage limits on turn completion so the
+values show up reliably instead of staying "unavailable". (2) A filled Description
+questionnaire is no longer overwritten by the empty template when Project Manager
+starts and the questionnaire read fails transiently.
+
+Retest focus: (1) start a Kimi session, send one message, and after the turn
+completes confirm the top bar shows real 5h and Weekly percentages instead of
+"unavailable"; (2) open a workspace that already has a filled questionnaire and
+confirm Project Manager does not replace it with a blank template on startup.
+
+**Previous Release — v1.2.546** (GLM Native Usage Limits)
+
+This release adds 5-hour and weekly plan usage-limit indicators for the native
+GLM provider in the session top bar. The GLM adapter now fetches the Z.AI
+account quota and reports the 5h and Weekly buckets alongside the existing
+context-window usage. Kimi and GLM OpenCode are unchanged and unaffected.
+
+Retest focus: start a native GLM session and confirm the top bar shows real
+5h and Weekly percentages (with reset times on hover) instead of "unavailable".
+A Kimi session must remain unchanged.
+
+**Previous Release — v1.2.545** (Start Card Settings Truth Hotfix)
+
+This release fixes the next-step and Development Tree launch cards so model
+and reasoning choices are persisted through the same scoped Settings path used
+by the Settings UI before a session starts. Kimi now exposes only binary
+Reasoning on/off in launch cards, native GLM exposes only Off/High/Max, and
+Development Tree node launches no longer send model/reasoning as one-shot
+payload fields that could drift away from the settings files.
+
+Retest focus: in a next-step card and a Development Tree node card, switch
+provider/model/reasoning for Kimi and native GLM, start the session, and confirm
+the selected values are reflected in the session footer and remain present
+after reopening Settings. Kimi should offer only on/off; native GLM should offer
+off/high/max.
+
+**Previous Release — v1.2.544** (Kimi Reasoning Toggle Audit Fix)
+
+This release fixes a critical defect in the Kimi Reasoning on/off toggle
+introduced in v1.2.543. After toggling Reasoning in Settings → Kimi and
+saving, the first subsequent Kimi turn would deterministically fail with
+"Kimi provider adapter must be initialized before use." because the adapter
+left itself in an uninitialized state. The fix keeps the adapter initialized
+across the reconfigure by re-running the Wire runtime setup, returns a
+`Promise<boolean>` from `reconfigureThinking` so the reconciler can skip
+binding invalidation on no-op saves, and extends the reconcile path to
+Settings reset (previously only Settings save triggered it).
+
+Retest focus: open Settings → Kimi, toggle Reasoning on/off, save, then send
+a Kimi message. The first turn after the toggle must succeed (no
+"must be initialized" error) and must reflect the selected thinking mode.
+Saving unrelated settings must NOT restart the Kimi session. Resetting
+settings to defaults must also reconcile Kimi thinking.
+
+**Previous Release — v1.2.543** (Kimi Reasoning On/Off Toggle)
+
+This release adds a binary Reasoning on/off toggle to the Kimi provider card
+in Settings. The toggle controls Kimi K2.7 Code thinking mode itself through
+the Wire process `--thinking` / `--no-thinking` CLI flag (separate from the
+existing "Reasoning in dialog" visibility toggle, which remains UI-only).
+Kimi has no reasoning effort levels (only on/off); changing the toggle
+force-restarts the active Kimi Wire process so the new flag takes effect on
+the next turn.
+
+This hotfix stops sending already-Russian reasoning blocks through the
+localization translator. Thinking/reasoning display still translates mixed
+English/Russian reasoning, but predominantly Russian chunks with only code
+tokens, file names or short product identifiers are shown as-is.
+
+Retest focus: run GLM/Kimi/OpenCode reasoning in a Russian workspace. Confirm
+Russian thinking fragments are not retranslated or reformatted, while mixed
+English reasoning with Russian questionnaire quotes is still translated.
+
+**Previous Release — v1.2.541** (Native GLM OpenCode Transport Hotfix)
+
+This hotfix aligns native `GLM` transport behavior with the useful parts of
+OpenCode's Z.AI request path. Native GLM requests now send stable
+session-affinity headers (`x-session-affinity`, `X-Session-Id`) plus a
+`User-Agent`, and retry timing now honors `retry-after-ms` / `retry-after`
+before falling back to capped exponential jitter.
+
+Retest focus: run Description or Virtual Simulation through native `GLM` with
+reasoning enabled. Confirm the turn still writes managed artifacts, creates the
+provider-home diagnostic JSONL, and no longer fails immediately on transient
+pre-output `ECONNRESET` resets.
+
+**Previous Release — v1.2.540** (Native GLM Provider Log Hotfix)
+
+This hotfix adds full native `GLM` provider-home diagnostic session logs.
+Every native GLM turn now writes JSONL under
+`.codeai-hub/<workspace>/runtime/providers/glm-native/home/sessions/YYYY/MM/DD/`,
+including the effective profile, request URL/headers/body, raw SSE frames,
+parsed chunks, tool calls/results, usage snapshots, retries and failures.
+Authorization headers are intentionally preserved for local debugging.
+
+Retest focus: run one native `GLM` turn with reasoning enabled, then inspect
+the provider-home session log and confirm it shows the selected reasoning
+level, full request body and raw streamed provider events.
+
+**Previous Release — v1.2.539** (Native GLM Workflow Tool Runtime Hotfix)
 
 This hotfix turns native `GLM` managed workflow turns into agent-capable turns.
 Native GLM now receives the CodeAI Hub system instruction plus an

@@ -19,6 +19,12 @@ const TRANSLATION_PREVIEW_LENGTH = 160;
 const TRANSLATION_TIMEOUT_BASE_MS = 15_000;
 const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
 const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
+const CYRILLIC_CHARACTER_PATTERN = /[А-Яа-яЁё]/gu;
+const LATIN_CODE_TOKEN_PATTERN = /[./_-]|\d/u;
+const LATIN_TOKEN_PATTERN = /[A-Za-z][A-Za-z0-9._/-]*/gu;
+const RUSSIAN_LANGUAGE_PATTERN = /^ru(?:[-_]|$)/iu;
+const RUSSIAN_SKIP_MIN_CYRILLIC_CHARACTERS = 40;
+const RUSSIAN_SKIP_MAX_LATIN_PROSE_WORDS = 3;
 
 export type SessionTranslationFacadeFactory = (options: {
   readonly reporter?: TranslationReporter;
@@ -82,6 +88,31 @@ const resolveTranslationTimeoutMs = (content: string): number =>
     TRANSLATION_TIMEOUT_BASE_MS +
       content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
   );
+
+const countMatches = (content: string, pattern: RegExp): number =>
+  content.match(pattern)?.length ?? 0;
+
+const countLatinProseWords = (content: string): number =>
+  [...content.matchAll(LATIN_TOKEN_PATTERN)].filter(([token]) => {
+    if (token.length < 3) {
+      return false;
+    }
+    return !LATIN_CODE_TOKEN_PATTERN.test(token);
+  }).length;
+
+const shouldSkipAlreadyRussianReasoningTranslation = (
+  content: string,
+  targetLanguage: string
+): boolean => {
+  if (!RUSSIAN_LANGUAGE_PATTERN.test(targetLanguage)) {
+    return false;
+  }
+  const cyrillicCharacters = countMatches(content, CYRILLIC_CHARACTER_PATTERN);
+  if (cyrillicCharacters < RUSSIAN_SKIP_MIN_CYRILLIC_CHARACTERS) {
+    return false;
+  }
+  return countLatinProseWords(content) <= RUSSIAN_SKIP_MAX_LATIN_PROSE_WORDS;
+};
 
 const defaultTranslationFacadeFactory: SessionTranslationFacadeFactory = (
   options
@@ -225,6 +256,40 @@ export class SessionTranslationFacade {
     return true;
   }
 
+  private shouldSkipAlreadyTargetLanguageThinking(options: {
+    readonly candidate: SessionMessageTranslationCandidate;
+    readonly policy: ReturnType<SessionTranslationPolicyResolver["resolve"]>;
+    readonly sourceHash: string;
+    readonly targetLanguage: string;
+    readonly thinkingCandidate: boolean;
+  }): boolean {
+    if (
+      !(
+        options.thinkingCandidate &&
+        shouldSkipAlreadyRussianReasoningTranslation(
+          options.candidate.content,
+          options.targetLanguage
+        )
+      )
+    ) {
+      return false;
+    }
+    this.logger.info("Session translation skipped before dispatch", {
+      sessionId: options.candidate.sessionId,
+      messageId: options.candidate.messageId,
+      role: options.candidate.role,
+      tag: options.candidate.tag,
+      sourceHash: options.sourceHash,
+      contentLength: options.candidate.content.length,
+      preview: buildLogPreview(options.candidate.content),
+      engineId: options.policy.engineId,
+      policyCategory: options.policy.category,
+      skipReason: "already_target_language",
+      targetLanguage: options.targetLanguage,
+    });
+    return true;
+  }
+
   async translateDialogMessage(
     candidate: SessionMessageTranslationCandidate
   ): Promise<SessionMessageTranslationResult | null> {
@@ -288,6 +353,18 @@ export class SessionTranslationFacade {
       return null;
     }
     const targetLanguage = policy.targetLanguage;
+
+    if (
+      this.shouldSkipAlreadyTargetLanguageThinking({
+        candidate,
+        policy,
+        sourceHash,
+        targetLanguage,
+        thinkingCandidate,
+      })
+    ) {
+      return null;
+    }
 
     if (dedupeKey) {
       const inFlightTranslation = this.inFlightTranslations.get(dedupeKey);

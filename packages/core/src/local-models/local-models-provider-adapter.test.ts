@@ -1,21 +1,71 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { withAppliedProviderTurnConfig } from "../remote-bridge/types";
-import { LocalModelsProviderAdapter } from "./local-models-provider-adapter";
+import {
+  LocalModelsProviderAdapter,
+  resolveRequestTimeoutMs,
+} from "./local-models-provider-adapter";
 
 const CONTEXT_LENGTH_ERROR_PATTERN = /context length exceeded/;
 const NO_FINAL_MESSAGE_PATTERN = /no final assistant message/;
 const SOCKET_CAUSE_PATTERN = /UND_ERR_SOCKET/;
 
-const createNativeMessageResponse = (content: string): Response =>
-  ({
-    json: () =>
-      Promise.resolve({
-        output: [{ content, type: "message" }],
-      }),
+const createNativeChatEndResponse = (result: unknown): Response => {
+  const frame = `event: chat.end\ndata: ${JSON.stringify({ result, type: "chat.end" })}\n\n`;
+  const encoded = new TextEncoder().encode(frame);
+  return {
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoded);
+        controller.close();
+      },
+    }),
     ok: true,
     status: 200,
-  }) as Response;
+  } as Response;
+};
+
+const createNativeMessageResponse = (content: string): Response =>
+  createNativeChatEndResponse({
+    output: [{ content, type: "message" }],
+  });
+
+const createNativeLiveStreamResponse = (
+  deltas: readonly string[],
+  finalContent: string,
+  reasoningDeltas: readonly string[] = []
+): Response => {
+  const reasoningFrames = reasoningDeltas
+    .map(
+      (delta) =>
+        `data: ${JSON.stringify({ content: delta, type: "reasoning.delta" })}\n\n`
+    )
+    .join("");
+  const deltaFrames = deltas
+    .map(
+      (delta) =>
+        `data: ${JSON.stringify({ content: delta, type: "message.delta" })}\n\n`
+    )
+    .join("");
+  const endFrame = `event: chat.end\ndata: ${JSON.stringify({
+    output: [{ content: finalContent, type: "message" }],
+    result: { output: [{ content: finalContent, type: "message" }] },
+    type: "chat.end",
+  })}\n\n`;
+  const encoded = new TextEncoder().encode(
+    `${reasoningFrames}${deltaFrames}${endFrame}`
+  );
+  return {
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoded);
+        controller.close();
+      },
+    }),
+    ok: true,
+    status: 200,
+  } as Response;
+};
 
 const createModelListJson = (): string =>
   JSON.stringify([
@@ -47,6 +97,20 @@ const createLoadedModelJson = (
     },
   ]);
 
+test("resolveRequestTimeoutMs defaults to 20 minutes and honors the env override", () => {
+  const original = process.env.CODEAI_LMSTUDIO_TIMEOUT_MS;
+  try {
+    process.env.CODEAI_LMSTUDIO_TIMEOUT_MS = undefined;
+    assert.equal(resolveRequestTimeoutMs(), 1_200_000);
+    process.env.CODEAI_LMSTUDIO_TIMEOUT_MS = "600000";
+    assert.equal(resolveRequestTimeoutMs(), 600_000);
+    process.env.CODEAI_LMSTUDIO_TIMEOUT_MS = "not-a-number";
+    assert.equal(resolveRequestTimeoutMs(), 1_200_000);
+  } finally {
+    process.env.CODEAI_LMSTUDIO_TIMEOUT_MS = original;
+  }
+});
+
 test("LocalModelsProviderAdapter uses selected local model and emits terminal events", async () => {
   const commandCalls: string[][] = [];
   const requestedModels: string[] = [];
@@ -66,7 +130,12 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
       requestedUrls.push(String(url));
       const body = JSON.parse(String(init?.body)) as { readonly model: string };
       requestedModels.push(body.model);
-      return Promise.resolve(createNativeMessageResponse("Локальный ответ."));
+      return Promise.resolve(
+        createNativeLiveStreamResponse(
+          ["Локальн", "ый ответ."],
+          "Локальный ответ."
+        )
+      );
     }) as typeof fetch,
   });
 
@@ -100,10 +169,26 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
     "codeaihub-workflow-agent-qwen-local-16384",
   ]);
   assert.deepEqual(requestedUrls, ["http://127.0.0.1:1234/api/v1/chat"]);
-  assert.deepEqual(
-    events.map((event) => (event as { readonly type?: string }).type),
-    ["turn_started", "assistant", "turn_completed"]
+  const typedEvents = events.map(
+    (event) =>
+      event as {
+        readonly content?: string;
+        readonly tag?: string;
+        readonly type?: string;
+      }
   );
+  assert.deepEqual(
+    typedEvents.map((event) => event.type),
+    ["turn_started", "assistant", "assistant", "assistant", "turn_completed"]
+  );
+  const liveChunks = typedEvents
+    .filter((event) => event.tag === "live")
+    .map((event) => event.content);
+  assert.deepEqual(liveChunks, ["Локальн", "ый ответ."]);
+  const finalAssistant = typedEvents.find(
+    (event) => event.type === "assistant" && event.tag === undefined
+  );
+  assert.equal(finalAssistant?.content, "Локальный ответ.");
 });
 
 test("LocalModelsProviderAdapter starts LM Studio server before provider turns", async () => {
@@ -293,23 +378,20 @@ test("LocalModelsProviderAdapter reports reasoning-only native chat responses", 
       return "";
     },
     fetchImplementation: (() =>
-      Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            output: [
-              {
-                content: "Reasoning without a final answer.",
-                type: "reasoning",
-              },
-            ],
-            stats: {
-              reasoning_output_tokens: 2047,
-              total_output_tokens: 2047,
+      Promise.resolve(
+        createNativeChatEndResponse({
+          output: [
+            {
+              content: "Reasoning without a final answer.",
+              type: "reasoning",
             },
-          }),
-        ok: true,
-        status: 200,
-      } as Response)) as typeof fetch,
+          ],
+          stats: {
+            reasoning_output_tokens: 2047,
+            total_output_tokens: 2047,
+          },
+        })
+      )) as typeof fetch,
   });
 
   const sessionId = await adapter.createSession();
@@ -350,4 +432,64 @@ test("LocalModelsProviderAdapter includes fetch cause diagnostics", async () => 
     () => adapter.sendMessage(sessionId, "Answer locally."),
     SOCKET_CAUSE_PATTERN
   );
+});
+
+test("LocalModelsProviderAdapter emits Qwen reasoning as thinking chunks before the answer", async () => {
+  const adapter = new LocalModelsProviderAdapter({
+    commandRunner: (args) => {
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
+      }
+      if (args[0] === "ps") {
+        return "[]";
+      }
+      return args[0] === "ls" ? createModelListJson() : "";
+    },
+    fetchImplementation: (() =>
+      Promise.resolve(
+        createNativeLiveStreamResponse(["Ответ."], "Ответ.", [
+          "Дай-ка",
+          " подумаю",
+        ])
+      )) as typeof fetch,
+  });
+
+  const sessionId = await adapter.createSession();
+  const events: unknown[] = [];
+  adapter.subscribe(sessionId, (event) => events.push(event));
+
+  await adapter.sendMessage(sessionId, "Answer locally.");
+
+  const typedEvents = events.map(
+    (event) =>
+      event as {
+        readonly content?: string;
+        readonly tag?: string;
+        readonly type?: string;
+      }
+  );
+  const thinkingEvents = typedEvents.filter(
+    (event) => event.type === "thinking"
+  );
+  // Reasoning chunks are buffered in the SSE reader and flushed as one block.
+  assert.deepEqual(
+    thinkingEvents.map((event) => event.content),
+    ["Дай-ка подумаю"]
+  );
+  assert.ok(thinkingEvents.every((event) => event.tag === "thinking"));
+  const liveChunks = typedEvents
+    .filter((event) => event.type === "assistant" && event.tag === "live")
+    .map((event) => event.content);
+  assert.deepEqual(liveChunks, ["Ответ."]);
+  const finalAssistant = typedEvents.find(
+    (event) => event.type === "assistant" && event.tag === undefined
+  );
+  assert.equal(finalAssistant?.content, "Ответ.");
+  const firstAssistantIndex = typedEvents.findIndex(
+    (event) => event.type === "assistant"
+  );
+  const lastThinkingIndex = typedEvents
+    .map((event) => event.type)
+    .lastIndexOf("thinking");
+  assert.ok(lastThinkingIndex < firstAssistantIndex);
 });

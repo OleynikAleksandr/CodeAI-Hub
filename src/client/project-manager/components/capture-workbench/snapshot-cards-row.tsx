@@ -65,6 +65,21 @@ export const CaptureWorkbenchSnapshotCardsRow: React.FC<
   }, [indexStore, onIndexChange]);
 
   const slot = resolveWorkbenchSlot(index, selection);
+  const hasArtifacts = index.slots.length > 0;
+
+  const clearCaptures = async (): Promise<void> => {
+    setBusy(true);
+    setError(null);
+    try {
+      await stateClient.saveIndex(EMPTY_INDEX);
+      setIndex(EMPTY_INDEX);
+      onIndexChange?.(EMPTY_INDEX);
+    } catch (clearError) {
+      setError(normalizeError(clearError));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const recaptureManaged = async (): Promise<void> => {
     setBusy(true);
@@ -86,13 +101,36 @@ export const CaptureWorkbenchSnapshotCardsRow: React.FC<
     }
   };
 
+  const recaptureVanilla = async (): Promise<void> => {
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await runner.runVanillaCapture({ context, selection });
+      const nextIndex = await indexStore.rotateCapture({
+        captureResult: result.captureResult,
+        mode: "vanilla",
+        records: result.records,
+        slot: result.slot,
+      });
+      setIndex(nextIndex);
+      onIndexChange?.(nextIndex);
+    } catch (captureError) {
+      setError(normalizeError(captureError));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <section aria-label="Capture snapshots" style={styles.container}>
       <div style={styles.row}>
         <CaptureWorkbenchSnapshotCard
+          busy={busy}
           current={slot?.vanilla.current ?? null}
-          disabled={true}
           mode="vanilla"
+          onRecapture={() => {
+            void recaptureVanilla();
+          }}
           previous={slot?.vanilla.previous ?? null}
         />
         <CaptureWorkbenchSnapshotCard
@@ -104,6 +142,21 @@ export const CaptureWorkbenchSnapshotCardsRow: React.FC<
           }}
           previous={slot?.managed.previous ?? null}
         />
+      </div>
+      <div style={styles.actions}>
+        <button
+          disabled={busy || !hasArtifacts}
+          onClick={() => {
+            void clearCaptures();
+          }}
+          style={{
+            ...styles.clearButton,
+            opacity: busy || !hasArtifacts ? 0.55 : 1,
+          }}
+          type="button"
+        >
+          Delete captures
+        </button>
       </div>
       {error ? (
         <div role="status" style={styles.error}>
@@ -118,6 +171,19 @@ const normalizeError = (error: unknown): string =>
   error instanceof Error ? error.message : "Capture Workbench action failed.";
 
 const styles: Record<string, React.CSSProperties> = {
+  actions: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  clearButton: {
+    background: "transparent",
+    border: "1px solid rgba(255, 138, 138, 0.45)",
+    borderRadius: 6,
+    color: "#ff8a8a",
+    cursor: "pointer",
+    fontSize: 11,
+    padding: "5px 10px",
+  },
   container: {
     background: "#20232a",
     borderBottom: "1px solid rgba(255, 255, 255, 0.08)",

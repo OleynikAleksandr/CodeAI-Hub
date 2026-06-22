@@ -11,7 +11,7 @@
 
 Root `Plans/` is intentionally kept small.
 
-- `DevelopmentTree_DownstreamExecutionRefactor_Architecture.md` — active strategic line for unfinished Development Tree downstream execution work, including the move toward Product Part, cluster, module and code worktree lanes.
+- `DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md` — active strategic line for unfinished Development Tree documentation/code lane lifecycle work after the v1.2.513 retest rejected automatic Product Part lane deletion.
 - `Archive/DevelopmentTree_UserGateReviewCursor_Architecture.md` — archived completed bounded refactor source closed by release `1.2.512`; stable Product Part user-gate cursor, attention marker, and immediate attention-clear behavior lives in SSOT docs, while future cluster/module/code user gates remain in the downstream refactor line.
 - `Archive/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md` — archived completed implementation plan closed by release `1.2.509`; stable Product Part lane behavior lives in SSOT docs, while future cluster/module/code lanes remain in the downstream refactor line.
 - `Archive/QualityGates_RestoreIsolation_Architecture.md` — archived completed Quality Gates restore-isolation planning source; stable behavior lives in SSOT docs.

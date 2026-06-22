@@ -42,6 +42,7 @@ import {
 } from "./managed-repair-limit";
 import { persistManagedDecision } from "./managed-workflow-decision-persister";
 import {
+  resolveApplicationSkeletonDraftRepairAttemptNumber,
   resolveDiagramModulesRepairAttemptNumber,
   resolveMaterializationRepairAttemptNumber,
 } from "./managed-workflow-repair-attempts";
@@ -326,7 +327,9 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ? resolveMaterializationRepairAttemptNumber(
             rejected?.repairTaskId ?? null
           )
-        : 1;
+        : resolveApplicationSkeletonDraftRepairAttemptNumber(
+            rejected?.repairTaskId ?? null
+          );
     if (isRepairAttemptLimitReached(attemptNumber)) {
       this.appendCoreMessage(
         params.sessionId,

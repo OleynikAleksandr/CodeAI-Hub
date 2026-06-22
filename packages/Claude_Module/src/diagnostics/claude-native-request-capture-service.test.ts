@@ -82,17 +82,15 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
   assert.deepEqual(queryPayload.options.additionalDirectories, ["/workspace"]);
   assert.deepEqual(queryPayload.options.settingSources, []);
   assert.deepEqual(callOrder, ["envelope", "query"]);
-  assert.deepEqual(appliedInputEnvelopes, [
-    {
-      allowDangerouslySkipPermissions: true,
-      cwd: "/workspace",
-      hasSystemPrompt: true,
-      kind: "claude",
-      permissionMode: "bypassPermissions",
-      settingSources: [],
-      toolCount: 4,
-    },
-  ]);
+  assert.deepEqual(appliedInputEnvelopes[0], {
+    allowDangerouslySkipPermissions: true,
+    cwd: "/workspace",
+    hasSystemPrompt: true,
+    kind: "claude",
+    permissionMode: "bypassPermissions",
+    settingSources: [],
+    toolCount: 4,
+  });
   assert.equal(typeof queryPayload.options.systemPrompt, "string");
   assert.equal(
     (queryPayload.options.systemPrompt as string).includes(
@@ -136,6 +134,46 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     "/tmp/ca.pem"
   );
   assert.equal(queryPayload.options.persistSession, false);
+
+  await service.captureNativeRequest({
+    captureId: "capture-claude-vanilla-test",
+    captureMode: "vanilla",
+    certificateEnv: {
+      NODE_EXTRA_CA_CERTS: "/tmp/ca.pem",
+      SSL_CERT_FILE: "/tmp/ca.pem",
+    },
+    certificatePath: "/tmp/ca.pem",
+    probePrompt: "probe",
+    proxyUrl: "http://127.0.0.1:4444",
+    recordAppliedInputEnvelope: (envelope) => {
+      appliedInputEnvelopes.push(envelope);
+    },
+    workflowPrompt: "workflow prompt",
+    workspacePath: "/workspace",
+  });
+
+  const vanillaPayload = queryPayloads[1];
+  assert.ok(vanillaPayload);
+  assert.equal(vanillaPayload.prompt, "workflow prompt");
+  assert.equal("systemPrompt" in vanillaPayload.options, false);
+  assert.equal("tools" in vanillaPayload.options, false);
+  assert.equal("settingSources" in vanillaPayload.options, false);
+  assert.equal("permissionMode" in vanillaPayload.options, false);
+  assert.equal(
+    "allowDangerouslySkipPermissions" in vanillaPayload.options,
+    false
+  );
+  assert.equal("projectPath" in vanillaPayload.options, false);
+  assert.equal("additionalDirectories" in vanillaPayload.options, false);
+  assert.deepEqual(appliedInputEnvelopes[1], {
+    allowDangerouslySkipPermissions: null,
+    cwd: "/workspace",
+    hasSystemPrompt: false,
+    kind: "claude",
+    permissionMode: null,
+    settingSources: null,
+    toolCount: 0,
+  });
 });
 
 test("ClaudeNativeRequestCaptureService mirrors selected model and applied thinking config", async () => {

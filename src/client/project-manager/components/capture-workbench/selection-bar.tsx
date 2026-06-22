@@ -1,25 +1,17 @@
 import React, { useEffect } from "react";
 import type { WorkbenchSelectionState } from "../../services/workbench-bridge-types";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
-import { CaptureWorkbenchModelReasoningSelectors } from "./model-reasoning-selectors";
+import {
+  CAPTURE_WORKBENCH_PROVIDER_DEFAULTS,
+  CaptureWorkbenchModelReasoningSelectors,
+} from "./model-reasoning-selectors";
 import { CaptureWorkbenchProviderSelector } from "./provider-selector";
 import { CaptureWorkbenchStepSelector } from "./step-selector";
 
 const DEFAULT_SELECTION: WorkbenchSelectionState = {
   step: "description",
-  provider: "claude",
-  model: "sonnet",
-  reasoning: "thinking-high",
-};
-
-const PROVIDER_DEFAULTS: Record<
-  string,
-  { readonly model: string; readonly reasoning: string }
-> = {
-  claude: { model: "sonnet", reasoning: "thinking-high" },
-  codex: { model: "gpt-5.4-mini", reasoning: "reasoning-high" },
-  kimi: { model: "kimi-k2.7-code", reasoning: "default" },
-  glmOpenCode: { model: "zai-coding-plan/glm-5.2", reasoning: "default" },
+  provider: "codex",
+  ...CAPTURE_WORKBENCH_PROVIDER_DEFAULTS.codex,
 };
 
 interface CaptureWorkbenchSelectionBarProps {
@@ -67,7 +59,9 @@ export const CaptureWorkbenchSelectionBar: React.FC<
   };
 
   const updateProvider = (provider: string): void => {
-    const defaults = PROVIDER_DEFAULTS[provider] ?? PROVIDER_DEFAULTS.claude;
+    const defaults =
+      CAPTURE_WORKBENCH_PROVIDER_DEFAULTS[provider] ??
+      CAPTURE_WORKBENCH_PROVIDER_DEFAULTS.codex;
     updateSelection({ ...selection, provider, ...defaults });
   };
 

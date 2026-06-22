@@ -1,7 +1,11 @@
-import { accessSync, constants } from "node:fs";
+import { accessSync, constants, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import {
+  CODEX_NATIVE_SYSTEM_INSTRUCTIONS,
+  CODEX_NATIVE_TOOL_DEFINITIONS_JSON,
+} from "./codex-native-baseline";
 
 const MANAGED_AGENT_DIR = "codeai-managed-agent";
 const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
@@ -10,10 +14,14 @@ const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
   "kimi",
   "home"
 );
-const KIMI_DEFAULT_CONFIG_RELATIVE_PATH = path.join(".kimi", "config.toml");
+const KIMI_DEFAULT_CONFIG_RELATIVE_PATH = path.join(
+  ".kimi-code",
+  "config.toml"
+);
 const WORKSPACE_FALLBACK_SLUG = "workspace";
 const KIMI_CLI_PATH_ENV = "KIMI_CLI_PATH";
 const KIMI_BINARY_NAME = "kimi";
+const KIMI_CODE_BIN_RELATIVE_PATH = path.join(".kimi-code", "bin");
 const KIMI_USER_LOCAL_BIN_RELATIVE_PATH = path.join(".local", "bin");
 const KIMI_COMMON_BIN_DIRS = ["/opt/homebrew/bin", "/usr/local/bin"] as const;
 
@@ -28,10 +36,15 @@ agent:
     - "kimi_cli.tools.file:Grep"
     - "kimi_cli.tools.file:WriteFile"
     - "kimi_cli.tools.file:StrReplaceFile"
+    - "kimi_cli.tools.shell:Shell"
   subagents:
 `;
 
-const KIMI_MANAGED_SYSTEM_PROMPT = `You are Kimi Code CLI operating inside CodeAI Hub as a managed workflow agent.
+const KIMI_MANAGED_SYSTEM_PROMPT = `${CODEX_NATIVE_SYSTEM_INSTRUCTIONS}
+
+# CodeAI Hub Kimi Runtime Addendum
+
+You are Kimi Code CLI operating inside CodeAI Hub as a managed workflow agent.
 
 Your role is to help the user turn project intent into durable CodeAI Hub artifacts. Follow the CodeAI Core Runtime prompt for the active workflow step exactly. The Core prompt is the authority for target artifact paths, artifact mode, language contract, source boundaries, validation rules, and next user-facing output.
 
@@ -60,7 +73,8 @@ Your role is to help the user turn project intent into durable CodeAI Hub artifa
 - When an artifact must be written, use WriteFile or StrReplaceFile so the file system actually changes.
 - Do not claim a file was changed unless the tool call succeeded.
 - Do not perform Git operations. Managed commits, validation, and workflow state transitions belong to CodeAI Core.
-- Do not use shell commands, web access, subagents, background tasks, MCP tools, or provider skills. They are intentionally unavailable in this managed profile.
+- Use Shell only when the active Core prompt or a failed file-tool write makes a local filesystem action necessary for the current managed task, such as creating the target parent directory, inspecting a just-written artifact, or running an explicitly requested narrow check.
+- Do not use web access, subagents, background tasks, MCP tools, provider skills, or shell commands unrelated to the current managed task. They are intentionally unavailable or out of scope in this managed profile.
 
 ## Architecture Workflow Behavior
 
@@ -126,6 +140,14 @@ Additional directories:
 
 \${KIMI_ADDITIONAL_DIRS_INFO}
 {% endif %}
+
+# Captured Codex Native Tool Definitions
+
+The following JSON is the complete Codex-native tool definition list captured for this Kimi comparison profile. The Kimi ACP runtime still executes only the tools declared in the actual Kimi managed agent profile.
+
+\`\`\`json
+${CODEX_NATIVE_TOOL_DEFINITIONS_JSON}
+\`\`\`
 `;
 
 export interface KimiManagedAgentProfilePaths {
@@ -153,10 +175,13 @@ export interface KimiCliEnvironment {
   readonly command: string;
   readonly env: NodeJS.ProcessEnv;
   readonly runtimeHome: KimiRuntimeHome;
+  readonly usesEnvironmentModel: boolean;
 }
 
 interface KimiCliEnvironmentOptions extends KimiRuntimeHomeOptions {
+  readonly defaultModel?: string;
   readonly env?: NodeJS.ProcessEnv;
+  readonly thinkingEnabled?: boolean;
   readonly workspacePath?: string;
 }
 
@@ -257,6 +282,7 @@ const prependPathEntries = (
 };
 
 const getKimiCandidateBinDirs = (homeDir: string): string[] => [
+  path.join(homeDir, KIMI_CODE_BIN_RELATIVE_PATH),
   path.join(homeDir, KIMI_USER_LOCAL_BIN_RELATIVE_PATH),
   ...KIMI_COMMON_BIN_DIRS,
 ];
@@ -280,6 +306,112 @@ const resolveKimiCliCommand = (
   return KIMI_BINARY_NAME;
 };
 
+const KIMI_CODEAI_MODEL_DISPLAY_NAMES: Readonly<Record<string, string>> = {
+  "kimi-k2.7-code": "Kimi K2.7 Code",
+  "kimi-k2.7-code-highspeed": "Kimi K2.7 Code High Speed",
+};
+const KIMI_DEFAULT_MODEL_RE = /^\s*default_model\s*=\s*"([^"]*)"/mu;
+
+const readTomlString = (section: string, key: string): string | undefined => {
+  const match = section.match(
+    new RegExp(`^\\s*${key}\\s*=\\s*"([^"]*)"`, "mu")
+  );
+  return match?.[1];
+};
+
+const unquoteTomlKey = (value: string): string =>
+  value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replace(/\\"/gu, '"')
+    : value;
+
+const readTomlSections = (
+  toml: string,
+  tableName: string
+): Array<{ readonly name: string; readonly text: string }> => {
+  const headers = Array.from(toml.matchAll(/^\s*\[([^\]]+)\]\s*$/gmu));
+  return headers
+    .map((header, index) => {
+      const rawName = header[1];
+      const prefix = `${tableName}.`;
+      if (!rawName.startsWith(prefix)) {
+        return null;
+      }
+      const start = (header.index ?? 0) + header[0].length;
+      const end = headers[index + 1]?.index ?? toml.length;
+      return {
+        name: unquoteTomlKey(rawName.slice(prefix.length)),
+        text: toml.slice(start, end),
+      };
+    })
+    .filter(
+      (section): section is { readonly name: string; readonly text: string } =>
+        section !== null
+    );
+};
+
+const findKimiProviderCredentials = (
+  userConfigPath: string
+): { readonly apiKey: string; readonly baseUrl: string } | null => {
+  let toml: string;
+  try {
+    toml = readFileSync(userConfigPath, "utf8");
+  } catch {
+    return null;
+  }
+
+  const defaultModel = toml.match(KIMI_DEFAULT_MODEL_RE)?.[1];
+  const modelSections = readTomlSections(toml, "models");
+  const providerSections = readTomlSections(toml, "providers");
+  const defaultModelSection = modelSections.find(
+    (section) => section.name === defaultModel
+  );
+  const defaultProviderName = defaultModelSection
+    ? readTomlString(defaultModelSection.text, "provider")
+    : undefined;
+  const provider =
+    providerSections.find((section) => section.name === defaultProviderName) ??
+    providerSections.find(
+      (section) => readTomlString(section.text, "type") === "kimi"
+    ) ??
+    providerSections[0];
+  const apiKey = provider
+    ? readTomlString(provider.text, "api_key")
+    : undefined;
+  if (!apiKey) {
+    return null;
+  }
+  return {
+    apiKey,
+    baseUrl:
+      (provider ? readTomlString(provider.text, "base_url") : undefined) ??
+      "https://api.kimi.com/coding/v1",
+  };
+};
+
+const buildKimiEnvironmentModelEnv = (
+  defaultModel: string | undefined,
+  userConfigPath: string
+): NodeJS.ProcessEnv | null => {
+  const modelName = defaultModel?.trim();
+  if (!(modelName && modelName in KIMI_CODEAI_MODEL_DISPLAY_NAMES)) {
+    return null;
+  }
+  const credentials = findKimiProviderCredentials(userConfigPath);
+  if (!credentials) {
+    throw new Error(
+      `Kimi model "${modelName}" requires Kimi API credentials in ${userConfigPath}. Run "kimi migrate" or "kimi login", then restart Core.`
+    );
+  }
+  return {
+    KIMI_MODEL_API_KEY: credentials.apiKey,
+    KIMI_MODEL_BASE_URL: credentials.baseUrl,
+    KIMI_MODEL_DISPLAY_NAME: KIMI_CODEAI_MODEL_DISPLAY_NAMES[modelName],
+    KIMI_MODEL_MAX_CONTEXT_SIZE: "262144",
+    KIMI_MODEL_NAME: modelName,
+    KIMI_MODEL_PROVIDER_TYPE: "kimi",
+  };
+};
+
 export const buildKimiCliEnvironment = (
   options: KimiCliEnvironmentOptions = {}
 ): KimiCliEnvironment => {
@@ -287,34 +419,21 @@ export const buildKimiCliEnvironment = (
   const runtimeHome = resolveKimiRuntimeHome(options);
   const homeDir = resolveHomeDir(options.homeDir);
   const candidateBinDirs = getKimiCandidateBinDirs(homeDir);
-  const agentProfile = resolveKimiManagedAgentProfilePaths(
-    runtimeHome.providerHomePath
+  const environmentModelEnv = buildKimiEnvironmentModelEnv(
+    options.defaultModel,
+    runtimeHome.userConfigPath
   );
-  const workspacePath = options.workspacePath?.trim();
-  const args = [
-    "--config-file",
-    runtimeHome.userConfigPath,
-    "--agent-file",
-    agentProfile.agentFilePath,
-    "--mcp-config-file",
-    agentProfile.mcpConfigPath,
-    "--skills-dir",
-    agentProfile.skillsDirPath,
-    "--yolo",
-  ];
-  if (workspacePath) {
-    args.push("--work-dir", workspacePath);
-  }
   return {
-    args,
+    args: ["acp"],
     command: resolveKimiCliCommand(baseEnv, homeDir),
     env: {
       ...baseEnv,
       KIMI_CLI_NO_AUTO_UPDATE: "1",
-      KIMI_SHARE_DIR: runtimeHome.providerHomePath,
       PATH: prependPathEntries(baseEnv.PATH, candidateBinDirs),
+      ...(environmentModelEnv ?? {}),
     },
     runtimeHome,
+    usesEnvironmentModel: environmentModelEnv !== null,
   };
 };
 

@@ -3,6 +3,7 @@ import type { SessionManager, SessionRole } from "../../session-manager";
 import type { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { serializeSessionScope } from "../session-stream-contracts";
 import type { BridgeEvent } from "../types";
 import { resolveLiveAssistantTailDedupe } from "./session-request-handler-live-tail-dedupe";
 import { resolveTranslationProviderId } from "./session-request-handler-translation-provider-id";
@@ -244,7 +245,13 @@ export class SessionRequestHandlerEventMessages {
           }
         );
       }
-      this.deps.broadcaster({ type: "session:message", payload: message });
+      this.deps.broadcaster({
+        type: "session:message",
+        payload: {
+          ...message,
+          ...(session ? serializeSessionScope(session) : {}),
+        },
+      });
       this.broadcastDialogMessage(options.sessionId, message);
       if (thinkingMessage) {
         this.deps.logger.info("Thinking dialog message broadcast dispatched", {

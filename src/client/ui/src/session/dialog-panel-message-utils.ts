@@ -7,6 +7,7 @@ const TRAILING_MARKDOWN_LIST_MARKER_REGEX =
 const LEADING_MARKDOWN_LIST_MARKER_REGEX = /^(?:\d+\.|[-*+])(?:\s|$)/u;
 const LEADING_STANDALONE_BOLD_HEADING_BLOCK_REGEX =
   /^\s*\*\*[^\n]*\*\*\s*(?:\r?\n){2,}\S/u;
+const DISPLAY_DUPLICATE_WHITESPACE_REGEX = /\s+/gu;
 
 const isAssistantThinkingMessage = (message: SessionMessage): boolean =>
   message.role === "assistant" && message.tag === "thinking";
@@ -144,6 +145,40 @@ export const mergeThinkingMessages = (
 const isLiveAssistantMessage = (message: SessionMessage): boolean =>
   message.role === "assistant" && message.tag === "live";
 
+const normalizeDisplayDuplicateContent = (content: string): string =>
+  content.replace(DISPLAY_DUPLICATE_WHITESPACE_REGEX, " ").trim();
+
+const hasSubstantiveDisplayContent = (message: SessionMessage): boolean =>
+  normalizeDisplayDuplicateContent(resolveDisplayContent(message)).length > 0;
+
+const hasRecentLiveAssistantDisplayMessage = (
+  messages: readonly SessionMessage[]
+): boolean => {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const candidate = messages[index];
+    if (!candidate) {
+      continue;
+    }
+    if (isLiveAssistantMessage(candidate)) {
+      return hasSubstantiveDisplayContent(candidate);
+    }
+    if (candidate.role === "system" || candidate.role === "user") {
+      return false;
+    }
+  }
+  return false;
+};
+
+const isStreamedFinalAssistantSnapshot = (
+  messages: readonly SessionMessage[],
+  message: SessionMessage
+): boolean =>
+  Boolean(
+    message.role === "assistant" &&
+      !message.tag &&
+      hasRecentLiveAssistantDisplayMessage(messages)
+  );
+
 /**
  * Live assistant text deltas arrive as multiple append-only bubbles so the
  * Core translation overlay can attach localizedContent per segment. Visually
@@ -180,8 +215,24 @@ export const mergeLiveAssistantMessages = (
         );
         continue;
       }
+      if (!hasSubstantiveDisplayContent(message)) {
+        continue;
+      }
       result.push({ ...message });
       continue;
+    }
+    if (isStreamedFinalAssistantSnapshot(result, message)) {
+      continue;
+    }
+    if (isThinkingDisplayMessage(message)) {
+      const previous = result.at(-1);
+      if (previous && isThinkingDisplayMessage(previous)) {
+        result[result.length - 1] = mergeThinkingDisplayMessage(
+          previous,
+          message
+        );
+        continue;
+      }
     }
     result.push(message);
   }

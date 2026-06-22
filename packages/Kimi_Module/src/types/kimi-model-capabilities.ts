@@ -1,4 +1,4 @@
-export type KimiModelId = "kimi-k2.7-code";
+export type KimiModelId = "kimi-k2.7-code" | "kimi-k2.7-code-highspeed";
 
 export interface KimiModelCapabilities {
   readonly displayName: string;
@@ -11,6 +11,12 @@ export const KIMI_MODEL_CAPABILITIES = [
   {
     modelId: "kimi-k2.7-code",
     displayName: "Kimi K2.7 Code",
+    supportsReasoningControl: false,
+    supportsThinkingDisplaySummarized: false,
+  },
+  {
+    modelId: "kimi-k2.7-code-highspeed",
+    displayName: "Kimi K2.7 Code High Speed",
     supportsReasoningControl: false,
     supportsThinkingDisplaySummarized: false,
   },

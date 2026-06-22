@@ -54,6 +54,23 @@ const parseRecordedPayload = (init?: RequestInit): RecordedChatPayload => {
   return JSON.parse(body) as RecordedChatPayload;
 };
 
+const createCompletionsStreamResponse = (content: string): Response => {
+  const frame = `data: ${JSON.stringify({
+    choices: [{ delta: { content } }],
+  })}\n\ndata: [DONE]\n\n`;
+  const encoded = new TextEncoder().encode(frame);
+  return {
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoded);
+        controller.close();
+      },
+    }),
+    ok: true,
+    status: 200,
+  } as Response;
+};
+
 test("LocalModelsFacade discovers LM Studio LLMs and exposes localization catalogs", () => {
   const facade = new LocalModelsFacade({
     commandRunner: () =>
@@ -101,14 +118,9 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
     },
     fetchImplementation: ((_url, init) => {
       payloads.push(parseRecordedPayload(init));
-      return Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Откройте Settings." } }],
-          }),
-        ok: true,
-        status: 200,
-      } as Response);
+      return Promise.resolve(
+        createCompletionsStreamResponse("Откройте Settings.")
+      );
     }) as typeof fetch,
   });
 
@@ -129,6 +141,8 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
     "8192",
     "--identifier",
     "codeaihub-translation-reasoning-mlx-community-gemma-request-test-8192",
+    "--ttl",
+    "600",
   ]);
   assert.equal(
     payloads[0]?.model,
@@ -165,14 +179,9 @@ test("LocalModelsFacade disables Qwen thinking and fails closed when model load 
     },
     fetchImplementation: ((_url, init) => {
       qwenPayloads.push(parseRecordedPayload(init));
-      return Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Быстрый перевод." } }],
-          }),
-        ok: true,
-        status: 200,
-      } as Response);
+      return Promise.resolve(
+        createCompletionsStreamResponse("Быстрый перевод.")
+      );
     }) as typeof fetch,
   });
 
@@ -245,14 +254,9 @@ test("LocalModelsFacade starts LM Studio server before translation when it is of
       return "";
     },
     fetchImplementation: (() =>
-      Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Проверка сервера." } }],
-          }),
-        ok: true,
-        status: 200,
-      } as Response)) as typeof fetch,
+      Promise.resolve(
+        createCompletionsStreamResponse("Проверка сервера.")
+      )) as typeof fetch,
   });
 
   const engine = facade.createTranslationEngines()[0];
@@ -275,5 +279,7 @@ test("LocalModelsFacade starts LM Studio server before translation when it is of
     "8192",
     "--identifier",
     "codeaihub-translation-reasoning-mlx-community-server-start-test-8192",
+    "--ttl",
+    "600",
   ]);
 });

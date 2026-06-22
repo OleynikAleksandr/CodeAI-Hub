@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -106,6 +106,54 @@ test("handleWorkspaceSessionCreate creates workflow boundary before stage direct
     assert.equal(capsuleHomeExistedDuringSession, true);
     assert.equal(stageDirectoryExistedDuringSession, true);
     assert.equal(await exists(stagePath), true);
+    assert.deepEqual(statuses, []);
+    assert.deepEqual(payloads, [{ sessionId: "session-1" }]);
+  } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});
+
+test("handleWorkspaceSessionCreate prepares Application Skeleton artifact directory", async () => {
+  const workspacePath = await mkdtemp(path.join(tmpdir(), "codeai-session-"));
+  try {
+    const workspaceRoot = path.join(
+      workspacePath,
+      ".codeai-hub",
+      WORKSPACE_SLUG
+    );
+    const stagePath = path.join(workspaceRoot, "application_skeleton");
+    const { payloads, res, statuses } = createResponse();
+
+    await mkdir(workspaceRoot, { recursive: true });
+    await writeFile(stagePath, "", "utf8");
+    await handleWorkspaceSessionCreate({
+      logger: {
+        error: () => undefined,
+        warn: () => undefined,
+      } as unknown as Logger,
+      req: {
+        body: {
+          initiativeSlug: WORKSPACE_SLUG,
+          stage: "application_skeleton",
+          workspacePath,
+        },
+      } as unknown as Request,
+      res,
+      sessionManager: {
+        createSession: () => ({ id: "session-1" }),
+      } as unknown as SessionManager,
+      workflowBoundaryFacade: {
+        ensureBoundary: () =>
+          Promise.resolve({
+            boundaryHash: "abc123",
+            created: true,
+            registryPath: path.join(workspacePath, "boundaries.json"),
+            stage: "application_skeleton",
+          }),
+      },
+    });
+
+    assert.equal((await stat(stagePath)).isDirectory(), true);
     assert.deepEqual(statuses, []);
     assert.deepEqual(payloads, [{ sessionId: "session-1" }]);
   } finally {

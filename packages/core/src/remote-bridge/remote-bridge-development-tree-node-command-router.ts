@@ -49,7 +49,6 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
   async handle(
     clientId: string,
     payload: {
-      readonly modelId?: unknown;
       readonly providerId?: unknown;
       readonly workflowPath?: unknown;
       readonly workspacePath?: unknown;
@@ -127,10 +126,6 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
         initiativeSlug: workspaceSlug,
         stage: workflowPath,
         runSlug: "development-tree",
-        modelSelection: {
-          providerId,
-          modelId: readOptionalString(payload.modelId),
-        },
       },
     });
   }

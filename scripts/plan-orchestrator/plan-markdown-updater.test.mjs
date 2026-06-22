@@ -1,13 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import {
-  finalizeCommitAndAdvance,
-  markTaskDoneAndCommitPending,
-} from "./plan-markdown-updater.mjs";
+import { finalizeCommitAndAdvance } from "./plan-markdown-updater.mjs";
 import { parsePlanStateMarkdown } from "./plan-state-parser.mjs";
 
 const TASK_DONE_PATTERN = /1\. \[DONE\] `phase2\.stream3\.task1`/u;
-const COMMIT_PENDING_PATTERN = /2\. \[PENDING\] `phase2\.stream3\.commit1`/u;
 const COMMIT_DONE_PATTERN = /2\. \[DONE\] `phase2\.stream3\.commit1`/u;
 const COMMIT_HASH_PATTERN =
   /Git Commit: `feat: add plan markdown updater` \(hash: abc1234\)/u;
@@ -109,33 +105,14 @@ const createImplicitTailMarkdown = () => `# План разработки
 2. [TODO] \`phase2.stream1.commit1\` Git Commit: \`fix: final ordinary task\` (hash: TBD)
 `;
 
-test("marks current task done and paired commit pending", () => {
-  const markdown = markTaskDoneAndCommitPending(
-    createMarkdown(),
-    "phase2.stream3.task1"
-  );
-  const parsed = parsePlanStateMarkdown(markdown);
-
-  assert.match(markdown, TASK_DONE_PATTERN);
-  assert.match(markdown, COMMIT_PENDING_PATTERN);
-  assert.deepEqual(parsed.state.debt, {
-    expectedCommitMessage: "feat: add plan markdown updater",
-    stage: "commit_pending",
-    taskId: "phase2.stream3.task1",
-  });
-});
-
 test("finalizes commit hash and advances to next task", () => {
-  const pending = markTaskDoneAndCommitPending(
-    createMarkdown(),
-    "phase2.stream3.task1"
-  );
-  const markdown = finalizeCommitAndAdvance(pending, {
+  const markdown = finalizeCommitAndAdvance(createMarkdown(), {
     commitHash: "abc1234",
     taskId: "phase2.stream3.task1",
   });
   const parsed = parsePlanStateMarkdown(markdown);
 
+  assert.match(markdown, TASK_DONE_PATTERN);
   assert.match(markdown, COMMIT_DONE_PATTERN);
   assert.match(markdown, COMMIT_HASH_PATTERN);
   assert.match(markdown, NEXT_TASK_IN_PROGRESS_PATTERN);
@@ -149,11 +126,7 @@ test("finalizes commit hash and advances to next task", () => {
 });
 
 test("finalizes closeout commit into NONE state instead of reserved handoff", () => {
-  const pending = markTaskDoneAndCommitPending(
-    createCloseoutMarkdown(),
-    "phase6.stream1.task1"
-  );
-  const markdown = finalizeCommitAndAdvance(pending, {
+  const markdown = finalizeCommitAndAdvance(createCloseoutMarkdown(), {
     commitHash: "def5678",
     taskId: "phase6.stream1.task1",
   });
@@ -171,14 +144,9 @@ test("finalizes closeout commit into NONE state instead of reserved handoff", ()
 });
 
 test("refuses implicit terminal NONE without closeout anchor", () => {
-  const pending = markTaskDoneAndCommitPending(
-    createImplicitTailMarkdown(),
-    "phase2.stream1.task1"
-  );
-
   assert.throws(
     () =>
-      finalizeCommitAndAdvance(pending, {
+      finalizeCommitAndAdvance(createImplicitTailMarkdown(), {
         commitHash: "abc1234",
         taskId: "phase2.stream1.task1",
       }),

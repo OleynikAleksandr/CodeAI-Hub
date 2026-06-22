@@ -69,6 +69,7 @@ export interface CaptureWorkbenchRunResult {
 
 export interface CaptureWorkbenchRunnerApi {
   runManagedCapture(input: CaptureWorkbenchRunInput): Promise<CaptureWorkbenchRunResult>;
+  runVanillaCapture(input: CaptureWorkbenchRunInput): Promise<CaptureWorkbenchRunResult>;
 }
 
 class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
@@ -94,7 +95,20 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
   async runManagedCapture(
     input: CaptureWorkbenchRunInput
   ): Promise<CaptureWorkbenchRunResult> {
-    const request = await this.#buildRequest(input);
+    return this.#runCapture(input, "managed");
+  }
+
+  async runVanillaCapture(
+    input: CaptureWorkbenchRunInput
+  ): Promise<CaptureWorkbenchRunResult> {
+    return this.#runCapture(input, "vanilla");
+  }
+
+  async #runCapture(
+    input: CaptureWorkbenchRunInput,
+    captureMode: "managed" | "vanilla"
+  ): Promise<CaptureWorkbenchRunResult> {
+    const request = await this.#buildRequest(input, captureMode);
     const captureResult = await this.#waitForCaptureResult(
       request,
       () => {
@@ -120,7 +134,8 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
   }
 
   async #buildRequest(
-    input: CaptureWorkbenchRunInput
+    input: CaptureWorkbenchRunInput,
+    captureMode: "managed" | "vanilla"
   ): Promise<CaptureWorkbenchRequest> {
     const providerId = parseProviderId(input.selection.provider);
     const modelId = parseModelId(input.selection.model);
@@ -140,17 +155,17 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
     if (scenarioId === "diagnostic_probe") {
       return {
         ...baseRequest,
-        options: { reasoning },
+        options: addCaptureMode({ reasoning }, captureMode),
       };
     }
     if (scenarioId === "translation") {
       return {
         ...baseRequest,
-        options: {
+        options: addCaptureMode({
           reasoning,
           scenarioId,
           scenarioLabel: "Translation",
-        },
+        }, captureMode),
       };
     }
 
@@ -167,7 +182,7 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
     });
     return {
       ...baseRequest,
-      options: {
+      options: addCaptureMode({
         reasoning,
         scenarioId: scenario.scenarioId,
         scenarioInputPath: scenario.inputPath,
@@ -175,7 +190,7 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
         scenarioPrompt: scenario.prompt,
         scenarioTargetPath: scenario.targetRelativePath,
         workspacePath,
-      },
+      }, captureMode),
     };
   }
 
@@ -317,6 +332,12 @@ const describeCaptureFailure = (
   readNonEmptyString(result.error) ??
   readNonEmptyString(result.reason) ??
   "Native request capture failed.";
+
+const addCaptureMode = (
+  options: SettingsNativeRequestCaptureOptions,
+  captureMode: "managed" | "vanilla"
+): SettingsNativeRequestCaptureOptions =>
+  captureMode === "vanilla" ? { ...options, captureMode } : options;
 
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;

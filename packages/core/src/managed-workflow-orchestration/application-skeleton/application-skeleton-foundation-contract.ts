@@ -140,9 +140,6 @@ export const validateApplicationSkeletonFoundationDraft = (
   if (!hasNonEmptyString(mapJson, "packageManager")) {
     errors.push("missing_foundation_field: packageManager");
   }
-  if (!hasNonEmptyString(mapJson, "repoShape")) {
-    errors.push("missing_foundation_field: repoShape");
-  }
   errors.push(...validateStack(mapJson));
   errors.push(...validateProjectFoundation(mapJson));
   errors.push(...validateOpenQuestions(mapJson));

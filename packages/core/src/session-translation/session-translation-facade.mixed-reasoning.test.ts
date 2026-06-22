@@ -156,3 +156,47 @@ test("SessionTranslationFacade translates mixed-language reasoning chunks", asyn
     await rm(homeDirectory, { recursive: true, force: true });
   }
 });
+
+test("SessionTranslationFacade skips already-Russian reasoning chunks", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  try {
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
+    let translateCalls = 0;
+    const facade = new SessionTranslationFacade({
+      logger: new Logger("error"),
+      settingsPath,
+      translationFacadeFactory: () =>
+        ({
+          translate: () => {
+            translateCalls += 1;
+            return Promise.resolve({
+              engine: "anthropic-claude-haiku-4-5",
+              finalText: "Не должно вызываться",
+              originalText: "",
+              sourceLanguage: "en",
+              status: "translated",
+              targetLanguage: "ru",
+              translatedText: "Не должно вызываться",
+            });
+          },
+        }) as unknown as TranslationFacade,
+    });
+
+    const outcome = await facade.translateDialogMessage({
+      content:
+        "Я напишу файл напрямую. Final_Description.md уже создан. " +
+        "Теперь нужно коротко сообщить пользователю, что изменилось, и задать важные вопросы. " +
+        "Кнопка Refresh остается техническим термином интерфейса.",
+      messageId: "msg-russian-reasoning",
+      providerId: "glmOpenCode",
+      role: "thinking",
+      sessionId: "sess-russian-reasoning",
+      tag: "thinking",
+    });
+
+    assert.equal(outcome, null);
+    assert.equal(translateCalls, 0);
+  } finally {
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});

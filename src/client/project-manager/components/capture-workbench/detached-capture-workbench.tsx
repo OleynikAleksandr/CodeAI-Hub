@@ -66,9 +66,8 @@ export const DetachedCaptureWorkbench: React.FC<
           stateClient={workbenchClient}
         />
         <CaptureWorkbenchDiffRenderer
-          current={slot?.managed.current ?? null}
-          previous={slot?.managed.previous ?? null}
           provider={selection.provider}
+          slot={slot ?? null}
           stateClient={workbenchClient}
         />
       </main>

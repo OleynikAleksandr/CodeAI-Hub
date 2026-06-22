@@ -109,6 +109,7 @@ export type UseProjectManagerSettingsStateResult =
     TemplateUpdateSettingsControls & {
       readonly handleKimiDefaultModelChange: (modelId: KimiModelId) => void;
       readonly handleKimiThinkingDisplaySyncChange: (enabled: boolean) => void;
+      readonly handleKimiThinkingEnabledChange: (enabled: boolean) => void;
       readonly handleNativeRequestCaptureWorkbenchOpen: () => void;
       readonly hostPostMessage: (message: unknown) => void;
       readonly supportsCoreRestart: false;
@@ -364,6 +365,7 @@ export const useProjectManagerSettingsState =
       handleGlmNativeThinkingDisplaySyncChange,
       handleKimiDefaultModelChange,
       handleKimiThinkingDisplaySyncChange,
+      handleKimiThinkingEnabledChange,
     } = useProjectManagerKimiSettingsHandlers({ settings, updateSettings });
     const handleGeminiThinkingChange = useCallback(
       (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
@@ -458,6 +460,7 @@ export const useProjectManagerSettingsState =
       handleGlmOpenCodeThinkingDisplaySyncChange,
       handleGlmNativeThinkingDisplaySyncChange,
       handleKimiThinkingDisplaySyncChange,
+      handleKimiThinkingEnabledChange,
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,
       handleLocalizationEngineIdChange,

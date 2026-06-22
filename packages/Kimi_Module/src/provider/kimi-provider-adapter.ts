@@ -6,7 +6,7 @@ import {
 import { normalizeKimiWireRequest } from "../messaging/kimi-request-failure-normalizer";
 import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
-import { KimiWireRouter } from "../wire/kimi-wire-router";
+import { type KimiWireRequest, KimiWireRouter } from "../wire/kimi-wire-router";
 import {
   buildKimiCliEnvironment,
   ensureKimiProviderHome,
@@ -38,6 +38,7 @@ export interface KimiWorkspaceOptions {
   readonly configPath?: string;
   readonly defaultModel?: string;
   readonly providerHomePath?: string;
+  readonly thinkingEnabled?: boolean;
   readonly workspacePath?: string;
 }
 
@@ -48,6 +49,7 @@ export interface KimiModuleOptions {
 
 export interface KimiSessionEvent {
   readonly payload?: unknown;
+  readonly postTurnTokenUsageUnavailable?: true;
   readonly type: string;
 }
 
@@ -78,6 +80,7 @@ export class KimiProviderAdapter {
     normalizeKimiWireEvent
   );
   private cliEnvironment: KimiCliEnvironment | null = null;
+  private currentThinkingEnabled: boolean | undefined;
   private runtimeHome: KimiRuntimeHome | null = null;
   private sessionLifecycle: KimiSessionLifecycle | null = null;
   private readonly workspaceOverride: KimiWorkspaceOverrideState;
@@ -87,6 +90,7 @@ export class KimiProviderAdapter {
 
   constructor(options: KimiModuleOptions) {
     this.options = options;
+    this.currentThinkingEnabled = options.workspace.thinkingEnabled;
     this.workspaceOverride = new KimiWorkspaceOverrideState(
       this.resolveRuntimeWorkspacePath(options.workspace.workspacePath)
     );
@@ -125,7 +129,9 @@ export class KimiProviderAdapter {
     workspacePath: string | undefined
   ): Promise<void> {
     const cliEnvironment = buildKimiCliEnvironment({
+      defaultModel: this.options.workspace.defaultModel,
       providerHomePath: this.options.workspace.providerHomePath,
+      thinkingEnabled: this.currentThinkingEnabled,
       userConfigPath: this.options.workspace.configPath,
       workspacePath,
     });
@@ -135,6 +141,12 @@ export class KimiProviderAdapter {
     this.wireRouter = this.createWireRouter();
     this.wireProcessBridge = this.createWireProcessBridge();
     this.sessionLifecycle = new KimiSessionLifecycle({
+      cwd:
+        this.workspaceOverride.getActiveWorkspacePath() ??
+        this.requireRuntimeHome().providerHomePath,
+      defaultModel: cliEnvironment.usesEnvironmentModel
+        ? undefined
+        : this.options.workspace.defaultModel,
       processBridge: this.wireProcessBridge,
       router: this.wireRouter,
     });
@@ -144,6 +156,7 @@ export class KimiProviderAdapter {
       cliCommand: cliEnvironment.command,
       providerId: KIMI_PROVIDER_ID,
       providerHomePath: this.runtimeHome.providerHomePath,
+      usesEnvironmentModel: cliEnvironment.usesEnvironmentModel,
       userConfigPath: this.runtimeHome.userConfigPath,
       wireProcessReady: this.wireProcessBridge !== null,
       wireRouterReady: this.wireRouter !== null,
@@ -170,13 +183,31 @@ export class KimiProviderAdapter {
     return this.onSessionEvent(sessionId, (payload) => listener(payload));
   }
 
-  sendMessage(sessionId: string, content: string): Promise<void> {
+  async sendMessage(sessionId: string, content: string): Promise<void> {
     this.assertInitialized();
     const trimmedContent = content.trim();
     if (trimmedContent.length === 0) {
       throw new Error("Cannot send an empty Kimi message.");
     }
-    return this.requireSessionLifecycle().send(sessionId, trimmedContent);
+    this.dispatchMessage(sessionId, this.createLifecycleEvent("turn_started"));
+    try {
+      await this.requireSessionLifecycle().send(sessionId, trimmedContent);
+      for (const event of this.wireEventNormalizer.flushPendingMessages()) {
+        this.dispatchMessage(sessionId, event);
+      }
+      this.dispatchMessage(
+        sessionId,
+        this.createLifecycleEvent("turn_completed")
+      );
+    } catch (error) {
+      this.dispatchMessage(
+        sessionId,
+        this.createLifecycleEvent("turn_failed", {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        })
+      );
+      throw error;
+    }
   }
 
   cancel(sessionId: string): Promise<void> {
@@ -216,6 +247,11 @@ export class KimiProviderAdapter {
   async closeSession(sessionId: string): Promise<void> {
     this.listeners.delete(sessionId);
     await this.requireSessionLifecycle().close(sessionId);
+  }
+
+  reconfigureThinking(_enabled: boolean): Promise<boolean> {
+    this.currentThinkingEnabled = true;
+    return Promise.resolve(false);
   }
 
   async refreshUsageLimits(params: {
@@ -288,7 +324,7 @@ export class KimiProviderAdapter {
         this.requireWireRouter().handleLine(line);
       },
       onStderr: (line) => {
-        this.options.reporter?.warn?.("Kimi Wire stderr line received", {
+        this.options.reporter?.warn?.("Kimi ACP stderr line received", {
           line,
         });
       },
@@ -324,15 +360,12 @@ export class KimiProviderAdapter {
         }
       },
       onMalformedFrame: (line, error) => {
-        this.options.reporter?.warn?.("Malformed Kimi Wire frame received", {
+        this.options.reporter?.warn?.("Malformed Kimi ACP frame received", {
           errorMessage: error.message,
           line,
         });
       },
-      onRequest: (request) => ({
-        request_id: this.handleProviderRequest(request),
-        response: "reject",
-      }),
+      onRequest: (request) => this.handleProviderRequest(request),
       sendJson: (message) => this.requireWireProcessBridge().sendJson(message),
     });
   }
@@ -347,21 +380,57 @@ export class KimiProviderAdapter {
     }
   }
 
-  private handleProviderRequest(request: {
-    readonly id: string | number;
-    readonly params?: unknown;
-  }): string | number | unknown {
-    const event = normalizeKimiWireRequest({
-      id: request.id,
-      method: "request",
-      params: request.params,
-    });
+  private createLifecycleEvent(
+    type: "turn_completed" | "turn_failed" | "turn_started",
+    payload?: Record<string, unknown>
+  ): KimiSessionEvent {
+    const event = {
+      payload: {
+        provider: "kimi",
+        timestamp: new Date().toISOString(),
+        ...(payload ?? {}),
+      },
+      type,
+    };
+    return type === "turn_completed"
+      ? { ...event, postTurnTokenUsageUnavailable: true }
+      : event;
+  }
+
+  private handleProviderRequest(request: KimiWireRequest): unknown {
+    const event = normalizeKimiWireRequest(request);
     for (const sessionId of this.listeners.keys()) {
       this.dispatchMessage(sessionId, event);
     }
-    return isRecord(request.params) && isRecord(request.params.payload)
-      ? request.params.payload.id
-      : request.id;
+    if (request.method !== "session/request_permission") {
+      return {};
+    }
+    return {
+      outcome: {
+        optionId: this.selectPermissionOptionId(request.params),
+        outcome: "selected",
+      },
+    };
+  }
+
+  private selectPermissionOptionId(params: unknown): string {
+    const options =
+      isRecord(params) && Array.isArray(params.options) ? params.options : [];
+    for (const kind of ["allow_always", "allow_once"]) {
+      const option = options.find(
+        (candidate) =>
+          isRecord(candidate) &&
+          candidate.kind === kind &&
+          typeof candidate.optionId === "string"
+      );
+      if (isRecord(option) && typeof option.optionId === "string") {
+        return option.optionId;
+      }
+    }
+    const firstOption = options.find(isRecord);
+    return typeof firstOption?.optionId === "string"
+      ? firstOption.optionId
+      : "allow";
   }
 
   private assertInitialized(): void {

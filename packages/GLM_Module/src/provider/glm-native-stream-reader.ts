@@ -8,6 +8,11 @@ import {
 
 export interface GlmStreamHandlers {
   readonly onAssistant: (content: string) => void;
+  readonly onParsedChunk?: (
+    chunk: ReturnType<typeof parseGlmSseData>,
+    data: string
+  ) => void;
+  readonly onRawFrame?: (data: string) => void;
   readonly onThinking: (content: string) => void;
   readonly onUsage: (usage: GlmTokenUsage) => void;
 }
@@ -94,7 +99,9 @@ export const readGlmStreamResponse = async (
     pendingThinking = "";
   };
   for await (const data of readSseDataFrames(body)) {
+    handlers.onRawFrame?.(data);
     const chunk = parseGlmSseData(data);
+    handlers.onParsedChunk?.(chunk, data);
     if (!chunk) {
       continue;
     }

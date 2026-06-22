@@ -2,6 +2,7 @@ import path from "node:path";
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { KimiModuleOptions } from "@codeai-hub/kimi-module";
 import type { CoreConfig } from "../config";
+import { loadKimiSettingsSnapshot } from "../config/provider-settings-snapshot";
 import { LocalModelsProviderAdapter } from "../local-models/local-models-provider-adapter";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
@@ -216,14 +217,23 @@ export const createKimiAdapterInstance = (
     ProviderDescriptorFactoryOptions,
     "config" | "createReporter" | "kimiAdapterCtor"
   >
-): ProviderAdapter =>
-  new options.kimiAdapterCtor({
+): ProviderAdapter => {
+  const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
+  const kimiSnapshot = loadKimiSettingsSnapshot(
+    capsule.settingsFile.absolutePath
+  );
+  return new options.kimiAdapterCtor({
     workspace: {
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
-      defaultModel: options.config.kimiDefaultModel ?? "kimi-k2.7-code",
+      defaultModel:
+        typeof kimiSnapshot?.defaultModel === "string"
+          ? kimiSnapshot.defaultModel
+          : (options.config.kimiDefaultModel ?? "kimi-k2.7-code"),
+      thinkingEnabled: true,
     },
     reporter: options.createReporter("kimi"),
   });
+};
 
 export const createGlmOpenCodeAdapterInstance = (
   options: Pick<

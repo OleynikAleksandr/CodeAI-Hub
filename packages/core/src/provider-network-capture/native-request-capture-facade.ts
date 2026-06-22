@@ -12,6 +12,7 @@ import { NativeRequestCaptureProxy } from "./native-request-capture-proxy";
 import { applyNativeRequestCaptureReasoningOverride } from "./native-request-capture-reasoning-override";
 import type {
   NativeRequestCaptureFailureReason,
+  NativeRequestCaptureMode,
   NativeRequestCaptureProviderId,
   NativeRequestCaptureProxyHandle,
   NativeRequestCaptureProxyResult,
@@ -103,6 +104,7 @@ interface NativeRequestCaptureFacadeOptions {
 }
 
 export interface NativeRequestCaptureCommand {
+  readonly captureMode?: NativeRequestCaptureMode | null;
   readonly modelId?: string | null;
   readonly providerId: NativeRequestCaptureProviderId;
   readonly reasoning?: string | null;
@@ -183,6 +185,7 @@ export class NativeRequestCaptureFacade {
     }
 
     const captureId = this.#captureIdFactory();
+    const captureMode = resolveCaptureMode(command.captureMode);
     const invocationPurpose = resolveInvocationPurpose(command.scenarioId);
     const resolvedAppliedTurnConfig =
       this.#resolveAppliedTurnConfig?.({
@@ -199,7 +202,7 @@ export class NativeRequestCaptureFacade {
     const writer = await NativeRequestCaptureWriter.create({
       appliedTurnConfig,
       captureId,
-      mode: "managed",
+      mode: captureMode,
       outputDir: this.#outputDir,
       providerId: command.providerId,
       scenarioMetadata: buildScenarioMetadata(command, invocationPurpose),
@@ -286,6 +289,7 @@ export class NativeRequestCaptureFacade {
     const providerRun = captureNativeRequest
       .call(params.adapter, {
         captureId: params.captureId,
+        captureMode: resolveCaptureMode(params.command.captureMode),
         certificateEnv: params.certificateBundle.envHints,
         certificatePath: params.certificateBundle.certificatePath,
         appliedTurnConfig: params.appliedTurnConfig,
@@ -353,6 +357,7 @@ export class NativeRequestCaptureFacade {
     try {
       await captureNativeRequest.call(params.adapter, {
         captureId: params.captureId,
+        captureMode: resolveCaptureMode(params.command.captureMode),
         certificateEnv: {},
         certificatePath: "",
         appliedTurnConfig: params.appliedTurnConfig,
@@ -463,3 +468,7 @@ const resolveInvocationPurpose = (
   scenarioId?: string | null
 ): ProviderNativeRequestCaptureInvocationPurpose =>
   scenarioId === TRANSLATION_SCENARIO_ID ? "translation" : "workflow-agent";
+
+const resolveCaptureMode = (
+  mode?: NativeRequestCaptureMode | null
+): NativeRequestCaptureMode => (mode === "vanilla" ? "vanilla" : "managed");

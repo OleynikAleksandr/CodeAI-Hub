@@ -17,6 +17,10 @@ const hasSingleIssue = (validation, code) =>
   validation.issues.length === 1 && validation.issues[0].code === code;
 
 const getReachability = ({ cwd, lastRecordedCommit }) => {
+  if (lastRecordedCommit === "self") {
+    return true;
+  }
+
   try {
     execFileSync(
       "git",

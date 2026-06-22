@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getRepositoryDebtPath, readPlanDebtFile } from "./plan-debt.mjs";
 import { getGitState } from "./plan-git-state.mjs";
 import {
   extractTaskScopePatterns,
@@ -21,6 +22,7 @@ export const evaluatePreCommitGuard = ({
   gitState,
   markdown,
   stagedFiles = [],
+  transactionDebt = null,
 }) => {
   const validation = validatePlanMarkdown(markdown, { gitState });
   const isMissingMachineState =
@@ -74,7 +76,9 @@ export const evaluatePreCommitGuard = ({
   }
 
   const taskId =
-    validation.state.debt?.taskId ?? validation.state.currentTaskId;
+    transactionDebt?.taskId ??
+    validation.state.debt?.taskId ??
+    validation.state.currentTaskId;
   const scopePatterns = extractTaskScopePatterns(markdown, taskId);
   const outOfScopePaths = getOutOfScopePaths(stagedFiles, scopePatterns);
 
@@ -114,6 +118,7 @@ const main = () => {
     gitState: getGitState(cwd),
     markdown,
     stagedFiles: readStagedPaths(cwd),
+    transactionDebt: readPlanDebtFile(getRepositoryDebtPath(cwd)),
   });
 
   if (result.ok) {

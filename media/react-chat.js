@@ -7778,7 +7778,16 @@
     {
       id: "kimi-k2.7-code",
       displayName: "Kimi K2.7 Code",
-      description: "Kimi K2.7 Code model exposed through Wire mode.",
+      description: "Kimi K2.7 Code model exposed through Kimi Code ACP.",
+      status: "active",
+      supportsReasoningControl: false,
+      supportsThinkingDisplaySummarized: false,
+      tier: "coding"
+    },
+    {
+      id: "kimi-k2.7-code-highspeed",
+      displayName: "Kimi K2.7 Code High Speed",
+      description: "Lower-latency Kimi K2.7 coding model exposed through ACP.",
       status: "active",
       supportsReasoningControl: false,
       supportsThinkingDisplaySummarized: false,
@@ -7821,6 +7830,10 @@
   ]);
   var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
   var mapOptionalBoolean = (value, fallback) => typeof value === "boolean" ? value : fallback;
+  var mapKimiModel = (value) => {
+    const modelId = mapOptionalString(value, DEFAULT_KIMI_MODEL_ID);
+    return KIMI_MODEL_ID_SET.has(modelId) ? modelId : DEFAULT_KIMI_MODEL_ID;
+  };
   var mapGlmNativeReasoningEffort = (value) => {
     const effort = mapOptionalString(value, DEFAULT_GLM_NATIVE_REASONING_EFFORT);
     if (GLM_NATIVE_HIGH_REASONING_ALIASES.has(effort)) {
@@ -7841,10 +7854,11 @@
   };
   var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
     autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
-    defaultModel: DEFAULT_KIMI_MODEL_ID,
+    defaultModel: mapKimiModel(value?.defaultModel),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
-    )
+    ),
+    thinkingEnabled: true
   });
   var mapGlmOpenCodeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
     apiKey: mapOptionalString(value?.apiKey, ""),

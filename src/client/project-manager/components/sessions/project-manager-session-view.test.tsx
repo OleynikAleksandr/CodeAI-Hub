@@ -23,6 +23,10 @@ const RUNTIME_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
 );
+const STATUS_HYDRATOR_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/status-hydrator.ts"
+);
 const CORE_STREAM_TYPES_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/core-stream-message-types.ts"
@@ -36,14 +40,12 @@ test("project-manager-session-view keeps cross-workspace session-created focus g
   const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes(
-      "const isInScope = Boolean(workspacePath) && session.workspacePath === workspacePath;"
-    ),
+    source.includes("const isInScope = isSessionInViewScope(session);"),
     true
   );
   assert.equal(
     source.includes(
-      "const scopedActiveSessionId = isPreferredPending || visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;"
+      "const scopedActiveSessionId = isPreferredPending || visibleSessionsForView.some((session) => session.id === activeSessionId) ? activeSessionId : null;"
     ),
     true
   );
@@ -51,6 +53,28 @@ test("project-manager-session-view keeps cross-workspace session-created focus g
     source.includes(
       "const handleSendMessage = useSessionMessageSender(\n    sessionsRef,\n    workspacePath,\n    reload\n  );"
     ),
+    true
+  );
+});
+
+test("project-manager-runtime-session-view keeps detached session snapshots across unrelated core state", async () => {
+  const runtimeSource = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+  const hydratorSource = await readFile(STATUS_HYDRATOR_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    runtimeSource.includes("if (visibleSessionId && nextSessions.length === 0) {"),
+    true
+  );
+  assert.equal(
+    runtimeSource.includes("rehydrateOnCoreState: !visibleSessionId,"),
+    true
+  );
+  assert.equal(
+    hydratorSource.includes("readonly rehydrateOnCoreState?: boolean;"),
+    true
+  );
+  assert.equal(
+    hydratorSource.includes("params.rehydrateOnCoreState === false"),
     true
   );
 });
@@ -215,9 +239,11 @@ test("project-manager-dialog-session-view keeps runtime model sync and dialog se
   assert.equal(source.includes("sendMessage(content, turnOptions)"), true);
   assert.equal(controllerSource.includes("turnOptions?.managedReviewAction"), true);
   assert.equal(
-    controllerSource.includes(
-      "api.sendSessionMessage(currentSessionId, content, turnOptions);"
-    ),
+    controllerSource.includes("api.dialogs.sendDialogMessage("),
+    true
+  );
+  assert.equal(
+    controllerSource.includes("intent.workspaceSlug, currentDialogId, content"),
     true
   );
   assert.equal(source.includes("activeSessionId={session.id}"), true);

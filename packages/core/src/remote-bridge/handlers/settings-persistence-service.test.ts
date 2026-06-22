@@ -74,6 +74,13 @@ const readGlmNativeSettings = (
   return providers.glmNative as Record<string, unknown>;
 };
 
+const readKimiSettings = (
+  settings: Record<string, unknown>
+): Record<string, unknown> => {
+  const providers = settings.providers as Record<string, unknown>;
+  return providers.kimi as Record<string, unknown>;
+};
+
 const hasGeneralSettings = (settings: Record<string, unknown>): boolean =>
   typeof settings.general === "object" && settings.general !== null;
 
@@ -203,6 +210,51 @@ test("SettingsPersistenceService keeps GLM native connection settings global", a
     readGlmNativeSettings(loadedB).baseUrl,
     "https://custom.z.ai/api/coding/paas/v4"
   );
+});
+
+test("SettingsPersistenceService keeps start-card provider defaults workspace scoped", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
+  const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
+  const config = createConfig(globalSettingsPath);
+  const workspace = {
+    workspaceRoot: path.join(tempRoot, "workspace-a"),
+    workspaceSlug: "workspace-a",
+  };
+  const service = new SettingsPersistenceService({ config, logger });
+  const settings = cloneSettings(await service.load({ workspace }));
+  const glmNative = readGlmNativeSettings(settings);
+  const kimi = readKimiSettings(settings);
+  glmNative.apiKey = "zai-global-key";
+  glmNative.baseUrl = "https://custom.z.ai/api/coding/paas/v4";
+  glmNative.reasoningEffort = "high";
+  glmNative.thinkingEnabled = false;
+  kimi.thinkingEnabled = false;
+
+  await service.save(settings, { workspace });
+
+  const globalSettings = JSON.parse(
+    await readFile(globalSettingsPath, "utf8")
+  ) as Record<string, unknown>;
+  assert.deepEqual(readGlmNativeSettings(globalSettings), {
+    apiKey: "zai-global-key",
+    baseUrl: "https://custom.z.ai/api/coding/paas/v4",
+  });
+  assert.equal(readKimiSettings(globalSettings), undefined);
+
+  const workspaceSettings = JSON.parse(
+    await readFile(
+      resolveWorkspaceRuntimeCapsule(workspace).settingsFile.absolutePath,
+      "utf8"
+    )
+  ) as Record<string, unknown>;
+  assert.equal(readGlmNativeSettings(workspaceSettings).apiKey, undefined);
+  assert.equal(readGlmNativeSettings(workspaceSettings).baseUrl, undefined);
+  assert.equal(
+    readGlmNativeSettings(workspaceSettings).reasoningEffort,
+    "high"
+  );
+  assert.equal(readGlmNativeSettings(workspaceSettings).thinkingEnabled, false);
+  assert.equal(readKimiSettings(workspaceSettings).thinkingEnabled, false);
 });
 
 test("SettingsPersistenceService migrates unsupported Codex model settings", async () => {

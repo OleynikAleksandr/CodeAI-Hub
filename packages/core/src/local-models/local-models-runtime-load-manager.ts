@@ -23,6 +23,8 @@ interface LocalModelsRuntimeLoadManagerOptions {
 interface EnsureLocalModelLoadedOptions {
   readonly maxTokens?: number;
   readonly model: LocalModelDescriptor;
+  readonly persistent?: boolean;
+  readonly preserveOtherCodeAiWorkers?: boolean;
   readonly purpose: LocalModelRuntimePurpose;
   readonly sourceTextLength?: number;
 }
@@ -219,21 +221,6 @@ const isIdleDuplicateCandidate = (
   );
 };
 
-const isIdleCodeAiWorkerCandidate = (
-  record: LoadedLmStudioModelRecord,
-  selectedModelKey: string,
-  selectedIdentifier: string
-): boolean => {
-  const identifier = asIdentifier(record);
-  return (
-    !!identifier &&
-    identifier !== selectedIdentifier &&
-    record.modelKey !== selectedModelKey &&
-    record.status === "idle" &&
-    identifier.startsWith(`${CODEAI_IDENTIFIER_PREFIX}-`)
-  );
-};
-
 const isIdleCodeAiOwnedWorker = (
   record: LoadedLmStudioModelRecord
 ): boolean => {
@@ -257,7 +244,6 @@ export class LocalModelsRuntimeLoadManager {
 
   ensureModelLoaded(options: EnsureLocalModelLoadedOptions): string {
     const contextLength = resolveRequestedContextLength(options);
-    const ttlSeconds = resolvePurposeTtlSeconds(options.purpose);
     const preferredIdentifier = buildCodeAiIdentifier(
       options.model.modelKey,
       options.purpose,
@@ -278,35 +264,39 @@ export class LocalModelsRuntimeLoadManager {
       preferredIdentifier
     );
     const selectedIdentifier = reusable ?? preferredIdentifier;
-    this.unloadIdleCodeAiWorkers(
-      loadedModels,
-      options.model.modelKey,
-      selectedIdentifier
-    );
     this.unloadIdleDuplicates(
       loadedModelsForSelectedModel,
       options.model.modelKey,
       selectedIdentifier
     );
     if (!reusable) {
-      this.commandRunner(
-        [
-          "load",
-          options.model.modelKey,
-          "--context-length",
-          String(contextLength),
-          "--identifier",
-          preferredIdentifier,
+      const loadArgs = [
+        "load",
+        options.model.modelKey,
+        "--context-length",
+        String(contextLength),
+        "--identifier",
+        preferredIdentifier,
+      ];
+      if (!options.persistent) {
+        loadArgs.push(
           "--ttl",
-          String(ttlSeconds),
-        ],
-        { timeoutMs: this.modelLoadTimeoutMs }
-      );
+          String(resolvePurposeTtlSeconds(options.purpose))
+        );
+      }
+      this.commandRunner(loadArgs, { timeoutMs: this.modelLoadTimeoutMs });
     }
     return selectedIdentifier;
   }
 
   unloadIdleCodeAiOwnedWorkers(): void {
+    this.unloadIdleCodeAiOwnedWorkersExcept([]);
+  }
+
+  unloadIdleCodeAiOwnedWorkersExcept(
+    preservedModelKeys: readonly string[]
+  ): void {
+    const preserved = new Set(preservedModelKeys);
     const loadedModels = parseLoadedModels(
       this.commandRunner(["ps", "--json"], {
         timeoutMs: this.modelLoadTimeoutMs,
@@ -314,6 +304,12 @@ export class LocalModelsRuntimeLoadManager {
     ).filter(isLoadedLlm);
     for (const record of loadedModels) {
       if (!isIdleCodeAiOwnedWorker(record)) {
+        continue;
+      }
+      if (
+        typeof record.modelKey === "string" &&
+        preserved.has(record.modelKey)
+      ) {
         continue;
       }
       const identifier = asIdentifier(record);
@@ -362,30 +358,6 @@ export class LocalModelsRuntimeLoadManager {
   ): void {
     for (const record of loadedModels) {
       if (!isIdleDuplicateCandidate(record, modelKey, selectedIdentifier)) {
-        continue;
-      }
-      const identifier = asIdentifier(record);
-      if (identifier) {
-        this.commandRunner(["unload", identifier], {
-          timeoutMs: this.modelLoadTimeoutMs,
-        });
-      }
-    }
-  }
-
-  private unloadIdleCodeAiWorkers(
-    loadedModels: readonly LoadedLmStudioModelRecord[],
-    selectedModelKey: string,
-    selectedIdentifier: string
-  ): void {
-    for (const record of loadedModels) {
-      if (
-        !isIdleCodeAiWorkerCandidate(
-          record,
-          selectedModelKey,
-          selectedIdentifier
-        )
-      ) {
         continue;
       }
       const identifier = asIdentifier(record);

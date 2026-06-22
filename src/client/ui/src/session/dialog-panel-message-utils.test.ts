@@ -61,22 +61,104 @@ test("mergeLiveAssistantMessages concatenates consecutive live assistant bubbles
   );
 });
 
-test("mergeLiveAssistantMessages keeps non-live assistant bubbles separate", () => {
+test("mergeLiveAssistantMessages keeps non-live assistant bubbles after a user boundary", () => {
   const source: readonly SessionMessage[] = [
     createMessage("1", "assistant", "Live chunk one. ", { tag: "live" }),
-    createMessage("2", "assistant", "Final untagged reply."),
+    createMessage("2", "user", "Next turn."),
+    createMessage("3", "assistant", "Final untagged reply."),
+    createMessage("4", "assistant", "Live chunk two.", { tag: "live" }),
+  ];
+
+  const merged = mergeLiveAssistantMessages(source);
+
+  assert.equal(merged.length, 4);
+  assert.equal(merged[0].tag, "live");
+  assert.equal(merged[0].content, "Live chunk one. ");
+  assert.equal(merged[1].role, "user");
+  assert.equal(merged[2].tag, undefined);
+  assert.equal(merged[2].content, "Final untagged reply.");
+  assert.equal(merged[3].tag, "live");
+  assert.equal(merged[3].content, "Live chunk two.");
+});
+
+test("mergeLiveAssistantMessages skips standalone whitespace-only live bubbles", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage("1", "assistant", "Planning complete.", {
+      tag: "thinking",
+    }),
+    createMessage("2", "assistant", "\n\n", { tag: "live" }),
     createMessage("3", "assistant", "Live chunk two.", { tag: "live" }),
   ];
 
   const merged = mergeLiveAssistantMessages(source);
 
-  assert.equal(merged.length, 3);
+  assert.equal(merged.length, 2);
+  assert.equal(merged[0].tag, "thinking");
+  assert.equal(merged[1].tag, "live");
+  assert.equal(merged[1].content, "Live chunk two.");
+});
+
+test("mergeLiveAssistantMessages joins thinking separated only by skipped live whitespace", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage("1", "assistant", "Pre-tool reasoning.", {
+      tag: "thinking",
+    }),
+    createMessage("2", "assistant", "\n\n", { tag: "live" }),
+    createMessage("3", "assistant", "Post-tool reasoning.", {
+      tag: "thinking",
+    }),
+  ];
+
+  const merged = mergeLiveAssistantMessages(source);
+
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0].tag, "thinking");
+  assert.equal(merged[0].content, "Pre-tool reasoning.\nPost-tool reasoning.");
+});
+
+test("mergeLiveAssistantMessages hides a final assistant bubble that visually duplicates live output", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage(
+      "1",
+      "assistant",
+      "Я подготовил черновик.\n\n**Что сделано:**\n- Создан документ.",
+      { tag: "live" }
+    ),
+    createMessage(
+      "2",
+      "assistant",
+      "Я подготовил черновик.\n\n**Что сделано:**\n\n- Создан документ."
+    ),
+  ];
+
+  const merged = mergeLiveAssistantMessages(source);
+
+  assert.equal(merged.length, 1);
   assert.equal(merged[0].tag, "live");
-  assert.equal(merged[0].content, "Live chunk one. ");
-  assert.equal(merged[1].tag, undefined);
-  assert.equal(merged[1].content, "Final untagged reply.");
-  assert.equal(merged[2].tag, "live");
-  assert.equal(merged[2].content, "Live chunk two.");
+  assert.equal(
+    merged[0].content,
+    "Я подготовил черновик.\n\n**Что сделано:**\n- Создан документ."
+  );
+});
+
+test("mergeLiveAssistantMessages hides final snapshots after live output across thinking gaps", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage("1", "assistant", "Создан черновик.\n", { tag: "live" }),
+    createMessage("2", "assistant", "Post-tool reasoning.", {
+      tag: "thinking",
+    }),
+    createMessage(
+      "3",
+      "assistant",
+      "Создан черновик.\n\nДополнительное форматирование snapshot."
+    ),
+  ];
+
+  const merged = mergeLiveAssistantMessages(source);
+
+  assert.equal(merged.length, 2);
+  assert.equal(merged[0].tag, "live");
+  assert.equal(merged[1].tag, "thinking");
 });
 
 test("mergeLiveAssistantMessages breaks the group when a thinking message sits between live bubbles", () => {

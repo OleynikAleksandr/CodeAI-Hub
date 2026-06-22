@@ -20,6 +20,10 @@ namespace codeai::launcher {
 // LauncherWindowDelegate::CanClose.
 void RequestNativeApplicationTermination();
 
+// macOS-only close-frame mitigation for disposable CEF popup windows.
+// Other platforms never call this helper.
+void PrepareNativePopupWindowForClose(CefWindowHandle window_handle);
+
 }  // namespace codeai::launcher
 
 class LauncherHandler : public CefClient,

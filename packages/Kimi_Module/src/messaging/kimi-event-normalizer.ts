@@ -2,6 +2,8 @@ import crypto from "node:crypto";
 import type { KimiSessionEvent } from "../provider/kimi-provider-adapter";
 
 interface WireEventEnvelope {
+  readonly method?: unknown;
+  readonly params?: unknown;
   readonly payload?: unknown;
   readonly type?: unknown;
 }
@@ -71,7 +73,8 @@ const createMessageEvent = (
   payload?: Record<string, unknown>
 ): KimiMessageEvent => {
   const timestamp = new Date().toISOString();
-  const tag = eventType === "thinking" ? "thinking" : undefined;
+  const payloadTag = typeof payload?.tag === "string" ? payload.tag : undefined;
+  const tag = eventType === "thinking" ? "thinking" : payloadTag;
   return {
     content,
     payload: {
@@ -106,6 +109,43 @@ const createStreamEvent = (
     payload: data,
     timestamp,
     type: "stream_event",
+  };
+};
+
+const isAcpSessionUpdateMessage = (params: Record<string, unknown>): boolean =>
+  params.method === "session/update";
+
+const readAcpUpdatePayload = (
+  params: Record<string, unknown>
+): Record<string, unknown> | null => {
+  const rawParams = isRecord(params.params) ? params.params : params;
+  return isRecord(rawParams.update) ? rawParams.update : null;
+};
+
+const readAcpToolPayload = (
+  update: Record<string, unknown>
+): Record<string, unknown> => ({
+  raw: update,
+  ...(typeof update.status === "string" ? { status: update.status } : {}),
+  ...(typeof update.title === "string" ? { toolName: update.title } : {}),
+  ...(typeof update.toolCallId === "string"
+    ? { toolCallId: update.toolCallId }
+    : {}),
+});
+
+const readAcpUsagePayload = (
+  update: Record<string, unknown>
+): Record<string, unknown> => {
+  const used = readNumber(update.used);
+  const limit = readNumber(update.size);
+  return {
+    raw: update,
+    ...(used !== null && limit !== null && limit > 0
+      ? {
+          contextUsage: used / limit,
+          tokenUsage: { limit, used },
+        }
+      : {}),
   };
 };
 
@@ -270,6 +310,9 @@ export class KimiWireEventNormalizer {
     if (!isRecord(params)) {
       return this.fallbackNormalizer(params);
     }
+    if (isAcpSessionUpdateMessage(params)) {
+      return this.bufferAcpSessionUpdate(params);
+    }
 
     const envelope = params as WireEventEnvelope;
     switch (envelope.type) {
@@ -311,50 +354,113 @@ export class KimiWireEventNormalizer {
     }
   }
 
+  flushPendingMessages(): readonly KimiSessionEvent[] {
+    return this.flushMessages();
+  }
+
+  private bufferAcpSessionUpdate(
+    params: Record<string, unknown>
+  ): readonly KimiSessionEvent[] {
+    const update = readAcpUpdatePayload(params);
+    if (!update) {
+      return [createEvent("kimi_acp_event", { raw: params })];
+    }
+    switch (update.sessionUpdate) {
+      case "agent_message_chunk":
+        return [
+          ...this.flushBufferedMessage("thinking"),
+          ...this.bufferAcpTextChunk(update, "assistant"),
+        ];
+      case "agent_thought_chunk":
+        return this.bufferAcpTextChunk(update, "thinking");
+      case "tool_call":
+        return [
+          ...this.flushMessages(),
+          createStreamEvent("tool_call", readAcpToolPayload(update)),
+        ];
+      case "tool_call_update":
+        return [
+          ...this.flushMessages(),
+          createStreamEvent("tool_result", readAcpToolPayload(update)),
+        ];
+      case "usage_update":
+        return [
+          createStreamEvent("status_update", readAcpUsagePayload(update)),
+        ];
+      default:
+        return [
+          ...this.flushMessages(),
+          createStreamEvent(String(update.sessionUpdate ?? "session_update"), {
+            raw: update,
+          }),
+        ];
+    }
+  }
+
+  private bufferAcpTextChunk(
+    update: Record<string, unknown>,
+    eventType: "assistant" | "thinking"
+  ): readonly KimiSessionEvent[] {
+    const content = isRecord(update.content) ? update.content : null;
+    const text = typeof content?.text === "string" ? content.text : "";
+    return this.bufferText(text, eventType);
+  }
+
   private bufferContentPart(payload: unknown): readonly KimiSessionEvent[] {
     if (!isRecord(payload)) {
       return [createEvent("kimi_wire_event", { raw: payload })];
     }
     if (payload.type === "text") {
       const text = typeof payload.text === "string" ? payload.text : "";
-      if (text.length > 0) {
-        this.assistantChunks.push(text);
-      }
-      return [];
+      return this.bufferText(text, "assistant");
     }
     if (payload.type === "think") {
       const thinking = typeof payload.think === "string" ? payload.think : "";
-      if (thinking.length > 0) {
-        this.thinkingChunks.push(thinking);
-      }
-      return this.flushThinkingStreamChunk();
+      return this.bufferText(thinking, "thinking");
     }
     return [createEvent("kimi_wire_event", { raw: payload })];
   }
 
-  private flushThinkingStreamChunk(): readonly KimiSessionEvent[] {
-    const thinking = this.thinkingChunks.join("");
-    if (!shouldFlushThinkingStreamChunk(thinking)) {
+  private bufferText(
+    text: string,
+    eventType: "assistant" | "thinking"
+  ): readonly KimiSessionEvent[] {
+    if (text.length === 0) {
       return [];
     }
-    this.thinkingChunks.length = 0;
-    return thinking.trim().length > 0
-      ? [createMessageEvent("thinking", thinking)]
-      : [];
+    const chunks =
+      eventType === "thinking" ? this.thinkingChunks : this.assistantChunks;
+    chunks.push(text);
+    return this.flushBufferedMessage(eventType, false);
   }
 
   private flushMessages(): readonly KimiSessionEvent[] {
-    const events: KimiSessionEvent[] = [];
-    const thinking = this.thinkingChunks.join("");
-    const assistant = this.assistantChunks.join("");
-    if (thinking.trim().length > 0) {
-      events.push(createMessageEvent("thinking", thinking));
+    return [
+      ...this.flushBufferedMessage("thinking"),
+      ...this.flushBufferedMessage("assistant"),
+    ];
+  }
+
+  private flushBufferedMessage(
+    eventType: "assistant" | "thinking",
+    force = true
+  ): readonly KimiSessionEvent[] {
+    const chunks =
+      eventType === "thinking" ? this.thinkingChunks : this.assistantChunks;
+    const content = chunks.join("");
+    if (!(force || shouldFlushThinkingStreamChunk(content))) {
+      return [];
     }
-    if (assistant.trim().length > 0) {
-      events.push(createMessageEvent("assistant", assistant));
-    }
-    this.reset();
-    return events;
+    chunks.length = 0;
+    return content.trim().length > 0
+      ? [
+          createMessageEvent(
+            eventType,
+            content,
+            eventType === "assistant" ? { tag: "live" } : undefined
+          ),
+        ]
+      : [];
   }
 
   private reset(): void {

@@ -4,15 +4,19 @@ import { extractCodexDiffSections } from "./diff-section-extractor-codex";
 import { CAPTURE_WORKBENCH_DIFF_SECTIONS } from "./diff-section-model";
 import { buildCaptureWorkbenchDiffSection } from "./diff-section-normalizer";
 import { CaptureWorkbenchDiffSection } from "./diff-section";
-import type { SlotEntryRecord } from "../../services/workbench-bridge-types";
+import type {
+  SlotEntryRecord,
+  WorkbenchSlotRecord,
+} from "../../services/workbench-bridge-types";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
 
 interface CaptureWorkbenchDiffRendererProps {
-  readonly current: SlotEntryRecord | null;
-  readonly previous: SlotEntryRecord | null;
   readonly provider: string;
+  readonly slot: WorkbenchSlotRecord | null;
   readonly stateClient: Pick<WorkbenchStateClientApi, "readArtifactRecords">;
 }
+
+type DiffMode = "managed-history" | "managed-vs-vanilla" | "vanilla-history";
 
 type DiffLoadState =
   | { readonly status: "empty" }
@@ -26,21 +30,23 @@ type DiffLoadState =
 
 export const CaptureWorkbenchDiffRenderer: React.FC<
   CaptureWorkbenchDiffRendererProps
-> = ({ current, previous, provider, stateClient }) => {
+> = ({ provider, slot, stateClient }) => {
+  const [mode, setMode] = useState<DiffMode>("managed-history");
   const [loadState, setLoadState] = useState<DiffLoadState>({
     status: "empty",
   });
+  const pair = resolveDiffPair(slot, mode);
 
   useEffect(() => {
-    if (!(current?.jsonlPath && previous?.jsonlPath)) {
+    if (!(pair.right?.jsonlPath && pair.left?.jsonlPath)) {
       setLoadState({ status: "empty" });
       return;
     }
     let cancelled = false;
     setLoadState({ status: "loading" });
     Promise.all([
-      stateClient.readArtifactRecords(previous.jsonlPath),
-      stateClient.readArtifactRecords(current.jsonlPath),
+      stateClient.readArtifactRecords(pair.left.jsonlPath),
+      stateClient.readArtifactRecords(pair.right.jsonlPath),
     ])
       .then(([previousRecords, currentRecords]) => {
         if (!cancelled) {
@@ -65,7 +71,7 @@ export const CaptureWorkbenchDiffRenderer: React.FC<
     return () => {
       cancelled = true;
     };
-  }, [current?.jsonlPath, previous?.jsonlPath, stateClient]);
+  }, [pair.left?.jsonlPath, pair.right?.jsonlPath, stateClient]);
 
   const sections = useMemo(() => {
     if (loadState.status !== "ready") {
@@ -87,28 +93,37 @@ export const CaptureWorkbenchDiffRenderer: React.FC<
     <section aria-label="Capture diff" style={styles.container}>
       <div style={styles.toolbar}>
         <div style={styles.tabs} role="tablist">
-          <ModeTab disabled={true} label="Managed vs Vanilla" />
-          <ModeTab active={true} label="Managed: current vs previous" />
+          <ModeTab
+            active={mode === "managed-vs-vanilla"}
+            disabled={!canCompareManagedVanilla(slot)}
+            label="Managed vs Vanilla"
+            onClick={() => setMode("managed-vs-vanilla")}
+          />
+          <ModeTab
+            active={mode === "managed-history"}
+            label="Managed: current vs previous"
+            onClick={() => setMode("managed-history")}
+          />
           <ModeTab disabled={true} label="Vanilla: current vs previous" />
         </div>
         <span style={styles.summary}>{buildSummary(loadState, sections.length)}</span>
       </div>
       <div style={styles.sideLabels}>
-        <span style={styles.sidePill}>{formatSnapshotLabel("Previous", previous)}</span>
-        <span style={styles.sidePill}>{formatSnapshotLabel("Current", current)}</span>
+        <span style={styles.sidePill}>{formatSnapshotLabel(pair.leftLabel, pair.left)}</span>
+        <span style={styles.sidePill}>{formatSnapshotLabel(pair.rightLabel, pair.right)}</span>
       </div>
       <div style={styles.body}>
         {loadState.status === "ready" && sections.length > 0 ? (
           sections.map((section) => (
             <CaptureWorkbenchDiffSection
               key={section.definition.id}
-              leftLabel="Previous"
-              rightLabel="Current"
+              leftLabel={pair.leftLabel}
+              rightLabel={pair.rightLabel}
               section={section}
             />
           ))
         ) : (
-          <div style={styles.emptyState}>{buildEmptyState(loadState)}</div>
+          <div style={styles.emptyState}>{buildEmptyState(loadState, mode)}</div>
         )}
       </div>
     </section>
@@ -119,10 +134,12 @@ const ModeTab: React.FC<{
   readonly active?: boolean;
   readonly disabled?: boolean;
   readonly label: string;
-}> = ({ active = false, disabled = false, label }) => (
+  readonly onClick?: () => void;
+}> = ({ active = false, disabled = false, label, onClick }) => (
   <button
     aria-selected={active}
     disabled={disabled}
+    onClick={onClick}
     role="tab"
     style={{
       ...styles.tab,
@@ -148,10 +165,12 @@ const buildSummary = (state: DiffLoadState, sectionCount: number): string => {
   }
 };
 
-const buildEmptyState = (state: DiffLoadState): string => {
+const buildEmptyState = (state: DiffLoadState, mode: DiffMode): string => {
   switch (state.status) {
     case "empty":
-      return "Capture two Managed snapshots to compare current vs previous.";
+      return mode === "managed-vs-vanilla"
+        ? "Capture Managed and Vanilla snapshots to compare."
+        : "Capture two Managed snapshots to compare current vs previous.";
     case "loading":
       return "Loading captured JSONL artifacts...";
     case "error":
@@ -159,6 +178,34 @@ const buildEmptyState = (state: DiffLoadState): string => {
     case "ready":
       return "No diff sections available for this provider.";
   }
+};
+
+const canCompareManagedVanilla = (slot: WorkbenchSlotRecord | null): boolean =>
+  Boolean(slot?.managed.current?.jsonlPath && slot.vanilla.current?.jsonlPath);
+
+const resolveDiffPair = (
+  slot: WorkbenchSlotRecord | null,
+  mode: DiffMode
+): {
+  readonly left: SlotEntryRecord | null;
+  readonly leftLabel: string;
+  readonly right: SlotEntryRecord | null;
+  readonly rightLabel: string;
+} => {
+  if (mode === "managed-vs-vanilla") {
+    return {
+      left: slot?.vanilla.current ?? null,
+      leftLabel: "Vanilla",
+      right: slot?.managed.current ?? null,
+      rightLabel: "Managed",
+    };
+  }
+  return {
+    left: slot?.managed.previous ?? null,
+    leftLabel: "Previous",
+    right: slot?.managed.current ?? null,
+    rightLabel: "Current",
+  };
 };
 
 const formatSnapshotLabel = (

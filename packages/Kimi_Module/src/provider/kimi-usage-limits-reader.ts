@@ -26,6 +26,7 @@ type KimiFetch = (
 
 interface UsageBucket {
   readonly limit?: unknown;
+  readonly remaining?: unknown;
   readonly resetTime?: unknown;
   readonly used?: unknown;
 }
@@ -116,8 +117,13 @@ const buildBucket = (
   if (!bucket) {
     return null;
   }
-  const used = readNumber(bucket.used);
   const limit = readNumber(bucket.limit);
+  const remaining = readNumber(bucket.remaining);
+  // The 5h window (limits[].detail) reports `remaining`, not `used`, so derive
+  // used from limit - remaining when the bucket has no explicit `used`.
+  const used =
+    readNumber(bucket.used) ??
+    (limit !== null && remaining !== null ? limit - remaining : null);
   if (used === null) {
     return null;
   }
@@ -132,6 +138,7 @@ const readBucket = (value: unknown): UsageBucket | null =>
   isRecord(value)
     ? {
         limit: value.limit,
+        remaining: value.remaining,
         resetTime: value.resetTime,
         used: value.used,
       }

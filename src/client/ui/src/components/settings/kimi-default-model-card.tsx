@@ -23,7 +23,9 @@ interface KimiDefaultModelCardProps {
   readonly defaultModel?: KimiModelId;
   readonly onDefaultModelChange?: (modelId: KimiModelId) => void;
   readonly onThinkingDisplaySyncChange?: (enabled: boolean) => void;
+  readonly onThinkingEnabledChange?: (enabled: boolean) => void;
   readonly thinkingDisplaySyncEnabled?: boolean;
+  readonly thinkingEnabled?: boolean;
 }
 
 const displaySyncToggleStyles: CSSProperties = {
@@ -115,9 +117,7 @@ const KimiDefaultModelCard: FC<KimiDefaultModelCardProps> = ({
         );
       })}
     </div>
-    <p style={noteStyles}>
-      Uses KIMI_SHARE_DIR at ~/.codeai-hub/providers/kimi/home.
-    </p>
+    <p style={noteStyles}>Uses the installed Kimi Code CLI through ACP.</p>
   </SettingsCard>
 );
 

@@ -15,6 +15,7 @@ import {
 } from "../../../../types/gemini-model-registry";
 import {
   DEFAULT_KIMI_MODEL_ID,
+  KIMI_MODEL_ID_SET,
   KIMI_RECOMMENDED_MODELS,
 } from "../../../../types/kimi-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
@@ -58,6 +59,11 @@ const GLM_NATIVE_MODEL = {
   id: "glm-5.2",
   label: "GLM 5.2",
 } as const;
+const GLM_NATIVE_REASONING_OPTIONS = [
+  { id: "max", label: "max" },
+  { id: "high", label: "high" },
+  { id: "off", label: "off" },
+] as const;
 const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
 const DEFAULT_LOCAL_MODEL_ID = "local-model";
 
@@ -148,12 +154,13 @@ export const getStartCardReasoningOptions = (
       label: effort,
     }));
   }
-  if (
-    providerId === "kimiCode" ||
-    providerId === "glmNative" ||
-    providerId === "glmOpenCode" ||
-    providerId === "localModels"
-  ) {
+  if (providerId === "kimiCode") {
+    return [];
+  }
+  if (providerId === "glmNative") {
+    return GLM_NATIVE_REASONING_OPTIONS;
+  }
+  if (providerId === "glmOpenCode" || providerId === "localModels") {
     return [{ id: "default", label: "default" }];
   }
   const model =
@@ -210,12 +217,19 @@ export const resolveDefaultStartCardModelSelection = (
   if (providerId === "glmNative") {
     return {
       modelId: settings?.providers.glmNative?.defaultModel ?? "glm-5.2",
-      reasoning: "default",
+      reasoning:
+        settings?.providers.glmNative?.thinkingEnabled === false
+          ? "off"
+          : settings?.providers.glmNative?.reasoningEffort ?? "max",
     };
   }
   if (providerId === "kimiCode") {
+    const kimiModelId = settings?.providers.kimi?.defaultModel;
     return {
-      modelId: settings?.providers.kimi?.defaultModel ?? DEFAULT_KIMI_MODEL_ID,
+      modelId:
+        kimiModelId && KIMI_MODEL_ID_SET.has(kimiModelId)
+          ? kimiModelId
+          : DEFAULT_KIMI_MODEL_ID,
       reasoning: "default",
     };
   }

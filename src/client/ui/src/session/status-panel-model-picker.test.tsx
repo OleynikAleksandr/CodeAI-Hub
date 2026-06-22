@@ -118,6 +118,25 @@ test("model picker marks the active model with data-active and provider tint", (
   assert.equal(opusButton?.props["data-active"], undefined);
 });
 
+test("Kimi model picker exposes High Speed and marks it active", () => {
+  const buttons = renderPickerButtons({
+    currentModelId: "kimi-k2.7-code-highspeed",
+    mode: "model",
+    providerId: "kimiCode",
+  });
+  const defaultButton = buttons.find(
+    (button) => button.props["data-model-id"] === "kimi-k2.7-code"
+  );
+  const highspeedButton = buttons.find(
+    (button) => button.props["data-model-id"] === "kimi-k2.7-code-highspeed"
+  );
+
+  assert.equal(defaultButton?.props["data-provider"], "kimiCode");
+  assert.equal(defaultButton?.props["data-active"], undefined);
+  assert.equal(highspeedButton?.props["data-provider"], "kimiCode");
+  assert.equal(highspeedButton?.props["data-active"], "true");
+});
+
 test("reasoning picker marks the active reasoning option only", () => {
   const buttons = renderPickerButtons({
     currentModelId: "gpt-5.3-codex reasoning:high",

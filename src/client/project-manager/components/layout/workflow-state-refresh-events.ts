@@ -8,6 +8,13 @@ export const shouldRefreshWorkflowStateForCoreEvent = (message: {
   if (message.type !== "session:message" || !isRecord(message.payload)) {
     return false;
   }
+  if (
+    message.payload.stage === null &&
+    message.payload.runSlug === null &&
+    message.payload.initiativeSlug === null
+  ) {
+    return false;
+  }
   return (
     message.payload.role === "user" ||
     message.payload.tag === "managed-workflow-user-review" ||

@@ -95,6 +95,7 @@ export const DEFAULT_SETTINGS_SNAPSHOT = {
     kimi: {
       autoUpdate: { enabled: false },
       defaultModel: "kimi-k2.7-code",
+      thinkingEnabled: true,
       thinkingDisplaySyncEnabled: true,
     },
     glmOpenCode: {

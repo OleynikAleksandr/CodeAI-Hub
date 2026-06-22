@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import {
+  CODEX_DEFAULT_PROCESS_PROFILE_KEY,
   CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
   CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
 } from "../app-server/process/codex-app-server-process-profile";
@@ -308,10 +309,12 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
   });
 });
 
-test("CodexNativeRequestCaptureService mirrors selected model and applied reasoning config", async () => {
+test("CodexNativeRequestCaptureService captures vanilla without workflow overrides", async () => {
   const processes: FakeCodexProcess[] = [];
+  let capturedProcessProfileKey: string | null = null;
   const service = new CodexNativeRequestCaptureService({
-    processFactory: () => {
+    processFactory: ({ processProfileKey }) => {
+      capturedProcessProfileKey = processProfileKey;
       const process = new FakeCodexProcess();
       processes.push(process);
       return process;
@@ -334,6 +337,7 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
       source: "switch_request",
     },
     captureId: "capture-codex-app-config-test",
+    captureMode: "vanilla",
     certificateEnv: {},
     certificatePath: "/tmp/fallback-ca.pem",
     probePrompt: "diagnostic probe",
@@ -342,24 +346,14 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
     workspacePath: "/workspace/capture",
   });
 
+  assert.equal(capturedProcessProfileKey, CODEX_DEFAULT_PROCESS_PROFILE_KEY);
   const requests = processes[0]?.requests;
   assert.equal(requests?.[0]?.method, "thread/start");
-  assert.equal(
-    (requests?.[0]?.params as { model?: string }).model,
-    "gpt-5.3-codex"
-  );
-  assert.deepEqual((requests?.[0]?.params as { config?: unknown }).config, {
-    project_doc_max_bytes: 0,
-  });
-  assert.equal(
-    typeof (requests?.[0]?.params as { baseInstructions?: unknown })
-      .baseInstructions,
-    "string"
-  );
-  assert.match(
-    (requests?.[0]?.params as { baseInstructions: string }).baseInstructions,
-    EARLY_ARCHITECTURE_WORKFLOW_PATTERN
-  );
+  const threadStart = requests?.[0]?.params as Record<string, unknown>;
+  assert.equal(threadStart.model, "gpt-5.3-codex");
+  assert.equal("baseInstructions" in threadStart, false);
+  assert.equal("config" in threadStart, false);
+  assert.equal(threadStart.persistExtendedHistory, false);
   assert.equal(requests?.[1]?.method, "turn/start");
   assert.deepEqual(requests?.[1]?.params, {
     threadId: "diagnostic-thread",

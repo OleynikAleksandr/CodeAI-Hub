@@ -39,13 +39,18 @@ export const repairPlanMarkdown = ({ debt, head, markdown, subject }) => {
 
   if (commitSucceeded) {
     return {
-      markdown: finalizePlanTransaction({
-        commitHash: head,
-        debtPath: debt.debtPath,
-        markdown,
-        taskId: debt.taskId,
-      }),
-      reason: "commit_succeeded_hash_missing",
+      markdown: finalizePlanTransaction({ debtPath: debt.debtPath, markdown }),
+      reason: "commit_succeeded_local_debt_cleared",
+    };
+  }
+
+  if (
+    head === debt.preCommitHead &&
+    typeof debt.rollbackMarkdown === "string"
+  ) {
+    return {
+      markdown: debt.rollbackMarkdown,
+      reason: "commit_not_created_rolled_back",
     };
   }
 
@@ -82,7 +87,7 @@ export const runPlanRepair = (cwd = process.cwd()) => {
   writeFileSync(planPath, result.markdown, "utf8");
 
   if (
-    result.reason === "commit_succeeded_hash_missing" ||
+    result.reason === "commit_succeeded_local_debt_cleared" ||
     result.reason === "commit_not_created_rolled_back"
   ) {
     clearPlanDebtFile(debtPath);

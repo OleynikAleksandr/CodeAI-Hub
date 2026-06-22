@@ -79,25 +79,71 @@ const extractFencedArtifact = (content: string): string | null => {
   return value && value.length > 0 ? `${value}\n` : null;
 };
 
+// Live streaming splits the assistant answer into many `tag: "live"` chunks and
+// the live-tail dedupe drops the whole final assistant message, so no single
+// message still carries the artifact path plus fenced block. Reconstruct the
+// latest answer by joining the trailing run of assistant messages, then keep the
+// per-message contents as a fallback for the non-streamed (cloud) path.
+const buildArtifactCandidateContents = (
+  messages: readonly PreliminaryAssistantMessage[]
+): string[] => {
+  const trailing: string[] = [];
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (message?.role !== "assistant") {
+      break;
+    }
+    trailing.push(message.content);
+  }
+  const reconstructed = trailing.reverse().join("");
+  const perMessage = messages
+    .filter((message) => message.role === "assistant")
+    .map((message) => message.content)
+    .reverse();
+  return reconstructed.length > 0 ? [reconstructed, ...perMessage] : perMessage;
+};
+
+// When reasoning is split into a separate `thinking` message, the model leaves
+// the fenced artifact block in the `assistant` message but the artifact filename
+// reference in the `thinking` message, so no single assistant message carries
+// both. Confirm the filename across the latest assistant+thinking turn, then
+// still extract the fenced block from an assistant candidate.
+const collectLatestTurnText = (
+  messages: readonly PreliminaryAssistantMessage[]
+): string => {
+  const parts: string[] = [];
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const role = messages[index]?.role;
+    if (role !== "assistant" && role !== "thinking") {
+      break;
+    }
+    parts.push(messages[index].content);
+  }
+  return parts.reverse().join("\n");
+};
+
 const maybeMaterializeArtifactFromAssistant = async (
   input: PreliminaryArtifactGateInput & { readonly stage: PreliminaryStage }
 ): Promise<void> => {
   const relativePath = resolveStageArtifactRelativePath(input.stage);
   const targetPath = `.codeai-hub/${input.workspaceSlug}/${relativePath}`;
-  const assistantMessages = (input.assistantMessages ?? []).filter(
-    (message) => message.role === "assistant"
+  const artifactBasename = path.basename(relativePath);
+  const messages = input.assistantMessages ?? [];
+  const latestTurnText = collectLatestTurnText(messages);
+  const filenameInTurn =
+    latestTurnText.includes(targetPath) ||
+    latestTurnText.includes(artifactBasename);
+  const candidate = buildArtifactCandidateContents(messages).find(
+    (content) =>
+      (filenameInTurn ||
+        content.includes(targetPath) ||
+        content.includes(artifactBasename)) &&
+      extractFencedArtifact(content) !== null
   );
-  const candidate = assistantMessages
-    .reverse()
-    .find(
-      (message) =>
-        message.content.includes(targetPath) ||
-        message.content.includes(path.basename(relativePath))
-    );
   if (!candidate) {
     return;
   }
-  const artifact = extractFencedArtifact(candidate.content);
+  const artifact = extractFencedArtifact(candidate);
   if (!artifact) {
     return;
   }

@@ -61,6 +61,7 @@ import type {
   SessionRequestHandlerOptions,
 } from "./session-request-handler-types";
 import { handleRefreshUsageLimitsFlow } from "./session-request-handler-usage-limits-refresh";
+import { createUsageRefreshTurnHook as usageRefreshTurnHook } from "./session-request-handler-usage-limits-turn-refresh";
 import { UsageLimitsWarmupTracker } from "./session-request-handler-usage-limits-warmup";
 import { SessionRequestHandlerWorkflowSession } from "./session-request-handler-workflow-session";
 
@@ -142,7 +143,7 @@ export class SessionRequestHandler {
         await this.workflowSession.createSessionForWorkflow(workflowOptions),
       handleMessage: async (sessionId, payload) =>
         await this.handleMessage(sessionId, payload),
-      onTurnCompleted: options.onTurnCompleted,
+      onTurnCompleted: usageRefreshTurnHook(this, options.onTurnCompleted),
       handleProviderEvent: (sessionId, event) =>
         this.providerEventRouter.handleProviderEvent(sessionId, event),
       getLogger: () => this.logger,

@@ -5,6 +5,10 @@ import { evaluatePreCommitGuard } from "./plan-hook-pre-commit.mjs";
 const createMarkdown = ({
   commitStatus = "TODO",
   debt = null,
+  expectedCommitMessage = "feat: enforce plan state before commit",
+  hash = "TBD",
+  nextTaskStatus = "TODO",
+  currentTaskId = "phase2.stream4.task1",
   taskStatus = "IN_PROGRESS",
 } = {}) => `# План разработки
 
@@ -18,8 +22,8 @@ const createMarkdown = ({
   "baseHead": "0debb4a32",
   "lastRecordedCommit": "0debb4a32",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md",
-  "currentTaskId": "phase2.stream4.task1",
-  "expectedCommitMessage": "feat: enforce plan state before commit",
+  "currentTaskId": "${currentTaskId}",
+  "expectedCommitMessage": "${expectedCommitMessage}",
   "debt": ${debt === null ? "null" : JSON.stringify(debt)}
 }
 \`\`\`
@@ -28,18 +32,28 @@ const createMarkdown = ({
 1. [${taskStatus}] \`phase2.stream4.task1\` Add pre-commit guard.
    - scope: \`scripts/plan-orchestrator/**, doc/TODO/todo-plan.md\`
    - expected commit: \`feat: enforce plan state before commit\`
-2. [${commitStatus}] \`phase2.stream4.commit1\` Git Commit: \`feat: enforce plan state before commit\` (hash: TBD)
+2. [${commitStatus}] \`phase2.stream4.commit1\` Git Commit: \`feat: enforce plan state before commit\` (hash: ${hash})
+3. [${nextTaskStatus}] \`phase2.stream5.task1\` Next docs task.
+   - scope: \`docs/**, doc/TODO/todo-plan.md\`
+   - expected commit: \`docs: next\`
+4. [TODO] \`phase2.stream5.commit1\` Git Commit: \`docs: next\` (hash: TBD)
 `;
 
-const createPendingMarkdown = () =>
+const transactionDebt = {
+  expectedCommitMessage: "feat: enforce plan state before commit",
+  preCommitHead: "a4be3c37d",
+  rollbackMarkdown: createMarkdown(),
+  stage: "commit_pending",
+  taskId: "phase2.stream4.task1",
+};
+
+const createPreparedMarkdown = () =>
   createMarkdown({
-    commitStatus: "PENDING",
-    debt: {
-      expectedCommitMessage: "feat: enforce plan state before commit",
-      preCommitHead: "a4be3c37d",
-      stage: "commit_pending",
-      taskId: "phase2.stream4.task1",
-    },
+    commitStatus: "DONE",
+    currentTaskId: "phase2.stream5.task1",
+    expectedCommitMessage: "docs: next",
+    hash: "self",
+    nextTaskStatus: "IN_PROGRESS",
     taskStatus: "DONE",
   });
 
@@ -75,11 +89,12 @@ test("allows active machine-managed plan during transaction", () => {
   const result = evaluatePreCommitGuard({
     env: { CODEAI_PLAN_TRANSACTION_ACTIVE: "1" },
     gitState,
-    markdown: createPendingMarkdown(),
+    markdown: createPreparedMarkdown(),
     stagedFiles: [
       "doc/TODO/todo-plan.md",
       "scripts/plan-orchestrator/plan-hook-pre-commit.mjs",
     ],
+    transactionDebt,
   });
 
   assert.equal(result.ok, true);
@@ -90,8 +105,9 @@ test("blocks staged files outside current task scope during transaction", () => 
   const result = evaluatePreCommitGuard({
     env: { CODEAI_PLAN_TRANSACTION_ACTIVE: "1" },
     gitState,
-    markdown: createPendingMarkdown(),
+    markdown: createPreparedMarkdown(),
     stagedFiles: ["doc/TODO/todo-plan.md", "src/client/project-manager/api.ts"],
+    transactionDebt,
   });
 
   assert.equal(result.ok, false);

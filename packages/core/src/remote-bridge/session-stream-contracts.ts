@@ -30,6 +30,22 @@ export interface SerializedSession {
   readonly workspacePath: string;
 }
 
+export interface SerializedSessionScope {
+  readonly initiativeSlug: string | null;
+  readonly runSlug: string | null;
+  readonly stage: string | null;
+  readonly workspacePath: string;
+}
+
+export const serializeSessionScope = (
+  session: Session
+): SerializedSessionScope => ({
+  workspacePath: session.workspacePath,
+  initiativeSlug: session.initiativeSlug,
+  stage: session.stage,
+  runSlug: session.runSlug ?? null,
+});
+
 export const serializeSessionModelBinding = (
   session: Session
 ): SerializedSessionModelBinding | null => {

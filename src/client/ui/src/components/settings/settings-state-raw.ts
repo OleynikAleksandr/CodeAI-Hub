@@ -45,6 +45,7 @@ export interface RawKimiSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
+  readonly thinkingEnabled?: unknown;
 }
 export interface RawGlmOpenCodeSettings {
   readonly apiKey?: unknown;

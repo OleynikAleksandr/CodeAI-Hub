@@ -1,17 +1,16 @@
+import {
+  parseDraftRepairTaskNumber,
+  parseMaterializationRepairTaskNumber,
+} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-repair-model";
 import { parseDiagramModulesRepairTaskNumber } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-model";
 
-const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
-  /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
+export const resolveApplicationSkeletonDraftRepairAttemptNumber = (
+  taskId: string | null
+): number => parseDraftRepairTaskNumber(taskId ?? "") ?? 1;
 
 export const resolveMaterializationRepairAttemptNumber = (
   taskId: string | null
-): number => {
-  const match = taskId?.match(
-    APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE
-  );
-  const value = Number(match?.[1]);
-  return Number.isInteger(value) && value > 0 ? value : 1;
-};
+): number => parseMaterializationRepairTaskNumber(taskId ?? "") ?? 1;
 
 export const resolveDiagramModulesRepairAttemptNumber = (
   taskId: string | null

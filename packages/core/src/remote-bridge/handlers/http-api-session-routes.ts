@@ -1,4 +1,9 @@
+import path from "node:path";
 import type { Request, Response } from "express";
+import {
+  deleteStandaloneWorkspaceChat,
+  renameStandaloneWorkspaceChat,
+} from "../../unified-session/standalone-workspace-chat-list";
 import {
   buildWorkflowStageArtifactUpsertPlan,
   parseArtifactUpsertPayload,
@@ -20,11 +25,15 @@ import { handleWorkspaceSessionCreate } from "./workspace-session-service";
 
 const ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
 const SESSION_HISTORY_ENDPOINT = "/api/v1/sessions/:sessionId/history";
+const STANDALONE_CHATS_ENDPOINT = "/api/v1/standalone-chats";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const WORKSPACE_ACTIVATE_ENDPOINT = "/api/v1/orchestrator/workspace-activate";
+
+const readTextField = (source: Record<string, unknown>, key: string): string =>
+  typeof source[key] === "string" ? source[key].trim() : "";
 
 export class HttpApiSessionRoutes {
   private readonly deps: RouterDependencies;
@@ -38,6 +47,21 @@ export class HttpApiSessionRoutes {
     app.get(SESSION_HISTORY_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleSessionHistory(req, res);
     });
+    app.get(STANDALONE_CHATS_ENDPOINT, async (req: Request, res: Response) => {
+      await this.handleStandaloneChats(req, res);
+    });
+    app.patch(
+      STANDALONE_CHATS_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await this.handleStandaloneChatRename(req, res);
+      }
+    );
+    app.delete(
+      STANDALONE_CHATS_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await this.handleStandaloneChatDelete(req, res);
+      }
+    );
     app.post(ARTIFACT_UPSERT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleArtifactUpsertSave(req, res);
     });
@@ -174,6 +198,133 @@ export class HttpApiSessionRoutes {
       res
         .status(HTTP_INTERNAL_ERROR)
         .json({ error: "Unable to read session history" });
+    }
+  }
+
+  private async handleStandaloneChats(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const workspacePath =
+      typeof req.query.workspacePath === "string"
+        ? req.query.workspacePath.trim()
+        : "";
+    if (!(workspacePath && path.isAbsolute(workspacePath))) {
+      res.status(HTTP_BAD_REQUEST).json({ error: "workspacePath is required" });
+      return;
+    }
+    try {
+      const chats = await this.deps.sessionStorage.listStandaloneWorkspaceChats(
+        {
+          liveSessions:
+            this.deps.sessionManager.getSessionsByWorkspacePath(workspacePath),
+          workspacePath,
+        }
+      );
+      res.json({ chats });
+    } catch (error) {
+      this.deps.logger.error(
+        "Failed to list standalone workspace chats",
+        error as Error,
+        { workspacePath }
+      );
+      res
+        .status(HTTP_INTERNAL_ERROR)
+        .json({ error: "Unable to list standalone chats" });
+    }
+  }
+
+  private async handleStandaloneChatRename(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const body =
+      typeof req.body === "object" && req.body !== null
+        ? (req.body as Record<string, unknown>)
+        : {};
+    const workspacePath = readTextField(body, "workspacePath");
+    const providerId = readTextField(body, "providerId");
+    const providerSessionId = readTextField(body, "providerSessionId");
+    const title = readTextField(body, "title");
+    if (
+      !(
+        workspacePath &&
+        path.isAbsolute(workspacePath) &&
+        providerId &&
+        providerSessionId &&
+        title
+      )
+    ) {
+      res
+        .status(HTTP_BAD_REQUEST)
+        .json({ error: "Invalid chat rename request" });
+      return;
+    }
+    try {
+      await renameStandaloneWorkspaceChat({
+        providerId,
+        providerSessionId,
+        title,
+        workspacePath,
+      });
+      res.json({ ok: true });
+    } catch (error) {
+      this.deps.logger.error(
+        "Failed to rename standalone workspace chat",
+        error as Error,
+        { providerId, providerSessionId, workspacePath }
+      );
+      res
+        .status(HTTP_INTERNAL_ERROR)
+        .json({ error: "Unable to rename standalone chat" });
+    }
+  }
+
+  private async handleStandaloneChatDelete(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const workspacePath =
+      typeof req.query.workspacePath === "string"
+        ? req.query.workspacePath.trim()
+        : "";
+    const providerId =
+      typeof req.query.providerId === "string"
+        ? req.query.providerId.trim()
+        : "";
+    const providerSessionId =
+      typeof req.query.providerSessionId === "string"
+        ? req.query.providerSessionId.trim()
+        : "";
+    if (
+      !(
+        workspacePath &&
+        path.isAbsolute(workspacePath) &&
+        providerId &&
+        providerSessionId
+      )
+    ) {
+      res
+        .status(HTTP_BAD_REQUEST)
+        .json({ error: "Invalid chat delete request" });
+      return;
+    }
+    try {
+      await deleteStandaloneWorkspaceChat({
+        providerId,
+        providerSessionId,
+        workspacePath,
+      });
+      res.status(HTTP_NO_CONTENT).end();
+    } catch (error) {
+      this.deps.logger.error(
+        "Failed to delete standalone workspace chat",
+        error as Error,
+        { providerId, providerSessionId, workspacePath }
+      );
+      res
+        .status(HTTP_INTERNAL_ERROR)
+        .json({ error: "Unable to delete standalone chat" });
     }
   }
 }

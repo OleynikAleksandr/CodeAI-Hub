@@ -42,6 +42,7 @@ export interface GeminiSettingsSnapshot {
 export interface KimiSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
+  readonly thinkingEnabled?: unknown;
 }
 
 export interface GlmOpenCodeSettingsSnapshot {
@@ -187,6 +188,7 @@ export const loadKimiSettingsSnapshot = (
   return {
     defaultModel: kimi.defaultModel,
     thinkingDisplaySyncEnabled: kimi.thinkingDisplaySyncEnabled,
+    thinkingEnabled: kimi.thinkingEnabled,
   };
 };
 

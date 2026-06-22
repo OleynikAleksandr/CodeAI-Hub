@@ -3,7 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
+import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import { useWorkspaceSettingsPayload } from "../../services/workspace-settings-payload-hook";
+import {
+  loadWorkflowSettingsPayload,
+  saveWorkflowSettingsAndWait,
+} from "../../services/workflow-step-settings-transport";
+import { applyStartCardModelDefaults } from "../../services/workflow-step-start-settings-defaults";
 import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
 import type { BranchNodeKind, BranchNodeSelection } from "./main-area-utils";
 import {
@@ -17,8 +23,12 @@ const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
+  value === "glmNative" ||
   value === "glmOpenCode" ||
   value === "localModels";
+
+const isSettings = (value: unknown): value is Settings =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
 const resolveKindLabel = (kind: BranchNodeKind): string =>
   kind === "product-part"
@@ -53,6 +63,8 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
     useState<ProviderStackId | null>(firstProvider?.id ?? null);
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
   const [selectedReasoning, setSelectedReasoning] = useState<string | null>(null);
+  const [startError, setStartError] = useState<string | null>(null);
+  const [startInFlight, setStartInFlight] = useState(false);
   const settingsPayload = useWorkspaceSettingsPayload({
     workspacePath,
     workspaceSlug,
@@ -72,6 +84,7 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
         : [],
     [selectedModelId, selectedProviderId]
   );
+  const hasReasoningOptions = reasoningOptions.length > 0;
 
   useEffect(() => {
     if (!selectedProviderId) {
@@ -97,11 +110,51 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
     }
   }, [reasoningOptions, selectedReasoning]);
 
-  const startDisabled = !(
-    selectedProviderId &&
-    selectedModelId &&
-    selectedReasoning
-  );
+  const startDisabled =
+    startInFlight ||
+    !(
+      selectedProviderId &&
+      selectedModelId &&
+      (!hasReasoningOptions || selectedReasoning)
+    );
+  const handleStart = (): void => {
+    if (startDisabled || !(selectedProviderId && selectedModelId)) {
+      return;
+    }
+    const reasoning = selectedReasoning ?? "default";
+    const scope = { workspacePath, workspaceSlug };
+    setStartError(null);
+    setStartInFlight(true);
+    void (async () => {
+      const loadedSettingsPayload =
+        (await loadWorkflowSettingsPayload(scope).catch(() => null)) ??
+        settingsPayload;
+      const currentSettings = loadedSettingsPayload?.settings;
+      if (isSettings(currentSettings)) {
+        const nextSettings = applyStartCardModelDefaults(currentSettings, {
+          modelId: selectedModelId,
+          providerId: selectedProviderId,
+          reasoning,
+        });
+        if (nextSettings) {
+          await saveWorkflowSettingsAndWait(nextSettings, scope);
+        }
+      }
+      api.startDevelopmentTreeNode({
+        providerId: selectedProviderId,
+        workflowPath,
+        workspacePath,
+        workspaceSlug,
+      });
+    })()
+      .catch((error: unknown) => {
+        setStartError(error instanceof Error ? error.message : String(error));
+      })
+      .finally(() => {
+        setStartInFlight(false);
+      });
+  };
+
   return (
     <div className="pm-details" style={{ padding: "24px 20px" }}>
       <strong style={{ display: "block", fontSize: 14, marginBottom: 16 }}>
@@ -124,7 +177,13 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
           }))}
           value={selectedProviderId ?? ""}
         />
-        <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
+        <div
+          style={{
+            display: "grid",
+            gap: 8,
+            gridTemplateColumns: hasReasoningOptions ? "1fr 1fr" : "1fr",
+          }}
+        >
           <CaptureWorkbenchDomListboxSelector
             label="Model"
             onChange={setSelectedModelId}
@@ -135,33 +194,31 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
             }))}
             value={selectedModelId ?? ""}
           />
-          <CaptureWorkbenchDomListboxSelector
-            label="Reasoning"
-            onChange={setSelectedReasoning}
-            options={reasoningOptions.map((option) => ({
-              label: option.label,
-              value: option.id,
-            }))}
-            value={selectedReasoning ?? ""}
-          />
+          {hasReasoningOptions ? (
+            <CaptureWorkbenchDomListboxSelector
+              label="Reasoning"
+              onChange={setSelectedReasoning}
+              options={reasoningOptions.map((option) => ({
+                label: option.label,
+                value: option.id,
+              }))}
+              value={selectedReasoning ?? ""}
+            />
+          ) : null}
         </div>
         <button
           className="pm-provider-picker__button pm-provider-picker__button--primary"
           disabled={startDisabled}
-          onClick={() => {
-            api.startDevelopmentTreeNode({
-              modelId: selectedModelId,
-              providerId: selectedProviderId ?? "",
-              reasoning: selectedReasoning,
-              workflowPath,
-              workspacePath,
-              workspaceSlug,
-            });
-          }}
+          onClick={handleStart}
           type="button"
         >
-          Start node
+          {startInFlight ? "Starting..." : "Start node"}
         </button>
+        {startError ? (
+          <div style={{ color: "var(--pm-danger)", fontSize: 12 }}>
+            {startError}
+          </div>
+        ) : null}
       </div>
     </div>
   );

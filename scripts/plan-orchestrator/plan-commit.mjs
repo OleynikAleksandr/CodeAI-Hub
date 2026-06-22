@@ -9,7 +9,10 @@ import {
   readDirtyPaths,
 } from "./plan-scope-boundary.mjs";
 import { parsePlanStateMarkdown } from "./plan-state-parser.mjs";
-import { beginPlanTransaction } from "./plan-transaction.mjs";
+import {
+  beginPlanTransaction,
+  finalizePlanTransaction,
+} from "./plan-transaction.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
 
 const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -78,8 +81,9 @@ export const runPlanCommit = ({ cwd = process.cwd(), message }) => {
     paths: readDirtyPaths(cwd),
     scopePatterns,
   });
+  const debtPath = getRepositoryDebtPath(cwd);
   const transaction = beginPlanTransaction({
-    debtPath: getRepositoryDebtPath(cwd),
+    debtPath,
     expectedCommitMessage: message,
     markdown,
     preCommitHead: gitState.head,
@@ -100,5 +104,9 @@ export const runPlanCommit = ({ cwd = process.cwd(), message }) => {
       [TRANSACTION_ENV]: "1",
     },
     stdio: "inherit",
+  });
+  finalizePlanTransaction({
+    debtPath,
+    markdown: readFileSync(planPath, "utf8"),
   });
 };

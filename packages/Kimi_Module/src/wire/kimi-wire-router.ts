@@ -55,21 +55,25 @@ export class KimiWireRouter {
       return;
     }
 
-    if (message.method === "event") {
-      this.options.onEvent?.(message.params);
-      return;
+    if (typeof message.method === "string") {
+      if (typeof message.id === "string" || typeof message.id === "number") {
+        this.handleAgentRequest({
+          id: message.id,
+          method: message.method,
+          params: message.params,
+        });
+        return;
+      }
+      this.options.onEvent?.(message);
     }
+  }
 
-    if (
-      message.method === "request" &&
-      (typeof message.id === "string" || typeof message.id === "number")
-    ) {
-      this.handleAgentRequest({
-        id: message.id,
-        method: message.method,
-        params: message.params,
-      });
-    }
+  notify(method: string, params?: unknown): void {
+    this.options.sendJson({
+      jsonrpc: "2.0",
+      method,
+      params,
+    });
   }
 
   request(method: string, params?: unknown): Promise<unknown> {

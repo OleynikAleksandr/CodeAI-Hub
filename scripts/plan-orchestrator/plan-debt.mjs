@@ -21,11 +21,13 @@ export const getRepositoryDebtPath = (cwd = process.cwd()) => {
 export const createPlanDebtPayload = ({
   expectedCommitMessage,
   preCommitHead,
+  rollbackMarkdown = null,
   stage = "commit_pending",
   taskId,
 }) => ({
   expectedCommitMessage,
   preCommitHead,
+  rollbackMarkdown,
   stage,
   taskId,
 });

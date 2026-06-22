@@ -110,6 +110,7 @@ const WORKSPACE_SETTINGS_SEED = {
     kimi: {
       autoUpdate: { enabled: false },
       defaultModel: "kimi-k2.7-code",
+      thinkingEnabled: true,
       thinkingDisplaySyncEnabled: true,
     },
     glmOpenCode: {

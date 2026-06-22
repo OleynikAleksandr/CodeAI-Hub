@@ -59,7 +59,14 @@ test("development tree node start card avoids native selects", async () => {
   const source = await readFile(DEVELOPMENT_TREE_NODE_START_CARD_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("CaptureWorkbenchDomListboxSelector"), true);
+  assert.equal(source.includes("applyStartCardModelDefaults("), true);
+  assert.equal(source.includes("saveWorkflowSettingsAndWait("), true);
   assert.equal(source.includes("api.startDevelopmentTreeNode({"), true);
+  const startPayloadIndex = source.indexOf("api.startDevelopmentTreeNode({");
+  const startPayloadEndIndex = source.indexOf("});", startPayloadIndex);
+  const startPayload = source.slice(startPayloadIndex, startPayloadEndIndex);
+  assert.equal(startPayload.includes("modelId"), false);
+  assert.equal(startPayload.includes("reasoning"), false);
   assert.equal(source.includes("<select"), false);
 });
 

@@ -9,9 +9,9 @@ import {
   finalizePlanTransaction,
 } from "./plan-transaction.mjs";
 
-const COMMIT_PENDING_PATTERN = /\[PENDING\].*Git Commit/u;
-const COMMIT_DONE_WITH_HASH_PATTERN =
-  /\[DONE\].*Git Commit.*\(hash: abc1234\)/u;
+const COMMIT_DONE_WITH_SELF_HASH_PATTERN =
+  /\[DONE\].*Git Commit.*\(hash: self\)/u;
+const NEXT_TASK_IN_PROGRESS_PATTERN = /\[IN_PROGRESS\].*Add pre-commit guard/u;
 
 const createMarkdown = () => `# План разработки
 
@@ -44,7 +44,7 @@ const createMarkdown = () => `# План разработки
 4. [TODO] \`phase2.stream4.commit1\` Git Commit: \`feat: enforce plan state before commit\` (hash: TBD)
 `;
 
-test("writes debt and marks commit transaction pending", () => {
+test("writes local debt and advances markdown for the commit itself", () => {
   const debtPath = join(mkdtempSync(join(tmpdir(), "plan-debt-")), "debt.json");
   const result = beginPlanTransaction({
     debtPath,
@@ -57,8 +57,12 @@ test("writes debt and marks commit transaction pending", () => {
   const fileDebt = JSON.parse(readFileSync(debtPath, "utf8"));
 
   assert.deepEqual(fileDebt, result.debt);
-  assert.deepEqual(parsed.state.debt, result.debt);
-  assert.match(result.markdown, COMMIT_PENDING_PATTERN);
+  assert.equal(fileDebt.rollbackMarkdown, createMarkdown());
+  assert.equal(parsed.state.debt, null);
+  assert.equal(parsed.state.lastRecordedCommit, "self");
+  assert.equal(parsed.state.currentTaskId, "phase2.stream4.task1");
+  assert.match(result.markdown, COMMIT_DONE_WITH_SELF_HASH_PATTERN);
+  assert.match(result.markdown, NEXT_TASK_IN_PROGRESS_PATTERN);
 });
 
 test("finalizes transaction and clears debt file", () => {
@@ -80,11 +84,11 @@ test("finalizes transaction and clears debt file", () => {
   const parsed = parsePlanStateMarkdown(markdown);
 
   assert.equal(parsed.state.debt, null);
-  assert.equal(parsed.state.lastRecordedCommit, "abc1234");
+  assert.equal(parsed.state.lastRecordedCommit, "self");
   assert.equal(parsed.state.currentTaskId, "phase2.stream4.task1");
   assert.equal(
     parsed.state.expectedCommitMessage,
     "feat: enforce plan state before commit"
   );
-  assert.match(markdown, COMMIT_DONE_WITH_HASH_PATTERN);
+  assert.match(markdown, COMMIT_DONE_WITH_SELF_HASH_PATTERN);
 });

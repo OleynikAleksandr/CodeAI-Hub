@@ -1,9 +1,9 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
  
 **Status:** Implemented on `main`
-**Updated:** 2026-06-01
+**Updated:** 2026-06-21
 **Owner:** Oleksandr + Codex
-**Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.2.101`)
+**Last metadata audit:** 2026-06-18 on `main` (`v1.2.545`; original validation: `v1.2.101`)
 
 ---
 
@@ -72,12 +72,18 @@ Persisted user-facing settings state, из которого Core вычисля�
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth for a bound session identity.
 Settings snapshot reads may be cached only as short, path-scoped read-through snapshots. Core-owned settings save/reset/default-materialization paths must invalidate the canonical path immediately after write; provider-local fallback caches are bounded helpers and never become a second settings owner.
 
+Provider connection settings that are intentionally global are not effective model identity. The current explicit case is native GLM: `providers.glmNative.apiKey` and `providers.glmNative.baseUrl` live in `~/.codeai-hub/settings/settings.json` so new workspaces reuse the same Z.AI connection, while workspace settings still own `defaultModel`, `reasoningEffort`, `thinkingEnabled` and reasoning display defaults for new sessions.
+
+Provider launch surfaces are settings writers, not independent identity owners. Workflow start cards and Development Tree start/fix cards must persist selected provider/model/reasoning values through the same scoped settings path before session creation; Core then resolves the new binding from Settings. Connection settings that are globally scoped, such as native GLM `apiKey` / `baseUrl`, remain global and must not be copied into workspace launch payload truth.
+
 Kimi and OpenCode provider settings are split by runtime:
 
-- `providers.kimi` belongs to the native Kimi Wire/CLI provider.
+- `providers.kimi` belongs to the native Kimi ACP/CLI provider.
 - `providers.glmOpenCode` belongs to the OpenCode wrapper provider and may target `zai-coding-plan/glm-5.2` or `kimi-for-coding/k2p7`.
 
-They must remain separate persisted defaults because they run under different provider process/session/turn envelopes: native Kimi defaults to `kimi-k2.7-code`, while OpenCode defaults to `zai-coding-plan/glm-5.2`.
+They must remain separate persisted defaults because they run under different provider process/session/turn envelopes: native Kimi defaults to `kimi-k2.7-code` and also supports `kimi-k2.7-code-highspeed`, while OpenCode defaults to `zai-coding-plan/glm-5.2`.
+
+Native Kimi effective identity is the selected Kimi model id only. `providers.kimi.thinkingEnabled` is a backward-compatible legacy field that is normalized to enabled and no longer drives a Kimi CLI flag, Settings control, launch-card control, or session binding metadata. `providers.kimi.thinkingDisplaySyncEnabled` remains presentation-only and is excluded from effective identity.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled`, `reasoningEngineId` / `reasoningLanguage` (the dedicated reasoning translation pair after the UI/Reasoning translation split) и их deprecated legacy aliases `translationEngineId` / `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity. Both legacy aliases are threaded with the same resolved value as the canonical reasoning fields until the provider adapters finish migrating.
 
@@ -164,8 +170,10 @@ Session continuity must preserve the model chosen at logical session start:
 ### 4.5. Provider-specific examples
 
 - **Codex**: `reasoningByModel` may require per-turn thread refresh, but the refresh still consumes Core-applied identity.
-- **Gemini**: `thinking` входит в effective identity; `gpt-5.3-codex reasoning:xhigh` и `gpt-5.3-codex reasoning:high` are different runtime identities.
+- **Gemini**: `thinking` входит в effective identity; `gemini-3-pro-preview thinking:high` and `gemini-3-pro-preview thinking:low` are different runtime identities.
 - **Claude**: `thinking` off remains `sonnet thinking:off`, while enabled Claude turns now expose explicit effort through identities such as `sonnet reasoning:high` and `sonnet reasoning:max`; this is how Session UI learns that the next Claude turn will use a different effort level.
+- **Kimi**: native Kimi ACP is model-only in CodeAI Hub. Settings/start cards/status-line model picker may choose `kimi-k2.7-code` or `kimi-k2.7-code-highspeed`; they must not show a reasoning on/off or effort picker.
+- **GLM Native**: global connection settings are outside identity, while workspace defaults carry `glm-5.2` plus `thinkingEnabled` and `reasoningEffort`. UI choices are `off`, `high`, and `max`; legacy cross-provider labels must normalize before reaching runtime.
 
 ### 4.6. Model invocation profile compatibility
 
@@ -215,6 +223,7 @@ Rules:
 18. Settings snapshot caches must be path-scoped, short-lived, and invalidated by Core write/reset/default-materialization paths; cache reuse is a performance detail and must not change settings ownership.
 19. Capture-scoped reasoning override is a diagnostic-only exception; it may affect native capture artifacts for one command but must never write Settings, mutate `session.modelBinding`, or become a provider-local identity source.
 20. Missing Claude thinking settings default to enabled for new/default snapshots only; explicit saved values and already-bound session identities remain authoritative.
+21. Provider launch/start cards must persist provider/model and provider-supported reasoning selections through scoped Settings before session creation and must not pass one-shot model/reasoning payloads as a second source of truth. For Kimi, only the model selection is supported.
 
 ---
 

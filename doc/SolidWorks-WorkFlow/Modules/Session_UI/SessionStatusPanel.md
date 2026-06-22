@@ -8,8 +8,8 @@
 
 Показывает live state одной logical session в виде четырёх-chip ряда:
 1. label `Модель:`;
-2. имя выбранной модели (provider-tinted button shape; для Codex и Claude открывает picker модели);
-3. опциональный `(reasoning)` / `(thinking)` (тот же button shape; для Codex открывает reasoning picker, для Claude открывает thinking picker; скрывается при отсутствующем `model.reasoning`);
+2. имя выбранной модели (provider-tinted button shape; для Codex, Claude, Kimi, GLM/OpenCode и Local Models открывает picker модели);
+3. опциональный `(reasoning)` / `(thinking)` (тот же button shape; для Codex открывает reasoning picker, для Claude открывает thinking picker; скрывается при отсутствующем `model.reasoning`; для Kimi скрыт всегда);
 4. правая `Токены:` плашка с `used (remaining%)` и свободным правым краем под будущие per-session signals.
 
 Панель возвращает `null`, если Core не `ready` или в `status.models` нет хотя бы одного элемента; legacy single-line fallback и `Core Supervisor: starting…` сняты с оборота на этом surface.
@@ -20,7 +20,7 @@
 - `connectionDetail` (зарезервирован для совместимости caller'а; в текущей разметке не используется)
 - `status`
 - `tokenDebugSummary` — опционально, рендерится отдельным muted strip ниже chip-ряда.
-- `onSelectModel(sessionId, modelId, reasoningEffort)` — optional callback; активный runtime/PM слой dispatch'ит его для Codex sessions.
+- `onSelectModel(sessionId, modelId, reasoningEffort)` — optional callback; активный runtime/PM слой dispatch'ит его для Codex, Kimi, GLM/OpenCode и Local Models sessions.
 - `onSelectReasoning(sessionId, reasoningEffort)` — optional callback; Codex reasoning-only selection resolves current base model before dispatch.
 - `onSelectClaudeModel(sessionId, modelId, thinking)` — optional callback; Claude model selection preserves or resolves the current thinking selection before dispatch.
 - `onSelectClaudeThinking(sessionId, thinking)` — optional callback; Claude thinking-only selection preserves the current base model before dispatch.
@@ -28,7 +28,7 @@
 ## Откуда берет правду
 
 - `connectionStatus` / `connectionDetail` из `useProjectManagerCoreStatusHydrator()`;
-- `status.models[0]` (single-model invariant per SystemArchitecture §3.14 / SMB-001/002): `modelDisplayName`, `reasoning`, `providerId` (`claudeCodeCli` / `codexCli` / `geminiCli`) → `session-status-button--{provider}` tint class;
+- `status.models[0]` (single-model invariant per SystemArchitecture §3.14 / SMB-001/002): `modelDisplayName`, `reasoning`, `providerId` (`claudeCodeCli` / `codexCli` / `geminiCli` / `kimiCode` / `glmNative` / `glmOpenCode` / `localModels`) → provider tint class;
 - `status.tokenUsage.used` / `.limit` → токен-плашка (used + remaining percent);
 - `tokenDebugSummary` либо вычисляется по chain/messages, либо в dialog mode приходит как override из parsed dialog history.
 
@@ -51,12 +51,12 @@ The user-facing percentage in the chip is **remaining context window percentage*
 
 ### Token side
 - `session:stream` token-usage events -> `updateSnapshotsWithTokenUsage(...)`.
-- Kimi-specific discovery, 2026-05-19: Kimi Wire `StatusUpdate` already carries authoritative context-window fields:
+- Kimi-specific discovery, 2026-06-21: current Kimi ACP `usage_update` carries authoritative context-window fields as `used` and `size`; legacy Kimi Wire `StatusUpdate` compatibility still maps:
   - `context_usage` as a `0..1` used ratio;
   - `context_tokens` as current context tokens;
   - `max_context_tokens` as the model context window.
   The Kimi adapter must normalize these into the same `tokenUsage` snapshot shape consumed by `updateSnapshotsWithTokenUsage(...)`: `used = context_tokens`, `limit = max_context_tokens`. `context_usage` is useful as provider evidence/debug, but the UI chip still derives the displayed percentage from `used / limit` to keep the provider-neutral status-panel contract.
-- Kimi Wire `token_usage.input_other/output/input_cache_read/input_cache_creation` is per-turn accounting, not the status-panel context-window source. It must not replace `context_tokens/max_context_tokens` in the `Токены:` chip.
+- Kimi per-turn accounting must not replace context-window usage in the `Токены:` chip.
 
 ### Debug summary side
 - пересчитывается по runtime chain или dialog history.
@@ -68,6 +68,7 @@ The user-facing percentage in the chip is **remaining context window percentage*
 - при change настроек модели/reasoning только для snapshots без `binding`/`runtime` ownership;
 - при пользовательском выборе Codex model/reasoning через chips: контракт раздельный — `session:codex:model-switch` несёт только `targetModelId`, а `session:codex:reasoning-switch` только `targetReasoningEffort`. После каждой команды Core отдаёт `session:model:update`, а следующий turn подтверждает binding через runtime path;
 - при пользовательском выборе Claude model/thinking через chips: контракт раздельный — `session:claude:model-switch` несёт только `targetModelId`, а `session:claude:thinking-switch` только `thinkingEnabled` + опциональный `targetReasoningEffort`. После каждой команды Core отдаёт `session:model:update`, а следующий turn применяет binding в Claude SDK `query(...)`;
+- при пользовательском выборе Kimi model через chip: model picker показывает `Kimi K2.7 Code` и `Kimi K2.7 Code High Speed`, отправляет только `targetModelId`, reasoning picker не открывается;
 - model-card popup рендерит только список моделей; reasoning-card popup рендерит только список значений reasoning/thinking. Активный пункт обеих карт подсвечен провайдерным цветом через `data-active="true"` + `data-provider`, без отдельного текстового маркера;
 - при `session:model:update`;
 - при новых token usage/history данных.
@@ -77,6 +78,7 @@ The user-facing percentage in the chip is **remaining context window percentage*
 
 - Для Codex sessions вызывает `onSelectModel(modelId)` / `onSelectReasoning(reasoning)` — каждый callback несёт только своё поле, без второго аргумента.
 - Для Claude sessions вызывает `onSelectClaudeModel(modelId)` / `onSelectClaudeThinking(thinking)` — model-callback теряет thinking-аргумент, thinking-callback не передаёт модель.
+- Для Kimi sessions вызывает только `onSelectModel(modelId)`.
 - Для Gemini sessions selection no-op: chips остаются визуальной частью status row, но не dispatch'ят provider command в этом scope.
 
 ## Локальный state
@@ -94,10 +96,11 @@ The user-facing percentage in the chip is **remaining context window percentage*
 - continuation session, созданная после `Remaining context threshold (%)`, должна показывать inherited binding предыдущей logical session, даже если Settings default у provider уже изменён.
 - для `Virtual Simulation` / `Diagram Modules`, стартующих с confirmation card, нижняя панель не должна сохранять provider/model summary предыдущего trunk step: выбранный на карточке provider seed-ит bootstrap snapshot сразу, а затем live runtime model update уточняет effective model без возврата к старому provider context.
 - 4-chip layout инвариант: chips 1–3 (`flex: 0 0 auto`) hug свой текст, правая `--limits` плашка (`flex: 1 1 0; min-width: 0`) поглощает весь оставшийся горизонт; внешняя ширина ряда фиксирована родителем (`width: 100%`). При смене модели (например Sonnet → Opus 4.7) reflow происходит только внутри ряда — токен-плашка автоматически меняет ширину, остальной layout остаётся стабильным.
-- buttons (chips 2 и 3) интерактивны для Codex и Claude sessions. Runtime и dialog PM views прокидывают callbacks симметрично. Каждая chip dispatch'ит свою команду: model chip → `api.requestCodexModelSwitch(sessionId, modelId)` или `api.requestClaudeModelSwitch(sessionId, modelId)`; reasoning/thinking chip → `api.requestCodexReasoningSwitch(sessionId, effort)` или `api.requestClaudeThinkingSwitch(sessionId, thinkingEnabled, effort?)`. Никаких объединённых payload'ов с двумя полями.
+- buttons (chips 2 и 3) интерактивны для provider-ов, у которых есть соответствующий callback. Runtime и dialog PM views прокидывают callbacks симметрично. Каждая chip dispatch'ит свою команду: model chip → provider model switch/default update, reasoning/thinking chip → provider-specific reasoning/thinking command. Никаких объединённых payload'ов с двумя полями.
 - для Gemini sessions callbacks guard'ятся до dispatch: Gemini strategy seam пока отсутствует, поэтому selection is no-op.
 - Codex model picker показывает текущий Codex registry order; reasoning picker показывает `reasoningEffortOptions` выбранной/current Codex модели.
 - Claude model picker показывает provider-owned alias order `Sonnet` / `Opus` / `Haiku`; thinking picker показывает `off` плюс `low | medium | high | xhigh | max`.
+- Kimi model picker показывает registry order `kimi-k2.7-code` / `kimi-k2.7-code-highspeed`; Kimi reasoning picker не используется.
 - при выборе новой Codex модели через model chip UI ничего не пересчитывает на клиенте — отправляется только `targetModelId`. Сохранение/нормализация reasoning происходит исключительно в Core handler по правилу: prior `reasoningEffort` сохраняется, если поддержан target model, иначе fallback к первому варианту из `reasoningEffortOptions`.
 - при выборе новой Claude модели через model chip UI отправляет только `targetModelId`. Claude handler сохраняет previous `thinkingEnabled` + `reasoningEffort` и нормализует effort через `findClaudeModelCapabilities`; Status Panel не несёт эту логику.
 - thinking chip dispatch'ит `api.requestClaudeThinkingSwitch(sessionId, thinkingEnabled, effort?)`; для `off` UI не передаёт effort, для остальных уровней передаёт `(true, level)`. Модель в этой команде не присутствует.

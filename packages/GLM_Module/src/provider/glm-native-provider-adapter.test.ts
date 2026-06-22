@@ -1,11 +1,24 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import {
+  type GlmRequestFailure,
+  readGlmRetryDelayMs,
+} from "./glm-native-adapter-utils";
 import { GlmProviderAdapter } from "./glm-native-provider-adapter";
 
 const encoder = new TextEncoder();
 const HTTP_529_PATTERN = /HTTP 529/u;
 const ECONNRESET_PATTERN = /ECONNRESET/u;
-const NATIVE_GLM_AGENT_PATTERN = /native GLM workflow agent/u;
+const CODEX_NATIVE_IDENTITY_PATTERN = /You are Codex, a coding agent/u;
+const GLM_RUNTIME_ADDENDUM_PATTERN = /CodeAI Hub GLM Runtime Addendum/u;
+const TOOL_JSON_BLOCK_PATTERN = /Captured Codex Native Tool Definitions/u;
+const TEST_PROVIDER_HOME = "/tmp/codeai-hub-glm-native-provider-test-home";
+
+const createTestWorkspace = (workspacePath?: string) => ({
+  apiKey: "test-key",
+  providerHomePath: TEST_PROVIDER_HOME,
+  ...(workspacePath ? { workspacePath } : {}),
+});
 
 const createFetchError = (code: string, message: string): Error => {
   const error = new Error("fetch failed") as Error & {
@@ -41,8 +54,10 @@ const createResettingResponse = (): Response =>
 test("GlmProviderAdapter streams thinking, assistant content and token usage", async () => {
   const originalFetch = globalThis.fetch;
   const bodies: string[] = [];
+  const requestHeaders: Record<string, string>[] = [];
   globalThis.fetch = ((_url, init) => {
     bodies.push(String(init?.body ?? ""));
+    requestHeaders.push(init?.headers as Record<string, string>);
     return Promise.resolve(
       createResponse([
         JSON.stringify({
@@ -64,7 +79,7 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key", workspacePath: "/tmp/glm-test" },
+      workspace: createTestWorkspace("/tmp/glm-test"),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -73,6 +88,9 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     await adapter.sendMessage(sessionId, "hello");
 
     assert.equal(bodies.length, 1);
+    assert.equal(requestHeaders[0]?.["x-session-affinity"], sessionId);
+    assert.equal(requestHeaders[0]?.["X-Session-Id"], sessionId);
+    assert.equal(requestHeaders[0]?.["User-Agent"], "codeai-hub/glm-native");
     const body = JSON.parse(bodies[0] as string) as {
       readonly model: string;
       readonly messages: Array<{
@@ -94,7 +112,15 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     };
     assert.equal(body.model, "glm-5.2");
     assert.equal(body.messages[0]?.role, "system");
-    assert.match(body.messages[0]?.content ?? "", NATIVE_GLM_AGENT_PATTERN);
+    assert.match(
+      body.messages[0]?.content ?? "",
+      CODEX_NATIVE_IDENTITY_PATTERN
+    );
+    assert.match(body.messages[0]?.content ?? "", GLM_RUNTIME_ADDENDUM_PATTERN);
+    assert.doesNotMatch(
+      body.messages[0]?.content ?? "",
+      TOOL_JSON_BLOCK_PATTERN
+    );
     assert.equal(body.reasoning_effort, "max");
     assert.deepEqual(body.stream_options, { include_usage: true });
     assert.deepEqual(body.thinking, {
@@ -103,7 +129,19 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     });
     assert.equal(body.tool_choice, "auto");
     assert.equal(body.tool_stream, true);
-    assert.equal(body.tools[0]?.function.name, "write_workflow_artifact");
+    assert.equal(body.tools.length, 46);
+    assert.ok(body.tools.some((tool) => tool.function.name === "exec_command"));
+    assert.ok(body.tools.some((tool) => tool.function.name === "apply_patch"));
+    assert.ok(
+      body.tools.some(
+        (tool) => tool.function.name === "mcp__playwright__browser_click"
+      )
+    );
+    assert.ok(
+      body.tools.some(
+        (tool) => tool.function.name === "write_workflow_artifact"
+      )
+    );
     assert.deepEqual(
       events.map((event) => (event as { type: string }).type),
       [
@@ -132,6 +170,20 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
   }
 });
 
+test("readGlmRetryDelayMs honors retry-after-ms", () => {
+  const error = new Error("rate limited") as GlmRequestFailure;
+  error.retryAfterMs = 1234;
+
+  assert.equal(readGlmRetryDelayMs(error, 1), 1234);
+});
+
+test("readGlmRetryDelayMs keeps GLM retries short and non-increasing", () => {
+  const error = new Error("transient");
+
+  assert.equal(readGlmRetryDelayMs(error, 1), 500);
+  assert.equal(readGlmRetryDelayMs(error, 8), 500);
+});
+
 test("GlmProviderAdapter applies per-turn reasoning controls", async () => {
   const originalFetch = globalThis.fetch;
   const bodies: string[] = [];
@@ -142,7 +194,7 @@ test("GlmProviderAdapter applies per-turn reasoning controls", async () => {
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -182,7 +234,7 @@ test("GlmProviderAdapter replays assistant reasoning_content in later turns", as
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -217,12 +269,15 @@ test("GlmProviderAdapter retries transient transport failures without changing r
     if (attempts === 1) {
       return Promise.reject(createFetchError("ECONNRESET", "read ECONNRESET"));
     }
+    if (attempts === 2) {
+      return Promise.reject(createFetchError("EPIPE", "write EPIPE"));
+    }
     return Promise.resolve(createResponse(["[DONE]"]));
   }) as typeof fetch;
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -232,7 +287,7 @@ test("GlmProviderAdapter retries transient transport failures without changing r
     });
     await adapter.sendMessage(sessionId, "hello");
 
-    assert.equal(attempts, 2);
+    assert.equal(attempts, 3);
     for (const bodyText of bodies) {
       const body = JSON.parse(bodyText) as {
         readonly reasoning_effort?: string;
@@ -271,7 +326,7 @@ test("GlmProviderAdapter buffers thinking chunks and marks assistant deltas live
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -327,7 +382,7 @@ test("GlmProviderAdapter retries stream reset before first useful event", async 
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -368,7 +423,7 @@ test("GlmProviderAdapter emits visible failure on HTTP error", async () => {
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();
@@ -400,7 +455,7 @@ test("GlmProviderAdapter preserves fetch cause after retry exhaustion", async ()
 
   try {
     const adapter = new GlmProviderAdapter({
-      workspace: { apiKey: "test-key" },
+      workspace: createTestWorkspace(),
     });
     await adapter.initialize();
     const sessionId = await adapter.createSession();

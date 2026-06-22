@@ -19,9 +19,19 @@ import type {
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 import type { BridgeEvent } from "../types";
 import {
+  type KimiReconfigureRegistry,
+  type KimiReconfigureSessionManager,
+  reconcileKimiThinkingEnabled,
+} from "./kimi-thinking-reconciler";
+import {
   SettingsLoadedBroadcaster,
   toWorkspaceScopePayload,
 } from "./settings-loaded-broadcaster";
+import {
+  type LocalModelsWarmupRunner,
+  type LocalModelsWarmupScheduler,
+  scheduleSettingsLocalModelsWarmup,
+} from "./settings-local-models-warmup-scheduler";
 import { SettingsPersistenceService } from "./settings-persistence-service";
 import {
   resolveLocalizationRuntimeSettings,
@@ -281,15 +291,23 @@ export class SettingsRequestHandler {
   private readonly createLocalizationFacade: LocalizationFacadeFactory;
   private readonly defaultWorkspace: WorkspaceSettingsScope;
   private readonly logger: Logger;
+  private readonly providerRegistry?: KimiReconfigureRegistry;
+  private readonly scheduleLocalModelsWarmup?: LocalModelsWarmupScheduler;
+  private readonly sessionManager?: KimiReconfigureSessionManager;
   private readonly settingsPersistenceService: SettingsPersistenceService;
   private readonly settingsProviderVersionService: SettingsProviderVersionService;
   private readonly templateSyncFacade: TemplateSyncFacade;
+  private readonly warmSelectedLocalModels?: LocalModelsWarmupRunner;
 
   constructor(options: {
     readonly broadcaster: (event: BridgeEvent) => void;
     readonly config: CoreConfig;
     readonly createLocalizationFacade?: LocalizationFacadeFactory;
     readonly logger: Logger;
+    readonly providerRegistry?: KimiReconfigureRegistry;
+    readonly scheduleLocalModelsWarmup?: LocalModelsWarmupScheduler;
+    readonly sessionManager?: KimiReconfigureSessionManager;
+    readonly warmSelectedLocalModels?: LocalModelsWarmupRunner;
   }) {
     this.broadcaster = options.broadcaster;
     this.config = options.config;
@@ -302,12 +320,16 @@ export class SettingsRequestHandler {
       workspaceSlug: options.config.claudeProjectSlug,
     };
     this.logger = options.logger;
+    this.providerRegistry = options.providerRegistry;
+    this.scheduleLocalModelsWarmup = options.scheduleLocalModelsWarmup;
+    this.sessionManager = options.sessionManager;
     this.settingsPersistenceService = new SettingsPersistenceService({
       config: options.config,
       logger: options.logger,
     });
     this.settingsProviderVersionService = new SettingsProviderVersionService();
     this.templateSyncFacade = new TemplateSyncFacade(options.logger);
+    this.warmSelectedLocalModels = options.warmSelectedLocalModels;
   }
 
   async handleSave(
@@ -331,6 +353,18 @@ export class SettingsRequestHandler {
         broadcaster: this.broadcaster,
         localizationFacade: this.createLocalizationFacade(workspace),
       }).publish(result, workspace, { syncFailureMessage });
+      await reconcileKimiThinkingEnabled(
+        settings,
+        this.providerRegistry,
+        this.sessionManager
+      );
+      scheduleSettingsLocalModelsWarmup({
+        config: this.config,
+        logger: this.logger,
+        scheduleLocalModelsWarmup: this.scheduleLocalModelsWarmup,
+        warmSelectedLocalModels: this.warmSelectedLocalModels,
+        workspace,
+      });
     } catch (error) {
       const reason = toErrorMessage(error);
       this.logger.warn("Failed to save settings", { error: reason });
@@ -340,12 +374,17 @@ export class SettingsRequestHandler {
 
   async handleReset(workspace?: WorkspaceSettingsScope): Promise<void> {
     try {
+      const result = await this.settingsPersistenceService.reset({
+        workspace,
+      });
       await new SettingsSavedBroadcaster({
         broadcaster: this.broadcaster,
         localizationFacade: this.createLocalizationFacade(workspace),
-      }).publish(
-        await this.settingsPersistenceService.reset({ workspace }),
-        workspace
+      }).publish(result, workspace);
+      await reconcileKimiThinkingEnabled(
+        result.settings,
+        this.providerRegistry,
+        this.sessionManager
       );
     } catch (error) {
       const reason = toErrorMessage(error);
@@ -355,14 +394,19 @@ export class SettingsRequestHandler {
   }
 
   async handleLoad(workspace?: WorkspaceSettingsScope): Promise<void> {
+    const settings = await this.settingsPersistenceService.load({ workspace });
     await new SettingsLoadedBroadcaster({
       broadcaster: this.broadcaster,
       localizationFacade: this.createLocalizationFacade(workspace),
       resolveRuntimeSettings: resolveLocalizationRuntimeSettings,
-    }).publish(
-      await this.settingsPersistenceService.load({ workspace }),
-      workspace
-    );
+    }).publish(settings, workspace);
+    scheduleSettingsLocalModelsWarmup({
+      config: this.config,
+      logger: this.logger,
+      scheduleLocalModelsWarmup: this.scheduleLocalModelsWarmup,
+      warmSelectedLocalModels: this.warmSelectedLocalModels,
+      workspace,
+    });
   }
 
   async handleLoadVersions(): Promise<void> {

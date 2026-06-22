@@ -151,6 +151,7 @@ export const updateKimiDefaultModel = (
       ...(settings.providers.kimi ?? {
         autoUpdate: { enabled: false },
         thinkingDisplaySyncEnabled: true,
+        thinkingEnabled: true,
       }),
       defaultModel,
     },

@@ -31,6 +31,26 @@ export const useProjectManagerKimiSettingsHandlers = ({
     },
     [settings, updateSettings]
   );
+  const handleKimiThinkingEnabledChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings({
+        ...settings,
+        providers: {
+          ...settings.providers,
+          kimi: {
+            ...(settings.providers.kimi ?? {
+              autoUpdate: { enabled: false },
+              defaultModel: "kimi-k2.7-code",
+              thinkingDisplaySyncEnabled: true,
+              thinkingEnabled: true,
+            }),
+            thinkingEnabled: enabled,
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
   const handleGlmOpenCodeThinkingDisplaySyncChange = useCallback(
     (enabled: boolean) => {
       updateSettings(
@@ -73,5 +93,6 @@ export const useProjectManagerKimiSettingsHandlers = ({
     handleGlmOpenCodeThinkingDisplaySyncChange,
     handleKimiDefaultModelChange,
     handleKimiThinkingDisplaySyncChange,
+    handleKimiThinkingEnabledChange,
   };
 };

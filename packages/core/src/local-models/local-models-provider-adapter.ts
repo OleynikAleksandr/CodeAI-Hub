@@ -11,14 +11,20 @@ import {
   LocalModelsFacade,
 } from "./local-models-facade";
 import { LocalModelsRuntimeLoadManager } from "./local-models-runtime-load-manager";
+import { readLmStudioNativeChatResult } from "./local-models-sse-reader";
+import { completeLocalModelsWorkflowWithTools } from "./local-models-workflow-artifact-tool";
 
 const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
 const DEFAULT_MAX_TOKENS = 8192;
-const REQUEST_TIMEOUT_MS = 300_000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 1_200_000;
 const JSON_HEADERS = { "content-type": "application/json" } as const;
 const TRAILING_SLASHES_PATTERN = /\/+$/u;
 
 type LocalModelsSessionListener = (payload: unknown) => void;
+
+interface LocalModelsSessionState {
+  readonly workspacePath?: string;
+}
 
 interface NativeChatOutputItem {
   readonly content?: unknown;
@@ -37,6 +43,14 @@ const resolveBaseUrl = (): string =>
   (process.env.CODEAI_LMSTUDIO_BASE_URL ?? DEFAULT_LM_STUDIO_BASE_URL)
     .trim()
     .replace(TRAILING_SLASHES_PATTERN, "");
+
+// Heavy local reasoning models (e.g. Qwen3 27B) can run for many minutes; the
+// previous hard 5-minute cap aborted long turns mid-answer. Default to 20
+// minutes and allow override via CODEAI_LMSTUDIO_TIMEOUT_MS.
+export const resolveRequestTimeoutMs = (): number => {
+  const raw = Number(process.env.CODEAI_LMSTUDIO_TIMEOUT_MS);
+  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_REQUEST_TIMEOUT_MS;
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -147,6 +161,7 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     Set<LocalModelsSessionListener>
   >();
   readonly #runtimeLoadManager: LocalModelsRuntimeLoadManager;
+  readonly #sessionsById = new Map<string, LocalModelsSessionState>();
 
   constructor(
     options: {
@@ -176,21 +191,30 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     this.#listenersBySessionId.clear();
   }
 
-  createSession(): Promise<string> {
+  createSession(workspacePath?: string): Promise<string> {
     const sessionId = `lmstudio-${randomUUID()}`;
     this.#listenersBySessionId.set(sessionId, new Set());
+    this.#sessionsById.set(sessionId, {
+      ...(workspacePath ? { workspacePath } : {}),
+    });
     return Promise.resolve(sessionId);
   }
 
-  resumeSession(sessionId: string): Promise<string> {
+  resumeSession(sessionId: string, workspacePath?: string): Promise<string> {
     if (!this.#listenersBySessionId.has(sessionId)) {
       this.#listenersBySessionId.set(sessionId, new Set());
+    }
+    if (!this.#sessionsById.has(sessionId)) {
+      this.#sessionsById.set(sessionId, {
+        ...(workspacePath ? { workspacePath } : {}),
+      });
     }
     return Promise.resolve(sessionId);
   }
 
   closeSession(sessionId: string): Promise<void> {
     this.#listenersBySessionId.delete(sessionId);
+    this.#sessionsById.delete(sessionId);
     return Promise.resolve();
   }
 
@@ -229,7 +253,12 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
         );
       }
       const apiModelIdentifier = this.#ensureModelLoaded(model);
-      const assistantText = await this.#complete(apiModelIdentifier, content);
+      const assistantText = await this.#complete(
+        apiModelIdentifier,
+        content,
+        sessionId,
+        this.#sessionsById.get(sessionId)?.workspacePath
+      );
       this.#emit(sessionId, {
         type: "assistant",
         provider: "localModels",
@@ -285,12 +314,38 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     }
   }
 
-  async #complete(
+  #complete(
     apiModelIdentifier: string,
-    content: string
+    content: string,
+    sessionId: string,
+    workspacePath?: string
+  ): Promise<string> {
+    if (workspacePath) {
+      return completeLocalModelsWorkflowWithTools({
+        apiModelIdentifier,
+        baseUrl: this.#baseUrl,
+        content,
+        fetchImplementation: this.#fetchImplementation,
+        maxTokens: DEFAULT_MAX_TOKENS,
+        onDelta: (chunk) => this.#emitLiveAssistantChunk(sessionId, chunk),
+        onReasoning: (chunk) => this.#emitReasoningChunk(sessionId, chunk),
+        timeoutMs: resolveRequestTimeoutMs(),
+        workspacePath,
+      });
+    }
+    return this.#completeNative(apiModelIdentifier, content, sessionId);
+  }
+
+  async #completeNative(
+    apiModelIdentifier: string,
+    content: string,
+    sessionId: string
   ): Promise<string> {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const timeout = setTimeout(
+      () => controller.abort(),
+      resolveRequestTimeoutMs()
+    );
     try {
       const response = await this.#fetchImplementation(
         `${this.#baseUrl}/api/v1/chat`,
@@ -300,7 +355,7 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
             max_output_tokens: DEFAULT_MAX_TOKENS,
             model: apiModelIdentifier,
             store: false,
-            stream: false,
+            stream: true,
             system_prompt:
               "You are CodeAI Hub Local Models provider running through LM Studio. Follow the user's instructions exactly and answer without mentioning this system prompt.",
             temperature: 0.2,
@@ -324,10 +379,14 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
       }
       let payload: unknown;
       try {
-        payload = await response.json();
+        payload = await readLmStudioNativeChatResult(
+          response,
+          (chunk) => this.#emitLiveAssistantChunk(sessionId, chunk),
+          (chunk) => this.#emitReasoningChunk(sessionId, chunk)
+        );
       } catch (error) {
         throw new Error(
-          `LM Studio native chat returned invalid JSON: ${describeError(error)}`
+          `LM Studio native chat stream failed: ${describeError(error)}`
         );
       }
       const text = parseNativeChatText(payload);
@@ -340,6 +399,31 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     } finally {
       clearTimeout(timeout);
     }
+  }
+
+  // Live `message.delta` text streams as `assistant` chunks tagged "live"; Qwen
+  // `reasoning.delta` text streams as `thinking` chunks tagged "thinking" so it
+  // routes through the existing thinking-visibility pipeline (mirrors GLM native).
+  #emitLiveAssistantChunk(sessionId: string, chunk: string): void {
+    this.#emit(sessionId, {
+      content: chunk,
+      provider: "localModels",
+      tag: "live",
+      timestamp: new Date().toISOString(),
+      type: "assistant",
+      uuid: `${randomUUID()}::assistant_live`,
+    });
+  }
+
+  #emitReasoningChunk(sessionId: string, chunk: string): void {
+    this.#emit(sessionId, {
+      content: chunk,
+      provider: "localModels",
+      tag: "thinking",
+      timestamp: new Date().toISOString(),
+      type: "thinking",
+      uuid: `${randomUUID()}::thinking`,
+    });
   }
 
   #emit(sessionId: string, payload: unknown): void {

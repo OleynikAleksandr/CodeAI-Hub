@@ -1,0 +1,314 @@
+# Plan Closeout: glm-native-provider-2026-06-17
+
+**Created:** 2026-06-17T17:49:17.426Z
+**Acceptance:** User accepted release 1.2.542 after retest and requested provider documentation closeout plus GitHub push.
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/audit-gates-cleanup
+**Current Task:** phase1.stream32.task1
+**Expected Commit:** docs: close native glm scope
+**Last Recorded Commit:** 8066d4acc
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Native_Provider_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
+# Development TODO Plan
+
+<!-- codeai-plan-state:start -->
+```json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "glm-native-provider-2026-06-17",
+  "branch": "codex/audit-gates-cleanup",
+  "baseHead": "9059a03eb",
+  "lastRecordedCommit": "8066d4acc",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Native_Provider_Planning_RU.md",
+  "currentTaskId": "phase1.stream32.task1",
+  "expectedCommitMessage": "docs: close native glm scope",
+  "debt": null
+}
+```
+<!-- codeai-plan-state:end -->
+
+## Context Pack For This Cycle
+
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Native_Provider_Planning_RU.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Kimi.md`
+  - `doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Only this list is the context source for this execution cycle.
+
+## Execution Rules
+
+- **Required reading before each fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Each implementation task is paired with a separate `Git Commit` item.
+- Keep each implementation task scoped to no more than 3 files or one tightly bounded package/surface.
+- Use `npm run plan:commit -- "<expected commit message>"` for planned commits.
+- Do not bypass Husky hooks or quality gates.
+- Release build requires a separate confirmation before `build-all.sh` / `build-release.sh`.
+
+## Phase 1 - Native GLM Provider (owner: Codex, updated: 2026-06-17)
+
+### Stream: Planning Intake
+
+1. [DONE] `phase1.stream1.task1` Create the native GLM provider planning source and link it from the docs index. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Native_Provider_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan native glm provider`)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan native glm provider` (hash: f52682d33)
+
+### Stream: Provider Runtime
+
+3. [DONE] `phase1.stream2.task1` Add the dedicated GLM provider package with native fetch/SSE runtime, reasoning/content normalization, token usage mapping and focused tests. (scope: `packages/GLM_Module/**, package.json, package-lock.json`; expected commit: `feat: add native glm provider module`)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `feat: add native glm provider module` (hash: 50484161c)
+
+### Stream: Core Registry
+
+5. [DONE] `phase1.stream3.task1` Register `glmNative` in Core provider loading, descriptors, workspace provider homes, model identity and provider failure recovery. (scope: `packages/core/package.json, package-lock.json, packages/core/src/provider-registry/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: register native glm provider`)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `feat: register native glm provider` (hash: c609e906b)
+
+### Stream: Settings And Selection Surfaces
+
+7. [DONE] `phase1.stream4.task1` Add `providers.glmNative` settings state, Settings card, provider picker visibility, workflow defaults and provider labels. (scope: `src/types/provider.ts, src/client/ui/src/components/settings/**, src/client/ui/src/core-bridge/**, src/client/ui/src/session/**, src/client/project-manager/**, media/react-chat.js`; expected commit: `feat: expose native glm settings and selection`)
+8. [DONE] `phase1.stream4.commit1` Git Commit: `feat: expose native glm settings and selection` (hash: 3275abef7)
+
+### Stream: Packaging And Documentation
+
+9. [DONE] `phase1.stream5.task1` Add native GLM release packaging and module SSOT documentation. (scope: `.vscodeignore, assets/providers/glm-native/**, scripts/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: package native glm provider`)
+10. [DONE] `phase1.stream5.commit1` Git Commit: `feat: package native glm provider` (hash: 8d76295ac)
+
+### Stream: Verification
+
+11. [DONE] `phase1.stream6.task1` Record targeted builds/tests and live GLM 5.2 smoke evidence for assistant output, reasoning and token usage. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm verification`)
+12. [DONE] `phase1.stream6.commit1` Git Commit: `docs: record native glm verification` (hash: 0dc8abac9)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module` — passed.
+- `npm test --workspace=@codeai-hub/glm-module` — passed earlier in this scope: 5/5 provider/SSE tests.
+- `npm run build --workspace=@codeai-hub/core` — passed after Core registry and packaging changes.
+- `npm run typecheck:webview` — passed after Settings/session UI changes.
+- `npm run build:webview` — passed and regenerated `media/react-chat.js`.
+- `npm run build:project-manager` — passed.
+- `bash -n scripts/build-glm-module.sh scripts/build-all.sh scripts/build-core.sh scripts/build-release.sh scripts/release-utils.sh` — passed.
+- `./scripts/build-glm-module.sh --version 1.2.533` — passed; installed `~/.codeai-hub/providers/glm-native/1.2.533` and updated `assets/providers/glm-native/manifest.json`.
+- Live native GLM smoke via `packages/GLM_Module/dist/index.js` using OpenCode `zai-coding-plan` auth key without printing the secret — passed: model `glm-5.2`, assistant chunks `12`, thinking chunks `52`, token usage events `1`, failure events `0`, assistant preview `GLM_NATIVE_SMOKE_OK This model is glm-5.2.`
+
+### Stream: GLM Reasoning Controls
+
+13. [DONE] `phase1.stream7.task1` Add native GLM reasoning enablement, effort level and dialog display controls before release. (scope: `src/client/ui/src/components/settings/**, src/client/project-manager/**, packages/core/src/config/**, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/GLM_Module/**, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `feat: add glm reasoning controls`)
+14. [DONE] `phase1.stream7.commit1` Git Commit: `feat: add glm reasoning controls` (hash: 65f6141ff)
+
+### Stream: Release Build
+
+15. [DONE] `phase1.stream8.task1` Prepare release notes for the confirmed native GLM release build. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm release notes`)
+16. [DONE] `phase1.stream8.commit1` Git Commit: `docs: prepare native glm release notes` (hash: 3cb3fcd29)
+17. [DONE] `phase1.stream8.task2` Build the confirmed native GLM release and record artifacts for user retest. (scope: `package.json, package-lock.json, .vscodeignore, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm release`)
+18. [DONE] `phase1.stream8.commit2` Git Commit: `chore: build native glm release` (hash: 172c248ef)
+
+### Stream: GLM Settings Crash Fix
+
+19. [DONE] `phase1.stream9.task1` Replace the GLM reasoning native select with the Codex-style custom reasoning dialog to avoid Project Manager/CEF native popup crashes. (scope: `src/client/ui/src/components/settings/glm-native-settings-card.tsx, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `fix: replace glm reasoning native select`)
+20. [DONE] `phase1.stream9.commit1` Git Commit: `fix: replace glm reasoning native select` (hash: 8cba2d0a3)
+
+### Stream: GLM Settings Crash Hotfix Release
+
+21. [DONE] `phase1.stream10.task1` Prepare release notes for the GLM Settings native select crash hotfix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm settings crash hotfix release`)
+22. [DONE] `phase1.stream10.commit1` Git Commit: `docs: prepare glm settings crash hotfix release` (hash: e79c1e7a6)
+23. [DONE] `phase1.stream10.task2` Build the GLM Settings crash hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build glm settings crash hotfix release`)
+24. [DONE] `phase1.stream10.commit2` Git Commit: `chore: build glm settings crash hotfix release` (hash: db30483f2)
+
+### Stream: GLM Native Retest Fix
+
+25. [DONE] `phase1.stream11.task1` Harden native GLM request compatibility after retest showed `fetch failed`, keeping reasoning enabled and preserving provider failure diagnostics. (scope: `packages/GLM_Module/**, doc/TODO/todo-plan.md`; expected commit: `fix: harden native glm reasoning transport`)
+26. [DONE] `phase1.stream11.commit1` Git Commit: `fix: harden native glm reasoning transport` (hash: 3bc6f845d)
+27. [DONE] `phase1.stream11.task2` Align native GLM Settings/Core reasoning controls with the real Z.AI/OpenCode high/max contract and legacy off aliases. (scope: `src/client/ui/src/components/settings/**, packages/core/src/config/glm-native-turn-config.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align native glm reasoning settings`)
+28. [DONE] `phase1.stream11.commit2` Git Commit: `fix: align native glm reasoning settings` (hash: 5bf8841fe)
+29. [DONE] `phase1.stream11.task3` Document native GLM reasoning transport findings from the OpenCode comparison. (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document native glm reasoning transport`)
+30. [DONE] `phase1.stream11.commit3` Git Commit: `docs: document native glm reasoning transport` (hash: 9659a0cdb)
+
+### Stream: Native GLM Transport Hotfix Release
+
+31. [DONE] `phase1.stream12.task1` Prepare release notes for the confirmed native GLM transport/reasoning hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm transport release`)
+32. [DONE] `phase1.stream12.commit1` Git Commit: `docs: prepare native glm transport release` (hash: 25023ebe3)
+33. [DONE] `phase1.stream12.task2` Build the confirmed native GLM transport/reasoning hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm transport release`)
+34. [DONE] `phase1.stream12.commit2` Git Commit: `chore: build native glm transport release` (hash: 195fd3b20)
+
+### Stream: User Workflow Acceptance Testing
+
+35. [BLOCKED] `phase1.stream13.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager. Retest on 2026-06-17 failed with `Provider turn failed: fetch failed (ECONNRESET: read ECONNRESET)`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+36. [TODO] `phase1.stream13.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native ECONNRESET Retest Fix
+
+37. [DONE] `phase1.stream14.task1` Retry native GLM stream resets before the first useful SSE event and persist GLM Native connection settings globally so new workspaces do not require re-entering the API key. (scope: `packages/GLM_Module/src/provider/**, packages/core/src/remote-bridge/handlers/settings-*.ts, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: stabilize native glm runtime settings`)
+38. [DONE] `phase1.stream14.commit1` Git Commit: `fix: stabilize native glm runtime settings` (hash: 812ebf2ca)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module && npm test --workspace=@codeai-hub/glm-module` — passed: 11/11, including pre-first-event `ECONNRESET` stream retry and global GLM runtime profile fallback.
+- `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/config/provider-settings-snapshot.test.ts` — passed: 7/7, including global GLM connection settings split/merge.
+- `npm run build --workspace=@codeai-hub/core` — passed after sequential GLM module build.
+
+### Stream: Native GLM Runtime Settings Hotfix Release
+
+39. [DONE] `phase1.stream15.task1` Prepare release notes for the confirmed native GLM runtime settings hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm runtime settings hotfix release`)
+40. [DONE] `phase1.stream15.commit1` Git Commit: `docs: prepare native glm runtime settings hotfix release` (hash: 461afb7cf)
+41. [DONE] `phase1.stream15.task2` Build the confirmed native GLM runtime settings hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm runtime settings hotfix release`)
+42. [DONE] `phase1.stream15.commit2` Git Commit: `chore: build native glm runtime settings hotfix release` (hash: 1fde3060b)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.537` and copied 10 release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.537.vsix` (`5.4M`).
+
+### Stream: User Workflow Acceptance Testing
+
+43. [BLOCKED] `phase1.stream16.task1` Wait for user retest that `GLM` is selectable, runs `GLM 5.2` natively, streams reasoning and reports token usage without OpenCode/Claude, and GLM reasoning level changes do not crash Project Manager after the runtime settings hotfix release. Retest on 2026-06-17 showed native GLM works, but thinking and assistant deltas are surfaced as raw chunks instead of coherent dialog bubbles. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+44. [TODO] `phase1.stream16.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native Live Chunk Aggregation Fix
+
+45. [DONE] `phase1.stream17.task1` Buffer native GLM thinking deltas into readable chunks and mark assistant deltas as live so the existing dialog merge path renders one growing answer bubble instead of one card per SSE chunk. (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: aggregate native glm live chunks`)
+46. [DONE] `phase1.stream17.commit1` Git Commit: `fix: aggregate native glm live chunks` (hash: 72091df3e)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module && npm test --workspace=@codeai-hub/glm-module` — passed: 12/12, including buffered thinking chunks and assistant `tag: "live"` deltas for UI merge.
+
+### Stream: Native GLM Live Chunk Hotfix Release
+
+47. [DONE] `phase1.stream18.task1` Prepare release notes for the confirmed native GLM live chunk aggregation hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm live chunk release`)
+48. [DONE] `phase1.stream18.commit1` Git Commit: `docs: prepare native glm live chunk release` (hash: ae1337a04)
+49. [DONE] `phase1.stream18.task2` Build the confirmed native GLM live chunk aggregation hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm live chunk release`)
+50. [DONE] `phase1.stream18.commit2` Git Commit: `chore: build native glm live chunk release` (hash: 0ab9364d2)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.538` and copied release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.538.vsix` (`5.4M`).
+
+### Stream: User Workflow Acceptance Testing
+
+51. [BLOCKED] `phase1.stream19.task1` Wait for user retest that native `GLM` streams reasoning and assistant output as coherent dialog bubbles, reports token usage, and keeps global GLM settings after the live chunk hotfix release. Retest on 2026-06-17 showed streaming is fixed, but GLM Native still behaves as plain chat completion without system/tool runtime: it generated `Final_Description.md` in chat instead of writing the canonical artifact. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+52. [TODO] `phase1.stream19.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native Workflow Tool Runtime
+
+53. [DONE] `phase1.stream20.task1` Add GLM Native system instructions, OpenAI-compatible tool schema, streamed tool-call parsing and a safe `.codeai-hub/...` artifact writer so managed workflow stages can create canonical artifacts instead of pasting them into chat. (scope: `packages/GLM_Module/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: add glm native workflow tool runtime`)
+54. [DONE] `phase1.stream20.commit1` Git Commit: `fix: add glm native workflow tool runtime` (hash: 13a845670)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module` — passed after adding GLM Native system/tool runtime.
+- `npm test --workspace=@codeai-hub/glm-module` — passed: 13/13, including streamed `tool_calls`, `write_workflow_artifact`, creation of `.codeai-hub/demo/description/Final_Description.md`, and replay of `role: "tool"` into the follow-up request.
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-adapter-utils.ts packages/GLM_Module/src/provider/glm-native-agent-runtime.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts packages/GLM_Module/src/provider/glm-native-sse-parser.ts packages/GLM_Module/src/provider/glm-native-stream-reader.ts` — passed.
+
+### Stream: Native GLM Workflow Tool Runtime Release
+
+55. [DONE] `phase1.stream21.task1` Prepare release notes for the confirmed native GLM workflow tool runtime hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm workflow tool release`)
+56. [DONE] `phase1.stream21.commit1` Git Commit: `docs: prepare native glm workflow tool release` (hash: 3df539f91)
+57. [DONE] `phase1.stream21.task2` Build the confirmed native GLM workflow tool runtime hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm workflow tool release`)
+58. [DONE] `phase1.stream21.commit2` Git Commit: `chore: build native glm workflow tool release` (hash: af4ce1e76)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.539` and copied release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.539.vsix` (`5.4M`).
+
+### Stream: User Workflow Acceptance Testing
+
+59. [BLOCKED] `phase1.stream22.task1` Wait for user retest that native `GLM` writes managed artifacts through the workflow tool runtime, streams reasoning/answers coherently, reports token usage, and keeps global GLM settings after the workflow tool runtime hotfix release. Retest on 2026-06-17 passed for GLM behavior, but reasoning-level verification needs full native GLM provider-home diagnostics. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+60. [TODO] `phase1.stream22.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native Provider Home Diagnostics
+
+61. [DONE] `phase1.stream23.task1` Add full native GLM provider-home session JSONL logging for request headers/body, streamed SSE frames, parsed deltas, tools, usage and errors. (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: log native glm provider sessions`)
+62. [DONE] `phase1.stream23.commit1` Git Commit: `fix: log native glm provider sessions` (hash: 829810317)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module` — passed after adding native GLM provider-home session logs.
+- `npm test --workspace=@codeai-hub/glm-module` — passed: 13/13, including provider-home JSONL assertions for full `Authorization` header, `reasoning_effort`, raw SSE frames and workflow tool results.
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-session-log.ts packages/GLM_Module/src/provider/glm-native-stream-reader.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts` — passed.
+
+### Stream: Native GLM Provider Home Diagnostics Release
+
+63. [DONE] `phase1.stream24.task1` Prepare release notes for the confirmed native GLM provider-home diagnostics release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm provider log release`)
+64. [DONE] `phase1.stream24.commit1` Git Commit: `docs: prepare native glm provider log release` (hash: 67bfe5da1)
+65. [DONE] `phase1.stream24.task2` Build the confirmed native GLM provider-home diagnostics release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm provider log release`)
+66. [DONE] `phase1.stream24.commit2` Git Commit: `chore: build native glm provider log release` (hash: bbf34e98f)
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.540` and copied release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.540.vsix` (`5.4M`).
+
+### Stream: User Workflow Acceptance Testing
+
+67. [BLOCKED] `phase1.stream25.task1` Wait for user retest that native `GLM` writes managed artifacts and creates full provider-home diagnostic logs that show effective reasoning level and raw request/stream details. User requested an OpenCode comparison and transport hardening for remaining `ECONNRESET` retries before acceptance can continue. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+68. [TODO] `phase1.stream25.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: GLM Native OpenCode Transport Compatibility
+
+69. [DONE] `phase1.stream26.task1` Add OpenCode-style session affinity headers and retry-after/jitter backoff to the native GLM HTTP/SSE retry path. (scope: `packages/GLM_Module/src/provider/glm-native-provider-adapter.ts, packages/GLM_Module/src/provider/glm-native-adapter-utils.ts, packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: align native glm retry with opencode`)
+70. [DONE] `phase1.stream26.commit1` Git Commit: `fix: align native glm retry with opencode` (hash: ba1f69e84)
+
+#### Verification evidence (2026-06-17)
+- `npm run build --workspace=@codeai-hub/glm-module` — passed after adding OpenCode-style session affinity headers and retry-after/jitter retry timing.
+- `npm test --workspace=@codeai-hub/glm-module` — passed: 14/14, including session affinity request headers and `retry-after-ms` delay handling.
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-adapter-utils.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts` — passed.
+
+### Stream: Native GLM OpenCode Transport Release
+
+71. [DONE] `phase1.stream27.task1` Prepare release notes for the confirmed native GLM OpenCode transport compatibility hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare native glm opencode transport release`)
+72. [DONE] `phase1.stream27.commit1` Git Commit: `docs: prepare native glm opencode transport release` (hash: d546b45ad)
+73. [DONE] `phase1.stream27.task2` Build the confirmed native GLM OpenCode transport compatibility hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build native glm opencode transport release`)
+74. [DONE] `phase1.stream27.commit2` Git Commit: `chore: build native glm opencode transport release` (hash: 036adbade)
+
+#### Release notes evidence (2026-06-17)
+- `README.md` and `CHANGELOG.md` now describe the future `1.2.541` Native GLM OpenCode transport hotfix before the release build.
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.541` and copied 10 release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.541.vsix` (`5.4M`).
+
+### Stream: User Workflow Acceptance Testing
+
+75. [BLOCKED] `phase1.stream28.task1` Wait for user retest that native `GLM` still writes managed artifacts, creates provider-home diagnostic logs, and handles transient Z.AI/OpenAI-compatible transport resets with the OpenCode-style headers/backoff path. User retest found reasoning translation still sends already-Russian thinking blocks through the translator, which reformats Russian quoted/prose text and wastes translator time. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+76. [TODO] `phase1.stream28.commit1` Git Commit: `docs: record native glm acceptance` (hash: TBD)
+
+### Stream: Reasoning Translation Russian Skip
+
+77. [DONE] `phase1.stream29.task1` Skip reasoning translation for blocks that are already predominantly Russian while still translating mixed English reasoning with Russian questionnaire quotes. (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: skip already russian reasoning translation`)
+78. [DONE] `phase1.stream29.commit1` Git Commit: `fix: skip already russian reasoning translation` (hash: e2365f535)
+
+#### Verification evidence (2026-06-17)
+- `npx ultracite check packages/core/src/session-translation/session-translation-facade.ts packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts` — passed.
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.mixed-reasoning.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/session-translation/session-translation-dispatcher.test.js` — passed: 13/13, including mixed English/Russian reasoning translation and already-Russian reasoning skip.
+
+### Stream: Reasoning Translation Russian Skip Release
+
+79. [DONE] `phase1.stream30.task1` Prepare release notes for the confirmed reasoning translation Russian skip hotfix release. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare reasoning translation skip release`)
+80. [DONE] `phase1.stream30.commit1` Git Commit: `docs: prepare reasoning translation skip release` (hash: 1eb277f17)
+81. [DONE] `phase1.stream30.task2` Build the confirmed reasoning translation Russian skip hotfix release and record artifacts for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build reasoning translation skip release`)
+82. [DONE] `phase1.stream30.commit2` Git Commit: `chore: build reasoning translation skip release` (hash: bf19cfd6b)
+
+#### Release notes evidence (2026-06-17)
+- `README.md` and `CHANGELOG.md` now describe the future `1.2.542` Reasoning Translation Russian Skip hotfix before the release build.
+
+#### Release evidence (2026-06-17)
+- `./scripts/build-all.sh --allow-dirty` — passed; built provider/core/UI/launcher tarballs for `1.2.542` and copied 10 release artifacts into `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed; verified SDK exclusions, local artifacts, markdown links, duplication advisory, VSIX runtime package surface and produced `codeai-hub-1.2.542.vsix` (`5.4M`).
+
+### Stream: User Workflow Acceptance Testing
+
+83. [DONE] `phase1.stream31.task1` Wait for user retest that already-Russian reasoning blocks are not retranslated, mixed English/Russian reasoning is still translated, and native GLM workflow behavior remains intact. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record native glm acceptance`)
+84. [DONE] `phase1.stream31.commit1` Git Commit: `docs: record native glm acceptance` (hash: 8066d4acc)
+
+#### Acceptance evidence (2026-06-17)
+- User retested release `1.2.542` and accepted the provider/reasoning translation scope for closeout.
+- Scope closeout requested: update provider documentation and push the release to GitHub.
+
+### Stream: Scope Closeout
+
+85. [IN_PROGRESS] `phase1.stream32.task1` Close the native GLM provider scope after user acceptance and archive/update planning/provider documentation. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Modules/GLM_OpenCode.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `docs: close native glm scope`)
+86. [TODO] `phase1.stream32.commit1` Git Commit: `docs: close native glm scope` (hash: TBD)
+87. [TODO] `phase1.stream32.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````

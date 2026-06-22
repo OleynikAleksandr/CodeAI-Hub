@@ -24,7 +24,7 @@ test("extractKimiApiKeyFromConfig reads the kimi-for-coding provider key only", 
   );
 });
 
-test("KimiUsageLimitsReader normalizes 5h and weekly usage percentages", async () => {
+test("KimiUsageLimitsReader derives 5h from remaining and weekly from used", async () => {
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "kimi-usage-reader-"));
   const configPath = path.join(tempDir, "config.toml");
   await writeFile(configPath, SAMPLE_CONFIG, "utf8");
@@ -43,10 +43,11 @@ test("KimiUsageLimitsReader normalizes 5h and weekly usage percentages", async (
           limits: [
             {
               detail: {
+                // Real Kimi 5h detail reports `remaining`, not `used`; the
+                // reader must derive used = limit - remaining (100 - 91 = 9).
                 limit: "100",
                 remaining: "91",
                 resetTime: "2026-05-19T12:50:12.630219Z",
-                used: "9",
               },
               window: {
                 duration: 300,

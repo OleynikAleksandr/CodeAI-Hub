@@ -3,14 +3,43 @@
 #include <cstdio>
 
 #include "cef_browser.h"
+#include "cef_color_ids.h"
 #include "cef_command_line.h"
 #include "include/views/cef_browser_view.h"
+#include "include/views/cef_view.h"
 #include "include/views/cef_window.h"
 #include "core_launcher.h"
 #include "launcher_handler.h"
 #include "wrapper/cef_helpers.h"
 
 namespace {
+
+const cef_color_t kProjectManagerBackgroundColor =
+    CefColorSetARGB(255, 11, 13, 18);
+
+void PaintViewDark(CefRefPtr<CefView> view) {
+  if (view) {
+    view->SetBackgroundColor(kProjectManagerBackgroundColor);
+  }
+}
+
+void PaintBrowserViewDark(CefRefPtr<CefBrowserView> browser_view) {
+  if (browser_view) {
+    browser_view->SetBackgroundColor(kProjectManagerBackgroundColor);
+  }
+}
+
+void PaintWindowDark(CefRefPtr<CefWindow> window, bool notify_views) {
+  if (!window) {
+    return;
+  }
+  window->SetThemeColor(CEF_ColorPrimaryBackground,
+                        kProjectManagerBackgroundColor);
+  window->SetBackgroundColor(kProjectManagerBackgroundColor);
+  if (notify_views) {
+    window->ThemeChanged();
+  }
+}
 
 class LauncherWindowDelegate : public CefWindowDelegate {
  public:
@@ -24,8 +53,36 @@ class LauncherWindowDelegate : public CefWindowDelegate {
         is_popup_window_(is_popup_window) {}
 
   void OnWindowCreated(CefRefPtr<CefWindow> window) override {
+    PaintWindowDark(window, true);
+    PaintBrowserViewDark(browser_view_);
     window->AddChildView(browser_view_);
+    PaintBrowserViewDark(browser_view_);
     window->Show();
+  }
+
+  void OnThemeColorsChanged(CefRefPtr<CefWindow> window,
+                            bool chrome_theme) override {
+    static_cast<void>(chrome_theme);
+    PaintWindowDark(window, false);
+    PaintBrowserViewDark(browser_view_);
+  }
+
+  void OnThemeChanged(CefRefPtr<CefView> view) override {
+    PaintViewDark(view);
+    PaintBrowserViewDark(browser_view_);
+  }
+
+  void OnWindowClosing(CefRefPtr<CefWindow> window) override {
+    if (!is_popup_window_) {
+      return;
+    }
+    PaintWindowDark(window, false);
+    PaintBrowserViewDark(browser_view_);
+#if defined(__APPLE__)
+    codeai::launcher::PrepareNativePopupWindowForClose(
+        window->GetWindowHandle());
+#endif
+    window->Hide();
   }
 
   void OnWindowDestroyed(CefRefPtr<CefWindow> window) override { browser_view_ = nullptr; }
@@ -35,8 +92,10 @@ class LauncherWindowDelegate : public CefWindowDelegate {
 #if defined(__APPLE__)
     if (is_popup_window_) {
       // Detached diagram popups are disposable auxiliary windows, not app
-      // owners. Let CEF close the popup locally instead of routing through
-      // the whole-application terminate path.
+      // owners. Hide the native NSWindow before CEF starts its close path so
+      // AppKit cannot animate a white backing frame as the last visible paint.
+      codeai::launcher::PrepareNativePopupWindowForClose(
+          window->GetWindowHandle());
       return true;
     }
 
@@ -92,6 +151,10 @@ class LauncherBrowserViewDelegate : public CefBrowserViewDelegate {
     return true;
   }
 
+  void OnThemeChanged(CefRefPtr<CefView> view) override {
+    PaintViewDark(view);
+  }
+
   cef_runtime_style_t GetBrowserRuntimeStyle() override { return runtime_style_; }
 
  private:
@@ -133,6 +196,7 @@ void LauncherApp::OnContextInitialized() {
   CefRefPtr<LauncherHandler> handler(new LauncherHandler(use_views));
 
   CefBrowserSettings browser_settings;
+  browser_settings.background_color = kProjectManagerBackgroundColor;
 
   std::string url = command_line->GetSwitchValue("url");
   if (url.empty()) {

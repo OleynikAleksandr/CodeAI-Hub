@@ -148,7 +148,7 @@ test("LocalModelsRuntimeLoadManager reuses sufficient loads and unloads only idl
   );
 });
 
-test("LocalModelsRuntimeLoadManager unloads idle CodeAI workers across model keys", () => {
+test("LocalModelsRuntimeLoadManager does not unload other model keys during load", () => {
   const commandCalls: string[][] = [];
   const manager = new LocalModelsRuntimeLoadManager({
     commandRunner: (args) => {
@@ -188,7 +188,7 @@ test("LocalModelsRuntimeLoadManager unloads idle CodeAI workers across model key
   assert.equal(identifier, "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384");
   assert.deepEqual(
     commandCalls.filter((args) => args[0] === "unload"),
-    [["unload", "codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384"]]
+    []
   );
   assert.deepEqual(commandCalls.at(-1), [
     "load",
@@ -229,6 +229,31 @@ test("LocalModelsRuntimeLoadManager supports TTL overrides per purpose", () => {
   assert.equal(commandCalls.at(-1)?.at(-1), "45");
 });
 
+test("LocalModelsRuntimeLoadManager omits TTL for persistent loads", () => {
+  const commandCalls: string[][] = [];
+  const manager = new LocalModelsRuntimeLoadManager({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      return args[0] === "ps" ? "[]" : "";
+    },
+  });
+
+  manager.ensureModelLoaded({
+    model: createModel("qwen3.6-27b-mlx"),
+    persistent: true,
+    purpose: "workflow-agent",
+  });
+
+  assert.deepEqual(commandCalls.at(-1), [
+    "load",
+    "qwen3.6-27b-mlx",
+    "--context-length",
+    "16384",
+    "--identifier",
+    "codeaihub-workflow-agent-qwen3.6-27b-mlx-16384",
+  ]);
+});
+
 test("LocalModelsRuntimeLoadManager unloads only idle CodeAI-owned workers on cleanup", () => {
   const commandCalls: string[][] = [];
   const manager = new LocalModelsRuntimeLoadManager({
@@ -265,5 +290,38 @@ test("LocalModelsRuntimeLoadManager unloads only idle CodeAI-owned workers on cl
   assert.deepEqual(
     commandCalls.filter((args) => args[0] === "unload"),
     [["unload", "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384"]]
+  );
+});
+
+test("LocalModelsRuntimeLoadManager preserves selected model keys on cleanup", () => {
+  const commandCalls: string[][] = [];
+  const manager = new LocalModelsRuntimeLoadManager({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      if (args[0] === "ps") {
+        return createLoadedModelsJson([
+          {
+            contextLength: 16_384,
+            identifier: "codeaihub-workflow-agent-workflow-local-16384",
+            modelKey: "workflow-local",
+            status: "idle",
+          },
+          {
+            contextLength: 8192,
+            identifier: "codeaihub-translation-reasoning-old-local-8192",
+            modelKey: "old-local",
+            status: "idle",
+          },
+        ]);
+      }
+      return "";
+    },
+  });
+
+  manager.unloadIdleCodeAiOwnedWorkersExcept(["workflow-local"]);
+
+  assert.deepEqual(
+    commandCalls.filter((args) => args[0] === "unload"),
+    [["unload", "codeaihub-translation-reasoning-old-local-8192"]]
   );
 });

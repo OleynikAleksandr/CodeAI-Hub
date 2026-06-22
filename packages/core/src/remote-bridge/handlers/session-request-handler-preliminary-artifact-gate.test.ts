@@ -81,6 +81,95 @@ test("preliminary artifact gate materializes Description from fenced assistant a
   }
 });
 
+test("preliminary artifact gate materializes Description from fragmented live-stream chunks", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "preliminary-gate-description-live-stream-")
+  );
+  try {
+    const answer = [
+      "```markdown",
+      "# Final Description: Demo",
+      "",
+      "## Scenarios",
+      "Live ready.",
+      "```",
+      "",
+      "Создан черновик `Final_Description.md`.",
+    ].join("\n");
+    // Live streaming emits one assistant message per delta; split the answer into
+    // tiny chunks so no single message keeps the artifact path or the whole fenced
+    // block. A leading user prompt verifies the reconstruction stops at non-assistant.
+    const liveChunks = answer.match(/[\s\S]{1,4}/gu) ?? [];
+    const result = await resolvePreliminaryArtifactGate({
+      assistantMessages: [
+        { content: "Промпт без артефакта.", role: "user" },
+        ...liveChunks.map((content) => ({
+          content,
+          role: "assistant" as const,
+        })),
+      ],
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result?.tag, USER_REVIEW_TAG);
+    assert.equal(
+      await readFile(
+        path.join(workspaceRoot, DESCRIPTION_ARTIFACT_PATH),
+        "utf8"
+      ),
+      "# Final Description: Demo\n\n## Scenarios\nLive ready.\n"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("preliminary artifact gate materializes Description when the filename is only in the thinking channel", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "preliminary-gate-description-thinking-split-")
+  );
+  try {
+    // Reasoning is split into a thinking message that carries the filename, while
+    // the assistant message carries only the fenced block (no filename).
+    const result = await resolvePreliminaryArtifactGate({
+      assistantMessages: [
+        { content: "Промпт без артефакта.", role: "user" },
+        {
+          content: `Proceeding to write .codeai-hub/${WORKSPACE_SLUG}/description/Final_Description.md now.`,
+          role: "thinking",
+        },
+        {
+          content: [
+            "```markdown",
+            "# Final Description: Demo",
+            "",
+            "## Scenarios",
+            "Ready.",
+            "```",
+          ].join("\n"),
+          role: "assistant",
+        },
+      ],
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result?.tag, USER_REVIEW_TAG);
+    assert.equal(
+      await readFile(
+        path.join(workspaceRoot, DESCRIPTION_ARTIFACT_PATH),
+        "utf8"
+      ),
+      "# Final Description: Demo\n\n## Scenarios\nReady.\n"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("preliminary artifact gate blocks Virtual Simulation handoff until canonical artifact exists", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "preliminary-gate-virtual-missing-")

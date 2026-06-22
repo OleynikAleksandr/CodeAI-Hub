@@ -75,6 +75,13 @@ const isGeminiThinkingLevel = (
 const isKimiModelId = (value: string): value is KimiModelId =>
   KIMI_MODEL_ID_SET.has(value as KimiModelId);
 
+type GlmNativeStartReasoning = "max" | "high" | "off";
+
+const isGlmNativeStartReasoning = (
+  value: string | null
+): value is GlmNativeStartReasoning =>
+  value === "max" || value === "high" || value === "off";
+
 const isGlmModelId = (value: string): boolean =>
   value === "zai-coding-plan/glm-5.2" ||
   value === "kimi-for-coding/k2p7";
@@ -131,24 +138,33 @@ const applyKimiStartDefaults = (
   settings: Settings,
   modelId: string | null
 ): Settings | null => {
-  if (!modelId || !isKimiModelId(modelId)) {
+  const kimiModelId = modelId && isKimiModelId(modelId) ? modelId : null;
+  if (modelId && !kimiModelId) {
     return null;
   }
-  if (settings.providers.kimi?.defaultModel === modelId) {
+  const currentProviderSettings = settings.providers.kimi ?? {
+    autoUpdate: { enabled: false },
+    defaultModel: DEFAULT_KIMI_MODEL_ID,
+    thinkingDisplaySyncEnabled: true,
+    thinkingEnabled: true,
+  };
+  let changed = false;
+  let nextProviderSettings = currentProviderSettings;
+  if (kimiModelId && currentProviderSettings.defaultModel !== kimiModelId) {
+    nextProviderSettings = {
+      ...nextProviderSettings,
+      defaultModel: kimiModelId,
+    };
+    changed = true;
+  }
+  if (!changed) {
     return null;
   }
   return {
     ...settings,
     providers: {
       ...settings.providers,
-      kimi: {
-        ...(settings.providers.kimi ?? {
-          autoUpdate: { enabled: false },
-          defaultModel: DEFAULT_KIMI_MODEL_ID,
-          thinkingDisplaySyncEnabled: true,
-        }),
-        defaultModel: modelId,
-      },
+      kimi: nextProviderSettings,
     },
   };
 };
@@ -183,30 +199,54 @@ const applyGlmStartDefaults = (
 
 const applyGlmNativeStartDefaults = (
   settings: Settings,
-  modelId: string | null
+  modelId: string | null,
+  reasoning: string | null
 ): Settings | null => {
-  if (modelId !== "glm-5.2") {
+  const glmModelId = modelId === "glm-5.2" ? "glm-5.2" : null;
+  if (modelId && !glmModelId) {
     return null;
   }
   const currentProviderSettings = settings.providers.glmNative;
-  if (currentProviderSettings?.defaultModel === modelId) {
+  const nextBaseSettings = currentProviderSettings ?? {
+    apiKey: "",
+    baseUrl: "https://api.z.ai/api/coding/paas/v4",
+    defaultModel: "glm-5.2",
+    reasoningEffort: "max",
+    thinkingEnabled: true,
+    thinkingDisplaySyncEnabled: true,
+  };
+  let changed = false;
+  let nextProviderSettings = nextBaseSettings;
+  if (glmModelId && nextBaseSettings.defaultModel !== glmModelId) {
+    nextProviderSettings = {
+      ...nextProviderSettings,
+      defaultModel: glmModelId,
+    };
+    changed = true;
+  }
+  if (isGlmNativeStartReasoning(reasoning)) {
+    const thinkingEnabled = reasoning !== "off";
+    const reasoningEffort = reasoning === "off" ? nextBaseSettings.reasoningEffort : reasoning;
+    if (
+      nextBaseSettings.thinkingEnabled !== thinkingEnabled ||
+      nextBaseSettings.reasoningEffort !== reasoningEffort
+    ) {
+      nextProviderSettings = {
+        ...nextProviderSettings,
+        reasoningEffort,
+        thinkingEnabled,
+      };
+      changed = true;
+    }
+  }
+  if (!changed) {
     return null;
   }
   return {
     ...settings,
     providers: {
       ...settings.providers,
-      glmNative: {
-        ...(currentProviderSettings ?? {
-          apiKey: "",
-          baseUrl: "https://api.z.ai/api/coding/paas/v4",
-          defaultModel: "glm-5.2",
-          reasoningEffort: "max",
-          thinkingEnabled: true,
-          thinkingDisplaySyncEnabled: true,
-        }),
-        defaultModel: modelId,
-      },
+      glmNative: nextProviderSettings,
     },
   };
 };
@@ -272,7 +312,7 @@ export const applyStartCardModelDefaults = (
     return applyGlmStartDefaults(settings, modelId);
   }
   if (params.providerId === "glmNative") {
-    return applyGlmNativeStartDefaults(settings, modelId);
+    return applyGlmNativeStartDefaults(settings, modelId, reasoning);
   }
   return applyGeminiStartDefaults(settings, modelId, reasoning);
 };

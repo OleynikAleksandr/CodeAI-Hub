@@ -3,6 +3,7 @@ import {
   isNativeRequestCaptureProviderId,
   type NativeRequestCaptureFacade,
 } from "../provider-network-capture/native-request-capture-facade";
+import type { NativeRequestCaptureMode } from "../provider-network-capture/native-request-capture-types";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import { RemoteBridgeDevelopmentTreeNodeCommandRouter } from "./remote-bridge-development-tree-node-command-router";
 import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-router";
@@ -383,6 +384,7 @@ export class RemoteBridgeMessageRouter {
   private async handleNativeRequestCapture(
     clientId: string,
     payload: {
+      readonly captureMode?: unknown;
       readonly modelId?: unknown;
       readonly providerId?: unknown;
       readonly reasoning?: unknown;
@@ -421,6 +423,7 @@ export class RemoteBridgeMessageRouter {
         ? payload.modelId.trim()
         : null;
     const result = await this.deps.nativeRequestCaptureFacade.capture({
+      captureMode: readCaptureMode(payload.captureMode),
       modelId,
       providerId,
       reasoning: readOptionalString(payload.reasoning),
@@ -482,3 +485,6 @@ export class RemoteBridgeMessageRouter {
 }
 const readOptionalString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const readCaptureMode = (value: unknown): NativeRequestCaptureMode | null =>
+  value === "managed" || value === "vanilla" ? value : null;

@@ -3,11 +3,9 @@ import {
   createPlanDebtPayload,
   writePlanDebtFile,
 } from "./plan-debt.mjs";
-import {
-  finalizeCommitAndAdvance,
-  markTaskDoneAndCommitPending,
-  updatePlanState,
-} from "./plan-markdown-updater.mjs";
+import { finalizeCommitAndAdvance } from "./plan-markdown-updater.mjs";
+
+const SELF_HASH = "self";
 
 export const beginPlanTransaction = ({
   debtPath,
@@ -19,6 +17,7 @@ export const beginPlanTransaction = ({
   const debt = createPlanDebtPayload({
     expectedCommitMessage,
     preCommitHead,
+    rollbackMarkdown: markdown,
     taskId,
   });
 
@@ -26,26 +25,15 @@ export const beginPlanTransaction = ({
 
   return {
     debt,
-    markdown: updatePlanState(
-      markTaskDoneAndCommitPending(markdown, taskId),
-      (state) => ({
-        ...state,
-        debt,
-      })
-    ),
+    markdown: finalizeCommitAndAdvance(markdown, {
+      commitHash: SELF_HASH,
+      taskId,
+    }),
   };
 };
 
-export const finalizePlanTransaction = ({
-  commitHash,
-  debtPath,
-  markdown,
-  taskId,
-}) => {
-  const nextMarkdown = finalizeCommitAndAdvance(markdown, {
-    commitHash,
-    taskId,
-  });
+export const finalizePlanTransaction = ({ debtPath, markdown }) => {
+  const nextMarkdown = markdown;
 
   clearPlanDebtFile(debtPath);
 

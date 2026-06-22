@@ -10,6 +10,7 @@ import type { ClaudeStreamMessage, ClaudeWorkspaceOptions } from "../types";
 export interface ClaudeNativeRequestCaptureOptions {
   readonly appliedTurnConfig?: ClaudeNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
+  readonly captureMode?: "managed" | "vanilla" | null;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
   readonly probePrompt: string;
@@ -106,9 +107,7 @@ export class ClaudeNativeRequestCaptureService {
     options: ClaudeNativeRequestCaptureOptions
   ): Record<string, unknown> {
     const thinkingOptions = resolveThinkingOptions(options.appliedTurnConfig);
-    return {
-      additionalDirectories: [options.workspacePath],
-      allowDangerouslySkipPermissions: true,
+    const baseOptions: Record<string, unknown> = {
       cwd: options.workspacePath,
       env: {
         ...this.#authManager.getAuthEnvironment(),
@@ -126,16 +125,24 @@ export class ClaudeNativeRequestCaptureService {
       includePartialMessages: false,
       model: resolveModelId(options) ?? this.#workspace.defaultModel,
       pathToClaudeCodeExecutable: this.#installer.getExecutablePath(),
-      permissionMode: "bypassPermissions",
       persistSession: false,
+      thinking: thinkingOptions.thinking,
+      ...(thinkingOptions.effort ? { effort: thinkingOptions.effort } : {}),
+    };
+    if (options.captureMode === "vanilla") {
+      return baseOptions;
+    }
+    return {
+      ...baseOptions,
+      additionalDirectories: [options.workspacePath],
+      allowDangerouslySkipPermissions: true,
+      permissionMode: "bypassPermissions",
       projectPath: resolveClaudeProviderProjectDir(
         this.#workspace.claudeProjectSlug
       ),
       settingSources: [],
       systemPrompt: CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
-      thinking: thinkingOptions.thinking,
       tools: [...CODEAI_CLAUDE_WORKFLOW_TOOLS],
-      ...(thinkingOptions.effort ? { effort: thinkingOptions.effort } : {}),
     };
   }
 }

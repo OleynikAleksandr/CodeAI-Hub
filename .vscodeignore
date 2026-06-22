@@ -29,6 +29,8 @@ dist/**
 .vscode/**
 .gemini/**
 .nvmrc
+.git
+.git/**
 .gitignore
 .husky/**
 .codeai-hub/**

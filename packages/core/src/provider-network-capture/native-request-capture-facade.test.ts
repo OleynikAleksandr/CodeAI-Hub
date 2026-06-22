@@ -155,7 +155,7 @@ test("NativeRequestCaptureFacade returns provider_not_ready for known provider w
   assert.equal(result.reason, "provider_not_ready");
 });
 
-test("NativeRequestCaptureFacade starts proxy and passes capture env to provider", async () => {
+test("NativeRequestCaptureFacade starts proxy and passes vanilla capture mode to provider", async () => {
   const outputDir = await fs.mkdtemp(
     path.join(os.tmpdir(), "native-capture-facade-")
   );
@@ -214,6 +214,7 @@ test("NativeRequestCaptureFacade starts proxy and passes capture env to provider
   });
 
   const result = await facade.capture({
+    captureMode: "vanilla",
     providerId: "claude",
     workspacePath: "/workspace",
   });
@@ -221,6 +222,7 @@ test("NativeRequestCaptureFacade starts proxy and passes capture env to provider
   assert.equal(result.ok, true);
   const capturedOptions = adapter.providerOptions[0];
   assert.ok(capturedOptions);
+  assert.equal(capturedOptions.captureMode, "vanilla");
   assert.equal(capturedOptions.proxyUrl, "http://127.0.0.1:42");
   assert.equal(capturedOptions.certificatePath, "/tmp/ca.pem");
   assert.equal(capturedOptions.certificateEnv.SSL_CERT_FILE, "/tmp/ca.pem");
@@ -235,7 +237,7 @@ test("NativeRequestCaptureFacade starts proxy and passes capture env to provider
     (record) => record.type === "capture_start"
   );
   assert.ok(captureStart);
-  assert.equal(captureStart.mode, "managed");
+  assert.equal(captureStart.mode, "vanilla");
   assert.equal(typeof captureStart.releaseVersion, "string");
   assert.notEqual(captureStart.releaseVersion, "");
   const appliedEnvelope = records.find(
@@ -383,6 +385,7 @@ test("NativeRequestCaptureFacade routes translation scenario as translation purp
     source: "switch_request",
   });
   assert.equal(capturedOptions.invocationPurpose, "translation");
+  assert.equal(capturedOptions.captureMode, "managed");
   assert.equal(capturedOptions.scenarioId, "translation");
   assert.equal(capturedOptions.workflowPrompt, null);
   assert.ok(result.jsonlPath);

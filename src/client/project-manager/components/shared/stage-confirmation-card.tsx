@@ -162,6 +162,7 @@ export const StageConfirmationCard: React.FC<{
         : [],
     [selectedModelId, selectedProviderId]
   );
+  const hasReasoningOptions = reasoningOptions.length > 0;
   const hasConnectedProviders = providers.some((provider) => provider.connected);
   const isUsingInheritedProvider =
     inheritedProviderId !== null && selectedProviderId === inheritedProviderId;
@@ -458,15 +459,17 @@ export const StageConfirmationCard: React.FC<{
               }))}
               value={selectedModelId ?? ""}
             />
-            <CaptureWorkbenchDomListboxSelector
-              label={reasoningLabelText}
-              onChange={setSelectedReasoning}
-              options={reasoningOptions.map((option) => ({
-                label: option.label,
-                value: option.id,
-              }))}
-              value={selectedReasoning ?? ""}
-            />
+            {hasReasoningOptions ? (
+              <CaptureWorkbenchDomListboxSelector
+                label={reasoningLabelText}
+                onChange={setSelectedReasoning}
+                options={reasoningOptions.map((option) => ({
+                  label: option.label,
+                  value: option.id,
+                }))}
+                value={selectedReasoning ?? ""}
+              />
+            ) : null}
           </div>
         ) : null}
 

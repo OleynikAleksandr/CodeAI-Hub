@@ -6,6 +6,7 @@ import {
   buildSessionTranslationFilePath,
   readSessionEvents,
   readSessionTranslationOverlayMap,
+  type SessionMessageRecord,
   SessionTranslationOverlayWriter,
   sanitizeWorkspaceSlug,
   UnifiedSessionWriter,
@@ -15,6 +16,13 @@ import { SessionMessageLocalizationProjector } from "../session-translation/sess
 import type { Logger } from "../telemetry/logger";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { getWorkspaceKeyFromPath } from "../workspaces/workspace-key";
+import { coalesceLiveAssistantMessageRecords } from "./live-message-coalescer";
+import {
+  listStandaloneWorkspaceChats,
+  resolveStandaloneWorkspaceSessionRoot,
+  STANDALONE_WORKSPACE_SESSION_SLUG,
+  type StandaloneWorkspaceChatSummary,
+} from "./standalone-workspace-chat-list";
 import {
   backfillUnifiedSessionHistory,
   tryPromoteSessionFile,
@@ -78,6 +86,14 @@ export class UnifiedSessionStorage {
       return {
         rootDirectory: capsule.sessionsRoot.absolutePath,
         workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+      };
+    }
+    if (session.workspacePath && session.stage === null) {
+      return {
+        rootDirectory: resolveStandaloneWorkspaceSessionRoot(
+          session.workspacePath
+        ),
+        workspaceSlug: STANDALONE_WORKSPACE_SESSION_SLUG,
       };
     }
     return {
@@ -303,7 +319,7 @@ export class UnifiedSessionStorage {
       ...workspaceSlugs,
     ]);
 
-    const messagesById = new Map<string, SessionMessage>();
+    const messagesById = new Map<string, SessionMessageRecord>();
     for (const workspaceSlug of candidates) {
       const filePath = buildSessionFilePath({
         rootDirectory,
@@ -319,18 +335,21 @@ export class UnifiedSessionStorage {
         if (messagesById.has(record.messageId)) {
           continue;
         }
-        messagesById.set(record.messageId, {
-          id: record.messageId,
-          role: record.role,
-          content: record.content,
-          sessionId: session.id,
-          timestamp: record.timestamp,
-        });
+        messagesById.set(record.messageId, record);
       }
     }
 
-    const messages = Array.from(messagesById.values());
-    messages.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const records = Array.from(messagesById.values());
+    records.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const messages = coalesceLiveAssistantMessageRecords(records).map(
+      (record) => ({
+        id: record.messageId,
+        role: record.role,
+        content: record.content,
+        sessionId: session.id,
+        timestamp: record.timestamp,
+      })
+    );
 
     const translations = await this.readMessageTranslationMap(session);
     return messages.map((message) => {
@@ -346,6 +365,13 @@ export class UnifiedSessionStorage {
           }
         : message;
     });
+  }
+
+  async listStandaloneWorkspaceChats(options: {
+    readonly liveSessions: readonly Session[];
+    readonly workspacePath: string;
+  }): Promise<StandaloneWorkspaceChatSummary[]> {
+    return await listStandaloneWorkspaceChats(options);
   }
 
   async backfillHistory(options: {

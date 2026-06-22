@@ -13,3 +13,9 @@
 # stage rewrite blocker. Remove this entry once those branches are sliced into
 # smaller modules.
 packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts
+
+# Settings handler debt: pre-existing ~498-line file pushed to ~514 by the
+# Kimi thinkingEnabled force-restart wiring (constructor deps + handleSave
+# hook). Remove once the Apple Native preflight block is extracted into its
+# own module.
+packages/core/src/remote-bridge/handlers/settings-request-handler.ts

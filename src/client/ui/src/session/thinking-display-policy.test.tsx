@@ -88,6 +88,7 @@ const buildDisabledSettings = (): Settings => {
         autoUpdate: defaults.providers.kimi?.autoUpdate ?? { enabled: false },
         defaultModel: defaults.providers.kimi?.defaultModel ?? "kimi-k2.7-code",
         thinkingDisplaySyncEnabled: false,
+        thinkingEnabled: defaults.providers.kimi?.thinkingEnabled ?? true,
       },
     },
   };

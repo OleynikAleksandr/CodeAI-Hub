@@ -5,7 +5,10 @@ import {
   resolveCodexWorkflowInvocationProfile,
 } from "../app-server/codex-workflow-instruction-profile";
 import { CodexAppServerProcess } from "../app-server/process/codex-app-server-process";
-import type { CodexAppServerProcessProfileKey } from "../app-server/process/codex-app-server-process-profile";
+import {
+  CODEX_DEFAULT_PROCESS_PROFILE_KEY,
+  type CodexAppServerProcessProfileKey,
+} from "../app-server/process/codex-app-server-process-profile";
 import type {
   CodexReasoningEffort,
   CodexReasoningSummaryMode,
@@ -34,6 +37,7 @@ const PROVIDER_HOME_ROLLOUT_CONTEXT_KIND =
 export interface CodexNativeRequestCaptureOptions {
   readonly appliedTurnConfig?: CodexNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
+  readonly captureMode?: "managed" | "vanilla" | null;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
   readonly invocationPurpose?: CodexNativeRequestCaptureInvocationPurpose;
@@ -127,10 +131,15 @@ export class CodexNativeRequestCaptureService {
       await this.#captureTranslationNativeRequest(options);
       return;
     }
-    const workflowProfile = resolveCodexWorkflowInvocationProfile();
+    const workflowProfile =
+      options.captureMode === "vanilla"
+        ? null
+        : resolveCodexWorkflowInvocationProfile();
+    const processProfileKey =
+      workflowProfile?.processProfileKey ?? CODEX_DEFAULT_PROCESS_PROFILE_KEY;
     const process = this.#processFactory({
       environment: this.#buildEnvironment(options),
-      processProfileKey: workflowProfile.processProfileKey,
+      processProfileKey,
       reporter: this.#reporter,
     });
     const turnCompletion = this.#waitForTurnCompletion(process);
@@ -139,7 +148,7 @@ export class CodexNativeRequestCaptureService {
       const thread = await this.#startThread(process, options, workflowProfile);
       turnCompletion.bindThread(thread.id);
       await this.#startTurn(process, thread.id, options, {
-        processProfileKey: workflowProfile.processProfileKey,
+        processProfileKey,
         threadStartParams: thread.startParams,
       });
       await turnCompletion.done;
@@ -203,7 +212,7 @@ export class CodexNativeRequestCaptureService {
   async #startThread(
     process: CodexProcessLike,
     options: CodexNativeRequestCaptureOptions,
-    workflowProfile: CodexWorkflowInvocationProfile
+    workflowProfile: CodexWorkflowInvocationProfile | null
   ): Promise<CodexDiagnosticThread> {
     const params = {
       cwd: options.workspacePath,
@@ -211,8 +220,12 @@ export class CodexNativeRequestCaptureService {
       sandbox: this.#workspace.defaultSandboxMode,
       model: this.#resolveModelId(options),
       persistExtendedHistory: false,
-      baseInstructions: workflowProfile.baseInstructions,
-      config: workflowProfile.threadConfig,
+      ...(workflowProfile
+        ? {
+            baseInstructions: workflowProfile.baseInstructions,
+            config: workflowProfile.threadConfig,
+          }
+        : {}),
     };
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_thread_start_request",

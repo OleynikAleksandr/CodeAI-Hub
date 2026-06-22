@@ -69,21 +69,6 @@ const collectSessionMatchIds = (params: {
     ),
   ]);
 
-const collectFileNameFragments = (
-  fragments: readonly string[] | undefined
-): ReadonlySet<string> => {
-  const values = new Set<string>();
-  for (const fragment of fragments ?? []) {
-    const trimmed = fragment.trim();
-    if (!trimmed) {
-      continue;
-    }
-    values.add(trimmed);
-    values.add(trimmed.replace(/_/gu, "-"));
-  }
-  return values;
-};
-
 const pruneProviderNativeSessions = async (params: {
   readonly providerNativeSessions: readonly WorkflowProviderNativeSessionRef[];
   readonly workspacePath: string;
@@ -122,18 +107,12 @@ const pruneProviderNativeSessions = async (params: {
 };
 
 const unifiedSessionFileMatches = (params: {
-  readonly fileNameFragments: ReadonlySet<string>;
   readonly filePath: string;
   readonly matchIds: ReadonlySet<string>;
 }): boolean => {
   const fileName = path.basename(params.filePath);
   for (const id of params.matchIds) {
     if (fileName.includes(id)) {
-      return true;
-    }
-  }
-  for (const fragment of params.fileNameFragments) {
-    if (fileName.includes(fragment)) {
       return true;
     }
   }
@@ -148,10 +127,7 @@ const pruneUnifiedSessionFiles = async (params: {
   readonly workspaceSlug: string;
 }): Promise<readonly string[]> => {
   const matchIds = collectSessionMatchIds(params);
-  const fileNameFragments = collectFileNameFragments(
-    params.unifiedSessionFileNameFragments
-  );
-  if (matchIds.size === 0 && fileNameFragments.size === 0) {
+  if (matchIds.size === 0) {
     return [];
   }
   const sessionsRoot = path.join(
@@ -165,7 +141,6 @@ const pruneUnifiedSessionFiles = async (params: {
   for (const filePath of await collectFiles(sessionsRoot)) {
     if (
       unifiedSessionFileMatches({
-        fileNameFragments,
         filePath,
         matchIds,
       })

@@ -115,6 +115,8 @@ export const createRemoteBridgeBootstrap = (options: {
     broadcaster: (event) => {
       options.broadcaster(event as BridgeEvent);
     },
+    providerRegistry: options.providerRegistry,
+    sessionManager: options.sessionManager,
   });
   const workflowRuntime = new WorkflowRuntime({
     logger: options.logger,

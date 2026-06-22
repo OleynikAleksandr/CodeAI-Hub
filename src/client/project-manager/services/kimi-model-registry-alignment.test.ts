@@ -20,6 +20,10 @@ test("Kimi UI model registry mirrors runtime capability model ids", () => {
   );
   const uiModelIds = KIMI_RECOMMENDED_MODELS.map((model) => model.id);
 
+  assert.deepEqual(uiModelIds, [
+    "kimi-k2.7-code",
+    "kimi-k2.7-code-highspeed",
+  ]);
   assert.deepEqual(uiModelIds, runtimeModelIds);
   assert.equal(DEFAULT_KIMI_MODEL_ID, RUNTIME_DEFAULT_KIMI_MODEL_ID);
 });
@@ -59,6 +63,15 @@ test("Kimi model registry helpers resolve known and unknown ids", () => {
   assert.equal(
     findKimiModelCapabilities(DEFAULT_KIMI_MODEL_ID)?.displayName,
     "Kimi K2.7 Code"
+  );
+  assert.equal(isKnownKimiModelId("kimi-k2.7-code-highspeed"), true);
+  assert.equal(
+    findKimiModelDescriptor("kimi-k2.7-code-highspeed")?.displayName,
+    "Kimi K2.7 Code High Speed"
+  );
+  assert.equal(
+    findKimiModelCapabilities("kimi-k2.7-code-highspeed")?.displayName,
+    "Kimi K2.7 Code High Speed"
   );
   assert.equal(findKimiModelDescriptor("unknown-kimi-model"), null);
   assert.equal(findKimiModelCapabilities("unknown-kimi-model"), null);

@@ -35,6 +35,14 @@
    npm run plan:repair
    ```
 5. `pre-commit`, `commit-msg` и `post-commit` hooks являются частью процесса. Их нельзя обходить через `--no-verify`.
+6. **Практический порядок ToDoPlan/commit**: перед правкой tracked files выполни `npm run plan:status`, сверь `Current Task`, `Expected Commit` и scope текущей строки в `doc/TODO/todo-plan.md`; если файл вне scope — сначала добавь микро-задачу + отдельный `Git Commit: ...`. Scope пиши одним backtick-блоком: `scope: \`file1, file2, dir/**\``. После правок: `npm run plan:validate` → `npm run plan:commit -- "<Expected Commit>"`; при отказе/debt: `npm run plan:status` → `npm run plan:repair` → повторить.
+
+### Короткий контракт Plan Orchestrator
+1. `doc/TODO/todo-plan.md` tracked: каждый meaningful шаг кода/документации обновляет план в том же commit.
+2. `hash: self` в строке `Git Commit` означает, что эта строка закрыта тем же commit, где она записана. Реальный hash ищи через `git log --oneline --grep='<точный commit message>'`, diff смотри через `git show <hash>`.
+3. `.git/codeai-plan-debt` — локальный rollback sentinel. Он нужен только между подготовкой `plan:commit` и завершением/ремонтом commit; в tracked markdown debt не записывается.
+4. `post-commit` не должен оставлять dirty `todo-plan.md`. Если после commit дерево dirty только из-за плана — сначала `npm run plan:status`, затем `npm run plan:repair`.
+5. Rollback до созданного commit: `npm run plan:repair`. Rollback уже созданного commit: только обычный Git revert/reset по явному решению пользователя, затем отдельный tracked plan update через `plan:commit`.
 
 ### Конец scope
 0. **User Acceptance Gate**: закрытие active scope, архивирование `todo-plan.md` и planning-документа разрешены только после явного acceptance пользователя.
@@ -117,14 +125,14 @@
     - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
     - Ручной прогон этих команд обычно не нужен (только для диагностики).
   - **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
-  - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
+  - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (статус + `hash: self` для commit, который содержит эту же строку).
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
   - Каждый новый `doc/TODO/todo-plan.md` обязан содержать финальные Stream: `Release Build` или `Tooling Verification` (по scope), `User Visual Acceptance Testing` или `User Workflow Acceptance Testing`, `Scope Closeout` (todo-plan, planning-doc).
   - **Release Build Confirmation Gate:** после завершения фиксов и проверок остановись и переспроси пользователя, собирать ли новый релиз. Не готовь README/CHANGELOG под новую версию и не запускай `./scripts/build-all.sh` / `./scripts/build-release.sh --use-current-version` без отдельного явного подтверждения пользователя.
   - Релизная Phase не завершается на сборке: на чистом дереве запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в active plan/archive snapshot, передаем релиз пользователю, оставляем scope `ACTIVE`, получаем явное acceptance и только потом закрываем scope.
-  - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
+  - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его строка получает `hash: self`; реальный hash восстанавливается из Git по точному commit message.
 
   ## Phase <N> — <описание> (owner: <имя>, updated: YYYY-MM-DD)
   ### Stream: <Короткое название>
@@ -133,7 +141,7 @@
   3. [STATUS] <задача 2 — scope: ≤3 файлов/пакетов; ожидаемый commit message>
   4. [STATUS] Git Commit: `<commit_message>` (hash: TBD)
   ```
-  Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`. Каждый пункт обязан иметь «scope» (файлы или пакеты) и целевой commit message; для пунктов `Git Commit` фиксируется хеш. Микрозадачи обновляются сразу после коммита.
+  Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`. Каждый пункт обязан иметь «scope» (файлы или пакеты) и целевой commit message; для пунктов `Git Commit` в active plan допустим `hash: self`. Микрозадачи обновляются в том же коммите.
 
 ## 5. Цикл выполнения (Гейт Качества)
 Для каждой подзадачи Stream из `todo-plan.md`:
@@ -157,6 +165,7 @@
 - **НИКОГДА** не редактируй версии в `package.json` вручную (используй `build-all.sh`).
 - **ВСЕГДА** держи doc/SolidWorks-WorkFlow/System/SystemArchitecture.md и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
 - **Automation-first**: если проблема повторяется или проверяется формально, сначала ищи решение через скрипт, validator, hook или gate; prompt-инструкции используй как второй слой, а не как единственную защиту.
+- **Project Manager / CEF dialogs:** в Project Manager и detached CEF-окнах не использовать native `window.alert`, `window.prompt` или `window.confirm` для UI-действий. На macOS они могут уронить host-процесс; Rename/Delete/confirm flows должны быть in-app React меню/диалогами.
 
 ## 7. Release Build Checklist
 Перед выполнением этого checklist обязательно получи отдельное явное подтверждение пользователя на сборку релиза. Нельзя начинать release notes, version bump, `build-all.sh` или `build-release.sh` только потому, что фиксы завершены.
@@ -164,10 +173,10 @@
 0. Перед сборкой релиза определи БУДУЩУЮ версию (текущая из `package.json` + 1) и актуализируй `README.md` ("Current Release — vX.Y.Z") и `CHANGELOG.md` ("## [X.Y.Z]") на эту будущую версию. Закоммить обновлённые документы ДО запуска `build-all.sh`. Это гарантирует, что VSIX содержит README/CHANGELOG с правильной версией. Также обнови связанные архитектурные материалы из `doc/`, если они затронуты.
 1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`/`build:web-client`.
 2. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + гейты качества (обычно автоматически через `.husky/pre-commit` и `.husky/pre-push`). Только после этого чистим рабочее дерево.
-3. Проверь, что `git status` пустой (никаких staged/unstaged). Версии пакетов/манифестов руками не меняем — это сделает скрипт.
-4. Выполни `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправь проблему и перезапусти **только** `build-all.sh`.
-5. Снова убедись, что `git status` пустой (все изменения от `build-all.sh` закоммичены, если это отдельная итерация).
-6. Выполни `./scripts/build-release.sh --use-current-version`. Скрипт ожидает чистое дерево, использует текущую версию из `package.json`, прогоняет финальные гейты (архитектура, type-check, compile, SDK exclusions, advisory `check:links` / `check:dup`, prune dev deps) и собирает VSIX. При падении повторно запускаем **только** `build-release.sh` после исправления причин.
+3. Проверь `git status`. Нормальный путь — чистое дерево. Допустимое исключение: active `doc/TODO/todo-plan.md` уже dirty из-за auto-advance/evidence оркестратора или release build изменил версии/манифесты, которые ещё должны попасть в release-build commit. В этом случае НЕ делай `git reset`/откат ради чистоты; используй release scripts с `--allow-dirty`.
+4. Выполни `./scripts/build-all.sh` из корня (или `./scripts/build-all.sh --allow-dirty` для допустимого исключения выше). Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если `build-all.sh` уже успешно поднял версию и собрал tarball’ы, не перезапускай его только ради clean tree.
+5. Выполни `./scripts/build-release.sh --use-current-version` (или `./scripts/build-release.sh --use-current-version --allow-dirty`, если dirty-state — только допустимый release/plan state). VSIX собирается ДО release-build commit; после успешного VSIX фиксируй версии/манифесты/evidence через `npm run plan:commit -- "<expected release build commit>"`.
+6. Если plan auto-advance уже ушёл на User Acceptance, а VSIX ещё не собран, это не повод делать reset. Выполни узкую плановую миграцию `doc/TODO/todo-plan.md` обратно на release-build task (`currentTaskId`, `expectedCommitMessage`, статусы task/commit), проверь `npm run plan:validate`, собери VSIX с `--allow-dirty`, затем сделай штатный `plan:commit`.
 7. После успеха проверь вывод `scripts/build-release.sh`: должны появиться строки `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забери `codeai-hub-<version>.vsix` из корня и при необходимости скопируй свежие tarball’ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`.
 8. Зафиксируй изменения (включая версии и манифесты), обнови active `doc/TODO/todo-plan.md` и при необходимости tracked archive/snapshot, если пользовательское визуальное тестирование еще не завершено.
 9. Передай VSIX пользователю для установки и retest. В `todo-plan.md` после Stream сборки релиза должен оставаться активный Stream `User Visual Acceptance Testing`.

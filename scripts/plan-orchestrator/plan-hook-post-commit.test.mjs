@@ -47,15 +47,14 @@ test("finalizes post-commit transaction and removes debt file", () => {
   writePlanDebtFile(debtPath, pending.debt);
 
   const result = finalizePostCommit({
-    commitHash: "abc1234",
     debt: pending.debt,
     debtPath,
     markdown: pending.markdown,
   });
   const parsed = parsePlanStateMarkdown(result.markdown);
 
-  assert.equal(result.reason, "finalized");
-  assert.equal(parsed.state.lastRecordedCommit, "abc1234");
+  assert.equal(result.reason, "cleared_local_debt");
+  assert.equal(parsed.state.lastRecordedCommit, "self");
   assert.equal(parsed.state.currentTaskId, "phase2.stream5.task5");
   assert.equal(existsSync(debtPath), false);
 });

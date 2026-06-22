@@ -36,7 +36,8 @@ type ProjectManagerSessionViewProps = {
   readonly preferredSessionId?: string | null;
   readonly emptyStatePending?: boolean;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
-  readonly startupStage?: string;
+  readonly startupStage?: string | null;
+  readonly visibleSessionId?: string | null;
 };
 
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
@@ -48,6 +49,7 @@ const ProjectManagerRuntimeSessionView = ({
   emptyStatePending = false,
   onFileLinkActivate,
   startupStage = "description",
+  visibleSessionId = null,
 }: ProjectManagerSessionViewProps) => {
   const sessionMessageLocalization = useMemo(
     () => new SessionMessageLocalizationFacade(),
@@ -81,6 +83,25 @@ const ProjectManagerRuntimeSessionView = ({
       setActiveSessionId,
     }
   );
+  const visibleSessionsForView = useMemo(
+    () =>
+      visibleSessionId
+        ? visibleSessions.filter((session) => session.id === visibleSessionId)
+        : visibleSessions,
+    [visibleSessionId, visibleSessions]
+  );
+  const isSessionInViewScope = useCallback(
+    (session: SessionRecord): boolean => {
+      if (!workspacePath || session.workspacePath !== workspacePath) {
+        return false;
+      }
+      if (visibleSessionId) {
+        return session.id === visibleSessionId;
+      }
+      return session.stage === sessionScopeStage;
+    },
+    [sessionScopeStage, visibleSessionId, workspacePath]
+  );
   const hydrateFromState = useCallback(
     (payload: {
       readonly providers: readonly ProviderStackDescriptor[];
@@ -89,7 +110,10 @@ const ProjectManagerRuntimeSessionView = ({
       setProviderCatalog((current) => {
         const merged = mergeCatalog(current, payload.providers);
         const labels = buildProviderLabels(merged);
-        const nextSessions = [...payload.sessions];
+        const nextSessions = payload.sessions.filter(isSessionInViewScope);
+        if (visibleSessionId && nextSessions.length === 0) {
+          return merged;
+        }
         syncSessionsRef(nextSessions);
         setSessions(nextSessions);
         const nextSnapshots: SessionSnapshots = {};
@@ -114,7 +138,7 @@ const ProjectManagerRuntimeSessionView = ({
         return merged;
       });
     },
-    [settings, syncSessionsRef, workspacePath]
+    [isSessionInViewScope, settings, syncSessionsRef, visibleSessionId, workspacePath]
   );
   const handleSessionHistory = useCallback(
     (payload: { readonly sessionId: string; readonly messages: readonly unknown[] }) => {
@@ -131,7 +155,10 @@ const ProjectManagerRuntimeSessionView = ({
   );
   const handleSessionCreated = useCallback(
     (session: SessionRecord) => {
-      const isInScope = Boolean(workspacePath) && session.workspacePath === workspacePath;
+      const isInScope = isSessionInViewScope(session);
+      if (!isInScope) {
+        return;
+      }
       if (isInScope) {
         showSession(session.id);
       }
@@ -187,10 +214,10 @@ const ProjectManagerRuntimeSessionView = ({
     [
       handleSessionHistory,
       providerLabels,
+      isSessionInViewScope,
       settings,
       showSession,
       syncSessionsRef,
-      workspacePath,
     ]
   );
   const handleSessionMessage = useCallback(
@@ -282,6 +309,7 @@ const ProjectManagerRuntimeSessionView = ({
   const connection = useProjectManagerCoreStatusHydrator({
     onHydrate: hydrateFromState,
     onSessionHistory: handleSessionHistory,
+    rehydrateOnCoreState: !visibleSessionId,
   });
   useEffect(() => {
     if (!preferredSessionId) {
@@ -291,7 +319,9 @@ const ProjectManagerRuntimeSessionView = ({
   }, [preferredSessionId]);
   useEffect(() => {
     if (!activeSessionId) {
-      setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
+      setActiveSessionId(
+        resolveMostRecentVisibleSessionId(visibleSessionsForView)
+      );
       return;
     }
     // Keep preferred session even if not yet in visibleSessions —
@@ -299,12 +329,12 @@ const ProjectManagerRuntimeSessionView = ({
     if (preferredSessionId && activeSessionId === preferredSessionId) {
       return;
     }
-    const isVisible = visibleSessions.some((session) => session.id === activeSessionId);
+    const isVisible = visibleSessionsForView.some((session) => session.id === activeSessionId);
     if (!(forcedHiddenSessionIds.has(activeSessionId) || !isVisible)) {
       return;
     }
-    setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
-  }, [activeSessionId, forcedHiddenSessionIds, preferredSessionId, visibleSessions]);
+    setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessionsForView));
+  }, [activeSessionId, forcedHiddenSessionIds, preferredSessionId, visibleSessionsForView]);
   useEffect(() => {
     if (!activeSessionId) {
       return;
@@ -328,7 +358,9 @@ const ProjectManagerRuntimeSessionView = ({
         return;
       }
       setSessionScopeStage((current) =>
-        typeof detail.stage === "string" ? detail.stage : current ?? startupStage
+        typeof detail.stage === "string"
+          ? detail.stage
+          : current ?? startupStage ?? null
       );
     };
     const handleStageActivated = (
@@ -356,8 +388,8 @@ const ProjectManagerRuntimeSessionView = ({
     },
     createSession: api.createSession,
   });
-  const isPreferredPending = Boolean(preferredSessionId && activeSessionId === preferredSessionId && !visibleSessions.some((s) => s.id === activeSessionId));
-  const scopedActiveSessionId = isPreferredPending || visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
+  const isPreferredPending = Boolean(preferredSessionId && activeSessionId === preferredSessionId && !visibleSessionsForView.some((s) => s.id === activeSessionId));
+  const scopedActiveSessionId = isPreferredPending || visibleSessionsForView.some((session) => session.id === activeSessionId) ? activeSessionId : null;
   const handleSendMessage = useSessionMessageSender(
     sessionsRef,
     workspacePath,
@@ -441,7 +473,7 @@ const ProjectManagerRuntimeSessionView = ({
       onSendMessage={handleSendMessage}
       emptyStatePending={emptyStatePending}
       providerLabels={providerLabels}
-      sessions={visibleSessions}
+      sessions={visibleSessionsForView}
       showThinkingMessages={showThinkingMessages}
       showEmptyState={Boolean(workspacePath)}
       snapshots={snapshots}

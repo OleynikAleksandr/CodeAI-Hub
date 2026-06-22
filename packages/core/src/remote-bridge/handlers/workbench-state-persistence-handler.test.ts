@@ -5,7 +5,11 @@ import path from "node:path";
 import test from "node:test";
 import { WorkbenchIndexRebuilder } from "./workbench-index-rebuilder";
 import { WorkbenchStatePersistenceHandler } from "./workbench-state-persistence-handler";
-import type { WorkbenchSelectionFile } from "./workbench-state-types";
+import type {
+  SlotEntryRecord,
+  WorkbenchIndexFile,
+  WorkbenchSelectionFile,
+} from "./workbench-state-types";
 
 test("WorkbenchStatePersistenceHandler saves and loads selection state", async () => {
   const settingsDir = await mkdtemp(path.join(tmpdir(), "workbench-state-"));
@@ -71,6 +75,39 @@ test("WorkbenchStatePersistenceHandler rebuilds a missing index from capture_sta
   }
 });
 
+test("WorkbenchStatePersistenceHandler deletes stale capture documents on index save", async () => {
+  const rootDir = await mkdtemp(path.join(tmpdir(), "workbench-clear-"));
+  const settingsDir = path.join(rootDir, "settings");
+  const captureLogsDir = path.join(rootDir, "logs", "native-request-capture");
+  const jsonlPath = path.join(captureLogsDir, "capture.jsonl");
+  const markdownPath = path.join(captureLogsDir, "capture.md");
+  const outsidePath = path.join(rootDir, "outside.md");
+  await mkdir(captureLogsDir, { recursive: true });
+  await writeFile(jsonlPath, "{}\n", "utf8");
+  await writeFile(markdownPath, "# capture\n", "utf8");
+  await writeFile(outsidePath, "keep", "utf8");
+  const handler = new WorkbenchStatePersistenceHandler({
+    captureLogsDir,
+    settingsDir,
+  });
+  const index = createIndex({
+    jsonlPath,
+    markdownPath,
+    outsidePath,
+  });
+
+  try {
+    await handler.save("index", index);
+    await handler.save("index", { version: 1, slots: [] });
+
+    await assert.rejects(readFile(jsonlPath, "utf8"));
+    await assert.rejects(readFile(markdownPath, "utf8"));
+    assert.equal(await readFile(outsidePath, "utf8"), "keep");
+  } finally {
+    await rm(rootDir, { force: true, recursive: true });
+  }
+});
+
 const writeCaptureStart = async (
   captureLogsDir: string,
   options: {
@@ -101,3 +138,47 @@ const writeCaptureStart = async (
     "utf8"
   );
 };
+
+const createIndex = (paths: {
+  readonly jsonlPath: string;
+  readonly markdownPath: string;
+  readonly outsidePath: string;
+}): WorkbenchIndexFile => ({
+  version: 1,
+  slots: [
+    {
+      step: "description",
+      provider: "claude",
+      model: "sonnet",
+      reasoning: "thinking-high",
+      managed: {
+        current: createSlotEntry(
+          "capture",
+          paths.jsonlPath,
+          paths.markdownPath
+        ),
+        previous: null,
+      },
+      vanilla: {
+        current: createSlotEntry(
+          "outside",
+          paths.outsidePath,
+          paths.outsidePath
+        ),
+        previous: null,
+      },
+    },
+  ],
+});
+
+const createSlotEntry = (
+  artifactId: string,
+  jsonlPath: string,
+  markdownPath: string
+): SlotEntryRecord => ({
+  artifactId,
+  capturedAt: "2026-05-02T12:00:00.000Z",
+  jsonlPath,
+  markdownPath,
+  releaseVersion: "1.2.123",
+});

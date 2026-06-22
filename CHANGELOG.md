@@ -8,6 +8,742 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.584] - 2026-06-22
+### Fixed
+- **GLM Native retries `EPIPE` provider disconnects.** `EPIPE: write EPIPE`
+  is now classified as retryable for GLM standalone turns.
+- **GLM retry timing is short and non-increasing.** GLM uses one non-nested
+  request retry loop with up to 8 attempts, a fixed 500 ms default retry delay,
+  and a 1500 ms cap for provider `retry-after` hints.
+
+### Notes
+- The retest also showed GLM can call declared-but-unwired tools such as
+  `web_search`. Those tools still return explicit not-wired results until we
+  decide whether to bridge or prune them.
+
+### Verification
+- `npm run build --workspace @codeai-hub/glm-module`
+- `npm test --workspace @codeai-hub/glm-module`
+- `npm run plan:validate`
+
+## [1.2.583] - 2026-06-22
+### Added
+- **GLM Native sends Codex-native tools as executable GLM function tools.**
+  The full captured Codex tool surface is converted into GLM/Z.AI-compatible
+  `tools` entries instead of being embedded as JSON inside the system prompt.
+
+### Changed
+- **GLM tool loop headroom increased for provider retries.** GLM standalone
+  chats can now run up to 64 tool-loop steps.
+- **GLM local execution starts with `exec_command`.** GLM can execute shell
+  commands through the local bridge in addition to the existing
+  `write_workflow_artifact` workflow artifact writer. Other declared
+  Codex-compatible tools return explicit not-yet-wired results until we choose
+  which bridges to keep.
+
+### Verification
+- `npm run build --workspace @codeai-hub/glm-module`
+- `npm test --workspace @codeai-hub/glm-module`
+- `npm run plan:validate`
+
+## [1.2.582] - 2026-06-22
+### Added
+- **GLM Native and Kimi receive the Codex-native baseline in system context.**
+  Both providers now include the captured Codex-native system instructions and
+  full captured Codex-native tool definition list for comparison testing.
+
+### Notes
+- The executable tool surfaces are unchanged in this test release: GLM still
+  exposes its `write_workflow_artifact` HTTP tool loop, and Kimi still exposes
+  its managed ACP file/shell tool profile. The Codex-native tool list is
+  included as system context so the next retest can show what each provider
+  understands before pruning.
+
+### Verification
+- `npm run build --workspace @codeai-hub/glm-module`
+- `npm run test --workspace @codeai-hub/glm-module`
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm run test --workspace @codeai-hub/kimi-module`
+- `node --test packages/Kimi_Module/dist/provider/kimi-managed-agent-profile.test.js`
+- `npm run plan:validate`
+
+## [1.2.581] - 2026-06-22
+### Added
+- **Capture Workbench can delete captured documents.** The detached Workbench
+  now has a `Delete captures` action that clears the Workbench index and
+  removes only the referenced `.md`/`.jsonl` capture artifacts from the native
+  request capture logs.
+
+### Fixed
+- **Vanilla capture mode now survives the Project Manager bridge.** Re-capture
+  Vanilla keeps `captureMode: "vanilla"` through the Core bridge instead of
+  falling back to Managed defaults.
+
+### Verification
+- `node --test --import tsx src/client/project-manager/components/capture-workbench/snapshot-cards-row.test.tsx`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/workbench-state-persistence-handler.test.ts`
+- `node --test --import tsx packages/core/src/remote-bridge/remote-bridge-message-router.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run lint`
+- `npm run check:knip`
+- `npm run plan:validate`
+
+## [1.2.580] - 2026-06-22
+### Added
+- **Provider Native Request Capture now supports a Vanilla baseline path.**
+  Capture Workbench can run Vanilla captures separately from Managed captures,
+  and the diff view can compare current Managed vs Vanilla snapshots when both
+  sides exist.
+
+### Fixed
+- **Claude and Codex Vanilla captures omit CodeAI-managed prompt/tool
+  overrides.** Claude keeps only required SDK infrastructure, while Codex starts
+  the default app-server profile without workflow base instructions or managed
+  config overrides.
+- **Workflow step cleanup preserves standalone Chats.** Deleting workflow steps
+  prunes only workflow-bound provider sessions and no longer removes standalone
+  workspace chats or histories by broad filename fragments.
+
+### Verification
+- `node --test --import tsx src/client/project-manager/services/capture-workbench-runner.test.ts src/client/project-manager/components/capture-workbench/snapshot-cards-row.test.tsx src/client/project-manager/components/capture-workbench/diff-renderer.test.tsx packages/core/src/provider-network-capture/native-request-capture-facade.test.ts packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.standalone.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts`
+- `npm run typecheck:webview`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `npm run build --workspace @codeai-hub/codex-app-server-module`
+- `npm run plan:validate`
+
+## [1.2.579] - 2026-06-22
+### Fixed
+- **Detached CEF popup close prepares the native window before CEF teardown.**
+  Disposable macOS popup windows now run native close prep from `CanClose`,
+  disable the AppKit close animation, and order the `NSWindow` out before CEF
+  is allowed to continue its close path.
+
+### Verification
+- `node --test packages/cef-launcher/src/launcher-app-paint.test.mjs`
+- `./scripts/build-cef-launcher.sh --launcher-version 1.2.578`
+- `npm run plan:validate`
+
+## [1.2.578] - 2026-06-22
+### Fixed
+- **Detached CEF popup close uses the native macOS window layer.** The CEF
+  launcher now paints the AppKit `NSWindow` dark and orders it out before CEF
+  browser-view teardown can expose a white backing frame during close.
+
+### Verification
+- `node --test packages/cef-launcher/src/launcher-app-paint.test.mjs`
+- `./scripts/build-cef-launcher.sh --launcher-version 1.2.577`
+- `npm run plan:validate`
+
+## [1.2.577] - 2026-06-22
+### Fixed
+- **Detached CEF popup windows hide before close teardown.** The CEF launcher
+  now hides disposable detached popups in `OnWindowClosing`, after repainting
+  them dark, so the browser-view teardown does not expose a white native backing
+  frame during close.
+
+### Verification
+- `node --test packages/cef-launcher/src/launcher-app-paint.test.mjs`
+- `./scripts/build-cef-launcher.sh --launcher-version 1.2.576`
+- `npm run plan:validate`
+
+## [1.2.576] - 2026-06-22
+### Fixed
+- **Detached CEF popup windows keep dark paint through theme resets.** The CEF
+  launcher now reapplies the Project Manager dark background from window and
+  browser-view theme callbacks, covering the remaining white open/close flash
+  seen after `1.2.575`.
+
+### Verification
+- `node --test packages/cef-launcher/src/launcher-app-paint.test.mjs`
+- `./scripts/build-cef-launcher.sh --launcher-version 1.2.575`
+- `npm run plan:validate`
+
+## [1.2.575] - 2026-06-22
+### Fixed
+- **Saved standalone Chats open correctly on the first try after Core restart.**
+  Project Manager no longer opens a pending detached shell for saved chats
+  without a live runtime id; it waits for Core to restore the matching
+  provider session and opens the detached window with the real `sessionId`.
+- **Detached CEF windows paint dark before the first visible frame.** The CEF
+  launcher now applies the Project Manager dark background to the window theme
+  and browser view before attaching/showing the view, covering the native
+  pre-paint white content frame.
+
+### Verification
+- `node --test --import tsx src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `node --test packages/cef-launcher/src/launcher-app-paint.test.mjs`
+- `./scripts/build-cef-launcher.sh --launcher-version 1.2.574`
+- `npm run plan:validate`
+
+## [1.2.574] - 2026-06-21
+### Fixed
+- **Detached standalone Chat windows no longer flash white on open/close.**
+  Project Manager now declares the dark app background inline before deferred
+  scripts/CSS load, and the CEF launcher sets the same dark browser background
+  before the first rendered frame.
+- **Standalone Chat sessions created after this release can reopen after Core
+  restart.** Stage-less standalone chats no longer lock history to transient
+  runtime session ids; once the provider binding is ready, Core promotes the
+  persisted history to the provider session id while keeping workflow session
+  history locked to continuity roots.
+
+### Verification
+- `npm run build:project-manager`
+- `./scripts/build-cef-launcher.sh --launcher-version 1.2.573`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-shell-factory.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm exec -- ultracite check`
+- `npm run plan:validate`
+
+## [1.2.573] - 2026-06-21
+### Fixed
+- **Detached standalone Chat windows no longer clear each other while new chats
+  open.** Runtime session views scoped to an exact `visibleSessionId` skip
+  automatic full rehydrate on unrelated Core `core:state` events and keep the
+  current snapshot if a status refresh temporarily does not include that
+  session.
+
+### Verification
+- `node --test --import tsx src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm exec -- ultracite check`
+- `npm run plan:validate`
+
+## [1.2.572] - 2026-06-21
+### Fixed
+- **Detached standalone Chat no longer refreshes workflow panels.** Core
+  `session:message` stream events now include session scope metadata, and the
+  Project Manager workflow view ignores stage-less standalone chat events while
+  the Chat sidebar refreshes only matching workspace chat rows.
+- **GLM/local standalone chat replay coalesces streamed answer chunks.** Core
+  history reads now merge adjacent persisted assistant `tag: live` records, so
+  reopened local-provider chats render one assistant response card instead of
+  one card per stored stream chunk.
+
+### Verification
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`
+- `node --test --import tsx src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `node --test --import tsx packages/core/src/unified-session/storage.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm exec -- ultracite check`
+- `npm run plan:validate`
+
+## [1.2.571] - 2026-06-21
+### Fixed
+- **Standalone Chat pending windows attach to the created session.** Detached
+  New Chat windows now normalize Core `session:created` events before matching
+  them and poll the workspace chat list for a matching `liveSessionId`, so the
+  Session UI can replace the "Creating chat session..." placeholder even when
+  CEF cross-window `postMessage` is not delivered.
+
+### Verification
+- `node --test --import tsx src/client/project-manager/standalone-session-resolver.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm exec -- ultracite check`
+- `npm run plan:validate`
+
+## [1.2.570] - 2026-06-21
+### Fixed
+- **Standalone Chat Rename persists across refresh.** Core now keeps the
+  history-backed provider session id when merging live standalone sessions with
+  saved workspace history, so Rename/Delete target the visible chat sidecars
+  instead of a temporary live-session alias.
+
+### Verification
+- `node --test --import tsx packages/core/src/unified-session/standalone-workspace-chat-list.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm exec -- ultracite check`
+- `npm run plan:validate`
+
+## [1.2.569] - 2026-06-21
+### Fixed
+- **Standalone Chat launch and row actions are stable in CEF.** New standalone
+  chat windows now open the Project Manager standalone shell instead of a blank
+  `about:blank` placeholder before switching to the real session id. Chat row
+  Rename/Delete now use in-app React menu/dialog UI instead of native
+  `window.prompt` / `window.confirm`, avoiding the macOS CEF host crash from the
+  right-click Rename path.
+
+### Verification
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm exec -- ultracite check`
+- `rg "window\\.prompt|window\\.confirm|window\\.alert|prompt\\(|confirm\\(|alert\\(" src/client/project-manager packages/ui/project-manager -n`
+- `npm run plan:validate`
+
+## [1.2.568] - 2026-06-21
+### Fixed
+- **Standalone Chat rows now update and open correctly.** New chats open their
+  detached Session UI immediately after provider selection, chat titles refresh
+  on first message without switching sidebar modes, card metadata shows only the
+  provider id, and right-click Rename/Delete actions are available for chat
+  rows.
+
+### Verification
+- `node --test --import tsx packages/core/src/unified-session/standalone-workspace-chat-list.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm exec -- ultracite check`
+- `npm run plan:validate`
+
+## [1.2.567] - 2026-06-21
+### Fixed
+- **Standalone Chat list no longer shows duplicate or stale rows.** Core now
+  skips standalone translation overlay logs, filters live standalone sessions to
+  the selected workspace, and merges live/history aliases by session id,
+  provider session id, or first-user preview so renamed provider chats reopen
+  the actual live Session UI instead of an empty resumed window.
+
+### Verification
+- `node --test --import tsx packages/core/src/unified-session/standalone-workspace-chat-list.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
+## [1.2.566] - 2026-06-21
+### Added
+- **Project Manager now has workspace standalone chats.** The left sidebar can
+  switch between `Workflow` and `Chat`; the workspace dropdown remains in place,
+  `Workflow` keeps the current tree UI, and `Chat` lists stage-less chats for
+  the selected workspace plus `New Chat`.
+- **Standalone chats open detached Session UI windows.** New chats start through
+  the provider picker, are created with `stage: null`, and use provider-default
+  instructions/tooling instead of workflow prompt packs. Chat history is stored
+  under the selected workspace's `.codeai-hub/sessions` root.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `npm exec -- ultracite check`
+- User accepted the Workflow/Chat sidebar switch and standalone chat behavior.
+
+## [1.2.565] - 2026-06-21
+### Fixed
+- **Kimi ACP reasoning and streamed answers render again.** Native Kimi sessions
+  now enable ACP `thinking` after session creation/resume, buffer token-sized
+  ACP `agent_thought_chunk` and `agent_message_chunk` updates into normal
+  thinking/assistant events, and flush the final buffered answer before
+  adapter-level `turn_completed`.
+
+### Verification
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm test --workspace @codeai-hub/kimi-module`
+- `npx tsx --test packages/Kimi_Module/src/messaging/kimi-event-normalizer.test.ts packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts packages/Kimi_Module/src/provider/kimi-provider-adapter.test.ts`
+- Live `KimiProviderAdapter` probe with `defaultModel =
+  "kimi-k2.7-code-highspeed"` emitted 2 `thinking` events, 1 `assistant` event
+  with `tag: "live"`, and adapter-level `turn_completed`.
+- `npm run plan:validate`
+
+## [1.2.564] - 2026-06-21
+### Fixed
+- **Kimi ACP starts with the selected CodeAI model through `KIMI_MODEL_*`.** The
+  provider now injects `kimi-k2.7-code` and `kimi-k2.7-code-highspeed` before
+  spawning `kimi acp`, using the Kimi CLI-supported temporary model contract.
+  CodeAI no longer sends raw CodeAI model ids through ACP
+  `session/set_config_option`, which the new CLI rejects unless those aliases
+  already exist in `config.toml`.
+
+### Verification
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm test --workspace @codeai-hub/kimi-module`
+- Live `KimiProviderAdapter` probe with `defaultModel =
+  "kimi-k2.7-code-highspeed"` created a Kimi ACP session and returned `OK` for
+  `sendMessage("Say only: OK")`.
+- `npm run plan:validate`
+
+## [1.2.563] - 2026-06-21
+### Fixed
+- **Native Kimi starts through ACP after the Kimi Code CLI update.** The Kimi
+  provider now launches `kimi acp`, creates/resumes ACP sessions, sends prompts
+  through `session/prompt`, and normalizes ACP stream updates into assistant,
+  thinking, tool, and usage events.
+- **Kimi model selection is model-only and includes High Speed.** Settings,
+  workflow start cards, Development Tree start/fix cards, and the Session
+  Status Panel model picker expose `Kimi K2.7 Code` and
+  `Kimi K2.7 Code High Speed` without the unsupported reasoning on/off toggle.
+
+### Verification
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm test --workspace @codeai-hub/kimi-module`
+- `npx tsx --test packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts packages/Kimi_Module/src/messaging/kimi-event-normalizer.test.ts packages/Kimi_Module/src/provider/kimi-provider-adapter.test.ts`
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-settings-defaults.test.ts src/client/project-manager/services/kimi-model-registry-alignment.test.ts src/client/ui/src/session/status-panel-model-picker.test.tsx packages/core/src/config/provider-settings-snapshot.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts`
+- `npm run plan:validate`
+
+## [1.2.562] - 2026-06-20
+### Fixed
+- **Selected LM Studio models stay loaded while Core is running.** The
+  `lmstudio:*` reasoning translation model and the Local Models workflow-agent
+  default now warm persistently without `--ttl` on Project Manager startup and
+  after Settings saves.
+- **Local Models loads no longer eject the reasoning translator.** Ordinary
+  translation/workflow `ensureModelLoaded` calls keep other selected model keys
+  loaded. Settings warmup/reconcile unloads only idle stale CodeAI-owned workers
+  whose model keys are no longer selected, and still never unloads user-loaded
+  LM Studio instances.
+
+### Verification
+- `node --test --import tsx packages/core/src/local-models/local-models-runtime-load-manager.test.ts`
+- `node --test --import tsx packages/core/src/local-models/local-models-warmup-service.test.ts`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/settings-request-handler.local-models-warmup.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
+## [1.2.561] - 2026-06-20
+### Changed
+- **Mainline Local Models verification release.** Packages the merged `main`
+  state after Local Models file tools, selected-model warmup, streamed tool
+  turns, dialog dedupe, and Qwen artifact-loop fixes landed together. This is a
+  packaging/retest release, not a new functional change beyond the merged
+  commits.
+
+### Verification
+- Full release build completed with `./scripts/build-all.sh --allow-dirty` and
+  `./scripts/build-release.sh --use-current-version --allow-dirty`; user retest
+  of the generated VSIX is pending.
+
+## [1.2.560] - 2026-06-20
+### Fixed
+- **Qwen Local Models artifact-tool turns stop after successful artifact writes.**
+  After `write_workflow_artifact` succeeds, Core sends the follow-up LM Studio
+  request without tools, preventing Qwen from repeatedly calling the write tool
+  until max-step failure. Empty post-write assistant follow-ups now complete
+  with a short success message so the orchestrator can advance instead of
+  receiving a provider failure.
+
+### Verification
+- `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.tools.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
+## [1.2.559] - 2026-06-20
+### Fixed
+- **Qwen Local Models streamed tool turns no longer duplicate visible dialog
+  output.** The dialog skips whitespace-only live cards, joins thinking blocks
+  separated only by those skipped live chunks, and hides the final stored
+  assistant snapshot after live output. Core/JSONL still keeps the final
+  assistant message for orchestrator consumers.
+
+### Verification
+- `npx tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`
+- `npm run typecheck:webview`
+- Qwen JSONL replay:
+  `localmodels-8c8aacc3-eecb-4a9a-b490-8024d81c1f89-description.jsonl`
+  merges to one thinking card, one live assistant card, and one system review
+  card after the user prompt.
+
+## [1.2.558] - 2026-06-20
+### Fixed
+- **The session dialog hides duplicated final assistant bubbles after live
+  output.** Core still stores and exposes the final assistant message for the
+  orchestrator/JSONL history, but the visible dialog skips the final bubble when
+  it visually duplicates the previous `tag: "live"` assistant output, including
+  small Markdown blank-line differences seen with Gemma 4 26B A4B.
+
+### Verification
+- `npx tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`
+- `npm run typecheck:webview`
+
+## [1.2.557] - 2026-06-20
+### Fixed
+- **Local Models artifact-tool turns stream reasoning and assistant text again.**
+  The OpenAI-compatible `/v1/chat/completions` tool loop now requests
+  `stream: true`, emits `delta.content` as live assistant chunks, emits
+  `delta.reasoning_content` / `delta.reasoning` through the buffered `thinking`
+  channel, and accumulates streamed `tool_calls` arguments silently until the
+  artifact write can execute. Project Manager no longer waits for the file write
+  before showing model reasoning or final assistant text.
+
+### Verification
+- `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/local-models/local-models-provider-adapter.tools.test.ts packages/core/src/local-models/local-models-sse-reader.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
+## [1.2.556] - 2026-06-20
+### Added
+- **Local Models workflow turns can write artifacts through a minimal tool.**
+  Workspace-bound LM Studio sessions use the OpenAI-compatible
+  `/v1/chat/completions` endpoint with one function tool,
+  `write_workflow_artifact(relative_path, content)`, restricted to
+  `.codeai-hub/**`. The tool has no shell, git, package-manager, read-file, or
+  arbitrary-write access; the existing fenced-Markdown artifact fallback remains
+  available.
+- **Project Manager startup preloads selected LM Studio models.** After
+  workspace settings are published, Core schedules a detached best-effort warmup
+  for `general.localization.reasoningEngineId = lmstudio:<modelKey>` and the
+  Local Models workflow default model. Duplicate selections are loaded once, and
+  LM Studio failures do not block Settings or Project Manager rendering.
+
+### Verification
+- `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/local-models/local-models-provider-adapter.tools.test.ts packages/core/src/local-models/local-models-sse-reader.test.ts`
+- `npx tsx --test packages/core/src/local-models/local-models-warmup-service.test.ts packages/core/src/local-models/local-models-runtime-load-manager.test.ts`
+- `npx tsx --test --test-name-pattern "schedules local models warmup" packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
+## [1.2.555] - 2026-06-19
+### Changed
+- **Verification-only release — no functional changes.** Confirms the working
+  tree builds and packages correctly after an exploratory scope (structured
+  output for local models) was investigated and fully reverted. Local Models
+  behavior is unchanged from 1.2.554.
+
+## [1.2.554] - 2026-06-19
+### Fixed
+- **Heavy local reasoning turns no longer abort at five minutes.** The native
+  chat request used a hard-coded 300s `AbortController` timeout, so a Qwen3 27B
+  reasoning turn that ran ~310s was cut off mid-answer with "This operation was
+  aborted". The default request timeout is now 20 minutes and is configurable via
+  the `CODEAI_LMSTUDIO_TIMEOUT_MS` environment variable.
+
+## [1.2.553] - 2026-06-19
+### Fixed
+- **Local artifact is written when the filename is only in the reasoning
+  channel.** When reasoning is split into a separate `thinking` message, the
+  model leaves the fenced artifact block in the `assistant` message but the
+  `Final_Description.md` filename in the `thinking` message, so no single
+  assistant message carries both. The preliminary artifact gate now confirms the
+  filename across the latest assistant+thinking turn while still extracting the
+  fenced block from the assistant message.
+- **Reasoning is coalesced instead of one delta per `thinking` message.** The SSE
+  reader buffers `reasoning.delta` text and flushes `onReasoning` only at ~900
+  chars or ~360 chars on a sentence boundary (mirroring GLM native), plus a flush
+  when message content starts or the stream ends. The thinking panel no longer
+  renders thousands of 1-4 char "letter per line" messages.
+
+## [1.2.552] - 2026-06-19
+### Fixed
+- **Local Models live-streamed artifact is materialized again.** The preliminary
+  artifact gate matched a single whole assistant message containing the artifact
+  path plus fenced block, but the Core live-tail dedupe drops the whole final
+  assistant message once it is fully covered by the live chunks, leaving only
+  fragmented `tag: "live"` chunks. The gate now reconstructs the latest assistant
+  answer by joining the trailing run of assistant messages before writing
+  `Final_Description.md` / `virtual-simulation.md`, so Description / Virtual
+  Simulation no longer report a missing artifact after live streaming.
+### Added
+- **Local Models reasoning channel.** `readLmStudioNativeChatResult` reads
+  LM Studio `reasoning.delta` frames via an optional `onReasoning` callback
+  (separate from `message.delta`), and the adapter emits each reasoning chunk as
+  a `thinking` event (`tag: "thinking"`) routed through the existing
+  thinking-visibility pipeline. Qwen3 reasoning now appears as a thinking block
+  instead of a silent pause; Gemma 4 reasoning surfaces through the same channel
+  once thinking is enabled in LM Studio (off by default).
+
+## [1.2.551] - 2026-06-19
+### Added
+- **Local Models provider now streams assistant text incrementally (live) on
+  workflow-agent turns.** During `POST /api/v1/chat` generation the provider
+  emits `assistant` events with `tag: "live"` for each LM Studio `message.delta`
+  chunk, then one final non-live `assistant` event with the complete text. The
+  Core live-tail dedupe pipeline (`resolveLiveAssistantTailDedupe`) merges the
+  live chunks into one card and strips the overlapping prefix of the final
+  event, so the assistant reply now appears progressively in Project Manager and
+  the webview instead of one buffered block. This matches Claude/GLM Native/GLM
+  OpenCode UX and removes the multi-minute blind wait for heavy local models
+  (Qwen3 27B MLX and similar). `turn_started`/`turn_completed` and the existing
+  fallback diagnostics are unchanged.
+
+### Verification
+- `node --test packages/core/dist/local-models/*.test.js` (31/31)
+- `npm run build --workspace @codeai-hub/core`
+- `npx ultracite check packages/core/src/local-models/`
+- `npm run check:knip`
+
+## [1.2.550] - 2026-06-19
+### Fixed
+- **Local Models provider no longer fails with `Headers Timeout Error` on heavy
+  local models through LM Studio.** Workflow-agent turns (`POST /api/v1/chat`)
+  and translation turns (`POST /v1/chat/completions`) now use streaming SSE
+  transport (`stream: true`). Non-streaming LM Studio chat does not emit HTTP
+  response headers until the full reply is generated, which exceeded Node's
+  default undici `headersTimeout` for slow models (Qwen3 27B MLX and similar).
+  With streaming, headers arrive immediately and the final assistant text is
+  reassembled from the terminal `chat.end.result` event (native) or accumulated
+  `delta.content` frames plus the `[DONE]` sentinel (OpenAI-compatible). The
+  adapter's `turn_started → assistant → turn_completed` and translation fallback
+  contracts are unchanged.
+
+### Verification
+- `node --test packages/core/dist/local-models/*.test.js` (27/27)
+- `npm run build --workspace @codeai-hub/core`
+- `npx ultracite check packages/core/src/local-models/`
+- `npm run check:knip`
+
+## [1.2.549] - 2026-06-19
+### Fixed
+- **Core now prepares managed stage artifact workspaces before provider turns.**
+  Application Skeleton and Quality Gates get their `.codeai-hub/<workspace>/...`
+  directories up front; an empty conflicting file is removed, while unsafe
+  non-directory residue stops the step instead of being silently overwritten.
+- **Kimi and GLM now have matching managed artifact capability coverage.** Kimi
+  managed sessions regain a narrow filesystem shell for local artifact recovery;
+  GLM Native continues to satisfy the same contract through Core's
+  `write_workflow_artifact` tool, including recursive parent directory creation.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts` (9/9)
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm run build --workspace @codeai-hub/glm-module`
+- `npm run build --workspace @codeai-hub/core`
+
+## [1.2.548] - 2026-06-19
+### Fixed
+- **Application Skeleton draft validation no longer blocks on descriptive
+  `repoShape` metadata.** Core still requires actionable foundation fields, but
+  an object-valued or omitted descriptive `repoShape` no longer causes
+  `missing_foundation_field: repoShape` by itself.
+- **Application Skeleton draft repair loops now hit the managed repair limit.**
+  Draft repair dispatch resolves the real
+  `application-skeleton.phase1.repair.taskN` attempt number, so after three
+  failed repair attempts Core opens the existing managed user review gate instead
+  of sending another automatic repair prompt.
+
+### Verification
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator-warnings.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-repair-attempts.test.ts` (4/4)
+- `npm run build --workspace @codeai-hub/core`
+
+## [1.2.547] - 2026-06-18
+### Fixed
+- **Kimi 5h / Weekly usage limits now appear in the session top bar.** The reader
+  derives the 5h bucket from the `remaining` field Kimi returns for the 300-minute
+  window (it does not send `used`), and Core refreshes usage limits on
+  `turn_completed` — not only on `binding_ready`, which raced Wire startup and was
+  deduped by warmup, leaving fresh Kimi sessions "unavailable".
+- **A filled Description questionnaire is no longer overwritten on startup.**
+  `DescriptionQuestionnaireService.load` now seeds the template only when the
+  questionnaire read returns an explicit `missing` (404); a transient read `error`
+  no longer makes the client treat the file as absent and write a blank template
+  over the user's filled questionnaire (BUG-2026-06-18-01).
+
+### Verification
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `npx tsx --test packages/Kimi_Module/src/provider/*.test.ts` (13/13)
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-turn-refresh.test.ts` (2/2)
+- `npx tsx --test src/client/project-manager/services/description-questionnaire-service.test.ts` (4/4)
+
+## [1.2.546] - 2026-06-18
+### Added
+- **GLM native 5h / Weekly usage limits in the session top bar.** The native
+  GLM adapter now fetches the Z.AI account quota (monitor endpoint, bare
+  `Authorization`) and broadcasts the 5h session and weekly buckets, so the top
+  bar shows real percentages and reset times instead of "unavailable". The
+  context-window indicator is unchanged; Kimi and GLM OpenCode are unaffected.
+
+### Verification
+- `npm run build --workspace @codeai-hub/glm-module`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `npx tsx --test packages/GLM_Module/src/provider/*.test.ts` (18/18)
+
+## [1.2.545] - 2026-06-18
+### Fixed
+- **Start-card reasoning options now match provider capabilities.** Kimi launch
+  cards expose only binary Reasoning on/off, while native GLM launch cards
+  expose only off/high/max instead of the cross-provider fake `default` option.
+- **Launch cards persist selections through Settings before start.** The
+  next-step and Development Tree start cards now save selected provider,
+  model and reasoning through the scoped settings path before creating a
+  session. Workspace-scoped provider defaults stay in workspace settings, while
+  global provider secrets such as native GLM API connection settings stay in
+  the user-space settings file.
+- **Development Tree starts no longer send one-shot model/reasoning payloads.**
+  Core starts from settings truth, so session creation cannot drift from the
+  persisted Settings state.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/shared/stage-confirmation-card.test.ts src/client/project-manager/services/workflow-step-start-settings-defaults.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/remote-bridge-development-tree-node-command-router.test.js packages/core/dist/remote-bridge/handlers/settings-persistence-service.test.js`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
+## [1.2.544] - 2026-06-18
+### Fixed
+- **Kimi Reasoning toggle — first turn after toggle no longer fails.** The
+  v1.2.543 `reconfigureThinking` left the Kimi adapter in an uninitialized
+  state after a Reasoning toggle, so the next Kimi turn deterministically
+  threw "Kimi provider adapter must be initialized before use." `reconfigureThinking`
+  is now async (`Promise<boolean>`) and re-runs the Wire runtime setup so the
+  adapter stays initialized across the reconfigure, preserving the stop-rebind
+  contract.
+- **Kimi thinking reconciler idempotency.** `reconcileKimiThinkingEnabled` now
+  invalidates Kimi provider bindings only when `reconfigureThinking` reports a
+  real restart. Saving unrelated settings (glossary, localization, etc.) no
+  longer resets active Kimi sessions to pending rebind.
+- **Settings reset reconciles Kimi thinking.** `handleReset` now invokes the
+  same `reconcileKimiThinkingEnabled` path as `handleSave`, so resetting
+  settings to defaults correctly reconfigures Kimi reasoning instead of
+  silently leaving the Wire process on the previous flag.
+- **Wire teardown diagnostics.** The `wireProcessBridge.stop()` rejection
+  during reconfigure is now logged via the module reporter instead of being
+  swallowed silently.
+
+## [1.2.543] - 2026-06-18
+### Added
+- **Kimi Reasoning on/off toggle.** The Kimi provider Settings card now exposes
+  a binary Reasoning toggle (separate from the existing "Reasoning in dialog"
+  visibility toggle). It controls Kimi K2.7 Code thinking mode itself through
+  the Wire process `--thinking` / `--no-thinking` CLI flag. CodeAI Hub defaults
+  this managed-workflow toggle to ON; users who want to preserve a user-global
+  Kimi CLI `default_thinking = false` must turn it off in CodeAI Settings.
+  Changing the toggle force-restarts the active Kimi
+  Wire process via `KimiProviderAdapter.reconfigureThinking(...)` and
+  invalidates the provider binding so the next send re-spawns with the new
+  flag. Kimi has no reasoning effort levels — only binary on/off.
+
+## [1.2.542] - 2026-06-17
+### Fixed
+- **Already-Russian reasoning chunks are no longer retranslated.** The session
+  translation path now skips thinking/reasoning blocks that are predominantly
+  Russian while ignoring code-like Latin tokens, paths, file names and short
+  identifiers.
+- **Mixed English/Russian reasoning still goes through localization.** Reasoning
+  that contains real English prose alongside Russian questionnaire quotes keeps
+  the existing translation behavior.
+
+### Verification
+- `npx ultracite check packages/core/src/session-translation/session-translation-facade.ts packages/core/src/session-translation/session-translation-facade.mixed-reasoning.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-facade.mixed-reasoning.test.js packages/core/dist/session-translation/session-translation-facade.localization-guards.test.js packages/core/dist/session-translation/session-translation-dispatcher.test.js`
+
+## [1.2.541] - 2026-06-17
+### Fixed
+- **Native GLM requests now include OpenCode-style Z.AI session identity headers.** The provider sends `x-session-affinity`, `X-Session-Id` and a stable `User-Agent` with each streaming Chat Completions request.
+- **Native GLM retry timing now follows provider hints before jitter.** Retryable HTTP/opening failures and pre-output stream resets honor `retry-after-ms` / `retry-after` when present, otherwise using capped exponential jitter instead of a fixed linear delay.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-adapter-utils.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts`
+
+## [1.2.540] - 2026-06-17
+### Fixed
+- **Native GLM now writes full provider-home session logs.** Each turn
+  records JSONL under
+  `.codeai-hub/<workspace>/runtime/providers/glm-native/home/sessions/YYYY/MM/DD/`,
+  including the effective profile, request headers/body, raw SSE frames, parsed
+  provider chunks, tool calls/results, usage snapshots, retries and failures.
+- **Native GLM diagnostics preserve local authorization details.** The log
+  intentionally keeps the full `Authorization` header and API request body so
+  reasoning-level and transport issues can be inspected without guessing what
+  was sent.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npx ultracite check packages/GLM_Module/src/provider/glm-native-provider-adapter.ts packages/GLM_Module/src/provider/glm-native-session-log.ts packages/GLM_Module/src/provider/glm-native-stream-reader.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.test.ts packages/GLM_Module/src/provider/glm-native-provider-adapter.tools.test.ts`
+
 ## [1.2.539] - 2026-06-17
 ### Fixed
 - **Native GLM managed turns now receive system instructions and workflow tools.** Requests include the CodeAI Hub system prompt, `write_workflow_artifact`, `tool_choice: "auto"` and `tool_stream: true`, so GLM can create canonical `.codeai-hub/...` artifacts instead of pasting them into chat.

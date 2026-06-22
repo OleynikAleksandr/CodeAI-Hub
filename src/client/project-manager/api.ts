@@ -218,9 +218,7 @@ class ProjectManagerApi {
     this.send({ type: "session:create", payload: params });
   }
   startDevelopmentTreeNode(params: {
-    readonly modelId?: string | null;
     readonly providerId: string;
-    readonly reasoning?: string | null;
     readonly workflowPath: string;
     readonly workspacePath: string;
     readonly workspaceSlug: string;

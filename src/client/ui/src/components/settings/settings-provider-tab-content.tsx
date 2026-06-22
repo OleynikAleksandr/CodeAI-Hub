@@ -46,6 +46,7 @@ export type SettingsViewState = UseSettingsStateResult & {
   ) => void;
   readonly handleGlmNativeThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleKimiThinkingDisplaySyncChange?: SettingsBooleanHandler;
+  readonly handleKimiThinkingEnabledChange?: SettingsBooleanHandler;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
   readonly supportsCoreRestart?: boolean;
@@ -188,6 +189,7 @@ export const SettingsProviderTabContent: React.FC<
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
     handleKimiThinkingDisplaySyncChange,
+    handleKimiThinkingEnabledChange,
     handleLocalizationCategoryLanguageChange,
     handleLocalizationDefaultLanguageChange,
     handleLocalizationEngineIdChange,
@@ -295,8 +297,10 @@ export const SettingsProviderTabContent: React.FC<
         kimiThinkingDisplaySyncEnabled={
           settings.providers.kimi?.thinkingDisplaySyncEnabled
         }
+        kimiThinkingEnabled={settings.providers.kimi?.thinkingEnabled}
         onKimiDefaultModelChange={handleKimiDefaultModelChange}
         onKimiThinkingDisplaySyncChange={handleKimiThinkingDisplaySyncChange}
+        onKimiThinkingEnabledChange={handleKimiThinkingEnabledChange}
       />
     );
   }

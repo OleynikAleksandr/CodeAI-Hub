@@ -179,7 +179,6 @@ Current supported Codex model ids:
 | --- | --- | --- |
 | `gpt-5.2` | yes | `low`, `medium`, `high`, `xhigh` |
 | `gpt-5.3-codex-spark` | no | `low`, `medium`, `high`, `xhigh` |
-| `gpt-5.3-codex` | yes | `low`, `medium`, `high`, `xhigh` |
 | `gpt-5.4-mini` | yes | `low`, `medium`, `high`, `xhigh` |
 | `gpt-5.4` | yes | `low`, `medium`, `high`, `xhigh` |
 | `gpt-5.5` | yes | `low`, `medium`, `high`, `xhigh` |
@@ -188,7 +187,7 @@ Default resolution order:
 
 1. `settings.json -> providers.codex.defaultModel`
 2. `CODEX_DEFAULT_MODEL`
-3. fallback `gpt-5.3-codex`
+3. fallback `gpt-5.4-mini`
 
 Reasoning effort resolution:
 

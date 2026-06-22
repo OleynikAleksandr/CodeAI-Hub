@@ -18,7 +18,7 @@ const CARD_SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/capture-workbench/snapshot-card.tsx"
 );
 
-test("CaptureWorkbenchSnapshotCardsRow renders empty managed and disabled vanilla cards", () => {
+test("CaptureWorkbenchSnapshotCardsRow renders empty snapshot recapture actions", () => {
   const markup = renderToStaticMarkup(
     <CaptureWorkbenchSnapshotCardsRow
       captureTransport={CAPTURE_TRANSPORT}
@@ -39,8 +39,10 @@ test("CaptureWorkbenchSnapshotCardsRow renders empty managed and disabled vanill
   assert.equal(markup.includes("Vanilla snapshot"), true);
   assert.equal(markup.includes("Managed snapshot"), true);
   assert.equal(markup.includes("No current artifact"), true);
+  assert.equal(markup.includes("Re-capture Vanilla"), true);
   assert.equal(markup.includes("Re-capture Managed"), true);
-  assert.equal(markup.includes("Vanilla capture is deferred"), true);
+  assert.equal(markup.includes("Delete captures"), true);
+  assert.equal(markup.includes("Vanilla capture is deferred"), false);
 });
 
 test("CaptureWorkbenchSnapshotCard renders artifact links and previous metadata", () => {
@@ -65,9 +67,12 @@ test("CaptureWorkbench snapshot row keeps runner, rotation, and file-link wiring
   const cardSource = await readFile(CARD_SOURCE_PATH, "utf8");
 
   assert.equal(rowSource.includes("runner.runManagedCapture"), true);
+  assert.equal(rowSource.includes("runner.runVanillaCapture"), true);
   assert.equal(rowSource.includes("indexStore.rotateCapture({"), true);
+  assert.equal(rowSource.includes('mode: "vanilla"'), true);
   assert.equal(rowSource.includes('mode: "managed"'), true);
   assert.equal(rowSource.includes("setIndex(nextIndex)"), true);
+  assert.equal(rowSource.includes("stateClient.saveIndex(EMPTY_INDEX)"), true);
   assert.equal(rowSource.includes("setError(normalizeError(captureError))"), true);
   assert.equal(cardSource.includes("openProjectManagerFileLink({"), true);
   assert.equal(cardSource.includes("filePath: path"), true);

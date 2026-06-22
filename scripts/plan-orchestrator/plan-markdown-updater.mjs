@@ -104,33 +104,8 @@ export const updatePlanState = (markdown, updateState) => {
     )}${markdown.slice(parsed.block.end)}`;
 };
 
-export const markTaskDoneAndCommitPending = (markdown, taskId) => {
-  const { pairedCommit, task } = locateTaskPair(markdown, taskId);
-  let lines = markdown.split("\n");
-
-  lines = replaceLine(
-    lines,
-    task.lineIndex,
-    replaceItemStatus(task.line, "DONE")
-  );
-  lines = replaceLine(
-    lines,
-    pairedCommit.lineIndex,
-    replaceItemStatus(pairedCommit.line, "PENDING")
-  );
-
-  return updatePlanState(lines.join("\n"), (state) => ({
-    ...state,
-    debt: {
-      expectedCommitMessage: state.expectedCommitMessage,
-      stage: "commit_pending",
-      taskId,
-    },
-  }));
-};
-
 export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
-  const { items, pairedCommit } = locateTaskPair(markdown, taskId);
+  const { items, pairedCommit, task } = locateTaskPair(markdown, taskId);
   const nextTask = locateNextTask(items, pairedCommit.lineIndex);
   let lines = markdown.split("\n");
   assertExplicitCloseoutBoundary(nextTask);
@@ -144,6 +119,11 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
     });
   }
 
+  lines = replaceLine(
+    lines,
+    task.lineIndex,
+    replaceItemStatus(task.line, "DONE")
+  );
   lines = replaceLine(
     lines,
     pairedCommit.lineIndex,

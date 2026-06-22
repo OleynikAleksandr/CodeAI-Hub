@@ -58,11 +58,13 @@ export interface ResolvedKimiTurnConfig {
   readonly defaultModel: string;
   readonly effectiveModelId: string;
   readonly thinkingDisplaySyncEnabled: boolean;
+  readonly thinkingEnabled: boolean;
 }
 
 interface SimpleProviderSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
+  readonly thinkingEnabled?: unknown;
 }
 
 export interface ResolvedClaudeTurnConfig {
@@ -281,6 +283,7 @@ const resolveSimpleProviderTurnConfig = (options: {
     effectiveModelId: defaultModel,
     thinkingDisplaySyncEnabled:
       options.snapshot?.thinkingDisplaySyncEnabled !== false,
+    thinkingEnabled: true,
   };
 };
 
@@ -311,6 +314,7 @@ const resolveLocalModelsTurnConfig = (
     defaultModel,
     effectiveModelId: defaultModel,
     thinkingDisplaySyncEnabled: true,
+    thinkingEnabled: true,
   };
 };
 
@@ -388,6 +392,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     defaultModel: resolved.kimi.defaultModel,
     effectiveModelId: resolved.kimi.effectiveModelId,
     thinkingDisplaySyncEnabled: resolved.kimi.thinkingDisplaySyncEnabled,
+    thinkingEnabled: resolved.kimi.thinkingEnabled,
   },
   glmOpenCode: {
     providerId: "glmOpenCode",

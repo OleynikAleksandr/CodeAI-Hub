@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getRepositoryDebtPath, readPlanDebtFile } from "./plan-debt.mjs";
 import { getGitState } from "./plan-git-state.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
 
@@ -24,6 +25,7 @@ export const evaluateCommitMessageGuard = ({
   gitState,
   markdown,
   message,
+  transactionDebt = null,
 }) => {
   const validation = validatePlanMarkdown(markdown, { gitState });
   const isMissingMachineState =
@@ -73,13 +75,16 @@ export const evaluateCommitMessageGuard = ({
   }
 
   const subject = getCommitSubject(message);
+  const expectedMessage =
+    transactionDebt?.expectedCommitMessage ??
+    validation.state.expectedCommitMessage;
 
-  if (subject !== validation.state.expectedCommitMessage) {
+  if (subject !== expectedMessage) {
     return {
       issues: [
         createIssue(
           "PLAN_COMMIT_MESSAGE_MISMATCH",
-          `Expected "${validation.state.expectedCommitMessage}", got "${subject}".`
+          `Expected "${expectedMessage}", got "${subject}".`
         ),
       ],
       ok: false,
@@ -117,6 +122,7 @@ const main = () => {
     gitState: getGitState(cwd),
     markdown: readFileSync(planPath, "utf8"),
     message: readFileSync(messageFile, "utf8"),
+    transactionDebt: readPlanDebtFile(getRepositoryDebtPath(cwd)),
   });
 
   if (result.ok) {

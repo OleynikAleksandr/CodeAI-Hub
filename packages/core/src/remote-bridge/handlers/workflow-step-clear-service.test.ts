@@ -388,7 +388,7 @@ test("workflow step clear prunes provider-native workflow sessions only", async 
     assert.equal(await fileExists(codexTranslationPath), true);
     assert.equal(await fileExists(codexUnifiedPath), false);
     assert.equal(await fileExists(codexUnifiedTranslationsPath), false);
-    assert.equal(await fileExists(staleDiagramUnifiedPath), false);
+    assert.equal(await fileExists(staleDiagramUnifiedPath), true);
     assert.equal(await fileExists(unrelatedUnifiedPath), true);
     assert.deepEqual(
       (result.payload as { readonly deletedSessionIds: readonly string[] })

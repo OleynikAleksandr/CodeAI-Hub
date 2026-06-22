@@ -74,12 +74,14 @@ test("dogfoods active plan commit guards, finalize, and repair path", () => {
     env: TRANSACTION_ENV,
     gitState: { ...gitState, debtExists: true },
     markdown: pending.markdown,
+    transactionDebt: pending.debt,
   });
   const transactionCommitMessage = evaluateCommitMessageGuard({
     env: TRANSACTION_ENV,
     gitState: { ...gitState, debtExists: true },
     markdown: pending.markdown,
     message: "test: dogfood plan orchestrator commit hooks\n",
+    transactionDebt: pending.debt,
   });
 
   assert.equal(transactionPreCommit.ok, true);
@@ -88,16 +90,15 @@ test("dogfoods active plan commit guards, finalize, and repair path", () => {
   assert.equal(transactionCommitMessage.reason, "transaction_commit_message");
 
   const finalized = finalizePostCommit({
-    commitHash: "abc1234",
     debt: pending.debt,
     debtPath,
     markdown: pending.markdown,
   });
   const finalizedState = parsePlanStateMarkdown(finalized.markdown).state;
 
-  assert.equal(finalized.reason, "finalized");
+  assert.equal(finalized.reason, "cleared_local_debt");
   assert.equal(finalizedState.debt, null);
-  assert.equal(finalizedState.lastRecordedCommit, "abc1234");
+  assert.equal(finalizedState.lastRecordedCommit, "self");
   assert.equal(finalizedState.currentTaskId, "phase4.stream8.task1");
 
   const repaired = repairPlanMarkdown({
@@ -108,9 +109,9 @@ test("dogfoods active plan commit guards, finalize, and repair path", () => {
   });
   const repairedState = parsePlanStateMarkdown(repaired.markdown).state;
 
-  assert.equal(repaired.reason, "commit_succeeded_hash_missing");
+  assert.equal(repaired.reason, "commit_succeeded_local_debt_cleared");
   assert.equal(repairedState.debt, null);
-  assert.equal(repairedState.lastRecordedCommit, "def5678");
+  assert.equal(repairedState.lastRecordedCommit, "self");
   assert.equal(repairedState.currentTaskId, "phase4.stream8.task1");
 
   const rolledBack = repairPlanMarkdown({

@@ -5,6 +5,8 @@ GLM-OpenCode provider module подключает OpenCode CLI как workflow-�
 
 Главная цель модуля — не владеть собственным GLM API-клиентом. CodeAI Hub отдает agent runtime OpenCode, а Core остается владельцем workflow state, prompt/artifact contracts, settings snapshot, model identity и user-facing lifecycle.
 
+After release `1.2.542`, this module remains a selectable OpenCode wrapper/fallback and a useful comparison path for GLM/Kimi selectors. It is not the primary GLM 5.2 provider when CodeAI Hub needs full control over system instructions, workflow tools, provider-home session logs and native transport retries; that role belongs to `glmNative`.
+
 ## Где живёт код
 - Provider package: `packages/GLM_OpenCode_Module/`
 - Public Core-facing facade: `packages/GLM_OpenCode_Module/src/provider/glm-opencode-provider-adapter.ts`
@@ -68,7 +70,7 @@ GLM-OpenCode provider module подключает OpenCode CLI как workflow-�
 
 ## Инварианты
 - `glmOpenCode` is a distinct provider id, not an alias of `kimiCode` or `claudeCode`.
-- CodeAI Hub does not own a native GLM API client in this module.
+- CodeAI Hub does not own a native GLM API client in this module; native GLM behavior is documented in `Modules/GLM_Native.md`.
 - OpenCode CLI must be present and authenticated through Z.AI API key configuration before workflow sends.
 - Every user-facing provider surface that offers GLM-OpenCode must send raw provider/model intent to Core; Project Manager must not own separate workflow truth.
 - Unproven telemetry must render as unavailable.

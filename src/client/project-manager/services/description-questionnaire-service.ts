@@ -160,6 +160,14 @@ const refreshWorkspaceSession = async (
   return await ensureWorkspaceSession(workspacePath, initiativeSlug);
 };
 
+// Seed the questionnaire template only when the file is confirmed absent
+// (HTTP 404). A read "error" (e.g. a transient failure or the Core endpoint not
+// being ready at startup) must NOT be treated as "missing"; otherwise a filled
+// questionnaire is overwritten by the empty template. See doc/BugRegistry.md.
+export const shouldSeedQuestionnaire = (
+  status: WorkspaceFileFetchResult["status"]
+): boolean => status === "missing";
+
 export class DescriptionQuestionnaireService {
   async load(workspace: WorkspaceInfo): Promise<QuestionnaireLoadResult> {
     const workspaceName = resolveWorkspaceName(workspace);
@@ -212,7 +220,7 @@ export class DescriptionQuestionnaireService {
       nextAnswers
     );
 
-    if (!existingContent) {
+    if (shouldSeedQuestionnaire(existing.status)) {
       await writeWorkspaceFile(sessionId, questionnairePath, rendered);
     }
 

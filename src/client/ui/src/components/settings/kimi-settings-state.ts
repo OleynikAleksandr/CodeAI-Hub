@@ -1,4 +1,8 @@
-import { DEFAULT_KIMI_MODEL_ID } from "../../../../../types/kimi-model-registry";
+import {
+  DEFAULT_KIMI_MODEL_ID,
+  KIMI_MODEL_ID_SET,
+  type KimiModelId,
+} from "../../../../../types/kimi-model-registry";
 import type {
   RawAutoUpdateSettings,
   RawGlmNativeSettings,
@@ -12,8 +16,9 @@ interface AutoUpdateSettings {
 
 export interface KimiSettings {
   readonly autoUpdate: AutoUpdateSettings;
-  readonly defaultModel: typeof DEFAULT_KIMI_MODEL_ID;
+  readonly defaultModel: KimiModelId;
   readonly thinkingDisplaySyncEnabled: boolean;
+  readonly thinkingEnabled: boolean;
 }
 
 export type GlmOpenCodeModelId =
@@ -81,6 +86,13 @@ const mapOptionalString = (value: unknown, fallback: string): string =>
 const mapOptionalBoolean = (value: unknown, fallback: boolean): boolean =>
   typeof value === "boolean" ? value : fallback;
 
+const mapKimiModel = (value: unknown): KimiModelId => {
+  const modelId = mapOptionalString(value, DEFAULT_KIMI_MODEL_ID);
+  return KIMI_MODEL_ID_SET.has(modelId as KimiModelId)
+    ? (modelId as KimiModelId)
+    : DEFAULT_KIMI_MODEL_ID;
+};
+
 const mapGlmNativeReasoningEffort = (
   value: unknown
 ): GlmNativeReasoningEffort => {
@@ -116,10 +128,11 @@ export const mapKimiSettings = (
   mapThinkingDisplaySyncEnabled: (value: unknown) => boolean
 ): KimiSettings => ({
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-  defaultModel: DEFAULT_KIMI_MODEL_ID,
+  defaultModel: mapKimiModel(value?.defaultModel),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled
   ),
+  thinkingEnabled: true,
 });
 
 export const mapGlmOpenCodeSettings = (

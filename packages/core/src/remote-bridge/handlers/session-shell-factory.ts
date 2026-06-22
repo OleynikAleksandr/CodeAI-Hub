@@ -64,6 +64,11 @@ interface SessionShellFactoryDependencies {
   ) => void;
 }
 
+const isStandaloneWorkspaceSession = (
+  options: CreateAndRegisterSessionOptions
+): boolean =>
+  options.context.initiativeSlug === null && options.context.stage === null;
+
 export class SessionShellFactory {
   private readonly deps: SessionShellFactoryDependencies;
   constructor(deps: SessionShellFactoryDependencies) {
@@ -109,9 +114,12 @@ export class SessionShellFactory {
       targetModelId: options.targetModelId,
     });
 
-    this.deps.sessionStorage.register(session, {
-      historySessionId: continuityRootSessionId,
-    });
+    this.deps.sessionStorage.register(
+      session,
+      isStandaloneWorkspaceSession(options)
+        ? undefined
+        : { historySessionId: continuityRootSessionId }
+    );
 
     this.deps.notifyRuntimeSessionCreated(session);
     this.deps.registerInitialSessionLifecycle(session, options.resumeMode);
@@ -187,9 +195,12 @@ export class SessionShellFactory {
       );
     }
 
-    this.deps.sessionStorage.register(session, {
-      historySessionId: continuityRootSessionId,
-    });
+    this.deps.sessionStorage.register(
+      session,
+      isStandaloneWorkspaceSession(options)
+        ? undefined
+        : { historySessionId: continuityRootSessionId }
+    );
 
     await this.attachBoundProviderSession({
       options,
@@ -228,6 +239,7 @@ export class SessionShellFactory {
         providerSessionId
       );
     }
+    this.deps.sessionStorage.promote(session.id, providerSessionId);
 
     await this.attachBoundProviderSession({
       options,

@@ -319,6 +319,83 @@ test("SettingsRequestHandler resolves loaded localization through the active wor
   assert.equal(firstLoaded?.payload.localizationRuntime, null);
 });
 
+test("SettingsRequestHandler schedules local models warmup after workspace settings load", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "settings-lm-warmup-"));
+  const defaultWorkspaceRoot = path.join(tempRoot, "default-workspace");
+  const defaultWorkspaceSlug =
+    "users-oleksandroliinyk-vscode-codeai-hub-codex-5-4";
+  const targetWorkspaceRoot = path.join(tempRoot, "target-workspace");
+  const targetWorkspaceSlug = "codeai-hub-codex-5-4";
+  const events: BridgeEvent[] = [];
+  const scheduledWarmups: Array<() => void> = [];
+  const warmupSettingsPaths: string[] = [];
+
+  const config = createConfig({
+    globalSettingsPath: path.join(tempRoot, "global", "settings.json"),
+    workspaceRoot: defaultWorkspaceRoot,
+    workspaceSlug: defaultWorkspaceSlug,
+  });
+  const targetCapsule = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: targetWorkspaceRoot,
+    workspaceSlug: targetWorkspaceSlug,
+  });
+  await mkdir(path.dirname(targetCapsule.settingsFile.absolutePath), {
+    recursive: true,
+  });
+  await writeFile(
+    targetCapsule.settingsFile.absolutePath,
+    `${JSON.stringify(
+      {
+        ...createSettings(),
+        providers: {
+          ...createSettings().providers,
+          localModels: { defaultModel: "workflow-local" },
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+
+  const handler = new SettingsRequestHandler({
+    broadcaster: (event) => events.push(event),
+    config,
+    createLocalizationFacade: () =>
+      ({
+        listAvailableEngines: createEngineCatalogs,
+        resolveRuntimePayload: () => Promise.resolve(createRuntimePayload()),
+        synchronizeRuntimePayload: () =>
+          Promise.resolve(createRuntimePayload()),
+      }) as unknown as LocalizationFacade,
+    logger,
+    scheduleLocalModelsWarmup(callback) {
+      scheduledWarmups.push(callback);
+    },
+    warmSelectedLocalModels({ settingsPath }) {
+      warmupSettingsPaths.push(settingsPath);
+    },
+  });
+
+  await handler.handleLoad({
+    workspaceRoot: targetWorkspaceRoot,
+    workspaceSlug: targetWorkspaceSlug,
+  });
+
+  assert.equal(
+    events.filter((event) => event.type === "settings:loaded").length,
+    2
+  );
+  assert.deepEqual(warmupSettingsPaths, []);
+  assert.equal(scheduledWarmups.length, 1);
+
+  scheduledWarmups[0]?.();
+
+  assert.deepEqual(warmupSettingsPaths, [
+    targetCapsule.settingsFile.absolutePath,
+  ]);
+});
+
 test("SettingsRequestHandler opens user glossary in the active workspace runtime", async () => {
   const tempRoot = await mkdtemp(
     path.join(tmpdir(), "settings-l10n-glossary-")
