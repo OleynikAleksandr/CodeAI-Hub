@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.chat-heading-typography.task1",
-  "expectedCommitMessage": "fix: reduce standalone chat heading scale",
+  "currentTaskId": "provider-tools.phase1.closeout.task1",
+  "expectedCommitMessage": "docs: close provider prompt tooling scope",
   "debt": null
 }
 ```
@@ -219,9 +219,13 @@
 ### Stream: Standalone Chat Heading Typography Follow-up
 114. [DONE] `provider-tools.phase1.chat-heading-typography-plan.task1` Add the screenshot-driven follow-up task for reducing oversized Markdown heading typography in standalone provider chat messages before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan standalone chat heading typography fix`).
 115. [DONE] `provider-tools.phase1.chat-heading-typography-plan.commit1` Git Commit: `docs: plan standalone chat heading typography fix` (hash: self)
-116. [IN_PROGRESS] `provider-tools.phase1.chat-heading-typography.task1` Reduce standalone chat rendered Markdown heading sizes by roughly 4x for provider/user-facing message cards while keeping normal body text unchanged (scope: `src/client/**/session/**, src/client/**/components/sessions/**, media/**/*.css, doc/TODO/todo-plan.md`; expected commit: `fix: reduce standalone chat heading scale`).
+116. [TODO] `provider-tools.phase1.chat-heading-typography.task1` Reduce standalone chat rendered Markdown heading sizes by roughly 4x for provider/user-facing message cards while keeping normal body text unchanged (scope: `src/client/**/session/**, src/client/**/components/sessions/**, media/**/*.css, doc/TODO/todo-plan.md`; expected commit: `fix: reduce standalone chat heading scale`).
 117. [TODO] `provider-tools.phase1.chat-heading-typography.commit1` Git Commit: `fix: reduce standalone chat heading scale` (hash: TBD)
 
+### Stream: Next Scope Intake - Kimi Parity And Workspace Instructions
+118. [DONE] `provider-tools.phase1.next-scope-intake.task1` Record the next provider scope intake before closeout. First line of the next plan must be: port the full GLM Native provider work to Kimi, including executable tool parity where Kimi can execute it or an explicit ACP/MCP bridge where it cannot. Second line must be: inject workspace custom instructions by having Core read `AGENTS.md` when present and pass its full text into provider-visible initial/system context for GLM, Kimi, and future standalone providers (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan kimi parity workspace instructions scope`).
+119. [DONE] `provider-tools.phase1.next-scope-intake.commit1` Git Commit: `docs: plan kimi parity workspace instructions scope` (hash: self)
+
 ### Stream: Scope Closeout
-118. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-119. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+120. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+121. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
