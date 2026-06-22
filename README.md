@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.587** (GLM Expanded Tools Retest)
+**Current Release — v1.2.588** (GLM Expanded Tools Smoke Follow-up)
+
+This release packages the GLM expanded tool smoke-test follow-up from the
+1.2.587 retest.
+
+GLM `edit_file_by_anchor` now exposes a schema that clearly requires string
+anchors from `read_file_anchored`, not line numbers. `browser_fetch` now
+detects the standard macOS Google Chrome executable path and supports
+`CODEAI_GLM_BROWSER_PATH` for custom browser locations.
+
+Retest focus: install the VSIX, restart the app, open standalone GLM, repeat
+the integrated tool smoke-test and confirm `edit_file_by_anchor` uses string
+anchors cleanly and `browser_fetch` returns rendered text through Chrome.
+
+**Previous Release — v1.2.587** (GLM Expanded Tools Retest)
 
 This release packages the expanded GLM Native standalone tool surface.
 

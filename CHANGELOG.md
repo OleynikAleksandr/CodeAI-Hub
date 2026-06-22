@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.588] - 2026-06-22
+### Fixed
+- **GLM `edit_file_by_anchor` schema now matches the executor.** The tool
+  contract tells agents to pass string anchors returned by
+  `read_file_anchored`, not numeric line ranges.
+- **GLM `browser_fetch` can find local Chrome reliably on macOS.** The
+  resolver checks the standard Google Chrome application executable and honors
+  `CODEAI_GLM_BROWSER_PATH` for custom browser locations.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- Manual `browser_fetch` against `https://example.com` through
+  `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
+- `npm run plan:validate`
+
 ## [1.2.587] - 2026-06-22
 ### Added
 - **GLM Native exposes the expanded standalone tool surface.** GLM now has
