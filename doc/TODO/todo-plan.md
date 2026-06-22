@@ -222,10 +222,14 @@
 116. [TODO] `provider-tools.phase1.chat-heading-typography.task1` Reduce standalone chat rendered Markdown heading sizes by roughly 4x for provider/user-facing message cards while keeping normal body text unchanged (scope: `src/client/**/session/**, src/client/**/components/sessions/**, media/**/*.css, doc/TODO/todo-plan.md`; expected commit: `fix: reduce standalone chat heading scale`).
 117. [TODO] `provider-tools.phase1.chat-heading-typography.commit1` Git Commit: `fix: reduce standalone chat heading scale` (hash: TBD)
 
-### Stream: Next Scope Intake - Kimi Parity And Workspace Instructions
-118. [DONE] `provider-tools.phase1.next-scope-intake.task1` Record the next provider scope intake before closeout. First line of the next plan must be: port the full GLM Native provider work to Kimi, including executable tool parity where Kimi can execute it or an explicit ACP/MCP bridge where it cannot. Second line must be: inject workspace custom instructions by having Core read `AGENTS.md` when present and pass its full text into provider-visible initial/system context for GLM, Kimi, and future standalone providers (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan kimi parity workspace instructions scope`).
+### Stream: Next Scope Intake - GLM Workspace Instructions
+118. [DONE] `provider-tools.phase1.next-scope-intake.task1` Record the corrected next provider scope intake before closeout. First line of the next plan must be: inject workspace custom instructions by having Core read `AGENTS.md` when present and pass its full text into GLM provider-visible initial/system context. Second line must be: evaluate GLM-native executable additions for subagents, media reading, skills, and background task lifecycle. Kimi is out of this scope because Kimi CLI/ACP already injects workspace instructions and exposes richer native agent tools (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan kimi parity workspace instructions scope`).
 119. [DONE] `provider-tools.phase1.next-scope-intake.commit1` Git Commit: `docs: plan kimi parity workspace instructions scope` (hash: self)
 
+### Stream: GLM Native Tool Evolution Documentation
+120. [DONE] `provider-tools.phase1.glm-tool-evolution-docs.task1` Record the GLM Native next evolution direction in the GLM module SSOT: workspace custom instructions, subagents, media reading, skills, and background task lifecycle must become GLM-owned executable capabilities or supported bridges, not prompt-only claims. Kimi is explicitly out of scope (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm native tool evolution`).
+121. [DONE] `provider-tools.phase1.glm-tool-evolution-docs.commit1` Git Commit: `docs: document glm native tool evolution` (hash: self)
+
 ### Stream: Scope Closeout
-120. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-121. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+122. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+123. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)

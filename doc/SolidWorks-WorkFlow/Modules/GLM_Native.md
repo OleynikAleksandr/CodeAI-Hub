@@ -101,6 +101,16 @@ Dispatcher и executors живут в:
 
 Prompt/system instruction не должен дублировать JSON schemas этих tools. Модель получает schemas через request `tools`; system message только объясняет, когда какой инструмент использовать.
 
+## Перспектива: native GLM agent capabilities
+- Kimi CLI smoke-test показал полезные категории agent-runtime tools, которых у GLM Native пока нет как исполняемых GLM-owned tools: subagents/agent swarm, чтение медиафайлов, registered skills и background task lifecycle.
+- Следующий GLM scope должен добавлять эти возможности только как реальные executable tools или поддержанный bridge/extension point, а не как текстовое описание в system prompt.
+- Приоритет для GLM Native:
+  - subagents через отдельный GLM-owned `agent` / `agent_swarm` contract;
+  - media inspection через text/vision-safe `read_media_file`;
+  - registered skill invocation через `skill`;
+  - background task lifecycle через task list/output/stop tools, если это безопасно для standalone sessions.
+- Отдельный обязательный GLM gap: workspace custom instructions. GLM Native должен получать `AGENTS.md`, если файл есть в workspace, в provider-visible initial/system context. Kimi уже получает такие инструкции через Kimi CLI/ACP, поэтому Kimi сейчас не является scope для этой работы.
+
 ## Event normalization
 - SSE `choices[].delta.reasoning_content` is buffered into readable `thinking` events tagged `thinking`; raw provider micro-chunks must not become one visible line per SSE frame.
 - Core may skip localization dispatch for already-Russian `thinking` blocks, but mixed English/Russian reasoning stays eligible for reasoning translation. This is display policy, not native transcript mutation.
