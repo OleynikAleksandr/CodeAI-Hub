@@ -61,14 +61,42 @@ export const GLM_NATIVE_EXPANDED_WORKFLOW_TOOLS: readonly GlmNativeToolDefinitio
     }),
     buildGlmFunctionTool({
       description:
-        "Edit a UTF-8 file by anchors returned from read_file_anchored. Supports old_range replacement/deletion and insert_before/insert_after.",
+        "Edit a UTF-8 file by string anchors returned from read_file_anchored. Supports old_range replacement/deletion and insert_before/insert_after.",
       name: "edit_file_by_anchor",
       parameters: objectSchema(
         {
           edits: {
             description:
-              "Array of edits. Each edit uses {old_range:[start,end], new_lines:[...]} or {insert_after:anchor,new_lines:[...]} or {insert_before:anchor,new_lines:[...]}.",
-            items: { type: "object" },
+              "Array of edits. Each edit uses string anchors: {old_range:[start_anchor,end_anchor], new_lines:[...]} or {insert_after:anchor,new_lines:[...]} or {insert_before:anchor,new_lines:[...]}. Do not pass line numbers.",
+            items: {
+              additionalProperties: false,
+              properties: {
+                insert_after: {
+                  description: "String anchor returned by read_file_anchored.",
+                  type: "string",
+                },
+                insert_before: {
+                  description: "String anchor returned by read_file_anchored.",
+                  type: "string",
+                },
+                new_lines: {
+                  description:
+                    "Replacement or inserted lines. Each entry is one line without a newline character.",
+                  items: { type: "string" },
+                  type: "array",
+                },
+                old_range: {
+                  description:
+                    "Inclusive [start_anchor,end_anchor] string anchors returned by read_file_anchored.",
+                  items: { type: "string" },
+                  maxItems: 2,
+                  minItems: 2,
+                  type: "array",
+                },
+              },
+              required: ["new_lines"],
+              type: "object",
+            },
             type: "array",
           },
           path: {

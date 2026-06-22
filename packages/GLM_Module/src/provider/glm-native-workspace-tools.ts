@@ -1,3 +1,4 @@
+import { access, constants as fsConstants } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import { runProcess, runShell } from "./glm-native-process";
@@ -10,6 +11,7 @@ const HTML_TAG_PATTERN = /<[^>]+>/gu;
 const WHITESPACE_PATTERN = /\s+/gu;
 const TEST_FAILURE_PATTERN =
   /\b(fail|failed|error|not ok|assertionerror|exception)\b/iu;
+const BROWSER_PATH_ENV = "CODEAI_GLM_BROWSER_PATH";
 
 export const executeGlmNativeWorkspaceTool = (
   name: string,
@@ -111,8 +113,7 @@ const executeBrowserFetchTool = async (
   const browser = await findHeadlessBrowser();
   if (!browser) {
     return {
-      error:
-        "No Chrome/Chromium/Edge executable found for headless browser fetch.",
+      error: `No Chrome/Chromium/Edge executable found for headless browser fetch. Set ${BROWSER_PATH_ENV} to a browser executable path if Chrome is installed in a custom location.`,
       ok: false,
     };
   }
@@ -303,18 +304,11 @@ const resolveSearchTarget = async (
 };
 
 const findHeadlessBrowser = async (): Promise<string | null> => {
-  const candidates =
-    process.platform === "darwin"
-      ? [
-          "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-          "/Applications/Chromium.app/Contents/MacOS/Chromium",
-          "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-          "google-chrome",
-          "chromium",
-          "microsoft-edge",
-        ]
-      : ["google-chrome", "chromium", "chromium-browser", "microsoft-edge"];
+  const candidates = browserCandidates();
   for (const candidate of candidates) {
+    if (path.isAbsolute(candidate) && !(await canExecute(candidate))) {
+      continue;
+    }
     const result = await runProcess(
       candidate,
       ["--version"],
@@ -328,6 +322,28 @@ const findHeadlessBrowser = async (): Promise<string | null> => {
   }
   return null;
 };
+
+const browserCandidates = (): readonly string[] => {
+  const explicitPath = process.env[BROWSER_PATH_ENV];
+  const defaults =
+    process.platform === "darwin"
+      ? [
+          "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+          "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+          "/Applications/Chromium.app/Contents/MacOS/Chromium",
+          "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+          "google-chrome",
+          "chromium",
+          "microsoft-edge",
+        ]
+      : ["google-chrome", "chromium", "chromium-browser", "microsoft-edge"];
+  return [...new Set([explicitPath, ...defaults].filter(Boolean) as string[])];
+};
+
+const canExecute = (filePath: string): Promise<boolean> =>
+  new Promise((resolve) => {
+    access(filePath, fsConstants.X_OK, (error) => resolve(!error));
+  });
 
 const cleanWebText = (value: string): string =>
   decodeHtml(

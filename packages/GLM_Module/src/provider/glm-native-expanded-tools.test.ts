@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { GLM_NATIVE_EXPANDED_WORKFLOW_TOOLS } from "./glm-native-expanded-tool-definitions";
 import type { GlmToolCall } from "./glm-native-sse-parser";
 import { executeGlmNativeTool } from "./glm-native-tool-executors";
 
@@ -11,8 +12,10 @@ const ANCHOR_LINE_PATTERN = /^\d+:([A-Za-z0-9_-]{3})\u2502/u;
 const CLASS_SAMPLE_TOOL_PATTERN = /class SampleTool/u;
 const EXTRA_FIELD_PATTERN = /extra = true/u;
 const RETURN_TWO_PATTERN = /return 2/u;
+const RENDERED_OK_PATTERN = /Rendered OK/u;
 const SAMPLE_TOOL_PATTERN = /SampleTool/u;
 const SAMPLE_TS_PATTERN = /sample\.ts/u;
+const STRING_ANCHOR_PATTERN = /string anchors/u;
 const TESTS_OK_PATTERN = /tests-ok/u;
 const USE_SAMPLE_PATTERN = /useSample/u;
 
@@ -64,6 +67,21 @@ test("GLM expanded file tools read anchors and edit by anchor", async () => {
   } finally {
     await rm(workspacePath, { force: true, recursive: true });
   }
+});
+
+test("GLM expanded tool schema tells agents to use string anchors", () => {
+  const tool = GLM_NATIVE_EXPANDED_WORKFLOW_TOOLS.find(
+    ({ function: definition }) => definition.name === "edit_file_by_anchor"
+  )?.function;
+  assert.ok(tool);
+  assert.match(tool.description, STRING_ANCHOR_PATTERN);
+  const edits = (tool.parameters.properties as Record<string, unknown>)
+    .edits as { readonly items?: Record<string, unknown> };
+  const itemProperties = edits.items?.properties as Record<string, unknown>;
+  const oldRange = itemProperties.old_range as {
+    readonly items?: { readonly type?: string };
+  };
+  assert.equal(oldRange.items?.type, "string");
 });
 
 test("GLM expanded workspace tools return structured search git and test results", async () => {
@@ -119,6 +137,40 @@ test("GLM expanded workspace tools return structured search git and test results
     assert.equal(tests.ok, true);
     assert.match(String(tests.stdout), TESTS_OK_PATTERN);
   } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});
+
+test("GLM browser_fetch can use an explicit browser executable path", async () => {
+  const workspacePath = await mkdtemp(path.join(os.tmpdir(), "glm-browser-"));
+  const browserPath = path.join(workspacePath, "fake-browser");
+  const previousBrowserPath = process.env.CODEAI_GLM_BROWSER_PATH;
+  await writeFile(
+    browserPath,
+    [
+      "#!/bin/sh",
+      'if [ "$1" = "--version" ]; then echo "Fake Chrome"; exit 0; fi',
+      'echo "<html><body><main>Rendered OK</main></body></html>"',
+    ].join("\n"),
+    "utf8"
+  );
+  await chmod(browserPath, 0o755);
+  process.env.CODEAI_GLM_BROWSER_PATH = browserPath;
+  try {
+    const result = await callTool(
+      "browser_fetch",
+      { max_chars: 1000, url: "https://example.com" },
+      workspacePath
+    );
+    assert.equal(result.ok, true);
+    assert.equal(result.browser, browserPath);
+    assert.match(String(result.text), RENDERED_OK_PATTERN);
+  } finally {
+    if (previousBrowserPath === undefined) {
+      process.env.CODEAI_GLM_BROWSER_PATH = "";
+    } else {
+      process.env.CODEAI_GLM_BROWSER_PATH = previousBrowserPath;
+    }
     await rm(workspacePath, { force: true, recursive: true });
   }
 });

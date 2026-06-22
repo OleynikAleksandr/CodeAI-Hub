@@ -206,6 +206,10 @@
 106. [DONE] `provider-tools.phase1.release-build-587.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.587 test release`).
 107. [DONE] `provider-tools.phase1.release-build-587.commit1` Git Commit: `chore: build 1.2.587 test release` (hash: self)
 
+### Stream: GLM Expanded Tool Smoke Follow-up
+108. [DONE] `provider-tools.phase1.glm-expanded-smoke-followup.task1` Repair the 1.2.587 GLM smoke-test issues in one pass: make `edit_file_by_anchor` schema describe string anchors and make `browser_fetch` detect the installed macOS Chrome binary reliably (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm expanded tool smoke issues`).
+109. [DONE] `provider-tools.phase1.glm-expanded-smoke-followup.commit1` Git Commit: `fix: repair glm expanded tool smoke issues` (hash: self)
+
 ### Stream: Scope Closeout
-108. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-109. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+110. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+111. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
