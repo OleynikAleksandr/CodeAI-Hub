@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.2.587",
-    "package": "glm-module-1.2.587.tar.bz2",
-    "size": 29416,
-    "sha1": "683ba6cebd987da26161c518885e3d522f977e67"
+    "version": "1.2.588",
+    "package": "glm-module-1.2.588.tar.bz2",
+    "size": 30097,
+    "sha1": "b5bacfcdd55b499a0c325eccff0f82108f2021ac"
   }
 }

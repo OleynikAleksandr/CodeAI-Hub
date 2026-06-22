@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.release-build-588.task1",
-  "expectedCommitMessage": "chore: build 1.2.588 test release",
+  "currentTaskId": "provider-tools.phase1.closeout.task1",
+  "expectedCommitMessage": "docs: close provider prompt tooling scope",
   "debt": null
 }
 ```
@@ -213,9 +213,9 @@
 ### Stream: Release Build 1.2.588
 110. [DONE] `provider-tools.phase1.release-docs-588.task1` Prepare README and CHANGELOG for the user-confirmed 1.2.588 GLM expanded tool smoke follow-up release before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.588 test release`).
 111. [DONE] `provider-tools.phase1.release-docs-588.commit1` Git Commit: `docs: prepare 1.2.588 test release` (hash: self)
-112. [IN_PROGRESS] `provider-tools.phase1.release-build-588.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.588 test release`).
-113. [TODO] `provider-tools.phase1.release-build-588.commit1` Git Commit: `chore: build 1.2.588 test release` (hash: TBD)
+112. [DONE] `provider-tools.phase1.release-build-588.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.588 test release`).
+113. [DONE] `provider-tools.phase1.release-build-588.commit1` Git Commit: `chore: build 1.2.588 test release` (hash: self)
 
 ### Stream: Scope Closeout
-114. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+114. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
 115. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
