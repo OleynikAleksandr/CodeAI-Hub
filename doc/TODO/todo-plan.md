@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.provider-code-navigation.task1",
-  "expectedCommitMessage": "docs: scope provider code navigation tools",
+  "currentTaskId": "provider-tools.phase1.closeout.task1",
+  "expectedCommitMessage": "docs: close provider prompt tooling scope",
   "debt": null
 }
 ```
@@ -174,9 +174,9 @@
 84. [DONE] `provider-tools.phase1.glm-apply-patch-tool.commit1` Git Commit: `fix: repair glm apply patch tool` (hash: self)
 85. [DONE] `provider-tools.phase1.glm-web-fetch.task1` Harden GLM `web_fetch` for JS-rendered or sparse pages by adding the smallest available rendered-content fallback or returning a clear limitation when only navigation shell HTML is available (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: harden glm web fetch results`).
 86. [DONE] `provider-tools.phase1.glm-web-fetch.commit1` Git Commit: `fix: harden glm web fetch results` (hash: self)
-87. [IN_PROGRESS] `provider-tools.phase1.provider-code-navigation.task1` Scope provider-owned code navigation tools for LSP-style references/definitions and semantic code search as shared capabilities after GLM file search is reliable, avoiding a GLM-only one-off implementation (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope provider code navigation tools`).
-88. [TODO] `provider-tools.phase1.provider-code-navigation.commit1` Git Commit: `docs: scope provider code navigation tools` (hash: TBD)
+87. [DONE] `provider-tools.phase1.provider-code-navigation.task1` Scope provider-owned code navigation tools for LSP-style references/definitions and semantic code search as shared capabilities after GLM file search is reliable, avoiding a GLM-only one-off implementation (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope provider code navigation tools`).
+88. [DONE] `provider-tools.phase1.provider-code-navigation.commit1` Git Commit: `docs: scope provider code navigation tools` (hash: self)
 
 ### Stream: Scope Closeout
-89. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+89. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
 90. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
