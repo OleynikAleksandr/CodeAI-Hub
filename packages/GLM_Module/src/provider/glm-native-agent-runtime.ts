@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { GLM_NATIVE_EXPANDED_WORKFLOW_TOOLS } from "./glm-native-expanded-tool-definitions";
 import type { GlmRuntimeProfile } from "./glm-native-runtime-profile";
 import type { GlmToolCall } from "./glm-native-sse-parser";
 import { executeGlmNativeTool } from "./glm-native-tool-executors";
@@ -190,6 +191,7 @@ export const GLM_NATIVE_WORKFLOW_TOOLS: readonly GlmNativeToolDefinition[] = [
       ["url"]
     ),
   }),
+  ...GLM_NATIVE_EXPANDED_WORKFLOW_TOOLS,
   {
     type: "function",
     function: {
@@ -261,10 +263,11 @@ const buildGlmNativeSystemInstruction = (profile: GlmRuntimeProfile): string =>
     "- Follow the user's workflow prompt as the task contract.",
     "- Treat runtime-provided target artifact paths as authoritative.",
     "- The executable GLM tools are provided in the request `tools` array using Z.AI/OpenAI-compatible function-call format; every declared tool has a local executor.",
-    "- Use `grep_files`, `glob_files` and `read_file` for codebase inspection before broad shell commands.",
-    "- Use `web_search` for current internet search and `web_fetch` to inspect a specific URL.",
+    "- Use `grep_files`, `glob_files`, `read_file`, `read_file_anchored`, and the best-effort symbol tools for codebase inspection before broad shell commands.",
+    "- Use `web_search`, `web_fetch`, and `browser_fetch` when current or JavaScript-rendered web sources must be inspected.",
     "- Use `exec_command` for builds, tests and diagnostics. Prefer `grep_files` over shell `rg` when searching source text.",
-    "- Use `apply_patch` or `write_file` for code edits. Keep edits scoped and verify them with commands.",
+    "- Use `edit_file`, `edit_file_by_anchor`, `apply_patch`, or `write_file` for code edits. Keep edits scoped and verify them with commands.",
+    "- Use structured `git_*` and `run_tests` tools when they cover the task; fall back to `exec_command` only when needed.",
     "- When the prompt asks you to create or rewrite a workflow artifact, call the write_workflow_artifact tool with the exact target relative path and complete file content.",
     "- Do not paste the full artifact body into the chat after a successful write unless the user explicitly asks for it.",
     "- After writing artifacts, answer briefly in the chat language with what changed and any critical questions.",

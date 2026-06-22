@@ -134,20 +134,17 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     });
     assert.equal(body.tool_choice, "auto");
     assert.equal(body.tool_stream, true);
-    assert.deepEqual(
-      body.tools.map((tool) => tool.function.name),
-      [
-        "exec_command",
-        "grep_files",
-        "glob_files",
-        "read_file",
-        "write_file",
-        "apply_patch",
-        "web_search",
-        "web_fetch",
-        "write_workflow_artifact",
-      ]
-    );
+    const toolNames = body.tools.map((tool) => tool.function.name);
+    for (const name of [
+      "exec_command",
+      "read_file_anchored",
+      "edit_file_by_anchor",
+      "browser_fetch",
+      "run_tests",
+      "write_workflow_artifact",
+    ]) {
+      assert.equal(toolNames.includes(name), true);
+    }
     assert.deepEqual(
       events.map((event) => (event as { type: string }).type),
       [

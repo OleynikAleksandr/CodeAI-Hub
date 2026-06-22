@@ -1,8 +1,10 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { executeGlmNativeFileEditTool } from "./glm-native-file-edit-tools";
 import { applyGlmNativePatch } from "./glm-native-patch-executor";
 import { runProcess, runShell } from "./glm-native-process";
 import type { GlmToolCall } from "./glm-native-sse-parser";
+import { executeGlmNativeWorkspaceTool } from "./glm-native-workspace-tools";
 
 const LEADING_DOT_SLASH_PATTERN = /^\.\/+/u;
 const PATH_SEGMENT_SEPARATOR_PATTERN = /[\\/]+/u;
@@ -55,9 +57,20 @@ const dispatchTool = (
     case "write_workflow_artifact":
       return executeWorkflowArtifactTool(args, workspacePath);
     default:
-      return { error: `Unknown tool: ${name}`, ok: false };
+      return dispatchExpandedTool(name, args, workspacePath);
   }
 };
+
+const dispatchExpandedTool = async (
+  name: string,
+  args: Record<string, unknown>,
+  workspacePath?: string
+): Promise<Record<string, unknown>> =>
+  (await executeGlmNativeFileEditTool(name, args, workspacePath)) ??
+  (await executeGlmNativeWorkspaceTool(name, args, workspacePath)) ?? {
+    error: `Unknown tool: ${name}`,
+    ok: false,
+  };
 
 const executeCommandTool = async (
   args: Record<string, unknown>,

@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.glm-expanded-tools.task1",
-  "expectedCommitMessage": "feat: add glm expanded workspace tools",
+  "currentTaskId": "provider-tools.phase1.kimi-expanded-tools.task1",
+  "expectedCommitMessage": "docs: scope kimi expanded provider tools",
   "debt": null
 }
 ```
@@ -189,9 +189,9 @@
 ### Stream: Expanded Provider Tool Surface
 94. [DONE] `provider-tools.phase1.expanded-tools-plan.task1` Add the approved follow-up stream for expanded provider tools: read-only code navigation, rendered web fetch, structured Git/test wrappers, and hash-anchored file reading/editing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan expanded provider tools`).
 95. [DONE] `provider-tools.phase1.expanded-tools-plan.commit1` Git Commit: `docs: plan expanded provider tools` (hash: self)
-96. [IN_PROGRESS] `provider-tools.phase1.glm-expanded-tools.task1` Add GLM Native executable tools for anchored file reads/edits, best-effort code navigation, rendered web fetch, Git wrappers, and structured test command results without adding unavailable Codex-native aliases (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `feat: add glm expanded workspace tools`).
-97. [TODO] `provider-tools.phase1.glm-expanded-tools.commit1` Git Commit: `feat: add glm expanded workspace tools` (hash: TBD)
-98. [TODO] `provider-tools.phase1.kimi-expanded-tools.task1` Document the Kimi ACP limitation for CodeAI-owned expanded tools and the required bridge/MCP route instead of pretending Kimi can execute GLM-owned local tool calls (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope kimi expanded provider tools`).
+96. [DONE] `provider-tools.phase1.glm-expanded-tools.task1` Add GLM Native executable tools for anchored file reads/edits, best-effort code navigation, rendered web fetch, Git wrappers, and structured test command results without adding unavailable Codex-native aliases (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `feat: add glm expanded workspace tools`).
+97. [DONE] `provider-tools.phase1.glm-expanded-tools.commit1` Git Commit: `feat: add glm expanded workspace tools` (hash: self)
+98. [IN_PROGRESS] `provider-tools.phase1.kimi-expanded-tools.task1` Document the Kimi ACP limitation for CodeAI-owned expanded tools and the required bridge/MCP route instead of pretending Kimi can execute GLM-owned local tool calls (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope kimi expanded provider tools`).
 99. [TODO] `provider-tools.phase1.kimi-expanded-tools.commit1` Git Commit: `docs: scope kimi expanded provider tools` (hash: TBD)
 100. [TODO] `provider-tools.phase1.expanded-tools-verify.task1` Run focused GLM module build/tests after the expanded tool surface changes (scope: `packages/GLM_Module`; expected commit: `test: verify expanded glm tools`).
 101. [TODO] `provider-tools.phase1.expanded-tools-verify.commit1` Git Commit: `test: verify expanded glm tools` (hash: TBD)
