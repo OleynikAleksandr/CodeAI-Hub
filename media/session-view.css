@@ -404,6 +404,18 @@
   font-weight: 600;
 }
 
+.session-dialog__content h1,
+.session-dialog__content h2,
+.session-dialog__content h3,
+.session-dialog__content h4,
+.session-dialog__content h5,
+.session-dialog__content h6 {
+  margin: 6px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .session-dialog__content a,
 .session-dialog__content a:visited {
   font-weight: 500;
