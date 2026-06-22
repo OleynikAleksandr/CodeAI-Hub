@@ -184,6 +184,7 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
     await harness.handler.handleMessage(session.id, "start on sonnet");
 
     assert.deepEqual(readAppliedProviderTurnConfig(sentTurnOptions[0]), {
+      artifactsForTheUserLanguage: "en",
       baseModelId: "sonnet",
       effectiveModelId: "sonnet thinking:off",
       messagesForTheUserLanguage: "en",
@@ -271,6 +272,7 @@ test("SessionRequestHandler threads Claude reasoning effort and display sync fro
     await harness.handler.handleMessage(session.id, "use max effort");
 
     assert.deepEqual(readAppliedProviderTurnConfig(sentTurnOptions[0]), {
+      artifactsForTheUserLanguage: "en",
       baseModelId: "sonnet",
       effectiveModelId: "sonnet reasoning:max",
       messagesForTheUserLanguage: "en",
@@ -319,6 +321,7 @@ test("SessionRequestHandler applies localized user-message language from live se
           localization: {
             defaultLanguage: "en",
             categories: {
+              artifactsForTheUser: "uk",
               messagesForTheUser: "ru",
             },
           },
@@ -364,6 +367,11 @@ test("SessionRequestHandler applies localized user-message language from live se
       readAppliedProviderTurnConfig(sentTurnOptions[0])
         ?.messagesForTheUserLanguage,
       "ru"
+    );
+    assert.equal(
+      readAppliedProviderTurnConfig(sentTurnOptions[0])
+        ?.artifactsForTheUserLanguage,
+      "uk"
     );
   } finally {
     restoreGlobalSettingsPath?.();

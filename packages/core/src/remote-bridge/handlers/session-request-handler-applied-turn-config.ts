@@ -1,4 +1,5 @@
 import type { CoreConfig } from "../../config";
+import { loadArtifactsForTheUserLanguage } from "../../config/provider-settings-snapshot";
 import {
   buildProviderEffectiveModelId,
   resolveProviderTurnConfigEntry,
@@ -108,12 +109,15 @@ export class SessionRequestHandlerAppliedTurnConfig {
         ? resolved.thinkingLevelByModel[baseModelId]
         : undefined;
     const translationPolicy = translationPolicyResolver.resolve(settingsPath);
+    const artifactsForTheUserLanguage =
+      loadArtifactsForTheUserLanguage(settingsPath);
     const reasoningLanguage =
       translationPolicy.targetLanguage ?? translationPolicy.sourceLanguage;
     const reasoningEngineId = translationPolicy.engineId;
 
     return {
       providerId,
+      artifactsForTheUserLanguage,
       baseModelId,
       effectiveModelId:
         buildProviderEffectiveModelId({
@@ -150,12 +154,16 @@ export class SessionRequestHandlerAppliedTurnConfig {
     const translationPolicy = translationPolicyResolver.resolve(
       options.settingsPath
     );
+    const artifactsForTheUserLanguage = loadArtifactsForTheUserLanguage(
+      options.settingsPath
+    );
     const reasoningLanguage =
       translationPolicy.targetLanguage ?? translationPolicy.sourceLanguage;
     const reasoningEngineId = translationPolicy.engineId;
 
     return {
       providerId: options.providerId,
+      artifactsForTheUserLanguage,
       baseModelId: options.binding.baseModelId,
       effectiveModelId: options.binding.modelId,
       messagesForTheUserLanguage: reasoningLanguage,

@@ -37,6 +37,7 @@ Release `1.2.542` accepted this provider path as the primary GLM 5.2 workflow ru
 - One Core send maps to one or more streaming Chat Completions requests when the model calls workflow tools.
 - The adapter keeps an in-memory session message list for the active Core provider session.
 - The adapter prepends a provider-owned system message to every request. After the `1.2.584` tool retest follow-up, this system context identifies the runtime as a native GLM CodeAI Hub agent and describes only the GLM-owned executable tool surface. Tool definitions are not duplicated inside the system text; they are sent through the GLM `tools` request field.
+- The system message includes an explicit language contract from Core applied turn config: chat replies, progress messages and reasoning/thinking summaries follow the selected messages/reasoning language, while user-facing artifact prose follows Settings → General → Artifacts for the User.
 - Assistant turns keep both user-visible `content` and provider `reasoning_content`; later requests replay `reasoning_content` unchanged in assistant messages for Z.AI/OpenAI-compatible preserved-thinking continuity.
 - Tool-call turns persist assistant `tool_calls` and matching `role: "tool"` results in the session history so later requests preserve the actual agent loop.
 - `closeSession` aborts in-flight requests and removes local session state so Stop can unblock the dialog.

@@ -6,6 +6,7 @@ export interface GlmRequestFailure extends Error {
 
 export const GLM_MAX_REQUEST_ATTEMPTS = 8;
 
+const APPLIED_PROVIDER_TURN_CONFIG_KEY = "__codeaiAppliedTurnConfig";
 const GLM_RETRY_DELAY_MS = 500;
 const GLM_RETRY_MAX_DELAY_MS = 1500;
 const RETRYABLE_ERROR_CODES = new Set([
@@ -40,10 +41,30 @@ const readErrorCause = (error: Error): unknown =>
 
 const readAppliedTurnConfig = (
   turnOptions?: Record<string, unknown>
-): Record<string, unknown> | null =>
-  isRecord(turnOptions?.appliedTurnConfig)
-    ? turnOptions.appliedTurnConfig
-    : null;
+): Record<string, unknown> | null => {
+  if (isRecord(turnOptions?.appliedTurnConfig)) {
+    return turnOptions.appliedTurnConfig;
+  }
+  const coreAppliedConfig = turnOptions?.[APPLIED_PROVIDER_TURN_CONFIG_KEY];
+  return isRecord(coreAppliedConfig) ? coreAppliedConfig : null;
+};
+
+export const readAppliedTurnConfigArtifactLanguage = (
+  turnOptions?: Record<string, unknown>
+): string | null => {
+  const applied = readAppliedTurnConfig(turnOptions);
+  return readString(applied?.artifactsForTheUserLanguage);
+};
+
+export const readAppliedTurnConfigChatLanguage = (
+  turnOptions?: Record<string, unknown>
+): string | null => {
+  const applied = readAppliedTurnConfig(turnOptions);
+  return (
+    readString(applied?.messagesForTheUserLanguage) ??
+    readString(applied?.reasoningLanguage)
+  );
+};
 
 export const readAppliedTurnConfigModel = (
   turnOptions?: Record<string, unknown>

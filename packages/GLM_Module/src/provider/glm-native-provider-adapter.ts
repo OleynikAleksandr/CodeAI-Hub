@@ -6,6 +6,8 @@ import {
   delay,
   GLM_MAX_REQUEST_ATTEMPTS,
   isRetryableGlmFailure,
+  readAppliedTurnConfigArtifactLanguage,
+  readAppliedTurnConfigChatLanguage,
   readAppliedTurnConfigModel,
   readAppliedTurnConfigReasoning,
   readAppliedTurnConfigThinkingEnabled,
@@ -43,7 +45,9 @@ export interface ModuleReporter {
 
 export interface GlmWorkspaceOptions {
   readonly apiKey?: string;
+  readonly artifactLanguage?: string;
   readonly baseUrl?: string;
+  readonly chatLanguage?: string;
   readonly defaultModel?: string;
   readonly providerHomePath?: string;
   readonly reasoningEffort?: string;
@@ -154,6 +158,9 @@ export class GlmProviderAdapter {
       throw new Error("Cannot send an empty GLM message.");
     }
     const profile = this.buildProfile({
+      artifactLanguage:
+        readAppliedTurnConfigArtifactLanguage(turnOptions) ?? undefined,
+      chatLanguage: readAppliedTurnConfigChatLanguage(turnOptions) ?? undefined,
       defaultModel: readAppliedTurnConfigModel(turnOptions) ?? undefined,
       reasoningEffort: readAppliedTurnConfigReasoning(turnOptions) ?? undefined,
       thinkingEnabled:
@@ -402,11 +409,22 @@ export class GlmProviderAdapter {
   private buildProfile(
     override?: Pick<
       GlmWorkspaceOptions,
-      "defaultModel" | "reasoningEffort" | "thinkingEnabled" | "workspacePath"
+      | "artifactLanguage"
+      | "chatLanguage"
+      | "defaultModel"
+      | "reasoningEffort"
+      | "thinkingEnabled"
+      | "workspacePath"
     >
   ): GlmRuntimeProfile {
     return buildGlmRuntimeProfile({
       ...this.options.workspace,
+      ...(override?.artifactLanguage
+        ? { artifactLanguage: override.artifactLanguage }
+        : {}),
+      ...(override?.chatLanguage
+        ? { chatLanguage: override.chatLanguage }
+        : {}),
       ...(override?.defaultModel
         ? { defaultModel: override.defaultModel }
         : {}),

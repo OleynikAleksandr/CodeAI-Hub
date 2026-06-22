@@ -12,6 +12,10 @@ const ECONNRESET_PATTERN = /ECONNRESET/u;
 const CODEX_NATIVE_IDENTITY_PATTERN = /You are Codex, a coding agent/u;
 const GLM_NATIVE_IDENTITY_PATTERN =
   /You are CodeAI Hub's native GLM coding agent/u;
+const GLM_CHAT_LANGUAGE_CONTRACT_PATTERN =
+  /chat replies, progress messages, and summaries of thinking\/reasoning must be written in `ru`/u;
+const GLM_ARTIFACT_LANGUAGE_CONTRACT_PATTERN =
+  /User-facing artifact prose must be written in `uk`/u;
 const TOOL_JSON_BLOCK_PATTERN = /Captured Codex Native Tool Definitions/u;
 const TEST_PROVIDER_HOME = "/tmp/codeai-hub-glm-native-provider-test-home";
 
@@ -201,18 +205,30 @@ test("GlmProviderAdapter applies per-turn reasoning controls", async () => {
     await adapter.initialize();
     const sessionId = await adapter.createSession();
     await adapter.sendMessage(sessionId, "hello", {
-      appliedTurnConfig: {
+      __codeaiAppliedTurnConfig: {
+        artifactsForTheUserLanguage: "uk",
+        messagesForTheUserLanguage: "ru",
         reasoningEffort: "none",
+        reasoningLanguage: "ru",
         thinkingEnabled: false,
       },
     });
 
     const body = JSON.parse(bodies[0] as string) as {
+      readonly messages: Array<{ readonly content: string }>;
       readonly reasoning_effort?: string;
       readonly thinking: { readonly type: string };
     };
     assert.equal(body.reasoning_effort, undefined);
     assert.deepEqual(body.thinking, { type: "disabled" });
+    assert.match(
+      body.messages[0]?.content ?? "",
+      GLM_CHAT_LANGUAGE_CONTRACT_PATTERN
+    );
+    assert.match(
+      body.messages[0]?.content ?? "",
+      GLM_ARTIFACT_LANGUAGE_CONTRACT_PATTERN
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }

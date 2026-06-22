@@ -60,8 +60,8 @@ export type {
   WorkspaceScopeSetPayload,
   WorkspaceScopeSyncReason,
 } from "./workspace-stream-contracts";
-
 export interface AppliedProviderTurnConfig {
+  readonly artifactsForTheUserLanguage?: string;
   readonly baseModelId?: string;
   readonly effectiveModelId?: string;
   /**
@@ -105,7 +105,6 @@ export const withAppliedProviderTurnConfig = (
     [APPLIED_PROVIDER_TURN_CONFIG_KEY]: config,
   };
 };
-
 export const readAppliedProviderTurnConfig = (
   turnOptions?: Record<string, unknown>
 ): AppliedProviderTurnConfig | null => {
@@ -129,6 +128,10 @@ export const readAppliedProviderTurnConfig = (
     baseModelId:
       typeof candidate.baseModelId === "string"
         ? candidate.baseModelId
+        : undefined,
+    artifactsForTheUserLanguage:
+      typeof candidate.artifactsForTheUserLanguage === "string"
+        ? candidate.artifactsForTheUserLanguage
         : undefined,
     effectiveModelId:
       typeof candidate.effectiveModelId === "string"

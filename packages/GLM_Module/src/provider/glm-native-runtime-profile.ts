@@ -19,7 +19,9 @@ const GLOBAL_SETTINGS_PATH = path.join(
 
 export interface GlmRuntimeProfileInput {
   readonly apiKey?: string;
+  readonly artifactLanguage?: string;
   readonly baseUrl?: string;
+  readonly chatLanguage?: string;
   readonly defaultModel?: string;
   readonly providerHomePath?: string;
   readonly reasoningEffort?: string;
@@ -30,8 +32,10 @@ export interface GlmRuntimeProfileInput {
 
 export interface GlmRuntimeProfile {
   readonly apiKey: string | null;
+  readonly artifactLanguage: string;
   readonly baseUrl: string;
   readonly chatCompletionsUrl: string;
+  readonly chatLanguage: string;
   readonly model: string;
   readonly providerHomePath: string;
   readonly reasoningEffort: string;
@@ -131,7 +135,9 @@ export const buildGlmRuntimeProfile = (
   const providerHomePath = resolveProviderHomePath(input.providerHomePath);
   return {
     apiKey,
+    artifactLanguage: readString(input.artifactLanguage) ?? "en",
     baseUrl,
+    chatLanguage: readString(input.chatLanguage) ?? "en",
     chatCompletionsUrl: `${baseUrl}/chat/completions`,
     model,
     providerHomePath,

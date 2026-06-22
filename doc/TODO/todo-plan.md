@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.closeout.task1",
-  "expectedCommitMessage": "docs: close provider prompt tooling scope",
+  "currentTaskId": "provider-tools.phase1.glm-file-search-tools.task1",
+  "expectedCommitMessage": "fix: repair glm file search tools",
   "debt": null
 }
 ```
@@ -163,6 +163,20 @@
 77. [DONE] `provider-tools.phase1.release-build-585.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.585 test release`).
 78. [DONE] `provider-tools.phase1.release-build-585.commit1` Git Commit: `chore: build 1.2.585 test release` (hash: self)
 
+### Stream: GLM Language Contract Follow-up
+79. [DONE] `provider-tools.phase1.glm-language-contract.task1` Pass chat/reasoning and artifact prose language into GLM native system instructions so user-facing messages, thinking summaries, and generated artifacts follow Settings General language choices (scope: `packages/core/src/remote-bridge/**, packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: enforce glm language contract`).
+80. [DONE] `provider-tools.phase1.glm-language-contract.commit1` Git Commit: `fix: enforce glm language contract` (hash: self)
+
+### Stream: GLM Tool Runtime Reliability Follow-up
+81. [IN_PROGRESS] `provider-tools.phase1.glm-file-search-tools.task1` Repair GLM `grep_files` and `glob_files` so they return real workspace matches/files or explicit executor errors instead of silent empty results (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm file search tools`).
+82. [TODO] `provider-tools.phase1.glm-file-search-tools.commit1` Git Commit: `fix: repair glm file search tools` (hash: TBD)
+83. [TODO] `provider-tools.phase1.glm-apply-patch-tool.task1` Repair GLM `apply_patch` so it applies patches through an in-process executor or returns explicit unsupported status instead of spawning a missing `apply_patch` binary (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm apply patch tool`).
+84. [TODO] `provider-tools.phase1.glm-apply-patch-tool.commit1` Git Commit: `fix: repair glm apply patch tool` (hash: TBD)
+85. [TODO] `provider-tools.phase1.glm-web-fetch.task1` Harden GLM `web_fetch` for JS-rendered or sparse pages by adding the smallest available rendered-content fallback or returning a clear limitation when only navigation shell HTML is available (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: harden glm web fetch results`).
+86. [TODO] `provider-tools.phase1.glm-web-fetch.commit1` Git Commit: `fix: harden glm web fetch results` (hash: TBD)
+87. [TODO] `provider-tools.phase1.provider-code-navigation.task1` Scope provider-owned code navigation tools for LSP-style references/definitions and semantic code search as shared capabilities after GLM file search is reliable, avoiding a GLM-only one-off implementation (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope provider code navigation tools`).
+88. [TODO] `provider-tools.phase1.provider-code-navigation.commit1` Git Commit: `docs: scope provider code navigation tools` (hash: TBD)
+
 ### Stream: Scope Closeout
-79. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-80. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+89. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+90. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
