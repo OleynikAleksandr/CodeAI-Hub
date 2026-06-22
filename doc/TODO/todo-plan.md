@@ -196,6 +196,10 @@
 100. [DONE] `provider-tools.phase1.expanded-tools-verify.task1` Run focused GLM module build/tests after the expanded tool surface changes (scope: `packages/GLM_Module`; expected commit: `test: verify expanded glm tools`).
 101. [DONE] `provider-tools.phase1.expanded-tools-verify.commit1` Git Commit: `test: verify expanded glm tools` (hash: self)
 
+### Stream: GLM Native Tooling SSOT Documentation
+102. [DONE] `provider-tools.phase1.glm-tooling-docs.task1` Document the full current GLM Native executable tool surface in the GLM module SSOT so future prompt/tooling work does not require spelunking provider code (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm native tool surface`).
+103. [DONE] `provider-tools.phase1.glm-tooling-docs.commit1` Git Commit: `docs: document glm native tool surface` (hash: self)
+
 ### Stream: Scope Closeout
-102. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-103. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+104. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+105. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)

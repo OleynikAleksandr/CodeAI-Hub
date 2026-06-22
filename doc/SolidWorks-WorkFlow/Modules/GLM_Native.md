@@ -61,6 +61,46 @@ Release `1.2.542` accepted this provider path as the primary GLM 5.2 workflow ru
 - The provider may retry transient transport/opening failures, including `EPIPE`, retryable HTTP statuses, and interrupted SSE streams that fail before the first useful reasoning/content/usage event. Retry attempts are one non-nested request loop with a short fixed 500 ms delay; `retry-after-ms` / `retry-after` from Z.AI is honored but capped at 1500 ms. It must not silently downgrade the model, disable reasoning, or switch to non-streaming mode.
 - Failure messages must preserve useful transport details such as `ECONNRESET` or HTTP status so the dialog does not collapse different provider failures into generic `fetch failed`.
 
+## Исполняемый tooling contract
+Этот раздел является SSOT для GLM Native tool surface. Если меняется список tools, JSON schema или executor-поведение в `packages/GLM_Module/src/provider/`, эта таблица обновляется в том же commit.
+
+Tool definitions живут в:
+- `packages/GLM_Module/src/provider/glm-native-agent-runtime.ts` — базовые tools и системная инструкция;
+- `packages/GLM_Module/src/provider/glm-native-expanded-tool-definitions.ts` — расширенные tools.
+
+Dispatcher и executors живут в:
+- `packages/GLM_Module/src/provider/glm-native-tool-executors.ts` — общий dispatcher и базовые tools;
+- `packages/GLM_Module/src/provider/glm-native-file-edit-tools.ts` — anchored/exact edit tools;
+- `packages/GLM_Module/src/provider/glm-native-workspace-tools.ts` — browser, code navigation, Git и test wrappers;
+- `packages/GLM_Module/src/provider/glm-native-patch-executor.ts` — in-process `apply_patch`;
+- `packages/GLM_Module/src/provider/glm-native-process.ts` — streaming shell/process runner.
+
+| Tool | Назначение | Executor | Ограничения |
+|---|---|---|---|
+| `exec_command` | Shell-команды для build/test/diagnostics. | `glm-native-tool-executors.ts` + `glm-native-process.ts` | Workspace-scoped cwd; output обрезается лимитом; tool не должен заменять специализированные search/git/test tools без причины. |
+| `grep_files` | Быстрый текстовый поиск по workspace через `rg`. | `glm-native-tool-executors.ts` | Lexical search; поддерживает file или directory target; не semantic/LSP. |
+| `glob_files` | Быстрое перечисление файлов через `rg --files`. | `glm-native-tool-executors.ts` | Directory target only; `.git` исключается. |
+| `read_file` | Чтение UTF-8 файла с `offset/limit`. | `glm-native-tool-executors.ts` | Text-only; бинарные/медиа файлы не интерпретируются. |
+| `read_file_anchored` | Чтение UTF-8 файла с короткими per-line anchors для точного редактирования. | `glm-native-file-edit-tools.ts` | Anchors действительны только для текущего содержимого файла; после успешного edit нужен re-read перед следующим anchored edit. |
+| `write_file` | Полная запись/замена UTF-8 файла. | `glm-native-tool-executors.ts` | Создает родительские директории; подходит для generated/scratch files, но для точечных правок предпочтительнее edit tools. |
+| `edit_file` | Exact single-occurrence `old_string` -> `new_string`. | `glm-native-file-edit-tools.ts` | `old_string` должен совпасть ровно один раз; нет fuzzy fallback, чтобы не редактировать не то место. |
+| `edit_file_by_anchor` | Replace/delete/insert по anchors из `read_file_anchored`. | `glm-native-file-edit-tools.ts` | Stale/missing anchors reject; overlapping ranges reject; edits применяются атомарно через temp-file + rename. |
+| `apply_patch` | Codex-style patch subset: add/delete/update/move/context replacements. | `glm-native-patch-executor.ts` | In-process parser, не внешний binary; поддерживает только используемый subset Codex patch grammar. |
+| `web_search` | Public web search, titles/URLs/snippets. | `glm-native-tool-executors.ts` | HTML search fallback через DuckDuckGo/Bing; качество зависит от доступности search HTML. |
+| `web_fetch` | Fetch URL и readable text extraction. | `glm-native-tool-executors.ts` | Не исполняет JS; sparse JS shells возвращаются как `partial: true` с warning. |
+| `browser_fetch` | Rendered DOM text через установленный Chrome/Chromium/Edge. | `glm-native-workspace-tools.ts` | Не тянет Playwright dependency; если browser binary не найден, возвращает явную ошибку. |
+| `workspace_symbols` | Best-effort declaration search по TS/JS workspace. | `glm-native-workspace-tools.ts` | `semantic: false`; lexical `rg`, не tsserver. |
+| `go_to_definition` | Best-effort definition lookup по symbol name. | `glm-native-workspace-tools.ts` | `semantic: false`; не понимает overloads/import graph/type resolution. |
+| `find_references` | Best-effort references lookup по symbol name. | `glm-native-workspace-tools.ts` | Lexical word-boundary search; может находить comments/strings и пропускать dynamic references. |
+| `git_status` | Structured `git status --short --branch`. | `glm-native-workspace-tools.ts` | Read-only wrapper. |
+| `git_diff` | Structured unstaged/staged diff, optional path. | `glm-native-workspace-tools.ts` | Read-only wrapper; large diff обрезается output лимитом. |
+| `git_log` | Recent git log, optional path. | `glm-native-workspace-tools.ts` | Read-only wrapper. |
+| `git_blame` | Blame для file line range. | `glm-native-workspace-tools.ts` | Read-only wrapper; требует workspace-relative file path. |
+| `run_tests` | Запуск test/check команды со структурированными failure lines. | `glm-native-workspace-tools.ts` + `glm-native-process.ts` | Shell execution с timeout/output limit; heuristic failure extraction, raw stdout/stderr сохраняются. |
+| `write_workflow_artifact` | Запись managed workflow artifact в `.codeai-hub/`. | `glm-native-tool-executors.ts` | Path обязан начинаться с `.codeai-hub/`; используется для Core-owned workflow artifacts, не для обычного кода. |
+
+Prompt/system instruction не должен дублировать JSON schemas этих tools. Модель получает schemas через request `tools`; system message только объясняет, когда какой инструмент использовать.
+
 ## Event normalization
 - SSE `choices[].delta.reasoning_content` is buffered into readable `thinking` events tagged `thinking`; raw provider micro-chunks must not become one visible line per SSE frame.
 - Core may skip localization dispatch for already-Russian `thinking` blocks, but mixed English/Russian reasoning stays eligible for reasoning translation. This is display policy, not native transcript mutation.
