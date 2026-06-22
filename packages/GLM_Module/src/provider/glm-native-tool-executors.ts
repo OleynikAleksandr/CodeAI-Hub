@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { runProcess, runShell } from "./glm-native-process";
 import type { GlmToolCall } from "./glm-native-sse-parser";
@@ -76,14 +76,13 @@ const executeGrepFilesTool = async (
   workspacePath?: string
 ): Promise<Record<string, unknown>> => {
   const pattern = readRequiredString(args.pattern, "pattern");
-  const cwd = resolveWorkspacePath(args.path, workspacePath, {
-    allowMissing: true,
-  });
+  const target = await resolveSearchTarget(args.path, workspacePath);
   const maxResults = clampNumber(args.max_results, 1, 500, 100);
   const rgArgs = [
     "--no-config",
     "--hidden",
     "--no-messages",
+    "--with-filename",
     "--line-number",
     "--column",
     "--glob",
@@ -92,14 +91,14 @@ const executeGrepFilesTool = async (
   if (typeof args.include === "string" && args.include.trim()) {
     rgArgs.push("--glob", args.include.trim());
   }
-  rgArgs.push("--", pattern, ".");
-  const result = await runProcess("rg", rgArgs, cwd, 30_000, 80_000);
+  rgArgs.push("--", pattern, target.targetPath);
+  const result = await runProcess("rg", rgArgs, target.cwd, 30_000, 80_000);
   const matches = result.stdout
     .split("\n")
     .filter(Boolean)
     .slice(0, maxResults);
   return {
-    cwd,
+    cwd: target.cwd,
     matches,
     ok: result.ok || result.exitCode === 1,
     stderr: result.stderr,
@@ -112,9 +111,7 @@ const executeGlobFilesTool = async (
   workspacePath?: string
 ): Promise<Record<string, unknown>> => {
   const pattern = readRequiredString(args.pattern, "pattern");
-  const cwd = resolveWorkspacePath(args.path, workspacePath, {
-    allowMissing: true,
-  });
+  const cwd = await resolveDirectorySearchRoot(args.path, workspacePath);
   const maxResults = clampNumber(args.max_results, 1, 1000, 200);
   const result = await runProcess(
     "rg",
@@ -139,6 +136,43 @@ const executeGlobFilesTool = async (
     stderr: result.stderr,
     stdout: files.join("\n"),
   };
+};
+
+const resolveSearchTarget = async (
+  value: unknown,
+  workspacePath?: string
+): Promise<{ readonly cwd: string; readonly targetPath: string }> => {
+  const workspaceRoot = resolveWorkspacePath(undefined, workspacePath, {
+    allowMissing: true,
+  });
+  const absolutePath = resolveWorkspacePath(value, workspacePath, {
+    allowMissing: true,
+  });
+  const stats = await stat(absolutePath);
+  if (stats.isDirectory()) {
+    return { cwd: absolutePath, targetPath: "." };
+  }
+  if (stats.isFile()) {
+    return {
+      cwd: workspaceRoot,
+      targetPath: path.relative(workspaceRoot, absolutePath) || ".",
+    };
+  }
+  throw new Error("Search path must be a file or directory.");
+};
+
+const resolveDirectorySearchRoot = async (
+  value: unknown,
+  workspacePath?: string
+): Promise<string> => {
+  const absolutePath = resolveWorkspacePath(value, workspacePath, {
+    allowMissing: true,
+  });
+  const stats = await stat(absolutePath);
+  if (!stats.isDirectory()) {
+    throw new Error("Glob path must be a directory.");
+  }
+  return absolutePath;
 };
 
 const executeReadFileTool = async (

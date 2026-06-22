@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.glm-file-search-tools.task1",
-  "expectedCommitMessage": "fix: repair glm file search tools",
+  "currentTaskId": "provider-tools.phase1.glm-apply-patch-tool.task1",
+  "expectedCommitMessage": "fix: repair glm apply patch tool",
   "debt": null
 }
 ```
@@ -168,9 +168,9 @@
 80. [DONE] `provider-tools.phase1.glm-language-contract.commit1` Git Commit: `fix: enforce glm language contract` (hash: self)
 
 ### Stream: GLM Tool Runtime Reliability Follow-up
-81. [IN_PROGRESS] `provider-tools.phase1.glm-file-search-tools.task1` Repair GLM `grep_files` and `glob_files` so they return real workspace matches/files or explicit executor errors instead of silent empty results (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm file search tools`).
-82. [TODO] `provider-tools.phase1.glm-file-search-tools.commit1` Git Commit: `fix: repair glm file search tools` (hash: TBD)
-83. [TODO] `provider-tools.phase1.glm-apply-patch-tool.task1` Repair GLM `apply_patch` so it applies patches through an in-process executor or returns explicit unsupported status instead of spawning a missing `apply_patch` binary (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm apply patch tool`).
+81. [DONE] `provider-tools.phase1.glm-file-search-tools.task1` Repair GLM `grep_files` and `glob_files` so they return real workspace matches/files or explicit executor errors instead of silent empty results (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm file search tools`).
+82. [DONE] `provider-tools.phase1.glm-file-search-tools.commit1` Git Commit: `fix: repair glm file search tools` (hash: self)
+83. [IN_PROGRESS] `provider-tools.phase1.glm-apply-patch-tool.task1` Repair GLM `apply_patch` so it applies patches through an in-process executor or returns explicit unsupported status instead of spawning a missing `apply_patch` binary (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm apply patch tool`).
 84. [TODO] `provider-tools.phase1.glm-apply-patch-tool.commit1` Git Commit: `fix: repair glm apply patch tool` (hash: TBD)
 85. [TODO] `provider-tools.phase1.glm-web-fetch.task1` Harden GLM `web_fetch` for JS-rendered or sparse pages by adding the smallest available rendered-content fallback or returning a clear limitation when only navigation shell HTML is available (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: harden glm web fetch results`).
 86. [TODO] `provider-tools.phase1.glm-web-fetch.commit1` Git Commit: `fix: harden glm web fetch results` (hash: TBD)

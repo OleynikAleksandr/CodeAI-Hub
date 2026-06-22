@@ -1,5 +1,9 @@
 import { spawn } from "node:child_process";
 
+const PROCESS_PATH_SEPARATOR = process.platform === "win32" ? ";" : ":";
+const EXTRA_PROCESS_PATHS =
+  process.platform === "win32" ? [] : ["/usr/local/bin", "/opt/homebrew/bin"];
+
 interface ProcessResult {
   readonly exitCode: number | null;
   readonly ok: boolean;
@@ -48,7 +52,12 @@ export const runProcess = (
     let timedOut = false;
     const child = spawn(command, args, {
       cwd,
-      env: process.env,
+      env: {
+        ...process.env,
+        PATH: [process.env.PATH, ...EXTRA_PROCESS_PATHS]
+          .filter(Boolean)
+          .join(PROCESS_PATH_SEPARATOR),
+      },
       stdio: ["pipe", "pipe", "pipe"],
     });
     const timer = setTimeout(() => {

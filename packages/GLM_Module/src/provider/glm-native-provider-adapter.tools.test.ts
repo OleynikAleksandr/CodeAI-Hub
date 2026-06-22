@@ -7,6 +7,7 @@ import test from "node:test";
 import { GlmProviderAdapter } from "./glm-native-provider-adapter";
 
 const encoder = new TextEncoder();
+const PACKAGE_JSON_NEEDLE_PATTERN = /package\.json:\d+:\d+:.*unique-marker/u;
 
 const createResponse = (frames: readonly string[]): Response =>
   new Response(
@@ -165,6 +166,52 @@ test("GlmProviderAdapter executes GLM grep_files tool calls", async () => {
   }
 });
 
+test("GlmProviderAdapter executes GLM file search smoke-test tool calls", async () => {
+  if (spawnSync("rg", ["--version"]).status !== 0) {
+    return;
+  }
+  const originalFetch = globalThis.fetch;
+  const workspacePath = await mkdtemp(
+    path.join(os.tmpdir(), "glm-search-tool-")
+  );
+  const providerHomePath = path.join(workspacePath, "provider-home");
+  await writeFile(
+    path.join(workspacePath, "package.json"),
+    '{\n  "name": "unique-marker"\n}\n'
+  );
+  const bodies: string[] = [];
+  globalThis.fetch = ((_url, init) => {
+    bodies.push(String(init?.body ?? ""));
+    if (bodies.length === 1) {
+      return Promise.resolve(createFileSearchToolCallResponse());
+    }
+    return Promise.resolve(
+      createResponse([
+        JSON.stringify({ choices: [{ delta: { content: "Готово." } }] }),
+        "[DONE]",
+      ])
+    );
+  }) as typeof fetch;
+
+  try {
+    const adapter = new GlmProviderAdapter({
+      workspace: { apiKey: "test-key", providerHomePath, workspacePath },
+    });
+    await adapter.initialize();
+    const sessionId = await adapter.createSession();
+    await adapter.sendMessage(sessionId, "search workspace");
+
+    const [grepContent, globContent] = readToolContents(bodies[1] as string);
+    assert.equal(grepContent?.ok, true);
+    assert.match(grepContent?.stdout ?? "", PACKAGE_JSON_NEEDLE_PATTERN);
+    assert.equal(globContent?.ok, true);
+    assert.deepEqual(globContent?.files, ["package.json"]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});
+
 test("GlmProviderAdapter executes GLM web_search tool calls", async () => {
   const originalFetch = globalThis.fetch;
   const workspacePath = await mkdtemp(path.join(os.tmpdir(), "glm-web-tool-"));
@@ -288,6 +335,41 @@ const createGrepToolCallResponse = (): Response =>
     "[DONE]",
   ]);
 
+const createFileSearchToolCallResponse = (): Response =>
+  createResponse([
+    JSON.stringify({
+      choices: [
+        {
+          delta: {
+            tool_calls: [
+              {
+                function: {
+                  arguments:
+                    '{"pattern":"unique-marker","path":"package.json","max_results":10}',
+                  name: "grep_files",
+                },
+                id: "call_grep_file",
+                index: 0,
+                type: "function",
+              },
+              {
+                function: {
+                  arguments: '{"pattern":"package.json","max_results":10}',
+                  name: "glob_files",
+                },
+                id: "call_glob_file",
+                index: 1,
+                type: "function",
+              },
+            ],
+          },
+        },
+      ],
+    }),
+    JSON.stringify({ choices: [{ delta: {}, finish_reason: "tool_calls" }] }),
+    "[DONE]",
+  ]);
+
 const createWebSearchToolCallResponse = (): Response =>
   createResponse([
     JSON.stringify({
@@ -372,6 +454,7 @@ const readLastToolCallId = (bodyText: string): string | undefined => {
 const readLastToolContent = (
   bodyText: string
 ): {
+  readonly files?: readonly string[];
   readonly matches?: readonly string[];
   readonly ok?: boolean;
   readonly results?: readonly Record<string, string>[];
@@ -381,9 +464,29 @@ const readLastToolContent = (
     readonly messages: Array<{ readonly content?: string }>;
   };
   return JSON.parse(body.messages.at(-1)?.content ?? "{}") as {
+    readonly files?: readonly string[];
     readonly matches?: readonly string[];
     readonly ok?: boolean;
     readonly results?: readonly Record<string, string>[];
     readonly stdout?: string;
   };
+};
+
+const readToolContents = (
+  bodyText: string
+): Array<{
+  readonly files?: readonly string[];
+  readonly matches?: readonly string[];
+  readonly ok?: boolean;
+  readonly stdout?: string;
+}> => {
+  const body = JSON.parse(bodyText) as {
+    readonly messages: Array<{
+      readonly content?: string;
+      readonly role?: string;
+    }>;
+  };
+  return body.messages
+    .filter((message) => message.role === "tool")
+    .map((message) => JSON.parse(message.content ?? "{}"));
 };
