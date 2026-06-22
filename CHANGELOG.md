@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.590] - 2026-06-22
+### Fixed
+- **Standalone chat Markdown headings no longer render as huge title text.**
+  Provider/user-facing message cards now normalize `h1`-`h6` to compact chat
+  typography while leaving normal body text unchanged.
+
+### Verification
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.589] - 2026-06-22
 ### Added
 - **GLM Native receives workspace custom instructions.** Standalone GLM chats

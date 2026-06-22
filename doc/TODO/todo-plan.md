@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.acceptance-589.task1",
-  "expectedCommitMessage": null,
+  "currentTaskId": "provider-tools.phase1.release-build-590.task1",
+  "expectedCommitMessage": "chore: build 1.2.590 test release",
   "debt": null
 }
 ```
@@ -245,8 +245,17 @@
 ### Stream: User Workflow Acceptance Testing For 1.2.589
 130. [DONE] `provider-tools.phase1.acceptance-gate-589.task1` Restore the post-release user acceptance gate so the scope stays active after delivering 1.2.589 (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: restore 1.2.589 acceptance gate`).
 131. [DONE] `provider-tools.phase1.acceptance-gate-589.commit1` Git Commit: `docs: restore 1.2.589 acceptance gate` (hash: self)
-132. [IN_PROGRESS] `provider-tools.phase1.acceptance-589.task1` User installs and retests the 1.2.589 release against GLM standalone chats with workspace `AGENTS.md` before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+132. [DONE] `provider-tools.phase1.acceptance-589.task1` User installs and retests the 1.2.589 release against GLM standalone chats with workspace `AGENTS.md` before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none). Result: GLM workspace instruction/tooling checks passed, but oversized Markdown headings in standalone chat cards required the 1.2.590 follow-up.
+
+### Stream: Release Build 1.2.590
+133. [DONE] `provider-tools.phase1.release-docs-590.task1` Prepare README and CHANGELOG for the user-confirmed 1.2.590 standalone chat typography test release before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.590 test release`).
+134. [DONE] `provider-tools.phase1.release-docs-590.commit1` Git Commit: `docs: prepare 1.2.590 test release` (hash: self)
+135. [IN_PROGRESS] `provider-tools.phase1.release-build-590.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.590 test release`).
+136. [TODO] `provider-tools.phase1.release-build-590.commit1` Git Commit: `chore: build 1.2.590 test release` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing For 1.2.590
+137. [TODO] `provider-tools.phase1.acceptance-590.task1` User installs and retests the 1.2.590 release against standalone GLM chat typography and the prior GLM workspace instruction checks before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none).
 
 ### Stream: Scope Closeout
-133. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-134. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+138. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+139. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)

@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.589** (GLM Workspace Instructions Test)
+**Current Release — v1.2.590** (Standalone Chat Typography Fix)
+
+This release packages the standalone provider chat typography follow-up from
+the GLM workspace instruction retest.
+
+Markdown headings inside provider/user-facing message cards now render with
+compact chat typography instead of browser-default oversized `h1`/`h2` text.
+Normal body text remains unchanged.
+
+Retest focus: install the VSIX, restart the app, open standalone GLM, ask for
+a Markdown answer with `#`, `##`, and numbered sections, and confirm headings
+stay visually close to the message body size.
+
+**Previous Release — v1.2.589** (GLM Workspace Instructions Test)
 
 This release packages the GLM Native workspace instruction injection follow-up
 from the standalone provider prompt/tooling scope.
