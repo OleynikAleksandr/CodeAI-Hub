@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.glm-workspace-instructions-docs.task1",
-  "expectedCommitMessage": "docs: document glm workspace instructions",
+  "currentTaskId": "provider-tools.phase1.closeout.task1",
+  "expectedCommitMessage": "docs: close provider prompt tooling scope",
   "debt": null
 }
 ```
@@ -233,9 +233,9 @@
 ### Stream: GLM Workspace Instructions Injection
 122. [DONE] `provider-tools.phase1.glm-workspace-instructions.task1` Inject root `AGENTS.md` into GLM Native provider-visible system context when the workspace file exists, without changing Kimi (scope: `packages/GLM_Module/src/provider/glm-native-agent-runtime.ts, packages/GLM_Module/src/provider/glm-native-agent-runtime.instructions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: inject glm workspace instructions`).
 123. [DONE] `provider-tools.phase1.glm-workspace-instructions.commit1` Git Commit: `fix: inject glm workspace instructions` (hash: self)
-124. [IN_PROGRESS] `provider-tools.phase1.glm-workspace-instructions-docs.task1` Document GLM Native workspace instruction injection in the module SSOT (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm workspace instructions`).
-125. [TODO] `provider-tools.phase1.glm-workspace-instructions-docs.commit1` Git Commit: `docs: document glm workspace instructions` (hash: TBD)
+124. [DONE] `provider-tools.phase1.glm-workspace-instructions-docs.task1` Document GLM Native workspace instruction injection in the module SSOT (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm workspace instructions`).
+125. [DONE] `provider-tools.phase1.glm-workspace-instructions-docs.commit1` Git Commit: `docs: document glm workspace instructions` (hash: self)
 
 ### Stream: Scope Closeout
-126. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+126. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
 127. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)

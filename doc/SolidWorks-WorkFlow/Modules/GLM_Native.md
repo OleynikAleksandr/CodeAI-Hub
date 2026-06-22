@@ -38,6 +38,7 @@ Release `1.2.542` accepted this provider path as the primary GLM 5.2 workflow ru
 - The adapter keeps an in-memory session message list for the active Core provider session.
 - The adapter prepends a provider-owned system message to every request. After the `1.2.584` tool retest follow-up, this system context identifies the runtime as a native GLM CodeAI Hub agent and describes only the GLM-owned executable tool surface. Tool definitions are not duplicated inside the system text; they are sent through the GLM `tools` request field.
 - The system message includes an explicit language contract from Core applied turn config: chat replies, progress messages and reasoning/thinking summaries follow the selected messages/reasoning language, while user-facing artifact prose follows Settings → General → Artifacts for the User.
+- If root `AGENTS.md` exists in the workspace, GLM Native appends its full UTF-8 content to the provider-visible system context under `Applicable AGENTS.md instructions` with the source path. This is GLM-owned injection; Kimi remains out of scope because Kimi CLI/ACP already provides its own workspace instruction block.
 - Assistant turns keep both user-visible `content` and provider `reasoning_content`; later requests replay `reasoning_content` unchanged in assistant messages for Z.AI/OpenAI-compatible preserved-thinking continuity.
 - Tool-call turns persist assistant `tool_calls` and matching `role: "tool"` results in the session history so later requests preserve the actual agent loop.
 - `closeSession` aborts in-flight requests and removes local session state so Stop can unblock the dialog.
@@ -109,7 +110,7 @@ Prompt/system instruction не должен дублировать JSON schemas 
   - media inspection через text/vision-safe `read_media_file`;
   - registered skill invocation через `skill`;
   - background task lifecycle через task list/output/stop tools, если это безопасно для standalone sessions.
-- Отдельный обязательный GLM gap: workspace custom instructions. GLM Native должен получать `AGENTS.md`, если файл есть в workspace, в provider-visible initial/system context. Kimi уже получает такие инструкции через Kimi CLI/ACP, поэтому Kimi сейчас не является scope для этой работы.
+- Workspace custom instructions уже реализованы для GLM Native: root `AGENTS.md` попадает в provider-visible system context. Следующие GLM gaps в этом направлении — только реальные executable tools/bridges для subagents, media, skills и task lifecycle.
 
 ## Event normalization
 - SSE `choices[].delta.reasoning_content` is buffered into readable `thinking` events tagged `thinking`; raw provider micro-chunks must not become one visible line per SSE frame.
