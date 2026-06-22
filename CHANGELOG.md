@@ -8,6 +8,28 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.587] - 2026-06-22
+### Added
+- **GLM Native exposes the expanded standalone tool surface.** GLM now has
+  executable tools for anchored file reads/edits, exact string edits,
+  best-effort code symbol navigation, rendered browser fetch, structured Git
+  wrappers, and structured test command results.
+- **The GLM tool contract is documented in the module SSOT.**
+  `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md` now lists every current GLM
+  Native tool, executor owner, and limitation so prompt/tooling changes do not
+  require reading provider code first.
+
+### Notes
+- Kimi still uses the native ACP tool surface. CodeAI-owned expanded tools
+  require a separate ACP/MCP bridge before they can be executable in Kimi.
+- GLM code navigation is best-effort lexical navigation, not a full tsserver
+  LSP integration.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npm run plan:validate`
+
 ## [1.2.586] - 2026-06-22
 ### Fixed
 - **GLM Native follows Settings language choices in provider-visible
