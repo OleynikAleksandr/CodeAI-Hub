@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.closeout.task1",
-  "expectedCommitMessage": "docs: close provider prompt tooling scope",
+  "currentTaskId": "provider-tools.phase1.acceptance-589.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -242,6 +242,11 @@
 128. [DONE] `provider-tools.phase1.release-build-589.task1` Run the release build scripts and commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.589 test release`).
 129. [DONE] `provider-tools.phase1.release-build-589.commit1` Git Commit: `chore: build 1.2.589 test release` (hash: self)
 
+### Stream: User Workflow Acceptance Testing For 1.2.589
+130. [DONE] `provider-tools.phase1.acceptance-gate-589.task1` Restore the post-release user acceptance gate so the scope stays active after delivering 1.2.589 (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: restore 1.2.589 acceptance gate`).
+131. [DONE] `provider-tools.phase1.acceptance-gate-589.commit1` Git Commit: `docs: restore 1.2.589 acceptance gate` (hash: self)
+132. [IN_PROGRESS] `provider-tools.phase1.acceptance-589.task1` User installs and retests the 1.2.589 release against GLM standalone chats with workspace `AGENTS.md` before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+
 ### Stream: Scope Closeout
-130. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-131. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+133. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+134. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
