@@ -9,6 +9,8 @@ const PATH_SEGMENT_SEPARATOR_PATTERN = /[\\/]+/u;
 const HTML_SCRIPT_STYLE_PATTERN =
   /<(script|style|noscript)\b[^>]*>[\s\S]*?<\/\1>/giu;
 const HTML_TAG_PATTERN = /<[^>]+>/gu;
+const JS_RENDERED_PAGE_HINT_PATTERN =
+  /<script\b|id=["'](?:__next|root|app)["']|data-reactroot|window\.__/iu;
 const WHITESPACE_PATTERN = /\s+/gu;
 const DUCK_RESULT_PATTERN =
   /<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/giu;
@@ -253,11 +255,21 @@ const executeWebFetchTool = async (
   const maxChars = clampNumber(args.max_chars, 1000, 100_000, 20_000);
   const response = await fetchWithTimeout(url, 30_000);
   const text = await response.text();
+  const cleanText = cleanWebText(text);
+  const partial = isLikelySparseRenderedPage(text, cleanText);
   return {
     ok: response.ok,
+    partial,
     status: response.status,
-    text: truncateText(cleanWebText(text), maxChars),
+    text: truncateText(cleanText, maxChars),
+    textChars: cleanText.length,
     url,
+    ...(partial
+      ? {
+          warning:
+            "Fetched HTML looks like a JavaScript-rendered shell; readable text may be incomplete.",
+        }
+      : {}),
   };
 };
 
@@ -343,6 +355,11 @@ const cleanWebText = (value: string): string =>
       .replace(WHITESPACE_PATTERN, " ")
       .trim()
   );
+
+const isLikelySparseRenderedPage = (html: string, text: string): boolean =>
+  html.length > 5000 &&
+  text.length < 1000 &&
+  JS_RENDERED_PAGE_HINT_PATTERN.test(html);
 
 const decodeHtml = (value: string): string =>
   value

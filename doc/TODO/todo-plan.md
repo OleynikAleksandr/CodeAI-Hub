@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.glm-web-fetch.task1",
-  "expectedCommitMessage": "fix: harden glm web fetch results",
+  "currentTaskId": "provider-tools.phase1.provider-code-navigation.task1",
+  "expectedCommitMessage": "docs: scope provider code navigation tools",
   "debt": null
 }
 ```
@@ -172,9 +172,9 @@
 82. [DONE] `provider-tools.phase1.glm-file-search-tools.commit1` Git Commit: `fix: repair glm file search tools` (hash: self)
 83. [DONE] `provider-tools.phase1.glm-apply-patch-tool.task1` Repair GLM `apply_patch` so it applies patches through an in-process executor or returns explicit unsupported status instead of spawning a missing `apply_patch` binary (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair glm apply patch tool`).
 84. [DONE] `provider-tools.phase1.glm-apply-patch-tool.commit1` Git Commit: `fix: repair glm apply patch tool` (hash: self)
-85. [IN_PROGRESS] `provider-tools.phase1.glm-web-fetch.task1` Harden GLM `web_fetch` for JS-rendered or sparse pages by adding the smallest available rendered-content fallback or returning a clear limitation when only navigation shell HTML is available (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: harden glm web fetch results`).
-86. [TODO] `provider-tools.phase1.glm-web-fetch.commit1` Git Commit: `fix: harden glm web fetch results` (hash: TBD)
-87. [TODO] `provider-tools.phase1.provider-code-navigation.task1` Scope provider-owned code navigation tools for LSP-style references/definitions and semantic code search as shared capabilities after GLM file search is reliable, avoiding a GLM-only one-off implementation (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope provider code navigation tools`).
+85. [DONE] `provider-tools.phase1.glm-web-fetch.task1` Harden GLM `web_fetch` for JS-rendered or sparse pages by adding the smallest available rendered-content fallback or returning a clear limitation when only navigation shell HTML is available (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: harden glm web fetch results`).
+86. [DONE] `provider-tools.phase1.glm-web-fetch.commit1` Git Commit: `fix: harden glm web fetch results` (hash: self)
+87. [IN_PROGRESS] `provider-tools.phase1.provider-code-navigation.task1` Scope provider-owned code navigation tools for LSP-style references/definitions and semantic code search as shared capabilities after GLM file search is reliable, avoiding a GLM-only one-off implementation (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope provider code navigation tools`).
 88. [TODO] `provider-tools.phase1.provider-code-navigation.commit1` Git Commit: `docs: scope provider code navigation tools` (hash: TBD)
 
 ### Stream: Scope Closeout
