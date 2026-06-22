@@ -8,6 +8,23 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.589] - 2026-06-22
+### Added
+- **GLM Native receives workspace custom instructions.** Standalone GLM chats
+  now include root `AGENTS.md` content in the provider-visible system context
+  as `Applicable AGENTS.md instructions` when the file exists.
+
+### Notes
+- Kimi is unchanged; Kimi CLI/ACP already injects workspace instructions and
+  exposes its native tool surface.
+- Future GLM work remains focused on real executable/bridged capabilities for
+  subagents, media reading, skills, and background task lifecycle.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npm run plan:validate`
+
 ## [1.2.588] - 2026-06-22
 ### Fixed
 - **GLM `edit_file_by_anchor` schema now matches the executor.** The tool

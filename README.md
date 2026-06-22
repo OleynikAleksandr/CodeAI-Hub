@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.588** (GLM Expanded Tools Smoke Follow-up)
+**Current Release — v1.2.589** (GLM Workspace Instructions Test)
+
+This release packages the GLM Native workspace instruction injection follow-up
+from the standalone provider prompt/tooling scope.
+
+GLM standalone chats now receive the root workspace `AGENTS.md` content in the
+provider-visible system context when the file exists. The block is sent as
+`Applicable AGENTS.md instructions` with the source path, matching the
+workspace custom-instruction behavior expected by coding agents. Kimi is
+unchanged because Kimi CLI/ACP already injects its own workspace instruction
+block.
+
+Retest focus: install the VSIX, restart the app, open standalone GLM in a
+workspace with `AGENTS.md`, ask whether it can see workspace custom
+instructions, and confirm it cites the `Applicable AGENTS.md instructions`
+block.
+
+**Previous Release — v1.2.588** (GLM Expanded Tools Smoke Follow-up)
 
 This release packages the GLM expanded tool smoke-test follow-up from the
 1.2.587 retest.
