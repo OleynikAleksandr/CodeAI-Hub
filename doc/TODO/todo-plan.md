@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.acceptance-586.task1",
-  "expectedCommitMessage": null,
+  "currentTaskId": "provider-tools.phase1.glm-expanded-tools.task1",
+  "expectedCommitMessage": "feat: add glm expanded workspace tools",
   "debt": null
 }
 ```
@@ -184,8 +184,18 @@
 92. [DONE] `provider-tools.phase1.release-build-586.commit1` Git Commit: `chore: build 1.2.586 test release` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing For 1.2.586
-93. [IN_PROGRESS] `provider-tools.phase1.acceptance-586.task1` User installs and retests the 1.2.586 release against GLM/Kimi standalone provider chats before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+93. [DONE] `provider-tools.phase1.acceptance-586.task1` User installs and retests the 1.2.586 release against GLM/Kimi standalone provider chats before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: none). Result: GLM smoke-test confirmed `exec_command`, `read_file`, `grep_files`, `glob_files`, `write_file`, `apply_patch`, `web_search`, `web_fetch`, and `write_workflow_artifact` work in 1.2.586; user requested the next expanded tool surface.
+
+### Stream: Expanded Provider Tool Surface
+94. [DONE] `provider-tools.phase1.expanded-tools-plan.task1` Add the approved follow-up stream for expanded provider tools: read-only code navigation, rendered web fetch, structured Git/test wrappers, and hash-anchored file reading/editing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan expanded provider tools`).
+95. [DONE] `provider-tools.phase1.expanded-tools-plan.commit1` Git Commit: `docs: plan expanded provider tools` (hash: self)
+96. [IN_PROGRESS] `provider-tools.phase1.glm-expanded-tools.task1` Add GLM Native executable tools for anchored file reads/edits, best-effort code navigation, rendered web fetch, Git wrappers, and structured test command results without adding unavailable Codex-native aliases (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `feat: add glm expanded workspace tools`).
+97. [TODO] `provider-tools.phase1.glm-expanded-tools.commit1` Git Commit: `feat: add glm expanded workspace tools` (hash: TBD)
+98. [TODO] `provider-tools.phase1.kimi-expanded-tools.task1` Document the Kimi ACP limitation for CodeAI-owned expanded tools and the required bridge/MCP route instead of pretending Kimi can execute GLM-owned local tool calls (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: scope kimi expanded provider tools`).
+99. [TODO] `provider-tools.phase1.kimi-expanded-tools.commit1` Git Commit: `docs: scope kimi expanded provider tools` (hash: TBD)
+100. [TODO] `provider-tools.phase1.expanded-tools-verify.task1` Run focused GLM module build/tests after the expanded tool surface changes (scope: `packages/GLM_Module`; expected commit: `test: verify expanded glm tools`).
+101. [TODO] `provider-tools.phase1.expanded-tools-verify.commit1` Git Commit: `test: verify expanded glm tools` (hash: TBD)
 
 ### Stream: Scope Closeout
-94. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-95. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+102. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+103. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
