@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.585] - 2026-06-22
+### Changed
+- **GLM Native now exposes provider-owned executable tools.** Standalone GLM
+  chats receive GLM-owned function tools for shell commands, workspace search,
+  file read/write, patch application, web search, web fetch, and workflow
+  artifact writes.
+- **Removed the copied Codex-native baseline from GLM.** GLM no longer embeds
+  Codex-native tool descriptions or ships the old captured Codex baseline file
+  in its provider module.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/glm-module`
+- `npm test --workspace=@codeai-hub/glm-module`
+- `npm run plan:validate`
+
 ## [1.2.584] - 2026-06-22
 ### Fixed
 - **GLM Native retries `EPIPE` provider disconnects.** `EPIPE: write EPIPE`
