@@ -153,6 +153,10 @@
 71. [DONE] `provider-tools.phase1.main-merge.task1` Merge the restored 1.2.584 provider tooling line back into `main` after the local release commits were left without a branch ref (scope: `**`; expected commit: `merge: restore 1.2.584 provider tooling line`).
 72. [DONE] `provider-tools.phase1.main-merge.commit1` Git Commit: `merge: restore 1.2.584 provider tooling line` (hash: self)
 
+### Stream: GLM-Owned Executable Tool Runtime
+73. [DONE] `provider-tools.phase1.glm-owned-tools.task1` Replace copied Codex-native GLM tool declarations with provider-owned executable tools and wire the smallest useful shell/search/web/file executors for standalone GLM work (scope: `packages/GLM_Module/src/provider/**, doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `fix: implement native glm tool executors`).
+74. [DONE] `provider-tools.phase1.glm-owned-tools.commit1` Git Commit: `fix: implement native glm tool executors` (hash: self)
+
 ### Stream: Scope Closeout
-73. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-74. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+75. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+76. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)

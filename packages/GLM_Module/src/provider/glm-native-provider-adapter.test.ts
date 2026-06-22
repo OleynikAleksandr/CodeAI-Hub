@@ -10,7 +10,8 @@ const encoder = new TextEncoder();
 const HTTP_529_PATTERN = /HTTP 529/u;
 const ECONNRESET_PATTERN = /ECONNRESET/u;
 const CODEX_NATIVE_IDENTITY_PATTERN = /You are Codex, a coding agent/u;
-const GLM_RUNTIME_ADDENDUM_PATTERN = /CodeAI Hub GLM Runtime Addendum/u;
+const GLM_NATIVE_IDENTITY_PATTERN =
+  /You are CodeAI Hub's native GLM coding agent/u;
 const TOOL_JSON_BLOCK_PATTERN = /Captured Codex Native Tool Definitions/u;
 const TEST_PROVIDER_HOME = "/tmp/codeai-hub-glm-native-provider-test-home";
 
@@ -112,11 +113,11 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     };
     assert.equal(body.model, "glm-5.2");
     assert.equal(body.messages[0]?.role, "system");
-    assert.match(
+    assert.doesNotMatch(
       body.messages[0]?.content ?? "",
       CODEX_NATIVE_IDENTITY_PATTERN
     );
-    assert.match(body.messages[0]?.content ?? "", GLM_RUNTIME_ADDENDUM_PATTERN);
+    assert.match(body.messages[0]?.content ?? "", GLM_NATIVE_IDENTITY_PATTERN);
     assert.doesNotMatch(
       body.messages[0]?.content ?? "",
       TOOL_JSON_BLOCK_PATTERN
@@ -129,18 +130,19 @@ test("GlmProviderAdapter streams thinking, assistant content and token usage", a
     });
     assert.equal(body.tool_choice, "auto");
     assert.equal(body.tool_stream, true);
-    assert.equal(body.tools.length, 46);
-    assert.ok(body.tools.some((tool) => tool.function.name === "exec_command"));
-    assert.ok(body.tools.some((tool) => tool.function.name === "apply_patch"));
-    assert.ok(
-      body.tools.some(
-        (tool) => tool.function.name === "mcp__playwright__browser_click"
-      )
-    );
-    assert.ok(
-      body.tools.some(
-        (tool) => tool.function.name === "write_workflow_artifact"
-      )
+    assert.deepEqual(
+      body.tools.map((tool) => tool.function.name),
+      [
+        "exec_command",
+        "grep_files",
+        "glob_files",
+        "read_file",
+        "write_file",
+        "apply_patch",
+        "web_search",
+        "web_fetch",
+        "write_workflow_artifact",
+      ]
     );
     assert.deepEqual(
       events.map((event) => (event as { type: string }).type),

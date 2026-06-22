@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -123,6 +124,92 @@ test("GlmProviderAdapter executes GLM exec_command tool calls", async () => {
   }
 });
 
+test("GlmProviderAdapter executes GLM grep_files tool calls", async () => {
+  if (spawnSync("rg", ["--version"]).status !== 0) {
+    return;
+  }
+  const originalFetch = globalThis.fetch;
+  const workspacePath = await mkdtemp(path.join(os.tmpdir(), "glm-grep-tool-"));
+  const providerHomePath = path.join(workspacePath, "provider-home");
+  await writeFile(path.join(workspacePath, "sample.ts"), "const needle = 1;\n");
+  const bodies: string[] = [];
+  globalThis.fetch = ((_url, init) => {
+    bodies.push(String(init?.body ?? ""));
+    if (bodies.length === 1) {
+      return Promise.resolve(createGrepToolCallResponse());
+    }
+    return Promise.resolve(
+      createResponse([
+        JSON.stringify({ choices: [{ delta: { content: "Готово." } }] }),
+        "[DONE]",
+      ])
+    );
+  }) as typeof fetch;
+
+  try {
+    const adapter = new GlmProviderAdapter({
+      workspace: { apiKey: "test-key", providerHomePath, workspacePath },
+    });
+    await adapter.initialize();
+    const sessionId = await adapter.createSession();
+    await adapter.sendMessage(sessionId, "search workspace");
+
+    const toolContent = readLastToolContent(bodies[1] as string);
+    assert.equal(toolContent.ok, true);
+    assert.deepEqual(toolContent.matches, [
+      "./sample.ts:1:7:const needle = 1;",
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});
+
+test("GlmProviderAdapter executes GLM web_search tool calls", async () => {
+  const originalFetch = globalThis.fetch;
+  const workspacePath = await mkdtemp(path.join(os.tmpdir(), "glm-web-tool-"));
+  const providerHomePath = path.join(workspacePath, "provider-home");
+  const bodies: string[] = [];
+  globalThis.fetch = ((url, init) => {
+    const target = String(url);
+    if (target.includes("duckduckgo.com/html")) {
+      return Promise.resolve(
+        new Response(
+          '<a class="result__a" href="https://example.test/page">Example result</a>'
+        )
+      );
+    }
+    bodies.push(String(init?.body ?? ""));
+    if (bodies.length === 1) {
+      return Promise.resolve(createWebSearchToolCallResponse());
+    }
+    return Promise.resolve(
+      createResponse([
+        JSON.stringify({ choices: [{ delta: { content: "Готово." } }] }),
+        "[DONE]",
+      ])
+    );
+  }) as typeof fetch;
+
+  try {
+    const adapter = new GlmProviderAdapter({
+      workspace: { apiKey: "test-key", providerHomePath, workspacePath },
+    });
+    await adapter.initialize();
+    const sessionId = await adapter.createSession();
+    await adapter.sendMessage(sessionId, "search web");
+
+    const toolContent = readLastToolContent(bodies[1] as string);
+    assert.equal(toolContent.ok, true);
+    assert.deepEqual(toolContent.results, [
+      { title: "Example result", url: "https://example.test/page" },
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});
+
 const createToolCallResponse = (): Response =>
   createResponse([
     JSON.stringify({
@@ -163,6 +250,58 @@ const createExecToolCallResponse = (): Response =>
                   name: "exec_command",
                 },
                 id: "call_exec",
+                index: 0,
+                type: "function",
+              },
+            ],
+          },
+        },
+      ],
+    }),
+    JSON.stringify({ choices: [{ delta: {}, finish_reason: "tool_calls" }] }),
+    "[DONE]",
+  ]);
+
+const createGrepToolCallResponse = (): Response =>
+  createResponse([
+    JSON.stringify({
+      choices: [
+        {
+          delta: {
+            tool_calls: [
+              {
+                function: {
+                  arguments:
+                    '{"pattern":"needle","path":".","include":"**/*.ts","max_results":10}',
+                  name: "grep_files",
+                },
+                id: "call_grep",
+                index: 0,
+                type: "function",
+              },
+            ],
+          },
+        },
+      ],
+    }),
+    JSON.stringify({ choices: [{ delta: {}, finish_reason: "tool_calls" }] }),
+    "[DONE]",
+  ]);
+
+const createWebSearchToolCallResponse = (): Response =>
+  createResponse([
+    JSON.stringify({
+      choices: [
+        {
+          delta: {
+            tool_calls: [
+              {
+                function: {
+                  arguments:
+                    '{"query":"CodeAI Hub GLM tools","response_length":"short"}',
+                  name: "web_search",
+                },
+                id: "call_web",
                 index: 0,
                 type: "function",
               },
@@ -232,12 +371,19 @@ const readLastToolCallId = (bodyText: string): string | undefined => {
 
 const readLastToolContent = (
   bodyText: string
-): { readonly ok?: boolean; readonly stdout?: string } => {
+): {
+  readonly matches?: readonly string[];
+  readonly ok?: boolean;
+  readonly results?: readonly Record<string, string>[];
+  readonly stdout?: string;
+} => {
   const body = JSON.parse(bodyText) as {
     readonly messages: Array<{ readonly content?: string }>;
   };
   return JSON.parse(body.messages.at(-1)?.content ?? "{}") as {
+    readonly matches?: readonly string[];
     readonly ok?: boolean;
+    readonly results?: readonly Record<string, string>[];
     readonly stdout?: string;
   };
 };
