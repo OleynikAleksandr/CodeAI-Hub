@@ -10,8 +10,8 @@
   "baseHead": "6a4528ef5",
   "lastRecordedCommit": "self",
   "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": "provider-tools.phase1.closeout.task1",
-  "expectedCommitMessage": "docs: close provider prompt tooling scope",
+  "currentTaskId": "provider-tools.phase1.glm-workspace-instructions-docs.task1",
+  "expectedCommitMessage": "docs: document glm workspace instructions",
   "debt": null
 }
 ```
@@ -230,6 +230,12 @@
 120. [DONE] `provider-tools.phase1.glm-tool-evolution-docs.task1` Record the GLM Native next evolution direction in the GLM module SSOT: workspace custom instructions, subagents, media reading, skills, and background task lifecycle must become GLM-owned executable capabilities or supported bridges, not prompt-only claims. Kimi is explicitly out of scope (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm native tool evolution`).
 121. [DONE] `provider-tools.phase1.glm-tool-evolution-docs.commit1` Git Commit: `docs: document glm native tool evolution` (hash: self)
 
+### Stream: GLM Workspace Instructions Injection
+122. [DONE] `provider-tools.phase1.glm-workspace-instructions.task1` Inject root `AGENTS.md` into GLM Native provider-visible system context when the workspace file exists, without changing Kimi (scope: `packages/GLM_Module/src/provider/glm-native-agent-runtime.ts, packages/GLM_Module/src/provider/glm-native-agent-runtime.instructions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: inject glm workspace instructions`).
+123. [DONE] `provider-tools.phase1.glm-workspace-instructions.commit1` Git Commit: `fix: inject glm workspace instructions` (hash: self)
+124. [IN_PROGRESS] `provider-tools.phase1.glm-workspace-instructions-docs.task1` Document GLM Native workspace instruction injection in the module SSOT (scope: `doc/SolidWorks-WorkFlow/Modules/GLM_Native.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm workspace instructions`).
+125. [TODO] `provider-tools.phase1.glm-workspace-instructions-docs.commit1` Git Commit: `docs: document glm workspace instructions` (hash: TBD)
+
 ### Stream: Scope Closeout
-122. [IN_PROGRESS] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
-123. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)
+126. [TODO] `provider-tools.phase1.closeout.task1` Close the provider prompt/tooling scope after explicit user acceptance and archive the active plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider prompt tooling scope`).
+127. [TODO] `provider-tools.phase1.closeout.commit1` Git Commit: `docs: close provider prompt tooling scope` (hash: TBD)

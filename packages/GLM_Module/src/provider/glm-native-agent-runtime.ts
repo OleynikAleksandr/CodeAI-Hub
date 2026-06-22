@@ -1,9 +1,12 @@
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { GLM_NATIVE_EXPANDED_WORKFLOW_TOOLS } from "./glm-native-expanded-tool-definitions";
 import type { GlmRuntimeProfile } from "./glm-native-runtime-profile";
 import type { GlmToolCall } from "./glm-native-sse-parser";
 import { executeGlmNativeTool } from "./glm-native-tool-executors";
 
+const WORKSPACE_INSTRUCTIONS_FILE = "AGENTS.md";
 const WORKFLOW_ARTIFACT_TOOL_NAME = "write_workflow_artifact";
 
 export const GLM_NATIVE_MAX_TOOL_STEPS = 64;
@@ -244,8 +247,13 @@ function objectSchema(
   };
 }
 
-const buildGlmNativeSystemInstruction = (profile: GlmRuntimeProfile): string =>
-  [
+const buildGlmNativeSystemInstruction = (
+  profile: GlmRuntimeProfile
+): string => {
+  const workspaceInstructions = readWorkspaceInstructions(
+    profile.workspacePath
+  );
+  return [
     "You are CodeAI Hub's native GLM coding agent.",
     "",
     "Runtime environment:",
@@ -273,7 +281,38 @@ const buildGlmNativeSystemInstruction = (profile: GlmRuntimeProfile): string =>
     "- After writing artifacts, answer briefly in the chat language with what changed and any critical questions.",
     "- If a required artifact write fails, use the tool error to correct the path or content and try again.",
     "- Never claim that a file was created unless the tool returned success.",
+    ...buildWorkspaceInstructionBlock(workspaceInstructions),
   ].join("\n");
+};
+
+const readWorkspaceInstructions = (
+  workspacePath: string | undefined
+): { readonly content: string; readonly sourcePath: string } | null => {
+  if (!workspacePath) {
+    return null;
+  }
+  const sourcePath = path.join(workspacePath, WORKSPACE_INSTRUCTIONS_FILE);
+  try {
+    const content = readFileSync(sourcePath, "utf8");
+    return content.trim().length > 0 ? { content, sourcePath } : null;
+  } catch {
+    return null;
+  }
+};
+
+const buildWorkspaceInstructionBlock = (
+  instructions: { readonly content: string; readonly sourcePath: string } | null
+): readonly string[] =>
+  instructions
+    ? [
+        "",
+        "Applicable AGENTS.md instructions:",
+        `Source: ${instructions.sourcePath}`,
+        "<agents.md>",
+        instructions.content,
+        "</agents.md>",
+      ]
+    : [];
 
 export const buildGlmNativeSystemMessage = (
   profile: GlmRuntimeProfile
