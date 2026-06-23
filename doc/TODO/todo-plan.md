@@ -10,8 +10,8 @@
   "baseHead": "5152b95f3",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Session_Event_Routing_Bugfix_Planning_RU.md",
-  "currentTaskId": "kimi-session-routing.phase2.docs.task1",
-  "expectedCommitMessage": "docs: document kimi session event routing",
+  "currentTaskId": "kimi-session-routing.phase3.verify.task1",
+  "expectedCommitMessage": "test: verify kimi session event routing fix",
   "debt": null
 }
 ```
@@ -53,12 +53,12 @@
 
 ## Phase 2 - Documentation Sync (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi routing contract
-5. [IN_PROGRESS] `kimi-session-routing.phase2.docs.task1` Document the Kimi session-scoped ACP routing invariant (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi session event routing`).
-6. [TODO] `kimi-session-routing.phase2.docs.commit1` Git Commit: `docs: document kimi session event routing` (hash: TBD)
+5. [DONE] `kimi-session-routing.phase2.docs.task1` Document the Kimi session-scoped ACP routing invariant (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi session event routing`).
+6. [DONE] `kimi-session-routing.phase2.docs.commit1` Git Commit: `docs: document kimi session event routing` (hash: self)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi focused checks
-7. [TODO] `kimi-session-routing.phase3.verify.task1` Run focused Kimi tests/build and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi session event routing fix`).
+7. [IN_PROGRESS] `kimi-session-routing.phase3.verify.task1` Run focused Kimi tests/build and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi session event routing fix`).
 8. [TODO] `kimi-session-routing.phase3.verify.commit1` Git Commit: `test: verify kimi session event routing fix` (hash: TBD)
 
 ## Phase 4 - Release Build (owner: Codex, updated: 2026-06-23)

@@ -46,6 +46,7 @@ Kimi provider module подключает Kimi K2.7 Code к Core как обыч
 ## Event normalization
 - ACP `session/update` `agent_message_chunk` is buffered into Core `assistant` messages tagged `live`; the adapter flushes buffered text on stream boundaries and before adapter-level `turn_completed` so token-sized ACP chunks do not render as separate dialog cards.
 - ACP `session/update` `agent_thought_chunk` is buffered into Core `thinking` messages tagged `thinking`; buffered thought text flushes before visible assistant text, on stream boundaries, and before adapter-level `turn_completed`. Visibility is decided by Core at emission time from `providers.kimi.thinkingDisplaySyncEnabled`, the same user-facing dialog policy used by other providers.
+- ACP frames carrying a provider `sessionId` route only to the matching runtime listener `kimi:<sessionId>` and use a session-scoped normalizer buffer. Broadcast is retained only for legacy/sessionless frames. This prevents two open Kimi chats from receiving each other's assistant/thinking chunks.
 - ACP `tool_call` / `tool_call_update` and `usage_update` become normalized progress/token events on the same provider event surface used by the existing providers.
 - Reasoning/thinking messages render as expanded dialog bubbles when visible; the old collapsed disclosure UI is not part of the current provider UX contract.
 - Legacy Wire `TurnBegin` / `TurnEnd` / `ContentPart` / `StatusUpdate` normalization remains as compatibility code, but the current CLI path is ACP.
