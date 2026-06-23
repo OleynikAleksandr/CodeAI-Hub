@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase5.acceptance.task1",
-  "expectedCommitMessage": "chore: record local models selection user acceptance",
+  "currentTaskId": "local-models-selection.phase5.followup.code.task1",
+  "expectedCommitMessage": "fix(local-models): seed standalone chat selected model",
   "debt": null
 }
 ```
@@ -75,12 +75,23 @@
    - Artifact: `codeai-hub-1.2.593.vsix` (5.5M) created at repository root.
 14. [DONE] `local-models-selection.phase4.release.build.commit1` Git Commit: `build: release v1.2.593` (hash: self)
 
-## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
-### Stream: User retest
-15. [IN_PROGRESS] `local-models-selection.phase5.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
-16. [TODO] `local-models-selection.phase5.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
+## Phase 5 - Retest Follow-up Fix (owner: Codex, updated: 2026-06-23)
+### Stream: Local Models standalone chat binding
+15. [DONE] `local-models-selection.phase5.followup.plan.task1` Add follow-up tasks after user retest showed standalone Local Models chat still seeds the sentinel `local-model` instead of a selected LM Studio model (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add local models standalone chat binding follow-up`).
+16. [DONE] `local-models-selection.phase5.followup.plan.commit1` Git Commit: `docs: add local models standalone chat binding follow-up` (hash: self)
+17. [IN_PROGRESS] `local-models-selection.phase5.followup.code.task1` Pass the resolved Local Models selected model into standalone chat session creation instead of relying on the persisted sentinel fallback (scope: `src/client/project-manager/components/layout/workspace-chat-list.tsx, src/client/project-manager/api.ts, src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`; expected commit: `fix(local-models): seed standalone chat selected model`).
+18. [TODO] `local-models-selection.phase5.followup.code.commit1` Git Commit: `fix(local-models): seed standalone chat selected model` (hash: TBD)
+19. [TODO] `local-models-selection.phase5.followup.docs.task1` Document the standalone Local Models chat binding rule (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local models standalone chat binding`).
+20. [TODO] `local-models-selection.phase5.followup.docs.commit1` Git Commit: `docs: document local models standalone chat binding` (hash: TBD)
+21. [TODO] `local-models-selection.phase5.followup.verify.task1` Run focused standalone chat binding checks and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone binding fix`).
+22. [TODO] `local-models-selection.phase5.followup.verify.commit1` Git Commit: `test: verify local models standalone binding fix` (hash: TBD)
 
-## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
+## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
+### Stream: User retest
+23. [TODO] `local-models-selection.phase6.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
+24. [TODO] `local-models-selection.phase6.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
+
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 ### Stream: Archive + planning-doc disposition
-17. [TODO] `local-models-selection.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models standalone chat selection scope`).
-18. [TODO] `local-models-selection.phase6.closeout.commit1` Git Commit: `docs: close local models standalone chat selection scope` (hash: TBD)
+25. [TODO] `local-models-selection.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models standalone chat selection scope`).
+26. [TODO] `local-models-selection.phase7.closeout.commit1` Git Commit: `docs: close local models standalone chat selection scope` (hash: TBD)
