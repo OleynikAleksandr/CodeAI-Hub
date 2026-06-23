@@ -10,8 +10,8 @@
   "baseHead": "dbebb0a76",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md",
-  "currentTaskId": "phase2.stream2.task1",
-  "expectedCommitMessage": "docs: prepare v1.2.596 release notes",
+  "currentTaskId": "phase2.stream2.task2",
+  "expectedCommitMessage": "build: release v1.2.596",
   "debt": null
 }
 ```
@@ -69,11 +69,11 @@
 2. [DONE] `phase2.stream1.commit1` Git Commit: `fix(local-models): confirm lmstudio runtime load` (hash: self)
 
 ### Stream: Release Build
-3. [IN_PROGRESS] `phase2.stream2.task1` Prepare release notes for v1.2.596.
+3. [DONE] `phase2.stream2.task1` Prepare release notes for v1.2.596.
    - scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`
    - expected commit: `docs: prepare v1.2.596 release notes`
-4. [TODO] `phase2.stream2.commit1` Git Commit: `docs: prepare v1.2.596 release notes` (hash: TBD)
-5. [TODO] `phase2.stream2.task2` Build release v1.2.596.
+4. [DONE] `phase2.stream2.commit1` Git Commit: `docs: prepare v1.2.596 release notes` (hash: self)
+5. [IN_PROGRESS] `phase2.stream2.task2` Build release v1.2.596.
    - scope: `package.json, package-lock.json, packages/**/package.json, packages/**/package-lock.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`
    - expected commit: `build: release v1.2.596`
 6. [TODO] `phase2.stream2.commit2` Git Commit: `build: release v1.2.596` (hash: TBD)

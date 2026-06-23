@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.596] - 2026-06-23
+### Fixed
+- **Local Models runtime loads no longer block on hidden LM Studio CLI prompts.**
+  Core now passes `--yes` to `lms load`, so fuzzy keys such as
+  `hy-mt2-30b-a3b-mlx` select the intended downloaded model instead of waiting
+  for an interactive "multiple models match" prompt that Project Manager cannot
+  answer.
+
+### Verification
+- `lms load hy-mt2-30b-a3b-mlx --context-length 8192 --identifier codeaihub-probe-key --estimate-only --yes`
+- `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-provider-adapter.selection.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/local-models/local-models-warmup-service.test.ts packages/core/src/local-models/local-models-facade.test.ts`
+- `npm run plan:validate`
+
 ## [1.2.595] - 2026-06-23
 ### Fixed
 - **Local Models workflow-agent warmup no longer blocks Core startup.**

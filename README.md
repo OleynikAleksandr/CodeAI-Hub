@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.595** (Local Models Warmup Hotfix)
+**Current Release — v1.2.596** (Local Models Runtime Load Fix)
+
+This release packages the Local Models runtime load follow-up.
+
+Core now runs `lms load` with `--yes` for Local Models workflow/translation
+loads. This keeps LM Studio CLI non-interactive when a selected key such as
+`hy-mt2-30b-a3b-mlx` matches both the 4-bit model and a neighboring variant,
+which previously made Core wait for a hidden selection prompt while the same
+model still loaded manually in LM Studio.
+
+Retest focus: install the VSIX, restart Project Manager, set Local Models to
+`hy-mt2-30b-a3b-mlx` / `Hy-MT2-30B-A3B-MLX-4bit`, start a Local Models chat
+turn, and confirm Core loads the model instead of failing or timing out at
+`lms load`.
+
+**Previous Release — v1.2.595** (Local Models Warmup Hotfix)
 
 This release packages the Local Models startup warmup hotfix.
 
@@ -11,11 +26,6 @@ Models workflow-agent model. Heavy LM Studio workflow models now load only when
 a real Local Models turn starts, so a stuck `lms load` cannot block Core
 startup, Settings, model switching, or restart. Workflow-agent loads also use an
 8192 default context unless `CODEAI_LMSTUDIO_AGENT_CONTEXT_LENGTH` overrides it.
-
-Retest focus: install the VSIX, restart Project Manager, set Local Models to
-`hy-mt2-30b-a3b-mlx`, confirm Project Manager/Core stay responsive, switch to a
-different local model, and confirm the selected model appears in the lower
-status panel when a chat turn starts.
 
 **Previous Release — v1.2.594** (Local Models Standalone Chat Binding Fix)
 
