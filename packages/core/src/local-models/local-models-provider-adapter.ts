@@ -18,6 +18,7 @@ const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
 const DEFAULT_MAX_TOKENS = 8192;
 const DEFAULT_REQUEST_TIMEOUT_MS = 1_200_000;
 const JSON_HEADERS = { "content-type": "application/json" } as const;
+const LMSTUDIO_MODEL_ID_PREFIX = "lmstudio:";
 const TRAILING_SLASHES_PATTERN = /\/+$/u;
 
 type LocalModelsSessionListener = (payload: unknown) => void;
@@ -43,6 +44,20 @@ const resolveBaseUrl = (): string =>
   (process.env.CODEAI_LMSTUDIO_BASE_URL ?? DEFAULT_LM_STUDIO_BASE_URL)
     .trim()
     .replace(TRAILING_SLASHES_PATTERN, "");
+
+const normalizeRequestedModelId = (modelId?: string): string | undefined => {
+  const trimmed = modelId?.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  return trimmed.startsWith(LMSTUDIO_MODEL_ID_PREFIX)
+    ? trimmed.slice(LMSTUDIO_MODEL_ID_PREFIX.length).trim() || undefined
+    : trimmed;
+};
+
+const describeAvailableModelKeys = (
+  models: readonly LocalModelDescriptor[]
+): string => models.map((model) => model.modelKey).join(", ") || "none";
 
 // Heavy local reasoning models (e.g. Qwen3 27B) can run for many minutes; the
 // previous hard 5-minute cap aborted long turns mid-answer. Default to 20
@@ -285,15 +300,24 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
   }
 
   #resolveModel(turnOptions?: Record<string, unknown>): LocalModelDescriptor {
-    const requestedModelId =
-      readAppliedProviderTurnConfig(turnOptions)?.modelId ??
-      process.env.CODEAI_LMSTUDIO_DEFAULT_MODEL;
     const models = this.#facade.listModels();
-    const model =
-      models.find((candidate) => candidate.modelKey === requestedModelId) ??
-      models[0];
-    if (!model) {
+    if (models.length === 0) {
       throw new Error("No LM Studio local LLMs are downloaded.");
+    }
+    const requestedModelId =
+      normalizeRequestedModelId(
+        readAppliedProviderTurnConfig(turnOptions)?.modelId
+      ) ?? normalizeRequestedModelId(process.env.CODEAI_LMSTUDIO_DEFAULT_MODEL);
+    if (!requestedModelId) {
+      return models[0] as LocalModelDescriptor;
+    }
+    const model = models.find(
+      (candidate) => candidate.modelKey === requestedModelId
+    );
+    if (!model) {
+      throw new Error(
+        `Requested LM Studio model "${requestedModelId}" is not available. Available models: ${describeAvailableModelKeys(models)}.`
+      );
     }
     return model;
   }

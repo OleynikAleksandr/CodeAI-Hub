@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase1.runtime.task1",
-  "expectedCommitMessage": "fix(local-models): honor requested lm studio model",
+  "currentTaskId": "local-models-selection.phase2.status.task1",
+  "expectedCommitMessage": "fix(ui): show local models status panel identity",
   "debt": null
 }
 ```
@@ -48,12 +48,12 @@
 
 ## Phase 1 - Runtime Selection Fix (owner: Codex, updated: 2026-06-23)
 ### Stream: Local Models requested model enforcement
-3. [IN_PROGRESS] `local-models-selection.phase1.runtime.task1` Make `LocalModelsProviderAdapter` normalize requested LM Studio ids and fail clearly when an explicitly requested model is unavailable instead of silently using the first discovered model (scope: `packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/SolidWorks-WorkFlow/Modules/LocalModels.md`; expected commit: `fix(local-models): honor requested lm studio model`).
-4. [TODO] `local-models-selection.phase1.runtime.commit1` Git Commit: `fix(local-models): honor requested lm studio model` (hash: TBD)
+3. [DONE] `local-models-selection.phase1.runtime.task1` Make `LocalModelsProviderAdapter` normalize requested LM Studio ids and fail clearly when an explicitly requested model is unavailable instead of silently using the first discovered model (scope: `packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/local-models/local-models-provider-adapter.selection.test.ts, doc/SolidWorks-WorkFlow/Modules/LocalModels.md`; expected commit: `fix(local-models): honor requested lm studio model`).
+4. [DONE] `local-models-selection.phase1.runtime.commit1` Git Commit: `fix(local-models): honor requested lm studio model` (hash: self)
 
 ## Phase 2 - Status Panel Fix (owner: Codex, updated: 2026-06-23)
 ### Stream: Local Models model identity display
-5. [TODO] `local-models-selection.phase2.status.task1` Ensure Session Status Panel renders Local Models model identity and provider tint from `status.models[0]`/binding snapshots (scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix(ui): show local models status panel identity`).
+5. [IN_PROGRESS] `local-models-selection.phase2.status.task1` Ensure Session Status Panel renders Local Models model identity and provider tint from `status.models[0]`/binding snapshots (scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix(ui): show local models status panel identity`).
 6. [TODO] `local-models-selection.phase2.status.commit1` Git Commit: `fix(ui): show local models status panel identity` (hash: TBD)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)

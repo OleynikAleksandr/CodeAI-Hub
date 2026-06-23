@@ -20,6 +20,7 @@ Accepted baseline in release `1.2.554` (live assistant streaming + reasoning thi
 
 ## Внешний контракт
 - Provider id в Core/UI catalog: `localModels`; user-facing models surface as `LM Studio · <model>` from `lmstudio:<modelKey>` catalogs.
+- Workflow turns accept selected LM Studio ids as either raw `modelKey` or `lmstudio:<modelKey>`. An explicit unavailable selected model is a hard error; the adapter must not silently fall back to the first discovered local model.
 - Workflow-agent endpoint: LM Studio native `POST /api/v1/chat`, `stream: true`, `input` = prompt, `max_output_tokens`, `model` = loaded identifier, `temperature`.
 - Workflow artifact tool path: workspace-bound Local Models sessions use LM Studio OpenAI-compatible `POST /v1/chat/completions` with `stream: true` and one function tool, `write_workflow_artifact(relative_path, content)`. This is the first working path because native `/api/v1/chat` exposes `tool_call.*` events through integrations/MCP; direct local function tools would otherwise require extra MCP server infrastructure.
 - Translation path (separate) also uses the OpenAI-compatible `/v1/chat/completions`; do not conflate translation prompts with the workflow artifact tool loop.
@@ -72,6 +73,7 @@ Accepted baseline in release `1.2.554` (live assistant streaming + reasoning thi
 - Reasoning is buffered before emission; raw per-delta micro-chunks must not become one visible thinking line per SSE frame.
 - Local Models artifact writes are restricted to `.codeai-hub/**`; any wider filesystem, shell, git, package-manager or dependency-management tool surface is out of scope.
 - Core can discover/load/reuse/unload idle `codeaihub-*` LM Studio instances, but user-loaded instances, in-app download/delete, and deep per-model tuning remain owned by LM Studio.
+- Explicit Local Models model identity is fail-closed: session binding, applied turn config, and `CODEAI_LMSTUDIO_DEFAULT_MODEL` may choose a model, but a missing selected id must surface as an error instead of executing with another model.
 - Startup/settings warmup is a preload optimization only; it must not change selected engine/model ids, prompt contracts, artifact validity, or workflow truth.
 - The selected reasoning-translation model and selected Local Models workflow-agent model are protected together. Loading one selected model must not unload the other; stale replacement happens only after Settings chooses a different model and warmup/reconcile unloads idle non-selected CodeAI-owned workers.
 
