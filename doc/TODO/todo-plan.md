@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
-  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
+  "currentTaskId": "openrouter-chat.phase6.stream-picker-release-build.task1",
+  "expectedCommitMessage": "chore: build OpenRouter stream picker release",
   "debt": null
 }
 ```
@@ -134,12 +134,17 @@
 43. [DONE] `openrouter-chat.phase6.new-chat-provider-dedupe.task1` Remove the duplicate OpenRouter entry from the New chat provider picker and cover the standalone provider list with a uniqueness test (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/provider-snapshot.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): dedupe new chat provider picker`).
     - Evidence 2026-06-23: root cause was `STANDALONE_CHAT_PROVIDER_IDS` appending `openRouter` after `DESCRIPTION_PROVIDER_IDS` already included it; `npx tsx --test src/client/project-manager/services/provider-snapshot.test.ts`; `npm run build:project-manager`; `npm run plan:validate`.
 44. [DONE] `openrouter-chat.phase6.new-chat-provider-dedupe.commit1` Git Commit: `fix(openrouter): dedupe new chat provider picker` (hash: self)
-45. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
-46. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
+45. [DONE] `openrouter-chat.phase6.stream-picker-release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for v1.2.600 with OpenRouter reasoning stream coalescing and New chat provider picker dedupe fixes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter stream picker release`).
+    - Evidence 2026-06-23: prepared README/CHANGELOG for future v1.2.600 after user explicitly requested a new release build.
+46. [DONE] `openrouter-chat.phase6.stream-picker-release-docs.commit1` Git Commit: `docs: prepare OpenRouter stream picker release` (hash: self)
+47. [IN_PROGRESS] `openrouter-chat.phase6.stream-picker-release-build.task1` Run approved release scripts for v1.2.600 and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter stream picker release`).
+48. [TODO] `openrouter-chat.phase6.stream-picker-release-build.commit1` Git Commit: `chore: build OpenRouter stream picker release` (hash: TBD)
+49. [TODO] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+50. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-47. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
-48. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)
+51. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
+52. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)

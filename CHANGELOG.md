@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.600] - 2026-06-23
+### Fixed
+- **OpenRouter reasoning stream now renders as a readable thinking block.**
+  Reasoning deltas are coalesced before OpenRouter emits a thinking message, so
+  token-level chunks no longer become separate lines or per-token translations.
+- **OpenRouter appears once in the New chat provider picker.** The standalone
+  chat provider list no longer appends OpenRouter after inheriting it from the
+  shared provider list.
+
+### Verification
+- `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npx tsx --test src/client/project-manager/services/provider-snapshot.test.ts`
+- `npm run build:project-manager`
+- `npm run plan:validate`
+
 ## [1.2.599] - 2026-06-23
 ### Changed
 - **OpenRouter model retest build.** Repackaged the current OpenRouter provider
