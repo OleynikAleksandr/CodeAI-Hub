@@ -14,6 +14,7 @@ import {
   type KimiRuntimeHome,
   materializeKimiManagedAgentProfile,
 } from "./kimi-managed-agent-profile";
+import { KimiNativeTokenUsageReader } from "./kimi-native-token-usage-reader";
 import { KimiUsageLimitsReader } from "./kimi-usage-limits-reader";
 import {
   KimiWorkspaceOverrideState,
@@ -74,6 +75,7 @@ interface KimiNativeRequestCaptureOptions {
 
 export class KimiProviderAdapter {
   private readonly listeners = new Map<string, Set<SessionListener>>();
+  private readonly nativeTokenUsageReader = new KimiNativeTokenUsageReader();
   private readonly options: KimiModuleOptions;
   private readonly usageLimitsReader = new KimiUsageLimitsReader();
   private readonly wireEventNormalizer = new KimiWireEventNormalizer(
@@ -194,6 +196,11 @@ export class KimiProviderAdapter {
       await this.requireSessionLifecycle().send(sessionId, trimmedContent);
       for (const event of this.wireEventNormalizer.flushPendingMessages()) {
         this.dispatchMessage(sessionId, event);
+      }
+      const tokenUsageEvent =
+        await this.nativeTokenUsageReader.readEvent(sessionId);
+      if (tokenUsageEvent) {
+        this.dispatchMessage(sessionId, tokenUsageEvent);
       }
       this.dispatchMessage(
         sessionId,

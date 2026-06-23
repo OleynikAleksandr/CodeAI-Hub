@@ -10,8 +10,8 @@
   "baseHead": "a96e90197",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md",
-  "currentTaskId": "kimi-token-status.phase1.runtime.task1",
-  "expectedCommitMessage": "fix(kimi): surface native token usage in status panel",
+  "currentTaskId": "kimi-token-status.phase2.docs.task1",
+  "expectedCommitMessage": "docs: document kimi token usage status fallback",
   "debt": null
 }
 ```
@@ -48,12 +48,12 @@
 
 ## Phase 1 - Runtime Fix (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi native token usage bridge
-3. [IN_PROGRESS] `kimi-token-status.phase1.runtime.task1` Read Kimi native wire usage after a turn and dispatch it through the existing `stream_event.data.tokenUsage` path (scope: `packages/Kimi_Module/src/provider/kimi-native-token-usage-reader.ts, packages/Kimi_Module/src/provider/kimi-native-token-usage-reader.test.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `fix(kimi): surface native token usage in status panel`).
-4. [TODO] `kimi-token-status.phase1.runtime.commit1` Git Commit: `fix(kimi): surface native token usage in status panel` (hash: TBD)
+3. [DONE] `kimi-token-status.phase1.runtime.task1` Read Kimi native wire usage after a turn and dispatch it through the existing `stream_event.data.tokenUsage` path (scope: `packages/Kimi_Module/src/provider/kimi-native-token-usage-reader.ts, packages/Kimi_Module/src/provider/kimi-native-token-usage-reader.test.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `fix(kimi): surface native token usage in status panel`).
+4. [DONE] `kimi-token-status.phase1.runtime.commit1` Git Commit: `fix(kimi): surface native token usage in status panel` (hash: self)
 
 ## Phase 2 - Documentation Sync (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi status-panel contract
-5. [TODO] `kimi-token-status.phase2.docs.task1` Document the Kimi fallback source for status-panel token usage without changing usage-limits semantics (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi token usage status fallback`).
+5. [IN_PROGRESS] `kimi-token-status.phase2.docs.task1` Document the Kimi fallback source for status-panel token usage without changing usage-limits semantics (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi token usage status fallback`).
 6. [TODO] `kimi-token-status.phase2.docs.commit1` Git Commit: `docs: document kimi token usage status fallback` (hash: TBD)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
