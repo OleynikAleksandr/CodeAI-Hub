@@ -6,6 +6,7 @@ import { KimiProviderAdapter } from "./kimi-provider-adapter";
 interface AdapterInternal {
   readonly currentThinkingEnabled: boolean | undefined;
   handleProviderRequest(request: KimiWireRequest): unknown;
+  handleWireEvent(params: unknown): void;
 }
 
 const createAdapter = (): KimiProviderAdapter =>
@@ -30,8 +31,14 @@ test("KimiProviderAdapter.reconfigureThinking is an ACP no-op", async () => {
 
 test("KimiProviderAdapter answers ACP permission requests with allow option", () => {
   const adapter = createAdapter();
-  const events: unknown[] = [];
-  adapter.onSessionEvent("kimi:session-1", (event) => events.push(event));
+  const session1Events: unknown[] = [];
+  const session2Events: unknown[] = [];
+  adapter.onSessionEvent("kimi:session-1", (event) =>
+    session1Events.push(event)
+  );
+  adapter.onSessionEvent("kimi:session-2", (event) =>
+    session2Events.push(event)
+  );
 
   const response = asInternal(adapter).handleProviderRequest({
     id: "request-1",
@@ -49,7 +56,7 @@ test("KimiProviderAdapter answers ACP permission requests with allow option", ()
           optionId: "allow-always",
         },
       ],
-      sessionId: "session-1",
+      sessionId: "session-2",
     },
   });
 
@@ -59,8 +66,52 @@ test("KimiProviderAdapter answers ACP permission requests with allow option", ()
       outcome: "selected",
     },
   });
+  assert.deepEqual(session1Events, []);
   assert.equal(
-    (events[0] as { readonly type?: string }).type,
+    (session2Events[0] as { readonly type?: string }).type,
     "provider_request"
+  );
+});
+
+test("KimiProviderAdapter routes ACP updates only to the frame session", () => {
+  const adapter = createAdapter();
+  const session1Events: unknown[] = [];
+  const session2Events: unknown[] = [];
+  adapter.onSessionEvent("kimi:session-1", (event) =>
+    session1Events.push(event)
+  );
+  adapter.onSessionEvent("kimi:session-2", (event) =>
+    session2Events.push(event)
+  );
+
+  asInternal(adapter).handleWireEvent({
+    method: "session/update",
+    params: {
+      sessionId: "session-2",
+      update: {
+        content: { text: "targeted reply", type: "text" },
+        sessionUpdate: "agent_message_chunk",
+      },
+    },
+  });
+  asInternal(adapter).handleWireEvent({
+    method: "session/update",
+    params: {
+      sessionId: "session-2",
+      update: {
+        sessionUpdate: "tool_call",
+        title: "ReadFile",
+      },
+    },
+  });
+
+  assert.deepEqual(session1Events, []);
+  assert.equal(
+    (session2Events[0] as { readonly type?: string }).type,
+    "assistant"
+  );
+  assert.equal(
+    (session2Events[0] as { readonly content?: string }).content,
+    "targeted reply"
   );
 });

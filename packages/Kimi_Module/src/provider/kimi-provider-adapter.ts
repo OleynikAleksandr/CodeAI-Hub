@@ -1,8 +1,4 @@
 import path from "node:path";
-import {
-  KimiWireEventNormalizer,
-  normalizeKimiWireEvent,
-} from "../messaging/kimi-event-normalizer";
 import { normalizeKimiWireRequest } from "../messaging/kimi-request-failure-normalizer";
 import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
@@ -15,6 +11,10 @@ import {
   materializeKimiManagedAgentProfile,
 } from "./kimi-managed-agent-profile";
 import { KimiNativeTokenUsageReader } from "./kimi-native-token-usage-reader";
+import {
+  KimiSessionEventRouter,
+  readKimiRuntimeSessionId,
+} from "./kimi-session-event-router";
 import { KimiUsageLimitsReader } from "./kimi-usage-limits-reader";
 import {
   KimiWorkspaceOverrideState,
@@ -53,7 +53,6 @@ export interface KimiSessionEvent {
   readonly postTurnTokenUsageUnavailable?: true;
   readonly type: string;
 }
-
 interface KimiNativeRequestCaptureOptions {
   readonly captureId: string;
   readonly recordAppliedInputEnvelope?: (envelope: {
@@ -78,9 +77,7 @@ export class KimiProviderAdapter {
   private readonly nativeTokenUsageReader = new KimiNativeTokenUsageReader();
   private readonly options: KimiModuleOptions;
   private readonly usageLimitsReader = new KimiUsageLimitsReader();
-  private readonly wireEventNormalizer = new KimiWireEventNormalizer(
-    normalizeKimiWireEvent
-  );
+  private readonly sessionEventRouter = new KimiSessionEventRouter();
   private cliEnvironment: KimiCliEnvironment | null = null;
   private currentThinkingEnabled: boolean | undefined;
   private runtimeHome: KimiRuntimeHome | null = null;
@@ -194,7 +191,7 @@ export class KimiProviderAdapter {
     this.dispatchMessage(sessionId, this.createLifecycleEvent("turn_started"));
     try {
       await this.requireSessionLifecycle().send(sessionId, trimmedContent);
-      for (const event of this.wireEventNormalizer.flushPendingMessages()) {
+      for (const event of this.sessionEventRouter.flush(sessionId)) {
         this.dispatchMessage(sessionId, event);
       }
       const tokenUsageEvent =
@@ -253,6 +250,7 @@ export class KimiProviderAdapter {
 
   async closeSession(sessionId: string): Promise<void> {
     this.listeners.delete(sessionId);
+    this.sessionEventRouter.close(sessionId);
     await this.requireSessionLifecycle().close(sessionId);
   }
 
@@ -358,14 +356,7 @@ export class KimiProviderAdapter {
 
   private createWireRouter(): KimiWireRouter {
     return new KimiWireRouter({
-      onEvent: (params) => {
-        const events = this.wireEventNormalizer.normalize(params);
-        for (const sessionId of this.listeners.keys()) {
-          for (const event of events) {
-            this.dispatchMessage(sessionId, event);
-          }
-        }
-      },
+      onEvent: (params) => this.handleWireEvent(params),
       onMalformedFrame: (line, error) => {
         this.options.reporter?.warn?.("Malformed Kimi ACP frame received", {
           errorMessage: error.message,
@@ -377,6 +368,30 @@ export class KimiProviderAdapter {
     });
   }
 
+  private handleWireEvent(params: unknown): void {
+    const targetSessionId = readKimiRuntimeSessionId(params);
+    this.dispatchEvents(
+      targetSessionId,
+      this.sessionEventRouter.normalize(targetSessionId, params)
+    );
+  }
+  private dispatchEvents(
+    sessionId: string | null,
+    events: readonly KimiSessionEvent[]
+  ): void {
+    if (sessionId) {
+      for (const event of events) {
+        this.dispatchMessage(sessionId, event);
+      }
+      return;
+    }
+    for (const listenerSessionId of this.listeners.keys()) {
+      for (const event of events) {
+        this.dispatchMessage(listenerSessionId, event);
+      }
+    }
+  }
+
   private dispatchMessage(sessionId: string, payload: KimiSessionEvent): void {
     const listeners = this.listeners.get(sessionId);
     if (!listeners) {
@@ -386,7 +401,6 @@ export class KimiProviderAdapter {
       listener(payload);
     }
   }
-
   private createLifecycleEvent(
     type: "turn_completed" | "turn_failed" | "turn_started",
     payload?: Record<string, unknown>
@@ -406,9 +420,7 @@ export class KimiProviderAdapter {
 
   private handleProviderRequest(request: KimiWireRequest): unknown {
     const event = normalizeKimiWireRequest(request);
-    for (const sessionId of this.listeners.keys()) {
-      this.dispatchMessage(sessionId, event);
-    }
+    this.dispatchEvents(readKimiRuntimeSessionId(request), [event]);
     if (request.method !== "session/request_permission") {
       return {};
     }

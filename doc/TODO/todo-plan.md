@@ -10,8 +10,8 @@
   "baseHead": "5152b95f3",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Session_Event_Routing_Bugfix_Planning_RU.md",
-  "currentTaskId": "kimi-session-routing.phase1.runtime.task1",
-  "expectedCommitMessage": "fix(kimi): route acp events to target session",
+  "currentTaskId": "kimi-session-routing.phase2.docs.task1",
+  "expectedCommitMessage": "docs: document kimi session event routing",
   "debt": null
 }
 ```
@@ -48,25 +48,30 @@
 
 ## Phase 1 - Runtime Fix (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi ACP event routing
-3. [IN_PROGRESS] `kimi-session-routing.phase1.runtime.task1` Route Kimi ACP events and provider requests to the listener matching the frame session id, with fallback broadcast only for sessionless frames (scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.test.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md`; expected commit: `fix(kimi): route acp events to target session`).
-4. [TODO] `kimi-session-routing.phase1.runtime.commit1` Git Commit: `fix(kimi): route acp events to target session` (hash: TBD)
+3. [DONE] `kimi-session-routing.phase1.runtime.task1` Route Kimi ACP events and provider requests to the listener matching the frame session id, with fallback broadcast only for sessionless frames (scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.test.ts, packages/Kimi_Module/src/provider/kimi-session-event-router.ts`; expected commit: `fix(kimi): route acp events to target session`).
+4. [DONE] `kimi-session-routing.phase1.runtime.commit1` Git Commit: `fix(kimi): route acp events to target session` (hash: self)
 
-## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-06-23)
+## Phase 2 - Documentation Sync (owner: Codex, updated: 2026-06-23)
+### Stream: Kimi routing contract
+5. [IN_PROGRESS] `kimi-session-routing.phase2.docs.task1` Document the Kimi session-scoped ACP routing invariant (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi session event routing`).
+6. [TODO] `kimi-session-routing.phase2.docs.commit1` Git Commit: `docs: document kimi session event routing` (hash: TBD)
+
+## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi focused checks
-5. [TODO] `kimi-session-routing.phase2.verify.task1` Run focused Kimi tests/build and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi session event routing fix`).
-6. [TODO] `kimi-session-routing.phase2.verify.commit1` Git Commit: `test: verify kimi session event routing fix` (hash: TBD)
+7. [TODO] `kimi-session-routing.phase3.verify.task1` Run focused Kimi tests/build and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi session event routing fix`).
+8. [TODO] `kimi-session-routing.phase3.verify.commit1` Git Commit: `test: verify kimi session event routing fix` (hash: TBD)
 
-## Phase 3 - Release Build (owner: Codex, updated: 2026-06-23)
+## Phase 4 - Release Build (owner: Codex, updated: 2026-06-23)
 ### Stream: Release gate
-7. [TODO] `kimi-session-routing.phase3.release.task1` After verification, ask the user whether to build a new release; do not run release scripts before explicit confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: request kimi session routing release decision`).
-8. [TODO] `kimi-session-routing.phase3.release.commit1` Git Commit: `chore: request kimi session routing release decision` (hash: TBD)
+9. [TODO] `kimi-session-routing.phase4.release.task1` After verification, ask the user whether to build a new release; do not run release scripts before explicit confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: request kimi session routing release decision`).
+10. [TODO] `kimi-session-routing.phase4.release.commit1` Git Commit: `chore: request kimi session routing release decision` (hash: TBD)
 
-## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
+## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-9. [TODO] `kimi-session-routing.phase4.acceptance.task1` User verifies two simultaneous Kimi chats keep responses in the correct chat history (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi session routing user acceptance`).
-10. [TODO] `kimi-session-routing.phase4.acceptance.commit1` Git Commit: `chore: record kimi session routing user acceptance` (hash: TBD)
+11. [TODO] `kimi-session-routing.phase5.acceptance.task1` User verifies two simultaneous Kimi chats keep responses in the correct chat history (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi session routing user acceptance`).
+12. [TODO] `kimi-session-routing.phase5.acceptance.commit1` Git Commit: `chore: record kimi session routing user acceptance` (hash: TBD)
 
-## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-23)
+## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 ### Stream: Archive + planning-doc disposition
-11. [TODO] `kimi-session-routing.phase5.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi session event routing scope`).
-12. [TODO] `kimi-session-routing.phase5.closeout.commit1` Git Commit: `docs: close kimi session event routing scope` (hash: TBD)
+13. [TODO] `kimi-session-routing.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi session event routing scope`).
+14. [TODO] `kimi-session-routing.phase6.closeout.commit1` Git Commit: `docs: close kimi session event routing scope` (hash: TBD)
