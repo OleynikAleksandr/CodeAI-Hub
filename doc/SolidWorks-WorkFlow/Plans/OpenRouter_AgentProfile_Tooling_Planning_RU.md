@@ -53,3 +53,22 @@ OpenRouter остается прямым HTTP провайдером через 
 - Existing standalone chat остается рабочим.
 - Quality Gates provider picker больше не скрывает OpenRouter.
 - Документация отражает новый контракт.
+
+## 5. Implemented Contract
+
+Реализация на `main`:
+
+- `f5cff0989` — exported GLM Native workflow tool definitions/executor helpers for reuse.
+- `8913f0c8e` — OpenRouter now prepends the Codex workflow system profile, sends `tools` + `tool_choice: "auto"`, parses streamed `tool_calls`, executes local tool calls, and continues the Chat Completions loop until final assistant content.
+- `fd78a5e42` — OpenRouter is treated as research-capable in workflow provider selection, including Quality Gates.
+
+Current provider-visible OpenRouter request shape:
+
+- `messages[0]` is a `system` message built from `resolveCodexWorkflowInvocationProfile().baseInstructions` plus a short OpenRouter runtime/tooling addendum.
+- `messages[1...]` are session history messages: `user`, `assistant`, and local `tool` results when a model calls functions.
+- `tools` is the exported GLM Native executable workflow tool catalog, not the full captured Codex-native MCP/browser/plugin catalog.
+- `tool_choice` is `auto`.
+- `model` remains the exact OpenRouter model slug from Core-applied session binding.
+- optional `endpointTag` remains routing-only config: `provider.order = [endpointTag]`, `allow_fallbacks = false`.
+
+Boundary retained from the original decision: OpenRouter still uses direct HTTP Chat Completions. There is no OpenRouter Agent SDK, no remote OpenRouter server-tool feature, and no provider-visible tool declaration without a local CodeAI Hub executor.

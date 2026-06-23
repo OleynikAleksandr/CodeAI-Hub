@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase2.docs.task1",
-  "expectedCommitMessage": "docs: document OpenRouter agent profile",
+  "currentTaskId": "openrouter-agent.phase3.verify.task1",
+  "expectedCommitMessage": "test: verify OpenRouter agent tooling",
   "debt": null
 }
 ```
@@ -64,14 +64,14 @@
 
 7. [DONE] `openrouter-agent.phase2.workflow-picker.task1` Treat OpenRouter as research-capable in workflow provider selection now that it has executable tools (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): enable workflow provider selection`).
 8. [DONE] `openrouter-agent.phase2.workflow-picker.commit1` Git Commit: `fix(openrouter): enable workflow provider selection` (hash: self)
-9. [IN_PROGRESS] `openrouter-agent.phase2.docs.task1` Update SSOT docs for OpenRouter agent profile/tooling behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: document OpenRouter agent profile`).
-10. [TODO] `openrouter-agent.phase2.docs.commit1` Git Commit: `docs: document OpenRouter agent profile` (hash: TBD)
+9. [DONE] `openrouter-agent.phase2.docs.task1` Update SSOT docs for OpenRouter agent profile/tooling behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: document OpenRouter agent profile`).
+10. [DONE] `openrouter-agent.phase2.docs.commit1` Git Commit: `docs: document OpenRouter agent profile` (hash: self)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Targeted checks
 
-11. [TODO] `openrouter-agent.phase3.verify.task1` Run targeted tests/builds for GLM exports, OpenRouter tool-loop payloads and workflow picker behavior; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter agent tooling`).
+11. [IN_PROGRESS] `openrouter-agent.phase3.verify.task1` Run targeted tests/builds for GLM exports, OpenRouter tool-loop payloads and workflow picker behavior; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter agent tooling`).
 12. [TODO] `openrouter-agent.phase3.verify.commit1` Git Commit: `test: verify OpenRouter agent tooling` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
