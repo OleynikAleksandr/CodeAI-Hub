@@ -15,7 +15,8 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "kimiCode" ||
   value === "glmNative" ||
   value === "glmOpenCode" ||
-  value === "localModels";
+  value === "localModels" ||
+  value === "openRouter";
 
 export const isResearchCapableProviderId = (
   providerId: ProviderStackId

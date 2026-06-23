@@ -23,6 +23,7 @@ const DESCRIPTION_PROVIDER_IDS: readonly ProviderStackId[] = [
   "glmNative",
   "glmOpenCode",
   "localModels",
+  "openRouter",
 ];
 const STANDALONE_CHAT_PROVIDER_IDS: readonly ProviderStackId[] = [
   ...DESCRIPTION_PROVIDER_IDS,
