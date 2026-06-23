@@ -10,8 +10,8 @@
   "baseHead": "a96e90197",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md",
-  "currentTaskId": "kimi-token-status.phase2.docs.task1",
-  "expectedCommitMessage": "docs: document kimi token usage status fallback",
+  "currentTaskId": "kimi-token-status.phase3.verify.task1",
+  "expectedCommitMessage": "test: verify kimi token usage status fix",
   "debt": null
 }
 ```
@@ -53,12 +53,12 @@
 
 ## Phase 2 - Documentation Sync (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi status-panel contract
-5. [IN_PROGRESS] `kimi-token-status.phase2.docs.task1` Document the Kimi fallback source for status-panel token usage without changing usage-limits semantics (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi token usage status fallback`).
-6. [TODO] `kimi-token-status.phase2.docs.commit1` Git Commit: `docs: document kimi token usage status fallback` (hash: TBD)
+5. [DONE] `kimi-token-status.phase2.docs.task1` Document the Kimi fallback source for status-panel token usage without changing usage-limits semantics (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi token usage status fallback`).
+6. [DONE] `kimi-token-status.phase2.docs.commit1` Git Commit: `docs: document kimi token usage status fallback` (hash: self)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi focused checks
-7. [TODO] `kimi-token-status.phase3.verify.task1` Run targeted Kimi module build/tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi token usage status fix`).
+7. [IN_PROGRESS] `kimi-token-status.phase3.verify.task1` Run targeted Kimi module build/tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi token usage status fix`).
 8. [TODO] `kimi-token-status.phase3.verify.commit1` Git Commit: `test: verify kimi token usage status fix` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)

@@ -92,6 +92,10 @@ Kimi provider module подключает Kimi K2.7 Code к Core как обыч
 - Kimi provider theme id is `kimi`; CSS/design tokens define its accent/fill/border/soft states for Project Manager and Session UI.
 
 ## Usage limits
+- The Session Status Panel `Токены` chip is not a Kimi usage-limit/quota display. It consumes `status.tokenUsage` as a context-window snapshot, while the rows below/around usage limits consume `usageLimits.currentSession` (`5h`) and `usageLimits.currentWeekAllModels` (`Weekly`).
+- Kimi token usage for the status panel is provider-runtime evidence. The adapter still normalizes ACP `usage_update` / legacy `StatusUpdate` context fields when Kimi emits them, but current Kimi CLI builds may omit those events.
+- To keep the lower status panel populated for those builds, `KimiNativeTokenUsageReader` reads the native Kimi session log `~/.kimi-code/sessions/.../<providerSessionId>/agents/main/wire.jsonl` after a turn and dispatches a provider-neutral `stream_event.data.tokenUsage` payload. The best-effort `used` value is the latest native step usage sum: `inputOther + inputCacheRead + inputCacheCreation + output`; `limit` is the CodeAI-owned Kimi context limit `262144`.
+- This native usage fallback must not be treated as account billing, OCR output, or 5h/Weekly quota state. It exists only to feed the context-window status chip through the existing token-usage stream path.
 - Kimi usage limits are read from `GET https://api.kimi.com/coding/v1/usages` with the configured Kimi config path (default `~/.kimi-code/config.toml`) `providers.kimi-for-coding.api_key`; this is the Kimi CLI auth section, not the CodeAI model id.
 - The API key is read locally and sent only as an `Authorization: Bearer ...` header to the Kimi endpoint. It must not be logged, persisted into CodeAI settings, or copied into diagnostic artifacts.
 - Live payload mapping:

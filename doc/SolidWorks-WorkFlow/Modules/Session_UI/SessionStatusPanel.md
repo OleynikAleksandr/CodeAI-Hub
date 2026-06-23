@@ -51,12 +51,13 @@ The user-facing percentage in the chip is **remaining context window percentage*
 
 ### Token side
 - `session:stream` token-usage events -> `updateSnapshotsWithTokenUsage(...)`.
-- Kimi-specific discovery, 2026-06-21: current Kimi ACP `usage_update` carries authoritative context-window fields as `used` and `size`; legacy Kimi Wire `StatusUpdate` compatibility still maps:
+- Kimi-specific discovery, updated 2026-06-23: Kimi ACP `usage_update`, when present, carries context-window fields as `used` and `size`; legacy Kimi Wire `StatusUpdate` compatibility still maps:
   - `context_usage` as a `0..1` used ratio;
   - `context_tokens` as current context tokens;
   - `max_context_tokens` as the model context window.
   The Kimi adapter must normalize these into the same `tokenUsage` snapshot shape consumed by `updateSnapshotsWithTokenUsage(...)`: `used = context_tokens`, `limit = max_context_tokens`. `context_usage` is useful as provider evidence/debug, but the UI chip still derives the displayed percentage from `used / limit` to keep the provider-neutral status-panel contract.
-- Kimi per-turn accounting must not replace context-window usage in the `Токены:` chip.
+- Current Kimi CLI builds may omit ACP `usage_update`. For those sessions the Kimi adapter emits a post-turn native-wire token snapshot from `~/.kimi-code/sessions/.../<providerSessionId>/agents/main/wire.jsonl` by reading the latest `usage.record` / `step.end.usage` and summing `inputOther + inputCacheRead + inputCacheCreation + output`. This is a best-effort context-window snapshot for the lower `Токены:` chip, not Kimi 5h/Weekly quota state and not OCR/text extraction.
+- Kimi per-turn billing/quota accounting must not replace context-window usage in the `Токены:` chip.
 
 ### Debug summary side
 - пересчитывается по runtime chain или dialog history.
