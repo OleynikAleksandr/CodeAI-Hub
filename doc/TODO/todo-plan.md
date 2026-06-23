@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase4.release-artifacts.task1",
-  "expectedCommitMessage": "build: release OpenRouter agent tooling",
+  "currentTaskId": "openrouter-agent.phase5.acceptance.task1",
+  "expectedCommitMessage": "chore: record OpenRouter agent tooling acceptance",
   "debt": null
 }
 ```
@@ -93,16 +93,22 @@ Verification evidence (2026-06-23):
 
 15. [DONE] `openrouter-agent.phase4.release-notes.task1` Prepare release-facing docs for future version `1.2.601` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter agent tooling release`).
 16. [DONE] `openrouter-agent.phase4.release-notes.commit1` Git Commit: `docs: prepare OpenRouter agent tooling release` (hash: self)
-17. [IN_PROGRESS] `openrouter-agent.phase4.release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.601` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter agent tooling`).
-18. [TODO] `openrouter-agent.phase4.release-artifacts.commit1` Git Commit: `build: release OpenRouter agent tooling` (hash: TBD)
+17. [DONE] `openrouter-agent.phase4.release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.601` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter agent tooling`).
+18. [DONE] `openrouter-agent.phase4.release-artifacts.commit1` Git Commit: `build: release OpenRouter agent tooling` (hash: self)
 
 Release notes target: `1.2.601` OpenRouter Agent Tooling.
+
+Release build evidence for `1.2.601`:
+- `./scripts/build-all.sh` — PASS; provider/core/UI/launcher tarballs generated under `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+- VSIX: `codeai-hub-1.2.601.vsix` (5.6M), SHA-256 `80cb7c2669c7e7249fb03f34350cc0cd8f069f07ab7e97cae3b3d9e54b438108`.
+- Runtime artifact set: `claude-module-1.2.601.tar.bz2`, `codex-module-1.2.601.tar.bz2`, `gemini-module-1.2.601.tar.bz2`, `glm-module-1.2.601.tar.bz2`, `glm-opencode-module-1.2.601.tar.bz2`, `kimi-module-1.2.601.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.601.tar.bz2`, `vscode-webview-1.2.601.tar.bz2`, `project-manager-1.2.601.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.601.tar.bz2`.
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 
 ### Stream: Retest
 
-19. [TODO] `openrouter-agent.phase5.acceptance.task1` User verifies OpenRouter with at least one free model on standalone chat and one workflow/provider-start path that needs tools (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
+19. [IN_PROGRESS] `openrouter-agent.phase5.acceptance.task1` User verifies OpenRouter with at least one free model on standalone chat and one workflow/provider-start path that needs tools (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
 20. [TODO] `openrouter-agent.phase5.acceptance.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
