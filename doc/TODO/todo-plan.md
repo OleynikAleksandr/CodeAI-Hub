@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase3.verify.task1",
-  "expectedCommitMessage": "test: verify OpenRouter agent tooling",
+  "currentTaskId": "openrouter-agent.phase4.acceptance.task1",
+  "expectedCommitMessage": "chore: record OpenRouter agent tooling acceptance",
   "debt": null
 }
 ```
@@ -71,14 +71,22 @@
 
 ### Stream: Targeted checks
 
-11. [IN_PROGRESS] `openrouter-agent.phase3.verify.task1` Run targeted tests/builds for GLM exports, OpenRouter tool-loop payloads and workflow picker behavior; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter agent tooling`).
-12. [TODO] `openrouter-agent.phase3.verify.commit1` Git Commit: `test: verify OpenRouter agent tooling` (hash: TBD)
+11. [DONE] `openrouter-agent.phase3.verify.task1` Run targeted tests/builds for GLM exports, OpenRouter tool-loop payloads and workflow picker behavior; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter agent tooling`).
+12. [DONE] `openrouter-agent.phase3.verify.commit1` Git Commit: `test: verify OpenRouter agent tooling` (hash: self)
+
+Verification evidence (2026-06-23):
+
+- `npm run build --workspace @codeai-hub/glm-module` — PASS.
+- `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts` — PASS (6/6).
+- `npm run build --workspace @codeai-hub/core` — PASS.
+- `npx tsx --test src/client/project-manager/components/shared/stage-confirmation-card.test.ts` — PASS (13/13).
+- `npm run typecheck:webview` — PASS.
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 
 ### Stream: Retest
 
-13. [TODO] `openrouter-agent.phase4.acceptance.task1` User verifies OpenRouter with at least one free model on standalone chat and one workflow/provider-start path that needs tools (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
+13. [IN_PROGRESS] `openrouter-agent.phase4.acceptance.task1` User verifies OpenRouter with at least one free model on standalone chat and one workflow/provider-start path that needs tools (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
 14. [TODO] `openrouter-agent.phase4.acceptance.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-23)
