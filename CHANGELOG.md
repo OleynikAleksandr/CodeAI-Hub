@@ -8,6 +8,27 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.601] - 2026-06-23
+### Added
+- **OpenRouter now has workflow-agent tooling.** OpenRouter Chat Completions
+  turns receive the CodeAI Hub Codex workflow system profile, OpenAI-compatible
+  local tool declarations, streamed `tool_calls` parsing, local tool execution,
+  and follow-up tool-result requests until final assistant content.
+- **OpenRouter is available in workflow provider selection.** Quality Gates and
+  other workflow start surfaces no longer hide OpenRouter now that it has a
+  local research/file/artifact tool surface.
+
+### Changed
+- OpenRouter tooling reuses the executable GLM Native workflow tool catalog
+  instead of copying the full captured Codex-native MCP/browser/plugin catalog.
+
+### Verification
+- `npm run build --workspace @codeai-hub/glm-module`
+- `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npx tsx --test src/client/project-manager/components/shared/stage-confirmation-card.test.ts`
+- `npm run typecheck:webview`
+
 ## [1.2.600] - 2026-06-23
 ### Fixed
 - **OpenRouter reasoning stream now renders as a readable thinking block.**

@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase4.release-notes.task1",
-  "expectedCommitMessage": "docs: prepare OpenRouter agent tooling release",
+  "currentTaskId": "openrouter-agent.phase4.release-artifacts.task1",
+  "expectedCommitMessage": "build: release OpenRouter agent tooling",
   "debt": null
 }
 ```
@@ -91,10 +91,12 @@ Verification evidence (2026-06-23):
 
 ### Stream: Release Build
 
-15. [IN_PROGRESS] `openrouter-agent.phase4.release-notes.task1` Prepare release-facing docs for future version `1.2.601` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter agent tooling release`).
-16. [TODO] `openrouter-agent.phase4.release-notes.commit1` Git Commit: `docs: prepare OpenRouter agent tooling release` (hash: TBD)
-17. [TODO] `openrouter-agent.phase4.release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.601` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter agent tooling`).
+15. [DONE] `openrouter-agent.phase4.release-notes.task1` Prepare release-facing docs for future version `1.2.601` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter agent tooling release`).
+16. [DONE] `openrouter-agent.phase4.release-notes.commit1` Git Commit: `docs: prepare OpenRouter agent tooling release` (hash: self)
+17. [IN_PROGRESS] `openrouter-agent.phase4.release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.601` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter agent tooling`).
 18. [TODO] `openrouter-agent.phase4.release-artifacts.commit1` Git Commit: `build: release OpenRouter agent tooling` (hash: TBD)
+
+Release notes target: `1.2.601` OpenRouter Agent Tooling.
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 
