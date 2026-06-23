@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase5.followup.verify.task1",
-  "expectedCommitMessage": "test: verify local models standalone binding fix",
+  "currentTaskId": "local-models-selection.phase6.acceptance.task1",
+  "expectedCommitMessage": "chore: record local models selection user acceptance",
   "debt": null
 }
 ```
@@ -84,12 +84,13 @@
 19. [DONE] `local-models-selection.phase5.followup.docs.task1` Document the standalone Local Models chat binding rule (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local models standalone chat binding`).
    - Evidence 2026-06-23: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md` now states that standalone Local Models chat creation must seed a concrete `targetModelId` from Settings/start-card discovery instead of the legacy `local-model` sentinel.
 20. [DONE] `local-models-selection.phase5.followup.docs.commit1` Git Commit: `docs: document local models standalone chat binding` (hash: self)
-21. [IN_PROGRESS] `local-models-selection.phase5.followup.verify.task1` Run focused standalone chat binding checks and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone binding fix`).
-22. [TODO] `local-models-selection.phase5.followup.verify.commit1` Git Commit: `test: verify local models standalone binding fix` (hash: TBD)
+21. [DONE] `local-models-selection.phase5.followup.verify.task1` Run focused standalone chat binding checks and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone binding fix`).
+   - Evidence 2026-06-23: `npx tsx --test src/client/project-manager/components/layout/workspace-chat-list-open.test.ts` passed (2/2); `npm run build:project-manager` passed; `npm run plan:validate` passed.
+22. [DONE] `local-models-selection.phase5.followup.verify.commit1` Git Commit: `test: verify local models standalone binding fix` (hash: self)
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-23. [TODO] `local-models-selection.phase6.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
+23. [IN_PROGRESS] `local-models-selection.phase6.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
 24. [TODO] `local-models-selection.phase6.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
