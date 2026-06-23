@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase3.verify.task1",
-  "expectedCommitMessage": "test: verify local models standalone chat selection fix",
+  "currentTaskId": "local-models-selection.phase4.acceptance.task1",
+  "expectedCommitMessage": "chore: record local models selection user acceptance",
   "debt": null
 }
 ```
@@ -58,12 +58,13 @@
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 ### Stream: Focused checks
-7. [IN_PROGRESS] `local-models-selection.phase3.verify.task1` Run focused Local Models/status-panel tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone chat selection fix`).
-8. [TODO] `local-models-selection.phase3.verify.commit1` Git Commit: `test: verify local models standalone chat selection fix` (hash: TBD)
+7. [DONE] `local-models-selection.phase3.verify.task1` Run focused Local Models/status-panel tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone chat selection fix`).
+   - Evidence 2026-06-23: `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.selection.test.ts` passed (2/2); `npx tsx --test src/client/ui/src/session/status-panel.test.tsx` passed (11/11); `npm run plan:validate` passed.
+8. [DONE] `local-models-selection.phase3.verify.commit1` Git Commit: `test: verify local models standalone chat selection fix` (hash: self)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-9. [TODO] `local-models-selection.phase4.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
+9. [IN_PROGRESS] `local-models-selection.phase4.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
 10. [TODO] `local-models-selection.phase4.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-23)
