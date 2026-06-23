@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase6.patch-release-build.task1",
-  "expectedCommitMessage": "chore: build OpenRouter follow-up release",
+  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
+  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
   "debt": null
 }
 ```
@@ -119,9 +119,10 @@
 33. [DONE] `openrouter-chat.phase6.patch-release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for v1.2.598 and record that release branches are already ancestors of local `main` before cleanup (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter follow-up release`).
     - Branch evidence 2026-06-23: `origin/codex/release-v1.2.596`, `origin/release/1.2.590`, and `origin/release/1.2.592` are already ancestors of local `main`; no merge commit is needed before release.
 34. [DONE] `openrouter-chat.phase6.patch-release-docs.commit1` Git Commit: `docs: prepare OpenRouter follow-up release` (hash: self)
-35. [IN_PROGRESS] `openrouter-chat.phase6.patch-release-build.task1` Run approved release scripts for v1.2.598, commit generated version/manifests/artifacts/evidence, then delete the already-merged extra release branches (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter follow-up release`).
-36. [TODO] `openrouter-chat.phase6.patch-release-build.commit1` Git Commit: `chore: build OpenRouter follow-up release` (hash: TBD)
-37. [TODO] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+35. [DONE] `openrouter-chat.phase6.patch-release-build.task1` Run approved release scripts for v1.2.598, commit generated version/manifests/artifacts/evidence, then delete the already-merged extra release branches (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter follow-up release`).
+    - Evidence 2026-06-23: `./scripts/build-all.sh`; `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.598.vsix` (5.6M); tarballs copied to `doc/tmp/releases/*1.2.598*`; deleted local branch `codex/release-v1.2.596`; deleted remote branches `origin/codex/release-v1.2.596`, `origin/release/1.2.590`, and `origin/release/1.2.592`; pre-push checks passed during remote branch deletion.
+36. [DONE] `openrouter-chat.phase6.patch-release-build.commit1` Git Commit: `chore: build OpenRouter follow-up release` (hash: self)
+37. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
 38. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
