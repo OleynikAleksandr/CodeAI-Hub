@@ -128,12 +128,15 @@
 39. [DONE] `openrouter-chat.phase6.model-retest-release-build.task1` Run approved release scripts for v1.2.599 and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter model retest release`).
     - Evidence 2026-06-23: `./scripts/build-all.sh`; `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.599.vsix` (5.6M); tarballs copied to `doc/tmp/releases/*1.2.599*`; package surface and SDK exclusions verified by release script.
 40. [DONE] `openrouter-chat.phase6.model-retest-release-build.commit1` Git Commit: `chore: build OpenRouter model retest release` (hash: self)
-41. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
-42. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
+41. [DONE] `openrouter-chat.phase6.reasoning-stream.task1` Coalesce OpenRouter reasoning deltas before emitting them so thinking display and translation operate on one reasoning message while assistant content keeps streaming live (scope: `packages/core/src/open-router/open-router-provider-adapter.ts, packages/core/src/open-router/open-router-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): coalesce reasoning stream`).
+    - Evidence 2026-06-23: inspected `FinderWidget-Test01/.codeai-hub/sessions/standalone/openRouter/openrouter-58cfd091-2542-4554-a6be-706480e3ca05.jsonl` and `.translations.jsonl`; confirmed 204 separate thinking translations caused by per-token reasoning events; `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`; `npm run build --workspace @codeai-hub/core`.
+42. [DONE] `openrouter-chat.phase6.reasoning-stream.commit1` Git Commit: `fix(openrouter): coalesce reasoning stream` (hash: self)
+43. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+44. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-43. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
-44. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)
+45. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
+46. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)

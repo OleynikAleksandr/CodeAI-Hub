@@ -156,6 +156,48 @@ test("OpenRouterProviderAdapter uses private settings connection from turn optio
   assert.equal(JSON.stringify(turnOptions).includes("settings-key"), false);
 });
 
+test("OpenRouterProviderAdapter coalesces reasoning deltas before live assistant chunks", async () => {
+  const adapter = new OpenRouterProviderAdapter({
+    apiKey: "test-key",
+    defaultModel: "cohere/north-mini-code:free",
+    fetchImplementation: (() =>
+      Promise.resolve(
+        createStreamResponse([
+          { choices: [{ delta: { reasoning: "The" } }] },
+          { choices: [{ delta: { reasoning: " user" } }] },
+          { choices: [{ delta: { content: "OK" } }] },
+        ])
+      )) as typeof fetch,
+  });
+  const sessionId = await adapter.createSession();
+  const events: unknown[] = [];
+  adapter.subscribe(sessionId, (event) => events.push(event));
+
+  await adapter.sendMessage(sessionId, "Confirm.");
+
+  const typedEvents = events as Array<{
+    readonly content?: string;
+    readonly tag?: string;
+    readonly type?: string;
+  }>;
+  assert.deepEqual(
+    typedEvents.map((event) => event.type),
+    ["turn_started", "thinking", "assistant", "assistant", "turn_completed"]
+  );
+  assert.deepEqual(
+    typedEvents
+      .filter((event) => event.tag === "thinking")
+      .map((event) => event.content),
+    ["The user"]
+  );
+  assert.deepEqual(
+    typedEvents
+      .filter((event) => event.tag === "live")
+      .map((event) => event.content),
+    ["OK"]
+  );
+});
+
 test("OpenRouterProviderAdapter keeps successful session history between turns", async () => {
   const requestBodies: Array<{ readonly messages: readonly unknown[] }> = [];
   const adapter = new OpenRouterProviderAdapter({

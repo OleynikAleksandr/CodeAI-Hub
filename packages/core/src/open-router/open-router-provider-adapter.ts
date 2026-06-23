@@ -260,11 +260,25 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
             : `OpenRouter request failed with status ${response.status}`
         );
       }
+      let pendingReasoning = "";
+      const flushReasoning = () => {
+        if (pendingReasoning.length === 0) {
+          return;
+        }
+        this.#emitReasoningChunk(sessionId, pendingReasoning);
+        pendingReasoning = "";
+      };
       const result = await readOpenRouterChatCompletionStream(
         response,
-        (chunk) => this.#emitLiveAssistantChunk(sessionId, chunk),
-        (chunk) => this.#emitReasoningChunk(sessionId, chunk)
+        (chunk) => {
+          flushReasoning();
+          this.#emitLiveAssistantChunk(sessionId, chunk);
+        },
+        (chunk) => {
+          pendingReasoning += chunk;
+        }
       );
+      flushReasoning();
       return result.content;
     } finally {
       clearTimeout(timeout);
