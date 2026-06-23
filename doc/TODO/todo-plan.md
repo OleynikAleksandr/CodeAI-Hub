@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase4.release.build.task1",
-  "expectedCommitMessage": "build: release v1.2.593",
+  "currentTaskId": "local-models-selection.phase5.acceptance.task1",
+  "expectedCommitMessage": "chore: record local models selection user acceptance",
   "debt": null
 }
 ```
@@ -69,12 +69,15 @@
 11. [DONE] `local-models-selection.phase4.release.docs.task1` Update release notes for v1.2.593 before packaging (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare v1.2.593 local models release notes`).
    - Evidence 2026-06-23: README current release and CHANGELOG entry prepared for v1.2.593 before running release scripts.
 12. [DONE] `local-models-selection.phase4.release.docs.commit1` Git Commit: `docs: prepare v1.2.593 local models release notes` (hash: self)
-13. [IN_PROGRESS] `local-models-selection.phase4.release.build.task1` Run the release build scripts and record produced artifacts/evidence (scope: `release manifests, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `build: release v1.2.593`).
-14. [TODO] `local-models-selection.phase4.release.build.commit1` Git Commit: `build: release v1.2.593` (hash: TBD)
+13. [DONE] `local-models-selection.phase4.release.build.task1` Run the release build scripts and record produced artifacts/evidence (scope: `assets/**/manifest.json, package*.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `build: release v1.2.593`).
+   - Evidence 2026-06-23: `./scripts/build-all.sh` passed and produced provider/core/launcher/UI tarballs for v1.2.593 in `doc/tmp/releases/`.
+   - Evidence 2026-06-23: `./scripts/build-release.sh --use-current-version --allow-dirty` passed after the version-manifest bump, including `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and VSIX runtime package surface verification.
+   - Artifact: `codeai-hub-1.2.593.vsix` (5.5M) created at repository root.
+14. [DONE] `local-models-selection.phase4.release.build.commit1` Git Commit: `build: release v1.2.593` (hash: self)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-15. [TODO] `local-models-selection.phase5.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
+15. [IN_PROGRESS] `local-models-selection.phase5.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
 16. [TODO] `local-models-selection.phase5.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
