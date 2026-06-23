@@ -24,7 +24,8 @@ export const isResearchCapableProviderId = (
   providerId === "codexCli" ||
   providerId === "claudeCodeCli" ||
   providerId === "glmNative" ||
-  providerId === "localModels";
+  providerId === "localModels" ||
+  providerId === "openRouter";
 
 const resolveProviderIdFromDescription = (
   state: WorkflowStateSnapshot | null

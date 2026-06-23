@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase2.workflow-picker.task1",
-  "expectedCommitMessage": "fix(openrouter): enable workflow provider selection",
+  "currentTaskId": "openrouter-agent.phase2.docs.task1",
+  "expectedCommitMessage": "docs: document OpenRouter agent profile",
   "debt": null
 }
 ```
@@ -62,9 +62,9 @@
 
 ### Stream: Provider surfaces
 
-7. [IN_PROGRESS] `openrouter-agent.phase2.workflow-picker.task1` Treat OpenRouter as research-capable in workflow provider selection now that it has executable tools (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): enable workflow provider selection`).
-8. [TODO] `openrouter-agent.phase2.workflow-picker.commit1` Git Commit: `fix(openrouter): enable workflow provider selection` (hash: TBD)
-9. [TODO] `openrouter-agent.phase2.docs.task1` Update SSOT docs for OpenRouter agent profile/tooling behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: document OpenRouter agent profile`).
+7. [DONE] `openrouter-agent.phase2.workflow-picker.task1` Treat OpenRouter as research-capable in workflow provider selection now that it has executable tools (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): enable workflow provider selection`).
+8. [DONE] `openrouter-agent.phase2.workflow-picker.commit1` Git Commit: `fix(openrouter): enable workflow provider selection` (hash: self)
+9. [IN_PROGRESS] `openrouter-agent.phase2.docs.task1` Update SSOT docs for OpenRouter agent profile/tooling behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: document OpenRouter agent profile`).
 10. [TODO] `openrouter-agent.phase2.docs.commit1` Git Commit: `docs: document OpenRouter agent profile` (hash: TBD)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)

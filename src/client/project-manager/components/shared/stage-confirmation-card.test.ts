@@ -2,7 +2,12 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import {
+  isResearchCapableProviderId,
+  resolvePreferredWorkflowProviderId,
+} from "../../services/workflow-provider-resolver";
 import { resolveStageSyncPayload } from "../layout/workspace-tree-branch-nodes";
 import {
   resolveDisplayedArtifactName,
@@ -53,6 +58,47 @@ test("quality gates start card hides providers without research tooling", async 
 
   assert.equal(source.includes("isResearchCapableProviderId"), true);
   assert.equal(source.includes('stage !== "quality_gates"'), true);
+});
+
+test("quality gates provider resolver keeps OpenRouter after tool enablement", () => {
+  const providers: readonly ProviderStackDescriptor[] = [
+    {
+      connected: true,
+      description: "Gemini CLI",
+      id: "geminiCli",
+      title: "Gemini",
+    },
+    {
+      connected: true,
+      description: "OpenRouter",
+      id: "openRouter",
+      title: "OpenRouter",
+    },
+  ];
+  const snapshot: WorkflowStateSnapshot = {
+    ...buildWorkflowSnapshot(),
+    description: {
+      finalPath:
+        ".codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md",
+      primarySession: {
+        jsonlPath:
+          ".codeai-hub/codeai-hub-codex-5-4/sessions/openrouter.jsonl",
+        providerId: "openRouter",
+        providerSessionId: "openrouter-description",
+      },
+      updatedAt: "2026-05-24T06:10:00.000Z",
+    },
+  };
+
+  assert.equal(isResearchCapableProviderId("openRouter"), true);
+  assert.equal(
+    resolvePreferredWorkflowProviderId({
+      providers,
+      stage: "quality_gates",
+      workflowState: snapshot,
+    }),
+    "openRouter"
+  );
 });
 
 test("development tree node start card avoids native selects", async () => {
