@@ -84,8 +84,8 @@ const createModelListJson = (): string =>
   ]);
 
 const createLoadedModelJson = (
-  identifier = "codeaihub-workflow-agent-qwen-local-16384",
-  contextLength = 16_384,
+  identifier = "codeaihub-workflow-agent-qwen-local-8192",
+  contextLength = 8192,
   modelKey = "qwen-local"
 ): string =>
   JSON.stringify([
@@ -159,14 +159,14 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
     "load",
     "qwen-local",
     "--context-length",
-    "16384",
+    "8192",
     "--identifier",
-    "codeaihub-workflow-agent-qwen-local-16384",
+    "codeaihub-workflow-agent-qwen-local-8192",
     "--ttl",
     "1800",
   ]);
   assert.deepEqual(requestedModels, [
-    "codeaihub-workflow-agent-qwen-local-16384",
+    "codeaihub-workflow-agent-qwen-local-8192",
   ]);
   assert.deepEqual(requestedUrls, ["http://127.0.0.1:1234/api/v1/chat"]);
   const typedEvents = events.map(
@@ -232,14 +232,14 @@ test("LocalModelsProviderAdapter starts LM Studio server before provider turns",
     "load",
     "gemma-local",
     "--context-length",
-    "16384",
+    "8192",
     "--identifier",
-    "codeaihub-workflow-agent-gemma-local-16384",
+    "codeaihub-workflow-agent-gemma-local-8192",
     "--ttl",
     "1800",
   ]);
   assert.deepEqual(requestedModels, [
-    "codeaihub-workflow-agent-gemma-local-16384",
+    "codeaihub-workflow-agent-gemma-local-8192",
   ]);
 });
 

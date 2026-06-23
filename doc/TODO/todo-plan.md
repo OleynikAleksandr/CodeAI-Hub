@@ -1,34 +1,57 @@
-# Development TODO Plan
+# План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "local-models-standalone-chat-selection-2026-06-23",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "local-models-workflow-warmup-hotfix-2026-06-23",
   "branch": "main",
-  "baseHead": "d14e1b4a7",
+  "baseHead": "dbebb0a76",
   "lastRecordedCommit": "self",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "build: release v1.2.595",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Modules/LocalModels.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-local-models-standalone-chat-selection-2026-06-23.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md`
-- **Last recorded commit:** `self`
+## Правила выполнения (Execution Rules)
+- Required reading before each fix: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Each task touches no more than 3 files except release build/version artifacts.
+- Each implementation task is followed by its own `Git Commit: ...`.
+- Release build is confirmed by the user request: "сделай фикс и пересобери релиз".
 
-## Start Next Scope
+## Phase 1 - Local Models warmup hotfix (owner: Codex, updated: 2026-06-23)
+### Stream: Runtime fix
+1. [DONE] `phase1.stream1.task1` Defer Local Models workflow-agent startup warmup, lower default workflow context to 8192, and update the Local Models contract docs.
+   - scope: `packages/core/src/local-models/**, doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md`
+   - expected commit: `fix(local-models): defer workflow warmup`
+2. [DONE] `phase1.stream1.commit1` Git Commit: `fix(local-models): defer workflow warmup` (hash: self)
 
-There is no active execution scope. Before starting new implementation work:
+### Stream: Release Build
+3. [IN_PROGRESS] `phase1.stream2.task1` Prepare release notes and build release.
+   - scope: `README.md, CHANGELOG.md, package.json`
+   - expected commit: `build: release v1.2.595`
+4. [TODO] `phase1.stream2.commit1` Git Commit: `build: release v1.2.595` (hash: TBD)
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+### Stream: User Workflow Acceptance Testing
+5. [TODO] `phase1.stream3.task1` Provide VSIX and retest instructions.
+   - scope: `doc/TODO/todo-plan.md`
+   - expected commit: `test: hand off v1.2.595 local models warmup fix`
+6. [TODO] `phase1.stream3.commit1` Git Commit: `test: hand off v1.2.595 local models warmup fix` (hash: TBD)
+
+### Stream: Scope Closeout
+7. [TODO] `phase1.stream4.task1` Close scope after user acceptance.
+   - scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`
+   - expected commit: `docs: close local models warmup hotfix scope`
+8. [TODO] `phase1.stream4.commit1` Git Commit: `docs: close local models warmup hotfix scope` (hash: TBD)

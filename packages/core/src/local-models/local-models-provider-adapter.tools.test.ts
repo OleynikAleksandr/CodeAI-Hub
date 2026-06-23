@@ -47,8 +47,8 @@ const createModelListJson = (): string =>
   ]);
 
 const createLoadedModelJson = (
-  identifier = "codeaihub-workflow-agent-qwen-local-16384",
-  contextLength = 16_384,
+  identifier = "codeaihub-workflow-agent-qwen-local-8192",
+  contextLength = 8192,
   modelKey = "qwen-local"
 ): string =>
   JSON.stringify([

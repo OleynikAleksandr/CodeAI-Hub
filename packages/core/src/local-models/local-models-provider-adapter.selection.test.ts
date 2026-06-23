@@ -76,14 +76,14 @@ test("LocalModelsProviderAdapter honors lmstudio-prefixed selected model ids", a
     "load",
     "qwen-local",
     "--context-length",
-    "16384",
+    "8192",
     "--identifier",
-    "codeaihub-workflow-agent-qwen-local-16384",
+    "codeaihub-workflow-agent-qwen-local-8192",
     "--ttl",
     "1800",
   ]);
   assert.deepEqual(requestedModels, [
-    "codeaihub-workflow-agent-qwen-local-16384",
+    "codeaihub-workflow-agent-qwen-local-8192",
   ]);
 });
 

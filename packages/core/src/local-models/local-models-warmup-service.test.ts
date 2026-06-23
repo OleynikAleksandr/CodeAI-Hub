@@ -79,7 +79,7 @@ const withSettings = async (
   }
 };
 
-test("warmSelectedLocalModels preloads selected reasoning and workflow models", async () => {
+test("warmSelectedLocalModels preloads reasoning and defers workflow models", async () => {
   await withSettings(
     {
       reasoningEngineId: "lmstudio:reasoning-local",
@@ -118,14 +118,16 @@ test("warmSelectedLocalModels preloads selected reasoning and workflow models", 
             "translation-reasoning",
             "codeaihub-translation-reasoning-reasoning-local-8192",
           ],
-          [
-            "workflow-local",
-            "workflow-agent",
-            "codeaihub-workflow-agent-workflow-local-16384",
-          ],
         ]
       );
-      assert.deepEqual(result.skipped, []);
+      assert.deepEqual(
+        result.skipped.map((record) => [
+          record.modelKey,
+          record.purpose,
+          record.reason,
+        ]),
+        [["workflow-local", "workflow-agent", "deferred_until_turn"]]
+      );
       assert.deepEqual(
         commandCalls.filter((args) => args[0] === "load"),
         [
@@ -136,14 +138,6 @@ test("warmSelectedLocalModels preloads selected reasoning and workflow models", 
             "8192",
             "--identifier",
             "codeaihub-translation-reasoning-reasoning-local-8192",
-          ],
-          [
-            "load",
-            "workflow-local",
-            "--context-length",
-            "16384",
-            "--identifier",
-            "codeaihub-workflow-agent-workflow-local-16384",
           ],
         ]
       );
@@ -182,9 +176,9 @@ test("warmSelectedLocalModels dedupes the same reasoning and workflow model", as
 
       assert.equal(result.loaded.length, 1);
       assert.deepEqual(result.loaded[0], {
-        identifier: "codeaihub-workflow-agent-shared-local-16384",
+        identifier: "codeaihub-translation-reasoning-shared-local-8192",
         modelKey: "shared-local",
-        purpose: "workflow-agent",
+        purpose: "translation-reasoning",
         sources: ["reasoning", "workflow"],
       });
       assert.equal(commandCalls.filter((args) => args[0] === "load").length, 1);

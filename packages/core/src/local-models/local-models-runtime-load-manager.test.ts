@@ -185,7 +185,7 @@ test("LocalModelsRuntimeLoadManager does not unload other model keys during load
     purpose: "workflow-agent",
   });
 
-  assert.equal(identifier, "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384");
+  assert.equal(identifier, "codeaihub-workflow-agent-gemma-4-26b-a4b-it-8192");
   assert.deepEqual(
     commandCalls.filter((args) => args[0] === "unload"),
     []
@@ -194,9 +194,9 @@ test("LocalModelsRuntimeLoadManager does not unload other model keys during load
     "load",
     "gemma-4-26b-a4b-it",
     "--context-length",
-    "16384",
+    "8192",
     "--identifier",
-    "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384",
+    "codeaihub-workflow-agent-gemma-4-26b-a4b-it-8192",
     "--ttl",
     "1800",
   ]);
@@ -248,9 +248,9 @@ test("LocalModelsRuntimeLoadManager omits TTL for persistent loads", () => {
     "load",
     "qwen3.6-27b-mlx",
     "--context-length",
-    "16384",
+    "8192",
     "--identifier",
-    "codeaihub-workflow-agent-qwen3.6-27b-mlx-16384",
+    "codeaihub-workflow-agent-qwen3.6-27b-mlx-8192",
   ]);
 });
 

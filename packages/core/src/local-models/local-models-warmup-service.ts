@@ -82,7 +82,8 @@ const addTarget = (
   }
   targetsByModelKey.set(modelKey, {
     modelKey,
-    purpose: existing.purpose === "workflow-agent" ? existing.purpose : purpose,
+    purpose:
+      existing.purpose === "translation-reasoning" ? existing.purpose : purpose,
     sources: [...existing.sources, source],
   });
 };
@@ -153,6 +154,10 @@ export const warmSelectedLocalModels = (
     );
     if (!model) {
       skipped.push({ ...target, reason: "model_not_found" });
+      continue;
+    }
+    if (target.purpose === "workflow-agent") {
+      skipped.push({ ...target, reason: "deferred_until_turn" });
       continue;
     }
     try {
