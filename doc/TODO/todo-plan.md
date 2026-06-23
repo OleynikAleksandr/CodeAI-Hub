@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase4.verify.task1",
-  "expectedCommitMessage": "test: verify OpenRouter chat provider",
+  "currentTaskId": "openrouter-chat.phase5.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare OpenRouter provider release",
   "debt": null
 }
 ```
@@ -85,14 +85,15 @@
 
 19. [DONE] `openrouter-chat.phase4.docs.task1` Document the implemented OpenRouter standalone chat/provider contract in SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md`; expected commit: `docs: document OpenRouter chat provider contract`).
 20. [DONE] `openrouter-chat.phase4.docs.commit1` Git Commit: `docs: document OpenRouter chat provider contract` (hash: self)
-21. [IN_PROGRESS] `openrouter-chat.phase4.verify.task1` Run targeted OpenRouter/settings tests and affected builds; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter chat provider`).
-22. [TODO] `openrouter-chat.phase4.verify.commit1` Git Commit: `test: verify OpenRouter chat provider` (hash: TBD)
+21. [DONE] `openrouter-chat.phase4.verify.task1` Run targeted OpenRouter/settings tests and affected builds; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter chat provider`).
+    - Evidence 2026-06-23: `npm run build --workspace @codeai-hub/core`; `npm run typecheck:webview`; `npm run build:project-manager`; `npm run build:webview`; `node --test packages/core/dist/open-router/open-router-provider-adapter.test.js packages/core/dist/session-model-binding/session-model-binding-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.js`; `npx tsx src/client/ui/src/components/settings/openrouter-model-search.test.ts`; `npx tsx src/client/ui/src/session/model-info-builder.test.ts`; `npx tsx src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`.
+22. [DONE] `openrouter-chat.phase4.verify.commit1` Git Commit: `test: verify OpenRouter chat provider` (hash: self)
 
 ## Phase 5 - Release Build (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Release after explicit confirmation
 
-23. [TODO] `openrouter-chat.phase5.release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for the next release version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter provider release`).
+23. [IN_PROGRESS] `openrouter-chat.phase5.release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for the next release version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter provider release`).
 24. [TODO] `openrouter-chat.phase5.release-docs.commit1` Git Commit: `docs: prepare OpenRouter provider release` (hash: TBD)
 25. [TODO] `openrouter-chat.phase5.release-build.task1` Run the approved release scripts and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter provider release`).
 26. [TODO] `openrouter-chat.phase5.release-build.commit1` Git Commit: `chore: build OpenRouter provider release` (hash: TBD)
