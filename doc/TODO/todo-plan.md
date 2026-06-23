@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase1.exports.task1",
-  "expectedCommitMessage": "feat(openrouter): reuse workflow tool surface",
+  "currentTaskId": "openrouter-agent.phase1.loop.task1",
+  "expectedCommitMessage": "feat(openrouter): add agent tool loop",
   "debt": null
 }
 ```
@@ -53,9 +53,9 @@
 
 ### Stream: Reuse existing executable tools
 
-3. [IN_PROGRESS] `openrouter-agent.phase1.exports.task1` Export the already implemented GLM Native workflow tools/executor helpers for reuse by OpenRouter (scope: `packages/GLM_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): reuse workflow tool surface`).
-4. [TODO] `openrouter-agent.phase1.exports.commit1` Git Commit: `feat(openrouter): reuse workflow tool surface` (hash: TBD)
-5. [TODO] `openrouter-agent.phase1.loop.task1` Add OpenRouter system prompt, OpenAI-compatible tool declarations, streamed tool-call parsing and local tool-call continuation loop (scope: `packages/core/src/open-router/open-router-provider-adapter.ts, packages/core/src/open-router/open-router-sse-reader.ts, packages/core/src/open-router/open-router-provider-adapter.test.ts`; expected commit: `feat(openrouter): add agent tool loop`).
+3. [DONE] `openrouter-agent.phase1.exports.task1` Export the already implemented GLM Native workflow tools/executor helpers for reuse by OpenRouter (scope: `packages/GLM_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): reuse workflow tool surface`).
+4. [DONE] `openrouter-agent.phase1.exports.commit1` Git Commit: `feat(openrouter): reuse workflow tool surface` (hash: self)
+5. [IN_PROGRESS] `openrouter-agent.phase1.loop.task1` Add OpenRouter system prompt, OpenAI-compatible tool declarations, streamed tool-call parsing and local tool-call continuation loop (scope: `packages/core/src/open-router/open-router-provider-adapter.ts, packages/core/src/open-router/open-router-sse-reader.ts, packages/core/src/open-router/open-router-provider-adapter.test.ts`; expected commit: `feat(openrouter): add agent tool loop`).
 6. [TODO] `openrouter-agent.phase1.loop.commit1` Git Commit: `feat(openrouter): add agent tool loop` (hash: TBD)
 
 ## Phase 2 - Workflow Availability And Docs (owner: Codex, updated: 2026-06-23)

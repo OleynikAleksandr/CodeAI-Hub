@@ -1,4 +1,11 @@
 export {
+  buildGlmNativeAssistantToolMessage,
+  executeGlmNativeToolCall,
+  GLM_NATIVE_MAX_TOOL_STEPS,
+  GLM_NATIVE_WORKFLOW_TOOLS,
+  type GlmSessionMessage,
+} from "./provider/glm-native-agent-runtime";
+export {
   GLM_NATIVE_PROVIDER_ID,
   type GlmModuleOptions,
   GlmProviderAdapter,
