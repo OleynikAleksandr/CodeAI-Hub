@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase5.release-build.task1",
-  "expectedCommitMessage": "chore: build OpenRouter provider release",
+  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
+  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
   "debt": null
 }
 ```
@@ -95,14 +95,15 @@
 
 23. [DONE] `openrouter-chat.phase5.release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for the next release version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter provider release`).
 24. [DONE] `openrouter-chat.phase5.release-docs.commit1` Git Commit: `docs: prepare OpenRouter provider release` (hash: self)
-25. [IN_PROGRESS] `openrouter-chat.phase5.release-build.task1` Run the approved release scripts and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter provider release`).
-26. [TODO] `openrouter-chat.phase5.release-build.commit1` Git Commit: `chore: build OpenRouter provider release` (hash: TBD)
+25. [DONE] `openrouter-chat.phase5.release-build.task1` Run the approved release scripts and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter provider release`).
+    - Evidence 2026-06-23: `./scripts/build-all.sh`; `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.597.vsix` (5.6M); tarballs copied to `doc/tmp/releases/*1.2.597*`.
+26. [DONE] `openrouter-chat.phase5.release-build.commit1` Git Commit: `chore: build OpenRouter provider release` (hash: self)
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 
 ### Stream: OpenRouter chat retest
 
-27. [TODO] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+27. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
 28. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
