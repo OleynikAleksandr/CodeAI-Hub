@@ -137,6 +137,7 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
   assert.deepEqual(commandCalls[3], [
     "load",
     modelKey,
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",
@@ -275,6 +276,7 @@ test("LocalModelsFacade starts LM Studio server before translation when it is of
   assert.deepEqual(commandCalls[5], [
     "load",
     modelKey,
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",

@@ -273,6 +273,7 @@ export class LocalModelsRuntimeLoadManager {
       const loadArgs = [
         "load",
         options.model.modelKey,
+        "--yes",
         "--context-length",
         String(contextLength),
         "--identifier",

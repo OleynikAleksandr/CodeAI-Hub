@@ -10,8 +10,8 @@
   "baseHead": "dbebb0a76",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md",
-  "currentTaskId": "phase1.stream4.task1",
-  "expectedCommitMessage": "docs: close local models warmup hotfix scope",
+  "currentTaskId": "phase2.stream2.task1",
+  "expectedCommitMessage": "docs: prepare v1.2.596 release notes",
   "debt": null
 }
 ```
@@ -56,7 +56,36 @@
 8. [DONE] `phase1.stream3.commit1` Git Commit: `test: hand off v1.2.595 local models warmup fix` (hash: self)
 
 ### Stream: Scope Closeout
-9. [IN_PROGRESS] `phase1.stream4.task1` Close scope after user acceptance.
+9. [TODO] `phase1.stream4.task1` Close scope after user acceptance.
    - scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`
    - expected commit: `docs: close local models warmup hotfix scope`
 10. [TODO] `phase1.stream4.commit1` Git Commit: `docs: close local models warmup hotfix scope` (hash: TBD)
+
+## Phase 2 - LM Studio runtime load confirmation fix (owner: Codex, updated: 2026-06-23)
+### Stream: Runtime load fix
+1. [DONE] `phase2.stream1.task1` Make Core LM Studio runtime loads non-interactive for large MLX models and cover the command contract in tests.
+   - scope: `packages/core/src/local-models/**, doc/SolidWorks-WorkFlow/Modules/LocalModels.md`
+   - expected commit: `fix(local-models): confirm lmstudio runtime load`
+2. [DONE] `phase2.stream1.commit1` Git Commit: `fix(local-models): confirm lmstudio runtime load` (hash: self)
+
+### Stream: Release Build
+3. [IN_PROGRESS] `phase2.stream2.task1` Prepare release notes for v1.2.596.
+   - scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`
+   - expected commit: `docs: prepare v1.2.596 release notes`
+4. [TODO] `phase2.stream2.commit1` Git Commit: `docs: prepare v1.2.596 release notes` (hash: TBD)
+5. [TODO] `phase2.stream2.task2` Build release v1.2.596.
+   - scope: `package.json, package-lock.json, packages/**/package.json, packages/**/package-lock.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`
+   - expected commit: `build: release v1.2.596`
+6. [TODO] `phase2.stream2.commit2` Git Commit: `build: release v1.2.596` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+7. [TODO] `phase2.stream3.task1` Provide VSIX and retest instructions.
+   - scope: `doc/TODO/todo-plan.md`
+   - expected commit: `test: hand off v1.2.596 local models runtime load fix`
+8. [TODO] `phase2.stream3.commit1` Git Commit: `test: hand off v1.2.596 local models runtime load fix` (hash: TBD)
+
+### Stream: Scope Closeout
+9. [TODO] `phase2.stream4.task1` Close scope after user acceptance.
+   - scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`
+   - expected commit: `docs: close local models runtime load hotfix scope`
+10. [TODO] `phase2.stream4.commit1` Git Commit: `docs: close local models runtime load hotfix scope` (hash: TBD)

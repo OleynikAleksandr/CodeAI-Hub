@@ -75,6 +75,7 @@ test("LocalModelsProviderAdapter honors lmstudio-prefixed selected model ids", a
   assert.deepEqual(commandCalls[3], [
     "load",
     "qwen-local",
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",

@@ -158,6 +158,7 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
   assert.deepEqual(commandCalls[3], [
     "load",
     "qwen-local",
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",
@@ -231,6 +232,7 @@ test("LocalModelsProviderAdapter starts LM Studio server before provider turns",
   assert.deepEqual(commandCalls[5], [
     "load",
     "gemma-local",
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",

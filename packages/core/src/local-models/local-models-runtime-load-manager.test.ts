@@ -53,6 +53,7 @@ test("LocalModelsRuntimeLoadManager uses a bounded adaptive context for localiza
     [
       "load",
       "hy-mt2-30b-a3b-mlx",
+      "--yes",
       "--context-length",
       "16384",
       "--identifier",
@@ -82,7 +83,7 @@ test("LocalModelsRuntimeLoadManager keeps reasoning translation on the small pro
     identifier,
     "codeaihub-translation-reasoning-gemma-4-26b-a4b-it-8192"
   );
-  assert.equal(commandCalls[1]?.[3], "8192");
+  assert.equal(commandCalls[1]?.[4], "8192");
   assert.equal(commandCalls[1]?.at(-1), "600");
 });
 
@@ -193,6 +194,7 @@ test("LocalModelsRuntimeLoadManager does not unload other model keys during load
   assert.deepEqual(commandCalls.at(-1), [
     "load",
     "gemma-4-26b-a4b-it",
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",
@@ -247,6 +249,7 @@ test("LocalModelsRuntimeLoadManager omits TTL for persistent loads", () => {
   assert.deepEqual(commandCalls.at(-1), [
     "load",
     "qwen3.6-27b-mlx",
+    "--yes",
     "--context-length",
     "8192",
     "--identifier",

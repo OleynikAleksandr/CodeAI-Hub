@@ -134,6 +134,7 @@ test("warmSelectedLocalModels preloads reasoning and defers workflow models", as
           [
             "load",
             "reasoning-local",
+            "--yes",
             "--context-length",
             "8192",
             "--identifier",
