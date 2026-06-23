@@ -1,6 +1,6 @@
 # OpenRouter Chat Provider — Planning Doc
 
-**Статус:** implemented on `main`, pending release/user acceptance  
+**Статус:** implemented on `main` and accepted in release `1.2.600`  
 **Дата:** 2026-06-23  
 **Цель:** добавить OpenRouter как отдельного провайдера для обычного чата, ревью и анализа в CodeAI Hub.
 
