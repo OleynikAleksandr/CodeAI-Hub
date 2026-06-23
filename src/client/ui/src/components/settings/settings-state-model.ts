@@ -40,6 +40,7 @@ import {
   type LocalModelsSettings,
   mapLocalModelsSettings,
 } from "./local-models-settings-state";
+import { mapOpenRouterSettings } from "./openrouter-settings-state";
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -101,9 +102,8 @@ interface ClaudeSettings {
   readonly thinking: ClaudeThinkingSettingsState;
   readonly thinkingDisplaySyncEnabled: boolean;
 }
-export type CodexReasoningByModel = Readonly<
-  Record<string, CodexReasoningLevel>
->;
+type CodexReasoningMap = Record<string, CodexReasoningLevel>;
+export type CodexReasoningByModel = Readonly<CodexReasoningMap>;
 interface CodexSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
@@ -125,9 +125,9 @@ export interface Settings {
     readonly glmOpenCode?: GlmOpenCodeSettings;
     readonly glmNative?: GlmNativeSettings;
     readonly localModels?: LocalModelsSettings;
+    readonly openRouter?: ReturnType<typeof mapOpenRouterSettings>;
   };
 }
-
 const DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
 const DEFAULT_AUTO_UPDATE_ENABLED = false;
 const DEFAULT_CORE_RESTART_ENABLED = true;
@@ -385,6 +385,7 @@ export const mapSettingsSnapshot = (
       mapThinkingDisplaySyncEnabled
     ),
     localModels: mapLocalModelsSettings(value?.providers?.localModels),
+    openRouter: mapOpenRouterSettings(value?.providers?.openRouter),
   },
 });
 
@@ -494,4 +495,6 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areLocalModelsSettingsEqual(
     left.providers.localModels,
     right.providers.localModels
-  );
+  ) &&
+  JSON.stringify(left.providers.openRouter ?? null) ===
+    JSON.stringify(right.providers.openRouter ?? null);

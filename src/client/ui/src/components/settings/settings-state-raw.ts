@@ -1,4 +1,5 @@
 import type { RawLocalModelsSettings } from "./local-models-settings-state";
+import type { RawOpenRouterSettings } from "./openrouter-settings-state";
 import type { RawTextToSpeechSettings } from "./text-to-speech-settings";
 
 export interface RawThinkingSettings {
@@ -109,5 +110,6 @@ export interface RawSettingsSnapshot {
     readonly glmOpenCode?: RawGlmOpenCodeSettings;
     readonly glmNative?: RawGlmNativeSettings;
     readonly localModels?: RawLocalModelsSettings;
+    readonly openRouter?: RawOpenRouterSettings;
   };
 }

@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase2.settings-state.task1",
-  "expectedCommitMessage": "feat(openrouter): add settings state",
+  "currentTaskId": "openrouter-chat.phase2.catalog.task1",
+  "expectedCommitMessage": "feat(openrouter): add live model search",
   "debt": null
 }
 ```
@@ -63,9 +63,9 @@
 
 ### Stream: Settings state
 
-9. [IN_PROGRESS] `openrouter-chat.phase2.settings-state.task1` Add `providers.openRouter` settings with `apiKey`, optional `baseUrl`, `defaultModel`, and optional `endpointTag` normalization (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/use-settings-state.ts`; expected commit: `feat(openrouter): add settings state`).
-10. [TODO] `openrouter-chat.phase2.settings-state.commit1` Git Commit: `feat(openrouter): add settings state` (hash: TBD)
-11. [TODO] `openrouter-chat.phase2.catalog.task1` Add catalog and endpoint helpers that load `/api/v1/models`, optionally `/api/v1/models/user`, load selected-model endpoints, rank exact slug matches first, and never persist fetched catalogs/endpoints (scope: `src/client/ui/src/components/settings/openrouter-model-search.ts, src/client/ui/src/components/settings/openrouter-model-search.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): add live model search`).
+9. [DONE] `openrouter-chat.phase2.settings-state.task1` Add `providers.openRouter` settings with `apiKey`, optional `baseUrl`, `defaultModel`, and optional `endpointTag` normalization (scope: `src/client/ui/src/components/settings/**, media/react-chat.js`; expected commit: `feat(openrouter): add settings state`).
+10. [DONE] `openrouter-chat.phase2.settings-state.commit1` Git Commit: `feat(openrouter): add settings state` (hash: self)
+11. [IN_PROGRESS] `openrouter-chat.phase2.catalog.task1` Add catalog and endpoint helpers that load `/api/v1/models`, optionally `/api/v1/models/user`, load selected-model endpoints, rank exact slug matches first, and never persist fetched catalogs/endpoints (scope: `src/client/ui/src/components/settings/openrouter-model-search.ts, src/client/ui/src/components/settings/openrouter-model-search.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): add live model search`).
 12. [TODO] `openrouter-chat.phase2.catalog.commit1` Git Commit: `feat(openrouter): add live model search` (hash: TBD)
 13. [TODO] `openrouter-chat.phase2.settings-ui.task1` Add an OpenRouter Settings tab with API key field, model search input, DOM-owned model results, selected model row, and endpoint rows displayed as `Provider - endpointTag` (scope: `src/client/ui/src/components/settings/settings-provider-tab-content.tsx, src/client/ui/src/components/settings/openrouter-settings-card.tsx, src/client/ui/src/components/settings/use-settings-state.ts`; expected commit: `feat(openrouter): add settings model picker`).
 14. [TODO] `openrouter-chat.phase2.settings-ui.commit1` Git Commit: `feat(openrouter): add settings model picker` (hash: TBD)

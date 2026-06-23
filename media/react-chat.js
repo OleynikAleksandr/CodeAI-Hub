@@ -7891,6 +7891,15 @@
   });
   var areLocalModelsSettingsEqual = (left, right) => (left?.defaultModel ?? DEFAULT_LOCAL_MODELS_MODEL_ID) === (right?.defaultModel ?? DEFAULT_LOCAL_MODELS_MODEL_ID);
 
+  // src/client/ui/src/components/settings/openrouter-settings-state.ts
+  var mapOptionalString2 = (value) => typeof value === "string" ? value.trim() : "";
+  var mapOpenRouterSettings = (value) => ({
+    apiKey: mapOptionalString2(value?.apiKey),
+    baseUrl: mapOptionalString2(value?.baseUrl),
+    defaultModel: mapOptionalString2(value?.defaultModel),
+    endpointTag: mapOptionalString2(value?.endpointTag)
+  });
+
   // src/client/ui/src/components/settings/text-to-speech-settings.ts
   var DEFAULT_TEXT_TO_SPEECH_RATE = 1;
   var MAX_TEXT_TO_SPEECH_RATE = 2;
@@ -8101,7 +8110,8 @@
         value?.providers?.glmNative,
         mapThinkingDisplaySyncEnabled
       ),
-      localModels: mapLocalModelsSettings(value?.providers?.localModels)
+      localModels: mapLocalModelsSettings(value?.providers?.localModels),
+      openRouter: mapOpenRouterSettings(value?.providers?.openRouter)
     }
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
@@ -8133,7 +8143,7 @@
   ) && areLocalModelsSettingsEqual(
     left.providers.localModels,
     right.providers.localModels
-  );
+  ) && JSON.stringify(left.providers.openRouter ?? null) === JSON.stringify(right.providers.openRouter ?? null);
 
   // src/client/ui/src/components/settings/native-request-capture-state.ts
   var createNativeRequestCaptureState = () => ({
