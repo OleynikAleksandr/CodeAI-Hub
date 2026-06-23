@@ -10,8 +10,8 @@
   "baseHead": "5152b95f3",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Session_Event_Routing_Bugfix_Planning_RU.md",
-  "currentTaskId": "kimi-session-routing.phase4.release-build.task1",
-  "expectedCommitMessage": "chore: build 1.2.592 kimi session routing release",
+  "currentTaskId": "kimi-session-routing.phase5.acceptance.task1",
+  "expectedCommitMessage": "chore: record kimi session routing user acceptance",
   "debt": null
 }
 ```
@@ -67,12 +67,12 @@
 10. [DONE] `kimi-session-routing.phase4.release.commit1` Git Commit: `chore: request kimi session routing release decision` (hash: self)
 11. [DONE] `kimi-session-routing.phase4.release-docs.task1` Prepare README and CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.592 kimi session routing release`). Result: README and CHANGELOG prepared for v1.2.592 before release scripts.
 12. [DONE] `kimi-session-routing.phase4.release-docs.commit1` Git Commit: `docs: prepare 1.2.592 kimi session routing release` (hash: self)
-13. [IN_PROGRESS] `kimi-session-routing.phase4.release-build.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifacts and build evidence (scope: `package.json, package-lock.json, packages/*/package.json, apps/**/package.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.592 kimi session routing release`).
-14. [TODO] `kimi-session-routing.phase4.release-build.commit1` Git Commit: `chore: build 1.2.592 kimi session routing release` (hash: TBD)
+13. [DONE] `kimi-session-routing.phase4.release-build.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifacts and build evidence (scope: `package.json, package-lock.json, packages/*/package.json, apps/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.592 kimi session routing release`). Result: `./scripts/build-all.sh` OK; `./scripts/build-release.sh --use-current-version --allow-dirty` OK; VSIX `codeai-hub-1.2.592.vsix` created at 5.5M; release tarballs copied to `doc/tmp/releases/*1.2.592*`.
+14. [DONE] `kimi-session-routing.phase4.release-build.commit1` Git Commit: `chore: build 1.2.592 kimi session routing release` (hash: self)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-15. [TODO] `kimi-session-routing.phase5.acceptance.task1` User verifies two simultaneous Kimi chats keep responses in the correct chat history (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi session routing user acceptance`).
+15. [IN_PROGRESS] `kimi-session-routing.phase5.acceptance.task1` User verifies two simultaneous Kimi chats keep responses in the correct chat history (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi session routing user acceptance`).
 16. [TODO] `kimi-session-routing.phase5.acceptance.commit1` Git Commit: `chore: record kimi session routing user acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
