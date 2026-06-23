@@ -37,9 +37,10 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   claudeCodeCli: "session-status-button--claude",
   codexCli: "session-status-button--codex",
   geminiCli: "session-status-button--gemini",
-  glmNative: "session-status-button--glm",
-  kimiCode: "session-status-button--glm",
-  glmOpenCode: "session-status-button--glm",
+  glmNative: "session-status-button--gemini",
+  kimiCode: "session-status-button--kimi",
+  glmOpenCode: "session-status-button--gemini",
+  localModels: "session-status-button--gemini",
 };
 
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>

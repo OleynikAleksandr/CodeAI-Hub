@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase2.status.task1",
-  "expectedCommitMessage": "fix(ui): show local models status panel identity",
+  "currentTaskId": "local-models-selection.phase3.verify.task1",
+  "expectedCommitMessage": "test: verify local models standalone chat selection fix",
   "debt": null
 }
 ```
@@ -53,12 +53,12 @@
 
 ## Phase 2 - Status Panel Fix (owner: Codex, updated: 2026-06-23)
 ### Stream: Local Models model identity display
-5. [IN_PROGRESS] `local-models-selection.phase2.status.task1` Ensure Session Status Panel renders Local Models model identity and provider tint from `status.models[0]`/binding snapshots (scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix(ui): show local models status panel identity`).
-6. [TODO] `local-models-selection.phase2.status.commit1` Git Commit: `fix(ui): show local models status panel identity` (hash: TBD)
+5. [DONE] `local-models-selection.phase2.status.task1` Ensure Session Status Panel renders Local Models model identity and provider tint from `status.models[0]`/binding snapshots (scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix(ui): show local models status panel identity`).
+6. [DONE] `local-models-selection.phase2.status.commit1` Git Commit: `fix(ui): show local models status panel identity` (hash: self)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 ### Stream: Focused checks
-7. [TODO] `local-models-selection.phase3.verify.task1` Run focused Local Models/status-panel tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone chat selection fix`).
+7. [IN_PROGRESS] `local-models-selection.phase3.verify.task1` Run focused Local Models/status-panel tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone chat selection fix`).
 8. [TODO] `local-models-selection.phase3.verify.commit1` Git Commit: `test: verify local models standalone chat selection fix` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)

@@ -133,6 +133,29 @@ test("StatusPanel applies the Kimi provider class", () => {
   assert.equal(html.includes("Kimi K2.7 Code"), true);
 });
 
+test("StatusPanel renders the Local Models selected model identity", () => {
+  Object.assign(globalThis, { React: { createElement } });
+
+  const html = renderToStaticMarkup(
+    createElement(StatusPanel, {
+      connectionStatus: "ready",
+      status: buildStatus({
+        models: [
+          {
+            modelDisplayName: "Gemma 4 E4b Qat",
+            modelId: "gemma-4-e4b-qat",
+            providerId: "localModels" as const,
+            providerName: "Local Models",
+          },
+        ],
+      }),
+    })
+  );
+
+  assert.equal(html.includes("session-status-button--gemini"), true);
+  assert.equal(html.includes("Gemma 4 E4b Qat"), true);
+});
+
 test("StatusPanel hides the reasoning chip when reasoning is missing", () => {
   Object.assign(globalThis, { React: { createElement } });
 

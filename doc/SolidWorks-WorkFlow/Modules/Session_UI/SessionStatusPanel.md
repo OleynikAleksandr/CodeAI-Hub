@@ -2,7 +2,7 @@
 
 **Surface:** нижняя статусная строка  
 **Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/status-panel-model-picker.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
-**Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}`, `.session-status__debug-strip`.
+**Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini,kimi}`, `.session-status__debug-strip`.
 
 ## Роль
 
@@ -29,6 +29,7 @@
 
 - `connectionStatus` / `connectionDetail` из `useProjectManagerCoreStatusHydrator()`;
 - `status.models[0]` (single-model invariant per SystemArchitecture §3.14 / SMB-001/002): `modelDisplayName`, `reasoning`, `providerId` (`claudeCodeCli` / `codexCli` / `geminiCli` / `kimiCode` / `glmNative` / `glmOpenCode` / `localModels`) → provider tint class;
+- Local Models status identity is rendered directly from `status.models[0].modelDisplayName`; until a dedicated local tint exists, Local Models uses the existing Gemini/cool tint class.
 - `status.tokenUsage.used` / `.limit` → токен-плашка (used + remaining percent);
 - `tokenDebugSummary` либо вычисляется по chain/messages, либо в dialog mode приходит как override из parsed dialog history.
 
