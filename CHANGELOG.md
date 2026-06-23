@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.599] - 2026-06-23
+### Changed
+- **OpenRouter model retest build.** Repackaged the current OpenRouter provider
+  after confirming that `nvidia/nemotron-3.5-content-safety:free` behaves as a
+  content-safety/classifier model and returns verdict text such as
+  `User Safety: safe`, not a normal conversational assistant response.
+
+### Verification
+- `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.598] - 2026-06-23
 ### Fixed
 - **OpenRouter standalone chat now uses Settings credentials at runtime.**

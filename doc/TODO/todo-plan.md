@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
-  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
+  "currentTaskId": "openrouter-chat.phase6.model-retest-release-build.task1",
+  "expectedCommitMessage": "chore: build OpenRouter model retest release",
   "debt": null
 }
 ```
@@ -122,12 +122,17 @@
 35. [DONE] `openrouter-chat.phase6.patch-release-build.task1` Run approved release scripts for v1.2.598, commit generated version/manifests/artifacts/evidence, then delete the already-merged extra release branches (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter follow-up release`).
     - Evidence 2026-06-23: `./scripts/build-all.sh`; `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.598.vsix` (5.6M); tarballs copied to `doc/tmp/releases/*1.2.598*`; deleted local branch `codex/release-v1.2.596`; deleted remote branches `origin/codex/release-v1.2.596`, `origin/release/1.2.590`, and `origin/release/1.2.592`; pre-push checks passed during remote branch deletion.
 36. [DONE] `openrouter-chat.phase6.patch-release-build.commit1` Git Commit: `chore: build OpenRouter follow-up release` (hash: self)
-37. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
-38. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
+37. [DONE] `openrouter-chat.phase6.model-retest-release-docs.task1` Prepare README/CHANGELOG for v1.2.599 as an OpenRouter model retest build after confirming the observed `User Safety: safe` output came from a content-safety model, not a lost assistant response (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter model retest release`).
+    - Evidence 2026-06-23: `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`; `npm run build --workspace @codeai-hub/core`; `npm run plan:validate`.
+38. [DONE] `openrouter-chat.phase6.model-retest-release-docs.commit1` Git Commit: `docs: prepare OpenRouter model retest release` (hash: self)
+39. [IN_PROGRESS] `openrouter-chat.phase6.model-retest-release-build.task1` Run approved release scripts for v1.2.599 and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter model retest release`).
+40. [TODO] `openrouter-chat.phase6.model-retest-release-build.commit1` Git Commit: `chore: build OpenRouter model retest release` (hash: TBD)
+41. [TODO] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+42. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-39. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
-40. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)
+43. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
+44. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)

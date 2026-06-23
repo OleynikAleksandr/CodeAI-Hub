@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.598** (OpenRouter Follow-up Fix)
+**Current Release — v1.2.599** (OpenRouter Model Retest Build)
+
+This release repackages the current OpenRouter provider for retesting with
+general chat/instruct OpenRouter models.
+
+The previous failing-looking standalone chat retest used
+`nvidia/nemotron-3.5-content-safety:free`, which returned the expected
+classifier-style verdict `User Safety: safe` rather than a conversational
+assistant reply. Use this build to retest OpenRouter with a normal chat model
+slug and optional endpoint row.
+
+Retest focus: install the VSIX, restart Project Manager, keep the OpenRouter
+API key in Settings, choose a general chat/instruct model rather than a
+safety/moderation/classifier model, start a standalone OpenRouter chat, and
+confirm the assistant reply streams in the dialog.
+
+**Previous Release — v1.2.598** (OpenRouter Follow-up Fix)
 
 This release packages the OpenRouter follow-up fixes from user retesting.
 
