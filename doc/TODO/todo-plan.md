@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase1.transport.task1",
-  "expectedCommitMessage": "feat(openrouter): add chat completion transport",
+  "currentTaskId": "openrouter-chat.phase1.registry.task1",
+  "expectedCommitMessage": "feat(openrouter): register provider descriptor",
   "debt": null
 }
 ```
@@ -54,9 +54,9 @@
 
 ### Stream: OpenRouter chat adapter
 
-5. [IN_PROGRESS] `openrouter-chat.phase1.transport.task1` Add a minimal OpenRouter chat completion adapter and SSE reader for `/api/v1/chat/completions`; include selected endpoint tag as `provider.order = [tag]` with `allow_fallbacks: false` only when the user explicitly selected an endpoint (scope: `packages/core/src/open-router/**`; expected commit: `feat(openrouter): add chat completion transport`).
-6. [TODO] `openrouter-chat.phase1.transport.commit1` Git Commit: `feat(openrouter): add chat completion transport` (hash: TBD)
-7. [TODO] `openrouter-chat.phase1.registry.task1` Register the `openRouter` provider descriptor and model binding capabilities for standalone chat (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/open-router/**`; expected commit: `feat(openrouter): register provider descriptor`).
+5. [DONE] `openrouter-chat.phase1.transport.task1` Add a minimal OpenRouter chat completion adapter and SSE reader for `/api/v1/chat/completions`; include selected endpoint tag as `provider.order = [tag]` with `allow_fallbacks: false` only when the user explicitly selected an endpoint (scope: `packages/core/src/open-router/**`; expected commit: `feat(openrouter): add chat completion transport`).
+6. [DONE] `openrouter-chat.phase1.transport.commit1` Git Commit: `feat(openrouter): add chat completion transport` (hash: self)
+7. [IN_PROGRESS] `openrouter-chat.phase1.registry.task1` Register the `openRouter` provider descriptor and model binding capabilities for standalone chat (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/open-router/**`; expected commit: `feat(openrouter): register provider descriptor`).
 8. [TODO] `openrouter-chat.phase1.registry.commit1` Git Commit: `feat(openrouter): register provider descriptor` (hash: TBD)
 
 ## Phase 2 - Settings And Catalog Search (owner: Codex, updated: 2026-06-23)
