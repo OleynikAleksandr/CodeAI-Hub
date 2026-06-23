@@ -56,3 +56,22 @@ test("buildModelInfoFromBinding marks session-scoped identity as binding-owned",
   assert.equal(modelInfo.reasoning, "xhigh");
   assert.equal(modelInfo.source, "binding");
 });
+
+test("buildModelInfo shows OpenRouter slug and endpoint tag from settings", () => {
+  const settings = createDefaultSettings();
+  const modelInfo = buildModelInfo("openRouter", {
+    ...settings,
+    providers: {
+      ...settings.providers,
+      openRouter: {
+        apiKey: "",
+        baseUrl: "https://openrouter.ai/api/v1",
+        defaultModel: "openai/gpt-5-nano",
+        endpointTag: "azure/swedencentral",
+      },
+    },
+  });
+
+  assert.equal(modelInfo.modelDisplayName, "openai/gpt-5-nano");
+  assert.equal(modelInfo.endpointTag, "azure/swedencentral");
+});

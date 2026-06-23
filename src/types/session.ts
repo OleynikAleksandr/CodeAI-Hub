@@ -30,6 +30,7 @@ export interface SessionTodoItem {
  * Includes provider context, model identifier, and reasoning level if applicable.
  */
 export interface ModelInfo {
+  readonly endpointTag?: string;
   readonly modelDisplayName: string;
   readonly modelId: string;
   readonly providerId: ProviderStackId;

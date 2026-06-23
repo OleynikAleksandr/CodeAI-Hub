@@ -1,5 +1,8 @@
 import type { CoreConfig } from "../../config";
-import { loadArtifactsForTheUserLanguage } from "../../config/provider-settings-snapshot";
+import {
+  loadArtifactsForTheUserLanguage,
+  loadOpenRouterSettingsSnapshot,
+} from "../../config/provider-settings-snapshot";
 import {
   buildProviderEffectiveModelId,
   resolveProviderTurnConfigEntry,
@@ -14,6 +17,12 @@ import {
 } from "../types";
 
 const translationPolicyResolver = new SessionTranslationPolicyResolver();
+const OPENROUTER_ENDPOINT_TAG_OPTION = "openRouterEndpointTag";
+
+const normalizeOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 
 const resolveDefaultSettingsPath = (config: CoreConfig): string =>
   resolveWorkspaceRuntimeCapsule({
@@ -35,7 +44,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
     readonly targetReasoningEffort?: string;
     readonly turnOptions?: Record<string, unknown>;
   }): Record<string, unknown> | undefined {
-    return withAppliedProviderTurnConfig(
+    const turnOptionsWithConfig = withAppliedProviderTurnConfig(
       options.turnOptions,
       this.resolveForProvider({
         providerId: options.providerId,
@@ -44,6 +53,11 @@ export class SessionRequestHandlerAppliedTurnConfig {
         targetReasoningEffort: options.targetReasoningEffort,
       })
     );
+    return this.attachOpenRouterEndpointTag({
+      providerId: options.providerId,
+      sessionModelBinding: options.sessionModelBinding,
+      turnOptions: turnOptionsWithConfig,
+    });
   }
 
   resolveEffectiveModelId(
@@ -189,5 +203,34 @@ export class SessionRequestHandlerAppliedTurnConfig {
     return binding?.providerId === providerId && binding.settingsPath
       ? binding.settingsPath
       : this.resolveSharedSettingsPath();
+  }
+
+  private attachOpenRouterEndpointTag(options: {
+    readonly providerId: string;
+    readonly sessionModelBinding?: SessionModelBinding | null;
+    readonly turnOptions?: Record<string, unknown>;
+  }): Record<string, unknown> | undefined {
+    if (options.providerId !== "openRouter") {
+      return options.turnOptions;
+    }
+    const explicitEndpointTag = normalizeOptionalString(
+      options.turnOptions?.[OPENROUTER_ENDPOINT_TAG_OPTION]
+    );
+    if (explicitEndpointTag) {
+      return options.turnOptions;
+    }
+    const settingsPath = this.resolveSettingsPath(
+      options.sessionModelBinding,
+      options.providerId
+    );
+    const endpointTag = normalizeOptionalString(
+      loadOpenRouterSettingsSnapshot(settingsPath)?.endpointTag
+    );
+    return endpointTag
+      ? {
+          ...(options.turnOptions ?? {}),
+          [OPENROUTER_ENDPOINT_TAG_OPTION]: endpointTag,
+        }
+      : options.turnOptions;
   }
 }

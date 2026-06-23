@@ -3,6 +3,7 @@ import {
   type ResolvedGlmNativeTurnConfig,
   resolveGlmNativeTurnConfig,
 } from "./glm-native-turn-config";
+import { resolveOpenRouterTurnConfig } from "./open-router-turn-config";
 import {
   type ClaudeThinkingEffort,
   type CodexReasoningEffort,
@@ -87,19 +88,6 @@ export interface ResolvedProviderTurnConfigEntry {
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevelByModel?: Record<string, string>;
-}
-
-export interface ResolvedProviderTurnConfig {
-  readonly byProviderId: Readonly<
-    Record<string, ResolvedProviderTurnConfigEntry>
-  >;
-  readonly claude: ResolvedClaudeTurnConfig;
-  readonly codex: ResolvedCodexTurnConfig;
-  readonly gemini: ResolvedGeminiTurnConfig;
-  readonly glmNative: ResolvedGlmNativeTurnConfig;
-  readonly glmOpenCode: ResolvedKimiTurnConfig;
-  readonly kimi: ResolvedKimiTurnConfig;
-  readonly localModels: ResolvedKimiTurnConfig;
 }
 
 export interface ResolvedProviderEffectiveModelIdentity {
@@ -421,7 +409,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
 
 const resolveProviderTurnConfig = (
   options: ProviderTurnConfigResolverOptions
-): ResolvedProviderTurnConfig => {
+) => {
   const claude = resolveClaudeTurnConfig(options);
   const codex = resolveCodexTurnConfig(options);
   const gemini = resolveGeminiTurnConfig(options);
@@ -455,7 +443,10 @@ export const resolveProviderTurnConfigEntry = (
     readonly providerId: string;
   }
 ): ResolvedProviderTurnConfigEntry | null =>
-  resolveProviderTurnConfig(options).byProviderId[options.providerId] ?? null;
+  options.providerId === "openRouter"
+    ? resolveOpenRouterTurnConfig(options)
+    : (resolveProviderTurnConfig(options).byProviderId[options.providerId] ??
+      null);
 
 export const resolveProviderEffectiveModelIdentity = (options: {
   readonly providerId: string;

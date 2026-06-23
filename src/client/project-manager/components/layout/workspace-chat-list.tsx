@@ -353,12 +353,12 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
       setPickerOpen(false);
       const createdAfter = Date.now() - 2000;
       const targetModelId =
-        providerId === "localModels"
+        providerId === "localModels" || providerId === "openRouter"
           ? resolveDefaultStartCardModelSelection(
               api.getLastSettingsPayload(),
               providerId,
               availableEngines
-            ).modelId
+            ).modelId || null
           : null;
       const placeholder = openStandaloneSessionPlaceholder({
         createdAfter,

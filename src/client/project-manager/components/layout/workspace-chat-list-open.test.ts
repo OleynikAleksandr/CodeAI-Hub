@@ -62,6 +62,11 @@ test("new standalone chats still open a pending popup immediately", async () => 
     "new Local Models chats must seed a concrete selected model id"
   );
   assert.equal(
+    startNewChatSource.includes('providerId === "openRouter"'),
+    true,
+    "new OpenRouter chats must seed the selected model slug"
+  );
+  assert.equal(
     startNewChatSource.includes("targetModelId"),
     true,
     "session:create should receive the selected model id"

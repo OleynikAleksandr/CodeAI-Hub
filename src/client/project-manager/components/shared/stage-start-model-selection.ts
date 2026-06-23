@@ -233,6 +233,12 @@ export const resolveDefaultStartCardModelSelection = (
       reasoning: "default",
     };
   }
+  if (providerId === "openRouter") {
+    return {
+      modelId: settings?.providers.openRouter?.defaultModel?.trim() ?? "",
+      reasoning: settings?.providers.openRouter?.endpointTag?.trim() ?? "default",
+    };
+  }
   const modelId = settings?.providers.gemini.defaultModel ?? DEFAULT_GEMINI_MODEL_ID;
   return {
     modelId,

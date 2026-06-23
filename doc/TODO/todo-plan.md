@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase3.binding.task1",
-  "expectedCommitMessage": "feat(openrouter): bind selected chat model",
+  "currentTaskId": "openrouter-chat.phase4.docs.task1",
+  "expectedCommitMessage": "docs: document OpenRouter chat provider contract",
   "debt": null
 }
 ```
@@ -76,14 +76,14 @@
 
 15. [DONE] `openrouter-chat.phase3.provider-list.task1` Include `openRouter` in standalone chat provider lists without enabling managed workflow stages (scope: `src/client/**, src/types/provider.ts, media/**`; expected commit: `feat(openrouter): expose standalone chat provider`).
 16. [DONE] `openrouter-chat.phase3.provider-list.commit1` Git Commit: `feat(openrouter): expose standalone chat provider` (hash: self)
-17. [IN_PROGRESS] `openrouter-chat.phase3.binding.task1` Persist the selected OpenRouter model slug and optional endpoint tag into new-session binding/config, and display both in session UI when available (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/status-panel.tsx`; expected commit: `feat(openrouter): bind selected chat model`).
-18. [TODO] `openrouter-chat.phase3.binding.commit1` Git Commit: `feat(openrouter): bind selected chat model` (hash: TBD)
+17. [DONE] `openrouter-chat.phase3.binding.task1` Persist the selected OpenRouter model slug and optional endpoint tag into new-session binding/config, and display both in session UI when available (scope: `packages/core/**, src/**, media/**`; expected commit: `feat(openrouter): bind selected chat model`).
+18. [DONE] `openrouter-chat.phase3.binding.commit1` Git Commit: `feat(openrouter): bind selected chat model` (hash: self)
 
 ## Phase 4 - Documentation And Verification (owner: Codex, updated: 2026-06-23)
 
 ### Stream: SSOT sync and targeted checks
 
-19. [TODO] `openrouter-chat.phase4.docs.task1` Document the implemented OpenRouter standalone chat/provider contract in SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md`; expected commit: `docs: document OpenRouter chat provider contract`).
+19. [IN_PROGRESS] `openrouter-chat.phase4.docs.task1` Document the implemented OpenRouter standalone chat/provider contract in SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md`; expected commit: `docs: document OpenRouter chat provider contract`).
 20. [TODO] `openrouter-chat.phase4.docs.commit1` Git Commit: `docs: document OpenRouter chat provider contract` (hash: TBD)
 21. [TODO] `openrouter-chat.phase4.verify.task1` Run targeted OpenRouter/settings tests and affected builds; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter chat provider`).
 22. [TODO] `openrouter-chat.phase4.verify.commit1` Git Commit: `test: verify OpenRouter chat provider` (hash: TBD)

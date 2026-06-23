@@ -30,6 +30,7 @@ const SINGLE_DIGIT_REGEX = /^\d+$/;
 const DECIMAL_VERSION_REGEX = /^\d+\.\d+$/;
 const VERSION_JOIN_REGEX = /(\d+)\s+(\d+)/g;
 const EFFECTIVE_MODEL_ID_REGEX = /^(.*)\s+(reasoning|thinking):([^\s]+)$/;
+const MODEL_ID_ACRONYMS = new Set(["ai", "api", "glm", "gpt"]);
 
 interface EffectiveModelDescriptor {
   readonly baseModelId: string;
@@ -123,6 +124,9 @@ const resolveFallbackModelDisplayName = (
   providerId: ProviderStackId,
   modelId: string
 ): string => {
+  if (providerId === "openRouter") {
+    return parseEffectiveModelId(modelId).baseModelId;
+  }
   if (isKimiLikeProviderId(providerId)) {
     return formatKimiSessionModelDisplayName(providerId, modelId);
   }
@@ -152,6 +156,10 @@ const formatModelDisplayName = (modelId: string): string => {
   return modelId
     .split("-")
     .map((part, index) => {
+      const lowerPart = part.toLowerCase();
+      if (MODEL_ID_ACRONYMS.has(lowerPart)) {
+        return lowerPart.toUpperCase();
+      }
       // Check if part is a version number like "4" or "5"
       if (SINGLE_DIGIT_REGEX.test(part)) {
         return part;
@@ -240,6 +248,21 @@ export const buildModelInfo = (
       providerName: getDefaultProviderTitle(providerId),
       modelId,
       modelDisplayName: formatKimiSessionModelDisplayName(providerId, modelId),
+      source,
+    };
+  }
+  if (providerId === "openRouter") {
+    const modelId =
+      effectiveModelId ??
+      settings.providers.openRouter?.defaultModel ??
+      "unknown";
+    const endpointTag = settings.providers.openRouter?.endpointTag?.trim();
+    return {
+      providerId,
+      providerName: getDefaultProviderTitle(providerId),
+      modelId,
+      modelDisplayName: modelId,
+      ...(endpointTag ? { endpointTag } : {}),
       source,
     };
   }

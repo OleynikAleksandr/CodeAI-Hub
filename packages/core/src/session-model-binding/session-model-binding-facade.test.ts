@@ -68,6 +68,10 @@ const createSettingsSnapshot = (): Record<string, unknown> => ({
         "gemini-3.1-pro-preview": "high",
       },
     },
+    openRouter: {
+      defaultModel: "openai/gpt-5-nano",
+      endpointTag: "azure/swedencentral",
+    },
   },
 });
 
@@ -144,6 +148,28 @@ test("SessionModelBindingResolver includes provider thinking fields in effective
     assert.equal(binding.baseModelId, "gemini-3.1-pro-preview");
     assert.equal(binding.modelId, "gemini-3.1-pro-preview thinking:high");
     assert.equal(binding.thinkingLevel, "high");
+    assert.equal(binding.source, "settings_default");
+  } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});
+
+test("SessionModelBindingResolver binds OpenRouter settings model slug", async () => {
+  const { homeDirectory, settingsPath } = await createTempSettingsPath();
+
+  try {
+    await writeSettings(settingsPath, createSettingsSnapshot());
+    const resolver = createResolver(settingsPath);
+
+    const binding = resolver.bindFromSettingsDefault({
+      providerId: "openRouter",
+      sessionId: "session-openrouter",
+      workspacePath: "/tmp/workspace-openrouter",
+    });
+
+    assert.ok(binding);
+    assert.equal(binding.baseModelId, "openai/gpt-5-nano");
+    assert.equal(binding.modelId, "openai/gpt-5-nano");
     assert.equal(binding.source, "settings_default");
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });

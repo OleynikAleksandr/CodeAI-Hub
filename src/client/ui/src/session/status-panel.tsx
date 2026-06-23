@@ -146,6 +146,10 @@ const StatusPanel = ({
     typeof model.reasoning === "string" && model.reasoning.length > 0
       ? `(${model.reasoning})`
       : null;
+  const endpointText =
+    typeof model.endpointTag === "string" && model.endpointTag.length > 0
+      ? `(${model.endpointTag})`
+      : null;
   const openPickerForMode = (mode: StatusPanelPickerMode): void => {
     if (!canOpenPicker) {
       return;
@@ -221,6 +225,11 @@ const StatusPanel = ({
           >
             {reasoningText}
           </button>
+        ) : null}
+        {!reasoningText && endpointText ? (
+          <span className={`session-status-button ${providerButtonClass}`}>
+            {endpointText}
+          </span>
         ) : null}
         <span className="session-status-chip session-status-chip--limits">
           <span className="session-status-chip__label">{`${tokensLabel}:`}</span>

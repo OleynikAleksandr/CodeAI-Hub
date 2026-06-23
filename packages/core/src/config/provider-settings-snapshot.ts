@@ -61,6 +61,11 @@ export interface LocalModelsSettingsSnapshot {
   readonly defaultModel?: unknown;
 }
 
+export interface OpenRouterSettingsSnapshot {
+  readonly defaultModel?: unknown;
+  readonly endpointTag?: unknown;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
@@ -230,6 +235,19 @@ export const loadLocalModelsSettingsSnapshot = (
     return null;
   }
   return { defaultModel: localModels.defaultModel };
+};
+
+export const loadOpenRouterSettingsSnapshot = (
+  settingsPath: string
+): OpenRouterSettingsSnapshot | null => {
+  const openRouter = loadProviderSnapshot(settingsPath, "openRouter");
+  if (!openRouter) {
+    return null;
+  }
+  return {
+    defaultModel: openRouter.defaultModel,
+    endpointTag: openRouter.endpointTag,
+  };
 };
 
 export const loadClaudeProviderSettingsSnapshot = (
