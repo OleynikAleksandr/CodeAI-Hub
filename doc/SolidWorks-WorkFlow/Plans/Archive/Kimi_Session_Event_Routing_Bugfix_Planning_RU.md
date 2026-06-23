@@ -1,6 +1,6 @@
 # Kimi Session Event Routing Bugfix Planning
 
-**Status:** active implementation planning
+**Status:** archived accepted planning source
 **Date:** 2026-06-23
 **Owner:** Codex
 
