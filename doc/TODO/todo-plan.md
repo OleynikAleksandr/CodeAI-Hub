@@ -10,8 +10,8 @@
   "baseHead": "5152b95f3",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Session_Event_Routing_Bugfix_Planning_RU.md",
-  "currentTaskId": "kimi-session-routing.phase3.verify.task1",
-  "expectedCommitMessage": "test: verify kimi session event routing fix",
+  "currentTaskId": "kimi-session-routing.phase4.release.task1",
+  "expectedCommitMessage": "chore: request kimi session routing release decision",
   "debt": null
 }
 ```
@@ -58,12 +58,12 @@
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
 ### Stream: Kimi focused checks
-7. [IN_PROGRESS] `kimi-session-routing.phase3.verify.task1` Run focused Kimi tests/build and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi session event routing fix`).
-8. [TODO] `kimi-session-routing.phase3.verify.commit1` Git Commit: `test: verify kimi session event routing fix` (hash: TBD)
+7. [DONE] `kimi-session-routing.phase3.verify.task1` Run focused Kimi tests/build and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi session event routing fix`). Result: `npm run build --workspace @codeai-hub/kimi-module` OK; `node --test packages/Kimi_Module/dist/provider/kimi-provider-adapter.test.js` OK (3/3); `npm test --workspace @codeai-hub/kimi-module` OK; `npm run plan:validate` OK.
+8. [DONE] `kimi-session-routing.phase3.verify.commit1` Git Commit: `test: verify kimi session event routing fix` (hash: self)
 
 ## Phase 4 - Release Build (owner: Codex, updated: 2026-06-23)
 ### Stream: Release gate
-9. [TODO] `kimi-session-routing.phase4.release.task1` After verification, ask the user whether to build a new release; do not run release scripts before explicit confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: request kimi session routing release decision`).
+9. [IN_PROGRESS] `kimi-session-routing.phase4.release.task1` After verification, ask the user whether to build a new release; do not run release scripts before explicit confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: request kimi session routing release decision`).
 10. [TODO] `kimi-session-routing.phase4.release.commit1` Git Commit: `chore: request kimi session routing release decision` (hash: TBD)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
