@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.593] - 2026-06-23
+### Fixed
+- **Local Models standalone chats now honor the selected LM Studio model.**
+  Runtime turns accept both raw `modelKey` and `lmstudio:<modelKey>` ids, and
+  an explicit unavailable model now fails clearly instead of falling back to the
+  first discovered local model.
+- **The lower status panel shows Local Models model identity.** Local Models
+  sessions render the selected model from `status.models[0]`; the existing Kimi
+  provider tint mapping was also corrected to the available Kimi class.
+
+### Verification
+- `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.selection.test.ts`
+- `npx tsx --test src/client/ui/src/session/status-panel.test.tsx`
+- `npm run plan:validate`
+
 ## [1.2.592] - 2026-06-23
 ### Fixed
 - **Kimi standalone chats no longer mirror concurrent session output.** ACP
