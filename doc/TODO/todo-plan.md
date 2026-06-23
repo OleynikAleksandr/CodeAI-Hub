@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase5.hotfix-release-artifacts.task1",
-  "expectedCommitMessage": "build: release OpenRouter start-card hotfix",
+  "currentTaskId": "openrouter-agent.phase5.acceptance-retest.task1",
+  "expectedCommitMessage": "chore: record OpenRouter agent tooling acceptance",
   "debt": null
 }
 ```
@@ -124,14 +124,20 @@ Release build evidence for `1.2.601`:
 26. [DONE] `openrouter-agent.phase5.hotfix-release-plan.commit1` Git Commit: `docs: plan OpenRouter start-card hotfix release` (hash: self)
 27. [DONE] `openrouter-agent.phase5.hotfix-release-notes.task1` Prepare release-facing docs for future version `1.2.602` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter start-card hotfix release`).
 28. [DONE] `openrouter-agent.phase5.hotfix-release-notes.commit1` Git Commit: `docs: prepare OpenRouter start-card hotfix release` (hash: self)
-29. [IN_PROGRESS] `openrouter-agent.phase5.hotfix-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.602` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter start-card hotfix`).
-30. [TODO] `openrouter-agent.phase5.hotfix-release-artifacts.commit1` Git Commit: `build: release OpenRouter start-card hotfix` (hash: TBD)
+29. [DONE] `openrouter-agent.phase5.hotfix-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.602` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter start-card hotfix`).
+30. [DONE] `openrouter-agent.phase5.hotfix-release-artifacts.commit1` Git Commit: `build: release OpenRouter start-card hotfix` (hash: self)
 
 Release notes target: `1.2.602` OpenRouter Start Card Hotfix.
 
+Release build evidence for `1.2.602`:
+- `./scripts/build-all.sh` — PASS; provider/core/UI/launcher tarballs generated under `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+- VSIX: `codeai-hub-1.2.602.vsix` (5.6M), SHA-256 `1e056802622cbaa2f19e98279919aba3f083616801b58cced58a09f39d270a04`.
+- Runtime artifact set: `claude-module-1.2.602.tar.bz2`, `codex-module-1.2.602.tar.bz2`, `gemini-module-1.2.602.tar.bz2`, `glm-module-1.2.602.tar.bz2`, `glm-opencode-module-1.2.602.tar.bz2`, `kimi-module-1.2.602.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.602.tar.bz2`, `vscode-webview-1.2.602.tar.bz2`, `project-manager-1.2.602.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.602.tar.bz2`.
+
 ### Stream: Hotfix Retest
 
-31. [TODO] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after installing hotfix release `1.2.602` (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
+31. [IN_PROGRESS] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after installing hotfix release `1.2.602` (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
 32. [TODO] `openrouter-agent.phase5.acceptance-retest.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
