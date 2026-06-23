@@ -246,6 +246,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       readonly glmNative: Record<string, unknown>;
       readonly kimi: Record<string, unknown>;
       readonly glmOpenCode: Record<string, unknown>;
+      readonly openRouter: Record<string, unknown>;
     };
   };
   const rawGeneral = isRecord(settings.general) ? settings.general : {};
@@ -265,6 +266,9 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     : {};
   const rawGlmNative = isRecord(rawProviders.glmNative)
     ? rawProviders.glmNative
+    : {};
+  const rawOpenRouter = isRecord(rawProviders.openRouter)
+    ? rawProviders.openRouter
     : {};
   const normalizedClaudeThinking = normalizeClaudeThinkingSettings({
     defaultThinkingSettings: defaults.providers.claude.thinking as {
@@ -325,7 +329,8 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       isRecord(rawProviders.gemini) &&
       isRecord(rawProviders.kimi) &&
       isRecord(rawProviders.glmOpenCode) &&
-      isRecord(rawProviders.glmNative)
+      isRecord(rawProviders.glmNative) &&
+      isRecord(rawProviders.openRouter)
     )
   ) {
     changed = true;
@@ -385,6 +390,10 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
           rawGlmNative,
           defaults.providers.glmNative
         ),
+        openRouter: {
+          ...defaults.providers.openRouter,
+          ...rawOpenRouter,
+        },
       },
     },
   };

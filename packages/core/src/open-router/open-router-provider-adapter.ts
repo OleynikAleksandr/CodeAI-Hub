@@ -9,6 +9,8 @@ import {
 const DEFAULT_BASE_URL = "https://openrouter.ai/api/v1";
 const DEFAULT_REQUEST_TIMEOUT_MS = 600_000;
 const JSON_HEADERS = { "content-type": "application/json" } as const;
+const OPENROUTER_API_KEY_OPTION = "__codeaiOpenRouterApiKey";
+const OPENROUTER_BASE_URL_OPTION = "__codeaiOpenRouterBaseUrl";
 const OPENROUTER_ENDPOINT_TAG_OPTION = "openRouterEndpointTag";
 const TRAILING_SLASHES_PATTERN = /\/+$/u;
 
@@ -139,6 +141,8 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
     try {
       const model = this.#resolveModel(turnOptions);
       const endpointTag = this.#resolveEndpointTag(turnOptions);
+      const apiKey = this.#resolveApiKey(turnOptions);
+      const baseUrl = this.#resolveBaseUrl(turnOptions);
       const currentMessages = this.#messagesBySessionId.get(sessionId) ?? [];
       const userMessage: OpenRouterMessage = { content, role: "user" };
       const requestMessages = [...currentMessages, userMessage];
@@ -146,6 +150,8 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
         requestMessages,
         model,
         endpointTag,
+        apiKey,
+        baseUrl,
         sessionId
       );
       this.#messagesBySessionId.set(sessionId, [
@@ -197,20 +203,36 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
     );
   }
 
+  #resolveApiKey(turnOptions?: Record<string, unknown>): string | undefined {
+    return (
+      normalizeOptionalString(turnOptions?.[OPENROUTER_API_KEY_OPTION]) ??
+      this.#apiKey
+    );
+  }
+
+  #resolveBaseUrl(turnOptions?: Record<string, unknown>): string {
+    return resolveBaseUrl(
+      normalizeOptionalString(turnOptions?.[OPENROUTER_BASE_URL_OPTION]) ??
+        this.#baseUrl
+    );
+  }
+
   async #complete(
     messages: readonly OpenRouterMessage[],
     model: string,
     endpointTag: string | undefined,
+    apiKey: string | undefined,
+    baseUrl: string,
     sessionId: string
   ): Promise<string> {
-    if (!this.#apiKey) {
+    if (!apiKey) {
       throw new Error("OpenRouter API key is not configured.");
     }
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.#timeoutMs);
     try {
       const response = await this.#fetchImplementation(
-        `${this.#baseUrl}/chat/completions`,
+        `${baseUrl}/chat/completions`,
         {
           body: JSON.stringify(
             createOpenRouterChatCompletionRequest({
@@ -221,7 +243,7 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
           ),
           headers: {
             ...JSON_HEADERS,
-            Authorization: `Bearer ${this.#apiKey}`,
+            Authorization: `Bearer ${apiKey}`,
             "X-Title": "CodeAI Hub",
           },
           method: "POST",

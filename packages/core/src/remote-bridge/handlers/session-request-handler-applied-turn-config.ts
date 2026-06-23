@@ -17,6 +17,8 @@ import {
 } from "../types";
 
 const translationPolicyResolver = new SessionTranslationPolicyResolver();
+const OPENROUTER_API_KEY_OPTION = "__codeaiOpenRouterApiKey";
+const OPENROUTER_BASE_URL_OPTION = "__codeaiOpenRouterBaseUrl";
 const OPENROUTER_ENDPOINT_TAG_OPTION = "openRouterEndpointTag";
 
 const normalizeOptionalString = (value: unknown): string | undefined =>
@@ -53,10 +55,15 @@ export class SessionRequestHandlerAppliedTurnConfig {
         targetReasoningEffort: options.targetReasoningEffort,
       })
     );
-    return this.attachOpenRouterEndpointTag({
+    const turnOptionsWithEndpointTag = this.attachOpenRouterEndpointTag({
       providerId: options.providerId,
       sessionModelBinding: options.sessionModelBinding,
       turnOptions: turnOptionsWithConfig,
+    });
+    return this.attachOpenRouterRuntimeConnection({
+      providerId: options.providerId,
+      sessionModelBinding: options.sessionModelBinding,
+      turnOptions: turnOptionsWithEndpointTag,
     });
   }
 
@@ -232,5 +239,49 @@ export class SessionRequestHandlerAppliedTurnConfig {
           [OPENROUTER_ENDPOINT_TAG_OPTION]: endpointTag,
         }
       : options.turnOptions;
+  }
+
+  private attachOpenRouterRuntimeConnection(options: {
+    readonly providerId: string;
+    readonly sessionModelBinding?: SessionModelBinding | null;
+    readonly turnOptions?: Record<string, unknown>;
+  }): Record<string, unknown> | undefined {
+    if (options.providerId !== "openRouter") {
+      return options.turnOptions;
+    }
+    const settingsPath = this.resolveSettingsPath(
+      options.sessionModelBinding,
+      options.providerId
+    );
+    const snapshot = loadOpenRouterSettingsSnapshot(settingsPath);
+    let next = options.turnOptions;
+    next = this.attachPrivateStringOption(
+      next,
+      OPENROUTER_API_KEY_OPTION,
+      snapshot?.apiKey
+    );
+    return this.attachPrivateStringOption(
+      next,
+      OPENROUTER_BASE_URL_OPTION,
+      snapshot?.baseUrl
+    );
+  }
+
+  private attachPrivateStringOption(
+    turnOptions: Record<string, unknown> | undefined,
+    key: string,
+    value: unknown
+  ): Record<string, unknown> | undefined {
+    const normalized = normalizeOptionalString(value);
+    if (!normalized) {
+      return turnOptions;
+    }
+    const next = turnOptions ?? {};
+    Object.defineProperty(next, key, {
+      configurable: true,
+      enumerable: false,
+      value: normalized,
+    });
+    return next;
   }
 }

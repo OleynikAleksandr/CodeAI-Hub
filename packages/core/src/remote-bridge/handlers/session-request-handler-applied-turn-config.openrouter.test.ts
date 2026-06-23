@@ -15,6 +15,8 @@ const writeSettings = async (settingsPath: string): Promise<void> => {
     `${JSON.stringify({
       providers: {
         openRouter: {
+          apiKey: "openrouter-settings-key",
+          baseUrl: "https://openrouter.example/api/v1",
           defaultModel: "openai/gpt-5-nano",
           endpointTag: "azure/swedencentral",
         },
@@ -74,6 +76,18 @@ test("OpenRouter applied turn config includes selected endpoint tag", async () =
     });
 
     assert.equal(turnOptions?.openRouterEndpointTag, "azure/swedencentral");
+    assert.equal(
+      turnOptions?.__codeaiOpenRouterApiKey,
+      "openrouter-settings-key"
+    );
+    assert.equal(
+      turnOptions?.__codeaiOpenRouterBaseUrl,
+      "https://openrouter.example/api/v1"
+    );
+    assert.equal(
+      JSON.stringify(turnOptions)?.includes("openrouter-settings-key"),
+      false
+    );
     assert.equal(
       readAppliedProviderTurnConfig(turnOptions)?.modelId,
       "openai/gpt-5-nano"

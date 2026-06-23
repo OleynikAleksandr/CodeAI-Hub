@@ -62,6 +62,8 @@ export interface LocalModelsSettingsSnapshot {
 }
 
 export interface OpenRouterSettingsSnapshot {
+  readonly apiKey?: unknown;
+  readonly baseUrl?: unknown;
   readonly defaultModel?: unknown;
   readonly endpointTag?: unknown;
 }
@@ -135,6 +137,34 @@ const loadProviderSnapshot = (
   const provider =
     providers && isRecord(providers[providerId]) ? providers[providerId] : null;
   return provider;
+};
+
+const pickProviderConnectionSnapshot = (
+  provider: Record<string, unknown> | null
+): Record<string, unknown> => {
+  const connection: Record<string, unknown> = {};
+  if (!provider) {
+    return connection;
+  }
+  for (const key of ["apiKey", "baseUrl"]) {
+    if (typeof provider[key] === "string") {
+      connection[key] = provider[key];
+    }
+  }
+  return connection;
+};
+
+const loadProviderSnapshotWithGlobalConnection = (
+  settingsPath: string,
+  providerId: string
+): Record<string, unknown> | null => {
+  const workspace = loadProviderSnapshot(settingsPath, providerId);
+  const global = loadProviderSnapshot(resolveGlobalSettingsPath(), providerId);
+  const globalConnection = pickProviderConnectionSnapshot(global);
+  if (!workspace && Object.keys(globalConnection).length === 0) {
+    return null;
+  }
+  return { ...(workspace ?? {}), ...globalConnection };
 };
 
 const loadLocalizationSettingsSnapshot = (
@@ -240,11 +270,16 @@ export const loadLocalModelsSettingsSnapshot = (
 export const loadOpenRouterSettingsSnapshot = (
   settingsPath: string
 ): OpenRouterSettingsSnapshot | null => {
-  const openRouter = loadProviderSnapshot(settingsPath, "openRouter");
+  const openRouter = loadProviderSnapshotWithGlobalConnection(
+    settingsPath,
+    "openRouter"
+  );
   if (!openRouter) {
     return null;
   }
   return {
+    apiKey: openRouter.apiKey,
+    baseUrl: openRouter.baseUrl,
     defaultModel: openRouter.defaultModel,
     endpointTag: openRouter.endpointTag,
   };

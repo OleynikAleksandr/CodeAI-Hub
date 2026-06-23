@@ -74,6 +74,13 @@ const readGlmNativeSettings = (
   return providers.glmNative as Record<string, unknown>;
 };
 
+const readOpenRouterSettings = (
+  settings: Record<string, unknown>
+): Record<string, unknown> => {
+  const providers = settings.providers as Record<string, unknown>;
+  return providers.openRouter as Record<string, unknown>;
+};
+
 const readKimiSettings = (
   settings: Record<string, unknown>
 ): Record<string, unknown> => {
@@ -209,6 +216,56 @@ test("SettingsPersistenceService keeps GLM native connection settings global", a
   assert.equal(
     readGlmNativeSettings(loadedB).baseUrl,
     "https://custom.z.ai/api/coding/paas/v4"
+  );
+});
+
+test("SettingsPersistenceService keeps OpenRouter connection settings global", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
+  const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
+  const config = createConfig(globalSettingsPath);
+  const workspaceA = {
+    workspaceRoot: path.join(tempRoot, "workspace-a"),
+    workspaceSlug: "workspace-a",
+  };
+  const workspaceB = {
+    workspaceRoot: path.join(tempRoot, "workspace-b"),
+    workspaceSlug: "workspace-b",
+  };
+  const service = new SettingsPersistenceService({ config, logger });
+  const settings = cloneSettings(await service.load({ workspace: workspaceA }));
+  const openRouter = readOpenRouterSettings(settings);
+  openRouter.apiKey = "openrouter-global-key";
+  openRouter.baseUrl = "https://openrouter.example/api/v1";
+  openRouter.defaultModel = "openai/gpt-5-nano";
+
+  await service.save(settings, { workspace: workspaceA });
+
+  const globalSettings = JSON.parse(
+    await readFile(globalSettingsPath, "utf8")
+  ) as Record<string, unknown>;
+  assert.deepEqual(readOpenRouterSettings(globalSettings), {
+    apiKey: "openrouter-global-key",
+    baseUrl: "https://openrouter.example/api/v1",
+  });
+
+  const persistedWorkspaceA = JSON.parse(
+    await readFile(
+      resolveWorkspaceRuntimeCapsule(workspaceA).settingsFile.absolutePath,
+      "utf8"
+    )
+  ) as Record<string, unknown>;
+  assert.equal(readOpenRouterSettings(persistedWorkspaceA).apiKey, undefined);
+  assert.equal(readOpenRouterSettings(persistedWorkspaceA).baseUrl, undefined);
+  assert.equal(
+    readOpenRouterSettings(persistedWorkspaceA).defaultModel,
+    "openai/gpt-5-nano"
+  );
+
+  const loadedB = await service.load({ workspace: workspaceB });
+  assert.equal(readOpenRouterSettings(loadedB).apiKey, "openrouter-global-key");
+  assert.equal(
+    readOpenRouterSettings(loadedB).baseUrl,
+    "https://openrouter.example/api/v1"
   );
 });
 

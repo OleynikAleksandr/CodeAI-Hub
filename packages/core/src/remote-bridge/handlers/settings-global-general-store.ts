@@ -18,6 +18,8 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const hasOwn = (value: Record<string, unknown>, key: string): boolean =>
   Object.hasOwn(value, key);
 
+const GLOBAL_CONNECTION_PROVIDER_IDS = ["glmNative", "openRouter"] as const;
+
 const readProviderSettings = (
   settings: Record<string, unknown> | null,
   providerId: string
@@ -27,7 +29,7 @@ const readProviderSettings = (
   return isRecord(provider) ? provider : null;
 };
 
-const pickGlmNativeConnection = (
+const pickProviderConnection = (
   provider: Record<string, unknown> | null
 ): Record<string, unknown> => {
   const connection: Record<string, unknown> = {};
@@ -42,7 +44,7 @@ const pickGlmNativeConnection = (
   return connection;
 };
 
-const shouldPromoteWorkspaceGlmConnection = (
+const shouldPromoteWorkspaceConnection = (
   globalProvider: Record<string, unknown> | null,
   workspaceProvider: Record<string, unknown> | null
 ): boolean => {
@@ -67,34 +69,43 @@ const mergeGlobalProviders = (options: {
   const workspaceProviders = isRecord(options.workspaceSettings.providers)
     ? options.workspaceSettings.providers
     : null;
-  const workspaceGlmNative = readProviderSettings(
-    options.workspaceSettings,
-    "glmNative"
-  );
-  const globalGlmNative = readProviderSettings(
-    options.globalSettings,
-    "glmNative"
-  );
-  const globalConnection = pickGlmNativeConnection(globalGlmNative);
-  if (
-    Object.keys(globalConnection).length === 0 &&
-    !shouldPromoteWorkspaceGlmConnection(globalGlmNative, workspaceGlmNative)
-  ) {
-    return { changed: false, providers: workspaceProviders ?? undefined };
-  }
-  return {
-    changed: shouldPromoteWorkspaceGlmConnection(
-      globalGlmNative,
-      workspaceGlmNative
-    ),
-    providers: {
-      ...(workspaceProviders ?? {}),
-      glmNative: {
-        ...(workspaceGlmNative ?? {}),
+  let changed = false;
+  let providers = workspaceProviders ? { ...workspaceProviders } : undefined;
+
+  for (const providerId of GLOBAL_CONNECTION_PROVIDER_IDS) {
+    const workspaceProvider = readProviderSettings(
+      options.workspaceSettings,
+      providerId
+    );
+    const globalProvider = readProviderSettings(
+      options.globalSettings,
+      providerId
+    );
+    const globalConnection = pickProviderConnection(globalProvider);
+    const promoteWorkspaceConnection = shouldPromoteWorkspaceConnection(
+      globalProvider,
+      workspaceProvider
+    );
+    if (
+      Object.keys(globalConnection).length === 0 &&
+      !promoteWorkspaceConnection
+    ) {
+      continue;
+    }
+    changed = changed || promoteWorkspaceConnection;
+    providers = {
+      ...(providers ?? {}),
+      [providerId]: {
+        ...(workspaceProvider ?? {}),
         ...globalConnection,
       },
-    },
-  };
+    };
+  }
+
+  if (!providers) {
+    return { changed: false, providers: workspaceProviders ?? undefined };
+  }
+  return { changed, providers };
 };
 
 export const readJsonObjectFile = async (
@@ -144,13 +155,15 @@ export const combineGlobalGeneralWithWorkspaceSettings = (options: {
 export const toGlobalGeneralSettingsSnapshot = (
   settings: Record<string, unknown>
 ): Record<string, unknown> => {
-  const glmNative = readProviderSettings(settings, "glmNative");
-  const glmConnection = pickGlmNativeConnection(glmNative);
+  const providers = Object.fromEntries(
+    GLOBAL_CONNECTION_PROVIDER_IDS.map((providerId) => [
+      providerId,
+      pickProviderConnection(readProviderSettings(settings, providerId)),
+    ]).filter(([, connection]) => Object.keys(connection).length > 0)
+  );
   return {
     general: isRecord(settings.general) ? settings.general : {},
-    ...(Object.keys(glmConnection).length > 0
-      ? { providers: { glmNative: glmConnection } }
-      : {}),
+    ...(Object.keys(providers).length > 0 ? { providers } : {}),
   };
 };
 
@@ -161,17 +174,24 @@ export const toWorkspaceSettingsSnapshot = (
   const providers = isRecord(workspaceSettings.providers)
     ? workspaceSettings.providers
     : null;
-  const glmNative = readProviderSettings(settings, "glmNative");
-  if (!(providers && glmNative)) {
+  if (!providers) {
     return workspaceSettings;
   }
-  const {
-    apiKey: _apiKey,
-    baseUrl: _baseUrl,
-    ...workspaceGlmNative
-  } = glmNative;
+  const nextProviders = { ...providers };
+  for (const providerId of GLOBAL_CONNECTION_PROVIDER_IDS) {
+    const provider = readProviderSettings(settings, providerId);
+    if (!provider) {
+      continue;
+    }
+    const {
+      apiKey: _apiKey,
+      baseUrl: _baseUrl,
+      ...workspaceProvider
+    } = provider;
+    nextProviders[providerId] = workspaceProvider;
+  }
   return {
     ...workspaceSettings,
-    providers: { ...providers, glmNative: workspaceGlmNative },
+    providers: nextProviders,
   };
 };

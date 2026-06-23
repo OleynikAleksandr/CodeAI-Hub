@@ -104,5 +104,11 @@ export const DEFAULT_SETTINGS_SNAPSHOT = {
       defaultModel: "zai-coding-plan/glm-5.2",
       thinkingDisplaySyncEnabled: true,
     },
+    openRouter: {
+      apiKey: "",
+      baseUrl: "",
+      defaultModel: "",
+      endpointTag: "",
+    },
   },
 } as const;

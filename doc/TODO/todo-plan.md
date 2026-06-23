@@ -110,12 +110,15 @@
 
 ### Stream: OpenRouter chat retest
 
-31. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
-32. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
+31. [DONE] `openrouter-chat.phase6.runtime-key.task1` Pass OpenRouter Settings `apiKey` and optional `baseUrl` into runtime turns without exposing them in public applied turn config, so selected model chats can call OpenRouter (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/open-router/**, packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config*, packages/core/src/remote-bridge/handlers/settings-*`; expected commit: `fix(openrouter): pass settings credentials to runtime`).
+    - Evidence 2026-06-23: `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts`; `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.ts`; `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`; `npm run build --workspace @codeai-hub/core`; `node --test packages/core/dist/open-router/open-router-provider-adapter.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.js packages/core/dist/remote-bridge/handlers/settings-persistence-service.test.js`.
+32. [DONE] `openrouter-chat.phase6.runtime-key.commit1` Git Commit: `fix(openrouter): pass settings credentials to runtime` (hash: self)
+33. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+34. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-33. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
-34. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)
+35. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
+36. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)
