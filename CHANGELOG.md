@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.598] - 2026-06-23
+### Fixed
+- **OpenRouter standalone chat now uses Settings credentials at runtime.**
+  Saved OpenRouter `apiKey` and optional `baseUrl` flow into provider turns
+  without being exposed in public applied-turn JSON, preventing false
+  "OpenRouter API key is not configured" failures after Settings validation.
+- **OpenRouter is available in the Description provider picker.** The
+  questionnaire provider picker now includes OpenRouter and its fallback copy
+  no longer names only Claude, Codex, and Gemini.
+
+### Verification
+- `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.ts`
+- `npx tsx --test packages/core/src/open-router/open-router-provider-adapter.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/open-router/open-router-provider-adapter.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.js packages/core/dist/remote-bridge/handlers/settings-persistence-service.test.js`
+- `npm run plan:validate`
+
 ## [1.2.597] - 2026-06-23
 ### Added
 - **OpenRouter is available as a standalone chat provider.** Settings now has
