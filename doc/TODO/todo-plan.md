@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase1.loop.task1",
-  "expectedCommitMessage": "feat(openrouter): add agent tool loop",
+  "currentTaskId": "openrouter-agent.phase2.workflow-picker.task1",
+  "expectedCommitMessage": "fix(openrouter): enable workflow provider selection",
   "debt": null
 }
 ```
@@ -55,14 +55,14 @@
 
 3. [DONE] `openrouter-agent.phase1.exports.task1` Export the already implemented GLM Native workflow tools/executor helpers for reuse by OpenRouter (scope: `packages/GLM_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): reuse workflow tool surface`).
 4. [DONE] `openrouter-agent.phase1.exports.commit1` Git Commit: `feat(openrouter): reuse workflow tool surface` (hash: self)
-5. [IN_PROGRESS] `openrouter-agent.phase1.loop.task1` Add OpenRouter system prompt, OpenAI-compatible tool declarations, streamed tool-call parsing and local tool-call continuation loop (scope: `packages/core/src/open-router/open-router-provider-adapter.ts, packages/core/src/open-router/open-router-sse-reader.ts, packages/core/src/open-router/open-router-provider-adapter.test.ts`; expected commit: `feat(openrouter): add agent tool loop`).
-6. [TODO] `openrouter-agent.phase1.loop.commit1` Git Commit: `feat(openrouter): add agent tool loop` (hash: TBD)
+5. [DONE] `openrouter-agent.phase1.loop.task1` Add OpenRouter system prompt, OpenAI-compatible tool declarations, streamed tool-call parsing and local tool-call continuation loop (scope: `packages/core/src/open-router/open-router-provider-adapter.ts, packages/core/src/open-router/open-router-sse-reader.ts, packages/core/src/open-router/open-router-provider-adapter.test.ts`; expected commit: `feat(openrouter): add agent tool loop`).
+6. [DONE] `openrouter-agent.phase1.loop.commit1` Git Commit: `feat(openrouter): add agent tool loop` (hash: self)
 
 ## Phase 2 - Workflow Availability And Docs (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Provider surfaces
 
-7. [TODO] `openrouter-agent.phase2.workflow-picker.task1` Treat OpenRouter as research-capable in workflow provider selection now that it has executable tools (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): enable workflow provider selection`).
+7. [IN_PROGRESS] `openrouter-agent.phase2.workflow-picker.task1` Treat OpenRouter as research-capable in workflow provider selection now that it has executable tools (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): enable workflow provider selection`).
 8. [TODO] `openrouter-agent.phase2.workflow-picker.commit1` Git Commit: `fix(openrouter): enable workflow provider selection` (hash: TBD)
 9. [TODO] `openrouter-agent.phase2.docs.task1` Update SSOT docs for OpenRouter agent profile/tooling behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: document OpenRouter agent profile`).
 10. [TODO] `openrouter-agent.phase2.docs.commit1` Git Commit: `docs: document OpenRouter agent profile` (hash: TBD)

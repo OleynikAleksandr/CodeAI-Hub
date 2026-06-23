@@ -1,8 +1,17 @@
 import { randomUUID } from "node:crypto";
+import { resolveCodexWorkflowInvocationProfile } from "@codeai-hub/codex-app-server-module";
+import {
+  buildGlmNativeAssistantToolMessage,
+  executeGlmNativeToolCall,
+  GLM_NATIVE_MAX_TOOL_STEPS,
+  GLM_NATIVE_WORKFLOW_TOOLS,
+  type GlmSessionMessage,
+} from "@codeai-hub/glm-module";
 import type { ProviderAdapter } from "../provider-registry/provider-module-loader.types";
 import { readAppliedProviderTurnConfig } from "../remote-bridge/types";
 import {
   createOpenRouterChatCompletionRequest,
+  type OpenRouterToolCall,
   readOpenRouterChatCompletionStream,
 } from "./open-router-sse-reader";
 
@@ -18,7 +27,9 @@ type OpenRouterSessionListener = (payload: unknown) => void;
 
 interface OpenRouterMessage {
   readonly content: string;
-  readonly role: "assistant" | "system" | "user";
+  readonly role: "assistant" | "system" | "tool" | "user";
+  readonly tool_call_id?: string;
+  readonly tool_calls?: readonly OpenRouterToolCall[];
 }
 
 interface OpenRouterProviderAdapterOptions {
@@ -61,6 +72,36 @@ const describeError = (error: unknown): string =>
 const truncateDiagnosticBody = (body: string): string =>
   body.trim().slice(0, 500);
 
+const buildOpenRouterSystemMessage = (
+  model: string,
+  workspacePath?: string
+): OpenRouterMessage => ({
+  content: [
+    resolveCodexWorkflowInvocationProfile().baseInstructions,
+    "",
+    "# OpenRouter Runtime Tooling",
+    "",
+    "- Runtime provider: OpenRouter Chat Completions.",
+    `- OpenRouter model: ${model}.`,
+    `- Workspace root: ${workspacePath ?? "(not provided)"}.`,
+    "- Executable tools are provided in the request `tools` array using OpenAI-compatible function-call format.",
+    "- Every declared tool has a local CodeAI Hub executor; do not claim a tool succeeded unless its result says `ok: true`.",
+    "- Use `write_workflow_artifact` for managed workflow artifacts when the prompt gives an exact `.codeai-hub/...` target path.",
+  ].join("\n"),
+  role: "system",
+});
+
+const toOpenRouterMessage = (
+  message: GlmSessionMessage
+): OpenRouterMessage => ({
+  content: message.content,
+  role: message.role as OpenRouterMessage["role"],
+  ...(message.tool_call_id ? { tool_call_id: message.tool_call_id } : {}),
+  ...(message.tool_calls
+    ? { tool_calls: message.tool_calls as readonly OpenRouterToolCall[] }
+    : {}),
+});
+
 export class OpenRouterProviderAdapter implements ProviderAdapter {
   readonly #apiKey?: string;
   readonly #baseUrl: string;
@@ -72,6 +113,7 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
     Set<OpenRouterSessionListener>
   >();
   readonly #messagesBySessionId = new Map<string, OpenRouterMessage[]>();
+  readonly #workspacePathBySessionId = new Map<string, string | undefined>();
   readonly #timeoutMs: number;
 
   constructor(options: OpenRouterProviderAdapterOptions = {}) {
@@ -91,26 +133,29 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
     return Promise.resolve();
   }
 
-  createSession(): Promise<string> {
+  createSession(workspacePath?: string): Promise<string> {
     const sessionId = `openrouter-${randomUUID()}`;
     this.#listenersBySessionId.set(sessionId, new Set());
     this.#messagesBySessionId.set(sessionId, []);
+    this.#workspacePathBySessionId.set(sessionId, workspacePath);
     return Promise.resolve(sessionId);
   }
 
-  resumeSession(sessionId: string): Promise<string> {
+  resumeSession(sessionId: string, workspacePath?: string): Promise<string> {
     if (!this.#listenersBySessionId.has(sessionId)) {
       this.#listenersBySessionId.set(sessionId, new Set());
     }
     if (!this.#messagesBySessionId.has(sessionId)) {
       this.#messagesBySessionId.set(sessionId, []);
     }
+    this.#workspacePathBySessionId.set(sessionId, workspacePath);
     return Promise.resolve(sessionId);
   }
 
   closeSession(sessionId: string): Promise<void> {
     this.#listenersBySessionId.delete(sessionId);
     this.#messagesBySessionId.delete(sessionId);
+    this.#workspacePathBySessionId.delete(sessionId);
     return Promise.resolve();
   }
 
@@ -143,23 +188,22 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
       const endpointTag = this.#resolveEndpointTag(turnOptions);
       const apiKey = this.#resolveApiKey(turnOptions);
       const baseUrl = this.#resolveBaseUrl(turnOptions);
+      const workspacePath = this.#workspacePathBySessionId.get(sessionId);
       const currentMessages = this.#messagesBySessionId.get(sessionId) ?? [];
       const userMessage: OpenRouterMessage = { content, role: "user" };
       const requestMessages = [...currentMessages, userMessage];
-      const assistantText = await this.#complete(
+      const result = await this.#complete(
         requestMessages,
         model,
         endpointTag,
         apiKey,
         baseUrl,
-        sessionId
+        sessionId,
+        workspacePath
       );
-      this.#messagesBySessionId.set(sessionId, [
-        ...requestMessages,
-        { content: assistantText, role: "assistant" },
-      ]);
+      this.#messagesBySessionId.set(sessionId, result.messages);
       this.#emit(sessionId, {
-        content: assistantText,
+        content: result.content,
         provider: "openRouter",
         timestamp: new Date().toISOString(),
         type: "assistant",
@@ -218,16 +262,69 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
   }
 
   async #complete(
-    messages: readonly OpenRouterMessage[],
+    initialMessages: readonly OpenRouterMessage[],
     model: string,
     endpointTag: string | undefined,
     apiKey: string | undefined,
     baseUrl: string,
-    sessionId: string
-  ): Promise<string> {
+    sessionId: string,
+    workspacePath?: string
+  ): Promise<{
+    readonly content: string;
+    readonly messages: OpenRouterMessage[];
+  }> {
     if (!apiKey) {
       throw new Error("OpenRouter API key is not configured.");
     }
+    let messages = [...initialMessages];
+    for (let step = 0; step < GLM_NATIVE_MAX_TOOL_STEPS; step += 1) {
+      const result = await this.#completeOnce(
+        messages,
+        model,
+        endpointTag,
+        apiKey,
+        baseUrl,
+        sessionId,
+        workspacePath
+      );
+      if (result.toolCalls.length === 0) {
+        const finalMessages = [
+          ...messages,
+          { content: result.content, role: "assistant" as const },
+        ];
+        return { content: result.content, messages: finalMessages };
+      }
+      const assistantToolMessage = buildGlmNativeAssistantToolMessage({
+        content: result.content,
+        reasoningContent: "",
+        toolCalls: result.toolCalls,
+      });
+      const toolMessages = await Promise.all(
+        assistantToolMessage.tool_calls?.map((toolCall) =>
+          executeGlmNativeToolCall(toolCall, workspacePath)
+        ) ?? []
+      );
+      messages = [
+        ...messages,
+        toOpenRouterMessage(assistantToolMessage),
+        ...toolMessages.map(toOpenRouterMessage),
+      ];
+    }
+    throw new Error("OpenRouter tool loop exceeded maximum tool steps.");
+  }
+
+  async #completeOnce(
+    messages: readonly OpenRouterMessage[],
+    model: string,
+    endpointTag: string | undefined,
+    apiKey: string,
+    baseUrl: string,
+    sessionId: string,
+    workspacePath?: string
+  ): Promise<{
+    readonly content: string;
+    readonly toolCalls: readonly OpenRouterToolCall[];
+  }> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.#timeoutMs);
     try {
@@ -237,8 +334,13 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
           body: JSON.stringify(
             createOpenRouterChatCompletionRequest({
               ...(endpointTag ? { endpointTag } : {}),
-              messages,
+              messages: [
+                buildOpenRouterSystemMessage(model, workspacePath),
+                ...messages,
+              ],
               model,
+              toolChoice: "auto",
+              tools: GLM_NATIVE_WORKFLOW_TOOLS,
             })
           ),
           headers: {
@@ -279,7 +381,7 @@ export class OpenRouterProviderAdapter implements ProviderAdapter {
         }
       );
       flushReasoning();
-      return result.content;
+      return { content: result.content, toolCalls: result.toolCalls };
     } finally {
       clearTimeout(timeout);
     }

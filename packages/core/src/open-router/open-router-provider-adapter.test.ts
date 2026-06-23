@@ -1,8 +1,14 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { withAppliedProviderTurnConfig } from "../remote-bridge/types";
 import { OpenRouterProviderAdapter } from "./open-router-provider-adapter";
 import { createOpenRouterChatCompletionRequest } from "./open-router-sse-reader";
+
+const CODEX_SYSTEM_PROMPT_PATTERN = /You are Codex/u;
+const TOOL_RESULT_PATTERN = /tool result/u;
 
 const createStreamResponse = (chunks: readonly unknown[]): Response => {
   const encoded = new TextEncoder().encode(
@@ -82,14 +88,39 @@ test("OpenRouterProviderAdapter sends selected model and endpoint tag, then emit
     )
   );
 
-  assert.deepEqual(requestBodies, [
-    {
-      messages: [{ content: "Say hello", role: "user" }],
-      model: "openai/gpt-5-nano",
-      provider: { allow_fallbacks: false, order: ["openai"] },
-      stream: true,
-    },
+  const requestBody = requestBodies[0] as {
+    readonly messages: Array<{
+      readonly content: string;
+      readonly role: string;
+    }>;
+    readonly model: string;
+    readonly provider: unknown;
+    readonly stream: boolean;
+    readonly tool_choice?: string;
+    readonly tools?: Array<{
+      readonly function?: { readonly name?: string };
+      readonly type?: string;
+    }>;
+  };
+  assert.equal(requestBodies.length, 1);
+  assert.equal(requestBody.messages[0]?.role, "system");
+  assert.match(
+    requestBody.messages[0]?.content ?? "",
+    CODEX_SYSTEM_PROMPT_PATTERN
+  );
+  assert.deepEqual(requestBody.messages.slice(1), [
+    { content: "Say hello", role: "user" },
   ]);
+  assert.equal(requestBody.model, "openai/gpt-5-nano");
+  assert.deepEqual(requestBody.provider, {
+    allow_fallbacks: false,
+    order: ["openai"],
+  });
+  assert.equal(requestBody.stream, true);
+  assert.equal(requestBody.tool_choice, "auto");
+  assert.ok(
+    requestBody.tools?.some((tool) => tool.function?.name === "exec_command")
+  );
   const typedEvents = events as Array<{
     readonly content?: string;
     readonly tag?: string;
@@ -215,15 +246,90 @@ test("OpenRouterProviderAdapter keeps successful session history between turns",
   await adapter.sendMessage(sessionId, "first");
   await adapter.sendMessage(sessionId, "second");
 
-  assert.deepEqual(
-    requestBodies.map((body) => body.messages),
-    [
-      [{ content: "first", role: "user" }],
-      [
-        { content: "first", role: "user" },
-        { content: "ok", role: "assistant" },
-        { content: "second", role: "user" },
-      ],
-    ]
-  );
+  const firstMessages = requestBodies[0]?.messages as Array<{
+    readonly content?: string;
+    readonly role?: string;
+  }>;
+  const secondMessages = requestBodies[1]?.messages as Array<{
+    readonly content?: string;
+    readonly role?: string;
+  }>;
+  assert.equal(firstMessages[0]?.role, "system");
+  assert.match(firstMessages[0]?.content ?? "", CODEX_SYSTEM_PROMPT_PATTERN);
+  assert.deepEqual(firstMessages.slice(1), [
+    { content: "first", role: "user" },
+  ]);
+  assert.equal(secondMessages[0]?.role, "system");
+  assert.match(secondMessages[0]?.content ?? "", CODEX_SYSTEM_PROMPT_PATTERN);
+  assert.deepEqual(secondMessages.slice(1), [
+    { content: "first", role: "user" },
+    { content: "ok", role: "assistant" },
+    { content: "second", role: "user" },
+  ]);
+});
+
+test("OpenRouterProviderAdapter executes local tool calls and continues the chat completion loop", async () => {
+  const workspacePath = await mkdtemp(path.join(tmpdir(), "openrouter-tools-"));
+  const requestBodies: Array<{ readonly messages: readonly unknown[] }> = [];
+  try {
+    await writeFile(
+      path.join(workspacePath, "note.txt"),
+      "tool result",
+      "utf8"
+    );
+    const adapter = new OpenRouterProviderAdapter({
+      apiKey: "test-key",
+      defaultModel: "openai/gpt-5-nano",
+      fetchImplementation: ((_url, init) => {
+        requestBodies.push(JSON.parse(String(init?.body)));
+        return Promise.resolve(
+          requestBodies.length === 1
+            ? createStreamResponse([
+                {
+                  choices: [
+                    {
+                      delta: {
+                        tool_calls: [
+                          {
+                            function: {
+                              arguments: '{"path":"note.txt"}',
+                              name: "read_file",
+                            },
+                            id: "call_read",
+                            index: 0,
+                            type: "function",
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              ])
+            : createStreamResponse([
+                { choices: [{ delta: { content: "done" } }] },
+              ])
+        );
+      }) as typeof fetch,
+    });
+    const sessionId = await adapter.createSession(workspacePath);
+
+    await adapter.sendMessage(sessionId, "read the note");
+
+    assert.equal(requestBodies.length, 2);
+    const secondMessages = requestBodies[1]?.messages as Array<{
+      readonly content?: string;
+      readonly role?: string;
+      readonly tool_call_id?: string;
+      readonly tool_calls?: unknown;
+    }>;
+    assert.equal(secondMessages[0]?.role, "system");
+    assert.equal(secondMessages[1]?.role, "user");
+    assert.equal(secondMessages[2]?.role, "assistant");
+    assert.ok(secondMessages[2]?.tool_calls);
+    assert.equal(secondMessages[3]?.role, "tool");
+    assert.equal(secondMessages[3]?.tool_call_id, "call_read");
+    assert.match(secondMessages[3]?.content ?? "", TOOL_RESULT_PATTERN);
+  } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
 });
