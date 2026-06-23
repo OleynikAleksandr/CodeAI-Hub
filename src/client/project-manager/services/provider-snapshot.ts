@@ -27,7 +27,6 @@ const DESCRIPTION_PROVIDER_IDS: readonly ProviderStackId[] = [
 ];
 const STANDALONE_CHAT_PROVIDER_IDS: readonly ProviderStackId[] = [
   ...DESCRIPTION_PROVIDER_IDS,
-  "openRouter",
 ];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
