@@ -1,6 +1,6 @@
 # OpenRouter Chat Provider — Planning Doc
 
-**Статус:** draft for user review  
+**Статус:** implemented on `main`, pending release/user acceptance  
 **Дата:** 2026-06-23  
 **Цель:** добавить OpenRouter как отдельного провайдера для обычного чата, ревью и анализа в CodeAI Hub.
 
@@ -99,6 +99,7 @@ UI constraint: не использовать native `<select>` для больш
 - При создании chat session Core записывает `session.modelBinding.modelId = <openrouter slug>`.
 - Существующая сессия продолжает использовать свой bound model, даже если Settings поменялись.
 - Adapter отправляет в OpenRouter точный `model` из binding.
+- `endpointTag` не входит в `session.modelBinding.modelId`; это routing config из Settings, который Core добавляет в turn options для OpenRouter sends.
 - Если selected endpoint tag задан, Adapter добавляет `provider: { order: [endpointTag], allow_fallbacks: false }`.
 - Если endpoint tag не задан, Adapter не отправляет provider routing и оставляет OpenRouter выбирать endpoint.
 - Если пользователь выбрал конкретную модель, OpenRouter provider не должен незаметно заменить ее локально. Исключение — пользователь сам выбрал OpenRouter router model, например `openrouter/auto` или `openrouter/free`.
@@ -116,6 +117,7 @@ UI constraint: не использовать native `<select>` для больш
 - Project Manager Settings UI: provider section, live catalog search, exact slug selection, endpoint-tag list for the selected model.
 - Provider/model picker surfaces for standalone chat creation.
 - Targeted tests around settings normalization, live search ordering, request body and SSE parsing.
+- Implemented MVP code paths: `packages/core/src/open-router/**`, `packages/core/src/config/open-router-turn-config.ts`, `src/client/ui/src/components/settings/openrouter-*`, `src/client/project-manager/components/layout/workspace-chat-list.tsx`, and `src/client/ui/src/session/model-info-builder.ts`.
 
 Не вводить новый общий abstraction layer для "OpenAI-compatible providers" в MVP. Если позже появится второй-третий совместимый backend с одинаковой болью, тогда можно вынести общий helper.
 

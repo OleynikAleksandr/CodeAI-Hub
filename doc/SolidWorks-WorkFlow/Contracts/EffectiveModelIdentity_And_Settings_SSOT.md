@@ -1,7 +1,7 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
  
 **Status:** Implemented on `main`
-**Updated:** 2026-06-21
+**Updated:** 2026-06-23
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-06-18 on `main` (`v1.2.545`; original validation: `v1.2.101`)
 
@@ -174,6 +174,7 @@ Session continuity must preserve the model chosen at logical session start:
 - **Claude**: `thinking` off remains `sonnet thinking:off`, while enabled Claude turns now expose explicit effort through identities such as `sonnet reasoning:high` and `sonnet reasoning:max`; this is how Session UI learns that the next Claude turn will use a different effort level.
 - **Kimi**: native Kimi ACP is model-only in CodeAI Hub. Settings/start cards/status-line model picker may choose `kimi-k2.7-code` or `kimi-k2.7-code-highspeed`; they must not show a reasoning on/off or effort picker.
 - **GLM Native**: global connection settings are outside identity, while workspace defaults carry `glm-5.2` plus `thinkingEnabled` and `reasoningEffort`. UI choices are `off`, `high`, and `max`; legacy cross-provider labels must normalize before reaching runtime.
+- **OpenRouter**: effective identity is the exact OpenRouter model slug, for example `openai/gpt-5-nano` or `deepseek/deepseek-chat-v3-0324:free`. `providers.openRouter.endpointTag` is routing config, not `modelId`: Core attaches it to OpenRouter turn options so the adapter can send strict `provider.order = [endpointTag]` with `allow_fallbacks = false`, while the bound model slug remains unchanged.
 
 ### 4.6. Model invocation profile compatibility
 
@@ -224,6 +225,7 @@ Rules:
 19. Capture-scoped reasoning override is a diagnostic-only exception; it may affect native capture artifacts for one command but must never write Settings, mutate `session.modelBinding`, or become a provider-local identity source.
 20. Missing Claude thinking settings default to enabled for new/default snapshots only; explicit saved values and already-bound session identities remain authoritative.
 21. Provider launch/start cards must persist provider/model and provider-supported reasoning selections through scoped Settings before session creation and must not pass one-shot model/reasoning payloads as a second source of truth. For Kimi, only the model selection is supported.
+22. OpenRouter `endpointTag` is endpoint routing policy, not effective model identity. Changing it may affect the next OpenRouter turn's backend route for the same settings path, but must not rewrite `session.modelBinding.modelId`.
 
 ---
 
@@ -234,6 +236,7 @@ Rules:
   - `packages/core/src/config/json-file-snapshot-cache.ts`
   - `packages/core/src/config/provider-settings-snapshot.ts`
   - `packages/core/src/config/provider-turn-config-resolver.ts`
+  - `packages/core/src/config/open-router-turn-config.ts`
   - `packages/core/src/config/provider-defaults-resolver.ts`
   - `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`
   - `packages/core/src/session-translation/session-translation-policy-resolver.ts`
@@ -259,6 +262,7 @@ Rules:
   - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (consumes the applied-turn-config envelope under `CODEX_APPLIED_TURN_CONFIG_KEY` on `thread/start` / `thread/resume` / `turn/start`)
   - `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`
   - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
+  - `packages/core/src/open-router/open-router-provider-adapter.ts`
 - UI sync:
   - `src/extension-module/settings/settings-storage.ts`
   - `src/client/ui/src/session/model-info-builder.ts`

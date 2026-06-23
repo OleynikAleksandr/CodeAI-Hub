@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase4.docs.task1",
-  "expectedCommitMessage": "docs: document OpenRouter chat provider contract",
+  "currentTaskId": "openrouter-chat.phase4.verify.task1",
+  "expectedCommitMessage": "test: verify OpenRouter chat provider",
   "debt": null
 }
 ```
@@ -83,9 +83,9 @@
 
 ### Stream: SSOT sync and targeted checks
 
-19. [IN_PROGRESS] `openrouter-chat.phase4.docs.task1` Document the implemented OpenRouter standalone chat/provider contract in SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md`; expected commit: `docs: document OpenRouter chat provider contract`).
-20. [TODO] `openrouter-chat.phase4.docs.commit1` Git Commit: `docs: document OpenRouter chat provider contract` (hash: TBD)
-21. [TODO] `openrouter-chat.phase4.verify.task1` Run targeted OpenRouter/settings tests and affected builds; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter chat provider`).
+19. [DONE] `openrouter-chat.phase4.docs.task1` Document the implemented OpenRouter standalone chat/provider contract in SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md`; expected commit: `docs: document OpenRouter chat provider contract`).
+20. [DONE] `openrouter-chat.phase4.docs.commit1` Git Commit: `docs: document OpenRouter chat provider contract` (hash: self)
+21. [IN_PROGRESS] `openrouter-chat.phase4.verify.task1` Run targeted OpenRouter/settings tests and affected builds; record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify OpenRouter chat provider`).
 22. [TODO] `openrouter-chat.phase4.verify.commit1` Git Commit: `test: verify OpenRouter chat provider` (hash: TBD)
 
 ## Phase 5 - Release Build (owner: Codex, updated: 2026-06-23)
