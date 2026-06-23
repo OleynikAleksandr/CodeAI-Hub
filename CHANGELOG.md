@@ -8,6 +8,28 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.597] - 2026-06-23
+### Added
+- **OpenRouter is available as a standalone chat provider.** Settings now has
+  an OpenRouter provider tab with API key storage, optional base URL override,
+  live model slug search against the OpenRouter catalog, exact model
+  selection, and optional endpoint-tag routing displayed as
+  `Provider - endpointTag`.
+- **OpenRouter model identity is shown in chat status.** Standalone OpenRouter
+  sessions bind to the selected OpenRouter slug and display the selected
+  endpoint tag when strict endpoint routing is configured.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- `node --test packages/core/dist/open-router/open-router-provider-adapter.test.js packages/core/dist/session-model-binding/session-model-binding-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.js`
+- `npx tsx src/client/ui/src/components/settings/openrouter-model-search.test.ts`
+- `npx tsx src/client/ui/src/session/model-info-builder.test.ts`
+- `npx tsx src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`
+- `npm run plan:validate`
+
 ## [1.2.596] - 2026-06-23
 ### Fixed
 - **Local Models runtime loads no longer block on hidden LM Studio CLI prompts.**

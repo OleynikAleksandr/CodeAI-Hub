@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase5.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare OpenRouter provider release",
+  "currentTaskId": "openrouter-chat.phase5.release-build.task1",
+  "expectedCommitMessage": "chore: build OpenRouter provider release",
   "debt": null
 }
 ```
@@ -93,9 +93,9 @@
 
 ### Stream: Release after explicit confirmation
 
-23. [IN_PROGRESS] `openrouter-chat.phase5.release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for the next release version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter provider release`).
-24. [TODO] `openrouter-chat.phase5.release-docs.commit1` Git Commit: `docs: prepare OpenRouter provider release` (hash: TBD)
-25. [TODO] `openrouter-chat.phase5.release-build.task1` Run the approved release scripts and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter provider release`).
+23. [DONE] `openrouter-chat.phase5.release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for the next release version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter provider release`).
+24. [DONE] `openrouter-chat.phase5.release-docs.commit1` Git Commit: `docs: prepare OpenRouter provider release` (hash: self)
+25. [IN_PROGRESS] `openrouter-chat.phase5.release-build.task1` Run the approved release scripts and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter provider release`).
 26. [TODO] `openrouter-chat.phase5.release-build.commit1` Git Commit: `chore: build OpenRouter provider release` (hash: TBD)
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
