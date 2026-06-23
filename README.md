@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.590** (Standalone Chat Typography Fix)
+**Current Release — v1.2.591** (Kimi Token Usage Status Fix)
+
+This release packages the Kimi lower status-panel token usage fix.
+
+Kimi sessions now publish a post-turn context-window token snapshot from the
+native Kimi session `wire.jsonl` when ACP omits `usage_update`, so the lower
+`Токены:` chip can show non-zero usage after a turn. Kimi 5h/Weekly quota rows
+remain separate.
+
+Retest focus: install the VSIX, restart the app, open a Kimi session, send a
+message, and confirm the lower status panel shows non-zero `Токены:` usage.
+
+**Previous Release — v1.2.590** (Standalone Chat Typography Fix)
 
 This release packages the standalone provider chat typography follow-up from
 the GLM workspace instruction retest.

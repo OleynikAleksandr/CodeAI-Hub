@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.591] - 2026-06-23
+### Fixed
+- **Kimi lower status panel now receives token usage after a turn.** When Kimi
+  ACP omits `usage_update`, the provider reads the native session `wire.jsonl`
+  usage record and publishes a context-window `tokenUsage` snapshot for the
+  existing `Токены:` chip.
+
+### Verification
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `node --test packages/Kimi_Module/dist/provider/kimi-native-token-usage-reader.test.js`
+- `npm test --workspace @codeai-hub/kimi-module`
+- `npm run plan:validate`
+
 ## [1.2.590] - 2026-06-22
 ### Fixed
 - **Standalone chat Markdown headings no longer render as huge title text.**
