@@ -10,8 +10,8 @@
   "baseHead": "a96e90197",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md",
-  "currentTaskId": "kimi-token-status.phase4.release-build.task1",
-  "expectedCommitMessage": "chore: build 1.2.591 kimi token usage release",
+  "currentTaskId": "kimi-token-status.phase5.acceptance.task1",
+  "expectedCommitMessage": "chore: record kimi token usage user acceptance",
   "debt": null
 }
 ```
@@ -65,12 +65,12 @@
 ### Stream: Release v1.2.591
 9. [DONE] `kimi-token-status.phase4.release-docs.task1` Prepare README and CHANGELOG for the user-confirmed 1.2.591 release before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.591 kimi token usage release`).
 10. [DONE] `kimi-token-status.phase4.release-docs.commit1` Git Commit: `docs: prepare 1.2.591 kimi token usage release` (hash: self)
-11. [IN_PROGRESS] `kimi-token-status.phase4.release-build.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`; commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.591 kimi token usage release`).
-12. [TODO] `kimi-token-status.phase4.release-build.commit1` Git Commit: `chore: build 1.2.591 kimi token usage release` (hash: TBD)
+11. [DONE] `kimi-token-status.phase4.release-build.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`; commit version bumps, manifests, release artifacts, VSIX evidence, and plan state (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.591 kimi token usage release`). Result: `./scripts/build-all.sh` OK; `./scripts/build-release.sh --use-current-version --allow-dirty` OK; package created `codeai-hub-1.2.591.vsix` (5.5M); tarballs created under `doc/tmp/releases/` for providers, core, launcher, and UI.
+12. [DONE] `kimi-token-status.phase4.release-build.commit1` Git Commit: `chore: build 1.2.591 kimi token usage release` (hash: self)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-13. [TODO] `kimi-token-status.phase5.acceptance.task1` User verifies release 1.2.591: Kimi sessions show non-zero token usage in the lower status panel after a turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi token usage user acceptance`).
+13. [IN_PROGRESS] `kimi-token-status.phase5.acceptance.task1` User verifies release 1.2.591: Kimi sessions show non-zero token usage in the lower status panel after a turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi token usage user acceptance`).
 14. [TODO] `kimi-token-status.phase5.acceptance.commit1` Git Commit: `chore: record kimi token usage user acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
