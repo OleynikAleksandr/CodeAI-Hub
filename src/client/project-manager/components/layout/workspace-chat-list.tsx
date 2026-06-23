@@ -241,7 +241,7 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
   const [loading, setLoading] = useState(false);
   const [menu, setMenu] = useState<ChatMenuState | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [providers, setProviders] = useState(api.getDescriptionProviders());
+  const [providers, setProviders] = useState(api.getStandaloneChatProviders());
   const closeMenu = useCallback(() => setMenu(null), []);
   const openChatMenu = useCallback(
     (event: React.MouseEvent<HTMLElement>, chat: StandaloneChatSummary) => {
@@ -301,7 +301,7 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
           message.type === "session:deleted" ||
           isStandaloneWorkspaceEvent(message, workspacePath)
         ) {
-          setProviders(api.getDescriptionProviders());
+          setProviders(api.getStandaloneChatProviders());
           void loadChats({ silent: message.type !== "core:state" });
         }
       }),

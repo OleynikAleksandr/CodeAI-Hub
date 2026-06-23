@@ -8419,7 +8419,8 @@
     glmNative: "GLM",
     glmOpenCode: "OpenCode",
     kimiCode: "Kimi",
-    localModels: "Local Models"
+    localModels: "Local Models",
+    openRouter: "OpenRouter"
   };
   var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
   var PROVIDER_DESCRIPTION_MAP = {
@@ -8429,7 +8430,8 @@
     glmNative: "Uses the native Z.AI GLM API",
     glmOpenCode: "Using OpenCode providers and models",
     kimiCode: "Using your authentication Kimi CLI",
-    localModels: "Runs downloaded LM Studio models on this Mac"
+    localModels: "Runs downloaded LM Studio models on this Mac",
+    openRouter: "Routes standalone chats through OpenRouter"
   };
   var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
 
@@ -8576,7 +8578,8 @@
     "kimiCode",
     "glmNative",
     "glmOpenCode",
-    "localModels"
+    "localModels",
+    "openRouter"
   ]);
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {

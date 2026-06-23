@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase3.provider-list.task1",
-  "expectedCommitMessage": "feat(openrouter): expose standalone chat provider",
+  "currentTaskId": "openrouter-chat.phase3.binding.task1",
+  "expectedCommitMessage": "feat(openrouter): bind selected chat model",
   "debt": null
 }
 ```
@@ -74,9 +74,9 @@
 
 ### Stream: Chat provider selection
 
-15. [IN_PROGRESS] `openrouter-chat.phase3.provider-list.task1` Include `openRouter` in standalone chat provider lists without enabling managed workflow stages (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `feat(openrouter): expose standalone chat provider`).
-16. [TODO] `openrouter-chat.phase3.provider-list.commit1` Git Commit: `feat(openrouter): expose standalone chat provider` (hash: TBD)
-17. [TODO] `openrouter-chat.phase3.binding.task1` Persist the selected OpenRouter model slug and optional endpoint tag into new-session binding/config, and display both in session UI when available (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/status-panel.tsx`; expected commit: `feat(openrouter): bind selected chat model`).
+15. [DONE] `openrouter-chat.phase3.provider-list.task1` Include `openRouter` in standalone chat provider lists without enabling managed workflow stages (scope: `src/client/**, src/types/provider.ts, media/**`; expected commit: `feat(openrouter): expose standalone chat provider`).
+16. [DONE] `openrouter-chat.phase3.provider-list.commit1` Git Commit: `feat(openrouter): expose standalone chat provider` (hash: self)
+17. [IN_PROGRESS] `openrouter-chat.phase3.binding.task1` Persist the selected OpenRouter model slug and optional endpoint tag into new-session binding/config, and display both in session UI when available (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/status-panel.tsx`; expected commit: `feat(openrouter): bind selected chat model`).
 18. [TODO] `openrouter-chat.phase3.binding.commit1` Git Commit: `feat(openrouter): bind selected chat model` (hash: TBD)
 
 ## Phase 4 - Documentation And Verification (owner: Codex, updated: 2026-06-23)

@@ -12,6 +12,7 @@ export const providerIdSet = new Set<ProviderStackId>([
   "glmNative",
   "glmOpenCode",
   "localModels",
+  "openRouter",
 ]);
 
 const isProviderDescriptorCandidate = (

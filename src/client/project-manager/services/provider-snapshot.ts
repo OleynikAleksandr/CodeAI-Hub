@@ -15,7 +15,7 @@ export type ProviderSnapshot = {
   readonly statusMessage?: string | null;
 };
 
-const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
+const DESCRIPTION_PROVIDER_IDS: readonly ProviderStackId[] = [
   "claudeCodeCli",
   "codexCli",
   "geminiCli",
@@ -23,7 +23,11 @@ const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
   "glmNative",
   "glmOpenCode",
   "localModels",
-]);
+];
+const STANDALONE_CHAT_PROVIDER_IDS: readonly ProviderStackId[] = [
+  ...DESCRIPTION_PROVIDER_IDS,
+  "openRouter",
+];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -72,10 +76,11 @@ export const extractProviders = (payload: unknown): ProviderSnapshot[] => {
 };
 
 const toProviderDescriptor = (
-  provider: ProviderSnapshot
+  provider: ProviderSnapshot,
+  providerIds: readonly ProviderStackId[]
 ): ProviderStackDescriptor | null => {
   const providerId = provider.id as ProviderStackId;
-  if (!DESCRIPTION_PROVIDER_IDS.has(providerId)) {
+  if (!providerIds.includes(providerId)) {
     return null;
   }
   return {
@@ -87,23 +92,24 @@ const toProviderDescriptor = (
   };
 };
 
-export const resolveDescriptionProviders = (
-  snapshot: readonly ProviderSnapshot[]
+const resolveProviders = (
+  snapshot: readonly ProviderSnapshot[],
+  providerIds: readonly ProviderStackId[]
 ): readonly ProviderStackDescriptor[] => {
   const mapped = snapshot
-    .map((provider) => toProviderDescriptor(provider))
+    .map((provider) => toProviderDescriptor(provider, providerIds))
     .filter((provider): provider is ProviderStackDescriptor =>
       Boolean(provider)
     );
   if (mapped.length > 0) {
     const byId = new Map(mapped.map((provider) => [provider.id, provider]));
-    return Array.from(DESCRIPTION_PROVIDER_IDS)
+    return providerIds
       .map((providerId) => byId.get(providerId))
       .filter((provider): provider is ProviderStackDescriptor =>
         Boolean(provider)
       );
   }
-  return Array.from(DESCRIPTION_PROVIDER_IDS, (providerId) => ({
+  return providerIds.map((providerId) => ({
     id: providerId,
     title: getDefaultProviderTitle(providerId),
     description: getDefaultProviderDescription(providerId),
@@ -111,3 +117,13 @@ export const resolveDescriptionProviders = (
     statusMessage: null,
   }));
 };
+
+export const resolveDescriptionProviders = (
+  snapshot: readonly ProviderSnapshot[]
+): readonly ProviderStackDescriptor[] =>
+  resolveProviders(snapshot, DESCRIPTION_PROVIDER_IDS);
+
+export const resolveStandaloneChatProviders = (
+  snapshot: readonly ProviderSnapshot[]
+): readonly ProviderStackDescriptor[] =>
+  resolveProviders(snapshot, STANDALONE_CHAT_PROVIDER_IDS);

@@ -5,7 +5,8 @@ export type KnownProviderStackId =
   | "glmNative"
   | "glmOpenCode"
   | "kimiCode"
-  | "localModels";
+  | "localModels"
+  | "openRouter";
 export type ProviderStackId = string;
 
 export interface ProviderStackDescriptor {
@@ -24,6 +25,7 @@ const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   glmOpenCode: "OpenCode",
   kimiCode: "Kimi",
   localModels: "Local Models",
+  openRouter: "OpenRouter",
 };
 
 export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
@@ -36,6 +38,7 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   glmOpenCode: "Using OpenCode providers and models",
   kimiCode: "Using your authentication Kimi CLI",
   localModels: "Runs downloaded LM Studio models on this Mac",
+  openRouter: "Routes standalone chats through OpenRouter",
 };
 
 export const getDefaultProviderDescription = (

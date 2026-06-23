@@ -2,6 +2,7 @@ import type { ProviderStackDescriptor } from "../../types/provider";
 import {
   extractProviders,
   resolveDescriptionProviders,
+  resolveStandaloneChatProviders,
   type ProviderSnapshot,
 } from "./services/provider-snapshot";
 import { resolveBridgeConfig, type ApiConfig } from "./services/bridge-config";
@@ -335,6 +336,8 @@ class ProjectManagerApi {
   getDescriptionProviders(): readonly ProviderStackDescriptor[] {
     return resolveDescriptionProviders(this.providerSnapshot);
   }
+
+  getStandaloneChatProviders(): readonly ProviderStackDescriptor[] { return resolveStandaloneChatProviders(this.providerSnapshot); }
 
   getHttpUrl(): string | null {
     return typeof this.config.httpUrl === "string" ? this.config.httpUrl : null;
