@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase4.acceptance.task1",
-  "expectedCommitMessage": "chore: record local models selection user acceptance",
+  "currentTaskId": "local-models-selection.phase4.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare v1.2.593 local models release notes",
   "debt": null
 }
 ```
@@ -62,12 +62,21 @@
    - Evidence 2026-06-23: `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.selection.test.ts` passed (2/2); `npx tsx --test src/client/ui/src/session/status-panel.test.tsx` passed (11/11); `npm run plan:validate` passed.
 8. [DONE] `local-models-selection.phase3.verify.commit1` Git Commit: `test: verify local models standalone chat selection fix` (hash: self)
 
-## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
-### Stream: User retest
-9. [IN_PROGRESS] `local-models-selection.phase4.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
-10. [TODO] `local-models-selection.phase4.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
+## Phase 4 - Release Build (owner: Codex, updated: 2026-06-23)
+### Stream: Release scope and packaging
+9. [DONE] `local-models-selection.phase4.release.scope.task1` Add release build tasks after explicit user confirmation to build a new release for the Local Models standalone chat selection fix (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add release build scope for local models fix`).
+10. [DONE] `local-models-selection.phase4.release.scope.commit1` Git Commit: `docs: add release build scope for local models fix` (hash: self)
+11. [IN_PROGRESS] `local-models-selection.phase4.release.docs.task1` Update release notes for v1.2.593 before packaging (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare v1.2.593 local models release notes`).
+12. [TODO] `local-models-selection.phase4.release.docs.commit1` Git Commit: `docs: prepare v1.2.593 local models release notes` (hash: TBD)
+13. [TODO] `local-models-selection.phase4.release.build.task1` Run the release build scripts and record produced artifacts/evidence (scope: `release manifests, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `build: release v1.2.593`).
+14. [TODO] `local-models-selection.phase4.release.build.commit1` Git Commit: `build: release v1.2.593` (hash: TBD)
 
-## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-23)
+## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
+### Stream: User retest
+15. [TODO] `local-models-selection.phase5.acceptance.task1` User verifies standalone Local Models chat shows the selected model in the lower status panel and runs that model on the next turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record local models selection user acceptance`).
+16. [TODO] `local-models-selection.phase5.acceptance.commit1` Git Commit: `chore: record local models selection user acceptance` (hash: TBD)
+
+## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 ### Stream: Archive + planning-doc disposition
-11. [TODO] `local-models-selection.phase5.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models standalone chat selection scope`).
-12. [TODO] `local-models-selection.phase5.closeout.commit1` Git Commit: `docs: close local models standalone chat selection scope` (hash: TBD)
+17. [TODO] `local-models-selection.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models standalone chat selection scope`).
+18. [TODO] `local-models-selection.phase6.closeout.commit1` Git Commit: `docs: close local models standalone chat selection scope` (hash: TBD)
