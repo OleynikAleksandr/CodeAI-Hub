@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase5.start-card-settings.task1",
-  "expectedCommitMessage": "fix(openrouter): save start card model defaults",
+  "currentTaskId": "openrouter-agent.phase5.acceptance-retest.task1",
+  "expectedCommitMessage": "chore: record OpenRouter agent tooling acceptance",
   "debt": null
 }
 ```
@@ -115,9 +115,9 @@ Release build evidence for `1.2.601`:
 
 21. [DONE] `openrouter-agent.phase5.start-card-model.task1` Preserve OpenRouter as previous-step provider and show the OpenRouter settings model in the next-step start card instead of Gemini fallback options (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `fix(openrouter): preserve start card model selection`).
 22. [DONE] `openrouter-agent.phase5.start-card-model.commit1` Git Commit: `fix(openrouter): preserve start card model selection` (hash: self)
-23. [IN_PROGRESS] `openrouter-agent.phase5.start-card-settings.task1` Persist OpenRouter start-card model defaults through the existing workflow settings save path before launching the next step (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix(openrouter): save start card model defaults`).
-24. [TODO] `openrouter-agent.phase5.start-card-settings.commit1` Git Commit: `fix(openrouter): save start card model defaults` (hash: TBD)
-25. [TODO] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after the start-card fix (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
+23. [DONE] `openrouter-agent.phase5.start-card-settings.task1` Persist OpenRouter start-card model defaults through the existing workflow settings save path before launching the next step (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix(openrouter): save start card model defaults`).
+24. [DONE] `openrouter-agent.phase5.start-card-settings.commit1` Git Commit: `fix(openrouter): save start card model defaults` (hash: self)
+25. [IN_PROGRESS] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after the start-card fix (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
 26. [TODO] `openrouter-agent.phase5.acceptance-retest.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)

@@ -260,6 +260,53 @@ test("workflow starts skip settings save when selected defaults are unchanged", 
   assert.deepEqual(events, ["session:create"]);
 });
 
+test("workflow starts save selected OpenRouter model before session creation", async () => {
+  installWindowStub();
+  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
+  const settings = createSettings();
+  const modelId = "deepseek/deepseek-chat-v3-0324:free";
+  const events: string[] = [];
+
+  const service = new WorkflowStepStartService({
+    getWorkflowState: async () => ({
+      ...createWorkflowState(),
+      description: {
+        finalPath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+        questionnairePath:
+          ".codeai-hub/demo-workspace/description/questionnaire.md",
+        updatedAt: "2026-05-26T12:00:00.000Z",
+      },
+    }),
+    loadSettingsPayload: async () => ({ settings }),
+    saveSettings: (nextSettings) => {
+      events.push(
+        `save:${nextSettings.providers.openRouter?.defaultModel}:${nextSettings.providers.gemini.defaultModel}`
+      );
+    },
+    submitService: {
+      submitQuestionnaire: async () => {
+        events.push("session:create");
+        return "virtual-simulation-session";
+      },
+    },
+  });
+
+  const sessionId = await service.startVirtualSimulation({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "openRouter",
+    modelId,
+    reasoning: "default",
+  });
+
+  assert.equal(sessionId, "virtual-simulation-session");
+  assert.deepEqual(events, [
+    `save:${modelId}:gemini-3-flash-preview`,
+    "session:create",
+  ]);
+});
+
 test("workflow settings transport accepts only matching workspace settings events", async () => {
   installWindowStub();
   const { isSettingsEventForScope } = await import(

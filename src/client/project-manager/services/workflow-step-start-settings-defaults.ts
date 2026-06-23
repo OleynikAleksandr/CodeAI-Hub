@@ -286,6 +286,45 @@ const applyLocalModelsStartDefaults = (
   return updateLocalModelsDefaultModel(settings, modelId);
 };
 
+const applyOpenRouterStartDefaults = (
+  settings: Settings,
+  modelId: string | null,
+  endpointTag: string | null
+): Settings | null => {
+  if (!modelId) {
+    return null;
+  }
+  const currentProviderSettings = settings.providers.openRouter ?? {
+    apiKey: "",
+    baseUrl: "",
+    defaultModel: "",
+    endpointTag: "",
+  };
+  const nextEndpointTag =
+    endpointTag === null
+      ? currentProviderSettings.endpointTag
+      : endpointTag === "default"
+        ? ""
+        : endpointTag;
+  if (
+    currentProviderSettings.defaultModel === modelId &&
+    currentProviderSettings.endpointTag === nextEndpointTag
+  ) {
+    return null;
+  }
+  return {
+    ...settings,
+    providers: {
+      ...settings.providers,
+      openRouter: {
+        ...currentProviderSettings,
+        defaultModel: modelId,
+        endpointTag: nextEndpointTag,
+      },
+    },
+  };
+};
+
 export const applyStartCardModelDefaults = (
   settings: Settings,
   params: Pick<StartWorkflowStepParams, "modelId" | "providerId" | "reasoning">
@@ -313,6 +352,9 @@ export const applyStartCardModelDefaults = (
   }
   if (params.providerId === "glmNative") {
     return applyGlmNativeStartDefaults(settings, modelId, reasoning);
+  }
+  if (params.providerId === "openRouter") {
+    return applyOpenRouterStartDefaults(settings, modelId, reasoning);
   }
   return applyGeminiStartDefaults(settings, modelId, reasoning);
 };
