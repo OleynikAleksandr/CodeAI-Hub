@@ -10,8 +10,8 @@
   "baseHead": "dbebb0a76",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md",
-  "currentTaskId": "phase1.stream2.task2",
-  "expectedCommitMessage": "build: release v1.2.595",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "test: hand off v1.2.595 local models warmup fix",
   "debt": null
 }
 ```
@@ -43,13 +43,13 @@
    - scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`
    - expected commit: `docs: prepare v1.2.595 release notes`
 4. [DONE] `phase1.stream2.commit1` Git Commit: `docs: prepare v1.2.595 release notes` (hash: self)
-5. [IN_PROGRESS] `phase1.stream2.task2` Build release v1.2.595.
-   - scope: `package.json, package-lock.json, packages/**/package.json, packages/**/package-lock.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`
+5. [DONE] `phase1.stream2.task2` Build release v1.2.595.
+   - scope: `package.json, package-lock.json, packages/**/package.json, packages/**/package-lock.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`
    - expected commit: `build: release v1.2.595`
-6. [TODO] `phase1.stream2.commit2` Git Commit: `build: release v1.2.595` (hash: TBD)
+6. [DONE] `phase1.stream2.commit2` Git Commit: `build: release v1.2.595` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing
-7. [TODO] `phase1.stream3.task1` Provide VSIX and retest instructions.
+7. [IN_PROGRESS] `phase1.stream3.task1` Provide VSIX and retest instructions.
    - scope: `doc/TODO/todo-plan.md`
    - expected commit: `test: hand off v1.2.595 local models warmup fix`
 8. [TODO] `phase1.stream3.commit1` Git Commit: `test: hand off v1.2.595 local models warmup fix` (hash: TBD)
