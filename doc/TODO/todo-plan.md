@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase5.followup.docs.task1",
-  "expectedCommitMessage": "docs: document local models standalone chat binding",
+  "currentTaskId": "local-models-selection.phase5.followup.verify.task1",
+  "expectedCommitMessage": "test: verify local models standalone binding fix",
   "debt": null
 }
 ```
@@ -81,9 +81,10 @@
 16. [DONE] `local-models-selection.phase5.followup.plan.commit1` Git Commit: `docs: add local models standalone chat binding follow-up` (hash: self)
 17. [DONE] `local-models-selection.phase5.followup.code.task1` Pass the resolved Local Models selected model into standalone chat session creation instead of relying on the persisted sentinel fallback (scope: `src/client/project-manager/components/layout/workspace-chat-list.tsx, src/client/project-manager/api.ts, src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`; expected commit: `fix(local-models): seed standalone chat selected model`).
 18. [DONE] `local-models-selection.phase5.followup.code.commit1` Git Commit: `fix(local-models): seed standalone chat selected model` (hash: self)
-19. [IN_PROGRESS] `local-models-selection.phase5.followup.docs.task1` Document the standalone Local Models chat binding rule (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local models standalone chat binding`).
-20. [TODO] `local-models-selection.phase5.followup.docs.commit1` Git Commit: `docs: document local models standalone chat binding` (hash: TBD)
-21. [TODO] `local-models-selection.phase5.followup.verify.task1` Run focused standalone chat binding checks and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone binding fix`).
+19. [DONE] `local-models-selection.phase5.followup.docs.task1` Document the standalone Local Models chat binding rule (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local models standalone chat binding`).
+   - Evidence 2026-06-23: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md` now states that standalone Local Models chat creation must seed a concrete `targetModelId` from Settings/start-card discovery instead of the legacy `local-model` sentinel.
+20. [DONE] `local-models-selection.phase5.followup.docs.commit1` Git Commit: `docs: document local models standalone chat binding` (hash: self)
+21. [IN_PROGRESS] `local-models-selection.phase5.followup.verify.task1` Run focused standalone chat binding checks and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone binding fix`).
 22. [TODO] `local-models-selection.phase5.followup.verify.commit1` Git Commit: `test: verify local models standalone binding fix` (hash: TBD)
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
