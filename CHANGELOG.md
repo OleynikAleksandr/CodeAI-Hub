@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.592] - 2026-06-23
+### Fixed
+- **Kimi standalone chats no longer mirror concurrent session output.** ACP
+  frames and permission requests with a provider `sessionId` now route only to
+  the matching `kimi:<sessionId>` listener.
+- **Kimi stream buffering is isolated per provider session.** Buffered
+  assistant/thinking chunks from concurrent Kimi turns no longer share one
+  normalizer buffer.
+
+### Verification
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `node --test packages/Kimi_Module/dist/provider/kimi-provider-adapter.test.js`
+- `npm test --workspace @codeai-hub/kimi-module`
+- `npm run plan:validate`
+
 ## [1.2.591] - 2026-06-23
 ### Fixed
 - **Kimi lower status panel now receives token usage after a turn.** When Kimi
