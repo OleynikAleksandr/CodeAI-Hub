@@ -4,31 +4,69 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "provider-system-prompts-tools-2026-06-22",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "kimi-token-usage-status-2026-06-23",
   "branch": "main",
-  "baseHead": "6a4528ef5",
+  "baseHead": "a96e90197",
   "lastRecordedCommit": "self",
-  "planningSource": "doc/BugRegistry.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md",
+  "currentTaskId": "kimi-token-status.phase1.runtime.task1",
+  "expectedCommitMessage": "fix(kimi): surface native token usage in status panel",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md`
+- **Read this context before implementation:**
+  - `AGENTS.md`
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Kimi.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`
+  - `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`
+  - `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts`
+  - `src/client/project-manager/components/sessions/token-usage-stream.ts`
+- Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-provider-system-prompts-tools-2026-06-22.md`
-- **Planning source:** `doc/BugRegistry.md`
-- **Last recorded commit:** `self`
+## Execution Rules
+- **Required reading before every fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Keep each implementation task scoped to no more than 3 files or packages.
+- Each implementation task is followed by a separate `Git Commit: ...` line.
+- Run `npm run plan:validate` before every `npm run plan:commit -- "<Expected Commit>"`.
+- Targeted verification: `npm run build --workspace @codeai-hub/kimi-module`, focused Kimi module tests, and `npm run plan:validate`.
+- **Ponytail Hard Mode:** smallest working diff, no new UI unless runtime data path cannot be fixed.
+- **Release Build Confirmation Gate:** do not run `./scripts/build-all.sh` without separate explicit user confirmation.
 
-## Start Next Scope
+## Phase 0 - Plan Intake (owner: Codex, updated: 2026-06-23)
+### Stream: Adopt Kimi token usage status fix
+1. [DONE] `kimi-token-status.phase0.plan.task1` Create the planning source and active execution plan for Kimi status-panel token usage repair (scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: start kimi token usage status fix`).
+2. [DONE] `kimi-token-status.phase0.plan.commit1` Git Commit: `docs: start kimi token usage status fix` (hash: self)
 
-There is no active execution scope. Before starting new implementation work:
+## Phase 1 - Runtime Fix (owner: Codex, updated: 2026-06-23)
+### Stream: Kimi native token usage bridge
+3. [IN_PROGRESS] `kimi-token-status.phase1.runtime.task1` Read Kimi native wire usage after a turn and dispatch it through the existing `stream_event.data.tokenUsage` path (scope: `packages/Kimi_Module/src/provider/kimi-native-token-usage-reader.ts, packages/Kimi_Module/src/provider/kimi-native-token-usage-reader.test.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `fix(kimi): surface native token usage in status panel`).
+4. [TODO] `kimi-token-status.phase1.runtime.commit1` Git Commit: `fix(kimi): surface native token usage in status panel` (hash: TBD)
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 2 - Documentation Sync (owner: Codex, updated: 2026-06-23)
+### Stream: Kimi status-panel contract
+5. [TODO] `kimi-token-status.phase2.docs.task1` Document the Kimi fallback source for status-panel token usage without changing usage-limits semantics (scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi token usage status fallback`).
+6. [TODO] `kimi-token-status.phase2.docs.commit1` Git Commit: `docs: document kimi token usage status fallback` (hash: TBD)
+
+## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-23)
+### Stream: Kimi focused checks
+7. [TODO] `kimi-token-status.phase3.verify.task1` Run targeted Kimi module build/tests and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify kimi token usage status fix`).
+8. [TODO] `kimi-token-status.phase3.verify.commit1` Git Commit: `test: verify kimi token usage status fix` (hash: TBD)
+
+## Phase 4 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
+### Stream: User retest
+9. [TODO] `kimi-token-status.phase4.acceptance.task1` User verifies that Kimi sessions show non-zero token usage in the lower status panel after a turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi token usage user acceptance`).
+10. [TODO] `kimi-token-status.phase4.acceptance.commit1` Git Commit: `chore: record kimi token usage user acceptance` (hash: TBD)
+
+## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-06-23)
+### Stream: Archive + planning-doc disposition
+11. [TODO] `kimi-token-status.phase5.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi token usage status scope`).
+12. [TODO] `kimi-token-status.phase5.closeout.commit1` Git Commit: `docs: close kimi token usage status scope` (hash: TBD)
