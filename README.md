@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.594** (Local Models Standalone Chat Binding Fix)
+**Current Release — v1.2.595** (Local Models Warmup Hotfix)
+
+This release packages the Local Models startup warmup hotfix.
+
+Project Manager startup/settings warmup no longer preloads the selected Local
+Models workflow-agent model. Heavy LM Studio workflow models now load only when
+a real Local Models turn starts, so a stuck `lms load` cannot block Core
+startup, Settings, model switching, or restart. Workflow-agent loads also use an
+8192 default context unless `CODEAI_LMSTUDIO_AGENT_CONTEXT_LENGTH` overrides it.
+
+Retest focus: install the VSIX, restart Project Manager, set Local Models to
+`hy-mt2-30b-a3b-mlx`, confirm Project Manager/Core stay responsive, switch to a
+different local model, and confirm the selected model appears in the lower
+status panel when a chat turn starts.
+
+**Previous Release — v1.2.594** (Local Models Standalone Chat Binding Fix)
 
 This release packages the Local Models standalone chat binding follow-up.
 

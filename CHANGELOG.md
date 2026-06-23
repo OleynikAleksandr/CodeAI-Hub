@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.595] - 2026-06-23
+### Fixed
+- **Local Models workflow-agent warmup no longer blocks Core startup.**
+  Startup/settings warmup still protects selected LM Studio model keys, but
+  defers workflow-agent `lms load` until a real Local Models turn starts. Heavy
+  or stuck local workflow model loads can no longer make Project Manager think
+  Core is unreachable before the user can switch models.
+- **Local Models workflow-agent loads default to 8192 context.** Larger local
+  prompts can still opt in with `CODEAI_LMSTUDIO_AGENT_CONTEXT_LENGTH`.
+
+### Verification
+- `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-warmup-service.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/local-models/local-models-provider-adapter.selection.test.ts packages/core/src/local-models/local-models-provider-adapter.tools.test.ts`
+- `npm run plan:validate`
+
 ## [1.2.594] - 2026-06-23
 ### Fixed
 - **Standalone Local Models chats now seed a concrete LM Studio model at session creation.**
