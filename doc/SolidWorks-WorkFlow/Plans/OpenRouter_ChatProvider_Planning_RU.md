@@ -29,9 +29,11 @@ OpenRouter Agent SDK не является каталогом готовых hos
 - начать вводить название, автора или точный slug модели;
 - сразу видеть список совпадений из OpenRouter catalog;
 - выбрать найденную модель из списка;
+- после выбора модели увидеть список endpoint rows в формате `Provider - endpointTag`;
+- опционально выбрать endpoint tag, если нужен конкретный backend с лучшей скоростью/задержкой;
 - сохранить точный OpenRouter model id/slug как default для новых chat sessions.
 
-OpenRouter website остается главным местом для глубокого просмотра каталога, фильтров и категорий. В CodeAI Hub нужен только практичный live-search picker, который помогает найти и сохранить правильный slug.
+OpenRouter website остается главным местом для глубокого просмотра каталога, фильтров и категорий. В CodeAI Hub нужен практичный live-search picker, который помогает найти slug, затем показывает endpoint tags этой модели без необходимости копировать их с сайта.
 
 ## 4. Non-Goals MVP
 
@@ -42,6 +44,7 @@ OpenRouter website остается главным местом для глуб�
 - Не строить сложный marketplace UI внутри Settings.
 - Не переносить категории/фильтры сайта OpenRouter в Settings.
 - Не добавлять отдельную кнопку проверки модели: поиск сам показывает совпадения.
+- Не делать сложный routing UI. Endpoint selection — один optional список `Provider - endpointTag` после выбора модели.
 - Не делать silent fallback на другую модель, если пользователь явно выбрал конкретный slug.
 
 ## 5. API Surface
@@ -50,6 +53,7 @@ OpenRouter website остается главным местом для глуб�
 
 - `GET /api/v1/models` — получить публичный каталог моделей.
 - `GET /api/v1/models/user` — получить доступные пользователю модели, если API key это поддерживает.
+- `GET /api/v1/models/<model>/endpoints` или `links.details` из model catalog — получить endpoint list выбранной модели.
 - `POST /api/v1/chat/completions` — обычный и streaming chat completion.
 
 Settings:
@@ -57,6 +61,7 @@ Settings:
 - `apiKey`: хранится в пользовательских Settings/secret storage, не в tracked файлах.
 - `baseUrl`: advanced поле, default `https://openrouter.ai/api/v1`.
 - `defaultModel`: точный OpenRouter model id/slug, например `anthropic/claude-sonnet-4`, `openai/gpt-4.1-mini` или `deepseek/deepseek-chat-v3-0324:free`.
+- `endpointTag`: optional OpenRouter endpoint/provider tag, например `openai`, `azure/swedencentral`, `azure`.
 - `catalogCache`: runtime-only cache на время открытия Settings; source of truth остается OpenRouter.
 
 Request headers:
@@ -71,7 +76,8 @@ Request headers:
 - masked API key field;
 - model search input;
 - DOM-owned result list с найденными моделями;
-- selected model row: `id`, display name, context length, free/paid marker, краткая pricing/metadata строка.
+- selected model row: `id`, display name, context length, free/paid marker, краткая pricing/metadata строка;
+- endpoint rows для выбранной модели: `Provider - endpointTag`, status/uptime/latency/throughput если OpenRouter вернул эти поля.
 
 Поведение поиска:
 
@@ -80,6 +86,8 @@ Request headers:
 - ввод фильтрует fetched catalog локально по `id`, `canonical_slug`, `name`, `description`;
 - точное совпадение `id` или `canonical_slug` всегда показывается первым;
 - пользователь выбирает модель кликом по строке результата;
+- после выбора модели Settings грузит endpoint list через `links.details` или `/models/<model>/endpoints`;
+- пользователь может оставить endpoint пустым или выбрать строку `Provider - endpointTag`;
 - если каталог недоступен, Settings показывает ошибку и не подменяет выбранную модель.
 
 UI constraint: не использовать native `<select>` для большого списка. Нужен DOM-owned searchable listbox, чтобы избежать CEF/macOS проблем и нормально работать с тысячами моделей.
@@ -91,6 +99,8 @@ UI constraint: не использовать native `<select>` для больш
 - При создании chat session Core записывает `session.modelBinding.modelId = <openrouter slug>`.
 - Существующая сессия продолжает использовать свой bound model, даже если Settings поменялись.
 - Adapter отправляет в OpenRouter точный `model` из binding.
+- Если selected endpoint tag задан, Adapter добавляет `provider: { order: [endpointTag], allow_fallbacks: false }`.
+- Если endpoint tag не задан, Adapter не отправляет provider routing и оставляет OpenRouter выбирать endpoint.
 - Если пользователь выбрал конкретную модель, OpenRouter provider не должен незаметно заменить ее локально. Исключение — пользователь сам выбрал OpenRouter router model, например `openrouter/auto` или `openrouter/free`.
 - Streaming chunks мапятся в существующий assistant live text flow.
 - Usage и actual routed model, если OpenRouter возвращает их в ответе, показываются в status panel как telemetry, но не меняют bound model.
@@ -103,7 +113,7 @@ UI constraint: не использовать native `<select>` для больш
 
 - Core provider adapter: OpenRouter request/streaming/error handling.
 - Core settings schema/defaults: `providers.openRouter`.
-- Project Manager Settings UI: provider section, live catalog search and exact slug selection.
+- Project Manager Settings UI: provider section, live catalog search, exact slug selection, endpoint-tag list for the selected model.
 - Provider/model picker surfaces for standalone chat creation.
 - Targeted tests around settings normalization, live search ordering, request body and SSE parsing.
 
@@ -121,8 +131,8 @@ UI constraint: не использовать native `<select>` для больш
 ### Phase 2 — Settings And Catalog
 
 1. Добавить settings contract для `providers.openRouter` — scope: shared/core settings files до 3 файлов.
-2. Добавить catalog fetch/live-search bridge — scope: core + UI bridge до 3 файлов.
-3. Добавить Project Manager Settings section — scope: PM Settings components/styles до 3 файлов.
+2. Добавить catalog fetch/live-search + endpoint-list bridge — scope: core + UI bridge до 3 файлов.
+3. Добавить Project Manager Settings section с endpoint rows — scope: PM Settings components/styles до 3 файлов.
 
 ### Phase 3 — Chat Entry Points
 
@@ -131,7 +141,7 @@ UI constraint: не использовать native `<select>` для больш
 
 ### Phase 4 — Verification
 
-1. Unit/regression tests for live search ordering, settings persistence and request body.
+1. Unit/regression tests for live search ordering, endpoint-list rendering, settings persistence and request body.
 2. Targeted builds: affected core package and Project Manager/webview build.
 3. User Workflow Acceptance Testing with real OpenRouter API key and at least one free model.
 
@@ -144,6 +154,8 @@ UI constraint: не использовать native `<select>` для больш
 - В Settings можно ввести OpenRouter API key.
 - В Settings можно начать вводить имя/slug и сразу увидеть список совпадений из OpenRouter catalog.
 - Точное совпадение slug показывается первым и выбирается кликом без отдельной кнопки проверки.
+- После выбора модели Settings показывает endpoint rows в формате `Provider - endpointTag`.
+- Если endpoint выбран, chat request использует этот tag через provider routing without fallback.
 - Для новой chat session Core сохраняет точный OpenRouter model slug как effective model identity.
 - Chat streaming работает через `/api/v1/chat/completions`.
 - При точном выборе модели нет локального silent fallback.
