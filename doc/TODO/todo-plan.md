@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase1.registry.task1",
-  "expectedCommitMessage": "feat(openrouter): register provider descriptor",
+  "currentTaskId": "openrouter-chat.phase2.settings-state.task1",
+  "expectedCommitMessage": "feat(openrouter): add settings state",
   "debt": null
 }
 ```
@@ -56,14 +56,14 @@
 
 5. [DONE] `openrouter-chat.phase1.transport.task1` Add a minimal OpenRouter chat completion adapter and SSE reader for `/api/v1/chat/completions`; include selected endpoint tag as `provider.order = [tag]` with `allow_fallbacks: false` only when the user explicitly selected an endpoint (scope: `packages/core/src/open-router/**`; expected commit: `feat(openrouter): add chat completion transport`).
 6. [DONE] `openrouter-chat.phase1.transport.commit1` Git Commit: `feat(openrouter): add chat completion transport` (hash: self)
-7. [IN_PROGRESS] `openrouter-chat.phase1.registry.task1` Register the `openRouter` provider descriptor and model binding capabilities for standalone chat (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/open-router/**`; expected commit: `feat(openrouter): register provider descriptor`).
-8. [TODO] `openrouter-chat.phase1.registry.commit1` Git Commit: `feat(openrouter): register provider descriptor` (hash: TBD)
+7. [DONE] `openrouter-chat.phase1.registry.task1` Register the `openRouter` provider descriptor and model binding capabilities for standalone chat (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/open-router/**`; expected commit: `feat(openrouter): register provider descriptor`).
+8. [DONE] `openrouter-chat.phase1.registry.commit1` Git Commit: `feat(openrouter): register provider descriptor` (hash: self)
 
 ## Phase 2 - Settings And Catalog Search (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Settings state
 
-9. [TODO] `openrouter-chat.phase2.settings-state.task1` Add `providers.openRouter` settings with `apiKey`, optional `baseUrl`, `defaultModel`, and optional `endpointTag` normalization (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/use-settings-state.ts`; expected commit: `feat(openrouter): add settings state`).
+9. [IN_PROGRESS] `openrouter-chat.phase2.settings-state.task1` Add `providers.openRouter` settings with `apiKey`, optional `baseUrl`, `defaultModel`, and optional `endpointTag` normalization (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/use-settings-state.ts`; expected commit: `feat(openrouter): add settings state`).
 10. [TODO] `openrouter-chat.phase2.settings-state.commit1` Git Commit: `feat(openrouter): add settings state` (hash: TBD)
 11. [TODO] `openrouter-chat.phase2.catalog.task1` Add catalog and endpoint helpers that load `/api/v1/models`, optionally `/api/v1/models/user`, load selected-model endpoints, rank exact slug matches first, and never persist fetched catalogs/endpoints (scope: `src/client/ui/src/components/settings/openrouter-model-search.ts, src/client/ui/src/components/settings/openrouter-model-search.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): add live model search`).
 12. [TODO] `openrouter-chat.phase2.catalog.commit1` Git Commit: `feat(openrouter): add live model search` (hash: TBD)

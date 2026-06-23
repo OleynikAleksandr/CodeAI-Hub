@@ -4,6 +4,7 @@ import type { KimiModuleOptions } from "@codeai-hub/kimi-module";
 import type { CoreConfig } from "../config";
 import { loadKimiSettingsSnapshot } from "../config/provider-settings-snapshot";
 import { LocalModelsProviderAdapter } from "../local-models/local-models-provider-adapter";
+import { OpenRouterProviderAdapter } from "../open-router/open-router-provider-adapter";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
   CLAUDE_INSTALLER_PATHS,
@@ -123,6 +124,12 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
+  openRouter: {
+    acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
+    syncsLabelFromAppliedConfig: true,
+  },
 };
 
 export const resolveProviderModelSyncCapabilities = (
@@ -141,6 +148,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   kimiCode: true,
   glmOpenCode: true,
   localModels: true,
+  openRouter: true,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
@@ -422,6 +430,20 @@ const buildLocalModelsDescriptor = (): ProviderDescriptor => ({
   status: "active",
 });
 
+const buildOpenRouterDescriptor = (): ProviderDescriptor => ({
+  adapter: new OpenRouterProviderAdapter(),
+  capabilities: {
+    modelSync: resolveProviderModelSyncCapabilities("openRouter"),
+    requiresPostStopResume: false,
+    supportsImmediateBinding:
+      resolveProviderImmediateBindingCapability("openRouter"),
+  },
+  id: "openRouter",
+  name: "OpenRouter",
+  description: "Uses the OpenRouter API with the selected model slug",
+  status: "active",
+});
+
 export const createProviderDescriptors = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor[] => [
@@ -432,6 +454,7 @@ export const createProviderDescriptors = (
   buildGlmDescriptor(options),
   buildGlmOpenCodeDescriptor(options),
   buildLocalModelsDescriptor(),
+  buildOpenRouterDescriptor(),
 ];
 
 export const createGeminiAdapterInstance = (
