@@ -10,8 +10,8 @@
   "baseHead": "dbebb0a76",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_WorkflowWarmup_Hotfix_Planning.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "test: hand off v1.2.595 local models warmup fix",
+  "currentTaskId": "phase1.stream4.task1",
+  "expectedCommitMessage": "docs: close local models warmup hotfix scope",
   "debt": null
 }
 ```
@@ -49,13 +49,14 @@
 6. [DONE] `phase1.stream2.commit2` Git Commit: `build: release v1.2.595` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing
-7. [IN_PROGRESS] `phase1.stream3.task1` Provide VSIX and retest instructions.
+7. [DONE] `phase1.stream3.task1` Provide VSIX and retest instructions.
    - scope: `doc/TODO/todo-plan.md`
    - expected commit: `test: hand off v1.2.595 local models warmup fix`
-8. [TODO] `phase1.stream3.commit1` Git Commit: `test: hand off v1.2.595 local models warmup fix` (hash: TBD)
+   - evidence: `codeai-hub-1.2.595.vsix` built; retest Local Models selection with `hy-mt2-30b-a3b-mlx`, Project Manager restart, and model switching.
+8. [DONE] `phase1.stream3.commit1` Git Commit: `test: hand off v1.2.595 local models warmup fix` (hash: self)
 
 ### Stream: Scope Closeout
-9. [TODO] `phase1.stream4.task1` Close scope after user acceptance.
+9. [IN_PROGRESS] `phase1.stream4.task1` Close scope after user acceptance.
    - scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`
    - expected commit: `docs: close local models warmup hotfix scope`
 10. [TODO] `phase1.stream4.commit1` Git Commit: `docs: close local models warmup hotfix scope` (hash: TBD)
