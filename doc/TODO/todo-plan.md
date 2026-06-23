@@ -10,8 +10,8 @@
   "baseHead": "5152b95f3",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Session_Event_Routing_Bugfix_Planning_RU.md",
-  "currentTaskId": "kimi-session-routing.phase4.release.task1",
-  "expectedCommitMessage": "chore: request kimi session routing release decision",
+  "currentTaskId": "kimi-session-routing.phase4.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.592 kimi session routing release",
   "debt": null
 }
 ```
@@ -63,15 +63,19 @@
 
 ## Phase 4 - Release Build (owner: Codex, updated: 2026-06-23)
 ### Stream: Release gate
-9. [IN_PROGRESS] `kimi-session-routing.phase4.release.task1` After verification, ask the user whether to build a new release; do not run release scripts before explicit confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: request kimi session routing release decision`).
-10. [TODO] `kimi-session-routing.phase4.release.commit1` Git Commit: `chore: request kimi session routing release decision` (hash: TBD)
+9. [DONE] `kimi-session-routing.phase4.release.task1` After verification, ask the user whether to build a new release; do not run release scripts before explicit confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: request kimi session routing release decision`). Result: user explicitly confirmed the release build on 2026-06-23.
+10. [DONE] `kimi-session-routing.phase4.release.commit1` Git Commit: `chore: request kimi session routing release decision` (hash: self)
+11. [IN_PROGRESS] `kimi-session-routing.phase4.release-docs.task1` Prepare README and CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.592 kimi session routing release`).
+12. [TODO] `kimi-session-routing.phase4.release-docs.commit1` Git Commit: `docs: prepare 1.2.592 kimi session routing release` (hash: TBD)
+13. [TODO] `kimi-session-routing.phase4.release-build.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifacts and build evidence (scope: `package.json, package-lock.json, packages/*/package.json, apps/**/package.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.592 kimi session routing release`).
+14. [TODO] `kimi-session-routing.phase4.release-build.commit1` Git Commit: `chore: build 1.2.592 kimi session routing release` (hash: TBD)
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-11. [TODO] `kimi-session-routing.phase5.acceptance.task1` User verifies two simultaneous Kimi chats keep responses in the correct chat history (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi session routing user acceptance`).
-12. [TODO] `kimi-session-routing.phase5.acceptance.commit1` Git Commit: `chore: record kimi session routing user acceptance` (hash: TBD)
+15. [TODO] `kimi-session-routing.phase5.acceptance.task1` User verifies two simultaneous Kimi chats keep responses in the correct chat history (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi session routing user acceptance`).
+16. [TODO] `kimi-session-routing.phase5.acceptance.commit1` Git Commit: `chore: record kimi session routing user acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 ### Stream: Archive + planning-doc disposition
-13. [TODO] `kimi-session-routing.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi session event routing scope`).
-14. [TODO] `kimi-session-routing.phase6.closeout.commit1` Git Commit: `docs: close kimi session event routing scope` (hash: TBD)
+17. [TODO] `kimi-session-routing.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi session event routing scope`).
+18. [TODO] `kimi-session-routing.phase6.closeout.commit1` Git Commit: `docs: close kimi session event routing scope` (hash: TBD)
