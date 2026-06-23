@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.602] - 2026-06-23
+### Fixed
+- **OpenRouter workflow start cards keep the selected model slug.** After
+  completing Description with OpenRouter, the next-step card now inherits
+  OpenRouter as the previous provider, shows the saved OpenRouter model instead
+  of Gemini defaults, and hides unrelated Gemini reasoning controls.
+- **OpenRouter start cards persist their selected model before launch.** The
+  workflow start path now writes `providers.openRouter.defaultModel` through the
+  existing workspace settings save barrier before creating the next session.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/shared/stage-confirmation-card.test.ts`
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`
+- `npm run typecheck:webview`
+
 ## [1.2.601] - 2026-06-23
 ### Added
 - **OpenRouter now has workflow-agent tooling.** OpenRouter Chat Completions

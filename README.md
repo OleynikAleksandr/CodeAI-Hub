@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.601** (OpenRouter Agent Tooling)
+**Current Release — v1.2.602** (OpenRouter Start Card Hotfix)
+
+This hotfix packages the OpenRouter workflow start-card fix from release
+`1.2.601` retesting.
+
+When Description was completed with OpenRouter, the next-step card could inherit
+OpenRouter as the provider but still show Gemini model/reasoning defaults. The
+card now treats OpenRouter as a real inherited workflow provider, shows the
+saved OpenRouter model slug, hides the unrelated Gemini reasoning fallback, and
+persists the OpenRouter model before launching the next workflow step.
+
+Retest focus: install the VSIX, restart Project Manager, complete Description
+with OpenRouter and a specific free model slug, then confirm the Virtual
+Simulation start card still shows OpenRouter and the same OpenRouter model.
+Start the step and confirm the launched session uses that OpenRouter model.
+
+**Previous Release — v1.2.601** (OpenRouter Agent Tooling)
 
 This release promotes OpenRouter beyond the standalone chat MVP.
 

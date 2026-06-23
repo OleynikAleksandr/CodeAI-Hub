@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase5.hotfix-release-notes.task1",
-  "expectedCommitMessage": "docs: prepare OpenRouter start-card hotfix release",
+  "currentTaskId": "openrouter-agent.phase5.hotfix-release-artifacts.task1",
+  "expectedCommitMessage": "build: release OpenRouter start-card hotfix",
   "debt": null
 }
 ```
@@ -122,10 +122,12 @@ Release build evidence for `1.2.601`:
 
 25. [DONE] `openrouter-agent.phase5.hotfix-release-plan.task1` Record the user's explicit release build confirmation and add the hotfix release-build stream for future version `1.2.602` before release notes or build scripts run (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan OpenRouter start-card hotfix release`).
 26. [DONE] `openrouter-agent.phase5.hotfix-release-plan.commit1` Git Commit: `docs: plan OpenRouter start-card hotfix release` (hash: self)
-27. [IN_PROGRESS] `openrouter-agent.phase5.hotfix-release-notes.task1` Prepare release-facing docs for future version `1.2.602` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter start-card hotfix release`).
-28. [TODO] `openrouter-agent.phase5.hotfix-release-notes.commit1` Git Commit: `docs: prepare OpenRouter start-card hotfix release` (hash: TBD)
-29. [TODO] `openrouter-agent.phase5.hotfix-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.602` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter start-card hotfix`).
+27. [DONE] `openrouter-agent.phase5.hotfix-release-notes.task1` Prepare release-facing docs for future version `1.2.602` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter start-card hotfix release`).
+28. [DONE] `openrouter-agent.phase5.hotfix-release-notes.commit1` Git Commit: `docs: prepare OpenRouter start-card hotfix release` (hash: self)
+29. [IN_PROGRESS] `openrouter-agent.phase5.hotfix-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.602` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter start-card hotfix`).
 30. [TODO] `openrouter-agent.phase5.hotfix-release-artifacts.commit1` Git Commit: `build: release OpenRouter start-card hotfix` (hash: TBD)
+
+Release notes target: `1.2.602` OpenRouter Start Card Hotfix.
 
 ### Stream: Hotfix Retest
 
