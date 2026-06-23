@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase5.acceptance-retest.task1",
-  "expectedCommitMessage": "chore: record OpenRouter agent tooling acceptance",
+  "currentTaskId": "openrouter-agent.phase5.hotfix-release-notes.task1",
+  "expectedCommitMessage": "docs: prepare OpenRouter start-card hotfix release",
   "debt": null
 }
 ```
@@ -117,12 +117,24 @@ Release build evidence for `1.2.601`:
 22. [DONE] `openrouter-agent.phase5.start-card-model.commit1` Git Commit: `fix(openrouter): preserve start card model selection` (hash: self)
 23. [DONE] `openrouter-agent.phase5.start-card-settings.task1` Persist OpenRouter start-card model defaults through the existing workflow settings save path before launching the next step (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix(openrouter): save start card model defaults`).
 24. [DONE] `openrouter-agent.phase5.start-card-settings.commit1` Git Commit: `fix(openrouter): save start card model defaults` (hash: self)
-25. [IN_PROGRESS] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after the start-card fix (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
-26. [TODO] `openrouter-agent.phase5.acceptance-retest.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
+
+### Stream: Hotfix Release 1.2.602
+
+25. [DONE] `openrouter-agent.phase5.hotfix-release-plan.task1` Record the user's explicit release build confirmation and add the hotfix release-build stream for future version `1.2.602` before release notes or build scripts run (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan OpenRouter start-card hotfix release`).
+26. [DONE] `openrouter-agent.phase5.hotfix-release-plan.commit1` Git Commit: `docs: plan OpenRouter start-card hotfix release` (hash: self)
+27. [IN_PROGRESS] `openrouter-agent.phase5.hotfix-release-notes.task1` Prepare release-facing docs for future version `1.2.602` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter start-card hotfix release`).
+28. [TODO] `openrouter-agent.phase5.hotfix-release-notes.commit1` Git Commit: `docs: prepare OpenRouter start-card hotfix release` (hash: TBD)
+29. [TODO] `openrouter-agent.phase5.hotfix-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.602` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter start-card hotfix`).
+30. [TODO] `openrouter-agent.phase5.hotfix-release-artifacts.commit1` Git Commit: `build: release OpenRouter start-card hotfix` (hash: TBD)
+
+### Stream: Hotfix Retest
+
+31. [TODO] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after installing hotfix release `1.2.602` (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
+32. [TODO] `openrouter-agent.phase5.acceptance-retest.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-27. [TODO] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
-28. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)
+33. [TODO] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
+34. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)
