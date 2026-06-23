@@ -378,21 +378,6 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
-  const handleSave = useCallback(() => {
-    setSaving(true);
-    vscode.postMessage({
-      type: "settings:save",
-      settings,
-    });
-  }, [settings]);
-
-  const handleReset = useCallback(() => {
-    setResetting(true);
-    window.setTimeout(() => {
-      vscode.postMessage({ type: "settings:reset" });
-    }, 100);
-  }, []);
-
   const handleUpdateProvider = useCallback(
     (provider: ProviderId, target: "cli" | "sdk" | "core") => {
       const targetKey = `${provider}:${target}`;
@@ -481,6 +466,11 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleLocalizationWorkflowTermsPolicyChange,
     handleLocalModelsDefaultModelChange: (modelId) =>
       updateSettings(updateLocalModelsDefaultModel(settings, modelId)),
+    handleOpenRouterSettingsChange: (openRouter) =>
+      updateSettings({
+        ...settings,
+        providers: { ...settings.providers, openRouter },
+      }),
     handleNativeRequestCapture,
     handleReasoningTranslationEngineIdChange,
     handleProviderAutoUpdateChange,
@@ -492,8 +482,16 @@ export const useSettingsState = (): UseSettingsStateResult => {
       updateSettings(updateStrictInstructionText(settings, value)),
     handleTextToSpeechRateChange: (rate) =>
       updateSettings(updateTextToSpeechRate(settings, rate)),
-    handleSave,
-    handleReset,
+    handleSave: () => {
+      setSaving(true);
+      vscode.postMessage({ type: "settings:save", settings });
+    },
+    handleReset: () => {
+      setResetting(true);
+      window.setTimeout(() => {
+        vscode.postMessage({ type: "settings:reset" });
+      }, 100);
+    },
     handleUpdateProvider,
   };
 };

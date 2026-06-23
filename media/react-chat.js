@@ -9810,19 +9810,6 @@
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react.useCallback)(() => {
-      setSaving(true);
-      vscode_default.postMessage({
-        type: "settings:save",
-        settings
-      });
-    }, [settings]);
-    const handleReset = (0, import_react.useCallback)(() => {
-      setResetting(true);
-      window.setTimeout(() => {
-        vscode_default.postMessage({ type: "settings:reset" });
-      }, 100);
-    }, []);
     const handleUpdateProvider = (0, import_react.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
@@ -9900,6 +9887,10 @@
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
       handleLocalModelsDefaultModelChange: (modelId) => updateSettings(updateLocalModelsDefaultModel(settings, modelId)),
+      handleOpenRouterSettingsChange: (openRouter) => updateSettings({
+        ...settings,
+        providers: { ...settings.providers, openRouter }
+      }),
       handleNativeRequestCapture,
       handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
@@ -9908,8 +9899,16 @@
       handleStrictSchemaTextChange: (value) => updateSettings(updateStrictSchemaText(settings, value)),
       handleStrictInstructionTextChange: (value) => updateSettings(updateStrictInstructionText(settings, value)),
       handleTextToSpeechRateChange: (rate) => updateSettings(updateTextToSpeechRate(settings, rate)),
-      handleSave,
-      handleReset,
+      handleSave: () => {
+        setSaving(true);
+        vscode_default.postMessage({ type: "settings:save", settings });
+      },
+      handleReset: () => {
+        setResetting(true);
+        window.setTimeout(() => {
+          vscode_default.postMessage({ type: "settings:reset" });
+        }, 100);
+      },
       handleUpdateProvider
     };
   };

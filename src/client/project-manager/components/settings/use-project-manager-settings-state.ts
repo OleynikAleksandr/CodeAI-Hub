@@ -468,6 +468,11 @@ export const useProjectManagerSettingsState =
       handleLocalizationWorkflowTermsPolicyChange,
       handleLocalModelsDefaultModelChange: (modelId) =>
         updateSettings(updateLocalModelsDefaultModel(settings, modelId)),
+      handleOpenRouterSettingsChange: (openRouter) =>
+        updateSettings({
+          ...settings,
+          providers: { ...settings.providers, openRouter },
+        }),
       handleNativeRequestCapture,
       handleNativeRequestCaptureWorkbenchOpen,
       handleReasoningTranslationEngineIdChange,

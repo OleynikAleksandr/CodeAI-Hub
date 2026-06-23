@@ -14,6 +14,7 @@ import type {
 } from "./kimi-settings-state";
 import KimiSettingsTab from "./kimi-settings-tab";
 import LocalizationSettingsCard from "./localization-settings-card";
+import OpenRouterSettingsCard from "./openrouter-settings-card";
 import ProviderVersions from "./provider-versions";
 import SessionContinuityCard from "./session-continuity-card";
 import SettingsCard from "./settings-card";
@@ -60,6 +61,7 @@ export type SettingsTab =
   | "glmNative"
   | "glmOpenCode"
   | "localModels"
+  | "openRouter"
   | "general";
 
 const stackStyles: React.CSSProperties = {
@@ -155,6 +157,7 @@ export const settingsTabs: ReadonlyArray<{
   { id: "glmNative", label: "GLM" },
   { id: "glmOpenCode", label: "OpenCode" },
   { id: "localModels", label: "Local Models" },
+  { id: "openRouter", label: "OpenRouter" },
   { id: "general", label: "General" },
 ];
 
@@ -196,6 +199,7 @@ export const SettingsProviderTabContent: React.FC<
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
     handleLocalModelsDefaultModelChange,
+    handleOpenRouterSettingsChange,
     handleNativeRequestCaptureWorkbenchOpen,
     handleReasoningTranslationEngineIdChange,
     handleCodexReasoningChange,
@@ -349,6 +353,15 @@ export const SettingsProviderTabContent: React.FC<
       <LocalModelsSettingsTab
         defaultModel={settings.providers.localModels?.defaultModel}
         onDefaultModelChange={handleLocalModelsDefaultModelChange}
+      />
+    );
+  }
+
+  if (activeTab === "openRouter") {
+    return (
+      <OpenRouterSettingsCard
+        onSettingsChange={handleOpenRouterSettingsChange}
+        settings={settings.providers.openRouter}
       />
     );
   }

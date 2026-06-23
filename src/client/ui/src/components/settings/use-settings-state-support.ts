@@ -22,6 +22,7 @@ import type {
   NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
 } from "./native-request-capture-state";
+import type { OpenRouterSettings } from "./openrouter-settings-state";
 import type {
   ProviderId,
   ProviderVersions,
@@ -460,6 +461,9 @@ export interface UseSettingsStateResult {
     providerId: NativeRequestCaptureProviderId,
     modelId: NativeRequestCaptureModelId,
     scenarioId: NativeRequestCaptureScenarioId
+  ) => void;
+  readonly handleOpenRouterSettingsChange?: (
+    settings: OpenRouterSettings
   ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,

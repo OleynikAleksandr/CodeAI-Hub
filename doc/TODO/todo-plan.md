@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase2.settings-ui.task1",
-  "expectedCommitMessage": "feat(openrouter): add settings model picker",
+  "currentTaskId": "openrouter-chat.phase3.provider-list.task1",
+  "expectedCommitMessage": "feat(openrouter): expose standalone chat provider",
   "debt": null
 }
 ```
@@ -67,14 +67,14 @@
 10. [DONE] `openrouter-chat.phase2.settings-state.commit1` Git Commit: `feat(openrouter): add settings state` (hash: self)
 11. [DONE] `openrouter-chat.phase2.catalog.task1` Add catalog and endpoint helpers that load `/api/v1/models`, optionally `/api/v1/models/user`, load selected-model endpoints, rank exact slug matches first, and never persist fetched catalogs/endpoints (scope: `src/client/ui/src/components/settings/openrouter-model-search.ts, src/client/ui/src/components/settings/openrouter-model-search.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat(openrouter): add live model search`).
 12. [DONE] `openrouter-chat.phase2.catalog.commit1` Git Commit: `feat(openrouter): add live model search` (hash: self)
-13. [IN_PROGRESS] `openrouter-chat.phase2.settings-ui.task1` Add an OpenRouter Settings tab with API key field, model search input, DOM-owned model results, selected model row, and endpoint rows displayed as `Provider - endpointTag` (scope: `src/client/ui/src/components/settings/settings-provider-tab-content.tsx, src/client/ui/src/components/settings/openrouter-settings-card.tsx, src/client/ui/src/components/settings/use-settings-state.ts`; expected commit: `feat(openrouter): add settings model picker`).
-14. [TODO] `openrouter-chat.phase2.settings-ui.commit1` Git Commit: `feat(openrouter): add settings model picker` (hash: TBD)
+13. [DONE] `openrouter-chat.phase2.settings-ui.task1` Add an OpenRouter Settings tab with API key field, model search input, DOM-owned model results, selected model row, and endpoint rows displayed as `Provider - endpointTag` (scope: `src/client/ui/src/components/settings/**, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, media/**`; expected commit: `feat(openrouter): add settings model picker`).
+14. [DONE] `openrouter-chat.phase2.settings-ui.commit1` Git Commit: `feat(openrouter): add settings model picker` (hash: self)
 
 ## Phase 3 - Standalone Chat Binding (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Chat provider selection
 
-15. [TODO] `openrouter-chat.phase3.provider-list.task1` Include `openRouter` in standalone chat provider lists without enabling managed workflow stages (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `feat(openrouter): expose standalone chat provider`).
+15. [IN_PROGRESS] `openrouter-chat.phase3.provider-list.task1` Include `openRouter` in standalone chat provider lists without enabling managed workflow stages (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `feat(openrouter): expose standalone chat provider`).
 16. [TODO] `openrouter-chat.phase3.provider-list.commit1` Git Commit: `feat(openrouter): expose standalone chat provider` (hash: TBD)
 17. [TODO] `openrouter-chat.phase3.binding.task1` Persist the selected OpenRouter model slug and optional endpoint tag into new-session binding/config, and display both in session UI when available (scope: `src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/status-panel.tsx`; expected commit: `feat(openrouter): bind selected chat model`).
 18. [TODO] `openrouter-chat.phase3.binding.commit1` Git Commit: `feat(openrouter): bind selected chat model` (hash: TBD)
