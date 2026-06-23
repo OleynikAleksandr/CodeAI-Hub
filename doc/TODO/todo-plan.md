@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase5.followup.code.task1",
-  "expectedCommitMessage": "fix(local-models): seed standalone chat selected model",
+  "currentTaskId": "local-models-selection.phase5.followup.docs.task1",
+  "expectedCommitMessage": "docs: document local models standalone chat binding",
   "debt": null
 }
 ```
@@ -79,9 +79,9 @@
 ### Stream: Local Models standalone chat binding
 15. [DONE] `local-models-selection.phase5.followup.plan.task1` Add follow-up tasks after user retest showed standalone Local Models chat still seeds the sentinel `local-model` instead of a selected LM Studio model (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add local models standalone chat binding follow-up`).
 16. [DONE] `local-models-selection.phase5.followup.plan.commit1` Git Commit: `docs: add local models standalone chat binding follow-up` (hash: self)
-17. [IN_PROGRESS] `local-models-selection.phase5.followup.code.task1` Pass the resolved Local Models selected model into standalone chat session creation instead of relying on the persisted sentinel fallback (scope: `src/client/project-manager/components/layout/workspace-chat-list.tsx, src/client/project-manager/api.ts, src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`; expected commit: `fix(local-models): seed standalone chat selected model`).
-18. [TODO] `local-models-selection.phase5.followup.code.commit1` Git Commit: `fix(local-models): seed standalone chat selected model` (hash: TBD)
-19. [TODO] `local-models-selection.phase5.followup.docs.task1` Document the standalone Local Models chat binding rule (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local models standalone chat binding`).
+17. [DONE] `local-models-selection.phase5.followup.code.task1` Pass the resolved Local Models selected model into standalone chat session creation instead of relying on the persisted sentinel fallback (scope: `src/client/project-manager/components/layout/workspace-chat-list.tsx, src/client/project-manager/api.ts, src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`; expected commit: `fix(local-models): seed standalone chat selected model`).
+18. [DONE] `local-models-selection.phase5.followup.code.commit1` Git Commit: `fix(local-models): seed standalone chat selected model` (hash: self)
+19. [IN_PROGRESS] `local-models-selection.phase5.followup.docs.task1` Document the standalone Local Models chat binding rule (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local models standalone chat binding`).
 20. [TODO] `local-models-selection.phase5.followup.docs.commit1` Git Commit: `docs: document local models standalone chat binding` (hash: TBD)
 21. [TODO] `local-models-selection.phase5.followup.verify.task1` Run focused standalone chat binding checks and record evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify local models standalone binding fix`).
 22. [TODO] `local-models-selection.phase5.followup.verify.commit1` Git Commit: `test: verify local models standalone binding fix` (hash: TBD)

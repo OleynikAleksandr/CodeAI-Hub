@@ -18,6 +18,7 @@ import {
   type ChatMenuState,
   WorkspaceChatListMenu,
 } from "./workspace-chat-list-menu";
+import { resolveDefaultStartCardModelSelection } from "../shared/stage-start-model-selection";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
@@ -234,7 +235,7 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
   workspacePath,
   workspaceSlug,
 }) => {
-  const { t } = useLocalization();
+  const { availableEngines, t } = useLocalization();
   const [chats, setChats] = useState<readonly StandaloneChatSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -351,6 +352,14 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
       }
       setPickerOpen(false);
       const createdAfter = Date.now() - 2000;
+      const targetModelId =
+        providerId === "localModels"
+          ? resolveDefaultStartCardModelSelection(
+              api.getLastSettingsPayload(),
+              providerId,
+              availableEngines
+            ).modelId
+          : null;
       const placeholder = openStandaloneSessionPlaceholder({
         createdAfter,
         providerId,
@@ -363,6 +372,7 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
         providerId,
         runSlug: null,
         stage: null,
+        targetModelId,
         workspacePath,
       });
       const session = await sessionPromise;
@@ -374,7 +384,7 @@ export const WorkspaceChatList: React.FC<WorkspaceChatListProps> = ({
       });
       void loadChats();
     },
-    [loadChats, workspacePath, workspaceSlug]
+    [availableEngines, loadChats, workspacePath, workspaceSlug]
   );
 
   const renameChat = useCallback(

@@ -56,4 +56,14 @@ test("new standalone chats still open a pending popup immediately", async () => 
     true,
     "new chat creation should still show the detached pending shell immediately"
   );
+  assert.equal(
+    startNewChatSource.includes("resolveDefaultStartCardModelSelection"),
+    true,
+    "new Local Models chats must seed a concrete selected model id"
+  );
+  assert.equal(
+    startNewChatSource.includes("targetModelId"),
+    true,
+    "session:create should receive the selected model id"
+  );
 });

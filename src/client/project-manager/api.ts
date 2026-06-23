@@ -207,6 +207,7 @@ class ProjectManagerApi {
     readonly stage?: string | null;
     readonly sessionKind?: "collector" | null;
     readonly runSlug?: string | null;
+    readonly targetModelId?: string | null;
   }): void {
     if (this.localizationSyncStatus.busy) {
       console.warn(
