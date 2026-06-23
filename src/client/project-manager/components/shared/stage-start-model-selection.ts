@@ -125,6 +125,9 @@ export const getStartCardModelOptions = (
   if (providerId === "glmNative") {
     return [GLM_NATIVE_MODEL];
   }
+  if (providerId === "openRouter") {
+    return [];
+  }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({
     description: model.description,
     id: model.id,
@@ -162,6 +165,9 @@ export const getStartCardReasoningOptions = (
   }
   if (providerId === "glmOpenCode" || providerId === "localModels") {
     return [{ id: "default", label: "default" }];
+  }
+  if (providerId === "openRouter") {
+    return [];
   }
   const model =
     GEMINI_RECOMMENDED_MODELS.find((candidate) => candidate.id === modelId) ??
@@ -234,9 +240,10 @@ export const resolveDefaultStartCardModelSelection = (
     };
   }
   if (providerId === "openRouter") {
+    const endpointTag = settings?.providers.openRouter?.endpointTag?.trim();
     return {
       modelId: settings?.providers.openRouter?.defaultModel?.trim() ?? "",
-      reasoning: settings?.providers.openRouter?.endpointTag?.trim() ?? "default",
+      reasoning: endpointTag || "default",
     };
   }
   const modelId = settings?.providers.gemini.defaultModel ?? DEFAULT_GEMINI_MODEL_ID;

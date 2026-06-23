@@ -46,7 +46,8 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmNative" ||
-  value === "glmOpenCode";
+  value === "glmOpenCode" ||
+  value === "openRouter";
 
 export const resolveUpstreamArtifactInfo = (
   stage: ConfirmableStageId,

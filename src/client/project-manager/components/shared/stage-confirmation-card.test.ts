@@ -14,6 +14,11 @@ import {
   resolveInheritedStageProviderId,
   resolveStageSessionIntent,
 } from "./stage-confirmation-card-workflow";
+import {
+  getStartCardModelOptions,
+  getStartCardReasoningOptions,
+  resolveDefaultStartCardModelSelection,
+} from "./stage-start-model-selection";
 
 const SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -98,6 +103,45 @@ test("quality gates provider resolver keeps OpenRouter after tool enablement", (
       workflowState: snapshot,
     }),
     "openRouter"
+  );
+});
+
+test("next-step card keeps OpenRouter provider and model slug", () => {
+  const modelId = "deepseek/deepseek-chat-v3-0324:free";
+  const snapshot: WorkflowStateSnapshot = {
+    ...buildWorkflowSnapshot(),
+    description: {
+      finalPath:
+        ".codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md",
+      primarySession: {
+        jsonlPath:
+          ".codeai-hub/codeai-hub-codex-5-4/sessions/openrouter.jsonl",
+        providerId: "openRouter",
+        providerSessionId: "openrouter-description",
+      },
+      updatedAt: "2026-05-24T06:10:00.000Z",
+    },
+  };
+  const settingsPayload = {
+    settings: {
+      providers: {
+        openRouter: {
+          defaultModel: modelId,
+          endpointTag: "",
+        },
+      },
+    },
+  };
+
+  assert.equal(
+    resolveInheritedStageProviderId("virtual_simulation", snapshot),
+    "openRouter"
+  );
+  assert.deepEqual(getStartCardModelOptions("openRouter"), []);
+  assert.deepEqual(getStartCardReasoningOptions("openRouter", modelId), []);
+  assert.deepEqual(
+    resolveDefaultStartCardModelSelection(settingsPayload, "openRouter"),
+    { modelId, reasoning: "default" }
   );
 });
 
