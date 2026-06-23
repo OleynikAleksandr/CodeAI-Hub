@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase6.description-copy.task1",
-  "expectedCommitMessage": "fix(openrouter): update description picker copy",
+  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
+  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
   "debt": null
 }
 ```
@@ -105,12 +105,12 @@
 
 27. [DONE] `openrouter-chat.phase6.description-picker.task1` Add OpenRouter to Description provider resolver/inheritance so it appears in the questionnaire provider picker and can be inherited by later workflow steps (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): show provider in description picker`).
 28. [DONE] `openrouter-chat.phase6.description-picker.commit1` Git Commit: `fix(openrouter): show provider in description picker` (hash: self)
-29. [IN_PROGRESS] `openrouter-chat.phase6.description-copy.task1` Update Description provider picker copy to mention OpenRouter in fallback and localization source text (scope: `src/client/project-manager/components/description/description-provider-picker.tsx, assets/localization/source/en/messages_for_the_user.json, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): update description picker copy`).
-30. [TODO] `openrouter-chat.phase6.description-copy.commit1` Git Commit: `fix(openrouter): update description picker copy` (hash: TBD)
+29. [DONE] `openrouter-chat.phase6.description-copy.task1` Update Description provider picker copy to mention OpenRouter in fallback and localization source text (scope: `src/client/project-manager/components/description/description-provider-picker.tsx, assets/localization/source/en/messages_for_the_user.json, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): update description picker copy`).
+30. [DONE] `openrouter-chat.phase6.description-copy.commit1` Git Commit: `fix(openrouter): update description picker copy` (hash: self)
 
 ### Stream: OpenRouter chat retest
 
-31. [TODO] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+31. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, and one standalone chat with a selected model/endpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
 32. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
