@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
-  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
+  "currentTaskId": "openrouter-chat.phase7.closeout.task1",
+  "expectedCommitMessage": "docs: close OpenRouter chat provider scope",
   "debt": null
 }
 ```
@@ -140,12 +140,13 @@
 47. [DONE] `openrouter-chat.phase6.stream-picker-release-build.task1` Run approved release scripts for v1.2.600 and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter stream picker release`).
     - Evidence 2026-06-23: `./scripts/build-all.sh`; `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.600.vsix` (5.6M); tarballs copied to `doc/tmp/releases/*1.2.600*`; package surface and SDK exclusions verified by release script.
 48. [DONE] `openrouter-chat.phase6.stream-picker-release-build.commit1` Git Commit: `chore: build OpenRouter stream picker release` (hash: self)
-49. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
-50. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
+49. [DONE] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+    - Acceptance 2026-06-23: user tested release `v1.2.600` and confirmed standalone OpenRouter chats now work correctly.
+50. [DONE] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: self)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-51. [TODO] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
+51. [IN_PROGRESS] `openrouter-chat.phase7.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter chat provider scope`).
 52. [TODO] `openrouter-chat.phase7.closeout.commit1` Git Commit: `docs: close OpenRouter chat provider scope` (hash: TBD)
