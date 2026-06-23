@@ -10,8 +10,8 @@
   "baseHead": "726892446",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_ChatProvider_Planning_RU.md",
-  "currentTaskId": "openrouter-chat.phase6.stream-picker-release-build.task1",
-  "expectedCommitMessage": "chore: build OpenRouter stream picker release",
+  "currentTaskId": "openrouter-chat.phase6.acceptance.task1",
+  "expectedCommitMessage": "chore: record OpenRouter provider user acceptance",
   "debt": null
 }
 ```
@@ -137,9 +137,10 @@
 45. [DONE] `openrouter-chat.phase6.stream-picker-release-docs.task1` After explicit user confirmation, prepare README/CHANGELOG for v1.2.600 with OpenRouter reasoning stream coalescing and New chat provider picker dedupe fixes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter stream picker release`).
     - Evidence 2026-06-23: prepared README/CHANGELOG for future v1.2.600 after user explicitly requested a new release build.
 46. [DONE] `openrouter-chat.phase6.stream-picker-release-docs.commit1` Git Commit: `docs: prepare OpenRouter stream picker release` (hash: self)
-47. [IN_PROGRESS] `openrouter-chat.phase6.stream-picker-release-build.task1` Run approved release scripts for v1.2.600 and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter stream picker release`).
-48. [TODO] `openrouter-chat.phase6.stream-picker-release-build.commit1` Git Commit: `chore: build OpenRouter stream picker release` (hash: TBD)
-49. [TODO] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
+47. [DONE] `openrouter-chat.phase6.stream-picker-release-build.task1` Run approved release scripts for v1.2.600 and commit generated version/manifests/artifacts/evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build OpenRouter stream picker release`).
+    - Evidence 2026-06-23: `./scripts/build-all.sh`; `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.600.vsix` (5.6M); tarballs copied to `doc/tmp/releases/*1.2.600*`; package surface and SDK exclusions verified by release script.
+48. [DONE] `openrouter-chat.phase6.stream-picker-release-build.commit1` Git Commit: `chore: build OpenRouter stream picker release` (hash: self)
+49. [IN_PROGRESS] `openrouter-chat.phase6.acceptance.task1` User verifies OpenRouter Settings API key, live model search, endpoint row selection, exact slug selection, Description provider picker presence, one standalone chat with a general chat/instruct model, and avoids safety/classifier-only models for conversational retest (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter provider user acceptance`).
 50. [TODO] `openrouter-chat.phase6.acceptance.commit1` Git Commit: `chore: record OpenRouter provider user acceptance` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-23)
