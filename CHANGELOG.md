@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.594] - 2026-06-23
+### Fixed
+- **Standalone Local Models chats now seed a concrete LM Studio model at session creation.**
+  New standalone Local Models sessions pass the selected `targetModelId` from
+  Settings/start-card discovery instead of relying on the legacy `local-model`
+  fallback.
+
+### Verification
+- `npx tsx --test src/client/project-manager/components/layout/workspace-chat-list-open.test.ts`
+- `npm run build:project-manager`
+- `npm run plan:validate`
+
 ## [1.2.593] - 2026-06-23
 ### Fixed
 - **Local Models standalone chats now honor the selected LM Studio model.**

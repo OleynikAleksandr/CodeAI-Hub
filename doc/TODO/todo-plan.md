@@ -10,8 +10,8 @@
   "baseHead": "d14e1b4a7",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_StandaloneChat_ModelSelection_Bugfix_Planning.md",
-  "currentTaskId": "local-models-selection.phase6.release.docs.task1",
-  "expectedCommitMessage": "docs: prepare v1.2.594 local models release notes",
+  "currentTaskId": "local-models-selection.phase6.release.build.task1",
+  "expectedCommitMessage": "build: release v1.2.594",
   "debt": null
 }
 ```
@@ -92,9 +92,10 @@
 ### Stream: Package standalone chat binding follow-up
 23. [DONE] `local-models-selection.phase6.release.scope.task1` Add release build tasks after explicit user confirmation to package the standalone Local Models chat binding follow-up (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add v1.2.594 release scope for local models follow-up`).
 24. [DONE] `local-models-selection.phase6.release.scope.commit1` Git Commit: `docs: add v1.2.594 release scope for local models follow-up` (hash: self)
-25. [IN_PROGRESS] `local-models-selection.phase6.release.docs.task1` Update release notes for v1.2.594 before packaging (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare v1.2.594 local models release notes`).
-26. [TODO] `local-models-selection.phase6.release.docs.commit1` Git Commit: `docs: prepare v1.2.594 local models release notes` (hash: TBD)
-27. [TODO] `local-models-selection.phase6.release.build.task1` Run the release build scripts and record produced artifacts/evidence (scope: `assets/**/manifest.json, package*.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `build: release v1.2.594`).
+25. [DONE] `local-models-selection.phase6.release.docs.task1` Update release notes for v1.2.594 before packaging (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare v1.2.594 local models release notes`).
+   - Evidence 2026-06-23: README current release and CHANGELOG entry prepared for v1.2.594 before running release scripts.
+26. [DONE] `local-models-selection.phase6.release.docs.commit1` Git Commit: `docs: prepare v1.2.594 local models release notes` (hash: self)
+27. [IN_PROGRESS] `local-models-selection.phase6.release.build.task1` Run the release build scripts and record produced artifacts/evidence (scope: `assets/**/manifest.json, package*.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `build: release v1.2.594`).
 28. [TODO] `local-models-selection.phase6.release.build.commit1` Git Commit: `build: release v1.2.594` (hash: TBD)
 
 ## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
