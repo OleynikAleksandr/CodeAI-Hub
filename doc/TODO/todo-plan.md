@@ -10,8 +10,8 @@
   "baseHead": "a96e90197",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Token_Usage_Status_Planning_RU.md",
-  "currentTaskId": "kimi-token-status.phase5.acceptance.task1",
-  "expectedCommitMessage": "chore: record kimi token usage user acceptance",
+  "currentTaskId": "kimi-token-status.phase6.closeout.task1",
+  "expectedCommitMessage": "docs: close kimi token usage status scope",
   "debt": null
 }
 ```
@@ -70,10 +70,10 @@
 
 ## Phase 5 - User Workflow Acceptance Testing (owner: user, updated: 2026-06-23)
 ### Stream: User retest
-13. [IN_PROGRESS] `kimi-token-status.phase5.acceptance.task1` User verifies release 1.2.591: Kimi sessions show non-zero token usage in the lower status panel after a turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi token usage user acceptance`).
-14. [TODO] `kimi-token-status.phase5.acceptance.commit1` Git Commit: `chore: record kimi token usage user acceptance` (hash: TBD)
+13. [DONE] `kimi-token-status.phase5.acceptance.task1` User verifies release 1.2.591: Kimi sessions show non-zero token usage in the lower status panel after a turn (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record kimi token usage user acceptance`). Result: user accepted release 1.2.591; Kimi lower status-panel token usage works after a turn. User also confirmed Kimi `ReadMediaFile` is now available in this runtime.
+14. [DONE] `kimi-token-status.phase5.acceptance.commit1` Git Commit: `chore: record kimi token usage user acceptance` (hash: self)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 ### Stream: Archive + planning-doc disposition
-15. [TODO] `kimi-token-status.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi token usage status scope`).
+15. [IN_PROGRESS] `kimi-token-status.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi token usage status scope`).
 16. [TODO] `kimi-token-status.phase6.closeout.commit1` Git Commit: `docs: close kimi token usage status scope` (hash: TBD)
