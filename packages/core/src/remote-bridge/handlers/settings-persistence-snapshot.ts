@@ -188,13 +188,10 @@ export const buildDefaultSettingsSnapshot = (
       ? config.claudeContinuityRemainingPercentThreshold
       : DEFAULT_SETTINGS_SNAPSHOT.providers.claude.sessionContinuity
           .remainingPercentThreshold;
-  const { gemini: _gemini, ...defaultProviders } =
-    DEFAULT_SETTINGS_SNAPSHOT.providers;
-
   return {
     ...DEFAULT_SETTINGS_SNAPSHOT,
     providers: {
-      ...defaultProviders,
+      ...DEFAULT_SETTINGS_SNAPSHOT.providers,
       claude: {
         ...DEFAULT_SETTINGS_SNAPSHOT.providers.claude,
         defaultModel: config.claudeDefaultModel,

@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-settings-defaults.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from core settings defaults",
+  "currentTaskId": "gemini-removal.phase2.core-config-leftovers.task1",
+  "expectedCommitMessage": "refactor: drop Gemini core config leftovers",
   "debt": null
 }
 ```
@@ -165,5 +165,10 @@
 
 ### Stream: Core settings defaults
 
-47. [IN_PROGRESS] `gemini-removal.phase2.core-settings-defaults.task1` Remove Gemini from the default settings snapshot constant and settings-handler fixtures (scope: `packages/core/src/remote-bridge/handlers/settings-default-snapshot.ts, packages/core/src/remote-bridge/handlers/settings-*.test.ts`; expected commit: `refactor: drop Gemini from core settings defaults`).
-48. [TODO] `gemini-removal.phase2.core-settings-defaults.commit1` Git Commit: `refactor: drop Gemini from core settings defaults` (hash: TBD)
+47. [DONE] `gemini-removal.phase2.core-settings-defaults.task1` Remove Gemini from the default settings snapshot constant and settings-handler fixtures (scope: `packages/core/src/remote-bridge/handlers/settings-default-snapshot.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/remote-bridge/handlers/settings-*.test.ts`; expected commit: `refactor: drop Gemini from core settings defaults`).
+48. [DONE] `gemini-removal.phase2.core-settings-defaults.commit1` Git Commit: `refactor: drop Gemini from core settings defaults` (hash: self)
+
+### Stream: Core config leftovers
+
+49. [IN_PROGRESS] `gemini-removal.phase2.core-config-leftovers.task1` Remove legacy Gemini CoreConfig fields, Gemini fallback turn-config option, and related test fixtures (scope: `packages/core/src/config/**, packages/core/src/**/*.test.ts`; expected commit: `refactor: drop Gemini core config leftovers`).
+50. [TODO] `gemini-removal.phase2.core-config-leftovers.commit1` Git Commit: `refactor: drop Gemini core config leftovers` (hash: TBD)

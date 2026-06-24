@@ -24,8 +24,6 @@ const createConfig = (): CoreConfig => ({
   claudeSettingsPath: "/tmp/codeai-hub-settings.json",
   codexSkipGitRepoCheck: false,
   continuityPreemptRemainingPercentThreshold: 50,
-  geminiSettingsPath: "/tmp/codeai-hub-settings.json",
-  geminiThinkingLevelByModel: {},
   host: "127.0.0.1",
   idleTtlMinutes: null,
   managedMode: null,
@@ -49,13 +47,11 @@ test("resolveProviderAutoUpdateTargets maps enabled provider settings to startup
       providers: {
         claude: { autoUpdate: { enabled: true } },
         codex: { autoUpdate: { enabled: false } },
-        gemini: { autoUpdate: { enabled: true } },
       },
     }),
     [
       { provider: "claude", target: "cli" },
       { provider: "claude", target: "sdk" },
-      { provider: "gemini", target: "cli" },
     ]
   );
 });

@@ -82,16 +82,6 @@ export const DEFAULT_SETTINGS_SNAPSHOT = {
       },
       sessionContinuity: { remainingPercentThreshold: 30 },
     },
-    gemini: {
-      autoUpdate: { enabled: false },
-      defaultModel: "gemini-3-pro-preview",
-      thinkingDisplaySyncEnabled: true,
-      thinkingLevelByModel: {},
-      sessionContinuity: {
-        remainingPercentThreshold: 30,
-        contextWindowTokenLimit: 300_000,
-      },
-    },
     kimi: {
       autoUpdate: { enabled: false },
       defaultModel: "kimi-k2.7-code",

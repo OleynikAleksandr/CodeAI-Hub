@@ -30,9 +30,6 @@ const createConfig = (params: {
   codexDefaultReasoningEffort: "medium",
   codexSkipGitRepoCheck: false,
   continuityPreemptRemainingPercentThreshold: 50,
-  geminiDefaultModel: "gemini-3-pro-preview",
-  geminiSettingsPath: params.globalSettingsPath,
-  geminiThinkingLevelByModel: {},
   host: "127.0.0.1",
   idleTtlMinutes: null,
   managedMode: null,
@@ -108,7 +105,6 @@ const createSettings = (params: { readonly uiHelperText?: string } = {}) => {
     providers: {
       claude: {},
       codex: {},
-      gemini: {},
       kimi: {},
     },
   };
