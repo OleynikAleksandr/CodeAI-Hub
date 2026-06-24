@@ -10,7 +10,7 @@
   "baseHead": "6cd9e8b9d",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md",
-  "currentTaskId": "phase3.stream1.task1",
+  "currentTaskId": "phase3.stream1.task2",
   "expectedCommitMessage": null,
   "debt": null
 }
@@ -59,7 +59,9 @@
 
 ### Stream: Targeted Checks
 
-1. [IN_PROGRESS] `phase3.stream1.task1` Run targeted Local Models tests and `npm run build --workspace @codeai-hub/core` (scope: `verification`).
+1. [DONE] `phase3.stream1.task1` Fix the native prompt-control test capture typing found by `npm run build --workspace @codeai-hub/core` (scope: `packages/core/src/local-models/local-models-provider-adapter.prompt-controls.test.ts`; expected commit: `test: fix local models prompt controls typing`).
+2. [DONE] Git Commit: `test: fix local models prompt controls typing` (hash: self)
+3. [IN_PROGRESS] `phase3.stream1.task2` Run targeted Local Models tests and `npm run build --workspace @codeai-hub/core` (scope: `verification`).
 
 ## Phase 4 - Release And Acceptance (owner: Codex, updated: 2026-06-24)
 

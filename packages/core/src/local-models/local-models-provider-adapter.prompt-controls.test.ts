@@ -47,10 +47,10 @@ test("LocalModelsProviderAdapter sends prompt file override and temperature", as
   const previousPromptFile = process.env.CODEAI_LMSTUDIO_SYSTEM_PROMPT_FILE;
   const tempDir = mkdtempSync(path.join(os.tmpdir(), "lm-prompt-"));
   const promptPath = path.join(tempDir, "system.md");
-  let requestBody: {
+  const requestBodies: Array<{
     readonly system_prompt?: string;
     readonly temperature?: number;
-  } | null = null;
+  }> = [];
 
   try {
     writeFileSync(promptPath, "Custom local system prompt\n", "utf8");
@@ -70,7 +70,7 @@ test("LocalModelsProviderAdapter sends prompt file override and temperature", as
         return "";
       },
       fetchImplementation: ((_url, init) => {
-        requestBody = JSON.parse(String(init?.body));
+        requestBodies.push(JSON.parse(String(init?.body)));
         return Promise.resolve(createNativeMessageResponse("ok"));
       }) as typeof fetch,
     });
@@ -78,6 +78,7 @@ test("LocalModelsProviderAdapter sends prompt file override and temperature", as
     const sessionId = await adapter.createSession();
     await adapter.sendMessage(sessionId, "normalize this");
 
+    const [requestBody] = requestBodies;
     assert.equal(requestBody?.system_prompt, "Custom local system prompt");
     assert.equal(requestBody?.temperature, 0.3);
   } finally {
