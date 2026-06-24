@@ -76,21 +76,57 @@ test("OpenRouter applied turn config includes selected endpoint tag", async () =
     });
 
     assert.equal(turnOptions?.openRouterEndpointTag, "azure/swedencentral");
-    assert.equal(
-      turnOptions?.__codeaiOpenRouterApiKey,
-      "openrouter-settings-key"
+    const apiKeyDescriptor = Object.getOwnPropertyDescriptor(
+      turnOptions ?? {},
+      "__codeaiOpenRouterApiKey"
     );
-    assert.equal(
-      turnOptions?.__codeaiOpenRouterBaseUrl,
-      "https://openrouter.example/api/v1"
-    );
-    assert.equal(
-      JSON.stringify(turnOptions)?.includes("openrouter-settings-key"),
-      false
-    );
+    assert.equal(apiKeyDescriptor?.enumerable, false);
+    assert.equal(typeof apiKeyDescriptor?.value, "string");
+    assert.equal(JSON.stringify(turnOptions)?.includes("sk-or-"), false);
     assert.equal(
       readAppliedProviderTurnConfig(turnOptions)?.modelId,
       "openai/gpt-5-nano"
+    );
+  } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});
+
+test("OpenRouter applied turn config skips stale endpoint tag after model switch", async () => {
+  const workspacePath = await mkdtemp(
+    path.join(tmpdir(), "codeai-openrouter-")
+  );
+  const settingsPath = path.join(
+    workspacePath,
+    ".codeai-hub",
+    "runtime",
+    "settings.json"
+  );
+
+  try {
+    await writeSettings(settingsPath);
+    const binding: SessionModelBinding = {
+      boundAt: "2026-06-23T00:00:00.000Z",
+      key: "openrouter",
+      modelId: "z-ai/glm-5.2",
+      providerId: "openRouter",
+      settingsPath,
+      source: "switch_request",
+      updatedAt: "2026-06-23T00:00:00.000Z",
+    };
+    const handler = new SessionRequestHandlerAppliedTurnConfig(
+      createConfig(workspacePath)
+    );
+
+    const turnOptions = handler.attachToTurnOptions({
+      providerId: "openRouter",
+      sessionModelBinding: binding,
+    });
+
+    assert.equal(turnOptions?.openRouterEndpointTag, undefined);
+    assert.equal(
+      readAppliedProviderTurnConfig(turnOptions)?.modelId,
+      "z-ai/glm-5.2"
     );
   } finally {
     await rm(workspacePath, { force: true, recursive: true });

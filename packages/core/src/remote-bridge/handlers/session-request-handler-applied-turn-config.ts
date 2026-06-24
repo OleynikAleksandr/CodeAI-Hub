@@ -230,9 +230,20 @@ export class SessionRequestHandlerAppliedTurnConfig {
       options.sessionModelBinding,
       options.providerId
     );
-    const endpointTag = normalizeOptionalString(
-      loadOpenRouterSettingsSnapshot(settingsPath)?.endpointTag
-    );
+    const snapshot = loadOpenRouterSettingsSnapshot(settingsPath);
+    const endpointTag = normalizeOptionalString(snapshot?.endpointTag);
+    const defaultModel = normalizeOptionalString(snapshot?.defaultModel);
+    if (
+      endpointTag &&
+      defaultModel &&
+      options.sessionModelBinding?.providerId === options.providerId &&
+      ![
+        options.sessionModelBinding.baseModelId,
+        options.sessionModelBinding.modelId,
+      ].includes(defaultModel)
+    ) {
+      return options.turnOptions;
+    }
     return endpointTag
       ? {
           ...(options.turnOptions ?? {}),

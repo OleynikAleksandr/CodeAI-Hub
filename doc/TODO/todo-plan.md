@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase5.acceptance-retest.task1",
-  "expectedCommitMessage": "chore: record OpenRouter agent tooling acceptance",
+  "currentTaskId": "openrouter-agent.phase6.closeout.task1",
+  "expectedCommitMessage": "docs: close OpenRouter agent tooling scope",
   "debt": null
 }
 ```
@@ -137,12 +137,17 @@ Release build evidence for `1.2.602`:
 
 ### Stream: Hotfix Retest
 
-31. [IN_PROGRESS] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after installing hotfix release `1.2.602` (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`).
+31. [BLOCKED] `openrouter-agent.phase5.acceptance-retest.task1` User verifies OpenRouter again on standalone chat and one workflow/provider-start path that needs tools after installing hotfix release `1.2.602` (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record OpenRouter agent tooling acceptance`). **BLOCKED 2026-06-24:** OpenRouter chat can strict-route a switched model through the stale workspace `endpointTag`, producing `No endpoints found for <model>` 404s.
 32. [TODO] `openrouter-agent.phase5.acceptance-retest.commit1` Git Commit: `chore: record OpenRouter agent tooling acceptance` (hash: TBD)
+
+### Stream: OpenRouter Endpoint Routing Fix
+
+33. [DONE] `openrouter-agent.phase5.endpoint-routing.task1` Ignore persisted OpenRouter endpoint tags when the active session binding has switched to a different OpenRouter model, while preserving tools for chat and workflow turns (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): ignore stale endpoint routing`).
+34. [DONE] `openrouter-agent.phase5.endpoint-routing.commit1` Git Commit: `fix(openrouter): ignore stale endpoint routing` (hash: self)
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-33. [TODO] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
-34. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)
+35. [IN_PROGRESS] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
+36. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)
