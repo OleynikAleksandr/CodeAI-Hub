@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.residue-audit.task1",
-  "expectedCommitMessage": "chore: audit Gemini removal residue",
+  "currentTaskId": "gemini-removal.phase2.runtime-env-leftovers.task1",
+  "expectedCommitMessage": "refactor: drop Gemini runtime env leftovers",
   "debt": null
 }
 ```
@@ -270,5 +270,10 @@
 
 ### Stream: Gemini removal residue audit
 
-89. [IN_PROGRESS] `gemini-removal.phase2.residue-audit.task1` Run repository Gemini residue checks after code/package cleanup and record the next tracked cleanup scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit Gemini removal residue`).
-90. [TODO] `gemini-removal.phase2.residue-audit.commit1` Git Commit: `chore: audit Gemini removal residue` (hash: TBD)
+89. [DONE] `gemini-removal.phase2.residue-audit.task1` Run repository Gemini residue checks after code/package cleanup and record the next tracked cleanup scope. Audit evidence: `npm audit --omit=dev --audit-level=high` found 0 vulnerabilities; remaining live tracked residue is split into runtime env wiring, generated UI/localization residue, tooling glossary fixtures, and active docs. Historical `CHANGELOG.md`, archived plans, and safety `.gemini`/`GEMINI.md` ignore entries are not runtime provider package residue. (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit Gemini removal residue`).
+90. [DONE] `gemini-removal.phase2.residue-audit.commit1` Git Commit: `chore: audit Gemini removal residue` (hash: self)
+
+### Stream: Runtime environment leftovers
+
+91. [IN_PROGRESS] `gemini-removal.phase2.runtime-env-leftovers.task1` Remove remaining Gemini workspace/module environment wiring from the launcher and Claude provider-home resolution (scope: `packages/cef-launcher/src/core_launcher.cc, packages/Claude_Module/src/sdk/claude-provider-home.ts`; expected commit: `refactor: drop Gemini runtime env leftovers`).
+92. [TODO] `gemini-removal.phase2.runtime-env-leftovers.commit1` Git Commit: `refactor: drop Gemini runtime env leftovers` (hash: TBD)
