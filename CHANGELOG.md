@@ -8,6 +8,25 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.605] - 2026-06-24
+### Added
+- **Local Models workflow-agent prompts can be overridden for benchmark/control
+  experiments.** Set `CODEAI_LMSTUDIO_SYSTEM_PROMPT` for inline text or
+  `CODEAI_LMSTUDIO_SYSTEM_PROMPT_FILE` for a UTF-8 prompt file. Native LM
+  Studio `/api/v1/chat` sends the resolved value as `system_prompt`; the
+  workspace artifact-tool path uses it as the first system-message section and
+  keeps the existing tool contract below it.
+
+### Changed
+- **Local Models workflow-agent temperature is now `0.3`.** Native workflow
+  turns and workspace artifact-tool turns use the same temperature setting for
+  the upcoming local normalizer benchmark pass.
+
+### Verification
+- `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.prompt-controls.test.ts packages/core/src/local-models/local-models-provider-adapter.tools.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.604] - 2026-06-24
 ### Removed
 - **Gemini provider has been removed.** CodeAI Hub no longer ships the Gemini

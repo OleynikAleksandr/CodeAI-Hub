@@ -10,8 +10,8 @@
   "baseHead": "6cd9e8b9d",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md",
-  "currentTaskId": "phase3.stream1.task2",
-  "expectedCommitMessage": null,
+  "currentTaskId": "phase4.stream1.task2",
+  "expectedCommitMessage": "chore: build 1.2.605 release",
   "debt": null
 }
 ```
@@ -61,15 +61,15 @@
 
 1. [DONE] `phase3.stream1.task1` Fix the native prompt-control test capture typing found by `npm run build --workspace @codeai-hub/core` (scope: `packages/core/src/local-models/local-models-provider-adapter.prompt-controls.test.ts`; expected commit: `test: fix local models prompt controls typing`).
 2. [DONE] Git Commit: `test: fix local models prompt controls typing` (hash: self)
-3. [IN_PROGRESS] `phase3.stream1.task2` Run targeted Local Models tests and `npm run build --workspace @codeai-hub/core` (scope: `verification`).
+3. [DONE] `phase3.stream1.task2` Run targeted Local Models tests and `npm run build --workspace @codeai-hub/core` (scope: `verification`). Result: Targeted Local Models prompt-control tests passed; npm run build --workspace @codeai-hub/core passed.
 
 ## Phase 4 - Release And Acceptance (owner: Codex, updated: 2026-06-24)
 
 ### Stream: Release Build
 
-1. [TODO] `phase4.stream1.task1` Prepare README and CHANGELOG for release 1.2.605 before running release scripts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.605 release notes`).
-2. [TODO] Git Commit: `docs: prepare 1.2.605 release notes` (hash: TBD)
-3. [TODO] `phase4.stream1.task2` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json`; expected commit: `chore: build 1.2.605 release`).
+1. [DONE] `phase4.stream1.task1` Prepare README and CHANGELOG for release 1.2.605 before running release scripts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.605 release notes`).
+2. [DONE] Git Commit: `docs: prepare 1.2.605 release notes` (hash: self)
+3. [IN_PROGRESS] `phase4.stream1.task2` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json`; expected commit: `chore: build 1.2.605 release`).
 4. [TODO] Git Commit: `chore: build 1.2.605 release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing

@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.604** (Gemini Provider Removal)
+**Current Release — v1.2.605** (Local Models Prompt Controls)
+
+This release adds env-driven system prompt controls for Local Models / LM
+Studio workflow-agent turns.
+
+Local Models native `/api/v1/chat` turns can now receive a custom
+`system_prompt` from `CODEAI_LMSTUDIO_SYSTEM_PROMPT` or
+`CODEAI_LMSTUDIO_SYSTEM_PROMPT_FILE`. Workspace-bound artifact-tool turns use
+the same custom prompt as the first system-message section, while preserving
+their existing file-write tool contract. Both workflow-agent paths now use
+`temperature: 0.3`.
+
+Retest focus: set `CODEAI_LMSTUDIO_SYSTEM_PROMPT_FILE` to the Claude benchmark
+system prompt, restart Core/Project Manager, select Local Models, and confirm
+the local normalization test sends the custom system prompt with temperature
+`0.3`.
+
+**Previous Release — v1.2.604** (Gemini Provider Removal)
 
 This release removes the Gemini provider from CodeAI Hub.
 
