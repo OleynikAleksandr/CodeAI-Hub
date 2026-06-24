@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.stage-card.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from stage confirmation card",
+  "currentTaskId": "gemini-removal.phase1.session-theme.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from session theme helpers",
   "debt": null
 }
 ```
@@ -68,5 +68,10 @@
 
 ### Stream: Stage confirmation card
 
-9. [IN_PROGRESS] `gemini-removal.phase1.stage-card.task1` Remove the Gemini provider tint and stage-confirmation-card workflow/title branches (scope: `src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `refactor: drop Gemini from stage confirmation card`).
-10. [TODO] `gemini-removal.phase1.stage-card.commit1` Git Commit: `refactor: drop Gemini from stage confirmation card` (hash: TBD)
+9. [DONE] `gemini-removal.phase1.stage-card.task1` Remove the `geminiCli` branch from the stage-confirmation-card provider-stack guards (`stage-confirmation-card-provider-tint.ts` deferred to the union-type phase because of the `Record<ProviderStackId,...>` exhaustiveness) (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `refactor: drop Gemini from stage confirmation card`).
+10. [DONE] `gemini-removal.phase1.stage-card.commit1` Git Commit: `refactor: drop Gemini from stage confirmation card` (hash: self)
+
+### Stream: Session theme and model helpers
+
+11. [IN_PROGRESS] `gemini-removal.phase1.session-theme.task1` Remove Gemini from the session provider theme, model-info builder and session candidates (scope: `src/client/ui/src/session/helpers.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `refactor: drop Gemini from session theme helpers`).
+12. [TODO] `gemini-removal.phase1.session-theme.commit1` Git Commit: `refactor: drop Gemini from session theme helpers` (hash: TBD)
