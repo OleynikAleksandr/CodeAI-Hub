@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.localization-glossary-terms.task1",
-  "expectedCommitMessage": "refactor: drop Gemini localization glossary terms",
+  "currentTaskId": "gemini-removal.phase2.core-continuity-alias.task1",
+  "expectedCommitMessage": "refactor: drop Gemini continuity alias",
   "debt": null
 }
 ```
@@ -255,5 +255,10 @@
 
 ### Stream: Localization glossary terms
 
-83. [IN_PROGRESS] `gemini-removal.phase2.localization-glossary-terms.task1` Remove Gemini-specific provider glossary terms from the localization package (scope: `packages/localization/src/user-glossary-store.ts`; expected commit: `refactor: drop Gemini localization glossary terms`).
-84. [TODO] `gemini-removal.phase2.localization-glossary-terms.commit1` Git Commit: `refactor: drop Gemini localization glossary terms` (hash: TBD)
+83. [DONE] `gemini-removal.phase2.localization-glossary-terms.task1` Remove Gemini-specific provider glossary terms from the localization package (scope: `packages/localization/src/user-glossary-store.ts`; expected commit: `refactor: drop Gemini localization glossary terms`).
+84. [DONE] `gemini-removal.phase2.localization-glossary-terms.commit1` Git Commit: `refactor: drop Gemini localization glossary terms` (hash: self)
+
+### Stream: Core legacy continuity alias
+
+85. [IN_PROGRESS] `gemini-removal.phase2.core-continuity-alias.task1` Remove the legacy Gemini provider alias from dialog id normalization (scope: `packages/core/src/session-continuity/dialog-id.ts`; expected commit: `refactor: drop Gemini continuity alias`).
+86. [TODO] `gemini-removal.phase2.core-continuity-alias.commit1` Git Commit: `refactor: drop Gemini continuity alias` (hash: TBD)
