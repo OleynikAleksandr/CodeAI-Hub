@@ -286,9 +286,8 @@ test("SessionRequestHandler starts rollover only after turn_completed and clears
   const harness = createHarness();
   const session = createDescriptionSession(
     harness,
-    "/tmp/core-gemini-post-turn-rollover",
-    "provider-session-gemini-rollover",
-    "geminiCli"
+    "/tmp/core-claude-post-turn-rollover",
+    "provider-session-claude-rollover"
   );
   setLifecycle(harness, session.id, "resume_in_place");
   useProductionFlowNodeHandler(harness);
@@ -320,8 +319,8 @@ test("SessionRequestHandler starts rollover only after turn_completed and clears
   assert.deepEqual(rolloverStarts, [session.id]);
 
   harness.providerSessions.set(session.id, {
-    providerId: "geminiCli",
-    providerSessionId: "provider-session-gemini-rollover",
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-claude-rollover",
     unsubscribe: noop,
   });
   harness.providerRegistry.getAdapter = () => ({

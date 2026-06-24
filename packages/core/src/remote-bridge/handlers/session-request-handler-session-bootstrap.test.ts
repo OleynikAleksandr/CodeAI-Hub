@@ -6,13 +6,13 @@ import type { BridgeEvent } from "../types";
 import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 
 const noop = (): void => undefined;
-const GEMINI_CREATE_FAILURE_RE = /Failed to create geminiCli session/u;
+const PROVIDER_CREATE_FAILURE_RE = /Failed to create codexCli session/u;
 
 const createAdapter = (): ProviderAdapter =>
   ({
     closeSession: async () => undefined,
     createSession: () =>
-      Promise.reject(new Error("Gemini startup probe failed")),
+      Promise.reject(new Error("Codex startup probe failed")),
     initialize: async () => undefined,
     sendMessage: async () => undefined,
     subscribe: () => () => undefined,
@@ -79,14 +79,14 @@ test("SessionRequestHandlerSessionBootstrap routes shell startup failures throug
       runSlug: null,
       stage: "virtual_simulation",
     },
-    providerId: "geminiCli",
-    workspacePath: "/tmp/gemini-shell-failure",
+    providerId: "codexCli",
+    workspacePath: "/tmp/codex-shell-failure",
   });
 
-  assert.equal(session?.providerId, "geminiCli");
+  assert.equal(session?.providerId, "codexCli");
   assert.equal(events[0]?.type, "session:created");
   assert.equal(failures.length, 1);
-  assert.equal(failures[0]?.providerId, "geminiCli");
+  assert.equal(failures[0]?.providerId, "codexCli");
   assert.equal(failures[0]?.sessionId, session?.id);
-  assert.match(failures[0]?.message ?? "", GEMINI_CREATE_FAILURE_RE);
+  assert.match(failures[0]?.message ?? "", PROVIDER_CREATE_FAILURE_RE);
 });

@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remote-bridge-bootstrap-fixtures.task1",
-  "expectedCommitMessage": "refactor: drop Gemini remote bridge bootstrap fixtures",
+  "currentTaskId": "gemini-removal.phase2.remote-bridge-usage-fixtures.task1",
+  "expectedCommitMessage": "refactor: drop Gemini remote bridge usage fixtures",
   "debt": null
 }
 ```
@@ -200,5 +200,10 @@
 
 ### Stream: Remote-bridge bootstrap fixtures
 
-61. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-bootstrap-fixtures.task1` Replace Gemini bootstrap/rollover/runtime-core fixtures in remote-bridge tests with live providers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `refactor: drop Gemini remote bridge bootstrap fixtures`).
-62. [TODO] `gemini-removal.phase2.remote-bridge-bootstrap-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge bootstrap fixtures` (hash: TBD)
+61. [DONE] `gemini-removal.phase2.remote-bridge-bootstrap-fixtures.task1` Replace Gemini bootstrap/rollover/runtime-core fixtures in remote-bridge tests with live providers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `refactor: drop Gemini remote bridge bootstrap fixtures`).
+62. [DONE] `gemini-removal.phase2.remote-bridge-bootstrap-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge bootstrap fixtures` (hash: self)
+
+### Stream: Remote-bridge usage fixtures
+
+63. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-usage-fixtures.task1` Remove Gemini from remote-bridge post-rebind usage refresh and workflow-state fixtures (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.ts, packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit: `refactor: drop Gemini remote bridge usage fixtures`).
+64. [TODO] `gemini-removal.phase2.remote-bridge-usage-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge usage fixtures` (hash: TBD)

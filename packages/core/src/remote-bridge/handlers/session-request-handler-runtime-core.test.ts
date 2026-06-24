@@ -125,7 +125,7 @@ const createRuntimeCallbacks =
     emitTurnStateEvent: noop,
     finalizeFlowNodeContinuityLock: noop,
     finalizeFlowNodeContinuityLockOnBootstrapGate: noop,
-    getDefaultProviderId: () => "geminiCli",
+    getDefaultProviderId: () => "codexCli",
     handleFlowNodeContinuityProviderEvent: async () => undefined,
     handleMessage: async () => undefined,
     handleProviderEvent: noop,
@@ -194,7 +194,7 @@ test("createSessionRequestHandlerRuntimeCore wires deferred continuity callbacks
   const events: BridgeEvent[] = [];
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
-    "geminiCli",
+    "codexCli",
     "/tmp/runtime-core-callbacks"
   );
   const runtime = createSessionRequestHandlerRuntimeCore(
@@ -225,7 +225,7 @@ test("createSessionRequestHandlerRuntimeCore wires deferred continuity callbacks
       initiativeSlug: null,
       stage: null,
     },
-    providerId: "geminiCli",
+    providerId: "codexCli",
     rootSessionId: session.id,
     workspacePath: "/tmp/runtime-core-callbacks",
   });
