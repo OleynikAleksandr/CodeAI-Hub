@@ -147,7 +147,7 @@ The cluster is composed of closed modules behind the facade:
 
 7. `ManagedWorkflowProviderGateway`
    - provider-neutral Core message dispatch boundary;
-   - keeps Claude/Codex/Gemini differences below the state machine;
+   - keeps active provider differences below the state machine;
    - guarantees intended Core messages are visible in audit/session feed.
 
 8. `ManagedWorkflowUserIntentClassifier`

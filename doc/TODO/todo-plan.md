@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.cluster-docs-residue.task1",
-  "expectedCommitMessage": "docs: drop Gemini cluster refs",
+  "currentTaskId": "gemini-removal.phase2.checklist-design-docs-residue.task1",
+  "expectedCommitMessage": "docs: drop Gemini checklist design refs",
   "debt": null
 }
 ```
@@ -325,5 +325,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Cluster docs residue
 
-109. [IN_PROGRESS] `gemini-removal.phase2.cluster-docs-residue.task1` Remove Gemini-as-live-provider references from active Core/PM orchestration cluster docs (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: drop Gemini cluster refs`).
-110. [TODO] `gemini-removal.phase2.cluster-docs-residue.commit1` Git Commit: `docs: drop Gemini cluster refs` (hash: TBD)
+109. [DONE] `gemini-removal.phase2.cluster-docs-residue.task1` Remove Gemini-as-live-provider references from active Core/PM orchestration cluster docs (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: drop Gemini cluster refs`).
+110. [DONE] `gemini-removal.phase2.cluster-docs-residue.commit1` Git Commit: `docs: drop Gemini cluster refs` (hash: self)
+
+### Stream: Checklist and design docs residue
+
+111. [IN_PROGRESS] `gemini-removal.phase2.checklist-design-docs-residue.task1` Remove Gemini-as-live-provider references from active audit checklist and design-system docs (scope: `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md, doc/SolidWorks-WorkFlow/Checklists/RuntimeReliabilityReviewRemediation.md, doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html`; expected commit: `docs: drop Gemini checklist design refs`).
+112. [TODO] `gemini-removal.phase2.checklist-design-docs-residue.commit1` Git Commit: `docs: drop Gemini checklist design refs` (hash: TBD)
