@@ -3604,7 +3604,7 @@ If you want to try the product today, clone the repository, build the release ar
 - Node.js per the project `.nvmrc` (currently `22.17.0`) + `npm`
 - Visual Studio Code
 - `cmake` (required for the standalone CEF launcher / Project Manager build)
-- the provider CLIs or SDK access you plan to use (`Claude`, `Codex`, `Gemini`, `Kimi`) installed and authenticated separately
+- the provider CLI/API access you plan to use (`Claude`, `Codex`, `GLM`, `GLM-OpenCode`, `Kimi`, `Local Models`, `OpenRouter`) configured separately
 
 ### Build from Source
 ```bash
@@ -3673,7 +3673,9 @@ src/types/                   Shared TypeScript types (provider, session, model r
 packages/                    Workspace packages — provider modules and runtime services.
 packages/Claude_Module/      Claude provider runtime (Agent SDK integration, session lifecycle).
 packages/Codex_AppServer_Module/   Codex provider runtime (App Server JSON-RPC, app-server process).
-packages/Gemini_Module/      Gemini provider runtime (CLI core integration).
+packages/GLM_Module/         GLM Native provider runtime (direct Z.AI transport).
+packages/GLM_OpenCode_Module/ GLM OpenCode wrapper provider runtime.
+packages/Kimi_Module/        Kimi provider runtime (ACP integration).
 packages/core/               Core orchestrator (turn lifecycle, continuity, remote bridge).
 packages/core-supervisor/    Runtime supervisor (Core process management).
 packages/cef-launcher/       Standalone CEF Launcher (native macOS/Windows/Linux client for PM).

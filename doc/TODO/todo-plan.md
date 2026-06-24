@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.root-docs-residue.task1",
-  "expectedCommitMessage": "docs: update Gemini root docs residue",
+  "currentTaskId": "gemini-removal.phase2.backlog-docs-residue.task1",
+  "expectedCommitMessage": "docs: update Gemini backlog docs residue",
   "debt": null
 }
 ```
@@ -352,5 +352,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Root docs residue
 
-117. [IN_PROGRESS] `gemini-removal.phase2.root-docs-residue.task1` Remove Gemini-as-active-build/provider wording from root process and user-facing docs while preserving changelog/history records (scope: `AGENTS.md, README.md`; expected commit: `docs: update Gemini root docs residue`).
-118. [TODO] `gemini-removal.phase2.root-docs-residue.commit1` Git Commit: `docs: update Gemini root docs residue` (hash: TBD)
+117. [DONE] `gemini-removal.phase2.root-docs-residue.task1` Remove Gemini-as-active-build/provider wording from root process and user-facing docs while preserving changelog/history records (scope: `AGENTS.md, README.md`; expected commit: `docs: update Gemini root docs residue`).
+118. [DONE] `gemini-removal.phase2.root-docs-residue.commit1` Git Commit: `docs: update Gemini root docs residue` (hash: self)
+
+### Stream: Backlog docs residue
+
+119. [IN_PROGRESS] `gemini-removal.phase2.backlog-docs-residue.task1` Remove Gemini-as-future-provider implementation wording from active/deferred backlog docs while preserving historical notes (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/Capture_Workbench_UI_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Backlog/CrossProvider_Common_Capabilities.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Provider_Native_Request_Capture_Workbench_Architecture.md`; expected commit: `docs: update Gemini backlog docs residue`).
+120. [TODO] `gemini-removal.phase2.backlog-docs-residue.commit1` Git Commit: `docs: update Gemini backlog docs residue` (hash: TBD)
