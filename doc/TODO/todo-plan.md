@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.gemini-module-docs.task1",
-  "expectedCommitMessage": "docs: drop Gemini module docs",
+  "currentTaskId": "gemini-removal.phase2.active-architecture-docs.task1",
+  "expectedCommitMessage": "docs: drop Gemini active architecture refs",
   "debt": null
 }
 ```
@@ -290,5 +290,10 @@
 
 ### Stream: Gemini module documentation
 
-97. [IN_PROGRESS] `gemini-removal.phase2.gemini-module-docs.task1` Remove active Gemini module documentation entries that no longer describe a shipped provider module (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: drop Gemini module docs`).
-98. [TODO] `gemini-removal.phase2.gemini-module-docs.commit1` Git Commit: `docs: drop Gemini module docs` (hash: TBD)
+97. [DONE] `gemini-removal.phase2.gemini-module-docs.task1` Remove active Gemini module documentation entries that no longer describe a shipped provider module (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: drop Gemini module docs`).
+98. [DONE] `gemini-removal.phase2.gemini-module-docs.commit1` Git Commit: `docs: drop Gemini module docs` (hash: self)
+
+### Stream: Active architecture docs
+
+99. [IN_PROGRESS] `gemini-removal.phase2.active-architecture-docs.task1` Remove Gemini-as-live-provider references from active system and provider contracts after module removal (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`; expected commit: `docs: drop Gemini active architecture refs`).
+100. [TODO] `gemini-removal.phase2.active-architecture-docs.commit1` Git Commit: `docs: drop Gemini active architecture refs` (hash: TBD)
