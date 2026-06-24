@@ -20,6 +20,8 @@ Raw benchmark scripts, logs and one-off reports остаются в `doc/tmp/pro
 | `CrossProvider_Common_Capabilities.md` | Decision backlog, still useful. | Обновить с учетом Kimi, GLM, OpenRouter, Local Models и будущего normalizer routing. |
 | `Benchmarks/Provider_Native_Request_Capture_Workbench_Architecture.md` | Deferred parent plan. | Refresh provider set and Gemini-removal assumptions before implementation. |
 | `Benchmarks/Capture_Workbench_UI_Architecture.md` | Deferred child UI plan. | Refresh against current PM UI/runtime before implementation. |
+| `Benchmarks/Instruction_Stack_Control_Experiment_Results/` | Completed experiment evidence bundle. | Use as reference evidence for prompt/tool-stack comparisons; do not treat old captured provider prompts as current runtime truth without fresh capture. |
+| `Benchmarks/ProviderPromptsAndTools/` | Captured/custom prompt-tool profile bundle. | Use as benchmark/reference inputs for provider prompt/tool comparison; refresh before productizing a runtime profile. |
 | `DevelopmentTree_Sidebar_Visualization_Architecture.md` | Accepted/implemented planning residue. | Candidate for archive or SSOT fold-in cleanup; not an active backlog item as written. |
 | `Implementation_Continuity_Deterministic_Snapshot_Architecture.md` | Deferred planning candidate. | Still relevant; refresh against current Plan Orchestrator and continuity runtime before implementation. |
 | `Kimi_Audit_Followup_Planning.md` | Backlog intake from older audit. | Refresh findings before execution; some code paths changed since the audit. |

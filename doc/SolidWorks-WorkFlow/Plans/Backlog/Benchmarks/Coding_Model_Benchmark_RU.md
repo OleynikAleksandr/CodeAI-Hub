@@ -39,7 +39,7 @@
 
 Примечание по calibrated prompt: в GLM/Kimi A/B использовался не полный `Claude_System_Prompt_2026-04-24T13-55-05-221Z.md` (264 строки, 27 733 символа) и не Claude tools capture (738 строк, 38 258 символов), а наш купированный `Claude_My_System_Prompt.md` (51 строка, 3 798 символов). В таблицах ниже он переименован в `compact CodeAI prompt`.
 
-Примечание по Codex baseline: `Codex GPT 5.5 high` в этом benchmark не запускался с `ProviderPromptsAndTools/native/codex-native-system-instructions.md` и не с archived `Codex_My_System_Prompt.md`. Скрипт использовал `CodexProviderAdapter`, а тот на `thread/start` передает runtime `baseInstructions` из `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` (`CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`). Этот runtime prompt сейчас не совпадает с archived `Codex_My_System_Prompt.md`.
+Примечание по Codex baseline: `Codex GPT 5.5 high` в этом benchmark не запускался с `Plans/Backlog/Benchmarks/ProviderPromptsAndTools/native/codex-native-system-instructions.md` и не с archived `Codex_My_System_Prompt.md`. Скрипт использовал `CodexProviderAdapter`, а тот на `thread/start` передает runtime `baseInstructions` из `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` (`CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`). Этот runtime prompt сейчас не совпадает с archived `Codex_My_System_Prompt.md`.
 
 ## 3. Тестовый набор
 

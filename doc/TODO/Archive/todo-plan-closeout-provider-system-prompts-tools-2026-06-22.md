@@ -115,11 +115,11 @@
 39. [DONE] `provider-tools.phase1.acceptance-gate-581.commit1` Git Commit: `docs: restore 1.2.581 acceptance gate` (hash: self)
 
 ### Stream: GLM Provider Prompt And Tooling Profiles
-40. [DONE] `provider-tools.phase1.glm-profile-docs.task1` Create native Codex-derived and custom GLM seed documents for system instructions and tool surfaces (scope: `doc/SolidWorks-WorkFlow/ProviderPromptsAndTools/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: seed glm provider prompt tooling profiles`).
+40. [DONE] `provider-tools.phase1.glm-profile-docs.task1` Create native Codex-derived and custom GLM seed documents for system instructions and tool surfaces (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/ProviderPromptsAndTools/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: seed glm provider prompt tooling profiles`).
 41. [DONE] `provider-tools.phase1.glm-profile-docs.commit1` Git Commit: `docs: seed glm provider prompt tooling profiles` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing For 1.2.581
-42. [DONE] `provider-tools.phase1.glm-profile-localize.task1` Localize the GLM prompt/tooling seed documents' explanatory text to Russian for discussion while preserving exact captured native blocks (scope: `doc/SolidWorks-WorkFlow/ProviderPromptsAndTools/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: localize glm provider profile docs`).
+42. [DONE] `provider-tools.phase1.glm-profile-localize.task1` Localize the GLM prompt/tooling seed documents' explanatory text to Russian for discussion while preserving exact captured native blocks (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/ProviderPromptsAndTools/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: localize glm provider profile docs`).
 43. [DONE] `provider-tools.phase1.glm-profile-localize.commit1` Git Commit: `docs: localize glm provider profile docs` (hash: self)
 
 ### Stream: Codex Native Baseline For GLM And Kimi

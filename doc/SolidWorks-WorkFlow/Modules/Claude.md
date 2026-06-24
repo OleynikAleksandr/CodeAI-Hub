@@ -114,7 +114,7 @@ Important transport mapping:
 ### Current shared workflow system prompt
 
 - Runtime source: `packages/Claude_Module/src/sdk/claude-workflow-system-prompt.ts`
-- Experiment/reference copy: `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md`
+- Experiment/reference copy: `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md`
 - The prompt includes CodeAI Hub workflow framing, instruction priority/source-boundary rules, artifact-first behavior, scope control, short communication, and explicit progress-update rules.
 - The prompt also owns visible reasoning-summary language policy: if Claude SDK/runtime emits visible thinking/thought/reasoning summary text, it must be concise, user-safe, and written in the runtime reasoning/chat language from the current step language directive. For Russian (`ru`) sessions, Claude must not fall back to English summary headings or short progress labels.
 

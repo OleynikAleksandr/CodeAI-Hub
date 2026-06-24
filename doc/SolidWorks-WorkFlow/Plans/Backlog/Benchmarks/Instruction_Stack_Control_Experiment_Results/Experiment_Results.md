@@ -93,7 +93,7 @@ Product decision:
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`
 - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
-- `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`
 
 Сохраненные artifacts в этом bundle:
 
@@ -279,8 +279,8 @@ Product decision:
 
 Перенесено в:
 
-- `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis`
-- `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis`
 
 Причина:
 

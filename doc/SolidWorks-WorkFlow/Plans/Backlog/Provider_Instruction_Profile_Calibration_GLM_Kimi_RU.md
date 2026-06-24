@@ -22,7 +22,7 @@
 - GLM идет через наш собственный `glmNative` client и Z.AI/OpenAI-style request body.
 - Kimi идет через родной Kimi ACP runtime и managed profile `codeai-managed-agent/system.md`.
 
-Отдельно про Codex baseline: `Codex GPT 5.5 high` в coding benchmark запускался не с vanilla capture `ProviderPromptsAndTools/native/codex-native-system-instructions.md` и не напрямую с archived `Codex_My_System_Prompt.md`. Он шел через `CodexProviderAdapter`, который при `thread/start` передает `baseInstructions` из `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` (`CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`). На 2026-06-24 этот runtime prompt отличается от archived `Codex_My_System_Prompt.md`, поэтому эти артефакты нельзя смешивать в выводах.
+Отдельно про Codex baseline: `Codex GPT 5.5 high` в coding benchmark запускался не с vanilla capture `Plans/Backlog/Benchmarks/ProviderPromptsAndTools/native/codex-native-system-instructions.md` и не напрямую с archived `Codex_My_System_Prompt.md`. Он шел через `CodexProviderAdapter`, который при `thread/start` передает `baseInstructions` из `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` (`CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`). На 2026-06-24 этот runtime prompt отличается от archived `Codex_My_System_Prompt.md`, поэтому эти артефакты нельзя смешивать в выводах.
 
 ## 2. Что доказали эксперименты
 

@@ -29,7 +29,7 @@ Keep the change narrow and experimental. Resume-time instruction injection is a 
 ## Scope
 Implementation files:
 - `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`
-- `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 
 Release/docs files:

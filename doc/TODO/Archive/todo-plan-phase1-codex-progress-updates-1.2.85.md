@@ -5,7 +5,7 @@
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
@@ -30,7 +30,7 @@
 2. [DONE] Git Commit: `docs: plan codex progress update instruction tuning` (hash: `9de089a7d`)
 
 ### Stream: Prompt tuning
-3. [DONE] Replace ambiguous `short commentary messages` wording with ordinary user-visible assistant chat messages — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: clarify codex progress update visibility`
+3. [DONE] Replace ambiguous `short commentary messages` wording with ordinary user-visible assistant chat messages — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: clarify codex progress update visibility`
 4. [DONE] Git Commit: `fix: clarify codex progress update visibility` (hash: `7931317bb`)
 
 ### Stream: Release 1.2.85

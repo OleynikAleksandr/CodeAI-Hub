@@ -26,7 +26,7 @@ Avoid naming `reasoning summary blocks` as the primary rule because that is a ru
 ## Scope
 Implementation files:
 - `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`
-- `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 
 Release/docs files:

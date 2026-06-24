@@ -231,7 +231,7 @@ The current shared Codex `baseInstructions` require progress updates to be:
 The exact prompt snapshot is stored in:
 
 ```text
-doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md
+doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md
 ```
 
 That file is intentionally kept as raw prompt text so it can be compared byte-for-byte with `CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`.

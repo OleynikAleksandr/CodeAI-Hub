@@ -5,7 +5,7 @@
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
@@ -27,7 +27,7 @@
 2. [DONE] Git Commit: `docs: plan codex progress cadence tuning` (hash: `20751a137`)
 
 ### Stream: Prompt cadence
-3. [DONE] Strengthen Progress Updates cadence rule with 30-second and 3-5 work-cycle fallback — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: tighten codex progress update cadence`
+3. [DONE] Strengthen Progress Updates cadence rule with 30-second and 3-5 work-cycle fallback — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: tighten codex progress update cadence`
 4. [DONE] Git Commit: `fix: tighten codex progress update cadence` (hash: `16e7c4e6a`)
 
 ### Stream: Release 1.2.86

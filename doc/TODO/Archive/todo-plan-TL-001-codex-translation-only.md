@@ -19,7 +19,7 @@
   - `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`
   - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
   - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`
 - Только этот список является источником документов для восстановления контекста этого queued execution cycle после активации.
 
 ## Правила выполнения (Execution Rules)
