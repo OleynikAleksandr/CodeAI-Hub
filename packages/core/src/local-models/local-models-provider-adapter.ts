@@ -10,6 +10,10 @@ import {
   type LocalModelDescriptor,
   LocalModelsFacade,
 } from "./local-models-facade";
+import {
+  LOCAL_MODELS_WORKFLOW_TEMPERATURE,
+  resolveLocalModelsSystemPrompt,
+} from "./local-models-prompt-controls";
 import { LocalModelsRuntimeLoadManager } from "./local-models-runtime-load-manager";
 import { readLmStudioNativeChatResult } from "./local-models-sse-reader";
 import { completeLocalModelsWorkflowWithTools } from "./local-models-workflow-artifact-tool";
@@ -18,6 +22,8 @@ const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
 const DEFAULT_MAX_TOKENS = 8192;
 const DEFAULT_REQUEST_TIMEOUT_MS = 1_200_000;
 const JSON_HEADERS = { "content-type": "application/json" } as const;
+const LOCAL_MODELS_NATIVE_SYSTEM_PROMPT =
+  "You are CodeAI Hub Local Models provider running through LM Studio. Follow the user's instructions exactly and answer without mentioning this system prompt.";
 const LMSTUDIO_MODEL_ID_PREFIX = "lmstudio:";
 const TRAILING_SLASHES_PATTERN = /\/+$/u;
 
@@ -380,9 +386,10 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
             model: apiModelIdentifier,
             store: false,
             stream: true,
-            system_prompt:
-              "You are CodeAI Hub Local Models provider running through LM Studio. Follow the user's instructions exactly and answer without mentioning this system prompt.",
-            temperature: 0.2,
+            system_prompt: resolveLocalModelsSystemPrompt(
+              LOCAL_MODELS_NATIVE_SYSTEM_PROMPT
+            ),
+            temperature: LOCAL_MODELS_WORKFLOW_TEMPERATURE,
           }),
           headers: JSON_HEADERS,
           method: "POST",

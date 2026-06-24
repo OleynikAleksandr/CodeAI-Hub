@@ -10,8 +10,8 @@
   "baseHead": "6cd9e8b9d",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md",
-  "currentTaskId": "phase2.stream1.task1",
-  "expectedCommitMessage": "feat: add local models native prompt controls",
+  "currentTaskId": "phase2.stream1.task2",
+  "expectedCommitMessage": "feat: apply local models prompt controls to tools",
   "debt": null
 }
 ```
@@ -48,9 +48,9 @@
 
 ### Stream: Prompt Controls
 
-1. [IN_PROGRESS] `phase2.stream1.task1` Add native Local Models prompt override support and set workflow-agent temperature to 0.3 (scope: `packages/core/src/local-models/local-models-prompt-controls.ts, packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts`; expected commit: `feat: add local models native prompt controls`).
-2. [TODO] Git Commit: `feat: add local models native prompt controls` (hash: TBD)
-3. [TODO] `phase2.stream1.task2` Apply the same prompt controls to the workspace artifact tool path (scope: `packages/core/src/local-models/local-models-workflow-artifact-tool.ts, packages/core/src/local-models/local-models-provider-adapter.tools.test.ts`; expected commit: `feat: apply local models prompt controls to tools`).
+1. [DONE] `phase2.stream1.task1` Add native Local Models prompt override support and set workflow-agent temperature to 0.3 (scope: `packages/core/src/local-models/local-models-prompt-controls.ts, packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/local-models/local-models-provider-adapter.prompt-controls.test.ts`; expected commit: `feat: add local models native prompt controls`).
+2. [DONE] Git Commit: `feat: add local models native prompt controls` (hash: self)
+3. [IN_PROGRESS] `phase2.stream1.task2` Apply the same prompt controls to the workspace artifact tool path (scope: `packages/core/src/local-models/local-models-workflow-artifact-tool.ts, packages/core/src/local-models/local-models-provider-adapter.tools.test.ts`; expected commit: `feat: apply local models prompt controls to tools`).
 4. [TODO] Git Commit: `feat: apply local models prompt controls to tools` (hash: TBD)
 5. [TODO] `phase2.stream1.task3` Document Local Models prompt controls in SSOT docs (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document local models prompt controls`).
 6. [TODO] Git Commit: `docs: document local models prompt controls` (hash: TBD)
