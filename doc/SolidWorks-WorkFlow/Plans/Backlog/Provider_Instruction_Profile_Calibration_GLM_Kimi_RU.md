@@ -28,7 +28,7 @@
 
 Источник benchmark evidence:
 
-- `doc/SolidWorks-WorkFlow/Plans/Backlog/Coding_Model_Benchmark_RU.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Coding_Model_Benchmark_RU.md`
 - `doc/tmp/prototypes/glm-instruction-stack-ab.md`
 - `doc/tmp/prototypes/codeai-provider-code-glm-claude-prompt.md`
 - `doc/tmp/prototypes/kimi-instruction-stack-ab.md`
