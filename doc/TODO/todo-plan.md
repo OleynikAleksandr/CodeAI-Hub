@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-continuity-alias.task1",
-  "expectedCommitMessage": "refactor: drop Gemini continuity alias",
+  "currentTaskId": "gemini-removal.phase2.core-negative-gemini-fixtures.task1",
+  "expectedCommitMessage": "refactor: drop Gemini core negative fixtures",
   "debt": null
 }
 ```
@@ -260,5 +260,10 @@
 
 ### Stream: Core legacy continuity alias
 
-85. [IN_PROGRESS] `gemini-removal.phase2.core-continuity-alias.task1` Remove the legacy Gemini provider alias from dialog id normalization (scope: `packages/core/src/session-continuity/dialog-id.ts`; expected commit: `refactor: drop Gemini continuity alias`).
-86. [TODO] `gemini-removal.phase2.core-continuity-alias.commit1` Git Commit: `refactor: drop Gemini continuity alias` (hash: TBD)
+85. [DONE] `gemini-removal.phase2.core-continuity-alias.task1` Remove the legacy Gemini provider alias from dialog id normalization (scope: `packages/core/src/session-continuity/dialog-id.ts`; expected commit: `refactor: drop Gemini continuity alias`).
+86. [DONE] `gemini-removal.phase2.core-continuity-alias.commit1` Git Commit: `refactor: drop Gemini continuity alias` (hash: self)
+
+### Stream: Core negative Gemini fixtures
+
+87. [IN_PROGRESS] `gemini-removal.phase2.core-negative-gemini-fixtures.task1` Replace leftover Gemini invalid-provider fixtures in Core tests with provider-neutral removed-provider examples (scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts, packages/core/src/remote-bridge/handlers/settings-provider-auto-update-service.test.ts`; expected commit: `refactor: drop Gemini core negative fixtures`).
+88. [TODO] `gemini-removal.phase2.core-negative-gemini-fixtures.commit1` Git Commit: `refactor: drop Gemini core negative fixtures` (hash: TBD)

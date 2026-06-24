@@ -17,9 +17,6 @@ const resolveProviderSlug = (providerId: string): string => {
   if (normalized === "claudecodecli") {
     return "claude";
   }
-  if (normalized === "geminicli") {
-    return "gemini";
-  }
   return normalized;
 };
 
