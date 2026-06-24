@@ -9,7 +9,7 @@ const GLOSSARY_HEADER_PATTERN = /^# CodeAI Hub do-not-translate glossary$/mu;
 const PROJECT_MANAGER_PATTERN = /^Project Manager$/mu;
 const DESCRIPTION_PATTERN = /^Description$/mu;
 const QUESTIONNAIRE_PATTERN = /^questionnaire\.md$/mu;
-const GEMINI_PATTERN = /^Gemini$/mu;
+const KIMI_PATTERN = /^Kimi$/mu;
 const VS_CODE_PATTERN = /^VS Code$/mu;
 const CLAUDE_PATTERN = /^Claude$/mu;
 
@@ -78,15 +78,15 @@ test("save writes the normalized glossary text format", async () => {
   try {
     const store = new UserGlossaryStore({ glossaryDirectory });
     const overrides = await store.save({
-      preserve: ["Gemini", "gemini", "VS Code", "  ", "Claude"],
+      preserve: ["Kimi", "kimi", "VS Code", "  ", "Claude"],
     });
     const raw = await readFile(
       path.join(glossaryDirectory, "do-not-translate-terms.txt"),
       "utf8"
     );
 
-    assert.deepEqual(overrides.preserve, ["Gemini", "VS Code", "Claude"]);
-    assert.match(raw, GEMINI_PATTERN);
+    assert.deepEqual(overrides.preserve, ["Kimi", "VS Code", "Claude"]);
+    assert.match(raw, KIMI_PATTERN);
     assert.match(raw, VS_CODE_PATTERN);
     assert.match(raw, CLAUDE_PATTERN);
     assert.ok(raw.startsWith("# CodeAI Hub do-not-translate glossary\n"));

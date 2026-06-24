@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.tooling-glossary-residue.task1",
-  "expectedCommitMessage": "refactor: drop Gemini tooling glossary residue",
+  "currentTaskId": "gemini-removal.phase2.gemini-module-docs.task1",
+  "expectedCommitMessage": "docs: drop Gemini module docs",
   "debt": null
 }
 ```
@@ -285,5 +285,10 @@
 
 ### Stream: Tooling glossary residue
 
-95. [IN_PROGRESS] `gemini-removal.phase2.tooling-glossary-residue.task1` Remove remaining Gemini glossary and tooling fixture residue after provider removal (scope: `assets/localization/glossary/base.json, knip.json, packages/localization/src/user-glossary-store.test.ts`; expected commit: `refactor: drop Gemini tooling glossary residue`).
-96. [TODO] `gemini-removal.phase2.tooling-glossary-residue.commit1` Git Commit: `refactor: drop Gemini tooling glossary residue` (hash: TBD)
+95. [DONE] `gemini-removal.phase2.tooling-glossary-residue.task1` Remove remaining Gemini glossary and tooling fixture residue after provider removal (scope: `assets/localization/glossary/base.json, knip.json, packages/localization/src/user-glossary-store.test.ts`; expected commit: `refactor: drop Gemini tooling glossary residue`).
+96. [DONE] `gemini-removal.phase2.tooling-glossary-residue.commit1` Git Commit: `refactor: drop Gemini tooling glossary residue` (hash: self)
+
+### Stream: Gemini module documentation
+
+97. [IN_PROGRESS] `gemini-removal.phase2.gemini-module-docs.task1` Remove active Gemini module documentation entries that no longer describe a shipped provider module (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: drop Gemini module docs`).
+98. [TODO] `gemini-removal.phase2.gemini-module-docs.commit1` Git Commit: `docs: drop Gemini module docs` (hash: TBD)

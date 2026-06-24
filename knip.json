@@ -19,9 +19,6 @@
     "packages/Codex_AppServer_Module": {
       "entry": ["src/**/*.test.ts"]
     },
-    "packages/Gemini_Module": {
-      "entry": ["src/**/*.test.ts"]
-    },
     "packages/Kimi_Module": {
       "entry": ["src/**/*.test.ts"]
     },

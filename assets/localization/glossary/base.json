@@ -2,7 +2,6 @@
   "rules": [
     { "kind": "preserve", "sourceTerm": "Claude" },
     { "kind": "preserve", "sourceTerm": "Codex" },
-    { "kind": "preserve", "sourceTerm": "Gemini" },
     { "kind": "preserve", "sourceTerm": "CodeAI Hub" },
     { "kind": "preserve", "sourceTerm": "Project Manager" },
     { "kind": "preserve", "sourceTerm": "Core" },
@@ -14,7 +13,6 @@
     { "kind": "preserve", "sourceTerm": "TypeScript" },
     { "kind": "preserve", "sourceTerm": "Markdown" },
     { "kind": "preserve", "sourceTerm": "CODEX_HOME" },
-    { "kind": "preserve", "sourceTerm": "GEMINI_HOME" },
     { "kind": "preserve", "sourceTerm": "settings.json" },
     { "kind": "preserve", "sourceTerm": "config.toml" },
     { "kind": "preserve", "sourceTerm": "auth.json" },
