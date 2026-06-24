@@ -5,7 +5,7 @@
 
 Backlog содержит planning/research документы, которые ещё не стали SSOT и не закрыты как `Plans/Archive`. Перед запуском execution scope документ из Backlog нужно перечитать, сверить с текущими `System/`, `Modules/`, `Contracts/` и при необходимости обновить.
 
-Raw benchmark scripts, logs and one-off reports остаются в `doc/tmp/prototypes/`. В Backlog хранятся только durable summaries и planning-документы.
+Raw benchmark scripts, logs and one-off reports остаются в `doc/tmp/prototypes/`. Durable benchmark summaries лежат в `Benchmarks/`, остальные backlog planning-документы остаются в корне этой папки.
 
 ## Freshness Map
 
@@ -13,8 +13,8 @@ Raw benchmark scripts, logs and one-off reports остаются в `doc/tmp/pro
 | --- | --- | --- |
 | `Intent_Normalizer_Module_Planning_RU.md` | Active backlog candidate. | Использовать как planning source для будущего pre-turn intent normalizer; сначала согласовать MVP packet + routing whitelist. |
 | `Provider_Instruction_Profile_Calibration_GLM_Kimi_RU.md` | Active backlog candidate. | Перепроверить controlled A/B: exact prompt path, sha256, size, tool hash, client path, reasoning/temperature. Текущие результаты считать exploratory. |
-| `Coding_Model_Benchmark_RU.md` | Exploratory benchmark summary. | Не выбирать production model только по этому документу; повторить shortlist с frozen instruction/tool stack. |
-| `Documentation_Planning_Model_Benchmark_RU.md` | Exploratory benchmark summary. | Повторить shortlist с frozen instruction/tool stack и отдельными stop/read-only cases. |
+| `Benchmarks/Coding_Model_Benchmark_RU.md` | Exploratory benchmark summary. | Не выбирать production model только по этому документу; повторить shortlist с frozen instruction/tool stack. |
+| `Benchmarks/Documentation_Planning_Model_Benchmark_RU.md` | Exploratory benchmark summary. | Повторить shortlist с frozen instruction/tool stack и отдельными stop/read-only cases. |
 | `Claude_Agent_SDK_Capabilities_Analysis.md` | Research catalogue, partially aged. | Refresh по текущему Agent SDK перед новым scope; текущий runtime SSOT искать в `Modules/Claude.md`. |
 | `Codex_AppServer_Capabilities_Analysis.md` | Research catalogue, partially aged. | Refresh по текущему `codex app-server generate-ts` перед новым scope; runtime SSOT искать в `Modules/Codex*.md`. |
 | `CrossProvider_Common_Capabilities.md` | Decision backlog, still useful. | Обновить с учетом Kimi, GLM, OpenRouter, Local Models и будущего normalizer routing. |

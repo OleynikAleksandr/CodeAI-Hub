@@ -4,31 +4,47 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "backlog-docs-cleanup-2026-06-24",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "backlog-benchmarks-folder-2026-06-24",
   "branch": "main",
-  "baseHead": "6d7826ade",
+  "baseHead": "2ee1460b1",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/README.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "currentTaskId": "backlog-benchmarks.phase1.references.task1",
+  "expectedCommitMessage": "docs: update backlog benchmark references",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-backlog-docs-cleanup-2026-06-24.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/README.md`
-- **Last recorded commit:** `self`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/README.md`
+- Only this list is the document source for restoring this execution cycle's context.
 
-## Start Next Scope
+## Execution Rules
 
-There is no active execution scope. Before starting new implementation work:
+- Documentation-only cleanup.
+- Move durable benchmark summaries under `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/`.
+- Keep raw benchmark scripts/logs in `doc/tmp/prototypes/`.
+- Run `npm run plan:validate` before each `npm run plan:commit -- "<Expected Commit>"`.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 1 - Backlog Benchmark Folder Cleanup (owner: Codex, updated: 2026-06-24)
+
+### Stream: Move benchmark summaries
+
+1. [DONE] `backlog-benchmarks.phase1.move.task1` Move benchmark summary documents into the Backlog `Benchmarks/` folder and update the Backlog freshness map (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Backlog/**`; expected commit: `docs: group backlog benchmark summaries`).
+2. [DONE] `backlog-benchmarks.phase1.move.commit1` Git Commit: `docs: group backlog benchmark summaries` (hash: self)
+3. [IN_PROGRESS] `backlog-benchmarks.phase1.references.task1` Update index and cross-document links to the moved benchmark summaries (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Provider_Instruction_Profile_Calibration_GLM_Kimi_RU.md`; expected commit: `docs: update backlog benchmark references`).
+4. [TODO] `backlog-benchmarks.phase1.references.commit1` Git Commit: `docs: update backlog benchmark references` (hash: TBD)
+
+### Stream: Verification and closeout
+
+5. [TODO] `backlog-benchmarks.phase1.closeout.task1` Validate the plan, verify moved paths, and write the closeout archive (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-closeout-backlog-benchmarks-folder-2026-06-24.md`; expected commit: `docs: close backlog benchmarks folder cleanup`).
+6. [TODO] `backlog-benchmarks.phase1.closeout.commit1` Git Commit: `docs: close backlog benchmarks folder cleanup` (hash: TBD)
+7. [TODO] `backlog-benchmarks.phase1.post-closeout-handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
