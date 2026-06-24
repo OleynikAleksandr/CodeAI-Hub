@@ -52,7 +52,8 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
         id: sessionId,
         workspacePath: "/tmp/workspace",
         stage: "description",
-        providerId: sessionId === "codex-session" ? "codexCli" : "geminiCli",
+        providerId:
+          sessionId === "codex-session" ? "codexCli" : "claudeCodeCli",
       }),
     } as never,
     updateBindingWithResolvedId: () => {
@@ -65,8 +66,8 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
 
   router.handleProviderEvent("session-1", {
     type: "turn_failed",
-    provider: "gemini",
-    message: "Gemini stream stalled after 60s without progress.",
+    provider: "claude",
+    message: "Claude stream stalled after 60s without progress.",
     timestamp: "2026-03-30T13:34:17.397Z",
   });
 
@@ -75,7 +76,7 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
   assert.equal(appended[0]?.role, "system");
   assert.deepEqual(appended[0]?.event, {
     content:
-      "Provider turn failed: Gemini stream stalled after 60s without progress.",
+      "Provider turn failed: Claude stream stalled after 60s without progress.",
     timestamp: "2026-03-30T13:34:17.397Z",
   });
   assert.equal(
@@ -83,7 +84,7 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
       (event) =>
         (event as { type?: string }).type === "session:error" &&
         ((event as { payload?: { message?: string } }).payload?.message ??
-          "") === "Gemini stream stalled after 60s without progress."
+          "") === "Claude stream stalled after 60s without progress."
     ),
     true
   );

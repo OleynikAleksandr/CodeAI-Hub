@@ -11,7 +11,7 @@ const STARTUP_FAILURE_RE = /Provider session startup timed out/u;
 test("SessionProviderFailureRecovery closes shell sessions without provider binding", () => {
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
-    "geminiCli",
+    "codexCli",
     "/tmp/startup-recovery",
     undefined,
     { initiativeSlug: "demo", stage: "virtual_simulation" }
@@ -52,7 +52,7 @@ test("SessionProviderFailureRecovery closes shell sessions without provider bind
   >[0]);
 
   recovery.handleProviderFailure(
-    "geminiCli",
+    "codexCli",
     new Error("Provider session startup timed out"),
     session.id
   );
@@ -60,7 +60,7 @@ test("SessionProviderFailureRecovery closes shell sessions without provider bind
   assert.equal(session.providerSessionStatus, "failed");
   assert.deepEqual(closedSessions, [session.id]);
   assert.deepEqual(bindingBroadcasts, [session.id]);
-  assert.deepEqual(registryFailures, ["geminiCli"]);
+  assert.deepEqual(registryFailures, ["codexCli"]);
   assert.equal(events[0]?.type, "session:error");
   assert.match(
     (events[0]?.payload as { readonly message?: string } | undefined)

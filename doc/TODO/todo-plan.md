@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remote-bridge-session-leftovers.task1",
-  "expectedCommitMessage": "refactor: drop Gemini remote bridge session leftovers",
+  "currentTaskId": "gemini-removal.phase2.remote-bridge-provider-fixtures.task1",
+  "expectedCommitMessage": "refactor: drop Gemini remote bridge provider fixtures",
   "debt": null
 }
 ```
@@ -190,5 +190,10 @@
 
 ### Stream: Remote-bridge session leftovers
 
-57. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-session-leftovers.task1` Remove Gemini-only remote-bridge session leftovers from stale-binding messages and focused test fixtures (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.test.ts`; expected commit: `refactor: drop Gemini remote bridge session leftovers`).
-58. [TODO] `gemini-removal.phase2.remote-bridge-session-leftovers.commit1` Git Commit: `refactor: drop Gemini remote bridge session leftovers` (hash: TBD)
+57. [DONE] `gemini-removal.phase2.remote-bridge-session-leftovers.task1` Remove Gemini-only remote-bridge session leftovers from stale-binding messages and focused test fixtures (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.test.ts`; expected commit: `refactor: drop Gemini remote bridge session leftovers`).
+58. [DONE] `gemini-removal.phase2.remote-bridge-session-leftovers.commit1` Git Commit: `refactor: drop Gemini remote bridge session leftovers` (hash: self)
+
+### Stream: Remote-bridge provider fixtures
+
+59. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-provider-fixtures.task1` Replace remaining Gemini provider fixtures in focused remote-bridge session tests with live providers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts, packages/core/src/remote-bridge/handlers/session-provider-session-resolver.test.ts`; expected commit: `refactor: drop Gemini remote bridge provider fixtures`).
+60. [TODO] `gemini-removal.phase2.remote-bridge-provider-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge provider fixtures` (hash: TBD)

@@ -29,7 +29,6 @@ import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 // shared: a one-shot invalidate + ensureSessionReadyForSend + resend covers all
 // of them.
 const PROVIDER_STALE_BINDING_ERROR_CODES: ReadonlySet<string> = new Set([
-  "GEMINI_SESSION_STALE_BINDING",
   "CLAUDE_SESSION_STALE_BINDING",
   "CODEX_SESSION_STALE_BINDING",
   "KIMI_SESSION_STALE_BINDING",
