@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.provider-release-assets.task1",
-  "expectedCommitMessage": "refactor: drop Gemini provider release assets",
+  "currentTaskId": "gemini-removal.phase2.release-ignore-cleanup.task1",
+  "expectedCommitMessage": "refactor: drop Gemini release ignore leftovers",
   "debt": null
 }
 ```
@@ -240,5 +240,10 @@
 
 ### Stream: Provider release assets
 
-77. [IN_PROGRESS] `gemini-removal.phase2.provider-release-assets.task1` Remove Gemini provider release assets and manifests that no build script consumes anymore (scope: `assets/providers/gemini/**, doc/tmp/releases/gemini-module-*.tar.bz2`; expected commit: `refactor: drop Gemini provider release assets`).
-78. [TODO] `gemini-removal.phase2.provider-release-assets.commit1` Git Commit: `refactor: drop Gemini provider release assets` (hash: TBD)
+77. [DONE] `gemini-removal.phase2.provider-release-assets.task1` Remove Gemini provider release assets and manifests that no build script consumes anymore (scope: `assets/providers/gemini/**, doc/tmp/releases/gemini-module-*.tar.bz2`; expected commit: `refactor: drop Gemini provider release assets`).
+78. [DONE] `gemini-removal.phase2.provider-release-assets.commit1` Git Commit: `refactor: drop Gemini provider release assets` (hash: self)
+
+### Stream: Release ignore cleanup
+
+79. [IN_PROGRESS] `gemini-removal.phase2.release-ignore-cleanup.task1` Remove Gemini package/archive leftovers from release ignore and cleanup utilities (scope: `.vscodeignore, scripts/release-utils.sh`; expected commit: `refactor: drop Gemini release ignore leftovers`).
+80. [TODO] `gemini-removal.phase2.release-ignore-cleanup.commit1` Git Commit: `refactor: drop Gemini release ignore leftovers` (hash: TBD)
