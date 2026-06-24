@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.build-script-package-list.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from build scripts",
+  "currentTaskId": "gemini-removal.phase2.provider-release-assets.task1",
+  "expectedCommitMessage": "refactor: drop Gemini provider release assets",
   "debt": null
 }
 ```
@@ -235,5 +235,10 @@
 
 ### Stream: Build script package list
 
-75. [IN_PROGRESS] `gemini-removal.phase2.build-script-package-list.task1` Remove Gemini workspace/package references from build and release scripts (scope: `scripts/build-core.sh, scripts/build-release.sh, scripts/build-all.sh, scripts/build-gemini-module.sh`; expected commit: `refactor: drop Gemini from build scripts`).
-76. [TODO] `gemini-removal.phase2.build-script-package-list.commit1` Git Commit: `refactor: drop Gemini from build scripts` (hash: TBD)
+75. [DONE] `gemini-removal.phase2.build-script-package-list.task1` Remove Gemini workspace/package references from build and release scripts (scope: `scripts/build-core.sh, scripts/build-release.sh, scripts/build-all.sh, scripts/build-gemini-module.sh`; expected commit: `refactor: drop Gemini from build scripts`).
+76. [DONE] `gemini-removal.phase2.build-script-package-list.commit1` Git Commit: `refactor: drop Gemini from build scripts` (hash: self)
+
+### Stream: Provider release assets
+
+77. [IN_PROGRESS] `gemini-removal.phase2.provider-release-assets.task1` Remove Gemini provider release assets and manifests that no build script consumes anymore (scope: `assets/providers/gemini/**, doc/tmp/releases/gemini-module-*.tar.bz2`; expected commit: `refactor: drop Gemini provider release assets`).
+78. [TODO] `gemini-removal.phase2.provider-release-assets.commit1` Git Commit: `refactor: drop Gemini provider release assets` (hash: TBD)

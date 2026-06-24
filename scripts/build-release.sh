@@ -170,18 +170,15 @@ fi
 if ! grep -q "node_modules/@google-cloud" .vscodeignore 2>/dev/null; then
   echo "node_modules/@google-cloud/**" >> .vscodeignore
 fi
-if [ -d "node_modules/@codeai-hub/claude-module" ] || [ -d "node_modules/@codeai-hub/codex-app-server-module" ] || [ -d "node_modules/@codeai-hub/gemini-module" ] || [ -d "node_modules/@codeai-hub/glm-module" ] || [ -d "node_modules/@codeai-hub/glm-opencode-module" ] || [ -d "node_modules/@codeai-hub/kimi-module" ]; then
+if [ -d "node_modules/@codeai-hub/claude-module" ] || [ -d "node_modules/@codeai-hub/codex-app-server-module" ] || [ -d "node_modules/@codeai-hub/glm-module" ] || [ -d "node_modules/@codeai-hub/glm-opencode-module" ] || [ -d "node_modules/@codeai-hub/kimi-module" ]; then
   echo "⚠️  Warning: Bundled provider modules detected, removing..."
-  rm -rf node_modules/@codeai-hub/claude-module node_modules/@codeai-hub/codex-app-server-module node_modules/@codeai-hub/gemini-module node_modules/@codeai-hub/glm-module node_modules/@codeai-hub/glm-opencode-module node_modules/@codeai-hub/kimi-module
+  rm -rf node_modules/@codeai-hub/claude-module node_modules/@codeai-hub/codex-app-server-module node_modules/@codeai-hub/glm-module node_modules/@codeai-hub/glm-opencode-module node_modules/@codeai-hub/kimi-module
 fi
 if ! grep -q "node_modules/@codeai-hub/claude-module" .vscodeignore 2>/dev/null; then
   echo "node_modules/@codeai-hub/claude-module/**" >> .vscodeignore
 fi
 if ! grep -q "node_modules/@codeai-hub/codex-app-server-module" .vscodeignore 2>/dev/null; then
   echo "node_modules/@codeai-hub/codex-app-server-module/**" >> .vscodeignore
-fi
-if ! grep -q "node_modules/@codeai-hub/gemini-module" .vscodeignore 2>/dev/null; then
-  echo "node_modules/@codeai-hub/gemini-module/**" >> .vscodeignore
 fi
 if ! grep -q "node_modules/@codeai-hub/glm-module" .vscodeignore 2>/dev/null; then
   echo "node_modules/@codeai-hub/glm-module/**" >> .vscodeignore
@@ -197,9 +194,6 @@ if ! grep -q "packages/Claude_Module" .vscodeignore 2>/dev/null; then
 fi
 if ! grep -q "packages/Codex_AppServer_Module" .vscodeignore 2>/dev/null; then
   echo "packages/Codex_AppServer_Module/**" >> .vscodeignore
-fi
-if ! grep -q "packages/Gemini_Module" .vscodeignore 2>/dev/null; then
-  echo "packages/Gemini_Module/**" >> .vscodeignore
 fi
 if ! grep -q "packages/GLM_Module" .vscodeignore 2>/dev/null; then
   echo "packages/GLM_Module/**" >> .vscodeignore
@@ -273,7 +267,6 @@ RELEASE_CACHE="$HOME/.codeai-hub/releases"
 declare -a REQUIRED_FILES=(
   "claude-module-${VERSION}.tar.bz2"
   "codex-module-${VERSION}.tar.bz2"
-  "gemini-module-${VERSION}.tar.bz2"
   "glm-module-${VERSION}.tar.bz2"
   "glm-opencode-module-${VERSION}.tar.bz2"
   "kimi-module-${VERSION}.tar.bz2"
@@ -305,15 +298,6 @@ fi
 
 node -e "require('$CODEX_INSTALL_ROOT/dist/index.js')"
 echo "✅ Codex provider bundle loads with bundled shared translation package"
-
-GEMINI_INSTALL_ROOT="$HOME/.codeai-hub/providers/gemini/$VERSION"
-if [[ ! -f "$GEMINI_INSTALL_ROOT/node_modules/@codeai-hub/translation/package.json" ]]; then
-  echo "❌ Missing bundled @codeai-hub/translation package in $GEMINI_INSTALL_ROOT" >&2
-  exit 1
-fi
-
-node -e "require('$GEMINI_INSTALL_ROOT/dist/index.js')"
-echo "✅ Gemini provider bundle loads with bundled shared translation package"
 
 KIMI_INSTALL_ROOT="$HOME/.codeai-hub/providers/kimi/$VERSION"
 node -e "require('$KIMI_INSTALL_ROOT/dist/index.js')"
@@ -351,10 +335,6 @@ if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/translation/package.
   echo "❌ Missing bundled @codeai-hub/translation package in $CORE_INSTALL_ROOT" >&2
   exit 1
 fi
-if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/gemini-module/package.json" ]]; then
-  echo "❌ Missing bundled @codeai-hub/gemini-module package in $CORE_INSTALL_ROOT" >&2
-  exit 1
-fi
 if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/glm-module/package.json" ]]; then
   echo "❌ Missing bundled @codeai-hub/glm-module package in $CORE_INSTALL_ROOT" >&2
   exit 1
@@ -386,9 +366,6 @@ fi
 
 CORE_HANDLER_PATH="$CORE_HANDLER_PATH" "$CORE_NODE_PATH" -e "require(process.env.CORE_HANDLER_PATH)"
 echo "✅ Core runtime bundle loads the localization-backed settings bridge"
-CORE_GEMINI_MODULE_PATH="$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/gemini-module/dist/index.js" \
-"$CORE_NODE_PATH" -e "require(process.env.CORE_GEMINI_MODULE_PATH)"
-echo "✅ Core runtime bundle includes Gemini provider module"
 CORE_GLM_MODULE_PATH="$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/glm-module/dist/index.js" \
 "$CORE_NODE_PATH" -e "require(process.env.CORE_GLM_MODULE_PATH)"
 echo "✅ Core runtime bundle includes GLM provider module"
@@ -412,7 +389,6 @@ const manifestChecks = [
   ["assets/launcher/manifest.json", (manifest) => manifest.platforms?.[launcherKey]?.launcherVersion],
   ["assets/providers/claude/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/codex/manifest.json", (manifest) => manifest.module?.version],
-  ["assets/providers/gemini/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/glm-native/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/glm-opencode/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/kimi/manifest.json", (manifest) => manifest.module?.version],
