@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-recovery-resolver.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from recovery target resolver",
+  "currentTaskId": "gemini-removal.phase2.remote-bridge-provider-settings.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from remote bridge provider settings",
   "debt": null
 }
 ```
@@ -175,5 +175,10 @@
 
 ### Stream: Core recovery resolver
 
-51. [IN_PROGRESS] `gemini-removal.phase2.core-recovery-resolver.task1` Remove Gemini fallback targets from the provider recovery target resolver (scope: `packages/core/src/recovery/recovery-target-resolver.ts`; expected commit: `refactor: drop Gemini from recovery target resolver`).
-52. [TODO] `gemini-removal.phase2.core-recovery-resolver.commit1` Git Commit: `refactor: drop Gemini from recovery target resolver` (hash: TBD)
+51. [DONE] `gemini-removal.phase2.core-recovery-resolver.task1` Remove Gemini fallback targets from the provider recovery target resolver (scope: `packages/core/src/recovery/recovery-target-resolver.ts`; expected commit: `refactor: drop Gemini from recovery target resolver`).
+52. [DONE] `gemini-removal.phase2.core-recovery-resolver.commit1` Git Commit: `refactor: drop Gemini from recovery target resolver` (hash: self)
+
+### Stream: Remote-bridge provider settings commands
+
+53. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-provider-settings.task1` Remove Gemini from remote-bridge provider settings/update/version command surfaces (scope: `packages/core/src/remote-bridge/**`; expected commit: `refactor: drop Gemini from remote bridge provider settings`).
+54. [TODO] `gemini-removal.phase2.remote-bridge-provider-settings.commit1` Git Commit: `refactor: drop Gemini from remote bridge provider settings` (hash: TBD)

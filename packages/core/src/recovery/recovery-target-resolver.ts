@@ -22,13 +22,8 @@ export interface RecoveryContext {
 
 type ProviderHealthCheck = (providerId: string) => boolean;
 
-// MVP fallback matrix per architecture doc section 6.2
+// MVP fallback matrix per architecture doc section 6.2.
 const STAGE_CROSS_PROVIDER_FALLBACK: Record<string, Record<string, string>> = {
-  geminiCli: {
-    description: "claudeCodeCli",
-    virtual_simulation: "codexCli",
-    diagram_modules: "claudeCodeCli",
-  },
   claudeCodeCli: {
     description: "codexCli",
     virtual_simulation: "codexCli",
@@ -60,16 +55,7 @@ export function resolveRecoveryTargets(
     });
   }
 
-  // Priority 2: same provider, fallback model (Gemini only for MVP)
-  if (context.currentProviderId === "geminiCli" && context.adapterAvailable) {
-    targets.push({
-      providerId: "geminiCli",
-      modelId: "gemini-3-flash-preview",
-      mode: "switch_model",
-    });
-  }
-
-  // Priority 3: cross-provider fallback by stage
+  // Priority 2: cross-provider fallback by stage
   const stageMap = STAGE_CROSS_PROVIDER_FALLBACK[context.currentProviderId];
   const stage = context.stage ?? "description";
   const fallbackProviderId = stageMap?.[stage] ?? null;
@@ -83,7 +69,7 @@ export function resolveRecoveryTargets(
   }
 
   // Add remaining providers as last resort
-  const allProviders = ["claudeCodeCli", "codexCli", "geminiCli"];
+  const allProviders = ["claudeCodeCli", "codexCli"];
   for (const pid of allProviders) {
     if (
       pid !== context.currentProviderId &&
