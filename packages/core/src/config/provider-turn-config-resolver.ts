@@ -30,7 +30,6 @@ export interface ProviderTurnConfigResolverOptions {
   readonly fallbackClaudeModel: string;
   readonly fallbackCodexModel: string;
   readonly fallbackCodexReasoningEffort: CodexReasoningEffort;
-  readonly fallbackGeminiModel?: string;
   readonly fallbackKimiModel?: string;
   readonly settingsPath: string;
 }

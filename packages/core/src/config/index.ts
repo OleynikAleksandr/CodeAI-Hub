@@ -32,11 +32,6 @@ export interface CoreConfig {
   readonly codexSkipGitRepoCheck: boolean;
   readonly codexWorkspacePath?: string;
   readonly continuityPreemptRemainingPercentThreshold: number;
-  readonly geminiCredentialsDirectory?: string;
-  readonly geminiDefaultModel?: string;
-  readonly geminiSettingsPath?: string;
-  readonly geminiThinkingLevelByModel?: Record<string, string>;
-  readonly geminiWorkspacePath?: string;
   readonly globalSettingsPath?: string;
   readonly host: string;
   readonly idleTtlMinutes: number | null;
@@ -180,7 +175,6 @@ export const loadConfig = (): CoreConfig => {
   const codexDefaultReasoningEffort =
     normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
     DEFAULT_CODEX_REASONING_EFFORT;
-  const geminiDefaultModel = process.env.GEMINI_DEFAULT_MODEL ?? undefined;
   const kimiDefaultModel = process.env.KIMI_DEFAULT_MODEL ?? undefined;
   const claudeContinuityRemainingPercentThreshold =
     resolveClaudeContinuityRemainingPercentThreshold(null);
@@ -212,7 +206,6 @@ export const loadConfig = (): CoreConfig => {
     codexSkipGitRepoCheck,
     codexDefaultModel,
     codexDefaultReasoningEffort,
-    geminiDefaultModel,
     globalSettingsPath,
     kimiDefaultModel,
     claudeContinuityRemainingPercentThreshold,

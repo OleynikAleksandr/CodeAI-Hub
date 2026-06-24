@@ -260,7 +260,6 @@ export const createSessionRequestHandlerRuntimeCore = (
       fallbackCodexModel: options.config.codexDefaultModel ?? "gpt-5.4-mini",
       fallbackCodexReasoningEffort:
         options.config.codexDefaultReasoningEffort ?? "medium",
-      fallbackGeminiModel: options.config.geminiDefaultModel,
       settingsPath: defaultSettingsPath,
     },
     settingsPathResolver: (key) =>

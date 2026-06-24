@@ -43,8 +43,6 @@ const createCoreConfig = (overrides: Partial<CoreConfig> = {}): CoreConfig => ({
   codexDefaultReasoningEffort: "medium",
   codexSkipGitRepoCheck: false,
   continuityPreemptRemainingPercentThreshold: 50,
-  geminiSettingsPath: "/settings.json",
-  geminiThinkingLevelByModel: {},
   host: "127.0.0.1",
   idleTtlMinutes: 60,
   managedMode: null,

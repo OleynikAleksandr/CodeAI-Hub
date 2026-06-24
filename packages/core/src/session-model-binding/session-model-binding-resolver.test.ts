@@ -13,7 +13,6 @@ test("SessionModelBindingResolver clones inherited continuity binding without Se
       fallbackClaudeModel: "sonnet",
       fallbackCodexModel: "gpt-5.5",
       fallbackCodexReasoningEffort: "medium",
-      fallbackGeminiModel: "gemini-3.1-pro-preview",
       settingsPath: "/missing/settings.json",
     },
   });
@@ -50,7 +49,6 @@ test("SessionModelBindingResolver carries workspace settings path on bindings", 
       fallbackClaudeModel: "sonnet",
       fallbackCodexModel: "gpt-5.5",
       fallbackCodexReasoningEffort: "medium",
-      fallbackGeminiModel: "gemini-3.1-pro-preview",
       settingsPath: "/global/settings.json",
     },
     settingsPathResolver: (key) =>

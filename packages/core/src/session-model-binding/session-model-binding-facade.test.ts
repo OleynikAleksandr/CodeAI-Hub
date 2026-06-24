@@ -48,7 +48,6 @@ const createResolver = (settingsPath: string): SessionModelBindingResolver =>
       fallbackClaudeModel: "sonnet",
       fallbackCodexModel: "gpt-5.3-codex",
       fallbackCodexReasoningEffort: "medium",
-      fallbackGeminiModel: "gemini-3.1-pro-preview",
       settingsPath,
     },
   });
@@ -60,12 +59,6 @@ const createSettingsSnapshot = (): Record<string, unknown> => ({
       reasoningByModel: {
         "gpt-5.3-codex": "xhigh",
         "gpt-5.4-mini": "high",
-      },
-    },
-    gemini: {
-      defaultModel: "gemini-3.1-pro-preview",
-      thinkingLevelByModel: {
-        "gemini-3.1-pro-preview": "high",
       },
     },
     openRouter: {
@@ -126,29 +119,6 @@ test("SessionModelBindingResolver binds explicit selection without changing sett
     assert.equal(binding.modelId, "gpt-5.3-codex reasoning:xhigh");
     assert.equal(binding.reasoningEffort, "xhigh");
     assert.equal(binding.source, "start_step_selection");
-  } finally {
-    await rm(homeDirectory, { force: true, recursive: true });
-  }
-});
-
-test("SessionModelBindingResolver includes provider thinking fields in effective identity", async () => {
-  const { homeDirectory, settingsPath } = await createTempSettingsPath();
-
-  try {
-    await writeSettings(settingsPath, createSettingsSnapshot());
-    const resolver = createResolver(settingsPath);
-
-    const binding = resolver.bindFromSettingsDefault({
-      providerId: "geminiCli",
-      sessionId: "session-c",
-      workspacePath: "/tmp/workspace-c",
-    });
-
-    assert.ok(binding);
-    assert.equal(binding.baseModelId, "gemini-3.1-pro-preview");
-    assert.equal(binding.modelId, "gemini-3.1-pro-preview thinking:high");
-    assert.equal(binding.thinkingLevel, "high");
-    assert.equal(binding.source, "settings_default");
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }

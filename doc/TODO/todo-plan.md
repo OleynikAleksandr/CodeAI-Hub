@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-config-leftovers.task1",
-  "expectedCommitMessage": "refactor: drop Gemini core config leftovers",
+  "currentTaskId": "gemini-removal.phase2.core-recovery-resolver.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from recovery target resolver",
   "debt": null
 }
 ```
@@ -170,5 +170,10 @@
 
 ### Stream: Core config leftovers
 
-49. [IN_PROGRESS] `gemini-removal.phase2.core-config-leftovers.task1` Remove legacy Gemini CoreConfig fields, Gemini fallback turn-config option, and related test fixtures (scope: `packages/core/src/config/**, packages/core/src/**/*.test.ts`; expected commit: `refactor: drop Gemini core config leftovers`).
-50. [TODO] `gemini-removal.phase2.core-config-leftovers.commit1` Git Commit: `refactor: drop Gemini core config leftovers` (hash: TBD)
+49. [DONE] `gemini-removal.phase2.core-config-leftovers.task1` Remove legacy Gemini CoreConfig fields, Gemini fallback turn-config option, and related remote-bridge/test fixtures (scope: `packages/core/src/config/**, packages/core/src/remote-bridge/**, packages/core/src/**/*.test.ts`; expected commit: `refactor: drop Gemini core config leftovers`).
+50. [DONE] `gemini-removal.phase2.core-config-leftovers.commit1` Git Commit: `refactor: drop Gemini core config leftovers` (hash: self)
+
+### Stream: Core recovery resolver
+
+51. [IN_PROGRESS] `gemini-removal.phase2.core-recovery-resolver.task1` Remove Gemini fallback targets from the provider recovery target resolver (scope: `packages/core/src/recovery/recovery-target-resolver.ts`; expected commit: `refactor: drop Gemini from recovery target resolver`).
+52. [TODO] `gemini-removal.phase2.core-recovery-resolver.commit1` Git Commit: `refactor: drop Gemini from recovery target resolver` (hash: TBD)

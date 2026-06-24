@@ -335,10 +335,7 @@ test("SessionRequestHandler applies localized user-message language from live se
     );
     restoreGlobalSettingsPath = fixture.restoreGlobalSettingsPath;
 
-    const harness = createHarness({
-      ...fixture.config,
-      geminiDefaultModel: "gemini-3-pro-preview",
-    });
+    const harness = createHarness(fixture.config);
     const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
     const session = harness.sessionManager.createSession(
       "geminiCli",

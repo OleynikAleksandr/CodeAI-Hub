@@ -110,8 +110,6 @@ const createCoreConfig = (): CoreConfig => ({
   claudeSettingsPath: "/tmp/codeai-hub-runtime-core-test/settings.json",
   codexSkipGitRepoCheck: false,
   continuityPreemptRemainingPercentThreshold: 50,
-  geminiSettingsPath: "/tmp/codeai-hub-runtime-core-test/settings.json",
-  geminiThinkingLevelByModel: {},
   host: "127.0.0.1",
   idleTtlMinutes: null,
   managedMode: null,

@@ -111,7 +111,6 @@ export class SessionRequestHandlerAppliedTurnConfig {
       fallbackCodexModel: this.config.codexDefaultModel ?? "gpt-5.4-mini",
       fallbackCodexReasoningEffort:
         this.config.codexDefaultReasoningEffort ?? "medium",
-      fallbackGeminiModel: this.config.geminiDefaultModel,
     });
     if (!resolved) {
       return null;

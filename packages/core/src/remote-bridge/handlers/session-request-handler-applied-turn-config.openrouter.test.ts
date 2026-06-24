@@ -28,14 +28,13 @@ const writeSettings = async (settingsPath: string): Promise<void> => {
 
 const createConfig = (workspacePath: string): CoreConfig =>
   ({
+    claudeContinuityRemainingPercentThreshold: 30,
     claudeDefaultModel: "sonnet",
     claudeProjectSlug: "workspace",
     claudeSettingsPath: "",
     claudeWorkspacePath: workspacePath,
     codexSkipGitRepoCheck: false,
     continuityPreemptRemainingPercentThreshold: 50,
-    geminiSettingsPath: "",
-    geminiThinkingLevelByModel: {},
     host: "127.0.0.1",
     idleTtlMinutes: null,
     managedMode: null,
