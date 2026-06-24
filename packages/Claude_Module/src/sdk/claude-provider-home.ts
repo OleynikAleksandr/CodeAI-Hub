@@ -42,8 +42,7 @@ export const resolveClaudeProviderHome = (
 
   const workspaceRoot =
     environment.CLAUDE_WORKSPACE_PATH?.trim() ||
-    environment.CODEX_WORKSPACE_PATH?.trim() ||
-    environment.GEMINI_WORKSPACE_PATH?.trim();
+    environment.CODEX_WORKSPACE_PATH?.trim();
   if (workspaceRoot) {
     return resolveWorkspaceClaudeHome(path.resolve(workspaceRoot));
   }

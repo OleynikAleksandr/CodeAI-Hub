@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.runtime-env-leftovers.task1",
-  "expectedCommitMessage": "refactor: drop Gemini runtime env leftovers",
+  "currentTaskId": "gemini-removal.phase2.ui-asset-residue.task1",
+  "expectedCommitMessage": "refactor: drop Gemini UI asset residue",
   "debt": null
 }
 ```
@@ -275,5 +275,10 @@
 
 ### Stream: Runtime environment leftovers
 
-91. [IN_PROGRESS] `gemini-removal.phase2.runtime-env-leftovers.task1` Remove remaining Gemini workspace/module environment wiring from the launcher and Claude provider-home resolution (scope: `packages/cef-launcher/src/core_launcher.cc, packages/Claude_Module/src/sdk/claude-provider-home.ts`; expected commit: `refactor: drop Gemini runtime env leftovers`).
-92. [TODO] `gemini-removal.phase2.runtime-env-leftovers.commit1` Git Commit: `refactor: drop Gemini runtime env leftovers` (hash: TBD)
+91. [DONE] `gemini-removal.phase2.runtime-env-leftovers.task1` Remove remaining Gemini workspace/module environment wiring from the launcher and Claude provider-home resolution (scope: `packages/cef-launcher/src/core_launcher.cc, packages/Claude_Module/src/sdk/claude-provider-home.ts`; expected commit: `refactor: drop Gemini runtime env leftovers`).
+92. [DONE] `gemini-removal.phase2.runtime-env-leftovers.commit1` Git Commit: `refactor: drop Gemini runtime env leftovers` (hash: self)
+
+### Stream: UI asset residue
+
+93. [IN_PROGRESS] `gemini-removal.phase2.ui-asset-residue.task1` Remove stale Gemini UI localization and generated webview asset residue left after source provider removal (scope: `assets/localization/source/en/ui_helper_text.json, media/react-chat.js, media/session-view.css`; expected commit: `refactor: drop Gemini UI asset residue`).
+94. [TODO] `gemini-removal.phase2.ui-asset-residue.commit1` Git Commit: `refactor: drop Gemini UI asset residue` (hash: TBD)

@@ -558,11 +558,6 @@ void ExportProviderEnvironment(
   if (codex) {
     SetEnv("CODEX_MODULE_PATH", codex->string());
   }
-
-  const auto gemini = ResolveProviderPath(home, "gemini");
-  if (gemini) {
-    SetEnv("GEMINI_MODULE_PATH", gemini->string());
-  }
 }
 
 #ifdef _WIN32
@@ -753,9 +748,6 @@ void EnsureGlobalEnvironment(
   const std::string codexWorkspace =
     GetEnvOrDefault("CODEX_WORKSPACE_PATH", workspace);
   SetEnv("CODEX_WORKSPACE_PATH", codexWorkspace);
-  const std::string geminiWorkspace =
-    GetEnvOrDefault("GEMINI_WORKSPACE_PATH", workspace);
-  SetEnv("GEMINI_WORKSPACE_PATH", geminiWorkspace);
   SetEnv("CODEX_SKIP_GIT_REPO_CHECK", "true");
 
   SetEnv("CORE_MANAGED_MODE", "launcher");
