@@ -10,8 +10,8 @@
   "baseHead": "6cd9e8b9d",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md",
-  "currentTaskId": "phase4.stream1.task2",
-  "expectedCommitMessage": "chore: build 1.2.605 release",
+  "currentTaskId": "phase4.stream2.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -69,12 +69,12 @@
 
 1. [DONE] `phase4.stream1.task1` Prepare README and CHANGELOG for release 1.2.605 before running release scripts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.605 release notes`).
 2. [DONE] Git Commit: `docs: prepare 1.2.605 release notes` (hash: self)
-3. [IN_PROGRESS] `phase4.stream1.task2` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json`; expected commit: `chore: build 1.2.605 release`).
-4. [TODO] Git Commit: `chore: build 1.2.605 release` (hash: TBD)
+3. [DONE] `phase4.stream1.task2` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore`; expected commit: `chore: build 1.2.605 release`).
+4. [DONE] Git Commit: `chore: build 1.2.605 release` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing
 
-1. [TODO] `phase4.stream2.task1` User installs release 1.2.605 and confirms Local Models prompt-control retest can proceed (scope: `user workflow`).
+1. [IN_PROGRESS] `phase4.stream2.task1` User installs release 1.2.605 and confirms Local Models prompt-control retest can proceed (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
