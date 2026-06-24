@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.release-build-confirmation.task1",
-  "expectedCommitMessage": "chore: record Gemini release build confirmation",
+  "currentTaskId": "gemini-removal.phase2.release-docs-prep.task1",
+  "expectedCommitMessage": "docs: prepare Gemini-free release notes",
   "debt": null
 }
 ```
@@ -377,5 +377,13 @@ Audit evidence (2026-06-24):
 
 ### Stream: Release build confirmation gate
 
-123. [IN_PROGRESS] `gemini-removal.phase2.release-build-confirmation.task1` Stop at Release Build Confirmation Gate and ask the user for explicit approval before README/CHANGELOG version prep or release build scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record Gemini release build confirmation`).
-124. [TODO] `gemini-removal.phase2.release-build-confirmation.commit1` Git Commit: `chore: record Gemini release build confirmation` (hash: TBD)
+123. [DONE] `gemini-removal.phase2.release-build-confirmation.task1` Stop at Release Build Confirmation Gate and ask the user for explicit approval before README/CHANGELOG version prep or release build scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record Gemini release build confirmation`).
+124. [DONE] `gemini-removal.phase2.release-build-confirmation.commit1` Git Commit: `chore: record Gemini release build confirmation` (hash: self)
+
+Approval evidence (2026-06-24):
+- User explicitly approved the Gemini-free release build flow in chat: "Да, подтверждаю. Создай новый релиз."
+
+### Stream: Release docs prep
+
+125. [IN_PROGRESS] `gemini-removal.phase2.release-docs-prep.task1` Prepare future-version README/CHANGELOG release notes for the Gemini-free build before running release scripts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare Gemini-free release notes`).
+126. [TODO] `gemini-removal.phase2.release-docs-prep.commit1` Git Commit: `docs: prepare Gemini-free release notes` (hash: TBD)
