@@ -640,6 +640,46 @@ Benchmark harness: `doc/tmp/prototypes/openrouter-normalizer-model-ranker.mjs`. 
 | `openai/gpt-4.1-nano` | 81 | 90 | 6/6 | 2.45s | $0.40/M |
 | `google/gemini-3.1-flash-lite-preview` | 80 | 92 | 6/6 | 2.01s | $1.50/M |
 
+Контрольный прогон с Claude system stack (системный prompt:
+`doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md`
+and normalizer contract), `temperature=0.3`, `max_tokens=1500`, `stream=false`.
+
+OpenRouter прогон: `doc/tmp/prototypes/openrouter-normalizer-claude-system-t03-full.md` и `.log`.
+Для OpenRouter использовался `structured=auto`, поэтому модели с поддержкой schema проходили schema-first.
+
+| Модель | Quality | Speed | JSON | Avg latency | Output price |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `google/gemini-3.1-flash-lite` | 97 | 78 | 6/6 | 2.15s | $1.50/M |
+| `google/gemini-3.1-flash-lite-preview` | 92 | 82 | 6/6 | 1.83s | $1.50/M |
+| `openai/gpt-oss-120b` | 85 | 50 | 6/6 | 8.76s | $0.18/M |
+| `openai/gpt-4o-mini` | 78 | 71 | 6/6 | 2.94s | $0.60/M |
+| `google/gemma-3-12b-it` | 78 | 50 | 6/6 | 5.77s | $0.15/M |
+| `google/gemini-2.5-flash-lite` | 75 | 84 | 5/6 | 1.56s | $0.40/M |
+| `cohere/north-mini-code:free` | 75 | 50 | 5/6 | 7.27s | $0 |
+| `openai/gpt-4.1-nano` | 74 | 50 | 6/6 | 6.74s | $0.40/M |
+| `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free` | 73 | 41 | 5/6 | 10.46s | $0 |
+| `liquid/lfm-2.5-1.2b-thinking:free` | 41 | 54 | 5/6 | 4.57s | $0 |
+| `liquid/lfm-2.5-1.2b-instruct:free` | 6 | 50 | 1/6 | 9.99s | $0 |
+
+LM Studio прогон тем же Claude system stack: `doc/tmp/prototypes/lmstudio-normalizer-claude-system-t03.md`
+и `.log`. Для Local Models использовался OpenAI-compatible `/v1/chat/completions`, `structured=off`,
+потому что локальный runtime в этом harness не объявляет schema support.
+
+| Модель | API model id | Quality | Speed | JSON | Avg latency | Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| `qwen3.5-9b` | `qwen/qwen3.5-9b` | 85 | 50 | 6/6 | 9.44s | $0 |
+| `gemma-3-12b` | `google/gemma-3-12b` | 84 | 50 | 6/6 | 5.53s | $0 |
+| `gemma-4-e4b-qat` | `google/gemma-4-e4b-qat` | 83 | 46 | 6/6 | 13.26s | $0 |
+| `phi-4-reasoning-plus` | `microsoft/phi-4-reasoning-plus` | 0 | 0 | 0/6 | 25.56s | $0 |
+
+Выводы из Claude system / `temperature=0.3` прогонов:
+
+- для hosted-пути лучший результат дал `google/gemini-3.1-flash-lite`, но он дороже предыдущего `google/gemini-2.5-flash-lite` baseline;
+- среди локальных моделей рабочими кандидатами стали `qwen3.5-9b`, `gemma-3-12b` и `gemma-4-e4b-qat`;
+- `gemma-3-12b` выглядит лучшим локальным балансом в этом прогоне, но скорость LM Studio не является стабильной метрикой: на нее влияет cold start, предварительная загрузка модели, выгрузка предыдущей модели и состояние локального runtime;
+- `phi-4-reasoning-plus` на этих настройках возвращал пустой `content` на всех 6 кейсах, поэтому JSON не парсился (`Unexpected end of JSON input`);
+- для production-сравнения quality важнее latency; speed использовать только как tie-breaker между моделями с близким quality и одинаковым режимом загрузки.
+
 Проверенные кейсы для `google/gemini-2.5-flash-lite`:
 
 - UX review с мутным описанием: валидный JSON, верные `review` / `low` / `reviewer`;
@@ -658,11 +698,12 @@ Benchmark harness: `doc/tmp/prototypes/openrouter-normalizer-model-ranker.mjs`. 
 
 Практические настройки:
 
-- temperature: `0` или близко к `0`;
+- temperature: `0.2-0.3`; `0` оказался слишком хрупким для части prompt-stack прогонов;
 - top_p: низкий или default, если модель ухудшается от ручной настройки;
 - structured output включать, если модель реально держит схему;
 - reasoning выключать, если задача только нормализация;
-- max tokens достаточно для JSON, но без большого запаса;
+- max tokens: benchmark default `1500`; не ставить жесткий потолок около `900`, пока реальные ответы не замерены;
+- stream: `false`, потому что результат normalizer-а не читается пользователем и дальше уходит в orchestration/executor path;
 - один и тот же prompt + один и тот же test set для сравнения моделей.
 
 Важно: меньшие модели могут выигрывать по скорости, но чаще:

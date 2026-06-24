@@ -10,8 +10,8 @@
   "baseHead": "6cd9e8b9d",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md",
-  "currentTaskId": "phase4.stream2.task1",
-  "expectedCommitMessage": null,
+  "currentTaskId": "phase4.stream4.task1",
+  "expectedCommitMessage": "docs: close local models prompt controls",
   "debt": null
 }
 ```
@@ -74,10 +74,15 @@
 
 ### Stream: User Workflow Acceptance Testing
 
-1. [IN_PROGRESS] `phase4.stream2.task1` User installs release 1.2.605 and confirms Local Models prompt-control retest can proceed (scope: `user workflow`).
+1. [DONE] `phase4.stream2.task1` User installs release 1.2.605 and confirms Local Models prompt-control retest can proceed (scope: `user workflow`). Result: Release 1.2.605 install/retest gate passed; user requested the Local Models benchmark run.
+
+### Stream: Benchmark Evidence
+
+1. [DONE] `phase4.stream3.task1` Record OpenRouter and Local Models intent-normalizer benchmark results in the planning document (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Intent_Normalizer_Module_Planning_RU.md`; expected commit: `docs: record local normalizer benchmark results`).
+2. [DONE] Git Commit: `docs: record local normalizer benchmark results` (hash: self)
 
 ### Stream: Scope Closeout
 
-1. [TODO] `phase4.stream3.task1` Close the Local Models prompt-control scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models prompt controls`).
+1. [IN_PROGRESS] `phase4.stream4.task1` Close the Local Models prompt-control scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models prompt controls`).
 2. [TODO] Git Commit: `docs: close local models prompt controls` (hash: TBD)
-3. [TODO] `phase4.stream3.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+3. [TODO] `phase4.stream4.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
