@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.root-package-deps.task1",
-  "expectedCommitMessage": "refactor: drop Gemini root package dependencies",
+  "currentTaskId": "gemini-removal.phase2.gemini-workspace-package.task1",
+  "expectedCommitMessage": "refactor: delete Gemini module workspace",
   "debt": null
 }
 ```
@@ -225,5 +225,10 @@
 
 ### Stream: Root package dependencies
 
-71. [IN_PROGRESS] `gemini-removal.phase2.root-package-deps.task1` Remove root-level Google Gemini CLI dependencies from package metadata and lockfile (scope: `package.json, package-lock.json`; expected commit: `refactor: drop Gemini root package dependencies`).
-72. [TODO] `gemini-removal.phase2.root-package-deps.commit1` Git Commit: `refactor: drop Gemini root package dependencies` (hash: TBD)
+71. [DONE] `gemini-removal.phase2.root-package-deps.task1` Remove root-level Google Gemini CLI dependencies from package metadata and lockfile (scope: `package.json, package-lock.json`; expected commit: `refactor: drop Gemini root package dependencies`).
+72. [DONE] `gemini-removal.phase2.root-package-deps.commit1` Git Commit: `refactor: drop Gemini root package dependencies` (hash: self)
+
+### Stream: Gemini workspace package
+
+73. [IN_PROGRESS] `gemini-removal.phase2.gemini-workspace-package.task1` Delete the unused Gemini provider workspace package and prune its lockfile entries (scope: `packages/Gemini_Module/**, package-lock.json`; expected commit: `refactor: delete Gemini module workspace`).
+74. [TODO] `gemini-removal.phase2.gemini-workspace-package.commit1` Git Commit: `refactor: delete Gemini module workspace` (hash: TBD)
