@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.workspace-tree.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from workspace tree resolvers",
+  "currentTaskId": "gemini-removal.phase1.start-card.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from start card model selection",
   "debt": null
 }
 ```
@@ -58,5 +58,10 @@
 
 ### Stream: Workspace tree provider surfaces
 
-5. [IN_PROGRESS] `gemini-removal.phase1.workspace-tree.task1` Remove the `geminiCli`/`gemini` branches from the project-manager workspace tree provider resolvers and tint (scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `refactor: drop Gemini from workspace tree resolvers`).
-6. [TODO] `gemini-removal.phase1.workspace-tree.commit1` Git Commit: `refactor: drop Gemini from workspace tree resolvers` (hash: TBD)
+5. [DONE] `gemini-removal.phase1.workspace-tree.task1` Remove the `geminiCli` branch from the workspace tree branch-node title resolvers (runtime string checks; `use-step-provider-resolver.ts` deferred to the union-type phase because of the `Record<ProviderStackId,...>` exhaustiveness) (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `refactor: drop Gemini from workspace tree resolvers`).
+6. [DONE] `gemini-removal.phase1.workspace-tree.commit1` Git Commit: `refactor: drop Gemini from workspace tree resolvers` (hash: self)
+
+### Stream: Start card model selection
+
+7. [IN_PROGRESS] `gemini-removal.phase1.start-card.task1` Remove the `geminiCli` provider case and Gemini default/fallback model branches from the workflow start-card model selection (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts`; expected commit: `refactor: drop Gemini from start card model selection`).
+8. [TODO] `gemini-removal.phase1.start-card.commit1` Git Commit: `refactor: drop Gemini from start card model selection` (hash: TBD)

@@ -20,7 +20,7 @@ import {
 } from "./workspace-tree-model";
 
 const resolveProviderTitle = (providerId: string): string =>
-  providerId === "claudeCodeCli" || providerId === "codexCli" || providerId === "geminiCli"
+  providerId === "claudeCodeCli" || providerId === "codexCli"
     ? getDefaultProviderTitle(providerId)
     : providerId;
 
