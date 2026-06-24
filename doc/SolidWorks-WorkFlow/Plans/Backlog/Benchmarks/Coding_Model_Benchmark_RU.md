@@ -24,6 +24,10 @@ OPENROUTER_API_KEY=... node doc/tmp/prototypes/openrouter-code-model-ranker.mjs 
 
 Native provider comparison runner: [doc/tmp/prototypes/codeai-provider-code-bench.cjs](../../../../tmp/prototypes/codeai-provider-code-bench.cjs).
 
+Calibrated GLM/Kimi prompt source: [Claude_My_System_Prompt.md].
+
+[Claude_My_System_Prompt.md]: Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md
+
 ## 1. Цель
 
 Найти недорогие модели, которые хорошо справляются с маленькими coding tasks:
@@ -44,9 +48,9 @@ Native provider comparison runner: [doc/tmp/prototypes/codeai-provider-code-benc
 | Модель | Роль | Pass | Compile | Correctness | Avg latency | Вывод |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
 | `Codex GPT 5.5 high` | **Best Line / reference** | 13/13 | 4/4 | 100.0 | 12.5s | Эталон: все кейсы пройдены, все ответы компилируются. |
-| `Kimi + compact CodeAI prompt` | calibrated native comparison | 13/13 | 4/4 | 100.0 | 34.3s | Лучший свежий Kimi A/B: full pass и raw clean 4/4. |
+| `Kimi +` [Claude_My_System_Prompt.md] | calibrated native comparison | 13/13 | 4/4 | 100.0 | 34.3s | Лучший свежий Kimi A/B: full pass и raw clean 4/4. |
 | `Kimi K2.7 Code` | native provider comparison | 13/13 | 4/4 | 100.0 | 35.1s | Тоже прошел все кейсы; медленнее Codex, но сильный native coding candidate. |
-| `GLM 5.2 + compact CodeAI prompt + GLM tools` | calibrated native comparison | 13/13 | 4/4 | 100.0 | 60.9s | Полный pass после смены system prompt; slow, raw clean 3/4. |
+| `GLM 5.2 +` [Claude_My_System_Prompt.md] `+ GLM tools` | calibrated native comparison | 13/13 | 4/4 | 100.0 | 60.9s | Полный pass после смены system prompt; slow, raw clean 3/4. |
 | `GLM 5.2 native max` | native provider comparison | 8/13 | 3/4 | 61.5 | 33.4s | Частично пригоден, но route-matcher вернул некомпилируемый/prose output. |
 | `Claude Opus max` | high-end comparison, retry | 11/13 | 3/4 | 84.6 | 43.0s | Смыслово силен, но нестабилен в raw-code output: один кейс оборвался. |
 | `Claude Opus max` | high-end comparison, first run | 2/13 | 1/4 | 15.4 | 49.9s | Первый полный прогон провалился из-за незакрытого финального `};` в 3/4 кейсов. |
@@ -55,7 +59,7 @@ Native provider comparison runner: [doc/tmp/prototypes/codeai-provider-code-benc
 
 Примечание по GLM: прогон выполнен через **native `glmNative`**, не через GLM OpenCode.
 
-Примечание по calibrated prompt: в GLM/Kimi A/B использовался не полный `Claude_System_Prompt_2026-04-24T13-55-05-221Z.md` (264 строки, 27 733 символа) и не Claude tools capture (738 строк, 38 258 символов), а наш купированный `Claude_My_System_Prompt.md` (51 строка, 3 798 символов). В таблицах ниже он переименован в `compact CodeAI prompt`.
+Примечание по calibrated prompt: в GLM/Kimi A/B использовался не полный `Claude_System_Prompt_2026-04-24T13-55-05-221Z.md` (264 строки, 27 733 символа) и не Claude tools capture (738 строк, 38 258 символов), а наш купированный [Claude_My_System_Prompt.md] (51 строка, 3 798 символов). В таблицах ниже он указан под точным именем исходного файла.
 
 Примечание по Codex baseline: `Codex GPT 5.5 high` в этом benchmark не запускался с `Plans/Backlog/Benchmarks/ProviderPromptsAndTools/native/codex-native-system-instructions.md` и не с archived `Codex_My_System_Prompt.md`. Скрипт использовал `CodexProviderAdapter`, а тот на `thread/start` передает runtime `baseInstructions` из `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` (`CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`). Этот runtime prompt сейчас не совпадает с archived `Codex_My_System_Prompt.md`.
 
@@ -82,9 +86,9 @@ Native provider comparison runner: [doc/tmp/prototypes/codeai-provider-code-benc
 | Provider | Run | Pass | Compile | Correctness | Avg latency | Notes |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
 | `Codex GPT 5.5 high` | main | 13/13 | 4/4 | 100.0 | 12.5s | Best Line. |
-| `Kimi + compact CodeAI prompt` | calibrated native A/B | 13/13 | 4/4 | 100.0 | 34.3s | Full pass and raw clean 4/4 in fresh A/B. |
+| `Kimi +` [Claude_My_System_Prompt.md] | calibrated native A/B | 13/13 | 4/4 | 100.0 | 34.3s | Full pass and raw clean 4/4 in fresh A/B. |
 | `Kimi K2.7 Code` | native | 13/13 | 4/4 | 100.0 | 35.1s | Full pass, but slower than Codex and OpenRouter cheap shortlist. |
-| `GLM 5.2 + compact CodeAI prompt + GLM tools` | calibrated native | 13/13 | 4/4 | 100.0 | 60.9s | Full pass; `visible-files` still used fenced markdown, so raw clean is 3/4. |
+| `GLM 5.2 +` [Claude_My_System_Prompt.md] `+ GLM tools` | calibrated native | 13/13 | 4/4 | 100.0 | 60.9s | Full pass; `visible-files` still used fenced markdown, so raw clean is 3/4. |
 | `GLM 5.2 native max` | native | 8/13 | 3/4 | 61.5 | 33.4s | Failed `route-matcher`; one response was not usable raw code. |
 | `Claude Opus max` | retry | 11/13 | 3/4 | 84.6 | 43.0s | Passed 3 cases; `merge-user-events` compile fail. |
 | `Claude Opus max` | main | 2/13 | 1/4 | 15.4 | 49.9s | Unstable raw-code output, missing final closure in most cases. |
@@ -94,9 +98,9 @@ Case-level result:
 | Provider | `signup-validator` | `route-matcher` | `visible-files` | `merge-user-events` |
 | --- | ---: | ---: | ---: | ---: |
 | `Codex GPT 5.5 high` | 4/4 | 5/5 | 2/2 | 2/2 |
-| `Kimi + compact CodeAI prompt` | 4/4 | 5/5 | 2/2 | 2/2 |
+| `Kimi +` [Claude_My_System_Prompt.md] | 4/4 | 5/5 | 2/2 | 2/2 |
 | `Kimi K2.7 Code` | 4/4 | 5/5 | 2/2 | 2/2 |
-| `GLM 5.2 + compact CodeAI prompt + GLM tools` | 4/4 | 5/5 | 2/2 | 2/2 |
+| `GLM 5.2 +` [Claude_My_System_Prompt.md] `+ GLM tools` | 4/4 | 5/5 | 2/2 | 2/2 |
 | `GLM 5.2 native max` | 4/4 | 0/5 compile fail | 2/2 | 2/2 |
 | `Claude Opus max` retry | 4/4 | 5/5 | 2/2 | 0/2 compile fail |
 | `Claude Opus max` main | 0/4 compile fail | 0/5 compile fail | 2/2 | 0/2 compile fail |
@@ -159,14 +163,14 @@ Focused A/B на проваленном ранее `route-matcher` подтве�
 
 | Variant | Pass | Compile | Latency | Вывод |
 | --- | ---: | ---: | ---: | --- |
-| GLM + compact CodeAI prompt + GLM tools | 5/5 | yes | 83.3s | Лучший вариант в коротком тесте: чистый code output без markdown/prose. |
+| GLM + [Claude_My_System_Prompt.md] + GLM tools | 5/5 | yes | 83.3s | Лучший вариант в коротком тесте: чистый code output без markdown/prose. |
 | GLM current tools max | 5/5 | yes | 113.7s | Смыслово прошел, но нарушил raw-output contract: добавил prose и fenced markdown. |
 | GLM minimal raw prompt, no tools, thinking off | 3/5 | yes | 12.5s | Быстро, но качество хуже. |
-| GLM + compact CodeAI prompt, no tools, thinking off | 2/5 | yes | 16.5s | Хуже всех: отключение tools/thinking не является бесплатным улучшением. |
+| GLM + [Claude_My_System_Prompt.md], no tools, thinking off | 2/5 | yes | 16.5s | Хуже всех: отключение tools/thinking не является бесплатным улучшением. |
 
-Полный coding benchmark подтвердил короткий A/B: `GLM 5.2 + compact CodeAI prompt + GLM tools` прошел 13/13 и compile 4/4. Но это не быстрый worker: average latency 60.9s, а raw-output discipline 3/4 (`visible-files` был в fenced markdown). Значит, направление рабочее, но ему нужен дополнительный prompt clamp именно на "no markdown/prose".
+Полный coding benchmark подтвердил короткий A/B: связка `GLM 5.2 +` [Claude_My_System_Prompt.md] `+ GLM tools` прошла 13/13 и compile 4/4. Но это не быстрый worker: average latency 60.9s, а raw-output discipline 3/4 (`visible-files` был в fenced markdown). Значит, направление рабочее, но ему нужен дополнительный prompt clamp именно на "no markdown/prose".
 
-Kimi устроен иначе: это ACP/родной runtime, где CodeAI Hub materializes `codeai-managed-agent/system.md`, а не передает system prompt флагом на каждый turn. Scratch A/B с подменой этого файла показал, что compact CodeAI prompt тоже полезен для Kimi: свежий прогон `Kimi + compact CodeAI prompt` дал 13/13, compile 4/4, raw clean 4/4, latency 34.3s. Текущий Kimi managed prompt в том же A/B дал 12/13 из-за ошибки в `merge-user-events`.
+Kimi устроен иначе: это ACP/родной runtime, где CodeAI Hub materializes `codeai-managed-agent/system.md`, а не передает system prompt флагом на каждый turn. Scratch A/B с подменой этого файла показал, что [Claude_My_System_Prompt.md] тоже полезен для Kimi: свежий прогон `Kimi +` [Claude_My_System_Prompt.md] дал 13/13, compile 4/4, raw clean 4/4, latency 34.3s. Текущий Kimi managed prompt в том же A/B дал 12/13 из-за ошибки в `merge-user-events`.
 
 ### 6.4. Не брать как основной coding worker
 
@@ -210,8 +214,8 @@ Kimi устроен иначе: это ACP/родной runtime, где CodeAI H
 Для coding tasks:
 
 1. `Codex GPT 5.5 high` остается **Best Line / reference** для этого набора задач.
-2. `Kimi K2.7 Code` и `Kimi + compact CodeAI prompt` выглядят сильными native coding candidates, но нуждаются в controlled повторе с зафиксированным profile hash.
-3. `GLM 5.2 + compact CodeAI prompt + GLM tools` показал резкий рост correctness, но из-за смешанного instruction/tool/client фактора это пока гипотеза для повторного A/B, а не финальное доказательство.
+2. `Kimi K2.7 Code` и `Kimi +` [Claude_My_System_Prompt.md] выглядят сильными native coding candidates, но нуждаются в controlled повторе с зафиксированным profile hash.
+3. `GLM 5.2 +` [Claude_My_System_Prompt.md] `+ GLM tools` показал резкий рост correctness, но из-за смешанного instruction/tool/client фактора это пока гипотеза для повторного A/B, а не финальное доказательство.
 4. Лучший OpenRouter quality winner: `mistralai/devstral-2512`.
 5. Лучший cheap/fast shortlist: `qwen/qwen3-coder-30b-a3b-instruct`, `qwen/qwen3-coder-next`, `inclusionai/ling-2.6-flash`, `qwen/qwen3-coder-flash`.
 6. `GLM 5.2 native max` без calibration и `Claude Opus max` не стоит использовать как strict raw-code generators в этом режиме.
