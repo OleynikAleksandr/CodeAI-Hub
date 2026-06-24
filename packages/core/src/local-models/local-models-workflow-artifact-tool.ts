@@ -1,5 +1,9 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  LOCAL_MODELS_WORKFLOW_TEMPERATURE,
+  resolveLocalModelsSystemPrompt,
+} from "./local-models-prompt-controls";
 
 const WORKFLOW_ARTIFACT_TOOL_NAME = "write_workflow_artifact";
 const JSON_HEADERS = { "content-type": "application/json" } as const;
@@ -82,7 +86,9 @@ interface StreamingToolCallAccumulator {
 }
 const buildLocalModelsWorkflowSystemPrompt = (workspacePath?: string): string =>
   [
-    "You are CodeAI Hub's local workflow agent running through LM Studio.",
+    resolveLocalModelsSystemPrompt(
+      "You are CodeAI Hub's local workflow agent running through LM Studio."
+    ),
     "",
     "Runtime environment:",
     "<env>",
@@ -203,7 +209,7 @@ const requestOpenAiChatCompletion = async (options: {
         messages: options.messages,
         model: options.apiModelIdentifier,
         stream: true,
-        temperature: 0.2,
+        temperature: LOCAL_MODELS_WORKFLOW_TEMPERATURE,
         ...(options.toolsEnabled ? { tools: LOCAL_MODELS_WORKFLOW_TOOLS } : {}),
       }),
       headers: JSON_HEADERS,

@@ -62,7 +62,9 @@ const createLoadedModelJson = (
 
 test("LocalModelsProviderAdapter executes workflow artifact tool calls", async () => {
   const workspacePath = await mkdtemp(path.join(os.tmpdir(), "lm-tool-"));
+  const previousPrompt = process.env.CODEAI_LMSTUDIO_SYSTEM_PROMPT;
   const bodies: string[] = [];
+  process.env.CODEAI_LMSTUDIO_SYSTEM_PROMPT = "Custom workflow system prompt";
   const adapter = new LocalModelsProviderAdapter({
     commandRunner: (args) => {
       if (args[0] === "ls") {
@@ -140,7 +142,14 @@ test("LocalModelsProviderAdapter executes workflow artifact tool calls", async (
 
     assert.equal(bodies.length, 2);
     assert.equal(readOpenAiBodyStreamFlag(bodies[0] as string), true);
+    assert.equal(readOpenAiBodyTemperature(bodies[0] as string), 0.3);
     assert.equal(readOpenAiBodyToolsEnabled(bodies[0] as string), true);
+    assert.equal(
+      readFirstOpenAiMessageContent(bodies[0] as string)?.startsWith(
+        "Custom workflow system prompt\n\nRuntime environment:"
+      ),
+      true
+    );
     assert.equal(readOpenAiBodyToolsEnabled(bodies[1] as string), false);
     assert.equal(
       await readFile(
@@ -172,6 +181,11 @@ test("LocalModelsProviderAdapter executes workflow artifact tool calls", async (
     assert.equal(events[3]?.tag, "live");
     assert.equal(events[4]?.content, "Готово.");
   } finally {
+    if (previousPrompt === undefined) {
+      Reflect.deleteProperty(process.env, "CODEAI_LMSTUDIO_SYSTEM_PROMPT");
+    } else {
+      process.env.CODEAI_LMSTUDIO_SYSTEM_PROMPT = previousPrompt;
+    }
     await rm(workspacePath, { force: true, recursive: true });
   }
 });
@@ -319,6 +333,20 @@ const readOpenAiBodyStreamFlag = (bodyText: string): boolean | undefined => {
 const readOpenAiBodyToolsEnabled = (bodyText: string): boolean => {
   const body = JSON.parse(bodyText) as { readonly tools?: unknown };
   return Array.isArray(body.tools);
+};
+
+const readOpenAiBodyTemperature = (bodyText: string): number | undefined => {
+  const body = JSON.parse(bodyText) as { readonly temperature?: number };
+  return body.temperature;
+};
+
+const readFirstOpenAiMessageContent = (
+  bodyText: string
+): string | undefined => {
+  const body = JSON.parse(bodyText) as {
+    readonly messages: Array<{ readonly content?: string }>;
+  };
+  return body.messages[0]?.content;
 };
 
 const readLastOpenAiMessageRole = (bodyText: string): string | undefined => {
