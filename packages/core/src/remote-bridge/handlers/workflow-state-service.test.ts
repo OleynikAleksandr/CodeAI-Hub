@@ -187,8 +187,8 @@ test("workflow-state cold start keeps development tree preview side-effect free 
           segments: [
             {
               sessionId: "diagram-session",
-              providerId: "geminiCli",
-              providerSessionId: "gemini-provider-session",
+              providerId: "codexCli",
+              providerSessionId: "codex-provider-session",
               createdAt: "2026-05-05T06:00:00.000Z",
             },
           ],

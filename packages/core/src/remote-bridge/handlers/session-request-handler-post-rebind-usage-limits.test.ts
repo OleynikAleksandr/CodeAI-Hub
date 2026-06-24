@@ -133,8 +133,8 @@ test("triggerPostRebindUsageLimitsRefresh swallows synchronous adapter failures 
       // ignored in this test
     },
     logger,
-    providerId: "geminiCli",
-    providerSessionId: "gemini-1",
+    providerId: "kimiCode",
+    providerSessionId: "kimi-1",
     session: createStubSession(),
     sessionId: "session-1",
   });

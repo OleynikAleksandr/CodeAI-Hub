@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remote-bridge-usage-fixtures.task1",
-  "expectedCommitMessage": "refactor: drop Gemini remote bridge usage fixtures",
+  "currentTaskId": "gemini-removal.phase2.core-runtime-profiles.task1",
+  "expectedCommitMessage": "refactor: drop Gemini core runtime profiles",
   "debt": null
 }
 ```
@@ -205,5 +205,10 @@
 
 ### Stream: Remote-bridge usage fixtures
 
-63. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-usage-fixtures.task1` Remove Gemini from remote-bridge post-rebind usage refresh and workflow-state fixtures (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.ts, packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit: `refactor: drop Gemini remote bridge usage fixtures`).
-64. [TODO] `gemini-removal.phase2.remote-bridge-usage-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge usage fixtures` (hash: TBD)
+63. [DONE] `gemini-removal.phase2.remote-bridge-usage-fixtures.task1` Remove Gemini from remote-bridge post-rebind usage refresh and workflow-state fixtures (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.ts, packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit: `refactor: drop Gemini remote bridge usage fixtures`).
+64. [DONE] `gemini-removal.phase2.remote-bridge-usage-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge usage fixtures` (hash: self)
+
+### Stream: Core runtime profiles
+
+65. [IN_PROGRESS] `gemini-removal.phase2.core-runtime-profiles.task1` Remove Gemini from core model-invocation profiles and workspace runtime provider homes (scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule*.test.ts`; expected commit: `refactor: drop Gemini core runtime profiles`).
+66. [TODO] `gemini-removal.phase2.core-runtime-profiles.commit1` Git Commit: `refactor: drop Gemini core runtime profiles` (hash: TBD)

@@ -8,7 +8,7 @@ import { normalizeUsageLimitsStreamEvent } from "./session-provider-binding-serv
 // will not emit a second binding_ready usage_limits refresh for the same
 // logical session — the one it emitted before the rebind raced against the
 // paper-binding and its payload was dropped. Trigger one refresh directly
-// so the usage_limits widget catches up for Claude / Codex / Gemini. Best-
+// so the usage_limits widget catches up for Claude / Codex / Kimi. Best-
 // effort: adapter without refreshUsageLimits (or a null payload) is OK.
 
 export interface PostRebindUsageLimitsAdapter {
