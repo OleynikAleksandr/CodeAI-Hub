@@ -159,7 +159,7 @@ Contract rules:
 - when at least one chunk translates successfully, the facade returns one assembled `translated` result for the whole request and uses `errorCode = "partial_fallback"` if some chunks had to stay in source English.
 - when callers explicitly request an unavailable engine, the facade returns a fail-closed fallback result with `errorCode = "no_engine"`; default-engine substitution is allowed only when the caller did not pin `engineId`.
 
-This keeps the module reusable for Gemini, Codex, and non-provider runtime consumers.
+This keeps the module reusable for Claude, Codex, Core overlays, and non-provider runtime consumers.
 
 ---
 
@@ -197,7 +197,7 @@ Provider modules still own provider-specific text extraction and message identit
 
 Current provider boundary:
 
-- Gemini and Codex now emit source-first thinking text directly into the dialog/runtime stream; Codex emits reasoning summary blocks sequentially, not as token-level deltas, so Core translation sees one normal persisted thinking message per paragraph/block;
+- Codex emits source-first reasoning text directly into the dialog/runtime stream as sequential reasoning summary blocks, not as token-level deltas, so Core translation sees one normal persisted thinking message per paragraph/block;
 - Claude keeps provider-local translation only for generic assistant progress/pre-tool text that is not part of the Core-owned thinking overlay path;
 - provider-local live adapters that still translate visible assistant progress prefer the dedicated `reasoningEngineId` and `reasoningLanguage` from the applied provider turn-config envelope; they fall back to the legacy `translationEngineId` / `messagesForTheUserLanguage` aliases only while Core is still forwarding both fields during the UI/Reasoning split migration;
 - `@codeai-hub/translation` still must not know about provider stream buffers, placeholder markers, UI roles, or dialog/session storage.
@@ -221,8 +221,8 @@ Installed provider bundles that consume the shared translation package are self-
 
 Build and release rules:
 
-- `scripts/build-claude-module.sh`, `scripts/build-codex-module.sh`, and `scripts/build-gemini-module.sh` vendor `@codeai-hub/translation` into the installed provider runtime root.
-- `scripts/build-release.sh` verifies that the installed Claude, Codex, and Gemini bundles can load with the bundled translation package present.
+- `scripts/build-claude-module.sh` and `scripts/build-codex-module.sh` vendor `@codeai-hub/translation` into the installed provider runtime root.
+- `scripts/build-release.sh` verifies that the installed Claude and Codex bundles plus the installed Core app can load with the bundled translation package present.
 - The installed provider must not depend on workspace `node_modules` to resolve the shared translation package.
 
 This invariant exists because provider bundles are loaded outside the repo workspace tree.
@@ -270,7 +270,6 @@ Current validation surface:
 - `npm run build --workspace=@codeai-hub/core`
 - `node --test packages/core/dist/session-translation/session-message-localization-projector.test.js`
 - `node --test packages/unified-session/dist/session-translation-overlay-store.test.js`
-- `npm run build --workspace=@codeai-hub/gemini-module`
 - `npm run build --workspace=@codeai-hub/claude-module`
 - `npm run build --workspace=@codeai-hub/codex-app-server-module`
 - `./scripts/build-all.sh`
@@ -281,13 +280,12 @@ The current chunked-translation baseline validates:
 - engine-aware chunk planning and protected-boundary resolution through dedicated translation package tests;
 - per-chunk fallback assembly into one request-level `translated` result with `errorCode = "partial_fallback"` when at least one chunk succeeds;
 - `@codeai-hub/core` still compiling against the shared reporter-based chunk diagnostics path;
-- installed Claude, Codex, and Gemini provider bundles continuing to load with the bundled shared translation package while Core-owned translation overlays stay replay-safe through JSONL sidecars.
+- installed Claude and Codex provider bundles continuing to load with the bundled shared translation package while Core-owned translation overlays stay replay-safe through JSONL sidecars.
 
 ---
 
 ## 9. Related Docs
 
-- `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-- `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+- `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

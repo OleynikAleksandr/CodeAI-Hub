@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.shared-translation-docs-residue.task1",
-  "expectedCommitMessage": "docs: drop Gemini shared translation refs",
+  "currentTaskId": "gemini-removal.phase2.cluster-docs-residue.task1",
+  "expectedCommitMessage": "docs: drop Gemini cluster refs",
   "debt": null
 }
 ```
@@ -320,5 +320,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Shared translation docs residue
 
-107. [IN_PROGRESS] `gemini-removal.phase2.shared-translation-docs-residue.task1` Remove Gemini runtime/build references from active shared translation module docs after provider package deletion (scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit: `docs: drop Gemini shared translation refs`).
-108. [TODO] `gemini-removal.phase2.shared-translation-docs-residue.commit1` Git Commit: `docs: drop Gemini shared translation refs` (hash: TBD)
+107. [DONE] `gemini-removal.phase2.shared-translation-docs-residue.task1` Remove Gemini runtime/build references from active shared translation module docs after provider package deletion (scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit: `docs: drop Gemini shared translation refs`).
+108. [DONE] `gemini-removal.phase2.shared-translation-docs-residue.commit1` Git Commit: `docs: drop Gemini shared translation refs` (hash: self)
+
+### Stream: Cluster docs residue
+
+109. [IN_PROGRESS] `gemini-removal.phase2.cluster-docs-residue.task1` Remove Gemini-as-live-provider references from active Core/PM orchestration cluster docs (scope: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: drop Gemini cluster refs`).
+110. [TODO] `gemini-removal.phase2.cluster-docs-residue.commit1` Git Commit: `docs: drop Gemini cluster refs` (hash: TBD)
