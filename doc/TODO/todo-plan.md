@@ -4,31 +4,54 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "openrouter-agent-profile-tooling-2026-06-23",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "gemini-removal-2026-06-24",
   "branch": "main",
-  "baseHead": "ed3742ac2",
+  "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
+  "currentTaskId": "gemini-removal.phase1.capture-selector.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from capture workbench selector",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-openrouter-agent-profile-tooling-2026-06-23.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/OpenRouter_AgentProfile_Tooling_Planning_RU.md`
-- **Last recorded commit:** `self`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
+- Only this list is the document source for restoring this execution cycle's context.
 
-## Start Next Scope
+## Execution Rules
 
-There is no active execution scope. Before starting new implementation work:
+- **Required reading before every fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- **Goal:** fully remove the Gemini provider (code, SDK, package, UI, settings, build, docs); then re-run `npm audit` and build a Gemini-free release.
+- **Removal order:** UI consumers -> extension-module settings -> core registration/config/remote-bridge/usage-limits -> narrow shared union types last -> delete `Gemini_Module` + SDK + build scripts -> documentation. Remove a Gemini file together with its usages so `knip` does not flag orphaned exports.
+- Keep each implementation task scoped to no more than 3 files or packages.
+- Each implementation task is followed by a separate `Git Commit: ...` line.
+- The plan grows incrementally: add the next task before committing the current one; never leave a committed task without a following task.
+- Run `npm run plan:validate` before every `npm run plan:commit -- "<Expected Commit>"`.
+- Targeted verification uses the smallest affected tests/builds first.
+- **Release Build Confirmation Gate:** do not run `./scripts/build-all.sh` or `./scripts/build-release.sh` without separate explicit user confirmation.
+- Scope Closeout runs only after explicit user acceptance.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 0 - Planning Intake (owner: CodeAI Hub Bot, updated: 2026-06-24)
+
+### Stream: Accepted scope
+
+1. [DONE] `gemini-removal.phase0.plan.task1` Create the Gemini removal planning source and active todo-plan for the accepted full-removal scope (scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan Gemini removal`).
+2. [DONE] `gemini-removal.phase0.plan.commit1` Git Commit: `docs: plan Gemini removal` (hash: self)
+
+## Phase 1 - UI Provider Surface (owner: CodeAI Hub Bot, updated: 2026-06-24)
+
+### Stream: Capture workbench
+
+3. [IN_PROGRESS] `gemini-removal.phase1.capture-selector.task1` Remove the disabled Gemini option and tooltip from the capture workbench provider selector (scope: `src/client/project-manager/components/capture-workbench/provider-selector.tsx`; expected commit: `refactor: drop Gemini from capture workbench selector`).
+4. [TODO] `gemini-removal.phase1.capture-selector.commit1` Git Commit: `refactor: drop Gemini from capture workbench selector` (hash: TBD)
