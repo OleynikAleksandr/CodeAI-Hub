@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.start-card.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from start card model selection",
+  "currentTaskId": "gemini-removal.phase1.stage-card.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from stage confirmation card",
   "debt": null
 }
 ```
@@ -63,5 +63,10 @@
 
 ### Stream: Start card model selection
 
-7. [IN_PROGRESS] `gemini-removal.phase1.start-card.task1` Remove the `geminiCli` provider case and Gemini default/fallback model branches from the workflow start-card model selection (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts`; expected commit: `refactor: drop Gemini from start card model selection`).
-8. [TODO] `gemini-removal.phase1.start-card.commit1` Git Commit: `refactor: drop Gemini from start card model selection` (hash: TBD)
+7. [DONE] `gemini-removal.phase1.start-card.task1` Remove the `geminiCli` provider case and Gemini default/fallback model branches from the workflow start-card model selection (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts`; expected commit: `refactor: drop Gemini from start card model selection`).
+8. [DONE] `gemini-removal.phase1.start-card.commit1` Git Commit: `refactor: drop Gemini from start card model selection` (hash: self)
+
+### Stream: Stage confirmation card
+
+9. [IN_PROGRESS] `gemini-removal.phase1.stage-card.task1` Remove the Gemini provider tint and stage-confirmation-card workflow/title branches (scope: `src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `refactor: drop Gemini from stage confirmation card`).
+10. [TODO] `gemini-removal.phase1.stage-card.commit1` Git Commit: `refactor: drop Gemini from stage confirmation card` (hash: TBD)

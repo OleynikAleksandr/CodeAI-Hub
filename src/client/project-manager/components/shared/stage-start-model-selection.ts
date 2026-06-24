@@ -9,11 +9,6 @@ import {
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../types/codex-model-registry";
 import {
-  DEFAULT_GEMINI_MODEL_ID,
-  DEFAULT_GEMINI_THINKING_LEVEL,
-  GEMINI_RECOMMENDED_MODELS,
-} from "../../../../types/gemini-model-registry";
-import {
   DEFAULT_KIMI_MODEL_ID,
   KIMI_MODEL_ID_SET,
   KIMI_RECOMMENDED_MODELS,
@@ -128,11 +123,7 @@ export const getStartCardModelOptions = (
   if (providerId === "openRouter") {
     return [];
   }
-  return GEMINI_RECOMMENDED_MODELS.map((model) => ({
-    description: model.description,
-    id: model.id,
-    label: model.displayName,
-  }));
+  return [];
 };
 
 export const getStartCardReasoningOptions = (
@@ -169,13 +160,7 @@ export const getStartCardReasoningOptions = (
   if (providerId === "openRouter") {
     return [];
   }
-  const model =
-    GEMINI_RECOMMENDED_MODELS.find((candidate) => candidate.id === modelId) ??
-    GEMINI_RECOMMENDED_MODELS[0];
-  return model.supportedThinkingLevels.map((level) => ({
-    id: level,
-    label: level,
-  }));
+  return [];
 };
 
 export const resolveDefaultStartCardModelSelection = (
@@ -246,11 +231,5 @@ export const resolveDefaultStartCardModelSelection = (
       reasoning: endpointTag || "default",
     };
   }
-  const modelId = settings?.providers.gemini.defaultModel ?? DEFAULT_GEMINI_MODEL_ID;
-  return {
-    modelId,
-    reasoning:
-      settings?.providers.gemini.thinkingLevelByModel[modelId] ??
-      DEFAULT_GEMINI_THINKING_LEVEL,
-  };
+  return { modelId: "", reasoning: "default" };
 };
