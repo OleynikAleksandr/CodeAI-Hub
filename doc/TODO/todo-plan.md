@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.ui-asset-residue.task1",
-  "expectedCommitMessage": "refactor: drop Gemini UI asset residue",
+  "currentTaskId": "gemini-removal.phase2.tooling-glossary-residue.task1",
+  "expectedCommitMessage": "refactor: drop Gemini tooling glossary residue",
   "debt": null
 }
 ```
@@ -280,5 +280,10 @@
 
 ### Stream: UI asset residue
 
-93. [IN_PROGRESS] `gemini-removal.phase2.ui-asset-residue.task1` Remove stale Gemini UI localization and generated webview asset residue left after source provider removal (scope: `assets/localization/source/en/ui_helper_text.json, media/react-chat.js, media/session-view.css`; expected commit: `refactor: drop Gemini UI asset residue`).
-94. [TODO] `gemini-removal.phase2.ui-asset-residue.commit1` Git Commit: `refactor: drop Gemini UI asset residue` (hash: TBD)
+93. [DONE] `gemini-removal.phase2.ui-asset-residue.task1` Remove stale Gemini UI localization and generated webview asset residue left after source provider removal (scope: `assets/localization/source/en/ui_helper_text.json, media/react-chat.js, media/session-view.css`; expected commit: `refactor: drop Gemini UI asset residue`).
+94. [DONE] `gemini-removal.phase2.ui-asset-residue.commit1` Git Commit: `refactor: drop Gemini UI asset residue` (hash: self)
+
+### Stream: Tooling glossary residue
+
+95. [IN_PROGRESS] `gemini-removal.phase2.tooling-glossary-residue.task1` Remove remaining Gemini glossary and tooling fixture residue after provider removal (scope: `assets/localization/glossary/base.json, knip.json, packages/localization/src/user-glossary-store.test.ts`; expected commit: `refactor: drop Gemini tooling glossary residue`).
+96. [TODO] `gemini-removal.phase2.tooling-glossary-residue.commit1` Git Commit: `refactor: drop Gemini tooling glossary residue` (hash: TBD)

@@ -7559,135 +7559,6 @@
   });
   var areClaudeThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.effort === right.effort;
 
-  // src/types/gemini-model-registry.ts
-  var GEMINI_RECOMMENDED_MODELS = [
-    {
-      id: "gemini-3.1-pro-preview",
-      displayName: "Gemini 3.1 Pro",
-      description: "Most advanced reasoning Gemini model (1M context).",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-3-flash-preview",
-      displayName: "Gemini 3 Flash",
-      description: "Pro-grade reasoning with Flash-level latency and cost.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
-    },
-    {
-      id: "gemini-3.1-flash-lite-preview",
-      displayName: "Gemini 3.1 Flash Lite",
-      description: "Lightweight model with fast responses and low cost.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["off", "minimal", "low"]
-    }
-  ];
-  var GEMINI_MODEL_ID_SET = new Set(
-    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
-  );
-  var DEFAULT_GEMINI_MODEL_ID = "gemini-3.1-pro-preview";
-  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
-  var GEMINI_THINKING_LEVELS = [
-    {
-      name: "off",
-      description: "Disable model's internal thinking process.",
-      useCase: "Basic tasks, fastest response."
-    },
-    {
-      name: "minimal",
-      description: "Absolute minimum reasoning tokens.",
-      useCase: "Low-complexity tasks, very low latency."
-    },
-    {
-      name: "low",
-      description: "Balanced reasoning for simpler tasks.",
-      useCase: "General coding and quick queries."
-    },
-    {
-      name: "medium",
-      description: "Advanced reasoning for moderate complexity.",
-      useCase: "Standard development and problem solving."
-    },
-    {
-      name: "high",
-      description: "Maximum reasoning depth.",
-      useCase: "Complex refactoring and PhD-level research."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/gemini-mapping.ts
-  var GEMINI_THINKING_LEVEL_SET = new Set(
-    GEMINI_THINKING_LEVELS.map((level) => level.name)
-  );
-  var DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 3e5;
-  var MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e4;
-  var MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e6;
-  var DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
-  var MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-  var MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-  var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
-    accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
-    return accumulator;
-  }, {});
-  var isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-  var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
-  var clampContinuityRemainingPercentThreshold = (value) => Math.min(
-    MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-    Math.max(MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
-  );
-  var clampContextWindowTokenLimit = (value) => Math.min(
-    MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
-    Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
-  );
-  var mapGeminiSessionContinuitySettings = (value) => {
-    if (!isRecord(value)) {
-      return {
-        contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
-        remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
-      };
-    }
-    const numericLimit = Number(value.contextWindowTokenLimit);
-    const contextWindowTokenLimit = Number.isFinite(numericLimit) ? clampContextWindowTokenLimit(numericLimit) : DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT;
-    const numericThreshold = Number(value.remainingPercentThreshold);
-    const remainingPercentThreshold = Number.isFinite(numericThreshold) ? clampContinuityRemainingPercentThreshold(numericThreshold) : DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
-    return { contextWindowTokenLimit, remainingPercentThreshold };
-  };
-  var mapGeminiThinkingLevelByModel = (value) => {
-    const nextThinkingLevelByModel = {
-      ...DEFAULT_GEMINI_THINKING_BY_MODEL
-    };
-    if (!isRecord(value)) {
-      return nextThinkingLevelByModel;
-    }
-    for (const [modelId, level] of Object.entries(value)) {
-      if (typeof level === "string" && GEMINI_THINKING_LEVEL_SET.has(level)) {
-        nextThinkingLevelByModel[modelId] = level;
-      }
-    }
-    return nextThinkingLevelByModel;
-  };
-  var mapGeminiSettings = (value, mapAutoUpdate) => ({
-    autoUpdate: mapAutoUpdate(value?.autoUpdate),
-    defaultModel: resolveGeminiModelId(value?.defaultModel),
-    thinkingLevelByModel: mapGeminiThinkingLevelByModel(
-      value?.thinkingLevelByModel
-    ),
-    sessionContinuity: mapGeminiSessionContinuitySettings(
-      value?.sessionContinuity
-    )
-  });
-  var areGeminiThinkingLevelByModelEqual = (left, right) => {
-    const leftEntries = Object.entries(left);
-    if (leftEntries.length !== Object.keys(right).length) {
-      return false;
-    }
-    return leftEntries.every(([modelId, level]) => right[modelId] === level);
-  };
-
   // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
   var RESPONSE_MODE_OPTIONS = [
     {
@@ -7743,7 +7614,7 @@
   var RESPONSE_MODE_IDS = new Set(
     RESPONSE_MODE_OPTIONS.map((option) => option.id)
   );
-  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var normalizeText = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value : fallback;
   var normalizeSchemaText = (value) => {
     const next = normalizeText(
@@ -7752,7 +7623,7 @@
     );
     try {
       const parsed = JSON.parse(next);
-      if (!isRecord2(parsed)) {
+      if (!isRecord(parsed)) {
         return DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText;
       }
       return `${JSON.stringify(parsed, null, 2)}
@@ -7939,7 +7810,7 @@
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapBoolean = (value, fallback) => typeof value === "boolean" ? value : fallback;
   var mapLocalizationString = (value, fallback) => {
     const normalized = typeof value === "string" ? value.trim() : "";
@@ -8032,7 +7903,7 @@
   });
   var mapContinuity = (value) => {
     const numericValue = Number(
-      isRecord3(value) ? value.remainingPercentThreshold : void 0
+      isRecord2(value) ? value.remainingPercentThreshold : void 0
     );
     const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
       MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -8052,12 +7923,6 @@
       value?.thinkingDisplaySyncEnabled
     )
   });
-  var mapGeminiSettingsWithDisplaySync = (value) => ({
-    ...mapGeminiSettings(value, mapAutoUpdateSettings),
-    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-      value?.thinkingDisplaySyncEnabled
-    )
-  });
   var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
   var resolveClaudeDefaultModel = (value) => {
     if (typeof value !== "string") {
@@ -8068,7 +7933,7 @@
   };
   var mapCodexReasoningByModel = (value) => {
     const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-    if (!isRecord3(value)) {
+    if (!isRecord2(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -8096,7 +7961,6 @@
     providers: {
       claude: mapClaudeSettings(value?.providers?.claude),
       codex: mapCodexSettings(value?.providers?.codex),
-      gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
       kimi: mapKimiSettings(
         value?.providers?.kimi,
         mapAutoUpdateSettings,
@@ -8130,11 +7994,7 @@
   var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.reasoningEngineId === right.reasoningEngineId && left.glossaryEnabled === right.glossaryEnabled;
   var areClaudeSettingsEqual = (left, right) => areClaudeThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.reasoningSummaryEnabled === right.reasoningSummaryEnabled && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
-    left.thinkingLevelByModel,
-    right.thinkingLevelByModel
-  ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
+  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
     left.providers.glmOpenCode,
     right.providers.glmOpenCode
   ) && areKimiProviderSettingsEqual(
@@ -8193,7 +8053,6 @@
   };
   var isSettingsSaveErrorMessage = (message) => message?.type === "settings:save-error";
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
-  var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
   var LEGACY_SOURCE_LANGUAGE2 = "source";
   var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
@@ -8415,7 +8274,6 @@
   var PROVIDER_TITLE_MAP = {
     claudeCodeCli: "Claude",
     codexCli: "Codex",
-    geminiCli: "Gemini",
     glmNative: "GLM",
     glmOpenCode: "OpenCode",
     kimiCode: "Kimi",
@@ -8426,7 +8284,6 @@
   var PROVIDER_DESCRIPTION_MAP = {
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
-    geminiCli: "Using your authentication Gemini CLI",
     glmNative: "Uses the native Z.AI GLM API",
     glmOpenCode: "Using OpenCode providers and models",
     kimiCode: "Using your authentication Kimi CLI",
@@ -8443,7 +8300,6 @@
   var DEFAULT_PROVIDER_IDS = [
     "claudeCodeCli",
     "codexCli",
-    "geminiCli",
     "localModels",
     "glmNative",
     "glmOpenCode"
@@ -8574,7 +8430,6 @@
   var providerIdSet = /* @__PURE__ */ new Set([
     "claudeCodeCli",
     "codexCli",
-    "geminiCli",
     "kimiCode",
     "glmNative",
     "glmOpenCode",
@@ -8647,7 +8502,7 @@
   };
 
   // src/client/ui/src/core-bridge/normalizers.ts
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
     const parsed = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
@@ -8670,7 +8525,7 @@
     };
   };
   var sanitizeSessionModelBinding = (binding) => {
-    if (!isRecord4(binding)) {
+    if (!isRecord3(binding)) {
       return null;
     }
     const providerId = binding.providerId;
@@ -8794,10 +8649,10 @@
     };
   };
   var sanitizeSessionMessagePayload = (payload) => {
-    if (!isRecord4(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
-    const messageSource = isRecord4(payload.message) ? {
+    const messageSource = isRecord3(payload.message) ? {
       sessionId: payload.sessionId,
       ...payload.message
     } : payload;
@@ -8808,7 +8663,7 @@
     return { sessionId: payload.sessionId, message: normalized };
   };
   var sanitizeSessionBindingPayload = (payload) => {
-    if (!isRecord4(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerSessionId = payload.providerSessionId === null || typeof payload.providerSessionId === "string" ? payload.providerSessionId : null;
@@ -8819,7 +8674,7 @@
     };
   };
   var sanitizeSessionErrorPayload = (payload) => {
-    if (!isRecord4(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerLabel = typeof payload.providerId === "string" && payload.providerId.trim().length > 0 ? `[${payload.providerId.trim()}] ` : "";
@@ -9437,55 +9292,6 @@
       }
     }
   });
-  var updateGeminiDefaultModel = (settings, modelId) => ({
-    ...settings,
-    providers: {
-      ...settings.providers,
-      gemini: {
-        ...settings.providers.gemini,
-        defaultModel: modelId
-      }
-    }
-  });
-  var updateGeminiThinking = (settings, modelId, level) => ({
-    ...settings,
-    providers: {
-      ...settings.providers,
-      gemini: {
-        ...settings.providers.gemini,
-        thinkingLevelByModel: {
-          ...settings.providers.gemini.thinkingLevelByModel,
-          [modelId]: level
-        }
-      }
-    }
-  });
-  var updateGeminiContinuityRemainingPercentThreshold = (settings, remainingPercentThreshold) => ({
-    ...settings,
-    providers: {
-      ...settings.providers,
-      gemini: {
-        ...settings.providers.gemini,
-        sessionContinuity: {
-          ...settings.providers.gemini.sessionContinuity,
-          remainingPercentThreshold
-        }
-      }
-    }
-  });
-  var updateGeminiContextWindowTokenLimit = (settings, contextWindowTokenLimit) => ({
-    ...settings,
-    providers: {
-      ...settings.providers,
-      gemini: {
-        ...settings.providers.gemini,
-        sessionContinuity: {
-          ...settings.providers.gemini.sessionContinuity,
-          contextWindowTokenLimit
-        }
-      }
-    }
-  });
   var updateResponsePolicyMode = (settings, mode) => ({
     ...settings,
     general: {
@@ -9681,30 +9487,6 @@
       },
       [settings, updateSettings]
     );
-    const handleGeminiContinuityRemainingPercentThresholdChange = (0, import_react.useCallback)(
-      (remainingPercentThreshold) => {
-        if (!Number.isFinite(remainingPercentThreshold)) {
-          return;
-        }
-        const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
-        updateSettings(
-          updateGeminiContinuityRemainingPercentThreshold(settings, clamped)
-        );
-      },
-      [settings, updateSettings]
-    );
-    const handleGeminiContextWindowTokenLimitChange = (0, import_react.useCallback)(
-      (contextWindowTokenLimit) => {
-        if (!Number.isFinite(contextWindowTokenLimit)) {
-          return;
-        }
-        const clamped = clampGeminiContextWindowTokenLimit(
-          contextWindowTokenLimit
-        );
-        updateSettings(updateGeminiContextWindowTokenLimit(settings, clamped));
-      },
-      [settings, updateSettings]
-    );
     const handleCodexDefaultModelChange = (0, import_react.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
@@ -9773,18 +9555,6 @@
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react.useCallback)(
-      (modelId) => {
-        updateSettings(updateGeminiDefaultModel(settings, modelId));
-      },
-      [settings, updateSettings]
-    );
-    const handleGeminiThinkingChange = (0, import_react.useCallback)(
-      (modelId, level) => {
-        updateSettings(updateGeminiThinking(settings, modelId, level));
-      },
-      [settings, updateSettings]
-    );
     const handleClaudeThinkingDisplaySyncChange = (0, import_react.useCallback)(
       (enabled) => {
         updateSettings(
@@ -9802,14 +9572,6 @@
           type: "settings:codex-reasoning-summary-preview",
           enabled
         });
-      },
-      [settings, updateSettings]
-    );
-    const handleGeminiThinkingDisplaySyncChange = (0, import_react.useCallback)(
-      (enabled) => {
-        updateSettings(
-          updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
-        );
       },
       [settings, updateSettings]
     );
@@ -9860,16 +9622,11 @@
       handleThinkingSettingsChange,
       handleClaudeContinuityRemainingPercentThresholdChange,
       handleCodexContinuityRemainingPercentThresholdChange,
-      handleGeminiContinuityRemainingPercentThresholdChange,
-      handleGeminiContextWindowTokenLimitChange,
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
-      handleGeminiDefaultModelChange,
-      handleGeminiThinkingChange,
       handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
-      handleGeminiThinkingDisplaySyncChange,
       handleGlmOpenCodeSettingsChange: (glmOpenCode) => updateSettings({
         ...settings,
         providers: { ...settings.providers, glmOpenCode }

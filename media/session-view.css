@@ -148,10 +148,6 @@
   color: #01f0d8;
 }
 
-.session-tab.session-tab--gemini .session-tab__providers-line {
-  color: #ab34cb;
-}
-
 .session-tab.session-tab--kimi .session-tab__providers-line {
   color: #77d6ff;
 }
@@ -553,14 +549,6 @@
   color: #01f0d8;
 }
 
-.session-dialog__message--assistant-gemini {
-  background-color: #2c2a2d;
-}
-
-.session-dialog__message--assistant-gemini .session-dialog__role {
-  color: #ab34cb;
-}
-
 .session-dialog__message--assistant-kimi {
   background-color: #27313a;
 }
@@ -611,11 +599,6 @@
 .session-dialog__message--assistant-thinking.session-dialog__message--assistant-codex
   .session-dialog__role {
   color: rgba(1, 240, 216, 0.6);
-}
-
-.session-dialog__message--assistant-thinking.session-dialog__message--assistant-gemini
-  .session-dialog__role {
-  color: rgba(171, 52, 203, 0.6);
 }
 
 .session-dialog__message--assistant-thinking.session-dialog__message--assistant-kimi
