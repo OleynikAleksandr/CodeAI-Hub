@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.604] - 2026-06-24
+### Removed
+- **Gemini provider has been removed.** CodeAI Hub no longer ships the Gemini
+  workspace package, Google Gemini CLI/Core dependencies, provider assets,
+  Settings UI, start-card/status surfaces, Core registration, usage-limits
+  bridge, runtime env wiring, release scripts, or active Gemini provider SSOT
+  docs.
+
+### Security
+- **Gemini dependency chain removed from production audit surface.** The
+  `@google/gemini-cli*` dependency tree that pulled the Google API moderate
+  vulnerability cluster is no longer part of the repository package graph.
+
+### Verification
+- `npm audit --omit=dev --audit-level=high`
+- `git grep -l -i gemini -- src packages scripts assets media package.json package-lock.json`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.603] - 2026-06-24
 ### Fixed
 - **OpenRouter model switches ignore stale endpoint routing.** When a session is

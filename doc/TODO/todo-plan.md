@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.release-docs-prep.task1",
-  "expectedCommitMessage": "docs: prepare Gemini-free release notes",
+  "currentTaskId": "gemini-removal.phase2.release-build.task1",
+  "expectedCommitMessage": "chore: build Gemini-free release 1.2.604",
   "debt": null
 }
 ```
@@ -385,5 +385,10 @@ Approval evidence (2026-06-24):
 
 ### Stream: Release docs prep
 
-125. [IN_PROGRESS] `gemini-removal.phase2.release-docs-prep.task1` Prepare future-version README/CHANGELOG release notes for the Gemini-free build before running release scripts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare Gemini-free release notes`).
-126. [TODO] `gemini-removal.phase2.release-docs-prep.commit1` Git Commit: `docs: prepare Gemini-free release notes` (hash: TBD)
+125. [DONE] `gemini-removal.phase2.release-docs-prep.task1` Prepare future-version README/CHANGELOG release notes for the Gemini-free build before running release scripts (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare Gemini-free release notes`).
+126. [DONE] `gemini-removal.phase2.release-docs-prep.commit1` Git Commit: `docs: prepare Gemini-free release notes` (hash: self)
+
+### Stream: Gemini-free release build
+
+127. [IN_PROGRESS] `gemini-removal.phase2.release-build.task1` Run the Gemini-free release build scripts for v1.2.604 and record generated VSIX/tarball evidence (scope: `package manifests, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build Gemini-free release 1.2.604`).
+128. [TODO] `gemini-removal.phase2.release-build.commit1` Git Commit: `chore: build Gemini-free release 1.2.604` (hash: TBD)

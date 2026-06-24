@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.603** (OpenRouter Endpoint Routing Hotfix)
+**Current Release — v1.2.604** (Gemini Provider Removal)
+
+This release removes the Gemini provider from CodeAI Hub.
+
+Gemini runtime code, SDK dependencies, workspace package, settings surfaces,
+build scripts, provider assets, runtime wiring, and active SSOT documentation
+have been removed. The remaining `gemini` text in the repository is limited to
+safety ignore rules, release/history records, active removal planning
+provenance, and hosted OpenRouter model ids such as `google/gemini-*`.
+
+Retest focus: install the VSIX, restart Project Manager, confirm Gemini no
+longer appears in provider/settings/start-card/status surfaces, and smoke-test
+Claude, Codex, GLM, GLM-OpenCode, Kimi, Local Models, and OpenRouter provider
+selection.
+
+**Previous Release — v1.2.603** (OpenRouter Endpoint Routing Hotfix)
 
 This hotfix prevents stale OpenRouter endpoint routing from breaking switched
 OpenRouter models.
