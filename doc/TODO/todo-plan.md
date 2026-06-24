@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.provider-module-docs-residue.task1",
-  "expectedCommitMessage": "docs: drop Gemini provider module refs",
+  "currentTaskId": "gemini-removal.phase2.session-ui-docs-residue.task1",
+  "expectedCommitMessage": "docs: drop Gemini session UI refs",
   "debt": null
 }
 ```
@@ -310,5 +310,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Provider module docs residue
 
-103. [IN_PROGRESS] `gemini-removal.phase2.provider-module-docs-residue.task1` Remove Gemini-as-live-provider references from active Claude/Codex/Kimi module docs after provider removal (scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Codex.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md`; expected commit: `docs: drop Gemini provider module refs`).
-104. [TODO] `gemini-removal.phase2.provider-module-docs-residue.commit1` Git Commit: `docs: drop Gemini provider module refs` (hash: TBD)
+103. [DONE] `gemini-removal.phase2.provider-module-docs-residue.task1` Remove Gemini-as-live-provider references from active Claude/Codex/Kimi module docs after provider removal (scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Codex.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md`; expected commit: `docs: drop Gemini provider module refs`).
+104. [DONE] `gemini-removal.phase2.provider-module-docs-residue.commit1` Git Commit: `docs: drop Gemini provider module refs` (hash: self)
+
+### Stream: Session UI docs residue
+
+105. [IN_PROGRESS] `gemini-removal.phase2.session-ui-docs-residue.task1` Remove Gemini-as-live-provider references from active Session UI module docs after UI asset cleanup (scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: drop Gemini session UI refs`).
+106. [TODO] `gemini-removal.phase2.session-ui-docs-residue.commit1` Git Commit: `docs: drop Gemini session UI refs` (hash: TBD)

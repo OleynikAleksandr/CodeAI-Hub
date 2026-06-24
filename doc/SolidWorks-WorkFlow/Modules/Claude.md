@@ -42,7 +42,7 @@
 ## Usage-limits cluster (lives in Core, not in Claude_Module)
 - `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts` — facade for header/runtime usage-limit normalization and stream payload shaping.
 - `packages/core/src/provider-usage-limits/providers/claude/claude-usage-token-resolver.ts` — platform/env/credential OAuth token resolution helper for the usage-limits facade.
-- All three providers (Claude, Codex, Gemini) share this Core cluster — see `packages/core/src/provider-usage-limits/` for the shared facade and per-provider adapters.
+- Claude and Codex use this Core cluster's per-provider adapters; Kimi consumes the same provider-neutral stream contract from its module-owned usage reader. See `packages/core/src/provider-usage-limits/` for the shared facade and stream payload contract.
 
 ## Provider-home (канон)
 - `HOME=~/.codeai-hub/providers/claude/home`

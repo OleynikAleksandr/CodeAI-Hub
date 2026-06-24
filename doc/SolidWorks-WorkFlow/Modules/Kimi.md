@@ -54,7 +54,7 @@ Kimi provider module подключает Kimi K2.7 Code к Core как обыч
 - Auth, quota, service, unsupported-model and stale-session failures must be classified before binding teardown so Core can retry/rebind once or show a provider recovery surface instead of silently dropping the user message.
 
 ## Continuity and stale binding
-- Kimi participates in the same snapshot-first continuity contract as Claude, Codex and Gemini.
+- Kimi participates in the same snapshot-first continuity contract as Claude and Codex.
 - Restored Core bindings may contain a provider session id that the fresh Kimi adapter process has not hydrated yet.
 - In that case `KimiSessionLifecycle` throws `KIMI_SESSION_STALE_BINDING`; Core `SessionRequestHandlerMessageDispatch` treats it as a one-shot stale-binding recovery signal, invalidates the binding, rebinds, and retries the send once.
 - Generic `Error` must not be used for this path because generic retryable classification does not preserve the provider session id required for deterministic recovery.
@@ -65,7 +65,7 @@ Kimi provider module подключает Kimi K2.7 Code к Core как обыч
 - `providers.kimi.thinkingEnabled` may remain in old settings snapshots as a backward-compatible field, but it is normalized to enabled and no longer drives a CLI flag, Settings control, launch-card control, or active runtime restart.
 - `thinkingDisplaySyncEnabled` is presentation-only and controls whether thought messages render in the Session UI; it never reaches the Kimi CLI.
 - Core-applied turn config remains authoritative for outbound sends. Provider-local defaults are only bootstrap fallback.
-- Kimi has no CodeAI-supported reasoning/thinking effort dimension (no `low|medium|high` levels like Claude/Codex/Gemini), and the current ACP path has no supported reasoning on/off switch in CodeAI UI.
+- Kimi has no CodeAI-supported reasoning/thinking effort dimension (no `low|medium|high` levels like Claude/Codex), and the current ACP path has no supported reasoning on/off switch in CodeAI UI.
 - Prompt/system-instruction cadence can ask Kimi for visible progress updates, but it is not a reliable substitute for ACP event handling: during a long tool call the model may emit no new text, so the adapter must rely on ACP thought chunks and progress events for live UX.
 
 ## Reasoning / thinking control (ACP)
