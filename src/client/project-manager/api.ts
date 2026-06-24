@@ -151,7 +151,7 @@ class ProjectManagerApi {
   }
 
   updateSettingsProvider(
-    provider: "claude" | "codex" | "gemini",
+    provider: "claude" | "codex",
     target: SettingsProviderTarget
   ): void {
     this.send({

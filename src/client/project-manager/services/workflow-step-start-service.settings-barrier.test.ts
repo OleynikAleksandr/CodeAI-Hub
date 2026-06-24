@@ -94,16 +94,6 @@ const createSettings = (): Settings => ({
       sessionContinuity: { remainingPercentThreshold: 30 },
       thinkingDisplaySyncEnabled: true,
     },
-    gemini: {
-      autoUpdate: { enabled: false },
-      defaultModel: "gemini-3-flash-preview",
-      sessionContinuity: {
-        contextWindowTokenLimit: 1_000_000,
-        remainingPercentThreshold: 30,
-      },
-      thinkingDisplaySyncEnabled: true,
-      thinkingLevelByModel: { "gemini-3-flash-preview": "low" },
-    },
   },
 });
 
@@ -280,7 +270,7 @@ test("workflow starts save selected OpenRouter model before session creation", a
     loadSettingsPayload: async () => ({ settings }),
     saveSettings: (nextSettings) => {
       events.push(
-        `save:${nextSettings.providers.openRouter?.defaultModel}:${nextSettings.providers.gemini.defaultModel}`
+        `save:${nextSettings.providers.openRouter?.defaultModel}`
       );
     },
     submitService: {
@@ -302,7 +292,7 @@ test("workflow starts save selected OpenRouter model before session creation", a
 
   assert.equal(sessionId, "virtual-simulation-session");
   assert.deepEqual(events, [
-    `save:${modelId}:gemini-3-flash-preview`,
+    `save:${modelId}`,
     "session:create",
   ]);
 });

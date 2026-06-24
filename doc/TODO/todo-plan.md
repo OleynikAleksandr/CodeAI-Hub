@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.settings-types.task1",
-  "expectedCommitMessage": "refactor: drop Gemini settings state model",
+  "currentTaskId": "gemini-removal.phase1.provider-types.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from provider type registry",
   "debt": null
 }
 ```
@@ -98,5 +98,10 @@
 
 ### Stream: Settings state model and mapping
 
-21. [IN_PROGRESS] `gemini-removal.phase1.settings-types.task1` Remove the Gemini settings type/defaults/equality from the settings state model and raw types, delete gemini-mapping, and update the settings/thinking tests that read providers.gemini (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/gemini-mapping.ts`; expected commit: `refactor: drop Gemini settings state model`).
-22. [TODO] `gemini-removal.phase1.settings-types.commit1` Git Commit: `refactor: drop Gemini settings state model` (hash: TBD)
+21. [DONE] `gemini-removal.phase1.settings-types.task1` Drop the required `gemini` settings field, its type/defaults/equality from the settings state model and raw types, delete gemini-mapping, and remove Gemini from the four settings/workflow tests whose fixtures must match the type (cascading type change) (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/gemini-mapping.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts, src/client/ui/src/components/settings/settings-auto-update-defaults.test.ts, src/client/ui/src/session/thinking-display-policy.test.tsx, src/client/ui/src/components/settings/provider-versions-ui.tsx, src/client/ui/src/components/settings/provider-versions.tsx, src/client/ui/src/components/settings/provider-versions-model.ts, src/client/project-manager/api.ts, src/types/gemini-model-registry.ts`; expected commit: `refactor: drop Gemini settings state model`).
+22. [DONE] `gemini-removal.phase1.settings-types.commit1` Git Commit: `refactor: drop Gemini settings state model` (hash: self)
+
+### Stream: Provider type registry
+
+23. [IN_PROGRESS] `gemini-removal.phase1.provider-types.task1` Remove geminiCli from the KnownProviderStackId union and title/description maps in the shared provider type and from the core-bridge constants (scope: `src/types/provider.ts, src/client/ui/src/core-bridge/constants.ts`; expected commit: `refactor: drop Gemini from provider type registry`).
+24. [TODO] `gemini-removal.phase1.provider-types.commit1` Git Commit: `refactor: drop Gemini from provider type registry` (hash: TBD)

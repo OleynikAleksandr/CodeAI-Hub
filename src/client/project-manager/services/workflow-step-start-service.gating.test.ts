@@ -101,16 +101,6 @@ const createSettings = (): Settings => ({
       sessionContinuity: { remainingPercentThreshold: 30 },
       thinkingDisplaySyncEnabled: true,
     },
-    gemini: {
-      autoUpdate: { enabled: false },
-      defaultModel: "gemini-3-flash-preview",
-      sessionContinuity: {
-        contextWindowTokenLimit: 1_000_000,
-        remainingPercentThreshold: 30,
-      },
-      thinkingDisplaySyncEnabled: true,
-      thinkingLevelByModel: { "gemini-3-flash-preview": "low" },
-    },
   },
 });
 
@@ -477,23 +467,8 @@ test("workflow starts persist selected model defaults for supported providers", 
     modelId: "gpt-5.4",
     reasoning: "xhigh",
   });
-  await createService().startVirtualSimulation({
-    workspaceName: "Demo Workspace",
-    workspacePath: "/tmp/demo",
-    workspaceSlug: "demo-workspace",
-    providerId: "geminiCli",
-    modelId: "gemini-3-flash-preview",
-    reasoning: "medium",
-  });
-
   assert.equal(savedSettings[0]?.providers.claude.defaultModel, "opus");
   assert.equal(savedSettings[0]?.providers.claude.thinking.effort, "high");
   assert.equal(savedSettings[1]?.providers.codex.defaultModel, "gpt-5.4");
   assert.equal(savedSettings[1]?.providers.codex.reasoningByModel["gpt-5.4"], "xhigh");
-  assert.equal(
-    savedSettings[2]?.providers.gemini.thinkingLevelByModel[
-      "gemini-3-flash-preview"
-    ],
-    "medium"
-  );
 });

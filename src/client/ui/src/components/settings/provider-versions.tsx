@@ -62,30 +62,6 @@ const ProviderVersions = ({
     if (!snapshot) {
       return [];
     }
-    if (provider === "gemini") {
-      const geminiSnapshot = snapshot.gemini;
-      if (!geminiSnapshot) {
-        return [];
-      }
-      return [
-        {
-          label: "Gemini CLI",
-          packageName: geminiSnapshot.cli.packageName,
-          currentVersion: geminiSnapshot.cli.currentVersion,
-          latestVersion: geminiSnapshot.cli.latestVersion,
-          target: undefined,
-          showUpdateButton: false,
-        },
-        {
-          label: "Gemini CLI Core",
-          packageName: geminiSnapshot.core.packageName,
-          currentVersion: geminiSnapshot.core.currentVersion,
-          latestVersion: geminiSnapshot.core.latestVersion,
-          target: "core" as const,
-          showUpdateButton: true,
-        },
-      ];
-    }
     if (provider === "glmOpenCode") {
       const glmOpenCodeSnapshot = snapshot.glmOpenCode;
       if (!glmOpenCodeSnapshot) {
@@ -138,9 +114,6 @@ const ProviderVersions = ({
     if (!snapshot) {
       return false;
     }
-    if (provider === "gemini") {
-      return Boolean(snapshot.gemini);
-    }
     if (provider === "glmOpenCode") {
       return Boolean(snapshot.glmOpenCode);
     }
@@ -190,7 +163,7 @@ const ProviderVersions = ({
     }
   };
 
-  let title = "Gemini Versions";
+  let title = "Provider Versions";
   if (provider === "claude") {
     title = "Claude Versions";
   } else if (provider === "codex") {

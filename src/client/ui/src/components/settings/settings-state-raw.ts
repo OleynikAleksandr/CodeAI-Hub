@@ -16,10 +16,6 @@ export interface RawClaudeSessionContinuitySettings {
 export interface RawCodexSessionContinuitySettings {
   readonly remainingPercentThreshold?: unknown;
 }
-export interface RawGeminiSessionContinuitySettings {
-  readonly contextWindowTokenLimit?: unknown;
-  readonly remainingPercentThreshold?: unknown;
-}
 export interface RawClaudeSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
@@ -34,13 +30,6 @@ export interface RawCodexSettings {
   readonly reasoningSummaryEnabled?: unknown;
   readonly sessionContinuity?: RawCodexSessionContinuitySettings;
   readonly thinkingDisplaySyncEnabled?: unknown;
-}
-export interface RawGeminiSettings {
-  readonly autoUpdate?: RawAutoUpdateSettings;
-  readonly defaultModel?: unknown;
-  readonly sessionContinuity?: RawGeminiSessionContinuitySettings;
-  readonly thinkingDisplaySyncEnabled?: unknown;
-  readonly thinkingLevelByModel?: Record<string, unknown>;
 }
 export interface RawKimiSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
@@ -105,7 +94,6 @@ export interface RawSettingsSnapshot {
   readonly providers?: {
     readonly claude?: RawClaudeSettings;
     readonly codex?: RawCodexSettings;
-    readonly gemini?: RawGeminiSettings;
     readonly kimi?: RawKimiSettings;
     readonly glmOpenCode?: RawGlmOpenCodeSettings;
     readonly glmNative?: RawGlmNativeSettings;

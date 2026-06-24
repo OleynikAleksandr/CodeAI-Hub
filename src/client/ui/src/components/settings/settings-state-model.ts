@@ -17,11 +17,6 @@ import {
   mapClaudeThinkingSettings,
 } from "./claude-thinking-state";
 import {
-  areGeminiThinkingLevelByModelEqual,
-  type GeminiSettings,
-  mapGeminiSettings,
-} from "./gemini-mapping";
-import {
   areGeneralResponsePolicyEqual,
   type GeneralResponsePolicySettings,
   mapGeneralResponsePolicy,
@@ -45,7 +40,6 @@ import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
   RawCodexSettings,
-  RawGeminiSettings,
   RawGeneralLocalizationSettings,
   RawGeneralSettings,
   RawLocalizationCategorySettings,
@@ -57,7 +51,7 @@ import {
   type TextToSpeechSettings,
 } from "./text-to-speech-settings";
 
-export type ProviderId = "claude" | "codex" | "gemini" | "kimi";
+export type ProviderId = "claude" | "codex" | "kimi";
 
 export type { ProviderVersions, VersionEntry } from "./provider-versions-model";
 export type { RawSettingsSnapshot } from "./settings-state-raw";
@@ -112,15 +106,11 @@ interface CodexSettings {
   readonly sessionContinuity: ContinuitySettings;
   readonly thinkingDisplaySyncEnabled: boolean;
 }
-interface GeminiSettingsWithDisplaySync extends GeminiSettings {
-  readonly thinkingDisplaySyncEnabled: boolean;
-}
 export interface Settings {
   readonly general: GeneralSettings;
   readonly providers: {
     readonly claude: ClaudeSettings;
     readonly codex: CodexSettings;
-    readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
     readonly glmOpenCode?: GlmOpenCodeSettings;
     readonly glmNative?: GlmNativeSettings;
@@ -306,15 +296,6 @@ const mapClaudeSettings = (
   ),
 });
 
-const mapGeminiSettingsWithDisplaySync = (
-  value: RawGeminiSettings | undefined
-): GeminiSettingsWithDisplaySync => ({
-  ...mapGeminiSettings(value, mapAutoUpdateSettings),
-  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-    value?.thinkingDisplaySyncEnabled
-  ),
-});
-
 const resolveCodexModelId = (value: unknown): CodexModelId =>
   typeof value === "string" && CODEX_MODEL_IDS.has(value)
     ? (value as CodexModelId)
@@ -370,7 +351,6 @@ export const mapSettingsSnapshot = (
   providers: {
     claude: mapClaudeSettings(value?.providers?.claude),
     codex: mapCodexSettings(value?.providers?.codex),
-    gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
     kimi: mapKimiSettings(
       value?.providers?.kimi,
       mapAutoUpdateSettings,
@@ -462,27 +442,10 @@ const areCodexSettingsEqual = (
   left.sessionContinuity.remainingPercentThreshold ===
     right.sessionContinuity.remainingPercentThreshold;
 
-const areGeminiSettingsEqual = (
-  left: GeminiSettingsWithDisplaySync,
-  right: GeminiSettingsWithDisplaySync
-): boolean =>
-  areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
-  left.defaultModel === right.defaultModel &&
-  areGeminiThinkingLevelByModelEqual(
-    left.thinkingLevelByModel,
-    right.thinkingLevelByModel
-  ) &&
-  left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled &&
-  left.sessionContinuity.contextWindowTokenLimit ===
-    right.sessionContinuity.contextWindowTokenLimit &&
-  left.sessionContinuity.remainingPercentThreshold ===
-    right.sessionContinuity.remainingPercentThreshold;
-
 export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areGeneralSettingsEqual(left.general, right.general) &&
   areClaudeSettingsEqual(left.providers.claude, right.providers.claude) &&
   areCodexSettingsEqual(left.providers.codex, right.providers.codex) &&
-  areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) &&
   areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) &&
   areKimiProviderSettingsEqual(
     left.providers.glmOpenCode,

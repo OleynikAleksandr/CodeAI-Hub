@@ -10,7 +10,6 @@ test("Settings UI defaults provider auto-update toggles to off", () => {
 
   assert.equal(settings.providers.claude.autoUpdate.enabled, false);
   assert.equal(settings.providers.codex.autoUpdate.enabled, false);
-  assert.equal(settings.providers.gemini.autoUpdate.enabled, false);
 });
 
 test("Settings UI preserves explicit provider auto-update opt-in", () => {
@@ -18,11 +17,9 @@ test("Settings UI preserves explicit provider auto-update opt-in", () => {
     providers: {
       claude: { autoUpdate: { enabled: true } },
       codex: { autoUpdate: { enabled: true } },
-      gemini: { autoUpdate: { enabled: true } },
     },
   });
 
   assert.equal(settings.providers.claude.autoUpdate.enabled, true);
   assert.equal(settings.providers.codex.autoUpdate.enabled, true);
-  assert.equal(settings.providers.gemini.autoUpdate.enabled, true);
 });

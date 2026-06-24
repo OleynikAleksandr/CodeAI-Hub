@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { useLocalization } from "../../app-host/use-localization";
 
-export type Provider = "claude" | "codex" | "gemini" | "glmOpenCode";
+export type Provider = "claude" | "codex" | "glmOpenCode";
 export type UpdatableProvider = Exclude<Provider, "glmOpenCode">;
 
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
@@ -83,19 +83,13 @@ const resolveProviderLabel = (provider: Provider): string => {
   if (provider === "codex") {
     return "Codex";
   }
-  if (provider === "glmOpenCode") {
-    return "OpenCode";
-  }
-  return "Gemini";
+  return "OpenCode";
 };
 
 export const resolveTargetLabel = (
   provider: Provider,
   target: "cli" | "sdk" | "core"
 ): string => {
-  if (provider === "gemini" && target === "core") {
-    return "CLI Core";
-  }
   if (provider === "glmOpenCode" && target === "cli") {
     return "OpenCode CLI";
   }
@@ -156,8 +150,7 @@ export const AutoUpdateToggle = ({
 }) => {
   const { t } = useLocalization();
   const providerLabel = resolveProviderLabel(provider);
-  const packageLabel =
-    provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
+  const packageLabel = "CLI and SDK";
   const description = t(
     UI_HELPER_TEXT_CATEGORY,
     "settings.provider_versions.auto_update.description",

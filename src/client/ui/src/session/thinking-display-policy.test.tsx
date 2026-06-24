@@ -80,10 +80,6 @@ const buildDisabledSettings = (): Settings => {
         ...defaults.providers.codex,
         reasoningSummaryEnabled: false,
       },
-      gemini: {
-        ...defaults.providers.gemini,
-        thinkingDisplaySyncEnabled: false,
-      },
       kimi: {
         autoUpdate: defaults.providers.kimi?.autoUpdate ?? { enabled: false },
         defaultModel: defaults.providers.kimi?.defaultModel ?? "kimi-k2.7-code",
@@ -107,13 +103,6 @@ test("resolveSessionThinkingDisplayEnabled follows provider-specific settings", 
   assert.equal(
     resolveSessionThinkingDisplayEnabled({
       providerId: "codexCli",
-      settings,
-    }),
-    false
-  );
-  assert.equal(
-    resolveSessionThinkingDisplayEnabled({
-      providerId: "geminiCli",
       settings,
     }),
     false
