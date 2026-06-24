@@ -5,12 +5,6 @@ import path from "node:path";
 import { promisify } from "node:util";
 
 const EXEC_MAX_BUFFER_BYTES = 10 * 1_048_576;
-const GEMINI_INSTALLER_PATHS = {
-  linux: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
-  macOS: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
-  windows:
-    "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@google\\gemini-cli\\",
-} as const;
 const NPM_COMMAND = process.platform === "win32" ? "npm.cmd" : "npm";
 const OPENCODE_VERSION_COMMAND =
   process.platform === "win32"
@@ -29,10 +23,6 @@ const PACKAGE_MAP = {
     cli: "@openai/codex",
     sdk: "@openai/codex-sdk",
   },
-  gemini: {
-    cli: "@google/gemini-cli",
-    core: "@google/gemini-cli-core",
-  },
   glmOpenCode: {
     cli: "opencode",
     sdk: "@opencode-ai/sdk",
@@ -40,7 +30,7 @@ const PACKAGE_MAP = {
 } as const;
 
 type ProviderId = keyof typeof PACKAGE_MAP;
-type VersionTarget = "cli" | "core" | "sdk";
+type VersionTarget = "cli" | "sdk";
 
 interface PackageDescriptor {
   readonly packageName: string;
@@ -72,10 +62,6 @@ export interface SettingsProviderVersionsSnapshot {
   readonly codex: {
     readonly cli: VersionEntry;
     readonly sdk: VersionEntry;
-  };
-  readonly gemini: {
-    readonly cli: VersionEntry;
-    readonly core: VersionEntry;
   };
   readonly glmOpenCode: {
     readonly cli: VersionEntry;
@@ -313,10 +299,6 @@ const buildSnapshot = (
       cli: get("codex", "cli"),
       sdk: get("codex", "sdk"),
     },
-    gemini: {
-      cli: get("gemini", "cli"),
-      core: get("gemini", "core"),
-    },
     glmOpenCode: {
       cli: get("glmOpenCode", "cli"),
       sdk: get("glmOpenCode", "sdk"),
@@ -327,16 +309,9 @@ const buildSnapshot = (
 export class SettingsProviderVersionService {
   async loadSnapshot(): Promise<SettingsProviderVersionsSnapshot> {
     const descriptors = resolveDescriptors();
-    const geminiVersions = await this.readGeminiVersions();
 
     const results = await Promise.all(
       descriptors.map(async ({ packageName, provider, target }) => {
-        if (provider === "gemini" && target === "cli") {
-          return geminiVersions.cli;
-        }
-        if (provider === "gemini" && target === "core") {
-          return geminiVersions.core;
-        }
         if (provider === "glmOpenCode" && target === "cli") {
           return readOpenCodeVersion();
         }
@@ -361,71 +336,10 @@ export class SettingsProviderVersionService {
     provider: ProviderId,
     target: VersionTarget
   ): Promise<SettingsProviderVersionsSnapshot> {
-    if (provider === "gemini") {
-      return this.updateGeminiAll();
-    }
     if (provider === "glmOpenCode") {
       throw new Error("OpenCode CLI updates are managed outside CodeAI Hub.");
     }
     await installGlobalPackageLatest(resolvePackageName(provider, target));
-    return this.loadSnapshot();
-  }
-
-  private async readGeminiVersions(): Promise<{
-    readonly cli: PackageVersionResult;
-    readonly core: PackageVersionResult;
-  }> {
-    const cliPackageName = PACKAGE_MAP.gemini.cli;
-    const corePackageName = PACKAGE_MAP.gemini.core;
-    const [cliInstalled, coreInstalled, cliLatest, coreLatest] =
-      await Promise.all([
-        readInstalledVersion(cliPackageName),
-        readInstalledVersion(corePackageName),
-        readLatestVersion(cliPackageName),
-        readLatestVersion(corePackageName),
-      ]);
-
-    return {
-      cli: {
-        currentVersion: cliInstalled.version,
-        error: cliInstalled.error ?? cliLatest.error,
-        latestVersion: cliLatest.version,
-        packageName: cliPackageName,
-      },
-      core: {
-        currentVersion: coreInstalled.version,
-        error: coreInstalled.error ?? coreLatest.error,
-        latestVersion: coreLatest.version,
-        packageName: corePackageName,
-      },
-    };
-  }
-
-  private async resolveGeminiModulePath(): Promise<string | null> {
-    const root = path.join(homedir(), ".codeai-hub", "providers", "gemini");
-    try {
-      const version = (
-        await fs.readFile(path.join(root, "latest"), "utf8")
-      ).trim();
-      const modulePath = path.join(root, version);
-      await fs.access(path.join(modulePath, "dist", "index.js"));
-      return modulePath;
-    } catch {
-      return null;
-    }
-  }
-
-  private async updateGeminiAll(): Promise<SettingsProviderVersionsSnapshot> {
-    const modulePath = await this.resolveGeminiModulePath();
-    if (!modulePath) {
-      throw new Error("Gemini module not installed");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { GeminiInstaller } = require(
-      path.join(modulePath, "dist", "index.js")
-    );
-    const installer = new GeminiInstaller(GEMINI_INSTALLER_PATHS);
-    await installer.updateToLatest();
     return this.loadSnapshot();
   }
 }

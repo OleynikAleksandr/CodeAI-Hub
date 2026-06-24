@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remote-bridge-provider-settings.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from remote bridge provider settings",
+  "currentTaskId": "gemini-removal.phase2.remote-bridge-provider-routing.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from remote bridge provider routing",
   "debt": null
 }
 ```
@@ -180,5 +180,10 @@
 
 ### Stream: Remote-bridge provider settings commands
 
-53. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-provider-settings.task1` Remove Gemini from remote-bridge provider settings/update/version command surfaces (scope: `packages/core/src/remote-bridge/**`; expected commit: `refactor: drop Gemini from remote bridge provider settings`).
-54. [TODO] `gemini-removal.phase2.remote-bridge-provider-settings.commit1` Git Commit: `refactor: drop Gemini from remote bridge provider settings` (hash: TBD)
+53. [DONE] `gemini-removal.phase2.remote-bridge-provider-settings.task1` ATOMIC cascade: remove Gemini from remote-bridge provider settings/update/version command surfaces and their validator checks (scope: `packages/core/src/remote-bridge/handlers/settings-provider-version-service.ts, packages/core/src/remote-bridge/handlers/settings-provider-auto-update-service.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, packages/core/src/remote-bridge/types.ts, packages/core/src/remote-bridge/handlers/settings-provider-auto-update-service.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts`; expected commit: `refactor: drop Gemini from remote bridge provider settings`).
+54. [DONE] `gemini-removal.phase2.remote-bridge-provider-settings.commit1` Git Commit: `refactor: drop Gemini from remote bridge provider settings` (hash: self)
+
+### Stream: Remote-bridge provider routing
+
+55. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-provider-routing.task1` Remove Gemini from remote-bridge provider-id translation and turn-threshold routing surfaces (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-translation-provider-id.ts, packages/core/src/remote-bridge/handlers/session-request-handler-turn-threshold-resolver.ts`; expected commit: `refactor: drop Gemini from remote bridge provider routing`).
+56. [TODO] `gemini-removal.phase2.remote-bridge-provider-routing.commit1` Git Commit: `refactor: drop Gemini from remote bridge provider routing` (hash: TBD)

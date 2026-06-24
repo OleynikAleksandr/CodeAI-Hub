@@ -47,6 +47,7 @@ test("resolveProviderAutoUpdateTargets maps enabled provider settings to startup
       providers: {
         claude: { autoUpdate: { enabled: true } },
         codex: { autoUpdate: { enabled: false } },
+        gemini: { autoUpdate: { enabled: true } },
       },
     }),
     [

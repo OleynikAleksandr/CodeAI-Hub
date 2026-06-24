@@ -410,8 +410,8 @@ type CoreIncomingMessage =
   | {
       readonly type: "settings:update-provider";
       readonly payload: {
-        readonly provider: "claude" | "codex" | "gemini";
-        readonly target: "cli" | "core" | "sdk";
+        readonly provider: "claude" | "codex";
+        readonly target: "cli" | "sdk";
       };
     }
   | { readonly type: "settings:template-updates" }

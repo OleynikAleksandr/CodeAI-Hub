@@ -439,8 +439,8 @@ export class SettingsRequestHandler {
   }
 
   async handleUpdateProvider(
-    provider: "claude" | "codex" | "gemini",
-    target: "cli" | "core" | "sdk"
+    provider: "claude" | "codex",
+    target: "cli" | "sdk"
   ): Promise<void> {
     try {
       this.broadcastVersions(

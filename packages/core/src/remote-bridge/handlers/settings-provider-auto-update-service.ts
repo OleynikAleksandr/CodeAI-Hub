@@ -3,8 +3,8 @@ import type { Logger } from "../../telemetry/logger";
 import { SettingsPersistenceService } from "./settings-persistence-service";
 import { SettingsProviderVersionService } from "./settings-provider-version-service";
 
-type ProviderId = "claude" | "codex" | "gemini";
-type VersionTarget = "cli" | "core" | "sdk";
+type ProviderId = "claude" | "codex";
+type VersionTarget = "cli" | "sdk";
 
 export interface ProviderAutoUpdateTarget {
   readonly provider: ProviderId;
@@ -23,7 +23,6 @@ const PROVIDER_TARGETS: Readonly<Record<ProviderId, readonly VersionTarget[]>> =
   {
     claude: ["cli", "sdk"],
     codex: ["cli", "sdk"],
-    gemini: ["cli"],
   };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

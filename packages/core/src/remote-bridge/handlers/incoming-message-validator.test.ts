@@ -52,3 +52,27 @@ test("parseIncomingClientMessage rejects malformed session speech payloads", () 
     "invalid-payload:session:speech:speak-message"
   );
 });
+
+test("parseIncomingClientMessage rejects removed Gemini provider updates", () => {
+  assert.equal(
+    parse({
+      type: "settings:update-provider",
+      payload: { provider: "claude", target: "cli" },
+    }).ok,
+    true
+  );
+  assert.equal(
+    parse({
+      type: "settings:update-provider",
+      payload: { provider: "gemini", target: "cli" },
+    }).ok,
+    false
+  );
+  assert.equal(
+    parse({
+      type: "settings:update-provider",
+      payload: { provider: "claude", target: "core" },
+    }).ok,
+    false
+  );
+});

@@ -37,8 +37,8 @@ const CLAUDE_THINKING_EFFORTS = new Set([
 const CODEX_REASONING_EFFORTS = new Set(["low", "medium", "high", "xhigh"]);
 
 const NATIVE_CAPTURE_PROVIDERS = new Set(["claude", "codex"]);
-const PROVIDER_IDS = new Set(["claude", "codex", "gemini"]);
-const SETTINGS_PROVIDER_TARGETS = new Set(["cli", "core", "sdk"]);
+const PROVIDER_IDS = new Set(["claude", "codex"]);
+const SETTINGS_PROVIDER_TARGETS = new Set(["cli", "sdk"]);
 const TEMPLATE_RESOLUTION_ACTIONS = new Set([
   "backup-and-replace",
   "preserve-current",
