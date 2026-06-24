@@ -10,8 +10,8 @@
   "baseHead": "6cd9e8b9d",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/LocalModels_SystemPrompt_Override_Planning.md",
-  "currentTaskId": "phase2.stream1.task3",
-  "expectedCommitMessage": "docs: document local models prompt controls",
+  "currentTaskId": "phase3.stream1.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -52,14 +52,14 @@
 2. [DONE] Git Commit: `feat: add local models native prompt controls` (hash: self)
 3. [DONE] `phase2.stream1.task2` Apply the same prompt controls to the workspace artifact tool path (scope: `packages/core/src/local-models/local-models-workflow-artifact-tool.ts, packages/core/src/local-models/local-models-provider-adapter.tools.test.ts`; expected commit: `feat: apply local models prompt controls to tools`).
 4. [DONE] Git Commit: `feat: apply local models prompt controls to tools` (hash: self)
-5. [IN_PROGRESS] `phase2.stream1.task3` Document Local Models prompt controls in SSOT docs (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document local models prompt controls`).
-6. [TODO] Git Commit: `docs: document local models prompt controls` (hash: TBD)
+5. [DONE] `phase2.stream1.task3` Document Local Models prompt controls in SSOT docs (scope: `doc/SolidWorks-WorkFlow/Modules/LocalModels.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document local models prompt controls`).
+6. [DONE] Git Commit: `docs: document local models prompt controls` (hash: self)
 
 ## Phase 3 - Tooling Verification (owner: Codex, updated: 2026-06-24)
 
 ### Stream: Targeted Checks
 
-1. [TODO] `phase3.stream1.task1` Run targeted Local Models tests and `npm run build --workspace @codeai-hub/core` (scope: `verification`).
+1. [IN_PROGRESS] `phase3.stream1.task1` Run targeted Local Models tests and `npm run build --workspace @codeai-hub/core` (scope: `verification`).
 
 ## Phase 4 - Release And Acceptance (owner: Codex, updated: 2026-06-24)
 

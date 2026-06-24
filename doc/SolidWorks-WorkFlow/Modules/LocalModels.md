@@ -5,12 +5,13 @@ Local Models provider подключает локальные LLM, загруж�
 
 Core остаётся владельцем workflow state, prompt/artifact contracts, model identity, reasoning visibility и lifecycle. Модуль владеет только HTTP/SSE transport, нормализацией событий, LM Studio discovery/load policy и request timeout.
 
-Accepted baseline in release `1.2.554` (live assistant streaming + reasoning thinking channel + reasoning buffering + artifact materialization incl. thinking-split + configurable request timeout), then extended through release `1.2.560` with minimal artifact file tools, streamed tool turns, dialog dedupe, and Qwen post-write tool-loop termination. Release `1.2.595` keeps startup warmup for the selected reasoning-translation model only and defers Local Models workflow-agent loads until the first actual turn, so a heavy/broken LM Studio load cannot block Core startup, Settings, Project Manager model selection, or restart.
+Accepted baseline in release `1.2.554` (live assistant streaming + reasoning thinking channel + reasoning buffering + artifact materialization incl. thinking-split + configurable request timeout), then extended through release `1.2.560` with minimal artifact file tools, streamed tool turns, dialog dedupe, and Qwen post-write tool-loop termination. Release `1.2.595` keeps startup warmup for the selected reasoning-translation model only and defers Local Models workflow-agent loads until the first actual turn, so a heavy/broken LM Studio load cannot block Core startup, Settings, Project Manager model selection, or restart. Release `1.2.605` adds env-driven workflow-agent system prompt overrides and standardizes workflow-agent temperature at `0.3` for native and artifact-tool turns.
 
 ## Где живёт код
 - Core local models package: `packages/core/src/local-models/`
 - Provider adapter (Core-facing entry): `packages/core/src/local-models/local-models-provider-adapter.ts`
 - Native SSE reader: `packages/core/src/local-models/local-models-sse-reader.ts`
+- Workflow-agent prompt controls: `packages/core/src/local-models/local-models-prompt-controls.ts`
 - Workflow artifact tool helper: `packages/core/src/local-models/local-models-workflow-artifact-tool.ts`
 - Discovery/translation facade: `packages/core/src/local-models/local-models-facade.ts`
 - Runtime load manager: `packages/core/src/local-models/local-models-runtime-load-manager.ts`
@@ -22,11 +23,21 @@ Accepted baseline in release `1.2.554` (live assistant streaming + reasoning thi
 - Provider id в Core/UI catalog: `localModels`; user-facing models surface as `LM Studio · <model>` from `lmstudio:<modelKey>` catalogs.
 - Workflow turns accept selected LM Studio ids as either raw `modelKey` or `lmstudio:<modelKey>`. An explicit unavailable selected model is a hard error; the adapter must not silently fall back to the first discovered local model.
 - Standalone Local Models chat creation must pass a concrete `targetModelId` resolved from the current Settings/start-card catalog. If old persisted settings still contain the sentinel `local-model`, Project Manager selects the first discovered `lmstudio:<modelKey>` engine for the new session instead of letting Core create a session bound to `local-model`.
-- Workflow-agent endpoint: LM Studio native `POST /api/v1/chat`, `stream: true`, `input` = prompt, `max_output_tokens`, `model` = loaded identifier, `temperature`.
+- Workflow-agent endpoint: LM Studio native `POST /api/v1/chat`, `stream: true`, `input` = prompt, `system_prompt`, `max_output_tokens`, `model` = loaded identifier, `temperature: 0.3`.
 - Workflow artifact tool path: workspace-bound Local Models sessions use LM Studio OpenAI-compatible `POST /v1/chat/completions` with `stream: true` and one function tool, `write_workflow_artifact(relative_path, content)`. This is the first working path because native `/api/v1/chat` exposes `tool_call.*` events through integrations/MCP; direct local function tools would otherwise require extra MCP server infrastructure.
 - Translation path (separate) also uses the OpenAI-compatible `/v1/chat/completions`; do not conflate translation prompts with the workflow artifact tool loop.
 - Base URL override: `CODEAI_LMSTUDIO_BASE_URL` (default `http://127.0.0.1:1234`). Default model override: `CODEAI_LMSTUDIO_DEFAULT_MODEL`.
 - CodeAI-owned LM Studio loads use `codeaihub-*` identifiers. Ordinary one-off translation/workflow loads keep purpose-specific TTLs; selected Project Manager warmup loads for reasoning translation are persistent and omit `--ttl`; workflow-agent models load on demand when a Local Models turn starts. Core passes `--yes` to `lms load` so fuzzy/variant keys such as `hy-mt2-30b-a3b-mlx` do not block on an interactive CLI selection prompt. Core may unload only idle `codeaihub-*` instances. User-loaded LM Studio instances must never be unloaded by Core. Model download/delete/config remains owned by LM Studio.
+
+## Workflow-agent prompt controls
+- Native workflow turns and workspace artifact-tool turns use `temperature: 0.3`.
+- Custom workflow-agent base system prompt is optional and env-driven:
+  - `CODEAI_LMSTUDIO_SYSTEM_PROMPT` for inline prompt text.
+  - `CODEAI_LMSTUDIO_SYSTEM_PROMPT_FILE` for a UTF-8 prompt file.
+- Inline prompt text wins over prompt file when both are set.
+- Native `/api/v1/chat` sends the resolved prompt as `system_prompt`.
+- Workspace `/v1/chat/completions` uses the resolved prompt as the first system-message section, then appends the existing runtime/tool contract so artifact writes keep their safety rules.
+- Project Manager UI settings for these controls are out of scope for release `1.2.605`; the option is intentionally env-level for benchmark/control experiments.
 
 ## Startup warmup
 - After a workspace `settings:load` or `settings:save`, `SettingsRequestHandler` publishes/saves the normalized settings snapshot first, then schedules Local Models warmup on a detached timer. Project Manager startup and settings save must not wait for LM Studio.
