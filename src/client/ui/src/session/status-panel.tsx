@@ -36,11 +36,10 @@ interface StatusPanelProps {
 const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   claudeCodeCli: "session-status-button--claude",
   codexCli: "session-status-button--codex",
-  geminiCli: "session-status-button--gemini",
-  glmNative: "session-status-button--gemini",
+  glmNative: "session-status-button--violet",
   kimiCode: "session-status-button--kimi",
-  glmOpenCode: "session-status-button--gemini",
-  localModels: "session-status-button--gemini",
+  glmOpenCode: "session-status-button--violet",
+  localModels: "session-status-button--violet",
 };
 
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>

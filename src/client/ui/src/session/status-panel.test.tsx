@@ -85,31 +85,6 @@ test("StatusPanel applies the Codex provider class", () => {
   assert.equal(html.includes("(xhigh)"), true);
 });
 
-test("StatusPanel applies the Gemini provider class", () => {
-  Object.assign(globalThis, { React: { createElement } });
-
-  const html = renderToStaticMarkup(
-    createElement(StatusPanel, {
-      connectionStatus: "ready",
-      status: buildStatus({
-        models: [
-          {
-            modelDisplayName: "Gemini 3.1 Pro Preview",
-            modelId: "gemini-3.1-pro-preview thinking:high",
-            providerId: "geminiCli" as const,
-            providerName: "Gemini",
-            reasoning: "thinking high",
-          },
-        ],
-      }),
-    })
-  );
-
-  assert.equal(html.includes("session-status-button--gemini"), true);
-  assert.equal(html.includes("Gemini 3.1 Pro Preview"), true);
-  assert.equal(html.includes("(thinking high)"), true);
-});
-
 test("StatusPanel applies the Kimi provider class", () => {
   Object.assign(globalThis, { React: { createElement } });
 
@@ -152,7 +127,7 @@ test("StatusPanel renders the Local Models selected model identity", () => {
     })
   );
 
-  assert.equal(html.includes("session-status-button--gemini"), true);
+  assert.equal(html.includes("session-status-button--violet"), true);
   assert.equal(html.includes("Gemma 4 E4b Qat"), true);
 });
 

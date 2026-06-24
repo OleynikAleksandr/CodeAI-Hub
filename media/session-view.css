@@ -1151,7 +1151,7 @@
   --border-active: rgba(1, 240, 216, 0.85);
 }
 
-.session-status-button--gemini {
+.session-status-button--violet {
   --accent: #b0b0b0;
   --bg: rgba(171, 52, 203, 0.1);
   --border: rgba(171, 52, 203, 0.4);

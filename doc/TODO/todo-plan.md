@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.status-panel.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from status panel button class",
+  "currentTaskId": "gemini-removal.phase1.step-resolver.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from step provider resolver",
   "debt": null
 }
 ```
@@ -108,5 +108,10 @@
 
 ### Stream: Session status panel button class
 
-25. [IN_PROGRESS] `gemini-removal.phase1.status-panel.task1` Remove the geminiCli button-class map entry, rename the `--gemini` CSS class for the other providers to a neutral name, and update the status-panel test (scope: `src/client/ui/src/session/status-panel.tsx, media/session-view.css, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `refactor: drop Gemini from status panel button class`).
-26. [TODO] `gemini-removal.phase1.status-panel.commit1` Git Commit: `refactor: drop Gemini from status panel button class` (hash: TBD)
+25. [DONE] `gemini-removal.phase1.status-panel.task1` Remove the geminiCli button-class map entry, rename the `--gemini` CSS class for the other providers to a neutral name, and update the status-panel test (scope: `src/client/ui/src/session/status-panel.tsx, media/session-view.css, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `refactor: drop Gemini from status panel button class`).
+26. [DONE] `gemini-removal.phase1.status-panel.commit1` Git Commit: `refactor: drop Gemini from status panel button class` (hash: self)
+
+### Stream: Step provider resolver
+
+27. [IN_PROGRESS] `gemini-removal.phase1.step-resolver.task1` Remove geminiCli from the sidebar step provider resolver (SidebarProviderId, design-id map, guard) and its tests, including the provider-tint test assertions (scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/use-step-provider-resolver.test.ts, src/client/project-manager/components/layout/workspace-tree-provider-tint.test.ts`; expected commit: `refactor: drop Gemini from step provider resolver`).
+28. [TODO] `gemini-removal.phase1.step-resolver.commit1` Git Commit: `refactor: drop Gemini from step provider resolver` (hash: TBD)
