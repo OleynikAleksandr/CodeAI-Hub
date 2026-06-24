@@ -111,7 +111,7 @@ Skills, plugins/marketplaces, review mode, realtime/voice, subagents, background
 - **Только Codex** — в единый UX брать нельзя. Либо убираем, либо переводим в «advanced» настройки с маркировкой «только для Codex».
 - **Только Claude** — аналогично, с маркировкой «только для Claude».
 
-Отдельно — заметка про Gemini: у него свой SDK (Gen AI SDK / Gemini API), и мы должны помнить про него при любых решениях, даже если этот документ его детально не разбирает (см. раздел 6).
+Отдельно — заметка про будущих провайдеров: этот документ фиксирует пересечение текущей Claude/Codex пары. Любой новый live provider требует отдельной capability-аудит вставки перед тем, как его возможности попадут в единый UX.
 
 ---
 
@@ -457,18 +457,13 @@ Skills, plugins/marketplaces, review mode, realtime/voice, subagents, background
 
 ---
 
-## 6. Заметка про Gemini
+## 6. Заметка про будущих провайдеров
 
-В CodeAI Hub есть и провайдер Gemini. Его SDK (Google Gen AI SDK / Gemini API) имеет **свой** набор возможностей — он отличается и от Claude Agent SDK, и от Codex App Server. Этот документ его детально не разбирает, но принцип остаётся тем же:
+Этот документ больше не обещает parity для удалённых provider modules. Если в CodeAI Hub добавляется новый live provider, его SDK/API сначала получает отдельный capabilities analysis по той же структуре, что Claude/Codex, и только затем меняет общий UX contract.
 
-> В единый UX-слой CodeAI Hub внедряем **только пересечение всех трёх** активных провайдеров: Claude + Codex + Gemini.
+> В единый UX-слой CodeAI Hub внедряем только пересечение всех активных workflow providers.
 
-Для каждой фичи из раздела 2 этого документа перед внедрением нужно **отдельно проверить** её наличие в Gemini. Если её там нет — либо:
-- найти обходной путь на стороне Gemini (эмуляция через нативные фичи);
-- отложить внедрение до тех пор, пока Gemini не получит аналог;
-- либо явно пометить фичу как недоступную при выборе Gemini (компромисс — с явным tooltip в UI «Not supported on Gemini»).
-
-Рекомендуется завести отдельный документ `Gemini_SDK_Capabilities_Analysis.md` по той же структуре, что и два имеющихся, и обновить этот документ до `TripleProvider_Common_Capabilities`, добавив колонку/блок Gemini для каждой фичи.
+Для каждой фичи из раздела 2 перед расширением UX нужно отдельно проверить её наличие у нового provider'а. Если её нет — либо держим фичу provider-internal, либо откладываем unified UX до появления аналога, либо явно выводим provider-specific limitation только после отдельного product decision.
 
 ---
 
@@ -585,4 +580,4 @@ Skills, plugins/marketplaces, review mode, realtime/voice, subagents, background
 
 ## 9. Итог одной строкой
 
-Claude Agent SDK и Codex App Server имеют очень широкое **концептуальное пересечение**: оба дают управляемые стартовые инструкции, полноценный agentic-цикл с MCP, approvals, tool streaming, session management, structured output, extended thinking, usage tracking, fork/rollback, compact и web-search. Первый общий шаг после перехода Codex на App Server — внедрить `WorkflowInstructionProfile`, который для Claude раскладывается в `systemPrompt` + `settingSources: []`, а для Codex — в `baseInstructions` + `developerInstructions` + config toggles. После этого в единый UI стоит выводить только пересечение возможностей, чтобы переключение провайдера не ломало пользователю привычный продукт. Provider-specific surface остаётся внутренней оптимизацией adapter layer или откладывается до полноценного аналога у всех активных провайдеров (включая Gemini).
+Claude Agent SDK и Codex App Server имеют очень широкое **концептуальное пересечение**: оба дают управляемые стартовые инструкции, полноценный agentic-цикл с MCP, approvals, tool streaming, session management, structured output, extended thinking, usage tracking, fork/rollback, compact и web-search. Первый общий шаг после перехода Codex на App Server — внедрить `WorkflowInstructionProfile`, который для Claude раскладывается в `systemPrompt` + `settingSources: []`, а для Codex — в `baseInstructions` + `developerInstructions` + config toggles. После этого в единый UI стоит выводить только пересечение возможностей, чтобы переключение провайдера не ломало пользователю привычный продукт. Provider-specific surface остаётся внутренней оптимизацией adapter layer или откладывается до полноценного аналога у всех активных провайдеров.

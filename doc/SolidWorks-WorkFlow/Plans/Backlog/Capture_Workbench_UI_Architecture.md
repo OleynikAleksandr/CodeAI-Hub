@@ -2,7 +2,7 @@
 
 **Status:** Draft rev4 (UI vehicle planning-doc, child of Provider Native Request Capture Workbench)
 **Created:** 2026-05-02
-**Updated:** 2026-05-02 — rev2 закрыл review comments: reasoning transport ownership (§5), snapshot storage as UI-side index over immutable artifacts (§3), Gemini disabled-placeholder UX (§2.1), explicit captured-artifact schema (§4), Open Questions 1-3 promoted to fixed decisions. rev3 закрыл follow-up review: Core-owned `workbench:state:*` transport for index + sticky selection (§3), index rebuild from `capture_start` JSONL records instead of filename parsing plus explicit `mode` field on `capture_start` (§3, §5.2), `Provider-home / Auth` section deferred to parent Phase 4 (§4.2). rev4 закрыл follow-up review: single canonical home `~/.codeai-hub/settings/` for both `workbench-index.json` and `capture-workbench.json` (§3), strict `SlotEntryRecord` schema (`markdownPath`, `jsonlPath`, `artifactId`, `capturedAt`, `releaseVersion`) shared by UI/persistence/rebuild (§3), migration summary lists all four Phase 1 extensions explicitly (§6).
+**Updated:** 2026-05-02 — rev2 закрыл review comments: reasoning transport ownership (§5), snapshot storage as UI-side index over immutable artifacts (§3), removed-provider disabled-placeholder UX (§2.1), explicit captured-artifact schema (§4), Open Questions 1-3 promoted to fixed decisions. rev3 закрыл follow-up review: Core-owned `workbench:state:*` transport for index + sticky selection (§3), index rebuild from `capture_start` JSONL records instead of filename parsing plus explicit `mode` field on `capture_start` (§3, §5.2), `Provider-home / Auth` section deferred to parent Phase 4 (§4.2). rev4 закрыл follow-up review: single canonical home `~/.codeai-hub/settings/` for both `workbench-index.json` and `capture-workbench.json` (§3), strict `SlotEntryRecord` schema (`markdownPath`, `jsonlPath`, `artifactId`, `capturedAt`, `releaseVersion`) shared by UI/persistence/rebuild (§3), migration summary lists all four Phase 1 extensions explicitly (§6).
 **Owner:** Oleksandr + Codex
 **Scope:** UX shell, snapshot storage layout, semantic diff contract, and Phase 1 MVP migration plan for the detached `Capture Workbench` window. The transport, capture-and-abort proxy, provider adapters, and Vanilla bridge contracts remain owned by the parent plan.
 
@@ -27,8 +27,8 @@ Over time the Step selector grows to cover Development Tree branch agents (Produ
 Four inline button-dropdowns:
 
 - **Step** — flat list grouped by section: `Trunk Workflow` (Description / Virtual Simulation / Diagram Modules), `Translation`, `Development Tree (future, disabled placeholders)`. Long lists must support filter/search before Development Tree lands.
-- **Provider** — Claude / Codex enabled in Phase 1, Gemini rendered as a **disabled item** in the dropdown with tooltip `Gemini support arrives with parent Phase 2`. Phase 1 capture transport (`NativeRequestCaptureProviderId = "claude" | "codex"`) is unchanged. Tinted with provider corporate token (warm peach / cyan / cool lavender for the disabled placeholder).
-- **Model** — provider-specific list (Claude aliases / Codex models). Gemini models list lives in code but is unreachable in Phase 1 because the Provider option is disabled.
+- **Provider** — Claude / Codex enabled in Phase 1. Removed-provider placeholders are not rendered; adding another provider requires a fresh planning/todo cycle and a live provider module. Phase 1 capture transport (`NativeRequestCaptureProviderId = "claude" | "codex"`) is unchanged. Tinted with active provider corporate tokens (warm peach / cyan).
+- **Model** — provider-specific list (Claude aliases / Codex models).
 - **Reasoning** — provider-specific level (`thinking off|low|medium|high|xhigh|max` for Claude; `low|medium|high` for Codex). See §5.1 for the Phase 1 transport contract — the selector is sticky and folder-keying, but the actual reasoning value applied to the capture is resolved Core-side from persisted settings until the transport is extended.
 
 Selection is **sticky between sessions** — last picked combination persists across reopen and restart, because the loop is iterative. Default on first launch: `Description + Claude + Sonnet + thinking high`.
@@ -201,7 +201,7 @@ Translation scenario quirk: when `step = Translation`, the `User Prompt (workflo
 
 ## 5. Phase 1 MVP Scope
 
-Phase 1 ships the Workbench shell as a **drop-in replacement** for the current `Provider Native Request Capture` card in Settings → General, with **only Managed capture wired up**. Vanilla capture and Gemini are deferred to parent Phases 2 and 4.
+Phase 1 ships the Workbench shell as a **drop-in replacement** for the current `Provider Native Request Capture` card in Settings → General, with **only Managed capture wired up**. Vanilla capture is deferred to parent Phase 4; removed-provider support is withdrawn from this backlog.
 
 ### 5.1 Reasoning selector transport ownership (Phase 1 decision)
 
@@ -227,12 +227,12 @@ If this transport extension proves bigger than expected during todo-plan slicing
 - Core remote-bridge persistence transport per §3: `workbench:state:load` / `workbench:state:save` / `workbench:state:loaded` / `workbench:state:saved` / `workbench:state:save-error`. Lands as a stream after the writer additions and before any UI work that depends on persisted index/selection.
 - Reasoning transport extension per §5.1.
 - Re-use of the existing PM-side `bypassUpstreamGuard` flag from release `1.2.123` so the Workbench keeps working on empty workspaces.
-- Gemini Provider option rendered as disabled placeholder per §2.1.
+- Removed-provider placeholder is not rendered per §2.1.
 
 ### 5.3 Out of scope (deferred to other phases)
 
 - **Vanilla capture** — parent Phase 4 (requires the pre-flight spike from parent §4 Phase 4).
-- **Gemini support** — parent Phase 2 (requires `GeminiProviderAdapter.captureNativeRequest()`).
+- **Additional provider support** — requires a live provider module plus fresh planning/todo slicing; removed-provider support is not a deferred implementation path.
 - **Development Tree steps** — disabled placeholders only; activation depends on the Development Tree feature itself landing.
 - **Search/filter in Step dropdown** — added when the step list grows past ~10 entries.
 - **Code reference navigation** ("open the file that defines this Managed system prompt"). Out of scope for now; the assistant edits code based on the diff conversation, not via a UI navigator.

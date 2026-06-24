@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.backlog-docs-residue.task1",
-  "expectedCommitMessage": "docs: update Gemini backlog docs residue",
+  "currentTaskId": "gemini-removal.phase2.final-docs-residue-audit.task1",
+  "expectedCommitMessage": "chore: audit final Gemini docs residue",
   "debt": null
 }
 ```
@@ -357,5 +357,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Backlog docs residue
 
-119. [IN_PROGRESS] `gemini-removal.phase2.backlog-docs-residue.task1` Remove Gemini-as-future-provider implementation wording from active/deferred backlog docs while preserving historical notes (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/Capture_Workbench_UI_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Backlog/CrossProvider_Common_Capabilities.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Provider_Native_Request_Capture_Workbench_Architecture.md`; expected commit: `docs: update Gemini backlog docs residue`).
-120. [TODO] `gemini-removal.phase2.backlog-docs-residue.commit1` Git Commit: `docs: update Gemini backlog docs residue` (hash: TBD)
+119. [DONE] `gemini-removal.phase2.backlog-docs-residue.task1` Remove Gemini-as-future-provider implementation wording from active/deferred backlog docs while preserving historical notes (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/Capture_Workbench_UI_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Backlog/CrossProvider_Common_Capabilities.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Provider_Native_Request_Capture_Workbench_Architecture.md`; expected commit: `docs: update Gemini backlog docs residue`).
+120. [DONE] `gemini-removal.phase2.backlog-docs-residue.commit1` Git Commit: `docs: update Gemini backlog docs residue` (hash: self)
+
+### Stream: Final docs residue audit
+
+121. [IN_PROGRESS] `gemini-removal.phase2.final-docs-residue-audit.task1` Re-run tracked Gemini residue checks after backlog cleanup and classify remaining safety/history/planning records before release-build gating (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit final Gemini docs residue`).
+122. [TODO] `gemini-removal.phase2.final-docs-residue-audit.commit1` Git Commit: `chore: audit final Gemini docs residue` (hash: TBD)

@@ -2,7 +2,7 @@
 
 **Status:** Draft rev6 (Phase 1 implementation planning source)
 **Created:** 2026-05-01
-**Updated:** 2026-05-01 — rev2 учёл P1.1/P1.2/P1.3/P2.4/P2.5/P2.6; rev3 учёл P1 (Product Goal contract), P2 (Codex CLI hypothesis), P2 (Translation comparison contract), P3 (Gemini Phase 2 file ownership); rev4 учёл P3 (internal section refs), P3 (Translation wording precision); 2026-05-02 rev5 — UI-scope ownership for Phase 1 Workbench moved to child plan `Plans/Backlog/Capture_Workbench_UI_Architecture.md`: §3.4 run history wording and §3.5 first-iteration provider scope are explicitly superseded by the child rev2; rev6 — §3.7 closes the detached transport/localization pre-flight spike for Phase 1 implementation.
+**Updated:** 2026-05-01 — rev2 учёл P1.1/P1.2/P1.3/P2.4/P2.5/P2.6; rev3 учёл P1 (Product Goal contract), P2 (Codex CLI hypothesis), P2 (Translation comparison contract), P3 (removed-provider Phase 2 file ownership); rev4 учёл P3 (internal section refs), P3 (Translation wording precision); 2026-05-02 rev5 — UI-scope ownership for Phase 1 Workbench moved to child plan `Plans/Backlog/Capture_Workbench_UI_Architecture.md`: §3.4 run history wording and §3.5 first-iteration provider scope are explicitly superseded by the child rev2; rev6 — §3.7 closes the detached transport/localization pre-flight spike for Phase 1 implementation.
 **Owner:** Oleksandr + Codex
 **Scope:** Эволюция модуля `Provider Native Request Capture` из карточки в Settings → General в полноценный исследовательский полигон. Главная цель — сравнение `Vanilla CLI baseline` (provider bridge с дефолтами) и `CodeAI Hub Managed` (текущий applied turn config) в идентичных условиях `(provider, model, reasoning, userPrompt, workspace)` для одного и того же пользовательского запроса.
 
@@ -14,13 +14,13 @@
 
 Текущая реализация capture решает только одну задачу: «снять snapshot того, что уходит на сервер провайдера в managed-пайплайне». Этого недостаточно для трёх практических нужд:
 
-1. **Невозможность сравнения.** У пользователя нет способа без пересборки расширения увидеть, что отправил бы тот же провайдерский bridge на тот же `(model, reasoning, prompt)` БЕЗ кастомизаций CodeAI Hub (custom system, custom tool list, `settingSources: []` для Claude, custom `baseInstructions` / `approvalPolicy` / `sandbox` для Codex App Server, custom `GeminiSessionBootstrapper` для Gemini). Это блокирует основной валидационный цикл архитектуры: «доказать, что наша managed isolation реально сужает контекст и сокращает скрытые инструкции».
+1. **Невозможность сравнения.** У пользователя нет способа без пересборки расширения увидеть, что отправил бы тот же провайдерский bridge на тот же `(model, reasoning, prompt)` БЕЗ кастомизаций CodeAI Hub (custom system, custom tool list, `settingSources: []` для Claude, custom `baseInstructions` / `approvalPolicy` / `sandbox` для Codex App Server). Это блокирует основной валидационный цикл архитектуры: «доказать, что наша managed isolation реально сужает контекст и сокращает скрытые инструкции».
 
 2. **Workflow gating блокирует диагностику.** Capture для сценария `Diagram Modules` падает с `Missing virtual-simulation.md. Complete Virtual Simulation step first.` если в активном workspace ещё нет upstream артефактов. Это нарушает саму идею исследовательского инструмента: capture должен быть доступен независимо от состояния workflow.
 
 3. **UI слишком тесный для исследовательского сценария.** Карточка в Settings → General не предназначена для длительной работы — пользователю нужен второй монитор, развёрнутая comparison-таблица, parallel runs, история захватов. Поверх этого карточка размывает семантическую границу: capture — это **диагностический инструмент над приложением**, а не настройка приложения.
 
-4. **Gemini capture отсутствует полностью.** Сейчас `captureNativeRequest` реализован только для Claude и Codex; Gemini provider adapter не имеет capture entry point. Сравнительный режим не сможет покрыть третьего провайдера до его реализации.
+4. **Provider parity требует fresh scope.** Сейчас `captureNativeRequest` реализован только для Claude и Codex. Поддержка любого нового live provider требует отдельного capabilities/capture planning cycle; удалённый provider не остаётся deferred implementation path.
 
 ---
 
@@ -30,8 +30,8 @@
 
 1. У пользователя есть отдельное окно `Capture Workbench`, открываемое одной кнопкой из Settings → General. Окно живёт в собственном CEF popup и может быть перенесено на второй монитор.
 2. В этом окне пользователь выбирает `(provider, model, reasoning/thinking)` и для каждого provider'а имеет **две независимые capture-кнопки**: `Capture Managed` и `Capture Vanilla`. Сценарий (Description / Virtual Simulation / Diagram Modules / Translation) определяет, какой workflow context используется при формировании prompt'а. Translation — особый случай (см. §3.6).
-3. **Managed capture** — diagnostic path, переиспользующий production *contracts* (workflow prompt pack, applied turn config, model invocation profile, provider-home auth), но запускающий provider через capture-and-abort proxy + diagnostic services (`claude-native-request-capture-service.ts`, `codex-native-request-capture-service.ts`, новый `gemini-native-request-capture-service.ts`). Codex managed capture стартует **temporary** app-server, не использует активный. Это **не обычный workflow turn**.
-4. **Vanilla capture** — отдельный bridge entry, который запускает provider (Claude SDK / `codex exec` subprocess / Gemini cli-core) с параметрами `(model, reasoning, prompt)` и БЕЗ наших кастомизаций (`systemPrompt`, custom tools, `settingSources: []`, `baseInstructions`, `approvalPolicy`, `sandbox`, `persistExtendedHistory`, `GeminiSessionBootstrapper`).
+3. **Managed capture** — diagnostic path, переиспользующий production *contracts* (workflow prompt pack, applied turn config, model invocation profile, provider-home auth), но запускающий provider через capture-and-abort proxy + diagnostic services (`claude-native-request-capture-service.ts`, `codex-native-request-capture-service.ts`). Codex managed capture стартует **temporary** app-server, не использует активный. Это **не обычный workflow turn**.
+4. **Vanilla capture** — отдельный bridge entry, который запускает provider (Claude SDK / `codex exec` subprocess) с параметрами `(model, reasoning, prompt)` и БЕЗ наших кастомизаций (`systemPrompt`, custom tools, `settingSources: []`, `baseInstructions`, `approvalPolicy`, `sandbox`, `persistExtendedHistory`).
 5. Оба режима пишут пары артефактов `<correlation>-managed.{jsonl,md}` и `<correlation>-vanilla.{jsonl,md}` (см. §3.4), готовые для построчного diff.
 6. Capture полностью read-only по отношению к workflow state, session state, binding, артефактам workspace. Phase 1 добавляет ровно одно изменение в существующий PM-side capture flow — флаг `bypassUpstreamGuard` в `resolveScenarioInputPath()`. Production workflow turns не задеваются вообще.
 7. Workbench не нарушает invariants §5 (provider-home isolation), §33 (settings ownership) и §35 (model invocation profile boundary). Vanilla namesly демонстрирует разницу с Managed isolation, но сам остаётся внутри капкан-диагностического contour'а: настоящие user turns по-прежнему идут только через managed pipeline.
@@ -48,14 +48,12 @@ Vanilla не эмулирует сторонний CLI бинарь. Это на
 
 - **Claude:** `query(...)` с минимальным набором options, в который входят только `model`, `thinking`, `prompt`, `cwd` и proxy/auth env. БЕЗ `systemPrompt`, БЕЗ `tools`, БЕЗ принудительного `settingSources: []`, БЕЗ `permissionMode`, БЕЗ `allowDangerouslySkipPermissions`. SDK сам выполнит filesystem discovery (`CLAUDE.md` от `cwd`, `.claude/settings.json`, `~/.codeai-hub/settings/`).
 - **Codex:** subprocess `codex exec` с фиксированными `model` и `reasoning level`, без managed-кастомизаций (`--sandbox`, `--approval-policy`, custom `--profile`, наш `~/.codeai-hub` config bundle). НЕ через long-lived `codex app-server`. Этого пути в коде сейчас нет — добавляется новый thin invoker.
-- **Gemini:** cli-core с минимальным конфигом `{ model, thinkingLevel, prompt }` через прямой `loadCliConfig` без нашего `GeminiSessionBootstrapper` resume и без applied turn overrides. Capture entry для Gemini добавляется с нуля (для обоих режимов одновременно).
-
 **Точный CLI / SDK shape — гипотеза, требующая валидации.** Конкретные флаги для каждого bridge (включая, например, `--reasoning` vs `-c model_reasoning_effort=...` для Codex, или какие именно SDK options обязательны для Claude `query(...)`) **не фиксируются в этом разделе как факт**. Они определяются результатами Phase 4 pre-flight spike (см. §4 Phases). Cледовательно:
 
 - Если spike покажет, что `codex exec --reasoning` не существует в текущей версии CLI, единственный способ задать reasoning — через минимальный `-c model_reasoning_effort=<level>` config override. Этот override допустим **только** для reasoning passthrough и не отменяет общий запрет тащить наш `~/.codeai-hub` config bundle. Точную форму фиксируем в §7 References после spike.
 - Если spike покажет, что Claude SDK требует обязательные options (`pathToClaudeCodeExecutable`, `cwd`), они тоже остаются в Vanilla — это infrastructure, не managed-кастомизация.
 
-Vanilla работает в **активном workspace** пользователя — filesystem discovery провайдеров (CLAUDE.md / AGENTS.md / GEMINI.md / .gemini/ / .codex/) намеренно НЕ изолируется. Это часть демонстрационной ценности: diff против Managed показывает, что наша isolation реально работает.
+Vanilla работает в **активном workspace** пользователя — filesystem discovery провайдеров (CLAUDE.md / AGENTS.md / .codex/) намеренно НЕ изолируется. Это часть демонстрационной ценности: diff против Managed показывает, что наша isolation реально работает.
 
 ### 3.2 Managed capture — diagnostic path, переиспользующий production contracts
 
@@ -110,7 +108,7 @@ Vanilla работает в **активном workspace** пользовате�
 
 ### 3.5 Scope управления провайдерами
 
-Long-term scope of the Workbench covers all three providers (Claude, Codex, Gemini), and Gemini eventually requires `captureNativeRequest` in `GeminiProviderAdapter` for both modes. **Phase 1 UI scope superseded by child plan rev2:** the first Workbench release ships with **Claude and Codex Managed capture only**; the Gemini Provider option is rendered as a disabled placeholder in the selection bar with tooltip `Gemini support arrives with parent Phase 2`. The capture transport union (`NativeRequestCaptureProviderId = "claude" | "codex"`) is unchanged in Phase 1. See `Plans/Backlog/Capture_Workbench_UI_Architecture.md` §2.1 and §5.2. The Phase 2 stream defined below remains the canonical owner of when and how Gemini joins the union.
+Long-term scope of the Workbench covers currently live capture providers. **Phase 1 UI scope superseded by child plan rev2:** the first Workbench release ships with **Claude and Codex Managed capture only**; removed-provider placeholders are not rendered. The capture transport union (`NativeRequestCaptureProviderId = "claude" | "codex"`) is unchanged in Phase 1. See `Plans/Backlog/Capture_Workbench_UI_Architecture.md` §2.1 and §5.2. Any new provider joins only through a fresh planning/todo cycle backed by a live provider module.
 
 ### 3.6 Translation как отдельный сравнительный контракт
 
@@ -173,31 +171,9 @@ Localization bootstrap decision:
 - Тесты: VS missing Final_Description, DM missing virtual-simulation, Translation/Description без изменений (они и сейчас работают).
 - UI: ничего не меняется (карточка остаётся прежней). Кнопки начинают работать на пустых workspaces.
 
-### Phase 2 — Gemini managed capture parity
+### Phase 2 — Additional provider capture parity (withdrawn until a live provider exists)
 
-Привести Gemini к тому же managed capture surface, что и Claude/Codex. Это **полноценная фаза**, не одна задача — текущая инфраструктура capture типизирована только под `claude | codex`, и расширение до тройки требует затронуть несколько слоёв.
-
-**Важно для todo-plan:** конкретные file paths ниже зафиксированы по результатам текущего исследования, но перед нарезкой стримов на микро-задачи (≤3 файла) обязательно перепроверить актуальность путей через grep `NativeRequestCaptureProviderId`, `"claude" | "codex"` и `claude | codex` в репо. С момента ревью могут появиться новые точки расширения. Разбивка на стримы:
-
-**Stream 2.1 — Core types & registry**
-- Расширить `NativeRequestCaptureProviderId` union (искомое определение в `packages/core/src/provider-registry/provider-module-loader.types.ts` и/или `packages/core/src/provider-network-capture/native-request-capture-types.ts` — уточнить grep'ом перед стартом) до `claude | codex | gemini`.
-- Расширить **target rules для proxy интерсепции** — они живут в `native-request-capture-facade.ts` (где определяется, какой endpoint для какого провайдера ожидается), а не только в `native-request-capture-proxy.ts`. Phase 2 grep по `api.anthropic.com` и `chatgpt.com/backend-api/codex` найдёт точные точки добавления Gemini endpoint (`generativelanguage.googleapis.com:443` для cli-core).
-- Расширить applied turn config validators / type guards (`ProviderNativeRequestCaptureAppliedTurnConfig` в `provider-module-loader.types.ts:86-100`).
-
-**Stream 2.2 — Gemini provider diagnostics service**
-- Реализовать `packages/Gemini_Module/src/diagnostics/gemini-native-request-capture-service.ts` (новая папка `diagnostics/` в Gemini_Module — её сейчас нет, см. ls findings).
-- Добавить `captureNativeRequest()` в `GeminiProviderAdapter` (`packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`).
-- Тесты для service и adapter.
-
-**Stream 2.3 — PM/UI plumbing**
-- **Host-message guards** живут в `src/client/project-manager/services/project-manager-settings-host-message.ts` (обработка `settings:native-request-capture:result`), а также в `core-stream-message-types.ts` (типизация payload) и в `use-settings-state-support.ts` (type guard ~lines 113-120). Все три точки требуют расширения union до Gemini.
-- **UI provider/model unions** живут в `src/client/ui/src/components/settings/native-request-capture-state.ts` (типизация `NativeRequestCaptureState`, default models, scenario validation) — уточнить grep'ом перед стартом стрима. Сама карточка `native-request-capture-card.tsx` consume'ит этот state.
-- `native-request-capture-runner.ts` — Gemini branch в scenario routing.
-- Тесты PM service и UI компонента.
-
-**Stream 2.4 — SSOT update**
-- Обновить `doc/SolidWorks-WorkFlow/Modules/Gemini.md` с упоминанием capture entry.
-- Обновить `SystemArchitecture.md` §33 (Settings ownership) — список provider id для capture.
+The old provider-specific Phase 2 is withdrawn after provider removal. Do not expand `NativeRequestCaptureProviderId` beyond `claude | codex` from this backlog alone. A future provider must bring a fresh capabilities analysis, live module, capture adapter plan, and microtask-sliced todo cycle before entering the Workbench union.
 
 ### Phase 3 pre-flight — Detached transport & localization spike
 
@@ -230,19 +206,14 @@ UI vehicle для будущего Vanilla режима.
 - Зафиксировать: какие из них **обязательны** для работы query (без них SDK падает) vs какие можно опустить для Vanilla. По исследованию `@anthropic-ai/claude-agent-sdk` отсутствует в node_modules — спайк включает чтение установленного SDK на dev-машине, либо запрос документации.
 - Решить: для Vanilla опускаем `systemPrompt`, `tools`, `settingSources`, `permissionMode`, `allowDangerouslySkipPermissions` — оставляем только `model`, `thinking`, `prompt`, `cwd`, `env` (proxy creds), `pathToClaudeCodeExecutable`. Подтвердить, что `cwd` обязателен для capture proxy override.
 
-**Gemini:**
-- Зафиксировать минимальный shape `loadCliConfig` параметров для cli-core (`packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts`), при котором `model + thinkingLevel + prompt` принимаются без нашего `GeminiSessionBootstrapper`.
-- Зафиксировать: какие cli-core defaults включают filesystem discovery (`~/.gemini/`, `.gemini/`, `GEMINI.md`).
-
 Результат spike — короткий append-в `§7. References / Vanilla CLI contract validation results`. Только после этого переходим к Phase 4 implementation.
 
 ### Phase 4 — Vanilla baseline capture
 
-Реализация Vanilla режима для всех трёх провайдеров **на основе результатов pre-flight spike**.
+Реализация Vanilla режима для Claude и Codex **на основе результатов pre-flight spike**.
 
 - Claude: новый shape options для `query(...)` без managed-кастомизаций. Auth и `cwd` через тот же managed provider-home (`~/.codeai-hub/providers/claude/home`), чтобы среда была идентична Managed.
 - Codex: новый thin subprocess invoker для `codex exec`. Точный shape флагов (включая reasoning) фиксируется по результатам spike. `CODEX_HOME` — managed `~/.codeai-hub/providers/codex/home`, не legacy `~/.codex/`.
-- Gemini: новый bypass-path в обход `GeminiSessionBootstrapper`. Provider-home — managed.
 - Парные артефакты с naming контракта 3.4 (две независимые кнопки `Capture Managed` / `Capture Vanilla`).
 - Translation НЕ использует workflow prompt pack (см. §3.6 — Translation как отдельный сравнительный контракт). Workflow scenarios (Description / Virtual Simulation / Diagram Modules) используют workflow prompt packs, Translation использует fixed translation sample для **обоих** режимов. Managed Translation продолжает идти через текущий `codex-app-server-translation-service` (translator-only system, `processProfileKey: "codex:translation"`, `approvalPolicy: "never"`). Vanilla Translation использует тот же fixed sample, но через bridge с дефолтами провайдера — без translator-only system, без processProfile, без guards. Разница между Managed и Vanilla — только в provider initialization/envelope.
 
@@ -258,7 +229,7 @@ UI vehicle для будущего Vanilla режима.
 2. **UX кнопок** — две независимые кнопки `Capture Managed` и `Capture Vanilla` для каждого провайдера. Без `Capture Both`. Семантика: Vanilla — редкий референс, Managed — частая итерация. Подробнее §3.4.
 3. **Scope translation в Vanilla** — Translation использует **fixed translation sample** (`codex-native-translation-capture-profile.ts:16-21`) как user prompt для обоих режимов; workflow prompt pack для Translation не применяется (см. §3.6). Managed Translation сохраняет текущий путь через `codex-app-server-translation-service` (translator-only system, processProfile, sandbox/approval guards). Vanilla Translation использует тот же sample, но через bridge с дефолтами провайдера — отличается только provider initialization/envelope.
 4. **Localization** — workbench использует ту же localization, что установлена в приложении (через `__CODEAI_LOCALIZATION_BOOTSTRAP__` injection в HTML detached окна). Английский fallback не делаем.
-5. **Codex/Claude/Gemini Vanilla auth** — все три провайдера в Vanilla работают через свой managed provider-home (`~/.codeai-hub/providers/<id>/home`), не через legacy `~/.<provider>/`. Среда идентична Managed по auth, отличается только инициализация bridge.
+5. **Codex/Claude Vanilla auth** — оба провайдера в Vanilla работают через свой managed provider-home (`~/.codeai-hub/providers/<id>/home`), не через legacy `~/.<provider>/`. Среда идентична Managed по auth, отличается только инициализация bridge.
 
 ---
 
@@ -286,11 +257,10 @@ UI vehicle для будущего Vanilla режима.
 - `src/client/project-manager/services/prompt-pack-builder.ts:254` — `buildWorkflowPromptPack` (вызывается и из capture, и из обычного turn — общий код).
 - `src/client/project-manager/services/workflow-step-start-service.ts:99,135` — guards для обычного workflow turn (НЕ трогаем).
 - `packages/core/src/provider-network-capture/native-request-capture-facade.ts` — Core entry, полностью read-only.
-- `packages/core/src/provider-network-capture/native-request-capture-proxy.ts` — TLS tunnel для Claude/Codex/Gemini endpoints.
+- `packages/core/src/provider-network-capture/native-request-capture-proxy.ts` — TLS tunnel для Claude/Codex endpoints.
 - `packages/core/src/provider-network-capture/native-request-capture-writer.ts` — naming артефактов (расширяется в Phase 4 для парного naming).
 - `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts` — Claude managed (Vanilla добавляется рядом).
 - `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts` — Codex managed app-server (Vanilla — отдельный subprocess path).
-- `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts` — НЕТ `captureNativeRequest` (Phase 2).
 - `src/client/ui/src/components/settings/native-request-capture-card.tsx` — текущая Settings карточка (сжимается в Phase 3 до launcher).
 - `src/client/project-manager/components/diagram-editor/detached-diagram-view.tsx` — pattern для Phase 3.
 - `src/client/project-manager/components/layout/detach-diagram-button.tsx` — `window.open` контракт.
