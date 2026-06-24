@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remaining-residue-audit.task1",
-  "expectedCommitMessage": "chore: audit remaining Gemini residue",
+  "currentTaskId": "gemini-removal.phase2.provider-module-docs-residue.task1",
+  "expectedCommitMessage": "docs: drop Gemini provider module refs",
   "debt": null
 }
 ```
@@ -300,5 +300,15 @@
 
 ### Stream: Remaining residue audit
 
-101. [IN_PROGRESS] `gemini-removal.phase2.remaining-residue-audit.task1` Re-run tracked Gemini residue checks after active architecture docs cleanup and record the next remaining cleanup scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit remaining Gemini residue`).
-102. [TODO] `gemini-removal.phase2.remaining-residue-audit.commit1` Git Commit: `chore: audit remaining Gemini residue` (hash: TBD)
+101. [DONE] `gemini-removal.phase2.remaining-residue-audit.task1` Re-run tracked Gemini residue checks after active architecture docs cleanup and record the next remaining cleanup scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit remaining Gemini residue`).
+102. [DONE] `gemini-removal.phase2.remaining-residue-audit.commit1` Git Commit: `chore: audit remaining Gemini residue` (hash: self)
+
+Audit evidence (2026-06-24):
+- `git grep -l -i gemini -- .` still reports safety ignore entries (`.gitignore`, `.vscodeignore`, `AGENTS.md`), release/history docs (`README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`), active docs, active/backlog/archived planning docs, and archived todo plans.
+- `git grep -n -i gemini -- doc/SolidWorks-WorkFlow/System doc/SolidWorks-WorkFlow/Contracts doc/SolidWorks-WorkFlow/Modules doc/SolidWorks-WorkFlow/Docs_Index.md` has no remaining `System/` or `Contracts/` hits; live documentation residue is now in `Docs_Index.md` and active module docs.
+- Next minimal cleanup scope: remove Gemini-as-live-provider references from `Modules/Claude.md`, `Modules/Codex.md`, and `Modules/Kimi.md`; keep archive/history references until a dedicated archive/index cleanup pass.
+
+### Stream: Provider module docs residue
+
+103. [IN_PROGRESS] `gemini-removal.phase2.provider-module-docs-residue.task1` Remove Gemini-as-live-provider references from active Claude/Codex/Kimi module docs after provider removal (scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Codex.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md`; expected commit: `docs: drop Gemini provider module refs`).
+104. [TODO] `gemini-removal.phase2.provider-module-docs-residue.commit1` Git Commit: `docs: drop Gemini provider module refs` (hash: TBD)
