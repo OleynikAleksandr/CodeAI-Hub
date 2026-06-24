@@ -7,10 +7,6 @@ import type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../types/codex-model-registry";
-import type {
-  GeminiModelId,
-  GeminiThinkingLevel,
-} from "../../../../types/gemini-model-registry";
 import type { KimiModelId } from "../../../../types/kimi-model-registry";
 import type { GeneralResponseMode } from "../../../ui/src/components/settings/general-response-mode/response-mode-state";
 import type {
@@ -25,7 +21,6 @@ import type {
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import type { TemplateUpdateSettingsControls } from "../../../ui/src/components/settings/template-update-settings-model";
 import {
-  clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
   completeNativeRequestCapture,
   createNativeRequestCaptureState,
@@ -47,10 +42,6 @@ import {
   updateCodexContinuityRemainingPercentThreshold,
   updateCodexDefaultModel,
   updateCodexReasoning,
-  updateGeminiContextWindowTokenLimit,
-  updateGeminiContinuityRemainingPercentThreshold,
-  updateGeminiDefaultModel,
-  updateGeminiThinking,
   updateLocalModelsDefaultModel,
   updateProviderAutoUpdate,
   updateResponsePolicyMode,
@@ -248,34 +239,6 @@ export const useProjectManagerSettingsState =
       [settings, updateSettings]
     );
 
-    const handleGeminiContinuityRemainingPercentThresholdChange = useCallback(
-      (remainingPercentThreshold: number) => {
-        if (!Number.isFinite(remainingPercentThreshold)) {
-          return;
-        }
-        const clamped = clampRemainingPercentThreshold(
-          remainingPercentThreshold
-        );
-        updateSettings(
-          updateGeminiContinuityRemainingPercentThreshold(settings, clamped)
-        );
-      },
-      [settings, updateSettings]
-    );
-
-    const handleGeminiContextWindowTokenLimitChange = useCallback(
-      (contextWindowTokenLimit: number) => {
-        if (!Number.isFinite(contextWindowTokenLimit)) {
-          return;
-        }
-        const clamped = clampGeminiContextWindowTokenLimit(
-          contextWindowTokenLimit
-        );
-        updateSettings(updateGeminiContextWindowTokenLimit(settings, clamped));
-      },
-      [settings, updateSettings]
-    );
-
     const handleCodexDefaultModelChange = useCallback(
       (modelId: CodexModelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
@@ -352,12 +315,6 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = useCallback(
-      (modelId: GeminiModelId) => {
-        updateSettings(updateGeminiDefaultModel(settings, modelId));
-      },
-      [settings, updateSettings]
-    );
     const {
       handleGlmOpenCodeSettingsChange,
       handleGlmOpenCodeThinkingDisplaySyncChange,
@@ -367,12 +324,6 @@ export const useProjectManagerSettingsState =
       handleKimiThinkingDisplaySyncChange,
       handleKimiThinkingEnabledChange,
     } = useProjectManagerKimiSettingsHandlers({ settings, updateSettings });
-    const handleGeminiThinkingChange = useCallback(
-      (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
-        updateSettings(updateGeminiThinking(settings, modelId, level));
-      },
-      [settings, updateSettings]
-    );
     const handleClaudeThinkingDisplaySyncChange = useCallback(
       (enabled: boolean) => {
         updateSettings(
@@ -385,14 +336,6 @@ export const useProjectManagerSettingsState =
       (enabled: boolean) => {
         updateSettings(
           updateThinkingDisplaySyncEnabled(settings, "codex", enabled)
-        );
-      },
-      [settings, updateSettings]
-    );
-    const handleGeminiThinkingDisplaySyncChange = useCallback(
-      (enabled: boolean) => {
-        updateSettings(
-          updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
         );
       },
       [settings, updateSettings]
@@ -444,19 +387,14 @@ export const useProjectManagerSettingsState =
       handleThinkingSettingsChange,
       handleClaudeContinuityRemainingPercentThresholdChange,
       handleCodexContinuityRemainingPercentThresholdChange,
-      handleGeminiContinuityRemainingPercentThresholdChange,
-      handleGeminiContextWindowTokenLimitChange,
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
-      handleGeminiDefaultModelChange,
       handleKimiDefaultModelChange,
       handleGlmOpenCodeSettingsChange,
       handleGlmNativeSettingsChange,
-      handleGeminiThinkingChange,
       handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
-      handleGeminiThinkingDisplaySyncChange,
       handleGlmOpenCodeThinkingDisplaySyncChange,
       handleGlmNativeThinkingDisplaySyncChange,
       handleKimiThinkingDisplaySyncChange,

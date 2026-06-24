@@ -7,10 +7,6 @@ import type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
-import type {
-  GeminiModelId,
-  GeminiThinkingLevel,
-} from "../../../../../types/gemini-model-registry";
 import { readBrowserLocalizationBootstrapSnapshot } from "../../app-host/localization-runtime-contract";
 import { createBootstrapSettings } from "../../shared-hooks/use-bootstrap-settings";
 import vscode from "../../vscode";
@@ -22,10 +18,6 @@ import {
   updateCodexContinuityRemainingPercentThreshold,
   updateCodexDefaultModel,
   updateCodexReasoning,
-  updateGeminiContextWindowTokenLimit,
-  updateGeminiContinuityRemainingPercentThreshold,
-  updateGeminiDefaultModel,
-  updateGeminiThinking,
   updateLocalModelsDefaultModel,
   updateProviderAutoUpdate,
   updateResponsePolicyMode,
@@ -43,7 +35,6 @@ import {
 } from "./settings-state-model";
 import {
   type CoreControlState,
-  clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
   completeNativeRequestCapture,
   createNativeRequestCaptureState,
@@ -229,32 +220,6 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
-  const handleGeminiContinuityRemainingPercentThresholdChange = useCallback(
-    (remainingPercentThreshold: number) => {
-      if (!Number.isFinite(remainingPercentThreshold)) {
-        return;
-      }
-      const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
-      updateSettings(
-        updateGeminiContinuityRemainingPercentThreshold(settings, clamped)
-      );
-    },
-    [settings, updateSettings]
-  );
-
-  const handleGeminiContextWindowTokenLimitChange = useCallback(
-    (contextWindowTokenLimit: number) => {
-      if (!Number.isFinite(contextWindowTokenLimit)) {
-        return;
-      }
-      const clamped = clampGeminiContextWindowTokenLimit(
-        contextWindowTokenLimit
-      );
-      updateSettings(updateGeminiContextWindowTokenLimit(settings, clamped));
-    },
-    [settings, updateSettings]
-  );
-
   const handleCodexDefaultModelChange = useCallback(
     (modelId: CodexModelId) => {
       updateSettings(updateCodexDefaultModel(settings, modelId));
@@ -333,20 +298,6 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
-  const handleGeminiDefaultModelChange = useCallback(
-    (modelId: GeminiModelId) => {
-      updateSettings(updateGeminiDefaultModel(settings, modelId));
-    },
-    [settings, updateSettings]
-  );
-
-  const handleGeminiThinkingChange = useCallback(
-    (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
-      updateSettings(updateGeminiThinking(settings, modelId, level));
-    },
-    [settings, updateSettings]
-  );
-
   const handleClaudeThinkingDisplaySyncChange = useCallback(
     (enabled: boolean) => {
       updateSettings(
@@ -365,15 +316,6 @@ export const useSettingsState = (): UseSettingsStateResult => {
         type: "settings:codex-reasoning-summary-preview",
         enabled,
       });
-    },
-    [settings, updateSettings]
-  );
-
-  const handleGeminiThinkingDisplaySyncChange = useCallback(
-    (enabled: boolean) => {
-      updateSettings(
-        updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
-      );
     },
     [settings, updateSettings]
   );
@@ -431,16 +373,11 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
     handleCodexContinuityRemainingPercentThresholdChange,
-    handleGeminiContinuityRemainingPercentThresholdChange,
-    handleGeminiContextWindowTokenLimitChange,
     handleClaudeDefaultModelChange,
     handleCodexDefaultModelChange,
-    handleGeminiDefaultModelChange,
-    handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
     handleCodexReasoningChange,
     handleCodexThinkingDisplaySyncChange,
-    handleGeminiThinkingDisplaySyncChange,
     handleGlmOpenCodeSettingsChange: (glmOpenCode) =>
       updateSettings({
         ...settings,

@@ -6,10 +6,6 @@ import type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
-import type {
-  GeminiModelId,
-  GeminiThinkingLevel,
-} from "../../../../../types/gemini-model-registry";
 import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import type { GeneralResponseMode } from "./general-response-mode/response-mode-state";
 import type {
@@ -152,9 +148,6 @@ export const isSettingsSaveErrorMessage = (
 
 export const clampRemainingPercentThreshold = (value: number): number =>
   Math.min(80, Math.max(5, Math.round(value)));
-
-export const clampGeminiContextWindowTokenLimit = (value: number): number =>
-  Math.min(1_000_000, Math.max(10_000, Math.round(value)));
 
 const LEGACY_SOURCE_LANGUAGE = "source";
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
@@ -420,18 +413,6 @@ export interface UseSettingsStateResult {
     reasoning: CodexReasoningLevel
   ) => void;
   readonly handleCodexThinkingDisplaySyncChange: (enabled: boolean) => void;
-  readonly handleGeminiContextWindowTokenLimitChange: (
-    contextWindowTokenLimit: number
-  ) => void;
-  readonly handleGeminiContinuityRemainingPercentThresholdChange: (
-    remainingPercentThreshold: number
-  ) => void;
-  readonly handleGeminiDefaultModelChange: (modelId: GeminiModelId) => void;
-  readonly handleGeminiThinkingChange: (
-    modelId: GeminiModelId,
-    level: GeminiThinkingLevel
-  ) => void;
-  readonly handleGeminiThinkingDisplaySyncChange: (enabled: boolean) => void;
   readonly handleGlmNativeSettingsChange?: (
     settings: GlmNativeSettings
   ) => void;

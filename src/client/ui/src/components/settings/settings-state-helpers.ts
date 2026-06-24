@@ -6,10 +6,6 @@ import type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
-import type {
-  GeminiModelId,
-  GeminiThinkingLevel,
-} from "../../../../../types/gemini-model-registry";
 import {
   DEFAULT_KIMI_MODEL_ID,
   type KimiModelId,
@@ -120,13 +116,7 @@ export const updateCodexReasoning = (
 
 export const updateThinkingDisplaySyncEnabled = (
   settings: Settings,
-  provider:
-    | "claude"
-    | "codex"
-    | "gemini"
-    | "kimi"
-    | "glmOpenCode"
-    | "glmNative",
+  provider: "claude" | "codex" | "kimi" | "glmOpenCode" | "glmNative",
   enabled: boolean
 ): Settings => ({
   ...settings,
@@ -201,72 +191,6 @@ export const updateProviderAutoUpdate = (
       ...settings.providers[provider],
       autoUpdate: {
         enabled,
-      },
-    },
-  },
-});
-
-export const updateGeminiDefaultModel = (
-  settings: Settings,
-  modelId: GeminiModelId
-): Settings => ({
-  ...settings,
-  providers: {
-    ...settings.providers,
-    gemini: {
-      ...settings.providers.gemini,
-      defaultModel: modelId,
-    },
-  },
-});
-
-export const updateGeminiThinking = (
-  settings: Settings,
-  modelId: GeminiModelId,
-  level: GeminiThinkingLevel
-): Settings => ({
-  ...settings,
-  providers: {
-    ...settings.providers,
-    gemini: {
-      ...settings.providers.gemini,
-      thinkingLevelByModel: {
-        ...settings.providers.gemini.thinkingLevelByModel,
-        [modelId]: level,
-      },
-    },
-  },
-});
-
-export const updateGeminiContinuityRemainingPercentThreshold = (
-  settings: Settings,
-  remainingPercentThreshold: number
-): Settings => ({
-  ...settings,
-  providers: {
-    ...settings.providers,
-    gemini: {
-      ...settings.providers.gemini,
-      sessionContinuity: {
-        ...settings.providers.gemini.sessionContinuity,
-        remainingPercentThreshold,
-      },
-    },
-  },
-});
-
-export const updateGeminiContextWindowTokenLimit = (
-  settings: Settings,
-  contextWindowTokenLimit: number
-): Settings => ({
-  ...settings,
-  providers: {
-    ...settings.providers,
-    gemini: {
-      ...settings.providers.gemini,
-      sessionContinuity: {
-        ...settings.providers.gemini.sessionContinuity,
-        contextWindowTokenLimit,
       },
     },
   },

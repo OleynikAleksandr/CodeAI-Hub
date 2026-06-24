@@ -11,12 +11,6 @@ import {
   type CodexReasoningLevel,
 } from "../../../types/codex-model-registry";
 import {
-  GEMINI_MODEL_ID_SET,
-  GEMINI_THINKING_LEVELS,
-  type GeminiModelId,
-  type GeminiThinkingLevel,
-} from "../../../types/gemini-model-registry";
-import {
   DEFAULT_KIMI_MODEL_ID,
   KIMI_MODEL_ID_SET,
   type KimiModelId,
@@ -27,8 +21,6 @@ import {
   updateClaudeDefaultModel,
   updateCodexDefaultModel,
   updateCodexReasoning,
-  updateGeminiDefaultModel,
-  updateGeminiThinking,
   updateLocalModelsDefaultModel,
   updateThinkingSettings,
 } from "../../ui/src/components/settings/settings-state-helpers";
@@ -39,10 +31,6 @@ const CODEX_MODEL_ID_SET = new Set<string>(
 const CODEX_REASONING_LEVEL_SET = new Set<string>(
   CODEX_REASONING_LEVELS.map((level) => level.name)
 );
-const GEMINI_THINKING_LEVEL_SET = new Set<string>(
-  GEMINI_THINKING_LEVELS.map((level) => level.name)
-);
-
 const normalizeStartCardSelection = (
   value: string | null | undefined
 ): string | null => {
@@ -64,13 +52,6 @@ const isCodexModelId = (value: string): value is CodexModelId =>
 const isCodexReasoningLevel = (
   value: string
 ): value is CodexReasoningLevel => CODEX_REASONING_LEVEL_SET.has(value);
-
-const isGeminiModelId = (value: string): value is GeminiModelId =>
-  GEMINI_MODEL_ID_SET.has(value as GeminiModelId);
-
-const isGeminiThinkingLevel = (
-  value: string
-): value is GeminiThinkingLevel => GEMINI_THINKING_LEVEL_SET.has(value);
 
 const isKimiModelId = (value: string): value is KimiModelId =>
   KIMI_MODEL_ID_SET.has(value as KimiModelId);
@@ -251,31 +232,6 @@ const applyGlmNativeStartDefaults = (
   };
 };
 
-const applyGeminiStartDefaults = (
-  settings: Settings,
-  modelId: string | null,
-  reasoning: string | null
-): Settings | null => {
-  if (!modelId || !isGeminiModelId(modelId)) {
-    return null;
-  }
-  let changed = false;
-  let nextSettings = settings;
-  if (settings.providers.gemini.defaultModel !== modelId) {
-    nextSettings = updateGeminiDefaultModel(nextSettings, modelId);
-    changed = true;
-  }
-  if (
-    reasoning &&
-    isGeminiThinkingLevel(reasoning) &&
-    settings.providers.gemini.thinkingLevelByModel[modelId] !== reasoning
-  ) {
-    nextSettings = updateGeminiThinking(nextSettings, modelId, reasoning);
-    changed = true;
-  }
-  return changed ? nextSettings : null;
-};
-
 const applyLocalModelsStartDefaults = (
   settings: Settings,
   modelId: string | null
@@ -356,7 +312,7 @@ export const applyStartCardModelDefaults = (
   if (params.providerId === "openRouter") {
     return applyOpenRouterStartDefaults(settings, modelId, reasoning);
   }
-  return applyGeminiStartDefaults(settings, modelId, reasoning);
+  return null;
 };
 
 type StartWorkflowStepParams = {

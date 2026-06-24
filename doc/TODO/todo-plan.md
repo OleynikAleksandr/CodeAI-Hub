@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.settings-handlers.task1",
-  "expectedCommitMessage": "refactor: drop Gemini settings handlers",
+  "currentTaskId": "gemini-removal.phase1.settings-types.task1",
+  "expectedCommitMessage": "refactor: drop Gemini settings state model",
   "debt": null
 }
 ```
@@ -93,5 +93,10 @@
 
 ### Stream: Settings handlers
 
-19. [IN_PROGRESS] `gemini-removal.phase1.settings-handlers.task1` Remove the Gemini update helpers and the handlers that wire them from the webview settings state hook (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state.ts, src/client/ui/src/components/settings/use-settings-state-support.ts`; expected commit: `refactor: drop Gemini settings handlers`).
-20. [TODO] `gemini-removal.phase1.settings-handlers.commit1` Git Commit: `refactor: drop Gemini settings handlers` (hash: TBD)
+19. [DONE] `gemini-removal.phase1.settings-handlers.task1` Remove the Gemini update helpers and the handlers that wire them from the webview settings state hook and its project-manager mirror and start-settings consumer (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state.ts, src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts`; expected commit: `refactor: drop Gemini settings handlers`).
+20. [DONE] `gemini-removal.phase1.settings-handlers.commit1` Git Commit: `refactor: drop Gemini settings handlers` (hash: self)
+
+### Stream: Settings state model and mapping
+
+21. [IN_PROGRESS] `gemini-removal.phase1.settings-types.task1` Remove the Gemini settings type/defaults/equality from the settings state model and raw types, delete gemini-mapping, and update the settings/thinking tests that read providers.gemini (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/gemini-mapping.ts`; expected commit: `refactor: drop Gemini settings state model`).
+22. [TODO] `gemini-removal.phase1.settings-types.commit1` Git Commit: `refactor: drop Gemini settings state model` (hash: TBD)
