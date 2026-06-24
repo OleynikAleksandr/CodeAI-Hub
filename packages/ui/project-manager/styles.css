@@ -1589,14 +1589,6 @@ body {
   --row-soft: rgba(1, 240, 216, 0.3);
 }
 
-.pm-tree__item[data-provider="gemini"] {
-  --row-accent: rgba(202, 178, 210, 0.62);
-  --row-fill: rgba(171, 52, 203, 0.08);
-  --row-fill-hover: rgba(171, 52, 203, 0.13);
-  --row-border: rgba(171, 52, 203, 0.3);
-  --row-soft: rgba(171, 52, 203, 0.22);
-}
-
 .pm-tree__item[data-provider="kimi"] {
   --row-accent: rgba(119, 214, 255, 0.64);
   --row-fill: rgba(76, 181, 255, 0.1);

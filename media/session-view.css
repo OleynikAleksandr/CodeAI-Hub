@@ -1215,18 +1215,6 @@
   --picker-border-active: rgba(1, 240, 216, 0.85);
 }
 
-.session-status-picker[data-provider="geminiCli"] {
-  --picker-accent: #b0b0b0;
-  --picker-bg: transparent;
-  --picker-border: rgba(255, 255, 255, 0.08);
-  --picker-accent-hover: #c25fde;
-  --picker-bg-hover: rgba(171, 52, 203, 0.18);
-  --picker-border-hover: rgba(171, 52, 203, 0.6);
-  --picker-accent-active: #ffffff;
-  --picker-bg-active: rgba(171, 52, 203, 0.45);
-  --picker-border-active: rgba(171, 52, 203, 0.8);
-}
-
 .session-status-picker[data-provider="kimiCode"] {
   --picker-accent: #b0b0b0;
   --picker-bg: transparent;

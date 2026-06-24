@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.css-scopes.task1",
-  "expectedCommitMessage": "refactor: drop Gemini provider CSS scopes",
+  "currentTaskId": "gemini-removal.phase1.workflow-resolver.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from workflow provider resolver",
   "debt": null
 }
 ```
@@ -118,5 +118,10 @@
 
 ### Stream: Provider tint CSS scopes
 
-29. [IN_PROGRESS] `gemini-removal.phase1.css-scopes.task1` Remove the dead Gemini provider CSS scopes (pm-tree data-provider gemini and session-status-picker geminiCli) (scope: `packages/ui/project-manager/styles.css, media/session-view.css`; expected commit: `refactor: drop Gemini provider CSS scopes`).
-30. [TODO] `gemini-removal.phase1.css-scopes.commit1` Git Commit: `refactor: drop Gemini provider CSS scopes` (hash: TBD)
+29. [DONE] `gemini-removal.phase1.css-scopes.task1` Remove the dead Gemini provider CSS scopes (pm-tree data-provider gemini and session-status-picker geminiCli) (scope: `packages/ui/project-manager/styles.css, media/session-view.css`; expected commit: `refactor: drop Gemini provider CSS scopes`).
+30. [DONE] `gemini-removal.phase1.css-scopes.commit1` Git Commit: `refactor: drop Gemini provider CSS scopes` (hash: self)
+
+### Stream: Workflow provider resolver
+
+31. [IN_PROGRESS] `gemini-removal.phase1.workflow-resolver.task1` Remove geminiCli from the project-manager workflow provider resolver guard and replace the geminiCli protagonist in its test with another provider (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts`; expected commit: `refactor: drop Gemini from workflow provider resolver`).
+32. [TODO] `gemini-removal.phase1.workflow-resolver.commit1` Git Commit: `refactor: drop Gemini from workflow provider resolver` (hash: TBD)
