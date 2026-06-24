@@ -6,6 +6,24 @@
 
 Методологическая оговорка: часть native-provider сравнений проводилась до того, как мы строго зафиксировали exact `system prompt`, `tool set`, client path и их hashes. Поэтому таблицы ниже полезны как smoke/evidence map, но выводы про "какой prompt лучше" требуют повторного controlled A/B с замороженным instruction/tool stack.
 
+## Benchmark Script
+
+Primary runner: [doc/tmp/prototypes/openrouter-code-model-ranker.mjs](../../../../tmp/prototypes/openrouter-code-model-ranker.mjs).
+
+Typical run:
+
+```bash
+OPENROUTER_API_KEY=... node doc/tmp/prototypes/openrouter-code-model-ranker.mjs \
+  --live \
+  --max-output-usd-per-m 2 \
+  --limit 25 \
+  --case-limit 4 \
+  --timeout-ms 60000 \
+  --out doc/tmp/prototypes/openrouter-code-model-live.md
+```
+
+Native provider comparison runner: [doc/tmp/prototypes/codeai-provider-code-bench.cjs](../../../../tmp/prototypes/codeai-provider-code-bench.cjs).
+
 ## 1. Цель
 
 Найти недорогие модели, которые хорошо справляются с маленькими coding tasks:

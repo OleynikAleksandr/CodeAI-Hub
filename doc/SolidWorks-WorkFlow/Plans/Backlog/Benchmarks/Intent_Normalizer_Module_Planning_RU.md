@@ -4,6 +4,23 @@
 **Дата:** 2026-06-24  
 **Цель:** описать будущий модуль предварительной нормализации пользовательских запросов для сессий создания программных продуктов.
 
+## Benchmark Script
+
+Primary runner: [doc/tmp/prototypes/openrouter-normalizer-model-ranker.mjs](../../../../tmp/prototypes/openrouter-normalizer-model-ranker.mjs).
+
+Typical run:
+
+```bash
+OPENROUTER_API_KEY=... node doc/tmp/prototypes/openrouter-normalizer-model-ranker.mjs \
+  --live \
+  --max-output-usd-per-m 2 \
+  --limit 30 \
+  --case-limit 6 \
+  --structured auto \
+  --timeout-ms 60000 \
+  --out doc/tmp/prototypes/openrouter-normalizer-live.md
+```
+
 ## 1. Короткое решение
 
 Перед дорогим executor-agent можно поставить дешевую локальную или недорогую модель, которая не выполняет задачу, а переводит сырой пользовательский текст в строгий intent packet.

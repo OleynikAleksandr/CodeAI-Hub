@@ -4,31 +4,41 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "benchmark-reference-bundles-folder-2026-06-24",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "benchmark-script-entrypoints-2026-06-24",
   "branch": "main",
-  "baseHead": "1a754bc24",
+  "baseHead": "b4674c9c1",
   "lastRecordedCommit": "self",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/README.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/",
+  "currentTaskId": "benchmark-script-entrypoints.phase1.closeout.task1",
+  "expectedCommitMessage": "docs: close benchmark script entrypoint cleanup",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-benchmark-reference-bundles-folder-2026-06-24.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/README.md`
-- **Last recorded commit:** `self`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Intent_Normalizer_Module_Planning_RU.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Coding_Model_Benchmark_RU.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Documentation_Planning_Model_Benchmark_RU.md`
 
-## Start Next Scope
+## Правила выполнения (Execution Rules)
 
-There is no active execution scope. Before starting new implementation work:
+- Каждая задача затрагивает только документацию benchmark-сводок и active plan.
+- Каждая задача закрывается отдельной строкой `Git Commit: ...`.
+- Перед коммитом выполнить `npm run plan:validate`.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 1 — Benchmark Script Links (owner: Codex, updated: 2026-06-24)
+
+### Stream: Script Entrypoints
+
+1. [DONE] `benchmark-script-entrypoints.phase1.docs.task1` Add clear `Benchmark Script` sections near the top of the three benchmark documents with primary script paths and run commands (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Intent_Normalizer_Module_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Coding_Model_Benchmark_RU.md, doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Documentation_Planning_Model_Benchmark_RU.md`; expected commit: `docs: add benchmark script entrypoints`).
+2. [DONE] Git Commit: `docs: add benchmark script entrypoints` (hash: self)
+3. [IN_PROGRESS] `benchmark-script-entrypoints.phase1.closeout.task1` Close this documentation cleanup scope after verifying the links are visible (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-closeout-benchmark-script-entrypoints-2026-06-24.md`; expected commit: `docs: close benchmark script entrypoint cleanup`).
+4. [TODO] Git Commit: `docs: close benchmark script entrypoint cleanup` (hash: TBD)

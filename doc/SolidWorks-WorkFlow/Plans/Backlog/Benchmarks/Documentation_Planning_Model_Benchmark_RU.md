@@ -6,6 +6,24 @@
 
 Методологическая оговорка: результаты полезны для shortlist, но строгие выводы о влиянии prompt/tool stack требуют отдельного controlled A/B. Для следующего прогона нужно заранее фиксировать exact `system prompt`, `tool set`, client path, reasoning/thinking/temperature и hashes этих артефактов.
 
+## Benchmark Script
+
+Primary runner: [doc/tmp/prototypes/openrouter-docs-planning-model-ranker.mjs](../../../../tmp/prototypes/openrouter-docs-planning-model-ranker.mjs).
+
+Typical run:
+
+```bash
+OPENROUTER_API_KEY=... node doc/tmp/prototypes/openrouter-docs-planning-model-ranker.mjs \
+  --live \
+  --max-output-usd-per-m 2 \
+  --limit 25 \
+  --case-limit 5 \
+  --timeout-ms 60000 \
+  --out doc/tmp/prototypes/openrouter-docs-planning-live.md
+```
+
+Native provider comparison runner: [doc/tmp/prototypes/codeai-provider-docs-planning-bench.cjs](../../../../tmp/prototypes/codeai-provider-docs-planning-bench.cjs).
+
 ## 1. Цель
 
 Найти модели для подготовительной работы вокруг программных продуктов:
