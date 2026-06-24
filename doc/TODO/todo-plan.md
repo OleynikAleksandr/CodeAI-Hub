@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.release-build.task1",
-  "expectedCommitMessage": "chore: build Gemini-free release 1.2.604",
+  "currentTaskId": "gemini-removal.phase2.user-acceptance.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -390,5 +390,22 @@ Approval evidence (2026-06-24):
 
 ### Stream: Gemini-free release build
 
-127. [IN_PROGRESS] `gemini-removal.phase2.release-build.task1` Run the Gemini-free release build scripts for v1.2.604 and record generated VSIX/tarball evidence (scope: `package manifests, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build Gemini-free release 1.2.604`).
-128. [TODO] `gemini-removal.phase2.release-build.commit1` Git Commit: `chore: build Gemini-free release 1.2.604` (hash: TBD)
+127. [DONE] `gemini-removal.phase2.release-build.task1` Run the Gemini-free release build scripts for v1.2.604 and record generated VSIX/tarball evidence (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/*.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build Gemini-free release 1.2.604`).
+128. [DONE] `gemini-removal.phase2.release-build.commit1` Git Commit: `chore: build Gemini-free release 1.2.604` (hash: self)
+
+Release build evidence (2026-06-24):
+- `./scripts/build-all.sh` advanced the workspace/package versions to `1.2.604`, rebuilt provider/core/UI/launcher tarballs, copied the fresh tarballs to `doc/tmp/releases/`, and updated release manifests with fresh size/sha1 values.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` completed Step 7 SDK exclusions, local runtime artefact validation, markdown link check, duplication check, dev-dependency pruning, VSIX packaging, VSIX runtime package surface verification, and dev-dependency restoration.
+- Generated local VSIX: `codeai-hub-1.2.604.vsix` (`5.6M`).
+- Generated tarballs in `doc/tmp/releases/`: `CodeAIHubLauncher-macos-arm64-1.2.604.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.604.tar.bz2`, `claude-module-1.2.604.tar.bz2`, `codex-module-1.2.604.tar.bz2`, `glm-module-1.2.604.tar.bz2`, `glm-opencode-module-1.2.604.tar.bz2`, `kimi-module-1.2.604.tar.bz2`, `vscode-webview-1.2.604.tar.bz2`, `project-manager-1.2.604.tar.bz2`.
+- Git tracking note: `*.vsix` and `doc/tmp/` are intentionally ignored; the release commit records the build through version files, release manifests, and this evidence while the artifacts remain available locally.
+
+### Stream: User Workflow Acceptance Testing
+
+129. [IN_PROGRESS] `gemini-removal.phase2.user-acceptance.task1` User installs/tests `codeai-hub-1.2.604.vsix` and explicitly confirms Gemini-free workflow acceptance (scope: `manual acceptance`).
+
+### Stream: Scope Closeout
+
+130. [TODO] `gemini-removal.phase2.scope-closeout.task1` After explicit user acceptance, archive the active todo-plan and dispose/update the related planning docs (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close Gemini removal scope`).
+131. [TODO] `gemini-removal.phase2.scope-closeout.commit1` Git Commit: `docs: close Gemini removal scope` (hash: TBD)
+132. [TODO] `gemini-removal.phase2.post-closeout-handoff.task1` Reserved post-closeout handoff anchor for Plan Orchestrator terminal NONE state (scope: `doc/TODO/todo-plan.md`).
