@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.session-theme.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from session theme helpers",
+  "currentTaskId": "gemini-removal.phase1.session-status.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from session status panel",
   "debt": null
 }
 ```
@@ -73,5 +73,10 @@
 
 ### Stream: Session theme and model helpers
 
-11. [IN_PROGRESS] `gemini-removal.phase1.session-theme.task1` Remove Gemini from the session provider theme, model-info builder and session candidates (scope: `src/client/ui/src/session/helpers.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `refactor: drop Gemini from session theme helpers`).
-12. [TODO] `gemini-removal.phase1.session-theme.commit1` Git Commit: `refactor: drop Gemini from session theme helpers` (hash: TBD)
+11. [DONE] `gemini-removal.phase1.session-theme.task1` Remove Gemini from the session provider theme, model-info builder and session candidates, plus the dialog-panel theme test it feeds (scope: `src/client/ui/src/session/helpers.ts, src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/session-candidates.ts, src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `refactor: drop Gemini from session theme helpers`).
+12. [DONE] `gemini-removal.phase1.session-theme.commit1` Git Commit: `refactor: drop Gemini from session theme helpers` (hash: self)
+
+### Stream: Session status panel
+
+13. [IN_PROGRESS] `gemini-removal.phase1.session-status.task1` Remove Gemini from the session status panel and session id bar and their tests (scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-id-bar.tsx, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `refactor: drop Gemini from session status panel`).
+14. [TODO] `gemini-removal.phase1.session-status.commit1` Git Commit: `refactor: drop Gemini from session status panel` (hash: TBD)

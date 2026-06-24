@@ -47,19 +47,17 @@ const createDefaultBinding = (): SessionBindingInfo => ({
 const USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX = "global";
 
 const buildGlobalUsageLimitScopeKey = (
-  providerId: "claude" | "codex" | "gemini"
+  providerId: "claude" | "codex"
 ): string => `${providerId}:${USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX}`;
 
 const mapUsageLimitProviderId = (
   providerId: ProviderStackId | null | undefined
-): "claude" | "codex" | "gemini" | null => {
+): "claude" | "codex" | null => {
   switch (providerId) {
     case "claudeCodeCli":
       return "claude";
     case "codexCli":
       return "codex";
-    case "geminiCli":
-      return "gemini";
     default:
       return null;
   }
@@ -67,7 +65,7 @@ const mapUsageLimitProviderId = (
 
 const readUsageLimitProviderFromScopeKey = (
   scopeKey: string | null | undefined
-): "claude" | "codex" | "gemini" | null => {
+): "claude" | "codex" | null => {
   const normalized = scopeKey?.trim().toLowerCase();
   if (!normalized) {
     return null;
@@ -78,9 +76,6 @@ const readUsageLimitProviderFromScopeKey = (
   }
   if (prefix.includes("codex")) {
     return "codex";
-  }
-  if (prefix.includes("gemini")) {
-    return "gemini";
   }
   return null;
 };
@@ -279,7 +274,7 @@ export const mergeHistoryIntoSnapshots = (
   } satisfies SessionSnapshots;
 };
 
-export type ProviderTheme = "claude" | "codex" | "gemini" | "kimi";
+export type ProviderTheme = "claude" | "codex" | "kimi";
 export const mapProviderTheme = (
   providerId: ProviderStackId | null
 ): ProviderTheme | null => {
@@ -288,8 +283,6 @@ export const mapProviderTheme = (
       return "claude";
     case "codexCli":
       return "codex";
-    case "geminiCli":
-      return "gemini";
     case "kimiCode":
     case "glmNative":
     case "glmOpenCode":
@@ -332,8 +325,6 @@ export const resolveSessionThinkingDisplayEnabled = (options: {
       return options.settings.providers.claude.thinkingDisplaySyncEnabled;
     case "codexCli":
       return options.settings.providers.codex.reasoningSummaryEnabled;
-    case "geminiCli":
-      return options.settings.providers.gemini.thinkingDisplaySyncEnabled;
     case "kimiCode":
       return (
         options.settings.providers.kimi?.thinkingDisplaySyncEnabled ?? true
@@ -364,8 +355,6 @@ export const resolveProviderWaitColor = (
         return [255, 145, 5] as const;
       case "codex":
         return [1, 240, 216] as const;
-      case "gemini":
-        return [171, 52, 203] as const;
       default:
         return [127, 140, 141] as const;
     }

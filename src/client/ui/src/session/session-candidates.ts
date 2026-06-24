@@ -7,7 +7,6 @@ import type { SessionRecord } from "../../../../types/session";
 export const providerIdSet = new Set<ProviderStackId>([
   "claudeCodeCli",
   "codexCli",
-  "geminiCli",
   "kimiCode",
   "glmNative",
   "glmOpenCode",

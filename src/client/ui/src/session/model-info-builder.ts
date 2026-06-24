@@ -6,8 +6,8 @@ import type {
 } from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
 
-type ProviderKey = "claude" | "codex" | "gemini";
-type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
+type ProviderKey = "claude" | "codex";
+type SettingsBackedProviderId = "claudeCodeCli" | "codexCli";
 type KimiLikeProviderId = "kimiCode" | "glmNative" | "glmOpenCode";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi K2.7 Code";
@@ -22,7 +22,6 @@ const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {
   claudeCodeCli: "claude",
   codexCli: "codex",
-  geminiCli: "gemini",
 };
 
 // Regex patterns at top level for performance
@@ -54,9 +53,7 @@ const parseEffectiveModelId = (modelId: string): EffectiveModelDescriptor => {
 const isSettingsBackedProviderId = (
   providerId: ProviderStackId
 ): providerId is SettingsBackedProviderId =>
-  providerId === "claudeCodeCli" ||
-  providerId === "codexCli" ||
-  providerId === "geminiCli";
+  providerId === "claudeCodeCli" || providerId === "codexCli";
 
 const isKimiLikeProviderId = (
   providerId: ProviderStackId
@@ -203,9 +200,7 @@ const resolveModelReasoning = (
     const codexReasoning = settings.providers.codex.reasoningByModel[modelId];
     return codexReasoning ? `reasoning ${codexReasoning}` : undefined;
   }
-  const geminiThinking =
-    settings.providers.gemini.thinkingLevelByModel[modelId];
-  return geminiThinking ? `thinking ${geminiThinking}` : undefined;
+  return undefined;
 };
 
 export const buildModelInfo = (

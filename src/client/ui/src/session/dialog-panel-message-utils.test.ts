@@ -14,8 +14,6 @@ const ASSISTANT_CLAUDE_CLASS_REGEX =
   /\bsession-dialog__message--assistant-claude\b/u;
 const ASSISTANT_CODEX_CLASS_REGEX =
   /\bsession-dialog__message--assistant-codex\b/u;
-const ASSISTANT_GEMINI_CLASS_REGEX =
-  /\bsession-dialog__message--assistant-gemini\b/u;
 
 const createMessage = (
   id: string,
@@ -190,10 +188,6 @@ test("buildMessageClassNames adds dedicated thinking styling hook for assistant-
     {
       assistantThemeRegex: ASSISTANT_CODEX_CLASS_REGEX,
       providerTheme: "codex" as const,
-    },
-    {
-      assistantThemeRegex: ASSISTANT_GEMINI_CLASS_REGEX,
-      providerTheme: "gemini" as const,
     },
   ];
 
