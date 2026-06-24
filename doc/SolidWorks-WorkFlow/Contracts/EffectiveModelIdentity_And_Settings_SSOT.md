@@ -170,7 +170,6 @@ Session continuity must preserve the model chosen at logical session start:
 ### 4.5. Provider-specific examples
 
 - **Codex**: `reasoningByModel` may require per-turn thread refresh, but the refresh still consumes Core-applied identity.
-- **Gemini**: `thinking` входит в effective identity; `gemini-3-pro-preview thinking:high` and `gemini-3-pro-preview thinking:low` are different runtime identities.
 - **Claude**: `thinking` off remains `sonnet thinking:off`, while enabled Claude turns now expose explicit effort through identities such as `sonnet reasoning:high` and `sonnet reasoning:max`; this is how Session UI learns that the next Claude turn will use a different effort level.
 - **Kimi**: native Kimi ACP is model-only in CodeAI Hub. Settings/start cards/status-line model picker may choose `kimi-k2.7-code` or `kimi-k2.7-code-highspeed`; they must not show a reasoning on/off or effort picker.
 - **GLM Native**: global connection settings are outside identity, while workspace defaults carry `glm-5.2` plus `thinkingEnabled` and `reasoningEffort`. UI choices are `off`, `high`, and `max`; legacy cross-provider labels must normalize before reaching runtime.
@@ -260,7 +259,6 @@ Rules:
   - `packages/core/src/remote-bridge/types.ts`
 - Provider adapters:
   - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (consumes the applied-turn-config envelope under `CODEX_APPLIED_TURN_CONFIG_KEY` on `thread/start` / `thread/resume` / `turn/start`)
-  - `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`
   - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
   - `packages/core/src/open-router/open-router-provider-adapter.ts`
 - UI sync:
@@ -276,5 +274,4 @@ Rules:
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
-- `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

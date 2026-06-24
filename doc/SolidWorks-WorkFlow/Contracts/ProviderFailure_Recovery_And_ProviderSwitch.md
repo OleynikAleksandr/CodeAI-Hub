@@ -95,7 +95,7 @@
 - `packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.ts`
 
 Текущий статус:
-- typed stale-binding retry (`GEMINI_*`, `CLAUDE_*`, `CODEX_*`) invalidates binding, rebinds and retries once;
+- typed stale-binding retry (`CLAUDE_*`, `CODEX_*`, `KIMI_*`) invalidates binding, rebinds and retries once;
 - provider failure path emits `session:error` and may broadcast `dialog:switch:offer`;
 - полноценная user-approved migration to another provider всё ещё deferred.
 
@@ -376,14 +376,6 @@ Core computes RecoveryPlan
 
 ### 6.2. MVP fallback matrix
 
-#### Gemini
-
-- `gemini-3.1-pro-preview` → `gemini-3-flash-preview`
-- если same-provider fallback не проходит:
-  - `description` → `claudeCodeCli`
-  - `virtual_simulation` → `codexCli`
-  - `diagram_modules` → `claudeCodeCli`
-
 #### Claude
 
 - использовать текущий default model из settings
@@ -649,7 +641,7 @@ Manual switch должен быть доступен даже без error path.
 
 Жёсткое правило совместимости:
 
-- никакой новой логики provider switch нельзя привязывать к Gemini/Claude/Codex-specific storage format;
+- никакой новой логики provider switch нельзя привязывать к Claude/Codex/Kimi-specific storage format;
 - все контракты должны оставаться provider-neutral, чтобы их потом мог вызывать будущий `multi-provider-orchestrator`.
 
 ---
@@ -707,7 +699,7 @@ Core материализует:
 Принципиально:
 
 - это **не** provider-native storage;
-- это **не** Gemini/Claude/Codex rollout JSONL;
+- это **не** Claude/Codex/Kimi provider-native storage;
 - это отдельный Core-owned continuity package.
 
 ### 8.4. Источник данных и нормализация
@@ -986,7 +978,7 @@ Recovery является одной из причин switch, а не отде�
   "dialogId": "dlg_123",
   "sessionId": "sess_456",
   "initiator": "core_recovery",
-  "reason": "Gemini model is unavailable and current native session is not recoverable",
+  "reason": "Codex model is unavailable and current native session is not recoverable",
   "recommendedTarget": {
     "providerId": "claudeCodeCli",
     "modelId": null,
@@ -994,8 +986,8 @@ Recovery является одной из причин switch, а не отде�
   },
   "alternativeTargets": [
     {
-      "providerId": "geminiCli",
-      "modelId": "gemini-3-flash-preview",
+      "providerId": "codexCli",
+      "modelId": "gpt-5.4-mini",
       "mode": "switch_model"
     }
   ],
@@ -1133,7 +1125,7 @@ Target MVP считается завершённым, когда одновре�
 
 ## 12. Verification Scenarios
 
-1. **Gemini capacity error**
+1. **Codex capacity error**
    - current turn завершается `turn_failed`
    - binding не дропается молча
    - same-provider retry возможен
