@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-settings-snapshots.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from core settings snapshots",
+  "currentTaskId": "gemini-removal.phase2.core-settings-defaults.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from core settings defaults",
   "debt": null
 }
 ```
@@ -160,5 +160,10 @@
 
 ### Stream: Core settings snapshots
 
-45. [IN_PROGRESS] `gemini-removal.phase2.core-settings-snapshots.task1` Remove Gemini from Core settings snapshot readers, session translation visibility policy, and default settings persistence (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; expected commit: `refactor: drop Gemini from core settings snapshots`).
-46. [TODO] `gemini-removal.phase2.core-settings-snapshots.commit1` Git Commit: `refactor: drop Gemini from core settings snapshots` (hash: TBD)
+45. [DONE] `gemini-removal.phase2.core-settings-snapshots.task1` Remove Gemini from Core settings snapshot readers, session translation visibility policy, and default settings persistence (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/session-translation/**, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; expected commit: `refactor: drop Gemini from core settings snapshots`).
+46. [DONE] `gemini-removal.phase2.core-settings-snapshots.commit1` Git Commit: `refactor: drop Gemini from core settings snapshots` (hash: self)
+
+### Stream: Core settings defaults
+
+47. [IN_PROGRESS] `gemini-removal.phase2.core-settings-defaults.task1` Remove Gemini from the default settings snapshot constant and settings-handler fixtures (scope: `packages/core/src/remote-bridge/handlers/settings-default-snapshot.ts, packages/core/src/remote-bridge/handlers/settings-*.test.ts`; expected commit: `refactor: drop Gemini from core settings defaults`).
+48. [TODO] `gemini-removal.phase2.core-settings-defaults.commit1` Git Commit: `refactor: drop Gemini from core settings defaults` (hash: TBD)

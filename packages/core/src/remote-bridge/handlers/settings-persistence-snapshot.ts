@@ -188,14 +188,13 @@ export const buildDefaultSettingsSnapshot = (
       ? config.claudeContinuityRemainingPercentThreshold
       : DEFAULT_SETTINGS_SNAPSHOT.providers.claude.sessionContinuity
           .remainingPercentThreshold;
-  const geminiDefaultModel =
-    config.geminiDefaultModel ??
-    DEFAULT_SETTINGS_SNAPSHOT.providers.gemini.defaultModel;
+  const { gemini: _gemini, ...defaultProviders } =
+    DEFAULT_SETTINGS_SNAPSHOT.providers;
 
   return {
     ...DEFAULT_SETTINGS_SNAPSHOT,
     providers: {
-      ...DEFAULT_SETTINGS_SNAPSHOT.providers,
+      ...defaultProviders,
       claude: {
         ...DEFAULT_SETTINGS_SNAPSHOT.providers.claude,
         defaultModel: config.claudeDefaultModel,
@@ -209,14 +208,6 @@ export const buildDefaultSettingsSnapshot = (
           [codexDefaultModel]: codexDefaultReasoning,
         },
         sessionContinuity: { remainingPercentThreshold },
-      },
-      gemini: {
-        ...DEFAULT_SETTINGS_SNAPSHOT.providers.gemini,
-        defaultModel: geminiDefaultModel,
-        sessionContinuity: {
-          ...DEFAULT_SETTINGS_SNAPSHOT.providers.gemini.sessionContinuity,
-          remainingPercentThreshold,
-        },
       },
     },
   };
@@ -242,7 +233,6 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     readonly providers: {
       readonly claude: Record<string, unknown>;
       readonly codex: Record<string, unknown>;
-      readonly gemini: Record<string, unknown>;
       readonly glmNative: Record<string, unknown>;
       readonly kimi: Record<string, unknown>;
       readonly glmOpenCode: Record<string, unknown>;
@@ -259,7 +249,6 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
   const rawProviders = isRecord(settings.providers) ? settings.providers : {};
   const rawClaude = isRecord(rawProviders.claude) ? rawProviders.claude : {};
   const rawCodex = isRecord(rawProviders.codex) ? rawProviders.codex : {};
-  const rawGemini = isRecord(rawProviders.gemini) ? rawProviders.gemini : {};
   const rawKimi = isRecord(rawProviders.kimi) ? rawProviders.kimi : {};
   const rawGlmOpenCode = isRecord(rawProviders.glmOpenCode)
     ? rawProviders.glmOpenCode
@@ -326,7 +315,6 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       isRecord(settings.providers) &&
       isRecord(rawProviders.claude) &&
       isRecord(rawProviders.codex) &&
-      isRecord(rawProviders.gemini) &&
       isRecord(rawProviders.kimi) &&
       isRecord(rawProviders.glmOpenCode) &&
       isRecord(rawProviders.glmNative) &&
@@ -344,7 +332,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     changed = true;
   }
   if (
-    [rawGemini, rawKimi, rawGlmOpenCode, rawGlmNative].some(
+    [rawKimi, rawGlmOpenCode, rawGlmNative].some(
       (provider) => typeof provider.thinkingDisplaySyncEnabled !== "boolean"
     )
   ) {
@@ -374,10 +362,6 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
           defaultModel: codexSettings.defaultModel,
           reasoningByModel: codexSettings.reasoningByModel,
         },
-        gemini: mergeDisplaySyncProviderSettings(
-          rawGemini,
-          defaults.providers.gemini
-        ),
         kimi: mergeDisplaySyncProviderSettings(
           rawKimi,
           defaults.providers.kimi

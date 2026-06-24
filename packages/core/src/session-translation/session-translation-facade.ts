@@ -39,7 +39,6 @@ export interface SessionTranslationFacadeOptions {
 export type SessionTranslationProviderId =
   | "claude"
   | "codex"
-  | "gemini"
   | "kimi"
   | "glmOpenCode";
 

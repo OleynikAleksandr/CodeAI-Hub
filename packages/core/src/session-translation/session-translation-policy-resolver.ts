@@ -15,7 +15,6 @@ import { providerSettingsSnapshotCache } from "../config/json-file-snapshot-cach
 import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
-  loadGeminiSettingsSnapshot,
   loadGlmOpenCodeSettingsSnapshot,
   loadKimiSettingsSnapshot,
   loadReasoningLanguage,
@@ -26,7 +25,6 @@ import {
 export type SessionThinkingVisibilityProviderId =
   | "claude"
   | "codex"
-  | "gemini"
   | "kimi"
   | "glmOpenCode";
 export type SessionTranslationPolicyCategory =
@@ -154,12 +152,6 @@ export class SessionTranslationPolicyResolver {
       const claude = loadClaudeProviderSettingsSnapshot(settingsPath);
       return resolveThinkingVisibilityEnabled(
         claude?.thinkingDisplaySyncEnabled
-      );
-    }
-    if (providerId === "gemini") {
-      const gemini = loadGeminiSettingsSnapshot(settingsPath);
-      return resolveThinkingVisibilityEnabled(
-        gemini?.thinkingDisplaySyncEnabled
       );
     }
     if (providerId === "kimi") {

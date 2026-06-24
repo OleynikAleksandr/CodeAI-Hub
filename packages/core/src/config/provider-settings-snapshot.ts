@@ -33,12 +33,6 @@ export interface ClaudeSettingsSnapshot {
   readonly thinking?: unknown;
 }
 
-export interface GeminiSettingsSnapshot {
-  readonly defaultModel?: unknown;
-  readonly thinkingDisplaySyncEnabled?: unknown;
-  readonly thinkingLevelByModel?: unknown;
-}
-
 export interface KimiSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
@@ -194,21 +188,6 @@ export const loadCodexSettingsSnapshot = (
     reasoningByModel: codex.reasoningByModel,
     reasoningSummaryEnabled: codex.reasoningSummaryEnabled,
     thinkingDisplaySyncEnabled: codex.thinkingDisplaySyncEnabled,
-  };
-};
-
-export const loadGeminiSettingsSnapshot = (
-  settingsPath: string
-): GeminiSettingsSnapshot | null => {
-  const gemini = loadProviderSnapshot(settingsPath, "gemini");
-  if (!gemini) {
-    return null;
-  }
-
-  return {
-    defaultModel: gemini.defaultModel,
-    thinkingLevelByModel: gemini.thinkingLevelByModel,
-    thinkingDisplaySyncEnabled: gemini.thinkingDisplaySyncEnabled,
   };
 };
 
