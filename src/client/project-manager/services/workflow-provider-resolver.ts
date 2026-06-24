@@ -11,7 +11,6 @@ type WorkflowProviderStageId =
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" ||
   value === "codexCli" ||
-  value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmNative" ||
   value === "glmOpenCode" ||

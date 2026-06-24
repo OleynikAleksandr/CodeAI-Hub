@@ -51,14 +51,6 @@ const createProviders = (
     ...overrides?.codexCli,
   },
   {
-    id: "geminiCli",
-    title: "Gemini",
-    description: "Gemini CLI",
-    connected: true,
-    statusMessage: null,
-    ...overrides?.geminiCli,
-  },
-  {
     id: "kimiCode",
     title: "Kimi",
     description: "Kimi Code",
@@ -75,9 +67,9 @@ test("virtual simulation inherits provider from description primary session", ()
         updatedAt: "2026-04-13T08:00:00.000Z",
         finalPath: ".codeai-hub/demo/description/Final_Description.md",
         primarySession: {
-          providerId: "geminiCli",
-          providerSessionId: "gemini-session-1",
-          jsonlPath: "/tmp/gemini.jsonl",
+          providerId: "kimiCode",
+          providerSessionId: "kimi-session-1",
+          jsonlPath: "/tmp/kimi.jsonl",
         },
       },
     }),
@@ -85,7 +77,7 @@ test("virtual simulation inherits provider from description primary session", ()
     stage: "virtual_simulation",
   });
 
-  assert.equal(providerId, "geminiCli");
+  assert.equal(providerId, "kimiCode");
 });
 
 test("virtual simulation inherits provider from description continuity when primary session is missing", () => {
@@ -177,8 +169,8 @@ test("diagram modules inherits provider from latest virtual simulation continuit
             segments: [
               {
                 sessionId: "vs-new",
-                providerId: "geminiCli",
-                providerSessionId: "gemini-vs-session",
+                providerId: "kimiCode",
+                providerSessionId: "kimi-vs-session",
                 createdAt: "2026-04-13T08:45:00.000Z",
               },
             ],
@@ -190,7 +182,7 @@ test("diagram modules inherits provider from latest virtual simulation continuit
     stage: "diagram_modules",
   });
 
-  assert.equal(providerId, "geminiCli");
+  assert.equal(providerId, "kimiCode");
 });
 
 test("resolver falls back to first connected provider when inherited one is disconnected", () => {
@@ -213,7 +205,7 @@ test("resolver falls back to first connected provider when inherited one is disc
     stage: "virtual_simulation",
   });
 
-  assert.equal(providerId, "geminiCli");
+  assert.equal(providerId, "kimiCode");
 });
 
 test("legacy call sites without stage keep description-based fallback", () => {
@@ -273,16 +265,16 @@ test("quality gates returns no provider when only non-search providers exist", (
         updatedAt: "2026-05-22T08:00:00.000Z",
         finalPath: ".codeai-hub/demo/description/Final_Description.md",
         primarySession: {
-          providerId: "geminiCli",
-          providerSessionId: "gemini-description-session",
-          jsonlPath: "/tmp/gemini-description.jsonl",
+          providerId: "kimiCode",
+          providerSessionId: "kimi-description-session",
+          jsonlPath: "/tmp/kimi-description.jsonl",
         },
       },
     }),
     providers: createProviders({
       claudeCodeCli: { connected: false },
       codexCli: { connected: false },
-    }).filter((provider) => provider.id === "geminiCli" || provider.id === "kimiCode"),
+    }).filter((provider) => provider.id === "kimiCode"),
     stage: "quality_gates",
   });
 

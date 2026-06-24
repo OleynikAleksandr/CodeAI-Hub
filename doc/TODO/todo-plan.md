@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.workflow-resolver.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from workflow provider resolver",
+  "currentTaskId": "gemini-removal.phase1.pm-remainder.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from remaining project-manager UI",
   "debt": null
 }
 ```
@@ -123,5 +123,10 @@
 
 ### Stream: Workflow provider resolver
 
-31. [IN_PROGRESS] `gemini-removal.phase1.workflow-resolver.task1` Remove geminiCli from the project-manager workflow provider resolver guard and replace the geminiCli protagonist in its test with another provider (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts`; expected commit: `refactor: drop Gemini from workflow provider resolver`).
-32. [TODO] `gemini-removal.phase1.workflow-resolver.commit1` Git Commit: `refactor: drop Gemini from workflow provider resolver` (hash: TBD)
+31. [DONE] `gemini-removal.phase1.workflow-resolver.task1` Remove geminiCli from the project-manager workflow provider resolver guard and replace the geminiCli protagonist in its test with another provider (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts`; expected commit: `refactor: drop Gemini from workflow provider resolver`).
+32. [DONE] `gemini-removal.phase1.workflow-resolver.commit1` Git Commit: `refactor: drop Gemini from workflow provider resolver` (hash: self)
+
+### Stream: Remaining project-manager UI
+
+33. [IN_PROGRESS] `gemini-removal.phase1.pm-remainder.task1` Remove the geminiCli tint token, the development-tree start-card Gemini branch, and the geminiCli fixture in the stage-confirmation-card test (scope: `src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `refactor: drop Gemini from remaining project-manager UI`).
+34. [TODO] `gemini-removal.phase1.pm-remainder.commit1` Git Commit: `refactor: drop Gemini from remaining project-manager UI` (hash: TBD)
