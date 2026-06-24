@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.checklist-design-docs-residue.task1",
-  "expectedCommitMessage": "docs: drop Gemini checklist design refs",
+  "currentTaskId": "gemini-removal.phase2.remaining-docs-residue-audit.task1",
+  "expectedCommitMessage": "chore: audit remaining Gemini docs residue",
   "debt": null
 }
 ```
@@ -330,5 +330,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Checklist and design docs residue
 
-111. [IN_PROGRESS] `gemini-removal.phase2.checklist-design-docs-residue.task1` Remove Gemini-as-live-provider references from active audit checklist and design-system docs (scope: `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md, doc/SolidWorks-WorkFlow/Checklists/RuntimeReliabilityReviewRemediation.md, doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html`; expected commit: `docs: drop Gemini checklist design refs`).
-112. [TODO] `gemini-removal.phase2.checklist-design-docs-residue.commit1` Git Commit: `docs: drop Gemini checklist design refs` (hash: TBD)
+111. [DONE] `gemini-removal.phase2.checklist-design-docs-residue.task1` Remove Gemini-as-live-provider references from active audit checklist and design-system docs (scope: `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md, doc/SolidWorks-WorkFlow/Checklists/RuntimeReliabilityReviewRemediation.md, doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html`; expected commit: `docs: drop Gemini checklist design refs`).
+112. [DONE] `gemini-removal.phase2.checklist-design-docs-residue.commit1` Git Commit: `docs: drop Gemini checklist design refs` (hash: self)
+
+### Stream: Remaining docs residue audit
+
+113. [IN_PROGRESS] `gemini-removal.phase2.remaining-docs-residue-audit.task1` Re-run tracked Gemini documentation residue checks after active docs cleanup and classify the remaining archive/history/planning scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit remaining Gemini docs residue`).
+114. [TODO] `gemini-removal.phase2.remaining-docs-residue-audit.commit1` Git Commit: `chore: audit remaining Gemini docs residue` (hash: TBD)

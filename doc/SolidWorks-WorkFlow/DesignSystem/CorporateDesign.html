@@ -27,12 +27,6 @@
       --codex-border: rgba(1, 240, 216, 0.4);
       --codex-soft: rgba(1, 240, 216, 0.3);
 
-      --gemini-accent: rgba(202, 178, 210, 0.62);
-      --gemini-fill: rgba(171, 52, 203, 0.08);
-      --gemini-fill-hover: rgba(171, 52, 203, 0.13);
-      --gemini-border: rgba(171, 52, 203, 0.3);
-      --gemini-soft: rgba(171, 52, 203, 0.22);
-
       --kimi-accent: rgba(119, 214, 255, 0.64);
       --kimi-fill: rgba(76, 181, 255, 0.1);
       --kimi-fill-hover: rgba(76, 181, 255, 0.16);
@@ -153,10 +147,6 @@
       color: var(--codex-accent);
       border-color: var(--codex-border);
     }
-    .provider-block__chip--gemini {
-      color: var(--gemini-accent);
-      border-color: var(--gemini-border);
-    }
     .provider-block__chip--kimi {
       color: var(--kimi-accent);
       border-color: var(--kimi-border);
@@ -275,9 +265,6 @@
     .sample-row--codex {
       color: var(--codex-accent);
     }
-    .sample-row--gemini {
-      color: var(--gemini-accent);
-    }
     .sample-row--kimi {
       color: var(--kimi-accent);
     }
@@ -291,11 +278,6 @@
       color: var(--selected-text);
       background: var(--codex-fill);
       border-color: var(--codex-border);
-    }
-    .sample-row--selected.sample-row--gemini {
-      color: var(--selected-text);
-      background: var(--gemini-fill);
-      border-color: var(--gemini-border);
     }
     .sample-row--selected.sample-row--kimi {
       color: var(--selected-text);
@@ -548,90 +530,13 @@
           </div>
         </div>
 
-        <!-- Gemini -->
-        <div class="provider-block">
-          <h3 class="provider-block__title">
-            Gemini
-            <span class="provider-block__chip provider-block__chip--gemini">
-              accent
-            </span>
-          </h3>
-          <div class="token-grid">
-            <div class="token-grid__head">Token</div>
-            <div class="token-grid__head">Sample (на черном)</div>
-            <div class="token-grid__head">RGBA</div>
-
-            <div class="token-grid__cell token-grid__role">accent (label)</div>
-            <div class="token-grid__cell">
-              <span
-                class="swatch--text-on-dark"
-                style="color: rgba(202, 178, 210, 0.62)"
-              >
-                Description · Virtual Simulation · Diagram Modules
-              </span>
-            </div>
-            <div class="token-grid__cell token-grid__rgba">
-              rgba(202, 178, 210, 0.62)
-            </div>
-
-            <div class="token-grid__cell token-grid__role">fill (selected)</div>
-            <div class="token-grid__cell">
-              <span
-                class="swatch"
-                style="background: rgba(171, 52, 203, 0.08)"
-              ></span>
-            </div>
-            <div class="token-grid__cell token-grid__rgba">
-              rgba(171, 52, 203, 0.08)
-            </div>
-
-            <div class="token-grid__cell token-grid__role">fill (hover)</div>
-            <div class="token-grid__cell">
-              <span
-                class="swatch"
-                style="background: rgba(171, 52, 203, 0.13)"
-              ></span>
-            </div>
-            <div class="token-grid__cell token-grid__rgba">
-              rgba(171, 52, 203, 0.13)
-            </div>
-
-            <div class="token-grid__cell token-grid__role">border</div>
-            <div class="token-grid__cell">
-              <span
-                class="swatch"
-                style="background: transparent; border-color: rgba(171, 52, 203, 0.3)"
-              ></span>
-            </div>
-            <div class="token-grid__cell token-grid__rgba">
-              rgba(171, 52, 203, 0.30)
-            </div>
-
-            <div class="token-grid__cell token-grid__role">
-              soft (connectors)
-            </div>
-            <div class="token-grid__cell">
-              <span
-                class="swatch"
-                style="background: rgba(171, 52, 203, 0.22)"
-              ></span>
-            </div>
-            <div class="token-grid__cell token-grid__rgba">
-              rgba(171, 52, 203, 0.22)
-            </div>
-          </div>
-        </div>
-
         <p class="section__intro" style="margin-top: 16px">
           <strong style="color: var(--text-primary); font-weight: 400">
             Notes по accent-токенам:
           </strong>
           для Claude взят desaturated тёплый peach (R=240, G=188, B=132) с
           альфой 0.62 — родной оранжевый <code>#ff9105</code> сохранён только в
-          fill/border/soft. Для Gemini взят desaturated сиреневый (R=202, G=178,
-          B=210) с альфой 0.62 — родной пурпур
-          <code>#ab34cb</code>
-          сохранён в fill/border/soft. Codex использует родной cyan
+          fill/border/soft. Codex использует родной cyan
           <code>#01f0d8</code>
           с альфой 0.60 во всех ролях.
         </p>
@@ -690,29 +595,6 @@
             Unselected: <code>--codex-accent</code>, без fill, без border
           </div>
         </div>
-
-        <h3 class="subsection__title">Gemini</h3>
-        <div class="sample-frame">
-          <div class="sample-sidebar">
-            <div class="sample-sidebar__provider-title">Documentation Tree</div>
-            <div class="sample-row sample-row--gemini">
-              <span class="sample-row__dot"></span>Description
-            </div>
-            <div class="sample-row sample-row--gemini sample-row--selected">
-              <span class="sample-row__dot"></span>Virtual Simulation
-            </div>
-            <div class="sample-row sample-row--gemini">
-              <span class="sample-row__dot"></span>Diagram Modules
-            </div>
-          </div>
-          <div class="sample-info">
-            Selected: <code>--gemini-fill</code> +
-            <code>--gemini-border</code>
-            +
-            <code>color: #cfcfcf</code><br>
-            Unselected: <code>--gemini-accent</code>, без fill, без border
-          </div>
-        </div>
       </section>
 
       <!-- ============================================================ -->
@@ -761,7 +643,7 @@
           <div class="neutral-grid__cell">font-weight (provider pills)</div>
           <div class="neutral-grid__cell">
             <span style="font-weight: 300; letter-spacing: 0.06em">
-              CLAUDE · CODEX · GEMINI
+              CLAUDE · CODEX · KIMI
             </span>
           </div>
           <div
@@ -817,12 +699,12 @@
               <strong style="color: #5fe3ba">[DONE 1.2.109]</strong>
               <code>StageConfirmationCard</code>
               provider radio pills используют corporate tokens (Claude warm
-              peach / Codex cyan / Gemini cool lavender / Kimi sky blue) через
+              peach / Codex cyan / Kimi sky blue) через
               <code>stage-confirmation-card-provider-tint.ts</code>
               вместо legacy hardcoded зелёного selection state.
             </li>
             <li>
-              <code>session-status-button--claude/codex/gemini/kimi</code>
+              <code>session-status-button--claude/codex/kimi/violet</code>
               в
               <code>media/session-view.css</code>
               — кнопки модели и reasoning в Session info-card. Сейчас используют
@@ -841,7 +723,6 @@
             <li>
               Bubble chrome: <code>Claude · Thinking</code> /
               <code>Codex · Thinking</code>
-              / <code>Gemini · Thinking</code>
               header tint (живёт сейчас в bubble visual contract)
             </li>
           </ul>

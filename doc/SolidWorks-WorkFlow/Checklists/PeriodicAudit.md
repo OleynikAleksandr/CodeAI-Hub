@@ -43,7 +43,7 @@ npx jscpd --threshold 0 --silent --reporters json --output /tmp/jscpd-audit src 
 
 Скриптом или вручную ранжировать top-20 клонов по размеру. **Классификация обязательна** по одной из шести категорий:
 
-- **LEGIT-PROVIDER.** Параллельный scaffolding Claude/Codex/Gemini (installer, session-logger, provider-adapter, session-registry, auth bridge). Extract нарушает модульную изоляцию. Оставляем.
+- **LEGIT-PROVIDER.** Параллельный scaffolding активных provider modules (installer, session-logger, provider-adapter, session-registry, auth bridge). Extract нарушает модульную изоляцию. Оставляем.
 - **LEGIT-BOUNDARY.** Симметричные type-контракты через слой (client ↔ core, extension ↔ client). Намеренная плата за независимость слоёв. Оставляем.
 - **LEGIT-SIMILAR-BUT-DIVERGING.** Похожие парсеры/валидаторы разных доменов. Extract сольёт семантику. Оставляем.
 - **EXTRACT-EASY.** Чистая utility без контекстных привязок. 1 commit, ≤3 файла. Берём.

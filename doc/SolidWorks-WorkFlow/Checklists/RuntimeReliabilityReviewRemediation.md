@@ -30,7 +30,7 @@ Original review focus:
 - Project Manager WebSocket lifecycle.
 - PM/Core WebSocket boundary validation.
 - Hot-path synchronous settings reads.
-- Provider listener cleanup, especially Gemini.
+- Provider listener cleanup and teardown ownership.
 - Silent Core Bridge best-effort catches.
 - Runtime factory definite-assignment bypasses.
 
@@ -38,7 +38,7 @@ Implemented outcome:
 - PM websocket `connect()` became idempotent for `OPEN` / `CONNECTING`, and disconnect became an explicit cleanup boundary.
 - PM/Core websocket frames received owner-layer validators before dispatch.
 - Settings/default/translation reads moved to path-scoped short TTL caches with invalidation after writes.
-- Gemini session listeners were cleaned up on close/session-id changes.
+- Provider session listeners were cleaned up on close/session-id changes.
 - Core Bridge best-effort hydration failures became sanitized diagnostics.
 - `session-request-handler-runtime-core.ts` cyclic dependencies were moved to explicit deferred refs.
 
@@ -81,7 +81,7 @@ Key reasons:
 2. **Acceptance criteria were local.** Session027 removed definite-assignment bypasses in `session-request-handler-runtime-core.ts`; Review B found a remaining bypass in the outer `session-request-handler-runtime.ts` factory.
 3. **Some classes were mitigated, not globally eliminated.** Settings reads were cached, but synchronous reads could still exist on cache-miss or other provider-local fallback paths. A grep-only review can still flag the pattern even after hot-path risk is reduced.
 4. **Best-effort diagnostics existed in one surface, not all surfaces.** Core Bridge browser hydration catches were fixed in Session027; startup/workspace constructor side effects were separate Core-side best-effort paths.
-5. **Teardown ownership was incomplete.** Gemini listener cleanup and websocket client cleanup were addressed earlier; runtime maps, provider recovery retry timers, and unified-session writer close ownership were follow-up lifecycle owners.
+5. **Teardown ownership was incomplete.** Provider listener cleanup and websocket client cleanup were addressed earlier; runtime maps, provider recovery retry timers, and unified-session writer close ownership were follow-up lifecycle owners.
 6. **Some Review B claims were partially stale or over-broad.** `rolloverStarted` cleanup was not simply "error-only"; successful cleanup runs through `SessionContinuityLockService.finalizePostBootstrapRolloverLifecycle()`. `initializeWriter()` did not have the exact concurrent double-writer race claimed because writer assignment is synchronous before `await`. Still, adjacent close/dead-queue risks were real.
 
 Rule for future closeout: never report "all review issues fixed" unless the report says exactly which findings are fixed, which are partially fixed, which are disproved, and which are deliberately deferred.
@@ -95,7 +95,7 @@ Rule for future closeout: never report "all review issues fixed" unless the repo
 | Core WS error events | Not covered by first scope | Confirmed server/client `error` ownership gap | Closed in `1.2.111` |
 | Sync settings I/O | Hot-path caching introduced | Pattern may still be seen by grep in bounded paths | Hot-path risk reduced; future review must inspect call path |
 | Silent catches | Core Bridge browser diagnostics fixed | Startup/workspace best-effort catches confirmed | Closed in `1.2.103` + `1.2.111` by surface |
-| Provider listener cleanup | Gemini listener ownership fixed | Provider recovery retry timers confirmed | Closed in `1.2.103` + `1.2.111` by owner |
+| Provider listener cleanup | Provider listener ownership fixed | Provider recovery retry timers confirmed | Closed in `1.2.103` + `1.2.111` by owner |
 | Definite assignment | Runtime-core refs fixed | Outer rollover factory ref remained | Closed in `1.2.111` |
 | Continuity state cleanup | Not in first scope | Legacy handoff triggered-state retry risk confirmed | Closed in `1.2.111`; production legacy handoff remains disabled |
 | Unified-session lifecycle | Not in first scope | Close deletes entry before writer close; dead queue path | Closed in `1.2.111` |
