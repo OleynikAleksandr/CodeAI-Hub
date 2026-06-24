@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.pm-services.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from PM provider services",
+  "currentTaskId": "gemini-removal.phase1.settings-state.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from settings state model",
   "debt": null
 }
 ```
@@ -83,5 +83,10 @@
 
 ### Stream: Project-manager provider services
 
-15. [IN_PROGRESS] `gemini-removal.phase1.pm-services.task1` Remove Gemini from the project-manager workflow provider resolver and provider snapshot service and the resolver test (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts`; expected commit: `refactor: drop Gemini from PM provider services`).
-16. [TODO] `gemini-removal.phase1.pm-services.commit1` Git Commit: `refactor: drop Gemini from PM provider services` (hash: TBD)
+15. [DONE] `gemini-removal.phase1.pm-services.task1` Remove Gemini from the project-manager provider snapshot list and usage-limits stream prefix (`workflow-provider-resolver.ts` guard + its `geminiCli`-protagonist test deferred to the union-type phase) (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/sessions/usage-limits-stream.ts`; expected commit: `refactor: drop Gemini from PM provider services`).
+16. [DONE] `gemini-removal.phase1.pm-services.commit1` Git Commit: `refactor: drop Gemini from PM provider services` (hash: self)
+
+### Stream: Settings state model
+
+17. [IN_PROGRESS] `gemini-removal.phase1.settings-state.task1` Remove the Gemini settings interfaces and defaults from the webview settings state model and raw types (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts`; expected commit: `refactor: drop Gemini from settings state model`).
+18. [TODO] `gemini-removal.phase1.settings-state.commit1` Git Commit: `refactor: drop Gemini from settings state model` (hash: TBD)

@@ -18,7 +18,6 @@ export type ProviderSnapshot = {
 const DESCRIPTION_PROVIDER_IDS: readonly ProviderStackId[] = [
   "claudeCodeCli",
   "codexCli",
-  "geminiCli",
   "kimiCode",
   "glmNative",
   "glmOpenCode",

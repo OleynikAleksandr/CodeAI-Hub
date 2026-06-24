@@ -81,9 +81,6 @@ const normalizeProviderFamily = (value: string | null | undefined): string => {
   if (prefix.includes("codex")) {
     return "codex";
   }
-  if (prefix.includes("gemini")) {
-    return "gemini";
-  }
   return prefix;
 };
 
