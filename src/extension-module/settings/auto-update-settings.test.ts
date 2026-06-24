@@ -16,10 +16,6 @@ test("default provider settings keep auto-update disabled", () => {
     DEFAULT_SETTINGS_SNAPSHOT.providers.codex.autoUpdate.enabled,
     false
   );
-  assert.equal(
-    DEFAULT_SETTINGS_SNAPSHOT.providers.gemini.autoUpdate.enabled,
-    false
-  );
 });
 
 test("normalizeAutoUpdateSettings requires an explicit opt-in", () => {

@@ -14,7 +14,6 @@ const cloneSnapshot = (snapshot: SettingsSnapshot): SettingsSnapshot => ({
   providers: {
     claude: { ...snapshot.providers.claude },
     codex: { ...snapshot.providers.codex },
-    gemini: { ...snapshot.providers.gemini },
   },
 });
 

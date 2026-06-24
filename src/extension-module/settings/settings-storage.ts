@@ -2,7 +2,6 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { normalizeClaudeSettings } from "./claude-settings";
 import { normalizeCodexSettings } from "./codex-settings";
-import { normalizeGeminiSettings } from "./gemini-settings";
 import { normalizeGeneralSettings } from "./general-settings";
 import { isRecord } from "./settings-utils";
 import { DEFAULT_SETTINGS_SNAPSHOT, type SettingsSnapshot } from "./types";
@@ -27,7 +26,6 @@ export const parseSettingsSnapshot = (
     providers: {
       claude: normalizeClaudeSettings(providers.claude),
       codex: normalizeCodexSettings(providers.codex),
-      gemini: normalizeGeminiSettings(providers.gemini),
     },
   };
 };

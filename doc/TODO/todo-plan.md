@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.ext-settings.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from extension settings storage",
+  "currentTaskId": "gemini-removal.phase2.ext-version.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from extension provider versions",
   "debt": null
 }
 ```
@@ -135,5 +135,10 @@
 
 ### Stream: Extension settings types
 
-35. [IN_PROGRESS] `gemini-removal.phase2.ext-settings.task1` Delete the extension-module Gemini settings module and remove its references from the settings storage and types (scope: `src/extension-module/settings/gemini-settings.ts, src/extension-module/settings/settings-storage.ts, src/extension-module/settings/types.ts`; expected commit: `refactor: drop Gemini from extension settings storage`).
-36. [TODO] `gemini-removal.phase2.ext-settings.commit1` Git Commit: `refactor: drop Gemini from extension settings storage` (hash: TBD)
+35. [DONE] `gemini-removal.phase2.ext-settings.task1` Delete the extension-module Gemini settings module and the now-orphaned gemini-model-registry, and remove their references from the settings storage and types (scope: `src/extension-module/settings/gemini-settings.ts, src/extension-module/settings/settings-storage.ts, src/extension-module/settings/types.ts, src/types/gemini-model-registry.ts, src/extension-module/settings/auto-update-settings.test.ts, src/extension-module/settings/localization-settings-impact-classifier.test.ts`; expected commit: `refactor: drop Gemini from extension settings storage`).
+36. [DONE] `gemini-removal.phase2.ext-settings.commit1` Git Commit: `refactor: drop Gemini from extension settings storage` (hash: self)
+
+### Stream: Extension provider version service
+
+37. [IN_PROGRESS] `gemini-removal.phase2.ext-version.task1` Remove Gemini from the extension provider version model and service and delete the Gemini version reader (scope: `src/extension-module/settings/provider-version-model.ts, src/extension-module/settings/provider-version-service.ts, src/extension-module/settings/gemini-version-reader.ts`; expected commit: `refactor: drop Gemini from extension provider versions`).
+38. [TODO] `gemini-removal.phase2.ext-version.commit1` Git Commit: `refactor: drop Gemini from extension provider versions` (hash: TBD)
