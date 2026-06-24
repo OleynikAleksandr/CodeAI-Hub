@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase5.endpoint-release-artifacts.task1",
-  "expectedCommitMessage": "build: release OpenRouter endpoint routing hotfix",
+  "currentTaskId": "openrouter-agent.phase6.closeout.task1",
+  "expectedCommitMessage": "docs: close OpenRouter agent tooling scope",
   "debt": null
 }
 ```
@@ -149,12 +149,20 @@ Release build evidence for `1.2.602`:
 
 35. [DONE] `openrouter-agent.phase5.endpoint-release-notes.task1` Record the user's explicit release build confirmation and prepare release-facing docs for future version `1.2.603` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter endpoint routing hotfix release`).
 36. [DONE] `openrouter-agent.phase5.endpoint-release-notes.commit1` Git Commit: `docs: prepare OpenRouter endpoint routing hotfix release` (hash: self)
-37. [IN_PROGRESS] `openrouter-agent.phase5.endpoint-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.603` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter endpoint routing hotfix`).
-38. [TODO] `openrouter-agent.phase5.endpoint-release-artifacts.commit1` Git Commit: `build: release OpenRouter endpoint routing hotfix` (hash: TBD)
+37. [DONE] `openrouter-agent.phase5.endpoint-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.603` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter endpoint routing hotfix`).
+38. [DONE] `openrouter-agent.phase5.endpoint-release-artifacts.commit1` Git Commit: `build: release OpenRouter endpoint routing hotfix` (hash: self)
+
+Release notes target: `1.2.603` OpenRouter Endpoint Routing Hotfix.
+
+Release build evidence for `1.2.603`:
+- `./scripts/build-all.sh` — PASS; provider/core/UI/launcher tarballs generated under `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface verification.
+- VSIX: `codeai-hub-1.2.603.vsix` (5.6M), SHA-256 `3965da4ba79d6e9c9908deb17580025fb4bc5e802169c9430563ef42a759f47d`.
+- Runtime artifact set: `claude-module-1.2.603.tar.bz2`, `codex-module-1.2.603.tar.bz2`, `gemini-module-1.2.603.tar.bz2`, `glm-module-1.2.603.tar.bz2`, `glm-opencode-module-1.2.603.tar.bz2`, `kimi-module-1.2.603.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.603.tar.bz2`, `vscode-webview-1.2.603.tar.bz2`, `project-manager-1.2.603.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.603.tar.bz2`.
 
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-39. [TODO] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
+39. [IN_PROGRESS] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
 40. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)
