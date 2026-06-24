@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-usage-limits.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from core usage limits",
+  "currentTaskId": "gemini-removal.phase2.core-config.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from core config",
   "debt": null
 }
 ```
@@ -150,5 +150,10 @@
 
 ### Stream: Core usage limits
 
-41. [IN_PROGRESS] `gemini-removal.phase2.core-usage-limits.task1` Remove the core Gemini usage-limits provider directory and its references in the usage-limits types and bridge factory (scope: `packages/core/src/provider-usage-limits/providers/gemini/**, packages/core/src/provider-usage-limits/provider-usage-limits-types.ts, packages/core/src/provider-registry/provider-usage-limits-bridge-factory.ts`; expected commit: `refactor: drop Gemini from core usage limits`).
-42. [TODO] `gemini-removal.phase2.core-usage-limits.commit1` Git Commit: `refactor: drop Gemini from core usage limits` (hash: TBD)
+41. [DONE] `gemini-removal.phase2.core-usage-limits.task1` ATOMIC cascade (knip + typecheck require removing the registered provider in one commit): delete the Gemini adapter registration and usage-limits provider from core. Touch points: index.ts (geminiAdapterCtorPromise, gemini config fields, ensureGeminiAdapter, isGeminiAuthReady/resolveWorkspaceGeminiDir/hasGeminiAuthFile, GEMINI_AUTH_FILENAMES, imports), descriptor-factory (buildGeminiDescriptor, createGeminiAdapterInstance, createGeminiUsageLimitsFacadeBridge usage, geminiCli capabilities), module-loader(.types) (loadGeminiAdapterCtor/resolveGeminiAdapter/extractGeminiAdapterCtor + GeminiAdapterCtor/GeminiModuleOptions/GeminiUsageLimits* types), installed-path-resolver (resolveGeminiModulePath + "gemini" ProviderModuleId), installer-paths (GEMINI_INSTALLER_PATHS), recovery-coordinator (ensureGeminiAdapter option, geminiCli branches), bridge-factory (GeminiUsageLimitsFacade import, toGeminiUsageLimitsStreamPayload, createGeminiUsageLimitsFacadeBridge), provider-usage-limits-types (gemini union members), and delete provider-usage-limits/providers/gemini/. config/turn-config/settings-snapshot follow in the next stream (scope: `packages/core/src/provider-registry/index.ts, packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/provider-module-loader.ts, packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/provider-registry/provider-installed-path-resolver.ts, packages/core/src/provider-registry/provider-installer-paths.ts, packages/core/src/provider-registry/provider-recovery-coordinator.ts, packages/core/src/provider-registry/provider-usage-limits-bridge-factory.ts, packages/core/src/provider-usage-limits/providers/gemini/**, packages/core/src/provider-usage-limits/provider-usage-limits-types.ts, packages/core/src/provider-registry/provider-recovery-coordinator.test.ts, packages/core/src/provider-registry/provider-recovery-scheduler.test.ts, packages/core/package.json`; expected commit: `refactor: drop Gemini from core provider registry`).
+42. [DONE] `gemini-removal.phase2.core-usage-limits.commit1` Git Commit: `refactor: drop Gemini from core provider registry` (hash: self)
+
+### Stream: Core config
+
+43. [IN_PROGRESS] `gemini-removal.phase2.core-config.task1` Remove the Gemini fields from CoreConfig and loadConfig, the provider turn-config resolver, provider-settings-snapshot, and the descriptor-factory test config fixture (scope: `packages/core/src/config/index.ts, packages/core/src/config/provider-turn-config-resolver.ts, packages/core/src/config/provider-settings-snapshot.ts`; expected commit: `refactor: drop Gemini from core config`).
+44. [TODO] `gemini-removal.phase2.core-config.commit1` Git Commit: `refactor: drop Gemini from core config` (hash: TBD)

@@ -1,7 +1,4 @@
-import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
-import { homedir } from "node:os";
-import path from "node:path";
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { CoreConfig } from "../config";
 import type {
@@ -10,11 +7,9 @@ import type {
   RuntimeStatusReporter,
 } from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
-import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
   createClaudeAdapterInstance,
   createCodexAdapterInstance,
-  createGeminiAdapterInstance,
   createGlmAdapterInstance,
   createGlmOpenCodeAdapterInstance,
   createKimiAdapterInstance,
@@ -24,21 +19,18 @@ import {
 import {
   resolveClaudeModulePath,
   resolveCodexModulePath,
-  resolveGeminiModulePath,
   resolveGlmModulePath,
   resolveGlmOpenCodeModulePath,
 } from "./provider-installed-path-resolver";
 import {
   loadClaudeAdapterCtor,
   loadCodexAdapterCtor,
-  loadGeminiAdapterCtor,
   loadGlmAdapterCtor,
   loadGlmOpenCodeAdapterCtor,
 } from "./provider-module-loader";
 import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
-  GeminiAdapterCtor,
   GlmAdapterCtor,
   GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
@@ -54,8 +46,6 @@ export type {
   ProviderDescriptor,
 } from "./provider-module-loader.types";
 
-const GEMINI_AUTH_FILENAMES = ["oauth_creds.json", "credentials.json"] as const;
-
 type DisposableProviderAdapter = ProviderAdapter & {
   readonly dispose: () => void;
 };
@@ -70,15 +60,9 @@ export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
   private readonly codexAdapterCtor: CodexAdapterCtor;
-  private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
   private readonly kimiAdapterCtor: KimiAdapterCtor;
   private readonly glmAdapterCtor: GlmAdapterCtor;
   private readonly glmOpenCodeAdapterCtor: GlmOpenCodeAdapterCtor;
-  private readonly geminiWorkspacePath: string;
-  private readonly geminiDefaultModel?: string;
-  private readonly geminiThinkingLevelByModel: Record<string, string>;
-  private readonly geminiSettingsPath: string;
-  private readonly geminiCredentialsDirectory?: string;
   private readonly options: {
     readonly config: CoreConfig;
     readonly logger: Logger;
@@ -114,18 +98,6 @@ export class ProviderRegistry {
       resolveGlmOpenCodeModulePath(),
       this.options.logger
     );
-    this.geminiAdapterCtorPromise = loadGeminiAdapterCtor(
-      resolveGeminiModulePath(),
-      this.options.logger
-    );
-    this.geminiWorkspacePath =
-      this.options.config.geminiWorkspacePath ?? process.cwd();
-    this.geminiDefaultModel = this.options.config.geminiDefaultModel;
-    this.geminiThinkingLevelByModel =
-      this.options.config.geminiThinkingLevelByModel;
-    this.geminiSettingsPath = this.options.config.geminiSettingsPath;
-    this.geminiCredentialsDirectory =
-      this.options.config.geminiCredentialsDirectory;
     this.recoveryScheduler = new ProviderRecoveryScheduler({
       logger: this.options.logger,
       retry: async (providerId) => {
@@ -165,9 +137,6 @@ export class ProviderRegistry {
           glmOpenCodeAdapterCtor: this.glmOpenCodeAdapterCtor,
         }),
       emitStatus: (event) => this.emitStatus(event),
-      ensureGeminiAdapter: async () => {
-        await this.ensureGeminiAdapter();
-      },
       logger: this.options.logger,
       scheduleRetry: (providerId) =>
         this.recoveryScheduler.scheduleRetry(providerId),
@@ -200,7 +169,6 @@ export class ProviderRegistry {
       scope: "providers",
       label: "Connecting provider modules...",
     });
-    await this.ensureGeminiAdapter();
     await Promise.all(
       this.providers.map((provider) =>
         this.prepareProvider(provider as MutableProviderDescriptor)
@@ -266,64 +234,6 @@ export class ProviderRegistry {
     }
   }
 
-  private async ensureGeminiAdapter(): Promise<void> {
-    const descriptor = this.providers.find(
-      (provider) => provider.id === "geminiCli"
-    );
-    if (!descriptor || descriptor.adapter) {
-      return;
-    }
-
-    const mutable = descriptor as MutableProviderDescriptor;
-    this.emitStatus({
-      phase: "provider",
-      scope: "geminiCli",
-      label: "Loading Gemini module...",
-    });
-    try {
-      const GeminiAdapter = await this.geminiAdapterCtorPromise;
-      if (!GeminiAdapter) {
-        this.options.logger.warn(
-          "Gemini provider adapter is not available; marking provider as inactive."
-        );
-        this.recoveryCoordinator.markProviderUnavailable(
-          mutable,
-          new Error("Gemini provider module is not installed"),
-          "Gemini module is not installed.",
-          true
-        );
-        return;
-      }
-
-      mutable.adapter = createGeminiAdapterInstance({
-        adapterCtor: GeminiAdapter,
-        config: this.options.config,
-        credentialsDirectory: this.geminiCredentialsDirectory,
-        defaultModel: this.geminiDefaultModel,
-        settingsPath: this.geminiSettingsPath,
-        thinkingLevelByModel: this.geminiThinkingLevelByModel,
-        workspacePath: this.geminiWorkspacePath,
-        createReporter: (scope) => this.createReporter(scope),
-      });
-      this.emitStatus({
-        phase: "provider",
-        scope: "geminiCli",
-        label: "Gemini module loaded.",
-      });
-    } catch (error) {
-      this.options.logger.error(
-        "Failed to load Gemini provider module",
-        error instanceof Error ? error : new Error(String(error))
-      );
-      this.recoveryCoordinator.markProviderUnavailable(
-        mutable,
-        error,
-        "Gemini module failed to load.",
-        true
-      );
-    }
-  }
-
   private emitStatus(
     event: Omit<RuntimeStatusEvent, "timestamp" | "phase"> & {
       readonly phase: RuntimeStatusPhase;
@@ -368,42 +278,7 @@ export class ProviderRegistry {
 
   private toProviderSnapshot(provider: ProviderDescriptor): Provider {
     const { adapter: _adapter, ...snapshot } = provider;
-    if (
-      snapshot.id !== "geminiCli" ||
-      snapshot.status !== "active" ||
-      this.isGeminiAuthReady()
-    ) {
-      return snapshot;
-    }
-    return {
-      ...snapshot,
-      status: "inactive",
-      statusMessage:
-        "Gemini CLI is unavailable. Run `gemini login`, confirm ~/.gemini/oauth_creds.json exists, then use Settings → General → Restart Core to retry",
-    };
-  }
-
-  private isGeminiAuthReady(): boolean {
-    return (
-      this.hasGeminiAuthFile(this.resolveWorkspaceGeminiDir()) ||
-      this.hasGeminiAuthFile(path.join(homedir(), ".gemini"))
-    );
-  }
-
-  private resolveWorkspaceGeminiDir(): string {
-    return path.join(
-      resolveWorkspaceRuntimeCapsule({
-        workspaceRoot: this.geminiWorkspacePath,
-        workspaceSlug: this.options.config.claudeProjectSlug,
-      }).providerHomes.gemini.absolutePath,
-      ".gemini"
-    );
-  }
-
-  private hasGeminiAuthFile(geminiDir: string): boolean {
-    return GEMINI_AUTH_FILENAMES.some((fileName) =>
-      existsSync(path.join(geminiDir, fileName))
-    );
+    return snapshot;
   }
 }
 

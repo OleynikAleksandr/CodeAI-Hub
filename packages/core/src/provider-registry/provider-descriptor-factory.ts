@@ -9,12 +9,10 @@ import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-ru
 import {
   CLAUDE_INSTALLER_PATHS,
   CODEX_INSTALLER_PATHS,
-  GEMINI_INSTALLER_PATHS,
 } from "./provider-installer-paths";
 import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
-  GeminiAdapterCtor,
   GlmAdapterCtor,
   GlmOpenCodeAdapterCtor,
   MutableProviderDescriptor,
@@ -25,7 +23,6 @@ import type {
 import {
   createClaudeUsageLimitsFacadeBridge,
   createCodexUsageLimitsFacadeBridge,
-  createGeminiUsageLimitsFacadeBridge,
 } from "./provider-usage-limits-bridge-factory";
 
 interface ProviderDescriptorFactoryOptions {
@@ -46,17 +43,6 @@ interface ProviderDescriptorFactoryOptions {
 export type KimiAdapterCtor = new (
   options: KimiModuleOptions
 ) => ProviderAdapter;
-
-interface GeminiAdapterFactoryOptions {
-  readonly adapterCtor: GeminiAdapterCtor;
-  readonly config: CoreConfig;
-  readonly createReporter: (scope: string) => ModuleReporter;
-  readonly credentialsDirectory?: string;
-  readonly defaultModel?: string;
-  readonly settingsPath: string;
-  readonly thinkingLevelByModel: Record<string, string>;
-  readonly workspacePath: string;
-}
 
 const tryAttachAdapter = (
   factory: () => ProviderAdapter,
@@ -89,12 +75,6 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     syncsLabelFromAppliedConfig: true,
   },
   codexCli: {
-    acceptsAppliedTurnConfig: true,
-    appliedConfigIdentityKey: "effective_model_id",
-    runtimeModelSelectionKey: "base_model_id",
-    syncsLabelFromAppliedConfig: true,
-  },
-  geminiCli: {
     acceptsAppliedTurnConfig: true,
     appliedConfigIdentityKey: "effective_model_id",
     runtimeModelSelectionKey: "base_model_id",
@@ -143,7 +123,6 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
 > = {
   claudeCodeCli: false,
   codexCli: false,
-  geminiCli: true,
   glmNative: true,
   kimiCode: true,
   glmOpenCode: true,
@@ -331,19 +310,6 @@ const buildCodexDescriptor = (
   return descriptor;
 };
 
-const buildGeminiDescriptor = (): ProviderDescriptor => ({
-  capabilities: {
-    modelSync: resolveProviderModelSyncCapabilities("geminiCli"),
-    requiresPostStopResume: true,
-    supportsImmediateBinding:
-      resolveProviderImmediateBindingCapability("geminiCli"),
-  },
-  id: "geminiCli",
-  name: "Gemini",
-  description: "Using your authentication Gemini CLI",
-  status: "active",
-});
-
 const buildKimiDescriptor = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor => {
@@ -449,36 +415,9 @@ export const createProviderDescriptors = (
 ): ProviderDescriptor[] => [
   buildClaudeDescriptor(options),
   buildCodexDescriptor(options),
-  buildGeminiDescriptor(),
   buildKimiDescriptor(options),
   buildGlmDescriptor(options),
   buildGlmOpenCodeDescriptor(options),
   buildLocalModelsDescriptor(),
   buildOpenRouterDescriptor(),
 ];
-
-export const createGeminiAdapterInstance = (
-  options: GeminiAdapterFactoryOptions
-): ProviderAdapter => {
-  const credentials = options.credentialsDirectory
-    ? {
-        directory: options.credentialsDirectory,
-        requiredFiles: ["oauth_creds.json", "credentials.json"],
-      }
-    : {
-        requiredFiles: ["oauth_creds.json", "credentials.json"],
-      };
-
-  return new options.adapterCtor({
-    installerPaths: GEMINI_INSTALLER_PATHS,
-    workspace: {
-      workspacePath: options.workspacePath,
-      defaultModel: options.defaultModel,
-      thinkingLevelByModel: options.thinkingLevelByModel,
-      settingsPath: options.settingsPath,
-    },
-    reporter: options.createReporter("gemini"),
-    credentials,
-    usageLimitsFacade: createGeminiUsageLimitsFacadeBridge(),
-  });
-};

@@ -5,7 +5,6 @@ import path from "node:path";
 type ProviderModuleId =
   | "claude"
   | "codex"
-  | "gemini"
   | "glm-native"
   | "glm-opencode"
   | "opencode";
@@ -104,9 +103,6 @@ export const resolveClaudeModulePath = (): string | undefined =>
 
 export const resolveCodexModulePath = (): string | undefined =>
   resolveProviderModulePath("codex", "CODEX_MODULE_PATH");
-
-export const resolveGeminiModulePath = (): string | undefined =>
-  resolveProviderModulePath("gemini", "GEMINI_MODULE_PATH");
 
 export const resolveGlmOpenCodeModulePath = (): string | undefined =>
   resolveProviderModulePath("opencode", "GLM_OPENCODE_MODULE_PATH");

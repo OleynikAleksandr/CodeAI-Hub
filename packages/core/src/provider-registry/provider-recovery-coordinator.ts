@@ -21,7 +21,6 @@ interface ProviderRecoveryCoordinatorOptions {
       readonly phase: RuntimeStatusPhase;
     }
   ) => void;
-  readonly ensureGeminiAdapter: () => Promise<void>;
   readonly logger: Logger;
   readonly scheduleRetry: (providerId: string) => void;
 }
@@ -132,16 +131,6 @@ export class ProviderRecoveryCoordinator {
     }
     const mutable = descriptor as MutableProviderDescriptor;
 
-    if (providerId === "geminiCli") {
-      await this.options.ensureGeminiAdapter();
-      if (!mutable.adapter) {
-        this.options.scheduleRetry(providerId);
-        return;
-      }
-      await this.prepareProvider(mutable);
-      return;
-    }
-
     if (!mutable.adapter) {
       try {
         mutable.adapter = this.createProviderAdapter(providerId);
@@ -217,8 +206,6 @@ export class ProviderRecoveryCoordinator {
     switch (providerId) {
       case "codexCli":
         return "Codex CLI is unavailable. Re-authenticate the CLI, verify your limits, then use Settings → General → Restart Core to retry";
-      case "geminiCli":
-        return "Gemini CLI is unavailable. Run `gemini login`, confirm credentials, then use Settings → General → Restart Core to retry";
       case "kimiCode":
         return "Kimi CLI is unavailable. Confirm `kimi` is installed and logged in, then use Settings → General → Restart Core to retry";
       case "glmOpenCode":

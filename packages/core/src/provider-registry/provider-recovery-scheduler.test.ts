@@ -20,7 +20,6 @@ test("ProviderRecoveryScheduler dispose clears pending retry timers", async () =
   });
 
   scheduler.scheduleRetry("codexCli");
-  scheduler.scheduleRetry("geminiCli");
   scheduler.dispose();
 
   await wait(20);

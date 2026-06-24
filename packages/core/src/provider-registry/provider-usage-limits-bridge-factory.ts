@@ -6,11 +6,6 @@ import { ProviderUsageLimitsFacade } from "../provider-usage-limits/provider-usa
 import { buildProviderUsageLimitScopeKey } from "../provider-usage-limits/provider-usage-limits-scope-key";
 import { ClaudeUsageLimitsFacade } from "../provider-usage-limits/providers/claude/claude-usage-limits-facade";
 import { CodexUsageLimitsFacade } from "../provider-usage-limits/providers/codex/codex-usage-limits-facade";
-import { GeminiUsageLimitsFacade } from "../provider-usage-limits/providers/gemini/gemini-usage-limits-facade";
-import type {
-  GeminiUsageLimitsFacadeBridge,
-  GeminiUsageLimitsStreamPayload,
-} from "./provider-module-loader.types";
 
 type CoreClaudeUsageLimitsStreamPayload = NonNullable<
   ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
@@ -86,32 +81,6 @@ const toClaudeUsageLimitsStreamPayload = (
 const toCodexUsageLimitsStreamPayload = (
   payload: ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
 ) => {
-  if (!payload) {
-    return null;
-  }
-
-  const usageLimits = payload.usageLimits
-    ? {
-        currentSession: payload.usageLimits.currentSession ?? null,
-        currentWeekAllModels: payload.usageLimits.currentWeekAllModels ?? null,
-        currentWeekSonnetOnly:
-          payload.usageLimits.currentWeekSonnetOnly ?? null,
-      }
-    : null;
-
-  return {
-    providerScopeKey: payload.providerScopeKey,
-    usageLimits,
-    data: {
-      ...payload.data,
-      usageLimits,
-    },
-  };
-};
-
-const toGeminiUsageLimitsStreamPayload = (
-  payload: ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
-): GeminiUsageLimitsStreamPayload | null => {
   if (!payload) {
     return null;
   }
@@ -253,32 +222,3 @@ export const createCodexUsageLimitsFacadeBridge = () => {
       ),
   };
 };
-
-export const createGeminiUsageLimitsFacadeBridge =
-  (): GeminiUsageLimitsFacadeBridge => {
-    const sourceFacade = new GeminiUsageLimitsFacade();
-    const sharedFacade = new ProviderUsageLimitsFacade({
-      readers: {
-        gemini: {
-          read: async (params) => await sourceFacade.read(params),
-        },
-      },
-    });
-
-    return {
-      readStreamPayload: async (params) =>
-        toGeminiUsageLimitsStreamPayload(
-          await sharedFacade.readStreamPayload({
-            ...params,
-            providerId: "gemini",
-          })
-        ),
-      getCachedStreamPayload: (params) =>
-        toGeminiUsageLimitsStreamPayload(
-          sharedFacade.getCachedStreamPayload({
-            providerId: "gemini",
-            providerSessionId: params.providerSessionId,
-          })
-        ),
-    };
-  };

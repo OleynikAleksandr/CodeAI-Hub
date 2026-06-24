@@ -30,7 +30,6 @@ const createCoordinator = (): ProviderRecoveryCoordinator =>
     createGlmOpenCodeAdapter: () => createAdapter(async () => undefined),
     createKimiAdapter: () => createAdapter(async () => undefined),
     emitStatus: () => undefined,
-    ensureGeminiAdapter: async () => undefined,
     logger: {
       error: () => undefined,
     } as unknown as Logger,
