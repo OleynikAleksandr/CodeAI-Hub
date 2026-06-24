@@ -21,7 +21,6 @@ import {
 const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "claudeCodeCli" ||
   value === "codexCli" ||
-  value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmNative" ||
   value === "glmOpenCode" ||

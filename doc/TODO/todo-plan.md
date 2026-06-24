@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.pm-remainder.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from remaining project-manager UI",
+  "currentTaskId": "gemini-removal.phase2.ext-settings.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from extension settings storage",
   "debt": null
 }
 ```
@@ -128,5 +128,12 @@
 
 ### Stream: Remaining project-manager UI
 
-33. [IN_PROGRESS] `gemini-removal.phase1.pm-remainder.task1` Remove the geminiCli tint token, the development-tree start-card Gemini branch, and the geminiCli fixture in the stage-confirmation-card test (scope: `src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `refactor: drop Gemini from remaining project-manager UI`).
-34. [TODO] `gemini-removal.phase1.pm-remainder.commit1` Git Commit: `refactor: drop Gemini from remaining project-manager UI` (hash: TBD)
+33. [DONE] `gemini-removal.phase1.pm-remainder.task1` Remove the geminiCli tint token, the development-tree start-card Gemini branch, and the geminiCli fixture in the stage-confirmation-card test (scope: `src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `refactor: drop Gemini from remaining project-manager UI`).
+34. [DONE] `gemini-removal.phase1.pm-remainder.commit1` Git Commit: `refactor: drop Gemini from remaining project-manager UI` (hash: self)
+
+## Phase 2 - Extension host and Core (owner: CodeAI Hub Bot, updated: 2026-06-24)
+
+### Stream: Extension settings types
+
+35. [IN_PROGRESS] `gemini-removal.phase2.ext-settings.task1` Delete the extension-module Gemini settings module and remove its references from the settings storage and types (scope: `src/extension-module/settings/gemini-settings.ts, src/extension-module/settings/settings-storage.ts, src/extension-module/settings/types.ts`; expected commit: `refactor: drop Gemini from extension settings storage`).
+36. [TODO] `gemini-removal.phase2.ext-settings.commit1` Git Commit: `refactor: drop Gemini from extension settings storage` (hash: TBD)

@@ -69,9 +69,9 @@ test("quality gates provider resolver keeps OpenRouter after tool enablement", (
   const providers: readonly ProviderStackDescriptor[] = [
     {
       connected: true,
-      description: "Gemini CLI",
-      id: "geminiCli",
-      title: "Gemini",
+      description: "Kimi Code",
+      id: "kimiCode",
+      title: "Kimi",
     },
     {
       connected: true,

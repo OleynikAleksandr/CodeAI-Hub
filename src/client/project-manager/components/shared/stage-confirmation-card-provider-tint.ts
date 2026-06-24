@@ -24,12 +24,6 @@ export const PROVIDER_TINT_TOKENS: Record<ProviderStackId, ProviderTintTokens> =
       border: "rgba(1, 240, 216, 0.40)",
       badgeBackground: "rgba(1, 240, 216, 0.16)",
     },
-    geminiCli: {
-      accent: "rgba(202, 178, 210, 0.62)",
-      fill: "rgba(171, 52, 203, 0.08)",
-      border: "rgba(171, 52, 203, 0.30)",
-      badgeBackground: "rgba(171, 52, 203, 0.13)",
-    },
     kimiCode: {
       accent: "rgba(119, 214, 255, 0.64)",
       fill: "rgba(76, 181, 255, 0.10)",
