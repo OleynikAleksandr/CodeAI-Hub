@@ -7,10 +7,6 @@ export const PACKAGE_MAP = {
     cli: "@openai/codex",
     sdk: "@openai/codex-sdk",
   },
-  gemini: {
-    cli: "@google/gemini-cli",
-    core: "@google/gemini-cli-core",
-  },
   glmOpenCode: {
     cli: "opencode",
   },
@@ -36,10 +32,6 @@ export interface ProviderVersionsSnapshot {
   readonly codex: {
     readonly cli: VersionEntry;
     readonly sdk: VersionEntry;
-  };
-  readonly gemini: {
-    readonly cli: VersionEntry;
-    readonly core: VersionEntry;
   };
   readonly glmOpenCode: {
     readonly cli: VersionEntry;
@@ -123,10 +115,6 @@ export const buildSnapshot = (
     codex: {
       cli: get("codex", "cli"),
       sdk: get("codex", "sdk"),
-    },
-    gemini: {
-      cli: get("gemini", "cli"),
-      core: get("gemini", "core"),
     },
     glmOpenCode: {
       cli: get("glmOpenCode", "cli"),

@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.ext-version.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from extension provider versions",
+  "currentTaskId": "gemini-removal.phase2.ext-msg-handler.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from settings message handler",
   "debt": null
 }
 ```
@@ -140,5 +140,10 @@
 
 ### Stream: Extension provider version service
 
-37. [IN_PROGRESS] `gemini-removal.phase2.ext-version.task1` Remove Gemini from the extension provider version model and service and delete the Gemini version reader (scope: `src/extension-module/settings/provider-version-model.ts, src/extension-module/settings/provider-version-service.ts, src/extension-module/settings/gemini-version-reader.ts`; expected commit: `refactor: drop Gemini from extension provider versions`).
-38. [TODO] `gemini-removal.phase2.ext-version.commit1` Git Commit: `refactor: drop Gemini from extension provider versions` (hash: TBD)
+37. [DONE] `gemini-removal.phase2.ext-version.task1` Remove Gemini from the extension provider version model and service and delete the Gemini version reader (scope: `src/extension-module/settings/provider-version-model.ts, src/extension-module/settings/provider-version-service.ts, src/extension-module/settings/gemini-version-reader.ts`; expected commit: `refactor: drop Gemini from extension provider versions`).
+38. [DONE] `gemini-removal.phase2.ext-version.commit1` Git Commit: `refactor: drop Gemini from extension provider versions` (hash: self)
+
+### Stream: Extension settings message handler
+
+39. [IN_PROGRESS] `gemini-removal.phase2.ext-msg-handler.task1` Remove the gemini union member and branch from the extension settings message handler (scope: `src/extension-module/message-handlers/settings-message-handler.ts`; expected commit: `refactor: drop Gemini from settings message handler`).
+40. [TODO] `gemini-removal.phase2.ext-msg-handler.commit1` Git Commit: `refactor: drop Gemini from settings message handler` (hash: TBD)

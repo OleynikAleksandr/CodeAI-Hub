@@ -1,7 +1,3 @@
-import { promises as fs } from "node:fs";
-import { homedir } from "node:os";
-import path from "node:path";
-import { GeminiVersionReader } from "./gemini-version-reader";
 import {
   buildSnapshot,
   type PackageVersionResult,
@@ -18,12 +14,6 @@ import {
   readLatestVersion,
 } from "./provider-version-npm";
 
-const GEMINI_INSTALLER_PATHS = {
-  macOS: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
-  linux: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
-  windows:
-    "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@google\\gemini-cli\\",
-};
 const OPENCODE_VERSION_COMMAND =
   process.platform === "win32"
     ? "opencode.cmd --version"
@@ -38,24 +28,11 @@ const combineErrors = (
 };
 
 export class ProviderVersionService {
-  private readonly geminiReader: GeminiVersionReader;
-
-  constructor() {
-    this.geminiReader = new GeminiVersionReader();
-  }
-
   async loadSnapshot(): Promise<ProviderVersionsSnapshot> {
     const descriptors = resolveDescriptors();
-    const geminiVersions = await this.geminiReader.read();
 
     const results = await Promise.all(
       descriptors.map(async ({ packageName, provider, target }) => {
-        if (provider === "gemini" && target === "cli") {
-          return geminiVersions.cli;
-        }
-        if (provider === "gemini" && target === "core") {
-          return geminiVersions.core;
-        }
         if (provider === "glmOpenCode" && target === "cli") {
           return readOpenCodeVersion();
         }
@@ -76,43 +53,12 @@ export class ProviderVersionService {
     provider: ProviderId,
     target: VersionTarget
   ): Promise<ProviderVersionsSnapshot> {
-    if (provider === "gemini") {
-      return this.updateGeminiAll();
-    }
     if (provider === "glmOpenCode") {
       throw new Error("OpenCode CLI updates are managed outside CodeAI Hub.");
     }
     const packageName = resolvePackageName(provider, target);
     await installGlobalPackageLatest(packageName);
     return this.loadSnapshot();
-  }
-
-  async updateGeminiAll(): Promise<ProviderVersionsSnapshot> {
-    const modulePath = await this.resolveGeminiModulePath();
-    if (!modulePath) {
-      throw new Error("Gemini module not installed");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { GeminiInstaller } = require(
-      path.join(modulePath, "dist", "index.js")
-    );
-    const installer = new GeminiInstaller(GEMINI_INSTALLER_PATHS);
-    await installer.updateToLatest();
-    return this.loadSnapshot();
-  }
-
-  private async resolveGeminiModulePath(): Promise<string | null> {
-    const root = path.join(homedir(), ".codeai-hub", "providers", "gemini");
-    try {
-      const version = (
-        await fs.readFile(path.join(root, "latest"), "utf8")
-      ).trim();
-      const modulePath = path.join(root, version);
-      await fs.access(path.join(modulePath, "dist", "index.js"));
-      return modulePath;
-    } catch {
-      return null;
-    }
   }
 }
 
