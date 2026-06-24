@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.gemini-workspace-package.task1",
-  "expectedCommitMessage": "refactor: delete Gemini module workspace",
+  "currentTaskId": "gemini-removal.phase2.build-script-package-list.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from build scripts",
   "debt": null
 }
 ```
@@ -230,5 +230,10 @@
 
 ### Stream: Gemini workspace package
 
-73. [IN_PROGRESS] `gemini-removal.phase2.gemini-workspace-package.task1` Delete the unused Gemini provider workspace package and prune its lockfile entries (scope: `packages/Gemini_Module/**, package-lock.json`; expected commit: `refactor: delete Gemini module workspace`).
-74. [TODO] `gemini-removal.phase2.gemini-workspace-package.commit1` Git Commit: `refactor: delete Gemini module workspace` (hash: TBD)
+73. [DONE] `gemini-removal.phase2.gemini-workspace-package.task1` Delete the unused Gemini provider workspace package and prune its lockfile entries (scope: `packages/Gemini_Module/**, package-lock.json`; expected commit: `refactor: delete Gemini module workspace`).
+74. [DONE] `gemini-removal.phase2.gemini-workspace-package.commit1` Git Commit: `refactor: delete Gemini module workspace` (hash: self)
+
+### Stream: Build script package list
+
+75. [IN_PROGRESS] `gemini-removal.phase2.build-script-package-list.task1` Remove Gemini workspace/package references from build and release scripts (scope: `scripts/build-core.sh, scripts/build-release.sh, scripts/build-all.sh, scripts/build-gemini-module.sh`; expected commit: `refactor: drop Gemini from build scripts`).
+76. [TODO] `gemini-removal.phase2.build-script-package-list.commit1` Git Commit: `refactor: drop Gemini from build scripts` (hash: TBD)
