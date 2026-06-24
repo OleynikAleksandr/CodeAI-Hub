@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/README.md",
-  "currentTaskId": "backlog-docs.phase2.audit.task1",
-  "expectedCommitMessage": "docs: audit backlog planning documents",
+  "currentTaskId": "backlog-docs.phase2.verify.task1",
+  "expectedCommitMessage": "docs: verify backlog document cleanup",
   "debt": null
 }
 ```
@@ -56,10 +56,10 @@
 
 ### Stream: Backlog freshness map
 
-5. [IN_PROGRESS] `backlog-docs.phase2.audit.task1` Add a concise Backlog README/freshness map and update Docs_Index entries for the moved documents (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit backlog planning documents`).
-6. [TODO] `backlog-docs.phase2.audit.commit1` Git Commit: `docs: audit backlog planning documents` (hash: TBD)
+5. [DONE] `backlog-docs.phase2.audit.task1` Add a concise Backlog README/freshness map and update Docs_Index entries for the moved documents (scope: `doc/SolidWorks-WorkFlow/Plans/Backlog/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit backlog planning documents`).
+6. [DONE] `backlog-docs.phase2.audit.commit1` Git Commit: `docs: audit backlog planning documents` (hash: self)
 
 ### Stream: Verification and closeout
 
-7. [TODO] `backlog-docs.phase2.verify.task1` Run plan validation and a targeted link/path check for the moved Backlog documents (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify backlog document cleanup`).
+7. [IN_PROGRESS] `backlog-docs.phase2.verify.task1` Run plan validation and a targeted link/path check for the moved Backlog documents (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify backlog document cleanup`).
 8. [TODO] `backlog-docs.phase2.verify.commit1` Git Commit: `docs: verify backlog document cleanup` (hash: TBD)
