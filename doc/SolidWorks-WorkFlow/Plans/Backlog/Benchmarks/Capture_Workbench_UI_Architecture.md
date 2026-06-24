@@ -6,7 +6,7 @@
 **Owner:** Oleksandr + Codex
 **Scope:** UX shell, snapshot storage layout, semantic diff contract, and Phase 1 MVP migration plan for the detached `Capture Workbench` window. The transport, capture-and-abort proxy, provider adapters, and Vanilla bridge contracts remain owned by the parent plan.
 
-**Parent plan:** `Plans/Backlog/Provider_Native_Request_Capture_Workbench_Architecture.md` (rev5). This document is the UI specification referenced by parent §3.3 and Phase 3.
+**Parent plan:** `Plans/Backlog/Benchmarks/Provider_Native_Request_Capture_Workbench_Architecture.md` (rev5). This document is the UI specification referenced by parent §3.3 and Phase 3.
 **Supersession note:** child rev2 explicitly supersedes parent §3.4 run-history-list framing and parent §3.5 "all three providers in the first iteration" wording for Phase 1 only. Parent rev5 carries matching forward-pointers in those sections. For any disagreement on Phase 1 UI scope, the child plan wins; for the underlying transport, capture-and-abort proxy, provider adapters, Vanilla bridge, and parent Phase boundaries, the parent plan remains authoritative.
 **Prototype:** `doc/tmp/prototypes/capture-workbench.html` (rev2, approved).
 
@@ -279,7 +279,7 @@ Decisions previously logged here as Open Questions 1-3 (sticky persistence file 
 ## 8. References
 
 - `doc/tmp/prototypes/capture-workbench.html` — approved UI prototype rev2 (this plan's visual contract).
-- `doc/SolidWorks-WorkFlow/Plans/Backlog/Provider_Native_Request_Capture_Workbench_Architecture.md` — parent plan; §2 Product Goal, §3.3 Detached UI, §3.4 Paired artifacts, §3.6 Translation contract, §4 Phase boundaries.
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Provider_Native_Request_Capture_Workbench_Architecture.md` — parent plan; §2 Product Goal, §3.3 Detached UI, §3.4 Paired artifacts, §3.6 Translation contract, §4 Phase boundaries.
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33 — Settings ownership invariant; Workbench is **not** Settings (no save/reset/persistence path), so it does not violate the §33 detached-settings precedent.
 - `src/client/ui/src/components/settings/native-request-capture-card.tsx` — current card to be shrunk to launcher.
 - `src/client/project-manager/services/native-request-capture-scenario-prompt.ts` — existing `bypassUpstreamGuard` contract from release `1.2.123`.
