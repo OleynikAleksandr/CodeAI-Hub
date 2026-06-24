@@ -14,14 +14,12 @@ import {
   resolveClaudeDefaultModel,
   resolveClaudeThinkingFromSettings,
   resolveCodexReasoningFromSettings,
-  resolveGeminiThinkingFromSettings,
   resolvePreferredCodexDefaultModel,
 } from "./provider-defaults-resolver";
 import {
   type ClaudeProviderSettingsSnapshot,
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
-  loadGeminiSettingsSnapshot,
   loadGlmOpenCodeSettingsSnapshot,
   loadKimiSettingsSnapshot,
   loadLocalModelsSettingsSnapshot,
@@ -44,14 +42,6 @@ export interface ResolvedCodexTurnConfig {
   readonly effectiveModelId: string;
   readonly reasoningByModel: Record<string, CodexReasoningEffort>;
   readonly thinkingDisplaySyncEnabled: boolean;
-}
-
-export interface ResolvedGeminiTurnConfig {
-  readonly baseModelId?: string;
-  readonly defaultModel?: string;
-  readonly effectiveModelId?: string;
-  readonly thinkingDisplaySyncEnabled: boolean;
-  readonly thinkingLevelByModel: Record<string, string>;
 }
 
 export interface ResolvedKimiTurnConfig {
@@ -108,12 +98,6 @@ const buildCodexEffectiveModelId = (
   reasoningEffort: CodexReasoningEffort
 ): string => `${baseModelId} reasoning:${reasoningEffort}`;
 
-const buildGeminiEffectiveModelId = (
-  baseModelId: string,
-  thinkingLevel?: string
-): string =>
-  thinkingLevel ? `${baseModelId} thinking:${thinkingLevel}` : baseModelId;
-
 const buildClaudeEffectiveModelId = (
   baseModelId: string,
   thinkingEnabled: boolean,
@@ -149,10 +133,6 @@ export const buildProviderEffectiveModelId = (options: {
       normalizeCodexReasoningEffort(options.reasoningEffort) ??
         DEFAULT_CODEX_REASONING_EFFORT
     );
-  }
-
-  if (options.providerId === "geminiCli") {
-    return buildGeminiEffectiveModelId(baseModelId, options.thinkingLevel);
   }
 
   if (options.providerId === "claudeCodeCli") {
@@ -206,38 +186,6 @@ const resolveCodexTurnConfig = (
       defaultReasoningEffort
     ),
     reasoningByModel,
-    thinkingDisplaySyncEnabled,
-  };
-};
-
-const resolveGeminiTurnConfig = (
-  options: ProviderTurnConfigResolverOptions
-): ResolvedGeminiTurnConfig => {
-  const snapshot = loadGeminiSettingsSnapshot(options.settingsPath);
-  const defaultModel =
-    normalizeOptionalString(
-      typeof snapshot?.defaultModel === "string"
-        ? snapshot.defaultModel
-        : undefined
-    ) ??
-    normalizeOptionalString(options.env.GEMINI_DEFAULT_MODEL) ??
-    options.fallbackGeminiModel;
-  const thinkingLevelByModel = resolveGeminiThinkingFromSettings(
-    snapshot?.thinkingLevelByModel
-  );
-  const thinkingDisplaySyncEnabled =
-    snapshot?.thinkingDisplaySyncEnabled !== false;
-
-  return {
-    baseModelId: defaultModel,
-    defaultModel,
-    effectiveModelId: defaultModel
-      ? buildGeminiEffectiveModelId(
-          defaultModel,
-          thinkingLevelByModel[defaultModel]
-        )
-      : undefined,
-    thinkingLevelByModel,
     thinkingDisplaySyncEnabled,
   };
 };
@@ -342,7 +290,6 @@ const resolveClaudeTurnConfig = (
 const buildResolvedProviderConfigRegistry = (resolved: {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
-  readonly gemini: ResolvedGeminiTurnConfig;
   readonly glmNative: ResolvedGlmNativeTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
   readonly glmOpenCode: ResolvedKimiTurnConfig;
@@ -365,14 +312,6 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     effectiveModelId: resolved.codex.effectiveModelId,
     reasoningByModel: resolved.codex.reasoningByModel,
     thinkingDisplaySyncEnabled: resolved.codex.thinkingDisplaySyncEnabled,
-  },
-  geminiCli: {
-    providerId: "geminiCli",
-    baseModelId: resolved.gemini.baseModelId,
-    defaultModel: resolved.gemini.defaultModel,
-    effectiveModelId: resolved.gemini.effectiveModelId,
-    thinkingLevelByModel: resolved.gemini.thinkingLevelByModel,
-    thinkingDisplaySyncEnabled: resolved.gemini.thinkingDisplaySyncEnabled,
   },
   kimiCode: {
     providerId: "kimiCode",
@@ -412,7 +351,6 @@ const resolveProviderTurnConfig = (
 ) => {
   const claude = resolveClaudeTurnConfig(options);
   const codex = resolveCodexTurnConfig(options);
-  const gemini = resolveGeminiTurnConfig(options);
   const kimi = resolveKimiTurnConfig(options);
   const glmOpenCode = resolveGlmOpenCodeTurnConfig(options);
   const glmNative = resolveGlmNativeTurnConfig(options);
@@ -421,7 +359,6 @@ const resolveProviderTurnConfig = (
   return {
     claude,
     codex,
-    gemini,
     glmNative,
     kimi,
     glmOpenCode,
@@ -429,7 +366,6 @@ const resolveProviderTurnConfig = (
     byProviderId: buildResolvedProviderConfigRegistry({
       claude,
       codex,
-      gemini,
       glmNative,
       kimi,
       glmOpenCode,

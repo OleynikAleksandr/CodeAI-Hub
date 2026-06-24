@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-config.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from core config",
+  "currentTaskId": "gemini-removal.phase2.core-settings-snapshots.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from core settings snapshots",
   "debt": null
 }
 ```
@@ -155,5 +155,10 @@
 
 ### Stream: Core config
 
-43. [IN_PROGRESS] `gemini-removal.phase2.core-config.task1` Remove the Gemini fields from CoreConfig and loadConfig, the provider turn-config resolver, provider-settings-snapshot, and the descriptor-factory test config fixture (scope: `packages/core/src/config/index.ts, packages/core/src/config/provider-turn-config-resolver.ts, packages/core/src/config/provider-settings-snapshot.ts`; expected commit: `refactor: drop Gemini from core config`).
-44. [TODO] `gemini-removal.phase2.core-config.commit1` Git Commit: `refactor: drop Gemini from core config` (hash: TBD)
+43. [DONE] `gemini-removal.phase2.core-config.task1` Remove live Gemini runtime config path/credentials loading and the Gemini provider turn-config registry entry; keep legacy optional CoreConfig fixture fields until the settings snapshot cleanup removes their remaining consumers (scope: `packages/core/src/config/index.ts, packages/core/src/config/provider-turn-config-resolver.ts, packages/core/src/config/provider-defaults-resolver.ts`; expected commit: `refactor: drop Gemini from core config`).
+44. [DONE] `gemini-removal.phase2.core-config.commit1` Git Commit: `refactor: drop Gemini from core config` (hash: self)
+
+### Stream: Core settings snapshots
+
+45. [IN_PROGRESS] `gemini-removal.phase2.core-settings-snapshots.task1` Remove Gemini from Core settings snapshot readers, session translation visibility policy, and default settings persistence (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; expected commit: `refactor: drop Gemini from core settings snapshots`).
+46. [TODO] `gemini-removal.phase2.core-settings-snapshots.commit1` Git Commit: `refactor: drop Gemini from core settings snapshots` (hash: TBD)

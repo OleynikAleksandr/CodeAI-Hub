@@ -139,23 +139,6 @@ export const resolveCodexReasoningFromSettings = (
   return normalized;
 };
 
-export const resolveGeminiThinkingFromSettings = (
-  value: unknown
-): Record<string, string> => {
-  if (!isRecord(value)) {
-    return {};
-  }
-
-  const normalized: Record<string, string> = {};
-  for (const [modelId, level] of Object.entries(value)) {
-    if (typeof level === "string") {
-      normalized[modelId] = level;
-    }
-  }
-
-  return normalized;
-};
-
 export const resolveClaudeThinkingFromSettings = (
   value: unknown
 ): {
