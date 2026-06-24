@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.translation-benchmark-copy.task1",
-  "expectedCommitMessage": "refactor: drop Gemini translation benchmark copy",
+  "currentTaskId": "gemini-removal.phase2.localization-glossary-terms.task1",
+  "expectedCommitMessage": "refactor: drop Gemini localization glossary terms",
   "debt": null
 }
 ```
@@ -250,5 +250,10 @@
 
 ### Stream: Translation benchmark copy
 
-81. [IN_PROGRESS] `gemini-removal.phase2.translation-benchmark-copy.task1` Remove Gemini provider copy from the translation benchmark script (scope: `scripts/translation-benchmark-shared.ts`; expected commit: `refactor: drop Gemini translation benchmark copy`).
-82. [TODO] `gemini-removal.phase2.translation-benchmark-copy.commit1` Git Commit: `refactor: drop Gemini translation benchmark copy` (hash: TBD)
+81. [DONE] `gemini-removal.phase2.translation-benchmark-copy.task1` Remove Gemini provider copy from the local ignored translation benchmark script; `scripts/translation-benchmark-shared.ts` is excluded by `.git/info/exclude`, so the cleanup is local-only and this commit records the tracked plan continuation (scope: `scripts/translation-benchmark-shared.ts`; expected commit: `refactor: drop Gemini translation benchmark copy`).
+82. [DONE] `gemini-removal.phase2.translation-benchmark-copy.commit1` Git Commit: `refactor: drop Gemini translation benchmark copy` (hash: self)
+
+### Stream: Localization glossary terms
+
+83. [IN_PROGRESS] `gemini-removal.phase2.localization-glossary-terms.task1` Remove Gemini-specific provider glossary terms from the localization package (scope: `packages/localization/src/user-glossary-store.ts`; expected commit: `refactor: drop Gemini localization glossary terms`).
+84. [TODO] `gemini-removal.phase2.localization-glossary-terms.commit1` Git Commit: `refactor: drop Gemini localization glossary terms` (hash: TBD)
