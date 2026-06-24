@@ -19,7 +19,6 @@ node_modules/google-logging-utils/**
 node_modules/tree-sitter-bash/**
 node_modules/web-tree-sitter/**
 node_modules/@codeai-hub/claude-module/**
-node_modules/@codeai-hub/gemini-module/**
 node_modules/@codeai-hub/kimi-module/**
 codeai-hub-*/**
 dist/**
@@ -46,7 +45,6 @@ native/**
 *.tar.bz2
 dist/cef-launcher/**
 packages/Claude_Module/**
-packages/Gemini_Module/**
 packages/GLM_Module/**
 packages/Kimi_Module/**
 packages/**

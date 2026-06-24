@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.release-ignore-cleanup.task1",
-  "expectedCommitMessage": "refactor: drop Gemini release ignore leftovers",
+  "currentTaskId": "gemini-removal.phase2.translation-benchmark-copy.task1",
+  "expectedCommitMessage": "refactor: drop Gemini translation benchmark copy",
   "debt": null
 }
 ```
@@ -245,5 +245,10 @@
 
 ### Stream: Release ignore cleanup
 
-79. [IN_PROGRESS] `gemini-removal.phase2.release-ignore-cleanup.task1` Remove Gemini package/archive leftovers from release ignore and cleanup utilities (scope: `.vscodeignore, scripts/release-utils.sh`; expected commit: `refactor: drop Gemini release ignore leftovers`).
-80. [TODO] `gemini-removal.phase2.release-ignore-cleanup.commit1` Git Commit: `refactor: drop Gemini release ignore leftovers` (hash: TBD)
+79. [DONE] `gemini-removal.phase2.release-ignore-cleanup.task1` Remove Gemini package/archive leftovers from release ignore and cleanup utilities (scope: `.vscodeignore, scripts/release-utils.sh`; expected commit: `refactor: drop Gemini release ignore leftovers`).
+80. [DONE] `gemini-removal.phase2.release-ignore-cleanup.commit1` Git Commit: `refactor: drop Gemini release ignore leftovers` (hash: self)
+
+### Stream: Translation benchmark copy
+
+81. [IN_PROGRESS] `gemini-removal.phase2.translation-benchmark-copy.task1` Remove Gemini provider copy from the translation benchmark script (scope: `scripts/translation-benchmark-shared.ts`; expected commit: `refactor: drop Gemini translation benchmark copy`).
+82. [TODO] `gemini-removal.phase2.translation-benchmark-copy.commit1` Git Commit: `refactor: drop Gemini translation benchmark copy` (hash: TBD)
