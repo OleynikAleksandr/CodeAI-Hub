@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.docs-index-residue.task1",
-  "expectedCommitMessage": "docs: update Gemini docs index residue",
+  "currentTaskId": "gemini-removal.phase2.root-docs-residue.task1",
+  "expectedCommitMessage": "docs: update Gemini root docs residue",
   "debt": null
 }
 ```
@@ -347,5 +347,10 @@ Audit evidence (2026-06-24):
 
 ### Stream: Docs index residue
 
-115. [IN_PROGRESS] `gemini-removal.phase2.docs-index-residue.task1` Remove active Gemini-as-live-provider references from Docs_Index while preserving explicit archive/history records (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update Gemini docs index residue`).
-116. [TODO] `gemini-removal.phase2.docs-index-residue.commit1` Git Commit: `docs: update Gemini docs index residue` (hash: TBD)
+115. [DONE] `gemini-removal.phase2.docs-index-residue.task1` Remove active Gemini-as-live-provider references from Docs_Index while preserving explicit archive/history records (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update Gemini docs index residue`).
+116. [DONE] `gemini-removal.phase2.docs-index-residue.commit1` Git Commit: `docs: update Gemini docs index residue` (hash: self)
+
+### Stream: Root docs residue
+
+117. [IN_PROGRESS] `gemini-removal.phase2.root-docs-residue.task1` Remove Gemini-as-active-build/provider wording from root process and user-facing docs while preserving changelog/history records (scope: `AGENTS.md, README.md`; expected commit: `docs: update Gemini root docs residue`).
+118. [TODO] `gemini-removal.phase2.root-docs-residue.commit1` Git Commit: `docs: update Gemini root docs residue` (hash: TBD)
