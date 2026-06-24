@@ -3,7 +3,6 @@ import type { KimiModelId } from "../../../../../types/kimi-model-registry";
 import { useLocalization } from "../../app-host/use-localization";
 import ClaudeDefaultModelCard from "./claude-default-model/claude-default-model-card";
 import CodexDefaultModelCard from "./codex-default-model/codex-default-model-card";
-import GeminiDefaultModelCard from "./gemini-default-model/gemini-default-model-card";
 import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./general-settings";
 import GlmNativeSettingsCard from "./glm-native-settings-card";
@@ -56,7 +55,6 @@ export type SettingsViewState = UseSettingsStateResult & {
 export type SettingsTab =
   | "claude"
   | "codex"
-  | "gemini"
   | "kimi"
   | "glmNative"
   | "glmOpenCode"
@@ -152,7 +150,6 @@ export const settingsTabs: ReadonlyArray<{
 }> = [
   { id: "claude", label: "Claude" },
   { id: "codex", label: "Codex" },
-  { id: "gemini", label: "Gemini" },
   { id: "kimi", label: "Kimi" },
   { id: "glmNative", label: "GLM" },
   { id: "glmOpenCode", label: "OpenCode" },
@@ -177,20 +174,15 @@ export const SettingsProviderTabContent: React.FC<
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
     handleCodexContinuityRemainingPercentThresholdChange,
-    handleGeminiContinuityRemainingPercentThresholdChange,
-    handleGeminiContextWindowTokenLimitChange,
     handleCodexDefaultModelChange,
     handleClaudeDefaultModelChange,
-    handleGeminiDefaultModelChange,
     handleKimiDefaultModelChange,
     handleGlmOpenCodeSettingsChange,
     handleGlmOpenCodeThinkingDisplaySyncChange,
     handleGlmNativeSettingsChange,
     handleGlmNativeThinkingDisplaySyncChange,
-    handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
-    handleGeminiThinkingDisplaySyncChange,
     handleKimiThinkingDisplaySyncChange,
     handleKimiThinkingEnabledChange,
     handleLocalizationCategoryLanguageChange,
@@ -363,46 +355,6 @@ export const SettingsProviderTabContent: React.FC<
         onSettingsChange={handleOpenRouterSettingsChange}
         settings={settings.providers.openRouter}
       />
-    );
-  }
-
-  if (activeTab === "gemini") {
-    return (
-      <div style={stackStyles}>
-        <GeminiDefaultModelCard
-          defaultModel={settings.providers.gemini.defaultModel}
-          onDefaultModelChange={handleGeminiDefaultModelChange}
-          onThinkingChange={handleGeminiThinkingChange}
-          onThinkingDisplaySyncChange={handleGeminiThinkingDisplaySyncChange}
-          thinkingDisplaySyncEnabled={
-            settings.providers.gemini.thinkingDisplaySyncEnabled
-          }
-          thinkingLevelByModel={settings.providers.gemini.thinkingLevelByModel}
-        />
-        <ProviderVersions
-          autoUpdateEnabled={settings.providers.gemini.autoUpdate.enabled}
-          onAutoUpdateChange={handleProviderAutoUpdateChange}
-          onUpdate={handleUpdateProvider}
-          provider="gemini"
-          versions={versions}
-        />
-        <SessionContinuityCard
-          contextWindowTokenLimit={
-            settings.providers.gemini.sessionContinuity.contextWindowTokenLimit
-          }
-          onContextWindowTokenLimitChange={
-            handleGeminiContextWindowTokenLimitChange
-          }
-          onRemainingPercentThresholdChange={
-            handleGeminiContinuityRemainingPercentThresholdChange
-          }
-          remainingPercentThreshold={
-            settings.providers.gemini.sessionContinuity
-              .remainingPercentThreshold
-          }
-          title="Gemini Session Continuity"
-        />
-      </div>
     );
   }
 

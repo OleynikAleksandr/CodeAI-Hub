@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.settings-state.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from settings state model",
+  "currentTaskId": "gemini-removal.phase1.settings-handlers.task1",
+  "expectedCommitMessage": "refactor: drop Gemini settings handlers",
   "debt": null
 }
 ```
@@ -86,7 +86,12 @@
 15. [DONE] `gemini-removal.phase1.pm-services.task1` Remove Gemini from the project-manager provider snapshot list and usage-limits stream prefix (`workflow-provider-resolver.ts` guard + its `geminiCli`-protagonist test deferred to the union-type phase) (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/sessions/usage-limits-stream.ts`; expected commit: `refactor: drop Gemini from PM provider services`).
 16. [DONE] `gemini-removal.phase1.pm-services.commit1` Git Commit: `refactor: drop Gemini from PM provider services` (hash: self)
 
-### Stream: Settings state model
+### Stream: Settings provider tab
 
-17. [IN_PROGRESS] `gemini-removal.phase1.settings-state.task1` Remove the Gemini settings interfaces and defaults from the webview settings state model and raw types (scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts`; expected commit: `refactor: drop Gemini from settings state model`).
-18. [TODO] `gemini-removal.phase1.settings-state.commit1` Git Commit: `refactor: drop Gemini from settings state model` (hash: TBD)
+17. [DONE] `gemini-removal.phase1.settings-tab.task1` Remove the Gemini settings tab from the settings provider tab content and delete the now-orphaned gemini-default-model card directory; settings-state types/helpers and gemini-mapping follow once no reader remains (scope: `src/client/ui/src/components/settings/settings-provider-tab-content.tsx, src/client/ui/src/components/settings/gemini-default-model/**`; expected commit: `refactor: drop Gemini settings provider tab`).
+18. [DONE] `gemini-removal.phase1.settings-tab.commit1` Git Commit: `refactor: drop Gemini settings provider tab` (hash: self)
+
+### Stream: Settings handlers
+
+19. [IN_PROGRESS] `gemini-removal.phase1.settings-handlers.task1` Remove the Gemini update helpers and the handlers that wire them from the webview settings state hook (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state.ts, src/client/ui/src/components/settings/use-settings-state-support.ts`; expected commit: `refactor: drop Gemini settings handlers`).
+20. [TODO] `gemini-removal.phase1.settings-handlers.commit1` Git Commit: `refactor: drop Gemini settings handlers` (hash: TBD)
