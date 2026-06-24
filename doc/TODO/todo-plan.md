@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-runtime-profiles.task1",
-  "expectedCommitMessage": "refactor: drop Gemini core runtime profiles",
+  "currentTaskId": "gemini-removal.phase2.core-templates-sdk.task1",
+  "expectedCommitMessage": "refactor: drop Gemini core templates",
   "debt": null
 }
 ```
@@ -210,5 +210,10 @@
 
 ### Stream: Core runtime profiles
 
-65. [IN_PROGRESS] `gemini-removal.phase2.core-runtime-profiles.task1` Remove Gemini from core model-invocation profiles and workspace runtime provider homes (scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule*.test.ts`; expected commit: `refactor: drop Gemini core runtime profiles`).
-66. [TODO] `gemini-removal.phase2.core-runtime-profiles.commit1` Git Commit: `refactor: drop Gemini core runtime profiles` (hash: TBD)
+65. [DONE] `gemini-removal.phase2.core-runtime-profiles.task1` Remove Gemini from core model-invocation profiles and workspace runtime provider homes (scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule*.test.ts`; expected commit: `refactor: drop Gemini core runtime profiles`).
+66. [DONE] `gemini-removal.phase2.core-runtime-profiles.commit1` Git Commit: `refactor: drop Gemini core runtime profiles` (hash: self)
+
+### Stream: Core templates and SDK exclusions
+
+67. [IN_PROGRESS] `gemini-removal.phase2.core-templates-sdk.task1` Remove Gemini invocation templates and SDK exclusion leftovers from Core packaging surfaces (scope: `packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/source/model-invocation-templates.json, packages/core/src/index.ts`; expected commit: `refactor: drop Gemini core templates`).
+68. [TODO] `gemini-removal.phase2.core-templates-sdk.commit1` Git Commit: `refactor: drop Gemini core templates` (hash: TBD)

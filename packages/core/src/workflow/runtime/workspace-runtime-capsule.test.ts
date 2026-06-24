@@ -43,8 +43,8 @@ test("resolveWorkspaceRuntimeCapsule resolves workspace-owned runtime roots", ()
     ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified"
   );
   assert.equal(
-    capsule.providerHomes.gemini.relativePath,
-    ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/gemini/home"
+    capsule.providerHomes.kimi.relativePath,
+    ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/kimi/home"
   );
   assert.equal(
     capsule.providerHomes["glm-opencode"].relativePath,

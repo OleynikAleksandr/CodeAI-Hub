@@ -92,12 +92,9 @@ test("workspace runtime gitignore ignores provider-native and unified runtime hi
       "claude-session.jsonl"
     ),
     path.posix.join(
-      capsule.providerHomes.gemini.relativePath,
-      ".gemini",
-      "tmp",
-      "finderwidget-test01",
-      "chats",
-      "session-gemini.jsonl"
+      capsule.providerHomes["glm-opencode"].relativePath,
+      "sessions",
+      "opencode-session.jsonl"
     ),
     path.posix.join(capsule.providerHomes.kimi.relativePath, "wire.jsonl"),
   ];
@@ -333,7 +330,7 @@ test("bootstrap updates an existing capsule gitignore to the current rollback co
 test("workspace runtime gitignore excludes the whole runtime capsule through one rule", () => {
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
-      "runtime/providers/gemini/home/.gemini/oauth_creds.json"
+      "runtime/providers/codex/home/config.toml"
     ),
     false
   );

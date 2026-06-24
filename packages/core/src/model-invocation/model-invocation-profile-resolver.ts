@@ -1,4 +1,4 @@
-export type ModelInvocationProviderId = "claude" | "codex" | "gemini";
+export type ModelInvocationProviderId = "claude" | "codex";
 
 export type ModelInvocationPurpose = "workflow-agent" | "translation";
 
@@ -65,8 +65,6 @@ const CODEX_TRANSLATION_MODELS = [
 
 const CLAUDE_WORKFLOW_MODELS = ["sonnet", "opus", "haiku"] as const;
 const CLAUDE_TRANSLATION_MODELS = ["claude-haiku-4-5-20251001"] as const;
-
-const GEMINI_WORKFLOW_MODELS = ["gemini-3.1-pro-preview"] as const;
 
 const CODEX_THREAD_CONFIG = {
   project_doc_max_bytes: 0,
@@ -235,54 +233,6 @@ const buildClaudeTranslationProfile = (
   },
 });
 
-const buildGeminiProfile = (
-  selector: ModelInvocationSelector
-): EffectiveModelInvocationProfile => {
-  const tree = resolveWorkflowTree(selector);
-  if (selector.purpose === "workflow-agent") {
-    return {
-      compatibleModelIds: GEMINI_WORKFLOW_MODELS,
-      processProfile: {
-        processProfileKey: `gemini:workflow-${tree}`,
-        toolProfileKey: "gemini:workflow-agent-tools",
-      },
-      selector: { ...selector, tree },
-      sessionProfile: {
-        instructionFragments: buildWorkflowInstructionFragments(
-          "gemini",
-          selector
-        ),
-        persistExtendedHistory: true,
-        sessionProfileKey: `gemini:workflow-${tree}:${requireWorkflowStep(selector)}`,
-      },
-      turnProfile: {
-        summary: null,
-        turnProfileKey: "gemini:workflow-turn",
-      },
-    };
-  }
-
-  return {
-    compatibleModelIds: [selector.modelId],
-    processProfile: {
-      approvalPolicy: "never",
-      processProfileKey: "gemini:translation",
-      sandbox: "read-only",
-      toolProfileKey: "gemini:translation-tools-disabled",
-    },
-    selector,
-    sessionProfile: {
-      instructionFragments: buildTranslationInstructionFragments("gemini"),
-      persistExtendedHistory: false,
-      sessionProfileKey: "gemini:translation",
-    },
-    turnProfile: {
-      summary: "none",
-      turnProfileKey: "gemini:translation-turn",
-    },
-  };
-};
-
 export const normalizeModelInvocationPurpose = (
   value: unknown
 ): ModelInvocationPurpose | null =>
@@ -300,6 +250,8 @@ export class ModelInvocationProfileResolver {
         ? buildClaudeTranslationProfile(selector)
         : buildClaudeWorkflowProfile(selector);
     }
-    return buildGeminiProfile(selector);
+    throw new Error(
+      `Unsupported model invocation provider: ${selector.providerId}`
+    );
   }
 }

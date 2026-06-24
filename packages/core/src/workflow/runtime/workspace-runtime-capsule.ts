@@ -5,7 +5,6 @@ import { WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT } from "./workspace-runtime
 export type WorkspaceRuntimeProviderId =
   | "codex"
   | "claude"
-  | "gemini"
   | "glm-native"
   | "glm-opencode"
   | "kimi";
@@ -56,7 +55,6 @@ const WORKSPACE_FALLBACK_SLUG = "workspace";
 const PROVIDER_IDS = [
   "codex",
   "claude",
-  "gemini",
   "glm-native",
   "glm-opencode",
   "kimi",
@@ -66,7 +64,6 @@ const PROVIDER_DIRECTORY_BY_ID: Readonly<
 > = {
   codex: "codex",
   claude: "claude",
-  gemini: "gemini",
   "glm-native": "glm-native",
   "glm-opencode": "opencode",
   kimi: "kimi",
@@ -96,16 +93,6 @@ const WORKSPACE_SETTINGS_SEED = {
         "gpt-5.5": "medium",
       },
       sessionContinuity: { remainingPercentThreshold: 30 },
-    },
-    gemini: {
-      autoUpdate: { enabled: false },
-      defaultModel: "gemini-3-pro-preview",
-      thinkingDisplaySyncEnabled: true,
-      thinkingLevelByModel: {},
-      sessionContinuity: {
-        remainingPercentThreshold: 30,
-        contextWindowTokenLimit: 300_000,
-      },
     },
     kimi: {
       autoUpdate: { enabled: false },
