@@ -2,7 +2,7 @@
 
 **Surface:** нижняя статусная строка  
 **Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/status-panel-model-picker.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
-**Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini,kimi}`, `.session-status__debug-strip`.
+**Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,kimi,violet}`, `.session-status__debug-strip`.
 
 ## Роль
 
@@ -28,8 +28,8 @@
 ## Откуда берет правду
 
 - `connectionStatus` / `connectionDetail` из `useProjectManagerCoreStatusHydrator()`;
-- `status.models[0]` (single-model invariant per SystemArchitecture §3.14 / SMB-001/002): `modelDisplayName`, `reasoning`, `providerId` (`claudeCodeCli` / `codexCli` / `geminiCli` / `kimiCode` / `glmNative` / `glmOpenCode` / `localModels`) → provider tint class;
-- Local Models status identity is rendered directly from `status.models[0].modelDisplayName`; until a dedicated local tint exists, Local Models uses the existing Gemini/cool tint class.
+- `status.models[0]` (single-model invariant per SystemArchitecture §3.14 / SMB-001/002): `modelDisplayName`, `reasoning`, `providerId` (`claudeCodeCli` / `codexCli` / `kimiCode` / `glmNative` / `glmOpenCode` / `localModels`) → provider tint class;
+- Local Models status identity is rendered directly from `status.models[0].modelDisplayName`; until a dedicated local tint exists, Local Models uses the shared violet tint class.
 - `status.tokenUsage.used` / `.limit` → токен-плашка (used + remaining percent);
 - `tokenDebugSummary` либо вычисляется по chain/messages, либо в dialog mode приходит как override из parsed dialog history.
 
@@ -80,15 +80,14 @@ The user-facing percentage in the chip is **remaining context window percentage*
 
 - Для Codex sessions вызывает `onSelectModel(modelId)` / `onSelectReasoning(reasoning)` — каждый callback несёт только своё поле, без второго аргумента.
 - Для Claude sessions вызывает `onSelectClaudeModel(modelId)` / `onSelectClaudeThinking(thinking)` — model-callback теряет thinking-аргумент, thinking-callback не передаёт модель.
-- Для Kimi sessions вызывает только `onSelectModel(modelId)`.
-- Для Gemini sessions selection no-op: chips остаются визуальной частью status row, но не dispatch'ят provider command в этом scope.
+- Для Kimi, GLM/OpenCode и Local Models sessions вызывает только `onSelectModel(modelId)`.
 
 ## Локальный state
 
 - `openPicker: "model" | "reasoning" | null` внутри `status-panel.tsx`.
 - picker закрывается после выбора или close action.
 - Model picker использует тот же floating card component, что reasoning picker; левый край model card выравнивается по левому краю reasoning card anchor, чтобы карточка не выходила за visible session zone.
-- picker option states (release `1.2.121`): опции рендерятся через CSS-класс `.session-status-picker__option`, а picker-контейнер несёт `data-provider`, который проставляет провайдерный набор CSS-переменных (`--picker-bg/-hover/-active`, `--picker-border/-hover/-active`, `--picker-accent/-hover/-active`). Активный пункт несёт `data-active="true"` и подсвечен теми же RGBA tokens, что и кнопка `session-status-button--{claude|codex|gemini}` на нажатой фазе; hover лайтит опцию в провайдерном цвете (warm peach / cyan / cool lavender) с переходом 120 ms, focus-visible — 1px outline. Клик переносит `data-active` с прежнего пункта на новый и закрывает popup; никаких inline `optionStyle`/`closeStyle` больше нет, текстовая метка "active" удалена.
+- picker option states (release `1.2.121`): опции рендерятся через CSS-класс `.session-status-picker__option`, а picker-контейнер несёт `data-provider`, который проставляет провайдерный набор CSS-переменных (`--picker-bg/-hover/-active`, `--picker-border/-hover/-active`, `--picker-accent/-hover/-active`) для провайдеров с dedicated picker tokens. Активный пункт несёт `data-active="true"` и подсвечен теми же RGBA tokens, что и соответствующая provider button на нажатой фазе; hover лайтит опцию в провайдерном цвете с переходом 120 ms, focus-visible — 1px outline. Клик переносит `data-active` с прежнего пункта на новый и закрывает popup; никаких inline `optionStyle`/`closeStyle` больше нет, текстовая метка "active" удалена.
 
 ## Особенности
 
@@ -99,7 +98,6 @@ The user-facing percentage in the chip is **remaining context window percentage*
 - для `Virtual Simulation` / `Diagram Modules`, стартующих с confirmation card, нижняя панель не должна сохранять provider/model summary предыдущего trunk step: выбранный на карточке provider seed-ит bootstrap snapshot сразу, а затем live runtime model update уточняет effective model без возврата к старому provider context.
 - 4-chip layout инвариант: chips 1–3 (`flex: 0 0 auto`) hug свой текст, правая `--limits` плашка (`flex: 1 1 0; min-width: 0`) поглощает весь оставшийся горизонт; внешняя ширина ряда фиксирована родителем (`width: 100%`). При смене модели (например Sonnet → Opus 4.7) reflow происходит только внутри ряда — токен-плашка автоматически меняет ширину, остальной layout остаётся стабильным.
 - buttons (chips 2 и 3) интерактивны для provider-ов, у которых есть соответствующий callback. Runtime и dialog PM views прокидывают callbacks симметрично. Каждая chip dispatch'ит свою команду: model chip → provider model switch/default update, reasoning/thinking chip → provider-specific reasoning/thinking command. Никаких объединённых payload'ов с двумя полями.
-- для Gemini sessions callbacks guard'ятся до dispatch: Gemini strategy seam пока отсутствует, поэтому selection is no-op.
 - Codex model picker показывает текущий Codex registry order; reasoning picker показывает `reasoningEffortOptions` выбранной/current Codex модели.
 - Claude model picker показывает provider-owned alias order `Sonnet` / `Opus` / `Haiku`; thinking picker показывает `off` плюс `low | medium | high | xhigh | max`.
 - Kimi model picker показывает registry order `kimi-k2.7-code` / `kimi-k2.7-code-highspeed`; Kimi reasoning picker не используется.

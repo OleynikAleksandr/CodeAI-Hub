@@ -31,7 +31,7 @@
 Её truth sources:
 - `binding.providerSessionId` и `binding.status` приходят из live snapshot/binding path;
 - `status.usageLimits` и `status.usageLimitLabels` приходят только из live snapshot;
-- provider scope для usage limits нормализован в provider-global contract (`claude:global`, `codex:global`, `gemini:global`, `kimi:global`);
+- provider scope для usage limits нормализован в provider-global contract (`claude:global`, `codex:global`, `kimi:global`);
 - persistent fallback cache для usage limits отсутствует.
 
 Следствие: если snapshot не получил реальный runtime binding или usage-limits stream event, панель ничего не "вспомнит" из старого кэша и не нарисует лимиты искусственно.
@@ -54,7 +54,6 @@
 
 Особенности:
 - для `claude/codex` fallback labels = `Session`, `Weekly`, `Model Weekly`;
-- для `gemini` fallback labels = `Primary`, `Secondary`, `Tertiary`;
 - для `kimi` labels = `5h`, `Weekly`, `Parallel`, потому что Kimi endpoint возвращает rolling 300-minute window, weekly quota и concurrency limit;
 - третья строка рендерится только если для неё реально известен `percentUsed`;
 - reset label строится из `resetsAt` и подставляется в подпись строки.
@@ -82,7 +81,7 @@ Refresh effect перевычисляется при изменении:
 - bootstrap snapshot всё равно должен нести provider identity выбранного шага, чтобы usage surface не осталась привязанной к старой provider family;
 - пока binding ещё `pending`, панель может показывать только pending/unavailable state и не должна отправлять refresh;
 - как только PM принимает materialized runtime session и binding становится `ready`, refresh обязан уйти с `sessionId` + `providerId` + `providerSessionId` именно нового выбранного provider path;
-- после этого `status.providerScopeKey` / fallback labels и live limits принадлежат новой provider family (`claude`, `codex` или `gemini`), а не предыдущему trunk step.
+- после этого `status.providerScopeKey` / fallback labels и live limits принадлежат новой provider family (`claude`, `codex` или `kimi`), а не предыдущему trunk step.
 
 ## Финальный dialog/auto-select contract после 1.1.971
 
