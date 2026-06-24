@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.final-docs-residue-audit.task1",
-  "expectedCommitMessage": "chore: audit final Gemini docs residue",
+  "currentTaskId": "gemini-removal.phase2.release-build-confirmation.task1",
+  "expectedCommitMessage": "chore: record Gemini release build confirmation",
   "debt": null
 }
 ```
@@ -362,5 +362,20 @@ Audit evidence (2026-06-24):
 
 ### Stream: Final docs residue audit
 
-121. [IN_PROGRESS] `gemini-removal.phase2.final-docs-residue-audit.task1` Re-run tracked Gemini residue checks after backlog cleanup and classify remaining safety/history/planning records before release-build gating (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit final Gemini docs residue`).
-122. [TODO] `gemini-removal.phase2.final-docs-residue-audit.commit1` Git Commit: `chore: audit final Gemini docs residue` (hash: TBD)
+121. [DONE] `gemini-removal.phase2.final-docs-residue-audit.task1` Re-run tracked Gemini residue checks after backlog cleanup and classify remaining safety/history/planning records before release-build gating (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit final Gemini docs residue`).
+122. [DONE] `gemini-removal.phase2.final-docs-residue-audit.commit1` Git Commit: `chore: audit final Gemini docs residue` (hash: self)
+
+Audit evidence (2026-06-24):
+- `git grep -l -i gemini -- src packages scripts assets media package.json package-lock.json` returned no tracked runtime/source/build/package/localization files.
+- `git grep -l -i gemini -- ':!doc/TODO/todo-plan.md' ':!doc/TODO/Archive/**' ':!doc/SolidWorks-WorkFlow/Plans/Archive/**'` now reports only `.gitignore`, `.vscodeignore`, `CHANGELOG.md`, `README.md`, `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Backlog/Kimi_Audit_Followup_Planning.md`, active `doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md`, `doc/SolidWorks-WorkFlow/Plans/Intent_Normalizer_Module_Planning_RU.md`, and `doc/SolidWorks-WorkFlow/Plans/README.md`.
+- `.gitignore` / `.vscodeignore` `.gemini` and `GEMINI.md` entries are safety ignore rules, not shipped provider package residue.
+- `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, and `Docs_Index.md` remaining hits are release/history/bug/archive records.
+- `Kimi_Audit_Followup_Planning.md` remaining hit is an outdated-audit problem statement, not a future Gemini implementation path.
+- `Gemini_Removal_Planning_RU.md` intentionally remains active planning provenance until scope closeout.
+- `Intent_Normalizer_Module_Planning_RU.md` and `Plans/README.md` remaining hits are OpenRouter hosted model ids (`google/gemini-*`), not the removed Gemini provider module.
+- Next required gate: stop before release notes/version prep, `build-all.sh`, or `build-release.sh`, and ask the user for explicit Gemini-free release-build approval.
+
+### Stream: Release build confirmation gate
+
+123. [IN_PROGRESS] `gemini-removal.phase2.release-build-confirmation.task1` Stop at Release Build Confirmation Gate and ask the user for explicit approval before README/CHANGELOG version prep or release build scripts (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: record Gemini release build confirmation`).
+124. [TODO] `gemini-removal.phase2.release-build-confirmation.commit1` Git Commit: `chore: record Gemini release build confirmation` (hash: TBD)
