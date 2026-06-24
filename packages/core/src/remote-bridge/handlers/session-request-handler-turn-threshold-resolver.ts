@@ -34,7 +34,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const extractContinuityThresholdPercentFromSettings = (options: {
   readonly fallback: number;
-  readonly providerKey: "claude" | "codex" | "gemini";
+  readonly providerKey: "claude" | "codex";
   readonly settings: unknown;
 }): number => {
   if (!isRecord(options.settings)) {
@@ -98,14 +98,9 @@ export class SessionRequestHandlerTurnThresholdResolver {
     });
   }
 
-  private resolveSettingsProviderKey(
-    providerId: string
-  ): "claude" | "codex" | "gemini" {
+  private resolveSettingsProviderKey(providerId: string): "claude" | "codex" {
     if (providerId.startsWith("codex")) {
       return "codex";
-    }
-    if (providerId.startsWith("gemini")) {
-      return "gemini";
     }
     return "claude";
   }

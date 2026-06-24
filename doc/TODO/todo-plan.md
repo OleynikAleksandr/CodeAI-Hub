@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remote-bridge-provider-routing.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from remote bridge provider routing",
+  "currentTaskId": "gemini-removal.phase2.remote-bridge-session-leftovers.task1",
+  "expectedCommitMessage": "refactor: drop Gemini remote bridge session leftovers",
   "debt": null
 }
 ```
@@ -185,5 +185,10 @@
 
 ### Stream: Remote-bridge provider routing
 
-55. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-provider-routing.task1` Remove Gemini from remote-bridge provider-id translation and turn-threshold routing surfaces (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-translation-provider-id.ts, packages/core/src/remote-bridge/handlers/session-request-handler-turn-threshold-resolver.ts`; expected commit: `refactor: drop Gemini from remote bridge provider routing`).
-56. [TODO] `gemini-removal.phase2.remote-bridge-provider-routing.commit1` Git Commit: `refactor: drop Gemini from remote bridge provider routing` (hash: TBD)
+55. [DONE] `gemini-removal.phase2.remote-bridge-provider-routing.task1` Remove Gemini from remote-bridge provider-id translation and turn-threshold routing surfaces (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-translation-provider-id.ts, packages/core/src/remote-bridge/handlers/session-request-handler-turn-threshold-resolver.ts`; expected commit: `refactor: drop Gemini from remote bridge provider routing`).
+56. [DONE] `gemini-removal.phase2.remote-bridge-provider-routing.commit1` Git Commit: `refactor: drop Gemini from remote bridge provider routing` (hash: self)
+
+### Stream: Remote-bridge session leftovers
+
+57. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-session-leftovers.task1` Remove Gemini-only remote-bridge session leftovers from stale-binding messages and focused test fixtures (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.test.ts`; expected commit: `refactor: drop Gemini remote bridge session leftovers`).
+58. [TODO] `gemini-removal.phase2.remote-bridge-session-leftovers.commit1` Git Commit: `refactor: drop Gemini remote bridge session leftovers` (hash: TBD)

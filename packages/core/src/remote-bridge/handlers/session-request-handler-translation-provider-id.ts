@@ -3,7 +3,6 @@ import type { SessionTranslationProviderId } from "../../session-translation/ses
 const TRANSLATION_PROVIDER_IDS = new Set([
   "claude",
   "codex",
-  "gemini",
   "kimi",
   "glmOpenCode",
 ]);
