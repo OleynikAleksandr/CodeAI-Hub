@@ -10,8 +10,8 @@
   "baseHead": "ed3742ac2",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/OpenRouter_AgentProfile_Tooling_Planning_RU.md",
-  "currentTaskId": "openrouter-agent.phase6.closeout.task1",
-  "expectedCommitMessage": "docs: close OpenRouter agent tooling scope",
+  "currentTaskId": "openrouter-agent.phase5.endpoint-release-artifacts.task1",
+  "expectedCommitMessage": "build: release OpenRouter endpoint routing hotfix",
   "debt": null
 }
 ```
@@ -145,9 +145,16 @@ Release build evidence for `1.2.602`:
 33. [DONE] `openrouter-agent.phase5.endpoint-routing.task1` Ignore persisted OpenRouter endpoint tags when the active session binding has switched to a different OpenRouter model, while preserving tools for chat and workflow turns (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix(openrouter): ignore stale endpoint routing`).
 34. [DONE] `openrouter-agent.phase5.endpoint-routing.commit1` Git Commit: `fix(openrouter): ignore stale endpoint routing` (hash: self)
 
+### Stream: Hotfix Release 1.2.603
+
+35. [DONE] `openrouter-agent.phase5.endpoint-release-notes.task1` Record the user's explicit release build confirmation and prepare release-facing docs for future version `1.2.603` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare OpenRouter endpoint routing hotfix release`).
+36. [DONE] `openrouter-agent.phase5.endpoint-release-notes.commit1` Git Commit: `docs: prepare OpenRouter endpoint routing hotfix release` (hash: self)
+37. [IN_PROGRESS] `openrouter-agent.phase5.endpoint-release-artifacts.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record release artifact evidence for `1.2.603` (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `build: release OpenRouter endpoint routing hotfix`).
+38. [TODO] `openrouter-agent.phase5.endpoint-release-artifacts.commit1` Git Commit: `build: release OpenRouter endpoint routing hotfix` (hash: TBD)
+
 ## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-06-23)
 
 ### Stream: Archive + planning-doc disposition
 
-35. [IN_PROGRESS] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
-36. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)
+39. [TODO] `openrouter-agent.phase6.closeout.task1` After explicit user acceptance, archive this plan and decide planning-doc disposition (scope: `doc/TODO/Archive/**, doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close OpenRouter agent tooling scope`).
+40. [TODO] `openrouter-agent.phase6.closeout.commit1` Git Commit: `docs: close OpenRouter agent tooling scope` (hash: TBD)

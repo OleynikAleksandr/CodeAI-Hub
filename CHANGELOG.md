@@ -8,6 +8,25 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.603] - 2026-06-24
+### Fixed
+- **OpenRouter model switches ignore stale endpoint routing.** When a session is
+  bound to a different OpenRouter model than the workspace default, Core no
+  longer applies the persisted `providers.openRouter.endpointTag` from the old
+  model. This keeps switched models such as `z-ai/glm-5.2` on automatic
+  OpenRouter routing instead of strict-routing them through an incompatible
+  endpoint such as `google-ai-studio`.
+- **OpenRouter tools remain enabled.** The fix preserves the existing
+  OpenRouter Codex system profile and executable local tool surface for chat and
+  workflow turns.
+
+### Verification
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-applied-turn-config.openrouter.test.js`
+- `node --test packages/core/dist/open-router/open-router-provider-adapter.test.js`
+- OpenRouter routing probe: `z-ai/glm-5.2` fails with stale
+  `google-ai-studio` strict routing but succeeds with automatic routing.
+
 ## [1.2.602] - 2026-06-23
 ### Fixed
 - **OpenRouter workflow start cards keep the selected model slug.** After

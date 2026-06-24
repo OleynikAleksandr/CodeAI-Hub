@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.602** (OpenRouter Start Card Hotfix)
+**Current Release — v1.2.603** (OpenRouter Endpoint Routing Hotfix)
+
+This hotfix prevents stale OpenRouter endpoint routing from breaking switched
+OpenRouter models.
+
+If a workspace saved an endpoint such as `google-ai-studio` for one OpenRouter
+model, later chat/model switches could strict-route a different model through
+that stale endpoint and fail with `No endpoints found for <model>`. Switched
+OpenRouter session bindings now ignore stale persisted endpoint tags while
+preserving OpenRouter tools for chat and workflow turns.
+
+Retest focus: install the VSIX, restart Project Manager, switch standalone
+OpenRouter chat from a Google-routed model to a non-Google model such as
+`z-ai/glm-5.2`, and confirm it uses automatic OpenRouter routing instead of
+failing on the old endpoint.
+
+**Previous Release — v1.2.602** (OpenRouter Start Card Hotfix)
 
 This hotfix packages the OpenRouter workflow start-card fix from release
 `1.2.601` retesting.
