@@ -23,7 +23,7 @@ const SELECTOR_SOURCE_PATHS = [
   )
 );
 
-test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini disabled", () => {
+test("CaptureWorkbenchSelectionBar renders four selector controls", () => {
   const markup = renderToStaticMarkup(
     <CaptureWorkbenchSelectionBar
       selection={{
@@ -43,8 +43,6 @@ test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini di
   assert.equal(markup.includes("Provider"), true);
   assert.equal(markup.includes("Model"), true);
   assert.equal(markup.includes("Reasoning"), true);
-  assert.equal(markup.includes("Gemini"), true);
-  assert.equal(markup.includes("disabled=\"\""), true);
   assert.equal(markup.includes("GPT-5.5"), true);
   assert.equal(markup.includes("GPT-5.3-Codex-Spark"), true);
   assert.equal(markup.includes("reasoning xhigh"), true);

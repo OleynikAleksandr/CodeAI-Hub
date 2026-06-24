@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.capture-selector.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from capture workbench selector",
+  "currentTaskId": "gemini-removal.phase1.workspace-tree.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from workspace tree resolvers",
   "debt": null
 }
 ```
@@ -53,5 +53,10 @@
 
 ### Stream: Capture workbench
 
-3. [IN_PROGRESS] `gemini-removal.phase1.capture-selector.task1` Remove the disabled Gemini option and tooltip from the capture workbench provider selector (scope: `src/client/project-manager/components/capture-workbench/provider-selector.tsx`; expected commit: `refactor: drop Gemini from capture workbench selector`).
-4. [TODO] `gemini-removal.phase1.capture-selector.commit1` Git Commit: `refactor: drop Gemini from capture workbench selector` (hash: TBD)
+3. [DONE] `gemini-removal.phase1.capture-selector.task1` Remove the disabled Gemini option and tooltip from the capture workbench provider selector and update its selection-bar test (scope: `src/client/project-manager/components/capture-workbench/provider-selector.tsx, src/client/project-manager/components/capture-workbench/selection-bar.test.tsx`; expected commit: `refactor: drop Gemini from capture workbench selector`).
+4. [DONE] `gemini-removal.phase1.capture-selector.commit1` Git Commit: `refactor: drop Gemini from capture workbench selector` (hash: self)
+
+### Stream: Workspace tree provider surfaces
+
+5. [IN_PROGRESS] `gemini-removal.phase1.workspace-tree.task1` Remove the `geminiCli`/`gemini` branches from the project-manager workspace tree provider resolvers and tint (scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `refactor: drop Gemini from workspace tree resolvers`).
+6. [TODO] `gemini-removal.phase1.workspace-tree.commit1` Git Commit: `refactor: drop Gemini from workspace tree resolvers` (hash: TBD)

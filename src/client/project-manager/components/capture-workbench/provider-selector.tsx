@@ -1,14 +1,11 @@
 import React from "react";
 import { CaptureWorkbenchDomListboxSelector } from "./dom-listbox-selector";
 
-const GEMINI_TOOLTIP = "Gemini support arrives with parent Phase 2";
-
 const PROVIDER_OPTIONS = [
-  { value: "claude", label: "Claude", disabled: false },
-  { value: "codex", label: "Codex", disabled: false },
-  { value: "kimi", label: "Kimi", disabled: false },
-  { value: "glmOpenCode", label: "OpenCode", disabled: false },
-  { value: "gemini", label: "Gemini", disabled: true },
+  { value: "claude", label: "Claude" },
+  { value: "codex", label: "Codex" },
+  { value: "kimi", label: "Kimi" },
+  { value: "glmOpenCode", label: "OpenCode" },
 ] as const;
 
 interface CaptureWorkbenchProviderSelectorProps {
@@ -22,10 +19,7 @@ export const CaptureWorkbenchProviderSelector: React.FC<
   <CaptureWorkbenchDomListboxSelector
     label="Provider"
     onChange={onChange}
-    options={PROVIDER_OPTIONS.map((option) => ({
-      ...option,
-      title: option.disabled ? GEMINI_TOOLTIP : undefined,
-    }))}
+    options={PROVIDER_OPTIONS}
     tone={value === "claude" || value === "codex" ? value : undefined}
     value={value}
   />
