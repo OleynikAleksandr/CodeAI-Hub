@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.session-status.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from session status panel",
+  "currentTaskId": "gemini-removal.phase1.pm-services.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from PM provider services",
   "debt": null
 }
 ```
@@ -78,5 +78,10 @@
 
 ### Stream: Session status panel
 
-13. [IN_PROGRESS] `gemini-removal.phase1.session-status.task1` Remove Gemini from the session status panel and session id bar and their tests (scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-id-bar.tsx, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `refactor: drop Gemini from session status panel`).
-14. [TODO] `gemini-removal.phase1.session-status.commit1` Git Commit: `refactor: drop Gemini from session status panel` (hash: TBD)
+13. [DONE] `gemini-removal.phase1.session-status.task1` Remove the Gemini label-prefix and fallback-label branches from the session id bar (`status-panel.tsx` `Record<ProviderStackId,...>` button-class map and its `--gemini` CSS class deferred to the union-type/CSS phase) (scope: `src/client/ui/src/session/session-id-bar.tsx`; expected commit: `refactor: drop Gemini from session status panel`).
+14. [DONE] `gemini-removal.phase1.session-status.commit1` Git Commit: `refactor: drop Gemini from session status panel` (hash: self)
+
+### Stream: Project-manager provider services
+
+15. [IN_PROGRESS] `gemini-removal.phase1.pm-services.task1` Remove Gemini from the project-manager workflow provider resolver and provider snapshot service and the resolver test (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts`; expected commit: `refactor: drop Gemini from PM provider services`).
+16. [TODO] `gemini-removal.phase1.pm-services.commit1` Git Commit: `refactor: drop Gemini from PM provider services` (hash: TBD)

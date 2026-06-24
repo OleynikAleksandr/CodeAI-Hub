@@ -84,8 +84,6 @@ const readProviderLabelPrefix = (
       return "claude";
     case "codexCli":
       return "codex";
-    case "geminiCli":
-      return "gemini";
     case "kimiCode":
     case "glmNative":
     case "glmOpenCode":
@@ -96,9 +94,6 @@ const readProviderLabelPrefix = (
       }
       if (status.providerSummary.toLowerCase().includes("codex")) {
         return "codex";
-      }
-      if (status.providerSummary.toLowerCase().includes("gemini")) {
-        return "gemini";
       }
       if (status.providerSummary.toLowerCase().includes("kimi")) {
         return "kimi";
@@ -112,12 +107,6 @@ const buildFallbackLabels = (
   binding: SessionBindingInfo
 ): NonNullable<SessionStatusInfo["usageLimitLabels"]> => {
   switch (readProviderLabelPrefix(status, binding)) {
-    case "gemini":
-      return {
-        currentSession: "Primary",
-        currentWeekAllModels: "Secondary",
-        currentWeekSonnetOnly: "Tertiary",
-      };
     case "kimi":
       return {
         currentSession: "5h",
