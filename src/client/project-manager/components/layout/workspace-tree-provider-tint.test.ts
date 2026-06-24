@@ -54,7 +54,6 @@ test("resolver maps provider stack ids to canonical sidebar design ids", async (
   const source = await readFile(RESOLVER_PATH, "utf8");
   assert.equal(source.includes('claudeCodeCli: "claude"'), true);
   assert.equal(source.includes('codexCli: "codex"'), true);
-  assert.equal(source.includes('geminiCli: "gemini"'), true);
 });
 
 test("css scheme defines provider variables and removes legacy yellow / green from progress / active markers", async () => {
@@ -68,11 +67,6 @@ test("css scheme defines provider variables and removes legacy yellow / green fr
     source.includes('.pm-tree__item[data-provider="codex"]'),
     true,
     "codex provider scope must exist"
-  );
-  assert.equal(
-    source.includes('.pm-tree__item[data-provider="gemini"]'),
-    true,
-    "gemini provider scope must exist"
   );
   assert.equal(
     source.includes(".pm-tree__item[data-provider].pm-tree__item--progress"),

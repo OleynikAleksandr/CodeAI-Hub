@@ -5,7 +5,7 @@ import type {
   WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 
-export type SidebarProviderId = "claude" | "codex" | "gemini" | "kimi";
+export type SidebarProviderId = "claude" | "codex" | "kimi";
 
 export const PROVIDER_STACK_TO_DESIGN_ID: Record<
   ProviderStackId,
@@ -13,7 +13,6 @@ export const PROVIDER_STACK_TO_DESIGN_ID: Record<
 > = {
   claudeCodeCli: "claude",
   codexCli: "codex",
-  geminiCli: "gemini",
   glmNative: "kimi",
   kimiCode: "kimi",
   glmOpenCode: "kimi",
@@ -22,7 +21,6 @@ export const PROVIDER_STACK_TO_DESIGN_ID: Record<
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" ||
   value === "codexCli" ||
-  value === "geminiCli" ||
   value === "kimiCode" ||
   value === "glmNative" ||
   value === "glmOpenCode";

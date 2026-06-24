@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.step-resolver.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from step provider resolver",
+  "currentTaskId": "gemini-removal.phase1.css-scopes.task1",
+  "expectedCommitMessage": "refactor: drop Gemini provider CSS scopes",
   "debt": null
 }
 ```
@@ -113,5 +113,10 @@
 
 ### Stream: Step provider resolver
 
-27. [IN_PROGRESS] `gemini-removal.phase1.step-resolver.task1` Remove geminiCli from the sidebar step provider resolver (SidebarProviderId, design-id map, guard) and its tests, including the provider-tint test assertions (scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/use-step-provider-resolver.test.ts, src/client/project-manager/components/layout/workspace-tree-provider-tint.test.ts`; expected commit: `refactor: drop Gemini from step provider resolver`).
-28. [TODO] `gemini-removal.phase1.step-resolver.commit1` Git Commit: `refactor: drop Gemini from step provider resolver` (hash: TBD)
+27. [DONE] `gemini-removal.phase1.step-resolver.task1` Remove geminiCli from the sidebar step provider resolver (SidebarProviderId, design-id map, guard) and its tests, including the provider-tint test assertions (scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/use-step-provider-resolver.test.ts, src/client/project-manager/components/layout/workspace-tree-provider-tint.test.ts`; expected commit: `refactor: drop Gemini from step provider resolver`).
+28. [DONE] `gemini-removal.phase1.step-resolver.commit1` Git Commit: `refactor: drop Gemini from step provider resolver` (hash: self)
+
+### Stream: Provider tint CSS scopes
+
+29. [IN_PROGRESS] `gemini-removal.phase1.css-scopes.task1` Remove the dead Gemini provider CSS scopes (pm-tree data-provider gemini and session-status-picker geminiCli) (scope: `packages/ui/project-manager/styles.css, media/session-view.css`; expected commit: `refactor: drop Gemini provider CSS scopes`).
+30. [TODO] `gemini-removal.phase1.css-scopes.commit1` Git Commit: `refactor: drop Gemini provider CSS scopes` (hash: TBD)

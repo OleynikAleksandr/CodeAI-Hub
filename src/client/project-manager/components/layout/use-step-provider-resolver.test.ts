@@ -43,7 +43,6 @@ const baseSnapshot = (
 test("provider stack ids map to canonical design ids", () => {
   assert.equal(PROVIDER_STACK_TO_DESIGN_ID.claudeCodeCli, "claude");
   assert.equal(PROVIDER_STACK_TO_DESIGN_ID.codexCli, "codex");
-  assert.equal(PROVIDER_STACK_TO_DESIGN_ID.geminiCli, "gemini");
   assert.equal(PROVIDER_STACK_TO_DESIGN_ID.kimiCode, "kimi");
 });
 
@@ -108,7 +107,7 @@ test("description stage uses primarySession when no chain exists", () => {
     description: {
       updatedAt: "2026-04-29T00:00:00.000Z",
       primarySession: {
-        providerId: "geminiCli",
+        providerId: "claudeCodeCli",
         providerSessionId: "ps",
         jsonlPath: "/tmp/p.jsonl",
       },
@@ -117,7 +116,7 @@ test("description stage uses primarySession when no chain exists", () => {
 
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "description", "codex"),
-    "gemini"
+    "claude"
   );
 });
 
@@ -143,8 +142,8 @@ test("null snapshot returns null for any stage when no fallback is provided", ()
 
 test("null snapshot honors explicit fallback when provided", () => {
   assert.equal(
-    resolveSidebarProviderIdForStage(null, "description", "gemini"),
-    "gemini"
+    resolveSidebarProviderIdForStage(null, "description", "claude"),
+    "claude"
   );
 });
 
@@ -221,7 +220,7 @@ test("idle diagram_modules does NOT inherit from virtual_simulation chain", () =
           segments: [
             {
               sessionId: "s1",
-              providerId: "geminiCli",
+              providerId: "codexCli",
               providerSessionId: "ps1",
               createdAt: "2026-04-29T00:30:00.000Z",
             },
@@ -234,7 +233,7 @@ test("idle diagram_modules does NOT inherit from virtual_simulation chain", () =
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
     null,
-    "DM without own chain stays neutral even when VS has Gemini"
+    "DM without own chain stays neutral even when VS has Codex"
   );
 });
 
