@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.ext-msg-handler.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from settings message handler",
+  "currentTaskId": "gemini-removal.phase2.core-usage-limits.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from core usage limits",
   "debt": null
 }
 ```
@@ -145,5 +145,10 @@
 
 ### Stream: Extension settings message handler
 
-39. [IN_PROGRESS] `gemini-removal.phase2.ext-msg-handler.task1` Remove the gemini union member and branch from the extension settings message handler (scope: `src/extension-module/message-handlers/settings-message-handler.ts`; expected commit: `refactor: drop Gemini from settings message handler`).
-40. [TODO] `gemini-removal.phase2.ext-msg-handler.commit1` Git Commit: `refactor: drop Gemini from settings message handler` (hash: TBD)
+39. [DONE] `gemini-removal.phase2.ext-msg-handler.task1` Remove the gemini union member and branch from the extension settings message handler (scope: `src/extension-module/message-handlers/settings-message-handler.ts`; expected commit: `refactor: drop Gemini from settings message handler`).
+40. [DONE] `gemini-removal.phase2.ext-msg-handler.commit1` Git Commit: `refactor: drop Gemini from settings message handler` (hash: self)
+
+### Stream: Core usage limits
+
+41. [IN_PROGRESS] `gemini-removal.phase2.core-usage-limits.task1` Remove the core Gemini usage-limits provider directory and its references in the usage-limits types and bridge factory (scope: `packages/core/src/provider-usage-limits/providers/gemini/**, packages/core/src/provider-usage-limits/provider-usage-limits-types.ts, packages/core/src/provider-registry/provider-usage-limits-bridge-factory.ts`; expected commit: `refactor: drop Gemini from core usage limits`).
+42. [TODO] `gemini-removal.phase2.core-usage-limits.commit1` Git Commit: `refactor: drop Gemini from core usage limits` (hash: TBD)

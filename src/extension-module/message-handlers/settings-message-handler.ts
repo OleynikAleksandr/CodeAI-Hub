@@ -31,7 +31,7 @@ export type SettingsMessage =
   | { type: "settings:reset" }
   | {
       type: "settings:update-provider";
-      provider: "claude" | "codex" | "gemini";
+      provider: "claude" | "codex";
       target: "cli" | "sdk" | "core";
     }
   | { type: "settings:closed" };
@@ -185,14 +185,12 @@ export class SettingsMessageHandler {
   }
 
   private async handleUpdateRequest(
-    provider: "claude" | "codex" | "gemini",
+    provider: "claude" | "codex",
     target: "cli" | "sdk" | "core",
     webview: Webview
   ): Promise<void> {
     if (
-      (provider !== "claude" &&
-        provider !== "codex" &&
-        provider !== "gemini") ||
+      (provider !== "claude" && provider !== "codex") ||
       (target !== "cli" && target !== "sdk" && target !== "core")
     ) {
       return;
