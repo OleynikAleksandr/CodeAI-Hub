@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remote-bridge-provider-fixtures.task1",
-  "expectedCommitMessage": "refactor: drop Gemini remote bridge provider fixtures",
+  "currentTaskId": "gemini-removal.phase2.remote-bridge-bootstrap-fixtures.task1",
+  "expectedCommitMessage": "refactor: drop Gemini remote bridge bootstrap fixtures",
   "debt": null
 }
 ```
@@ -195,5 +195,10 @@
 
 ### Stream: Remote-bridge provider fixtures
 
-59. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-provider-fixtures.task1` Replace remaining Gemini provider fixtures in focused remote-bridge session tests with live providers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts, packages/core/src/remote-bridge/handlers/session-provider-session-resolver.test.ts`; expected commit: `refactor: drop Gemini remote bridge provider fixtures`).
-60. [TODO] `gemini-removal.phase2.remote-bridge-provider-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge provider fixtures` (hash: TBD)
+59. [DONE] `gemini-removal.phase2.remote-bridge-provider-fixtures.task1` ATOMIC fixture cascade: replace remaining Gemini provider fixtures in focused remote-bridge session tests with live providers, including the settings-fixture imported by `session-request-handler.test.ts` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts, packages/core/src/remote-bridge/handlers/session-provider-session-resolver.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.settings-fixtures.test.ts`; expected commit: `refactor: drop Gemini remote bridge provider fixtures`).
+60. [DONE] `gemini-removal.phase2.remote-bridge-provider-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge provider fixtures` (hash: self)
+
+### Stream: Remote-bridge bootstrap fixtures
+
+61. [IN_PROGRESS] `gemini-removal.phase2.remote-bridge-bootstrap-fixtures.task1` Replace Gemini bootstrap/rollover/runtime-core fixtures in remote-bridge tests with live providers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `refactor: drop Gemini remote bridge bootstrap fixtures`).
+62. [TODO] `gemini-removal.phase2.remote-bridge-bootstrap-fixtures.commit1` Git Commit: `refactor: drop Gemini remote bridge bootstrap fixtures` (hash: TBD)

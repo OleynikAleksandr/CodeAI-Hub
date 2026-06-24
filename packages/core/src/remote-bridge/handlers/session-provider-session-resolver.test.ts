@@ -22,15 +22,15 @@ test("resolveProviderSessionId returns a managed timeout for stalled session cre
 
   const result = await resolveProviderSessionId({
     adapter,
-    providerId: "geminiCli",
+    providerId: "codexCli",
     requestedProviderSessionId: null,
     startupTimeoutMs: 5,
-    workspacePath: "/tmp/gemini-timeout",
+    workspacePath: "/tmp/codex-timeout",
   });
 
   assert.deepEqual(result, {
     error:
-      "Failed to create geminiCli session: Provider geminiCli session create timed out after 5ms.",
+      "Failed to create codexCli session: Provider codexCli session create timed out after 5ms.",
   });
 });
 
@@ -50,14 +50,14 @@ test("resolveProviderSessionId closes late sessions after startup timeout", asyn
 
   const result = await resolveProviderSessionId({
     adapter,
-    providerId: "geminiCli",
+    providerId: "codexCli",
     requestedProviderSessionId: null,
     startupTimeoutMs: 5,
-    workspacePath: "/tmp/gemini-timeout",
+    workspacePath: "/tmp/codex-timeout",
   });
-  resolveLateSession("late-gemini-session");
+  resolveLateSession("late-codex-session");
   await new Promise<void>((resolve) => setImmediate(resolve));
 
   assert.ok("error" in result);
-  assert.deepEqual(closedSessions, ["late-gemini-session"]);
+  assert.deepEqual(closedSessions, ["late-codex-session"]);
 });

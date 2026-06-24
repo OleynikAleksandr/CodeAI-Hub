@@ -308,14 +308,14 @@ test("SessionRequestHandler threads Claude reasoning effort and display sync fro
 
 test("SessionRequestHandler applies localized user-message language from live settings snapshot", async () => {
   const tempDir = await mkdtemp(
-    path.join(tmpdir(), "codeai-hub-gemini-language-sync-")
+    path.join(tmpdir(), "codeai-hub-codex-language-sync-")
   );
   let restoreGlobalSettingsPath: (() => void) | undefined;
 
   try {
     const fixture = await prepareSettingsFixture(
       tempDir,
-      "gemini-runtime-language-update",
+      "codex-runtime-language-update",
       {
         general: {
           localization: {
@@ -327,8 +327,8 @@ test("SessionRequestHandler applies localized user-message language from live se
           },
         },
         providers: {
-          gemini: {
-            defaultModel: "gemini-3-pro-preview",
+          codex: {
+            defaultModel: "gpt-5.3-codex-spark",
           },
         },
       }
@@ -338,8 +338,8 @@ test("SessionRequestHandler applies localized user-message language from live se
     const harness = createHarness(fixture.config);
     const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
     const session = harness.sessionManager.createSession(
-      "geminiCli",
-      "/tmp/gemini-runtime-language-update"
+      "codexCli",
+      "/tmp/codex-runtime-language-update"
     );
 
     harness.providerRegistry.getAdapter = () => ({
@@ -353,8 +353,8 @@ test("SessionRequestHandler applies localized user-message language from live se
       },
     });
     harness.providerSessions.set(session.id, {
-      providerId: "geminiCli",
-      providerSessionId: "provider-session-gemini",
+      providerId: "codexCli",
+      providerSessionId: "provider-session-codex",
       unsubscribe: noop,
     });
 

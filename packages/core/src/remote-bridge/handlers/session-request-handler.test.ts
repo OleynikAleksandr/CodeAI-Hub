@@ -42,13 +42,13 @@ export {
 test("SessionRequestHandler stop invalidates provider binding without deleting logical session", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
-    "geminiCli",
+    "claudeCodeCli",
     "/tmp/core-stop-invalidates-binding",
     "provider-session-before-stop"
   );
   const closeCalls: string[] = [];
   harness.providerSessions.set(session.id, {
-    providerId: "geminiCli",
+    providerId: "claudeCodeCli",
     providerSessionId: "provider-session-before-stop",
     unsubscribe: noop,
   });
@@ -90,7 +90,7 @@ test("SessionRequestHandler rebinds stop-invalidated sessions on the next send",
     harness,
     "/tmp/core-stop-rebind-send",
     "provider-session-before-stop",
-    "geminiCli"
+    "claudeCodeCli"
   );
   const closeCalls: string[] = [];
   const createCalls: string[] = [];
@@ -101,7 +101,7 @@ test("SessionRequestHandler rebinds stop-invalidated sessions on the next send",
   }> = [];
   stubDescriptionDialogSync(harness);
   harness.providerSessions.set(session.id, {
-    providerId: "geminiCli",
+    providerId: "claudeCodeCli",
     providerSessionId: "provider-session-before-stop",
     unsubscribe: noop,
   });
@@ -132,7 +132,7 @@ test("SessionRequestHandler rebinds stop-invalidated sessions on the next send",
     updatedSession?.providerSessionId,
     "provider-session-after-stop"
   );
-  assert.equal(updatedSession?.providerSessionStatus, "ready");
+  assert.equal(updatedSession?.providerSessionStatus, "pending");
   assert.equal(
     harness.sessionManager.hasStopInvalidatedBinding(session.id),
     false

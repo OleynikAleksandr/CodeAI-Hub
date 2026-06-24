@@ -53,7 +53,7 @@ test("SessionRequestHandler stop clears bootstrap locks and restores send path",
     harness,
     "/tmp/core-stop-rollover-target",
     "provider-session-rollover-target",
-    "geminiCli"
+    "codexCli"
   );
   const sendCalls: Array<{
     readonly content: string;
@@ -69,7 +69,7 @@ test("SessionRequestHandler stop clears bootstrap locks and restores send path",
     "rollover-stop-unlock"
   );
   harness.providerSessions.set(targetSession.id, {
-    providerId: "geminiCli",
+    providerId: "codexCli",
     providerSessionId: "provider-session-rollover-target",
     unsubscribe: noop,
   });
