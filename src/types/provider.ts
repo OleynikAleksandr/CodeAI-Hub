@@ -1,7 +1,6 @@
 export type KnownProviderStackId =
   | "claudeCodeCli"
   | "codexCli"
-  | "geminiCli"
   | "glmNative"
   | "glmOpenCode"
   | "kimiCode"
@@ -20,7 +19,6 @@ export interface ProviderStackDescriptor {
 const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Claude",
   codexCli: "Codex",
-  geminiCli: "Gemini",
   glmNative: "GLM",
   glmOpenCode: "OpenCode",
   kimiCode: "Kimi",
@@ -33,7 +31,6 @@ export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
 const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Using your authentication Claude Code CLI",
   codexCli: "Using your authentication Codex CLI",
-  geminiCli: "Using your authentication Gemini CLI",
   glmNative: "Uses the native Z.AI GLM API",
   glmOpenCode: "Using OpenCode providers and models",
   kimiCode: "Using your authentication Kimi CLI",

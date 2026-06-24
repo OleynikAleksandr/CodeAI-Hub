@@ -14,7 +14,6 @@ export const DEFAULT_CONFIG: CoreBridgeConfig = {
 const DEFAULT_PROVIDER_IDS: ProviderStackId[] = [
   "claudeCodeCli",
   "codexCli",
-  "geminiCli",
   "localModels",
   "glmNative",
   "glmOpenCode",

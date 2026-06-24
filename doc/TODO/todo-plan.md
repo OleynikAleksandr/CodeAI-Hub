@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase1.provider-types.task1",
-  "expectedCommitMessage": "refactor: drop Gemini from provider type registry",
+  "currentTaskId": "gemini-removal.phase1.status-panel.task1",
+  "expectedCommitMessage": "refactor: drop Gemini from status panel button class",
   "debt": null
 }
 ```
@@ -103,5 +103,10 @@
 
 ### Stream: Provider type registry
 
-23. [IN_PROGRESS] `gemini-removal.phase1.provider-types.task1` Remove geminiCli from the KnownProviderStackId union and title/description maps in the shared provider type and from the core-bridge constants (scope: `src/types/provider.ts, src/client/ui/src/core-bridge/constants.ts`; expected commit: `refactor: drop Gemini from provider type registry`).
-24. [TODO] `gemini-removal.phase1.provider-types.commit1` Git Commit: `refactor: drop Gemini from provider type registry` (hash: TBD)
+23. [DONE] `gemini-removal.phase1.provider-types.task1` Remove geminiCli from the KnownProviderStackId union and title/description maps in the shared provider type and from the core-bridge constants (scope: `src/types/provider.ts, src/client/ui/src/core-bridge/constants.ts`; expected commit: `refactor: drop Gemini from provider type registry`).
+24. [DONE] `gemini-removal.phase1.provider-types.commit1` Git Commit: `refactor: drop Gemini from provider type registry` (hash: self)
+
+### Stream: Session status panel button class
+
+25. [IN_PROGRESS] `gemini-removal.phase1.status-panel.task1` Remove the geminiCli button-class map entry, rename the `--gemini` CSS class for the other providers to a neutral name, and update the status-panel test (scope: `src/client/ui/src/session/status-panel.tsx, media/session-view.css, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `refactor: drop Gemini from status panel button class`).
+26. [TODO] `gemini-removal.phase1.status-panel.commit1` Git Commit: `refactor: drop Gemini from status panel button class` (hash: TBD)
