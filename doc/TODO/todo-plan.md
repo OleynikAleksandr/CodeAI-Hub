@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.remaining-docs-residue-audit.task1",
-  "expectedCommitMessage": "chore: audit remaining Gemini docs residue",
+  "currentTaskId": "gemini-removal.phase2.docs-index-residue.task1",
+  "expectedCommitMessage": "docs: update Gemini docs index residue",
   "debt": null
 }
 ```
@@ -335,5 +335,17 @@ Audit evidence (2026-06-24):
 
 ### Stream: Remaining docs residue audit
 
-113. [IN_PROGRESS] `gemini-removal.phase2.remaining-docs-residue-audit.task1` Re-run tracked Gemini documentation residue checks after active docs cleanup and classify the remaining archive/history/planning scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit remaining Gemini docs residue`).
-114. [TODO] `gemini-removal.phase2.remaining-docs-residue-audit.commit1` Git Commit: `chore: audit remaining Gemini docs residue` (hash: TBD)
+113. [DONE] `gemini-removal.phase2.remaining-docs-residue-audit.task1` Re-run tracked Gemini documentation residue checks after active docs cleanup and classify the remaining archive/history/planning scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit remaining Gemini docs residue`).
+114. [DONE] `gemini-removal.phase2.remaining-docs-residue-audit.commit1` Git Commit: `chore: audit remaining Gemini docs residue` (hash: self)
+
+Audit evidence (2026-06-24):
+- `git grep -l -i gemini -- .` has no remaining package/source/build/localization active runtime paths; remaining hits are documentation, safety ignore rules, planning/backlog, changelog/bug history, and archives.
+- `git grep -n -i gemini -- ':!doc/TODO/todo-plan.md' ':!doc/TODO/Archive/**' ':!doc/SolidWorks-WorkFlow/Plans/Archive/**'` shows the non-archive set: `.gitignore`, `.vscodeignore`, `AGENTS.md`, `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Backlog/**`, active `Gemini_Removal_Planning_RU.md`, `Intent_Normalizer_Module_Planning_RU.md`, and `Plans/README.md`.
+- `.gitignore` / `.vscodeignore` `.gemini` and `GEMINI.md` entries are safety ignore rules for user/project residue, not shipped provider package residue.
+- `Intent_Normalizer_Module_Planning_RU.md` and `Plans/README.md` use `google/gemini-*` OpenRouter model ids as hosted benchmark candidates; this is not the removed Gemini provider module.
+- Next minimal cleanup scope: update `Docs_Index.md` so the active index no longer presents Gemini as a live provider/system doc surface while preserving explicit archive/history entries until a dedicated history cleanup decision.
+
+### Stream: Docs index residue
+
+115. [IN_PROGRESS] `gemini-removal.phase2.docs-index-residue.task1` Remove active Gemini-as-live-provider references from Docs_Index while preserving explicit archive/history records (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update Gemini docs index residue`).
+116. [TODO] `gemini-removal.phase2.docs-index-residue.commit1` Git Commit: `docs: update Gemini docs index residue` (hash: TBD)
