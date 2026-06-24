@@ -29,12 +29,5 @@ export class ProviderRegistry {
       connected: true,
       statusMessage: null,
     },
-    {
-      id: "geminiCli",
-      title: getDefaultProviderTitle("geminiCli"),
-      description: getDefaultProviderDescription("geminiCli"),
-      connected: true,
-      statusMessage: null,
-    },
   ];
 }

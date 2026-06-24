@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.supervisor-shell-registry.task1",
-  "expectedCommitMessage": "refactor: drop Gemini supervisor registry leftovers",
+  "currentTaskId": "gemini-removal.phase2.root-package-deps.task1",
+  "expectedCommitMessage": "refactor: drop Gemini root package dependencies",
   "debt": null
 }
 ```
@@ -220,5 +220,10 @@
 
 ### Stream: Supervisor and shell registry
 
-69. [IN_PROGRESS] `gemini-removal.phase2.supervisor-shell-registry.task1` Remove Gemini from supervisor runtime env wiring and the legacy shell provider registry (scope: `packages/core-supervisor/src/index.ts, src/core/providers/provider-registry.ts`; expected commit: `refactor: drop Gemini supervisor registry leftovers`).
-70. [TODO] `gemini-removal.phase2.supervisor-shell-registry.commit1` Git Commit: `refactor: drop Gemini supervisor registry leftovers` (hash: TBD)
+69. [DONE] `gemini-removal.phase2.supervisor-shell-registry.task1` Remove Gemini from supervisor runtime env wiring and the legacy shell provider registry (scope: `packages/core-supervisor/src/index.ts, src/core/providers/provider-registry.ts`; expected commit: `refactor: drop Gemini supervisor registry leftovers`).
+70. [DONE] `gemini-removal.phase2.supervisor-shell-registry.commit1` Git Commit: `refactor: drop Gemini supervisor registry leftovers` (hash: self)
+
+### Stream: Root package dependencies
+
+71. [IN_PROGRESS] `gemini-removal.phase2.root-package-deps.task1` Remove root-level Google Gemini CLI dependencies from package metadata and lockfile (scope: `package.json, package-lock.json`; expected commit: `refactor: drop Gemini root package dependencies`).
+72. [TODO] `gemini-removal.phase2.root-package-deps.commit1` Git Commit: `refactor: drop Gemini root package dependencies` (hash: TBD)

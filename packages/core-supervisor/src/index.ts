@@ -84,7 +84,6 @@ const buildCoreProcessEnv = (
     CORE_MANAGED_MODE: "cli",
     CLAUDE_WORKSPACE_PATH: defaultWorkspace,
     CODEX_WORKSPACE_PATH: defaultWorkspace,
-    GEMINI_WORKSPACE_PATH: defaultWorkspace,
     CODEX_SKIP_GIT_REPO_CHECK: "true",
   };
 
@@ -100,7 +99,6 @@ const buildCoreProcessEnv = (
     const providersRoot = path.join(home, ".codeai-hub", "providers");
     env.CLAUDE_MODULE_PATH = path.join(providersRoot, "claude", version);
     env.CODEX_MODULE_PATH = path.join(providersRoot, "codex", version);
-    env.GEMINI_MODULE_PATH = path.join(providersRoot, "gemini", version);
   }
 
   return env;
