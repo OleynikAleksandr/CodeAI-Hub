@@ -12,6 +12,7 @@
 Root `Plans/` is intentionally kept small.
 
 - `DevelopmentTree_ProductPartLaneCloseout_ImplementationPlan.md` — active strategic line for unfinished Development Tree documentation/code lane lifecycle work after the v1.2.513 retest rejected automatic Product Part lane deletion.
+- `Intent_Normalizer_Module_Planning_RU.md` — backlog planning source for a future software-product intent normalizer: a cheap/local text-in JSON-out pre-turn layer that turns vague user requests into a strict 10-field intent packet for a stronger executor-agent, with Prompt 2 benchmark notes, `google/gemini-2.5-flash-lite` as current hosted baseline, and future whitelisted system/tool profile routing.
 - `Archive/DevelopmentTree_UserGateReviewCursor_Architecture.md` — archived completed bounded refactor source closed by release `1.2.512`; stable Product Part user-gate cursor, attention marker, and immediate attention-clear behavior lives in SSOT docs, while future cluster/module/code user gates remain in the downstream refactor line.
 - `Archive/DevelopmentTree_ProductPartWorktreeLanes_ImplementationPlan.md` — archived completed implementation plan closed by release `1.2.509`; stable Product Part lane behavior lives in SSOT docs, while future cluster/module/code lanes remain in the downstream refactor line.
 - `Archive/QualityGates_RestoreIsolation_Architecture.md` — archived completed Quality Gates restore-isolation planning source; stable behavior lives in SSOT docs.
