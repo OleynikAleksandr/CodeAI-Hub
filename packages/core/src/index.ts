@@ -41,20 +41,6 @@ const appendFatalLog = (
   }
 };
 
-const PROVIDER_ABORT_SUPPRESSION_STACKS: readonly string[] = [
-  "@google/gemini-cli-core",
-];
-
-const isProviderAbortError = (error: Error): boolean => {
-  if (error.name !== "AbortError") {
-    return false;
-  }
-  const stack = error.stack ?? "";
-  return PROVIDER_ABORT_SUPPRESSION_STACKS.some((marker) =>
-    stack.includes(marker)
-  );
-};
-
 const main = async (): Promise<void> => {
   process.on("uncaughtExceptionMonitor", (error, origin) => {
     appendFatalLog("core:uncaughtExceptionMonitor", {
@@ -63,20 +49,6 @@ const main = async (): Promise<void> => {
       message: error.message,
       stack: error.stack ?? null,
     });
-  });
-
-  process.on("uncaughtException", (error) => {
-    if (error instanceof Error && isProviderAbortError(error)) {
-      appendFatalLog("core:abortError:suppressed", {
-        errorName: error.name,
-        message: error.message,
-        stack: error.stack ?? null,
-      });
-      return;
-    }
-    // Non-provider-abort uncaughtException: preserve default Node behaviour
-    // (crash after uncaughtExceptionMonitor has logged it).
-    throw error;
   });
 
   await orchestrator.start();

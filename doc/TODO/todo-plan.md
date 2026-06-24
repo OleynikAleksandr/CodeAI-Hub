@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-templates-sdk.task1",
-  "expectedCommitMessage": "refactor: drop Gemini core templates",
+  "currentTaskId": "gemini-removal.phase2.supervisor-shell-registry.task1",
+  "expectedCommitMessage": "refactor: drop Gemini supervisor registry leftovers",
   "debt": null
 }
 ```
@@ -215,5 +215,10 @@
 
 ### Stream: Core templates and SDK exclusions
 
-67. [IN_PROGRESS] `gemini-removal.phase2.core-templates-sdk.task1` Remove Gemini invocation templates and SDK exclusion leftovers from Core packaging surfaces (scope: `packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/source/model-invocation-templates.json, packages/core/src/index.ts`; expected commit: `refactor: drop Gemini core templates`).
-68. [TODO] `gemini-removal.phase2.core-templates-sdk.commit1` Git Commit: `refactor: drop Gemini core templates` (hash: TBD)
+67. [DONE] `gemini-removal.phase2.core-templates-sdk.task1` Remove Gemini invocation templates and SDK exclusion leftovers from Core packaging surfaces (scope: `packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/source/model-invocation-templates.json, packages/core/src/index.ts`; expected commit: `refactor: drop Gemini core templates`).
+68. [DONE] `gemini-removal.phase2.core-templates-sdk.commit1` Git Commit: `refactor: drop Gemini core templates` (hash: self)
+
+### Stream: Supervisor and shell registry
+
+69. [IN_PROGRESS] `gemini-removal.phase2.supervisor-shell-registry.task1` Remove Gemini from supervisor runtime env wiring and the legacy shell provider registry (scope: `packages/core-supervisor/src/index.ts, src/core/providers/provider-registry.ts`; expected commit: `refactor: drop Gemini supervisor registry leftovers`).
+70. [TODO] `gemini-removal.phase2.supervisor-shell-registry.commit1` Git Commit: `refactor: drop Gemini supervisor registry leftovers` (hash: TBD)

@@ -43,14 +43,6 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
       "IyBDbGF1ZGUgVHJhbnNsYXRpb24gU3lzdGVtIEluc3RydWN0aW9ucwoKVHJhbnNsYXRlIG9ubHkgdGhlIHByb3ZpZGVkIHJ1bnRpbWUgdGV4dC4KUHJlc2VydmUgcGxhY2Vob2xkZXJzLCBpZHMsIG1hcmtkb3duIHN0cnVjdHVyZSwgY29kZSBzcGFucywgYW5kIGxvY2FsaXphdGlvbiBtYXJrZXJzIGV4YWN0bHkuCkRvIG5vdCB1c2Ugd29ya2Zsb3ctYWdlbnQgaW5zdHJ1Y3Rpb25zIG9yIHByb2plY3Qgd29ya2Zsb3cgc3RlcHMgZm9yIHRyYW5zbGF0aW9uIGNhbGxzLgo=",
   },
   {
-    id: "gemini-workflow-agent-system",
-    audience: "internal_agent_instructions",
-    destinationRelativePath:
-      ".codeai-hub/templates/invocation/gemini/workflow-agent.system.md",
-    base64:
-      "IyBHZW1pbmkgV29ya2Zsb3cgQWdlbnQgU3lzdGVtIEluc3RydWN0aW9ucwoKVGhlc2UgaW5zdHJ1Y3Rpb25zIGFyZSB0ZXh0LW9ubHkgYWRkaXRpb25zIGZvciBDb2RlQUkgSHViIHdvcmtmbG93LWFnZW50IHNlc3Npb25zLgpUaGV5IG1heSByZWZpbmUgYWdlbnQgYmVoYXZpb3IsIGJ1dCB0aGV5IG11c3Qgbm90IGRlc2NyaWJlIG9yIHJlcXVlc3QgcHJvY2VzcyBmbGFncywgc3lzdGVtIHRvb2xzLCBzYW5kYm94LCBhcHByb3ZhbCBwb2xpY3ksIG9yIHByb3ZpZGVyIHN0YXJ0dXAgc2V0dGluZ3MuCgpBcHBseSB0aGUgYWN0aXZlIHdvcmtmbG93IHN0ZXAgaW5zdHJ1Y3Rpb25zIGFuZCBwcmVzZXJ2ZSB0aGUgY3VycmVudCBzdGVwL3Nlc3Npb24gYm91bmRhcnkuCg==",
-  },
-  {
     id: "documentation-description-step-system",
     audience: "internal_agent_instructions",
     destinationRelativePath:

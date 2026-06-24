@@ -50,19 +50,6 @@
     ]
   },
   {
-    "id": "gemini-workflow-agent-system",
-    "audience": "internal_agent_instructions",
-    "dest": ".codeai-hub/templates/invocation/gemini/workflow-agent.system.md",
-    "contentLines": [
-      "# Gemini Workflow Agent System Instructions",
-      "",
-      "These instructions are text-only additions for CodeAI Hub workflow-agent sessions.",
-      "They may refine agent behavior, but they must not describe or request process flags, system tools, sandbox, approval policy, or provider startup settings.",
-      "",
-      "Apply the active workflow step instructions and preserve the current step/session boundary."
-    ]
-  },
-  {
     "id": "documentation-description-step-system",
     "audience": "internal_agent_instructions",
     "dest": ".codeai-hub/templates/workflow_steps/documentation/description.system.md",
