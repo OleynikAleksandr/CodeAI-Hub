@@ -121,7 +121,7 @@ const parseJsonlRecords = (jsonl: string): readonly Record<string, unknown>[] =>
 
 test("NativeRequestCaptureFacade returns provider_not_supported for missing adapter method", async () => {
   assert.equal(isNativeRequestCaptureProviderId("claude"), true);
-  assert.equal(isNativeRequestCaptureProviderId("gemini"), false);
+  assert.equal(isNativeRequestCaptureProviderId("removed-provider"), false);
   const facade = new NativeRequestCaptureFacade({
     providerRegistry: {
       getAdapter: () => createNoopAdapter(),

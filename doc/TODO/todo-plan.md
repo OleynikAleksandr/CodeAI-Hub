@@ -10,8 +10,8 @@
   "baseHead": "6d7826ade",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Gemini_Removal_Planning_RU.md",
-  "currentTaskId": "gemini-removal.phase2.core-negative-gemini-fixtures.task1",
-  "expectedCommitMessage": "refactor: drop Gemini core negative fixtures",
+  "currentTaskId": "gemini-removal.phase2.residue-audit.task1",
+  "expectedCommitMessage": "chore: audit Gemini removal residue",
   "debt": null
 }
 ```
@@ -265,5 +265,10 @@
 
 ### Stream: Core negative Gemini fixtures
 
-87. [IN_PROGRESS] `gemini-removal.phase2.core-negative-gemini-fixtures.task1` Replace leftover Gemini invalid-provider fixtures in Core tests with provider-neutral removed-provider examples (scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts, packages/core/src/remote-bridge/handlers/settings-provider-auto-update-service.test.ts`; expected commit: `refactor: drop Gemini core negative fixtures`).
-88. [TODO] `gemini-removal.phase2.core-negative-gemini-fixtures.commit1` Git Commit: `refactor: drop Gemini core negative fixtures` (hash: TBD)
+87. [DONE] `gemini-removal.phase2.core-negative-gemini-fixtures.task1` Replace leftover Gemini invalid-provider fixtures in Core tests with provider-neutral removed-provider examples (scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts, packages/core/src/remote-bridge/handlers/settings-provider-auto-update-service.test.ts`; expected commit: `refactor: drop Gemini core negative fixtures`).
+88. [DONE] `gemini-removal.phase2.core-negative-gemini-fixtures.commit1` Git Commit: `refactor: drop Gemini core negative fixtures` (hash: self)
+
+### Stream: Gemini removal residue audit
+
+89. [IN_PROGRESS] `gemini-removal.phase2.residue-audit.task1` Run repository Gemini residue checks after code/package cleanup and record the next tracked cleanup scope (scope: `doc/TODO/todo-plan.md`; expected commit: `chore: audit Gemini removal residue`).
+90. [TODO] `gemini-removal.phase2.residue-audit.commit1` Git Commit: `chore: audit Gemini removal residue` (hash: TBD)

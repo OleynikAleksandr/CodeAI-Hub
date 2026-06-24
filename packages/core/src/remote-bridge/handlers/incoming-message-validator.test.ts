@@ -53,7 +53,7 @@ test("parseIncomingClientMessage rejects malformed session speech payloads", () 
   );
 });
 
-test("parseIncomingClientMessage rejects removed Gemini provider updates", () => {
+test("parseIncomingClientMessage rejects removed provider updates", () => {
   assert.equal(
     parse({
       type: "settings:update-provider",
@@ -64,7 +64,7 @@ test("parseIncomingClientMessage rejects removed Gemini provider updates", () =>
   assert.equal(
     parse({
       type: "settings:update-provider",
-      payload: { provider: "gemini", target: "cli" },
+      payload: { provider: "removed-provider", target: "cli" },
     }).ok,
     false
   );
