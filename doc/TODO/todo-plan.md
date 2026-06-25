@@ -5,11 +5,11 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "NONE",
-  "planId": "local-models-prompt-controls-2026-06-24",
+  "planId": "translation-model-benchmark-2026-06-25",
   "branch": "main",
-  "baseHead": "6cd9e8b9d",
+  "baseHead": "c665f8a97",
   "lastRecordedCommit": "self",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/LocalModels_SystemPrompt_Override_Planning.md",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
   "currentTaskId": null,
   "expectedCommitMessage": null,
   "debt": null
@@ -20,8 +20,8 @@
 ## No Active Execution Scope
 
 - **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-local-models-prompt-controls-2026-06-24.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/LocalModels_SystemPrompt_Override_Planning.md`
+- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-translation-model-benchmark-2026-06-25.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md`
 - **Last recorded commit:** `self`
 
 ## Start Next Scope
