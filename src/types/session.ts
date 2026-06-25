@@ -3,6 +3,7 @@ import type { ProviderStackId } from "./provider";
 export type SessionMessageRole = "system" | "assistant" | "user" | "thinking";
 
 export type SessionMessageEmissionVisibility = "visible" | "hidden";
+export type SessionMessageTranslationState = "pending";
 
 export interface SessionMessage {
   readonly content: string;
@@ -11,6 +12,7 @@ export interface SessionMessage {
   readonly localizedContent?: string;
   readonly role: SessionMessageRole;
   readonly tag?: string;
+  readonly translationState?: SessionMessageTranslationState;
   readonly visibilityAtEmission?: SessionMessageEmissionVisibility;
 }
 

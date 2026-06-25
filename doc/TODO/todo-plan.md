@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase2.stream1.task1",
-  "expectedCommitMessage": "feat: add reasoning translation pending state",
+  "currentTaskId": "reasoning-reveal.phase2.stream2.task1",
+  "expectedCommitMessage": "feat: mark visible reasoning pending translation",
   "debt": null
 }
 ```
@@ -48,12 +48,12 @@
 
 ### Stream: Shared Message Contract
 
-3. [IN_PROGRESS] `reasoning-reveal.phase2.stream1.task1` Add a minimal session message field for pending translation state and normalize it through the browser bridge (scope: `src/types/session.ts, src/client/ui/src/core-bridge/types.ts, src/client/ui/src/core-bridge/normalizers.ts`; expected commit: `feat: add reasoning translation pending state`).
-4. [TODO] Git Commit: `feat: add reasoning translation pending state` (hash: TBD)
+3. [DONE] `reasoning-reveal.phase2.stream1.task1` Add a minimal session message field for pending translation state and normalize it through the browser bridge (scope: `src/types/session.ts, src/client/ui/src/core-bridge/types.ts, src/client/ui/src/core-bridge/normalizers.ts`; expected commit: `feat: add reasoning translation pending state`).
+4. [DONE] Git Commit: `feat: add reasoning translation pending state` (hash: self)
 
 ### Stream: Core Policy Wiring
 
-5. [TODO] `reasoning-reveal.phase2.stream2.task1` Mark visible reasoning messages as pending only when Core policy will translate them (scope: `packages/core/src/session-manager/index.ts, packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`; expected commit: `feat: mark visible reasoning pending translation`).
+5. [IN_PROGRESS] `reasoning-reveal.phase2.stream2.task1` Mark visible reasoning messages as pending only when Core policy will translate them (scope: `packages/core/src/session-manager/index.ts, packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`; expected commit: `feat: mark visible reasoning pending translation`).
 6. [TODO] Git Commit: `feat: mark visible reasoning pending translation` (hash: TBD)
 
 ## Phase 3 - Session UI Translation-First Reveal (owner: Codex, updated: 2026-06-25)

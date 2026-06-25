@@ -130,6 +130,10 @@ export const sanitizeMessage = (
     message.visibilityAtEmission === "visible"
       ? message.visibilityAtEmission
       : undefined;
+  const translationState =
+    message.translationState === "pending"
+      ? message.translationState
+      : undefined;
 
   return {
     id: message.id,
@@ -141,6 +145,7 @@ export const sanitizeMessage = (
       ? { localizedContent: message.localizedContent }
       : {}),
     ...(typeof message.tag === "string" ? { tag: message.tag } : {}),
+    ...(translationState ? { translationState } : {}),
     ...(visibilityAtEmission ? { visibilityAtEmission } : {}),
   };
 };

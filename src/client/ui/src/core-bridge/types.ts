@@ -6,6 +6,7 @@ import type {
   SessionMessage,
   SessionMessageEmissionVisibility,
   SessionMessageRole,
+  SessionMessageTranslationState,
   SessionModelBindingInfo,
   SessionRecord,
 } from "../../../../types/session";
@@ -31,6 +32,7 @@ export interface ServerSessionMessage {
   readonly sessionId?: string;
   readonly tag?: string;
   readonly timestamp?: string;
+  readonly translationState?: SessionMessageTranslationState;
   readonly visibilityAtEmission?: SessionMessageEmissionVisibility;
 }
 
