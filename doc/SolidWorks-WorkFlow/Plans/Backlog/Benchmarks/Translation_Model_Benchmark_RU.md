@@ -6,6 +6,33 @@
 
 Назначение: выбрать быстрые и качественные модели для модуля локализации, прежде всего для live-перевода видимых provider `Thinking` / `Reasoning` блоков с английского на русский.
 
+## Benchmark Script
+
+Primary runner: `scripts/benchmarks/translation-model-benchmark-runner.mjs`.
+
+Dry run / shape check:
+
+```bash
+node scripts/benchmarks/translation-model-benchmark-runner.mjs \
+  --openrouter-model TODO_OPENROUTER_MODEL \
+  --local-model lmstudio:TODO_LOCAL_MODEL \
+  --case-limit 2
+```
+
+Typical live run:
+
+```bash
+OPENROUTER_API_KEY=... node scripts/benchmarks/translation-model-benchmark-runner.mjs \
+  --live \
+  --openrouter-model <openrouter/model-slug> \
+  --local-model lmstudio:<modelKey> \
+  --iterations 3 \
+  --timeout-ms 30000 \
+  --out doc/tmp/prototypes/translation-model-benchmark-live.md
+```
+
+The script writes a Markdown report plus raw JSON payload to the output file. Its automated score covers protected terms, structure, and output discipline only; semantic fidelity and Russian style stay manual review fields.
+
 ## 1. Цель
 
 Проверить две provider-линии:
