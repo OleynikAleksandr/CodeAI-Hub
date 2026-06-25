@@ -2,7 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.607** (Stable Gemini Flash Lite Localization Engine)
+**Current Release — v1.2.608** (Dynamic Live Reasoning Glossary Protection)
+
+This release applies the localization glossary marker-protection mechanism to
+live reasoning translation through the dedicated OpenRouter Gemini Flash-Lite
+engine.
+
+Before each live translation request, Core reads the current user
+`do-not-translate-terms.txt` glossary and the bundled global preserve glossary,
+replaces matched terms with `[[CAIHUB_TERM_N]]` markers, sends the protected
+text to Gemini, then restores the original terms after the model responds. The
+translation prompt also says that glossary terms are a non-exhaustive priority
+reminder, so Gemini must still preserve other product, workflow, role, mode,
+setting, command, file, provider, model, API, code, project, and technical
+terms.
+
+Retest focus: install the VSIX, select `OpenRouter · Gemini 2.5 Flash Lite` as
+the Reasoning Translation Engine, add terms such as `shell`,
+`description agent`, and `workflow` to the editable glossary, trigger a new GLM
+reasoning translation, and confirm those terms remain in English without
+rebuilding after the glossary edit.
+
+**Previous Release — v1.2.607** (Stable Gemini Flash Lite Localization Engine)
 
 This release switches the OpenRouter localization translation engine from the
 preview `google/gemini-2.5-flash-lite-preview-09-2025` slug to the stable

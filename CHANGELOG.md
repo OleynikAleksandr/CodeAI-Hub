@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.608] - 2026-06-25
+### Changed
+- **Live reasoning translation now hard-protects glossary terms.** The
+  dedicated OpenRouter Gemini Flash-Lite translation engine reads the current
+  user `do-not-translate-terms.txt` glossary for each request, protects matched
+  terms with `[[CAIHUB_TERM_N]]` markers, and restores the original terms after
+  the model response.
+- **The Gemini translation prompt treats glossary terms as non-exhaustive.**
+  The prompt now states that glossary terms are an additional priority reminder,
+  not the complete set of English product, workflow, role, mode, setting,
+  command, file, provider, model, API, code, project, or technical terms to
+  preserve.
+
+### Verification
+- `node --test --import tsx packages/core/src/translation/core-translation-facade-factory.test.ts packages/core/src/translation/open-router-translation-glossary-protection.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.607] - 2026-06-25
 ### Changed
 - **Gemini localization now uses the stable Flash-Lite model.** The dedicated
