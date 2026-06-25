@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.612] - 2026-06-25
+### Fixed
+- **Project Manager dialog history preserves pending reasoning translation
+  state.** Pending Thinking/Reasoning messages persisted in unified-session
+  history now replay with `translationState: "pending"`, so history refresh no
+  longer treats untranslated English reasoning as ordinary visible text.
+- **Translated reasoning reveal no longer clears on growing batches.** The
+  reveal keeps the longest already-visible common prefix and resumes from the
+  new suffix when additional translated blocks arrive.
+
+### Verification
+- `node --test --import tsx src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts src/client/ui/src/session/translated-text-reveal.test.ts`
+- `npm run typecheck:webview`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.611] - 2026-06-25
 ### Fixed
 - **Pending reasoning no longer leaks English source through merged bubbles.**

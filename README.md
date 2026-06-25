@@ -2,7 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.611** (Stable Reasoning Translation Reveal)
+**Current Release — v1.2.612** (Deep Reasoning Translation Reveal Fix)
+
+This hotfix closes the Project Manager dialog-history path for the
+translation-first Thinking/Reasoning reveal.
+
+Pending reasoning state is now persisted through unified-session history and
+preserved when Project Manager converts dialog history back into UI messages,
+so a refreshed dialog does not briefly render untranslated English reasoning as
+ordinary visible text.
+
+The translated reveal also keeps the longest already-visible common prefix when
+new translated blocks arrive. If a later batch differs by whitespace, newline,
+or a rewritten tail, the Thinking bubble keeps the stable Russian prefix and
+continues revealing only the remaining suffix instead of clearing and replaying
+from the first paragraph.
+
+Retest focus: select `OpenRouter · Gemini 2.5 Flash Lite` as the Reasoning
+Translation Engine, trigger a multi-block GLM/OpenCode reasoning turn, and
+confirm the Thinking bubble never flashes English source and does not restart
+the word-by-word reveal when each new translated block arrives.
+
+**Previous Release — v1.2.611** (Stable Reasoning Translation Reveal)
 
 This hotfix stabilizes the translation-first Thinking/Reasoning reveal added in
 v1.2.610.
@@ -12,11 +33,6 @@ projection for as long as any merged segment is still pending translation. When
 later translated blocks arrive, the already visible Russian text remains a
 stable prefix and the reveal continues from the new suffix instead of restarting
 from the first block.
-
-Retest focus: select `OpenRouter · Gemini 2.5 Flash Lite` as the Reasoning
-Translation Engine, trigger a multi-block GLM/OpenCode reasoning turn, and
-confirm the Thinking bubble never flashes English source and does not restart
-the word-by-word reveal when each new translated block arrives.
 
 **Previous Release — v1.2.610** (Translation-First Reasoning Reveal)
 

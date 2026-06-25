@@ -10,7 +10,7 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase7.stream4.task1",
+  "currentTaskId": "reasoning-reveal.phase7.stream4.task2",
   "expectedCommitMessage": "chore: build 1.2.612 release",
   "debt": null
 }
@@ -129,17 +129,22 @@
 29. [DONE] `reasoning-reveal.phase7.stream3.task1` Make translated reasoning reveal keep the longest already-visible prefix when translated content grows, instead of clearing and replaying the full text (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: keep translated reasoning reveal prefix stable`).
 30. [DONE] Git Commit: `fix: keep translated reasoning reveal prefix stable` (hash: self)
 
+### Stream: Bugfix Release Metadata
+
+31. [DONE] `reasoning-reveal.phase7.stream4.task1` Prepare README and CHANGELOG for release 1.2.612 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.612 release notes`).
+32. [DONE] Git Commit: `docs: prepare 1.2.612 release notes` (hash: self)
+
 ### Stream: Bugfix Release Build
 
-31. [IN_PROGRESS] `reasoning-reveal.phase7.stream4.task1` Build the next bugfix release only after explicit release-build confirmation (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.612 release`).
-32. [TODO] Git Commit: `chore: build 1.2.612 release` (hash: TBD)
+33. [IN_PROGRESS] `reasoning-reveal.phase7.stream4.task2` Build the next bugfix release only after explicit release-build confirmation (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.612 release`).
+34. [TODO] Git Commit: `chore: build 1.2.612 release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Retest
 
-33. [TODO] `reasoning-reveal.phase7.stream5.task1` User installs the next bugfix release and verifies reasoning never flashes English source and never restarts reveal from the first paragraph as new translated blocks arrive (scope: `user workflow`).
+35. [TODO] `reasoning-reveal.phase7.stream5.task1` User installs the next bugfix release and verifies reasoning never flashes English source and never restarts reveal from the first paragraph as new translated blocks arrive (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
-34. [TODO] `reasoning-reveal.phase5.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close reasoning translation reveal scope`).
-35. [TODO] Git Commit: `docs: close reasoning translation reveal scope` (hash: TBD)
-36. [TODO] `reasoning-reveal.phase5.stream4.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+36. [TODO] `reasoning-reveal.phase5.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close reasoning translation reveal scope`).
+37. [TODO] Git Commit: `docs: close reasoning translation reveal scope` (hash: TBD)
+38. [TODO] `reasoning-reveal.phase5.stream4.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
