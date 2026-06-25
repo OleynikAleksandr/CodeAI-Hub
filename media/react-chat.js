@@ -8576,6 +8576,7 @@
     }
     const normalizedContent = role === "assistant" ? extractIdeaCollectorResponse(message.content) ?? message.content : message.content;
     const visibilityAtEmission = message.visibilityAtEmission === "hidden" || message.visibilityAtEmission === "visible" ? message.visibilityAtEmission : void 0;
+    const translationState = message.translationState === "pending" ? message.translationState : void 0;
     return {
       id: message.id,
       role,
@@ -8583,6 +8584,7 @@
       createdAt: toNumberTimestamp(message.timestamp),
       ...typeof message.localizedContent === "string" && message.localizedContent.trim().length > 0 ? { localizedContent: message.localizedContent } : {},
       ...typeof message.tag === "string" ? { tag: message.tag } : {},
+      ...translationState ? { translationState } : {},
       ...visibilityAtEmission ? { visibilityAtEmission } : {}
     };
   };

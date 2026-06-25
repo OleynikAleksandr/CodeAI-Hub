@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase5.stream2.task1",
-  "expectedCommitMessage": "chore: build 1.2.610 release",
+  "currentTaskId": "reasoning-reveal.phase5.stream3.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -84,12 +84,12 @@
 
 ### Stream: Release Build
 
-15. [IN_PROGRESS] `reasoning-reveal.phase5.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.610 release`).
-16. [TODO] Git Commit: `chore: build 1.2.610 release` (hash: TBD)
+15. [DONE] `reasoning-reveal.phase5.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.610 release`).
+16. [DONE] Git Commit: `chore: build 1.2.610 release` (hash: self)
 
 ### Stream: User Visual Acceptance Testing
 
-17. [TODO] `reasoning-reveal.phase5.stream3.task1` User installs release 1.2.610 and verifies translated reasoning appears translation-first with progressive reveal (scope: `user workflow`).
+17. [IN_PROGRESS] `reasoning-reveal.phase5.stream3.task1` User installs release 1.2.610 and verifies translated reasoning appears translation-first with progressive reveal (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
