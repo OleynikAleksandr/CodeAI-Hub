@@ -102,7 +102,7 @@ export const DEFAULT_ENGINE_LANGUAGE_CATALOGS: readonly LocalizationEngineLangua
       languages: GOOGLE_GTX_LANGUAGES,
     },
     {
-      engineId: "google/gemini-2.5-flash-lite-preview-09-2025",
+      engineId: "google/gemini-2.5-flash-lite",
       languages: GOOGLE_GTX_LANGUAGES,
     },
   ];

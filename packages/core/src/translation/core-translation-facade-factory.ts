@@ -23,8 +23,7 @@ import {
   CodexAppServerTranslationEngine,
 } from "./codex-app-server-translation-engine";
 
-const GEMINI_FLASH_LITE_TRANSLATION_ENGINE_ID =
-  "google/gemini-2.5-flash-lite-preview-09-2025";
+const GEMINI_FLASH_LITE_TRANSLATION_ENGINE_ID = "google/gemini-2.5-flash-lite";
 
 export interface CoreTranslationFacadeFactoryOptions {
   readonly claudeHaikuTranslationService?: ClaudeHaikuTranslationService;
