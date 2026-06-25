@@ -25,8 +25,11 @@ import {
 } from "./codex-app-server-translation-engine";
 import {
   buildCoreTranslationEngines,
+  buildOpenRouterTranslationPrompt,
   createCoreTranslationFacade,
+  GeminiFlashLiteOpenRouterTranslationEngine,
 } from "./core-translation-facade-factory";
+import type { ProtectedOpenRouterTranslationText } from "./open-router-translation-glossary-protection";
 
 const createNormalizedRequest = (): NormalizedTranslationRequest => ({
   category: "generic",
@@ -54,6 +57,15 @@ const createCodexRequest = (): NormalizedTranslationRequest => ({
   sourceLanguage: "en",
   targetLanguage: "es",
   text: "Settings",
+  timeoutMs: 5000,
+});
+
+const createGeminiRequest = (): NormalizedTranslationRequest => ({
+  category: "reasoning",
+  engineId: "google/gemini-2.5-flash-lite",
+  sourceLanguage: "en",
+  targetLanguage: "ru",
+  text: "Use shell in Project Manager.",
   timeoutMs: 5000,
 });
 
@@ -158,6 +170,84 @@ test("CodexAppServerTranslationEngine maps provider-owned service text into Tran
   assert.equal(result.engine, CODEX_GPT_5_4_MINI_TRANSLATION_ENGINE_ID);
   assert.equal(result.status, "translated");
   assert.equal(result.finalText, "Configuracion");
+});
+
+test("buildOpenRouterTranslationPrompt treats glossary terms as non-exhaustive", () => {
+  const prompt = buildOpenRouterTranslationPrompt(createGeminiRequest(), {
+    protectedTerms: ["shell"],
+    restore: (translatedText) => translatedText,
+    text: "Use [[CAIHUB_TERM_0]] in Project Manager.",
+  });
+
+  assert.equal(prompt.includes("non-exhaustive"), true);
+  assert.equal(prompt.includes("not the complete set"), true);
+  assert.equal(
+    prompt.includes("must also preserve any other English term"),
+    true
+  );
+  assert.equal(prompt.includes("[[CAIHUB_TERM_N]] glossary markers"), true);
+  assert.equal(prompt.includes("- shell"), true);
+  assert.equal(
+    prompt.includes("Use [[CAIHUB_TERM_0]] in Project Manager."),
+    true
+  );
+});
+
+test("GeminiFlashLiteOpenRouterTranslationEngine restores protected glossary markers", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalOpenRouterApiKey = process.env.OPENROUTER_API_KEY;
+  const prompts: string[] = [];
+  const protectedText: ProtectedOpenRouterTranslationText = {
+    protectedTerms: ["shell"],
+    restore: (translatedText) =>
+      translatedText.replace("[[CAIHUB_TERM_0]]", "shell"),
+    text: "Use [[CAIHUB_TERM_0]] in Project Manager.",
+  };
+  globalThis.fetch = ((_input, init) => {
+    const body = JSON.parse(String(init?.body)) as {
+      readonly messages?: readonly { readonly content?: string }[];
+      readonly model?: string;
+    };
+    assert.equal(body.model, "google/gemini-2.5-flash-lite");
+    prompts.push(body.messages?.[1]?.content ?? "");
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({
+          choices: [
+            {
+              message: {
+                content: "Используйте [[CAIHUB_TERM_0]] в Project Manager.",
+              },
+            },
+          ],
+        }),
+        { status: 200 }
+      )
+    );
+  }) as typeof fetch;
+  process.env.OPENROUTER_API_KEY = "test-openrouter-key";
+  try {
+    const engine = new GeminiFlashLiteOpenRouterTranslationEngine({
+      glossaryProtection: {
+        protect: () => Promise.resolve(protectedText),
+      },
+    });
+
+    const result = await engine.translate(createGeminiRequest());
+
+    assert.equal(result.status, "translated");
+    assert.equal(result.finalText, "Используйте shell в Project Manager.");
+    assert.equal(result.originalText, "Use shell in Project Manager.");
+    assert.equal(prompts.length, 1);
+    assert.equal(prompts[0]?.includes("Use [[CAIHUB_TERM_0]]"), true);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalOpenRouterApiKey === undefined) {
+      Reflect.deleteProperty(process.env, "OPENROUTER_API_KEY");
+    } else {
+      process.env.OPENROUTER_API_KEY = originalOpenRouterApiKey;
+    }
+  }
 });
 
 test("CodexAppServerTranslationEngine falls back to shared codex exec engine when app-server returns fallback", async () => {

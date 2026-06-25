@@ -22,6 +22,10 @@ import {
   CODEX_SPARK_TRANSLATION_MODEL_ID,
   CodexAppServerTranslationEngine,
 } from "./codex-app-server-translation-engine";
+import {
+  OpenRouterTranslationGlossaryProtection,
+  type ProtectedOpenRouterTranslationText,
+} from "./open-router-translation-glossary-protection";
 
 const GEMINI_FLASH_LITE_TRANSLATION_ENGINE_ID = "google/gemini-2.5-flash-lite";
 
@@ -98,25 +102,59 @@ const resolveOpenRouterChatUrl = (
   return baseUrl ? `${baseUrl}/chat/completions` : OPENROUTER_CHAT_URL;
 };
 
-const buildOpenRouterTranslationPrompt = (
-  request: NormalizedTranslationRequest
+interface OpenRouterTranslationGlossaryProtectionContract {
+  protect(text: string): Promise<ProtectedOpenRouterTranslationText>;
+}
+
+const buildProtectedTermLines = (
+  protectedTerms: readonly string[]
+): readonly string[] =>
+  protectedTerms.length === 0
+    ? []
+    : [
+        "Additional protected terms from the glossary are non-exhaustive and not the complete set of terms to preserve:",
+        ...protectedTerms.map((term) => `- ${term}`),
+        "",
+      ];
+
+export const buildOpenRouterTranslationPrompt = (
+  request: NormalizedTranslationRequest,
+  protectedText: ProtectedOpenRouterTranslationText
 ): string =>
   [
     "Your current task is translation only.",
     `Translate the supplied English text to the language identified by code ${request.targetLanguage}.`,
     "Return only the translated text. Do not add explanations, labels, quotes, or Markdown fences unless they already exist in the source text.",
-    "Preserve placeholders, ICU tokens, Markdown, code spans, JSON keys, file paths, API routes, CLI commands, URLs, model IDs, provider names, product names, and protected technical terms exactly.",
+    "Translate explanatory prose only.",
+    "Preserve English terms exactly when they are product names, workflow terms, agent roles, UI labels, modes, settings, commands, file names, provider names, model IDs, APIs, code identifiers, project names, or technical/domain terms.",
+    "The glossary list below is an additional priority reminder, not the complete set of terms to preserve. You must also preserve any other English term that appears to be a product, workflow, role, mode, setting, command, file, provider, model, API, code identifier, project name, or technical/domain term.",
+    "When unsure whether a phrase is a term or normal prose, keep the English phrase unchanged.",
+    "Preserve placeholders, ICU tokens, Markdown, code spans, JSON keys, file paths, API routes, CLI commands, URLs, model IDs, provider names, product names, protected technical terms, and [[CAIHUB_TERM_N]] glossary markers exactly.",
     "If the input is structured with __CODEAI_HUB_LOCALIZATION_ENTRY__ markers, keep every marker exactly unchanged and translate only the text between markers.",
+    ...buildProtectedTermLines(protectedText.protectedTerms),
     "",
     "Text to translate:",
-    request.text,
+    protectedText.text,
   ].join("\n");
 
-class GeminiFlashLiteOpenRouterTranslationEngine implements TranslationEngine {
+export class GeminiFlashLiteOpenRouterTranslationEngine
+  implements TranslationEngine
+{
   readonly id = GEMINI_FLASH_LITE_TRANSLATION_ENGINE_ID;
+  private readonly glossaryProtection: OpenRouterTranslationGlossaryProtectionContract;
   private readonly reporter?: TranslationReporter;
 
-  constructor(options: { readonly reporter?: TranslationReporter } = {}) {
+  constructor(
+    options: {
+      readonly glossaryProtection?: OpenRouterTranslationGlossaryProtectionContract;
+      readonly reporter?: TranslationReporter;
+    } = {}
+  ) {
+    this.glossaryProtection =
+      options.glossaryProtection ??
+      new OpenRouterTranslationGlossaryProtection({
+        reporter: options.reporter,
+      });
     this.reporter = options.reporter;
   }
 
@@ -137,6 +175,7 @@ class GeminiFlashLiteOpenRouterTranslationEngine implements TranslationEngine {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), request.timeoutMs);
     try {
+      const protectedText = await this.glossaryProtection.protect(request.text);
       const response = await fetch(resolveOpenRouterChatUrl(snapshot), {
         body: JSON.stringify({
           max_tokens: 2048,
@@ -147,7 +186,7 @@ class GeminiFlashLiteOpenRouterTranslationEngine implements TranslationEngine {
               role: "system",
             },
             {
-              content: buildOpenRouterTranslationPrompt(request),
+              content: buildOpenRouterTranslationPrompt(request, protectedText),
               role: "user",
             },
           ],
@@ -182,7 +221,11 @@ class GeminiFlashLiteOpenRouterTranslationEngine implements TranslationEngine {
         payload.choices?.[0]?.message?.content
       );
       return translated
-        ? createTranslatedResult(request, this.id, translated)
+        ? createTranslatedResult(
+            request,
+            this.id,
+            protectedText.restore(translated)
+          )
         : createFallbackResult(request, this.id, "openrouter_empty_response");
     } catch (error) {
       this.reporter?.warn?.("OpenRouter translation request threw", {

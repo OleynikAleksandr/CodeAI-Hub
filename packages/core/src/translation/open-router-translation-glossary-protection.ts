@@ -30,7 +30,8 @@ export interface ProtectedOpenRouterTranslationText {
   readonly text: string;
 }
 
-const LIVE_TRANSLATION_GLOSSARY_CATEGORY: LocalizationCategoryId = "ui_labels";
+const LIVE_TRANSLATION_GLOSSARY_CATEGORY: LocalizationCategoryId =
+  "user_guidance";
 
 const createIdentityProtection = (
   text: string

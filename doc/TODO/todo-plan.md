@@ -10,8 +10,8 @@
   "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": "release-1.2.608.phase2.stream2.task1",
-  "expectedCommitMessage": "fix: apply live glossary protection to Gemini translation",
+  "currentTaskId": "release-1.2.608.phase2.stream3.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.608 release notes",
   "debt": null
 }
 ```
@@ -100,12 +100,12 @@
 
 ### Stream: Gemini Prompt Wiring
 
-21. [IN_PROGRESS] `release-1.2.608.phase2.stream2.task1` Wire Gemini OpenRouter translation through live glossary protection and non-exhaustive term instructions (scope: `packages/core/src/translation/core-translation-facade-factory.ts, packages/core/src/translation/core-translation-facade-factory.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply live glossary protection to Gemini translation`).
-22. [TODO] Git Commit: `fix: apply live glossary protection to Gemini translation` (hash: TBD)
+21. [DONE] `release-1.2.608.phase2.stream2.task1` Wire Gemini OpenRouter translation through live glossary protection and non-exhaustive term instructions (scope: `packages/core/src/translation/core-translation-facade-factory.ts, packages/core/src/translation/core-translation-facade-factory.test.ts, packages/core/src/translation/open-router-translation-glossary-protection.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply live glossary protection to Gemini translation`).
+22. [DONE] Git Commit: `fix: apply live glossary protection to Gemini translation` (hash: self)
 
 ### Stream: Release Metadata
 
-23. [TODO] `release-1.2.608.phase2.stream3.task1` Prepare README and CHANGELOG for release 1.2.608 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.608 release notes`).
+23. [IN_PROGRESS] `release-1.2.608.phase2.stream3.task1` Prepare README and CHANGELOG for release 1.2.608 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.608 release notes`).
 24. [TODO] Git Commit: `docs: prepare 1.2.608 release notes` (hash: TBD)
 
 ### Stream: Release Build
