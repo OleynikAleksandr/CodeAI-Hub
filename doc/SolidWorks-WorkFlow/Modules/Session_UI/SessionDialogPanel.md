@@ -70,6 +70,24 @@ UI читает не raw events, а уже собранные `virtualConversati
 - expanded thinking map
 - scroll pinned state
 
+## Reasoning translation projection
+
+Visible provider `Thinking` / `Reasoning` uses a translation-first display contract:
+
+- Core may emit source `content` with `translationState = "pending"` so the canonical transcript remains intact;
+- `SessionDialogPanel` must not render pending source English as the first visible buffer;
+- the pending visible text is local UI status copy such as `Перевод...`;
+- when `localizedContent` arrives, the panel reveals translated text progressively;
+- source `content` is shown only when translation explicitly falls back or does not arrive in time.
+
+This contract depends on preserving `translationState` through every Session UI projection:
+
+- runtime mode consumes live `session:message` / `session:message_translation` updates;
+- dialog mode treats `dialog:message` as a signal to reread `dialog:history:result`;
+- dialog history conversion must keep `translationState`, otherwise a reread can replace the pending placeholder with source English before the translation patch is applied.
+
+When later translation patches add more translated reasoning blocks, the panel compares the new display text with what is already visible, keeps the longest common translated prefix, and streams only the suffix. The visible transcript must not clear and restart from the first translated paragraph on every new block.
+
 ## Особенности
 
 - в dialog mode product SSOT для отображения — это именно dialog history;

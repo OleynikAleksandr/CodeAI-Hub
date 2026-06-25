@@ -10,8 +10,8 @@
   "baseHead": "478b726c0",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Localization_Documentation_GitHub_Push_Planning_RU.md",
-  "currentTaskId": "loc-docs-push.phase2.stream2.task1",
-  "expectedCommitMessage": "docs: document session dialog reasoning translation projection",
+  "currentTaskId": "loc-docs-push.phase3.stream1.task1",
+  "expectedCommitMessage": "docs: close localization documentation push scope",
   "debt": null
 }
 ```
@@ -54,13 +54,13 @@
 
 ### Stream: Session UI Projection Docs
 
-5. [IN_PROGRESS] `loc-docs-push.phase2.stream2.task1` Document the Session Dialog translation-first projection and history replay path (scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionDialogPanel.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document session dialog reasoning translation projection`).
-6. [TODO] Git Commit: `docs: document session dialog reasoning translation projection` (hash: TBD)
+5. [DONE] `loc-docs-push.phase2.stream2.task1` Document the Session Dialog translation-first projection and history replay path (scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionDialogPanel.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document session dialog reasoning translation projection`).
+6. [DONE] Git Commit: `docs: document session dialog reasoning translation projection` (hash: self)
 
 ## Phase 3 - Scope Closeout (owner: Codex, updated: 2026-06-25)
 
 ### Stream: Closeout
 
-7. [TODO] `loc-docs-push.phase3.stream1.task1` Close this documentation/push scope after documentation commits (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close localization documentation push scope`).
+7. [IN_PROGRESS] `loc-docs-push.phase3.stream1.task1` Close this documentation/push scope after documentation commits (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close localization documentation push scope`).
 8. [TODO] Git Commit: `docs: close localization documentation push scope` (hash: TBD)
 9. [TODO] `loc-docs-push.phase3.stream1.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

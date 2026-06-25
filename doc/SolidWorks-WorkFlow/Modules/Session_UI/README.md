@@ -33,6 +33,10 @@
 
 `SessionDialogPanel` renders reasoning through a translation-first projection: pending reasoning translation does not show the English source, completed translated text is revealed progressively, and the source transcript remains available only as the fallback/error path.
 
+The same projection contract applies to both controller paths. In `runtime mode`, live `session:message` data may carry `translationState = "pending"`. In `dialog mode`, `dialog:message` is only a trigger to reread `dialog:history:result`, so the history projection must preserve `translationState` as well. Otherwise the dialog can briefly replay English source text before the translated overlay arrives.
+
+When a translated reasoning payload grows block by block, the panel keeps the already visible translated prefix and streams only the new suffix. Previously rendered translated paragraphs must not disappear and replay from the first block.
+
 ## Связанные документы
 
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
