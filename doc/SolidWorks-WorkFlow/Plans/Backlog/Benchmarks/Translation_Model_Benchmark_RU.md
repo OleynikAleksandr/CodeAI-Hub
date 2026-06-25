@@ -27,7 +27,7 @@ OPENROUTER_API_KEY=... node scripts/benchmarks/translation-model-benchmark-runne
   --out doc/tmp/prototypes/translation-model-benchmark-live.md
 ```
 
-By default the script uses the candidate list in §9. Custom ad-hoc candidates can still be passed with `--openrouter-model <slug>` and `--local-model lmstudio:<modelKey>`; an OpenRouter provider route can be forced with `--openrouter-model <slug>@groq` or `--openrouter-model <slug>@parasail`.
+By default the script uses the candidate list in §9. Custom ad-hoc candidates can still be passed with `--openrouter-model <slug>` and `--local-model lmstudio:<modelKey>`; an OpenRouter provider route can be forced with `--openrouter-model <slug>@groq` or `--openrouter-model <slug>@parasail`. Local Models defaults use LM Studio `modelKey` values from `lms ls --json`; the runner also accepts the original display/path names from §9 as aliases.
 
 The script writes a Markdown report plus raw JSON payload to the output file. Its automated score covers protected terms, structure, and output discipline only; semantic fidelity and Russian style stay manual review fields. OpenRouter routed candidates use `provider.order` with `allow_fallbacks: false`; this follows the official OpenRouter provider routing contract.
 
@@ -217,7 +217,7 @@ No tools are exposed to the model. Each request is one chat completion:
 - user: translation-only task prompt from §2 with `<TERMS>` and `<TEXT>`;
 - temperature: `0.3`;
 - top_p: `0.8`;
-- OpenRouter reasoning controls: `reasoning: { enabled: false, exclude: true }` and `reasoning_effort: "none"`; if a model/provider ignores or rejects this, record it in the report.
+- OpenRouter reasoning controls: send `reasoning: { enabled: false, exclude: true }` and `reasoning_effort: "none"` where the endpoint allows it. If the endpoint requires reasoning, as observed for `openai/gpt-oss-*`, omit those disable flags and rely on the translation-only prompt.
 - Local Models reasoning controls: Qwen-family model keys receive `/no_think` before the translation prompt; other local models rely on the translation-only prompt unless LM Studio exposes a model-specific non-thinking switch.
 - streaming: enabled when provider supports it;
 - max output tokens: enough for full translation, default `2048`;
@@ -240,7 +240,7 @@ Local Models benchmark must measure translation latency, not model load latency.
 Required sequence:
 
 1. Confirm LM Studio server is reachable.
-2. Resolve the model key from the exact `lmstudio:<modelKey>` candidate.
+2. Resolve the model key from the exact `lmstudio:<modelKey>` candidate or a documented alias.
 3. Run `lms ps --json`.
 4. If a matching loaded model has enough context, reuse it.
 5. Otherwise run `lms load <modelKey> --identifier codeaihub-translation-bench-<slug> --context-length 8192 --yes`.
@@ -276,12 +276,23 @@ Record:
 | OpenRouter | `google/gemma-4-26b-a4b-it@parasail` |
 | OpenRouter | `google/gemini-2.5-flash-lite-preview-09-2025` |
 | OpenRouter | `openai/gpt-oss-20b@groq` |
-| Local Models | `lmstudio:Llama-3.3-8B-Instruct-128K_Abliterated-mlx-4Bit` |
-| Local Models | `lmstudio:Meta-Llama-3-8B-Instruct-4bit` |
-| Local Models | `lmstudio:gemma-3-12b` |
-| Local Models | `lmstudio:Hy-MT2-30B-A3B-oQ2-MLX` |
-| Local Models | `lmstudio:Hy-MT2-1.8B-4bit` |
-| Local Models | `lmstudio:qwen3.5-9b` |
+| Local Models | `lmstudio:llama-3.3-8b-instruct-128k_abliterated-mlx` |
+| Local Models | `lmstudio:meta-llama-3-8b-instruct` |
+| Local Models | `lmstudio:google/gemma-3-12b` |
+| Local Models | `lmstudio:hy-mt2-30b-a3b-oq2-mlx` |
+| Local Models | `lmstudio:hy-mt2-1.8b` |
+| Local Models | `lmstudio:qwen/qwen3.5-9b` |
+
+Runner aliases accepted for the user-facing names originally selected for this run:
+
+| Requested name | LM Studio `modelKey` |
+| --- | --- |
+| `Llama-3.3-8B-Instruct-128K_Abliterated-mlx-4Bit` | `llama-3.3-8b-instruct-128k_abliterated-mlx` |
+| `Meta-Llama-3-8B-Instruct-4bit` | `meta-llama-3-8b-instruct` |
+| `gemma-3-12b` | `google/gemma-3-12b` |
+| `Hy-MT2-30B-A3B-oQ2-MLX` | `hy-mt2-30b-a3b-oq2-mlx` |
+| `Hy-MT2-1.8B-4bit` | `hy-mt2-1.8b` |
+| `qwen3.5-9b` | `qwen/qwen3.5-9b` |
 
 ## 10. Expected Output Shape
 

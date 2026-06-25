@@ -19,6 +19,7 @@ const LABEL = /^\s*(translation|translated text|перевод)\s*[:：]/iu;
 const LM_PREFIX = /^lmstudio:/u;
 const OR_ROUTE = "@";
 const QWEN = /qwen/iu;
+const REQUIRES_REASONING = /^openai\/gpt-oss-/u;
 const SERVER_ON = /\bServer:\s*ON\b|\bserver\b.*\brunning\b/iu;
 const TEXT_TAG = /<\/?text>/iu;
 
@@ -31,13 +32,24 @@ const OR_DEFAULTS = [
   ["openai/gpt-oss-20b", "groq"],
 ];
 const LM_DEFAULTS = [
-  "Llama-3.3-8B-Instruct-128K_Abliterated-mlx-4Bit",
-  "Meta-Llama-3-8B-Instruct-4bit",
-  "gemma-3-12b",
-  "Hy-MT2-30B-A3B-oQ2-MLX",
-  "Hy-MT2-1.8B-4bit",
-  "qwen3.5-9b",
+  "llama-3.3-8b-instruct-128k_abliterated-mlx",
+  "meta-llama-3-8b-instruct",
+  "google/gemma-3-12b",
+  "hy-mt2-30b-a3b-oq2-mlx",
+  "hy-mt2-1.8b",
+  "qwen/qwen3.5-9b",
 ];
+const LM_ALIASES = new Map([
+  [
+    "Llama-3.3-8B-Instruct-128K_Abliterated-mlx-4Bit",
+    "llama-3.3-8b-instruct-128k_abliterated-mlx",
+  ],
+  ["Meta-Llama-3-8B-Instruct-4bit", "meta-llama-3-8b-instruct"],
+  ["gemma-3-12b", "google/gemma-3-12b"],
+  ["Hy-MT2-30B-A3B-oQ2-MLX", "hy-mt2-30b-a3b-oq2-mlx"],
+  ["Hy-MT2-1.8B-4bit", "hy-mt2-1.8b"],
+  ["qwen3.5-9b", "qwen/qwen3.5-9b"],
+]);
 const PROTECTED = [
   "CodeAI Hub",
   "Project Manager",
@@ -266,8 +278,10 @@ async function runCase(target, requestModel, item, iteration) {
 
 function requestOpenRouter(target, item) {
   const body = chatBody(target.model, item);
-  body.reasoning = { enabled: false, exclude: true };
-  body.reasoning_effort = "none";
+  if (!REQUIRES_REASONING.test(target.model)) {
+    body.reasoning = { enabled: false, exclude: true };
+    body.reasoning_effort = "none";
+  }
   if (target.route) {
     body.provider = { allow_fallbacks: false, order: [target.route] };
   }
@@ -635,7 +649,7 @@ function openRouterTargets() {
 
 function localTargets() {
   const custom = list("local-model", "local-models").map((item) =>
-    item.replace(LM_PREFIX, "")
+    lmModelKey(item)
   );
   return (custom.length ? custom : LM_DEFAULTS).map((key) => ({
     key,
@@ -643,6 +657,11 @@ function localTargets() {
     model: `lmstudio:${key}`,
     provider: "Local Models",
   }));
+}
+
+function lmModelKey(value) {
+  const key = value.replace(LM_PREFIX, "");
+  return LM_ALIASES.get(key) ?? key;
 }
 
 function parseOr(value) {
