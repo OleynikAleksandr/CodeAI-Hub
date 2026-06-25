@@ -41,6 +41,7 @@ type DialogHistoryRecord = {
   readonly localizedContent?: string;
   readonly timestamp: string;
   readonly tag?: string;
+  readonly translationState?: SessionMessage["translationState"];
 };
 
 export interface SpeechStatePayload {
@@ -161,6 +162,8 @@ const sanitizeDialogHistoryRecord = (value: unknown): DialogHistoryRecord | null
     value.localizedContent.trim().length > 0
       ? value.localizedContent
       : undefined;
+  const translationState =
+    value.translationState === "pending" ? value.translationState : undefined;
   return {
     messageId: value.messageId,
     role,
@@ -168,6 +171,7 @@ const sanitizeDialogHistoryRecord = (value: unknown): DialogHistoryRecord | null
     timestamp: value.timestamp,
     ...(localizedContent ? { localizedContent } : {}),
     ...(tag ? { tag } : {}),
+    ...(translationState ? { translationState } : {}),
   };
 };
 
@@ -272,6 +276,9 @@ export const convertHistoryToMessages = (records: readonly unknown[]): SessionMe
         ? { localizedContent: sanitized.localizedContent }
         : {}),
       ...(sanitized.tag ? { tag: sanitized.tag } : {}),
+      ...(sanitized.translationState
+        ? { translationState: sanitized.translationState }
+        : {}),
     });
   }
   result.sort((a, b) => a.createdAt - b.createdAt);

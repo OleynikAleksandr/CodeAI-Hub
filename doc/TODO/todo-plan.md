@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase7.stream2.task1",
-  "expectedCommitMessage": "fix: preserve dialog history translation state in project manager",
+  "currentTaskId": "reasoning-reveal.phase7.stream3.task1",
+  "expectedCommitMessage": "fix: keep translated reasoning reveal prefix stable",
   "debt": null
 }
 ```
@@ -121,12 +121,12 @@
 
 ### Stream: Project Manager History Normalization
 
-27. [IN_PROGRESS] `reasoning-reveal.phase7.stream2.task1` Preserve translation pending state when Project Manager converts dialog history records into UI messages (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/ui/src/core-bridge/types.ts`; expected commit: `fix: preserve dialog history translation state in project manager`).
-28. [TODO] Git Commit: `fix: preserve dialog history translation state in project manager` (hash: TBD)
+27. [DONE] `reasoning-reveal.phase7.stream2.task1` Preserve translation pending state when Project Manager converts dialog history records into UI messages (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/ui/src/core-bridge/types.ts`; expected commit: `fix: preserve dialog history translation state in project manager`).
+28. [DONE] Git Commit: `fix: preserve dialog history translation state in project manager` (hash: self)
 
 ### Stream: Reveal Prefix Stability
 
-29. [TODO] `reasoning-reveal.phase7.stream3.task1` Make translated reasoning reveal keep the longest already-visible prefix when translated content grows, instead of clearing and replaying the full text (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: keep translated reasoning reveal prefix stable`).
+29. [IN_PROGRESS] `reasoning-reveal.phase7.stream3.task1` Make translated reasoning reveal keep the longest already-visible prefix when translated content grows, instead of clearing and replaying the full text (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: keep translated reasoning reveal prefix stable`).
 30. [TODO] Git Commit: `fix: keep translated reasoning reveal prefix stable` (hash: TBD)
 
 ### Stream: Bugfix Release Build

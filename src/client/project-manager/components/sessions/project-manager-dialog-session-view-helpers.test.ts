@@ -9,6 +9,7 @@ import DialogPanel from "../../../ui/src/session/dialog-panel";
 import {
   buildDialogSpeechWorkbenchMessage,
   buildDialogSessionRecord,
+  convertHistoryToMessages,
   resolveDialogMatch,
   resolveActiveSpeechMessageId,
   sanitizeDialogIndexEntry,
@@ -234,6 +235,35 @@ test("DialogPanel keeps Speak button available for assistant thinking bubbles", 
   assert.equal(html.includes("session-dialog__speak-button"), true);
   assert.equal(
     html.includes('aria-label="Speak: Codex · Thinking"'),
+    true
+  );
+});
+
+test("dialog history keeps pending thinking source hidden until translation arrives", () => {
+  const messages = convertHistoryToMessages([
+    {
+      messageId: "thinking-history-1",
+      role: "assistant",
+      tag: "thinking",
+      content: "Let me inspect the workflow.",
+      timestamp: "2026-05-05T18:00:00.000Z",
+      translationState: "pending",
+    },
+  ]);
+
+  assert.equal(messages[0]?.translationState, "pending");
+
+  const html = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      messages,
+      providerLabel: "Codex",
+      speakingMessageId: null,
+    })
+  );
+
+  assert.equal(html.includes("Let me inspect the workflow."), false);
+  assert.equal(
+    html.includes("session-dialog__message--assistant-thinking"),
     true
   );
 });
