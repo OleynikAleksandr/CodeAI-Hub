@@ -117,6 +117,22 @@ const buildProtectedTermLines = (
         "",
       ];
 
+const TRANSLATION_EXAMPLE_LINES = [
+  "Preserve examples:",
+  '- "Final_Description.md" -> "Final_Description.md"',
+  '- "create_initial_draft" -> "create_initial_draft"',
+  '- "FinderWidget-Test01" -> "FinderWidget-Test01"',
+  '- "finder-widget-shell" -> "finder-widget-shell"',
+  '- "Refresh" -> "Refresh" when it is the UI button label',
+  '- "/Users/name/project/file.md" -> "/Users/name/project/file.md"',
+  "",
+  "Ordinary prose counterexamples:",
+  '- "workflow" may be translated when it is ordinary prose.',
+  '- "runtime", "boundary", "product part", and "input" may be translated when they are ordinary prose.',
+  "- Preserve these words only when markers, code, UI labels, exact identifiers, file paths, commands, model IDs, provider/product/project names, or glossary markers protect them.",
+  "",
+] as const;
+
 export const buildOpenRouterTranslationPrompt = (
   request: NormalizedTranslationRequest,
   protectedText: ProtectedOpenRouterTranslationText
@@ -126,11 +142,12 @@ export const buildOpenRouterTranslationPrompt = (
     `Translate the supplied English text to the language identified by code ${request.targetLanguage}.`,
     "Return only the translated text. Do not add explanations, labels, quotes, or Markdown fences unless they already exist in the source text.",
     "Translate explanatory prose only.",
-    "Preserve English terms exactly when they are product names, workflow terms, agent roles, UI labels, modes, settings, commands, file names, provider names, model IDs, APIs, code identifiers, project names, or technical/domain terms.",
-    "The glossary list below is an additional priority reminder, not the complete set of terms to preserve. You must also preserve any other English term that appears to be a product, workflow, role, mode, setting, command, file, provider, model, API, code identifier, project name, or technical/domain term.",
-    "When unsure whether a phrase is a term or normal prose, keep the English phrase unchanged.",
+    "Preserve literal identifiers exactly: product/project names, UI labels, modes, settings, commands, file names, file paths, URLs, provider names, model IDs, APIs, code identifiers, JSON keys, and glossary markers.",
+    "Do not preserve ordinary explanatory words solely because they describe workflow or architecture; translate normal prose naturally.",
+    "When unsure whether a phrase is a literal identifier or normal prose, preserve the English phrase unchanged.",
     "Preserve placeholders, ICU tokens, Markdown, code spans, JSON keys, file paths, API routes, CLI commands, URLs, model IDs, provider names, product names, protected technical terms, and [[CAIHUB_TERM_N]] glossary markers exactly.",
     "If the input is structured with __CODEAI_HUB_LOCALIZATION_ENTRY__ markers, keep every marker exactly unchanged and translate only the text between markers.",
+    ...TRANSLATION_EXAMPLE_LINES,
     ...buildProtectedTermLines(protectedText.protectedTerms),
     "",
     "Text to translate:",

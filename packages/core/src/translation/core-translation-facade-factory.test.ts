@@ -181,14 +181,21 @@ test("buildOpenRouterTranslationPrompt treats glossary terms as non-exhaustive",
 
   assert.equal(prompt.includes("non-exhaustive"), true);
   assert.equal(prompt.includes("not the complete set"), true);
-  assert.equal(
-    prompt.includes("must also preserve any other English term"),
-    true
-  );
+  assert.equal(prompt.includes("translate normal prose naturally"), true);
   assert.equal(prompt.includes("[[CAIHUB_TERM_N]] glossary markers"), true);
   assert.equal(prompt.includes("- shell"), true);
   assert.equal(
     prompt.includes("Use [[CAIHUB_TERM_0]] in Project Manager."),
+    true
+  );
+  assert.equal(prompt.includes('"Final_Description.md"'), true);
+  assert.equal(prompt.includes('"create_initial_draft"'), true);
+  assert.equal(prompt.includes('"finder-widget-shell"'), true);
+  assert.equal(prompt.includes('"workflow" may be translated'), true);
+  assert.equal(
+    prompt.includes(
+      '"runtime", "boundary", "product part", and "input" may be translated'
+    ),
     true
   );
 });
