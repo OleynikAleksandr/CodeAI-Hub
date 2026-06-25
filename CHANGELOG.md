@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.607] - 2026-06-25
+### Changed
+- **Gemini localization now uses the stable Flash-Lite model.** The dedicated
+  OpenRouter localization engine sends `google/gemini-2.5-flash-lite` instead
+  of the preview `google/gemini-2.5-flash-lite-preview-09-2025` slug.
+- **Saved preview localization selections migrate to the stable engine.**
+  Users who selected the v1.2.606 preview option keep Gemini Flash-Lite instead
+  of falling back to Google GTX.
+
+### Verification
+- `node --test --import tsx packages/core/src/translation/core-translation-facade-factory.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts`
+- `npm run lint -- packages/core/src/translation/core-translation-facade-factory.ts packages/localization/src/language-catalog.ts`
+- `npm run lint -- src/client/ui/src/components/settings/use-settings-state-support.ts src/client/ui/src/components/settings/localization-engine-availability.ts`
+- `npm run typecheck:webview`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.606] - 2026-06-25
 ### Added
 - **OpenRouter Gemini Flash Lite is now a dedicated localization engine.**
