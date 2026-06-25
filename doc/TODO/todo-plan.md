@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase4.stream1.task1",
-  "expectedCommitMessage": "docs: document reasoning translation-first reveal",
+  "currentTaskId": "reasoning-reveal.phase5.stream1.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.610 release notes",
   "debt": null
 }
 ```
@@ -72,14 +72,14 @@
 
 ### Stream: SSOT Updates
 
-11. [IN_PROGRESS] `reasoning-reveal.phase4.stream1.task1` Document translation-first reasoning reveal in system/module/session UI SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`; expected commit: `docs: document reasoning translation-first reveal`).
-12. [TODO] Git Commit: `docs: document reasoning translation-first reveal` (hash: TBD)
+11. [DONE] `reasoning-reveal.phase4.stream1.task1` Document translation-first reasoning reveal in system/module/session UI SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`; expected commit: `docs: document reasoning translation-first reveal`).
+12. [DONE] Git Commit: `docs: document reasoning translation-first reveal` (hash: self)
 
 ## Phase 5 - Release 1.2.610 (owner: Codex, updated: 2026-06-25)
 
 ### Stream: Release Metadata
 
-13. [TODO] `reasoning-reveal.phase5.stream1.task1` Prepare README and CHANGELOG for release 1.2.610 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.610 release notes`).
+13. [IN_PROGRESS] `reasoning-reveal.phase5.stream1.task1` Prepare README and CHANGELOG for release 1.2.610 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.610 release notes`).
 14. [TODO] Git Commit: `docs: prepare 1.2.610 release notes` (hash: TBD)
 
 ### Stream: Release Build

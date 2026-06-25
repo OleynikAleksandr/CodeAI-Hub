@@ -31,6 +31,8 @@
 
 Поэтому одинаковая визуальная панель может брать данные из разных truth-channels в зависимости от режима.
 
+`SessionDialogPanel` renders reasoning through a translation-first projection: pending reasoning translation does not show the English source, completed translated text is revealed progressively, and the source transcript remains available only as the fallback/error path.
+
 ## Связанные документы
 
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
