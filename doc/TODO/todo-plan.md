@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase6.stream3.task1",
-  "expectedCommitMessage": null,
+  "currentTaskId": "reasoning-reveal.phase7.stream2.task1",
+  "expectedCommitMessage": "fix: preserve dialog history translation state in project manager",
   "debt": null
 }
 ```
@@ -33,7 +33,7 @@
 
 - **Required reading before each fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Release build confirmation gate: satisfied by the user request on 2026-06-25.
-- Next release target: `1.2.611`.
+- Next release target: `1.2.612`.
 - Use `npm run plan:commit -- "<expected commit message>"` for tracked commits.
 - Do not close this scope until the user explicitly accepts the installed release.
 
@@ -110,10 +110,36 @@
 
 ### Stream: User Visual Acceptance Retest
 
-24. [IN_PROGRESS] `reasoning-reveal.phase6.stream3.task1` User installs the bugfix release and verifies translated reasoning no longer shows English source and no longer restarts reveal from the first block (scope: `user workflow`).
+24. [BLOCKED] `reasoning-reveal.phase6.stream3.task1` User installs the bugfix release and verifies translated reasoning no longer shows English source and no longer restarts reveal from the first block (scope: `user workflow`; result: failed, PM dialog history still shows English source first and progressive reveal restarts whenever new translated blocks arrive).
+
+## Phase 7 - Deep Reasoning Reveal Regression Fix (owner: Codex, updated: 2026-06-25)
+
+### Stream: History Pending State
+
+25. [DONE] `reasoning-reveal.phase7.stream1.task1` Persist and replay reasoning `translationState` through unified session history so Project Manager history refresh does not treat untranslated reasoning as ordinary visible English (scope: `packages/unified-session/src/index.ts, packages/core/src/unified-session/storage.ts, packages/core/src/remote-bridge/handlers/dialog-history-service.ts`; expected commit: `fix: persist reasoning translation pending state`).
+26. [DONE] Git Commit: `fix: persist reasoning translation pending state` (hash: self)
+
+### Stream: Project Manager History Normalization
+
+27. [IN_PROGRESS] `reasoning-reveal.phase7.stream2.task1` Preserve translation pending state when Project Manager converts dialog history records into UI messages (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/ui/src/core-bridge/types.ts`; expected commit: `fix: preserve dialog history translation state in project manager`).
+28. [TODO] Git Commit: `fix: preserve dialog history translation state in project manager` (hash: TBD)
+
+### Stream: Reveal Prefix Stability
+
+29. [TODO] `reasoning-reveal.phase7.stream3.task1` Make translated reasoning reveal keep the longest already-visible prefix when translated content grows, instead of clearing and replaying the full text (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: keep translated reasoning reveal prefix stable`).
+30. [TODO] Git Commit: `fix: keep translated reasoning reveal prefix stable` (hash: TBD)
+
+### Stream: Bugfix Release Build
+
+31. [TODO] `reasoning-reveal.phase7.stream4.task1` Build the next bugfix release only after explicit release-build confirmation (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.612 release`).
+32. [TODO] Git Commit: `chore: build 1.2.612 release` (hash: TBD)
+
+### Stream: User Visual Acceptance Retest
+
+33. [TODO] `reasoning-reveal.phase7.stream5.task1` User installs the next bugfix release and verifies reasoning never flashes English source and never restarts reveal from the first paragraph as new translated blocks arrive (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
-25. [TODO] `reasoning-reveal.phase5.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close reasoning translation reveal scope`).
-26. [TODO] Git Commit: `docs: close reasoning translation reveal scope` (hash: TBD)
-27. [TODO] `reasoning-reveal.phase5.stream4.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+34. [TODO] `reasoning-reveal.phase5.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close reasoning translation reveal scope`).
+35. [TODO] Git Commit: `docs: close reasoning translation reveal scope` (hash: TBD)
+36. [TODO] `reasoning-reveal.phase5.stream4.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

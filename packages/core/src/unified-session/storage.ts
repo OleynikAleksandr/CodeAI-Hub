@@ -472,21 +472,22 @@ export class UnifiedSessionStorage {
     });
   }
 
-  private async writeMessage(
-    entry: PendingSession,
-    message: SessionMessage
-  ): Promise<void> {
+  private async writeMessage(entry: PendingSession, message: SessionMessage) {
     if (!entry.writer) {
       throw new Error(
         `Unified session writer missing for ${entry.providerId} session ${message.sessionId}`
       );
     }
+    const translationState = (
+      message as { readonly translationState?: "pending" }
+    ).translationState;
     await entry.writer.appendMessage({
       messageId: message.id,
       role: message.role,
       content: message.content,
       timestamp: message.timestamp,
       ...(message.tag ? { tag: message.tag } : {}),
+      ...(translationState ? { translationState } : {}),
     });
     this.diagnostics.logThinkingMessageAppended({
       providerId: entry.providerId,

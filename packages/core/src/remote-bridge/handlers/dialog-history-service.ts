@@ -24,6 +24,7 @@ export interface DialogHistoryMessage {
   readonly role: "system" | "user" | "assistant" | "thinking";
   readonly tag?: string;
   readonly timestamp: string;
+  readonly translationState?: "pending";
 }
 
 export interface DialogHistoryResult {
@@ -83,6 +84,9 @@ const readDialogWorktreePath = (dialog: unknown): string | null =>
     ? readNonEmptyString(dialog.worktreePath)
     : null;
 
+const readTranslationState = (value: unknown): "pending" | undefined =>
+  value === "pending" ? value : undefined;
+
 export class DialogHistoryService {
   private readonly logger: Logger;
   private readonly localizationProjector =
@@ -115,6 +119,9 @@ export class DialogHistoryService {
         translations,
       }
     );
+    const translationState = readTranslationState(
+      messageRecord.translationState
+    );
     byId.set(messageRecord.messageId, {
       messageId: messageRecord.messageId,
       role: messageRecord.role,
@@ -122,6 +129,7 @@ export class DialogHistoryService {
       timestamp: messageRecord.timestamp,
       ...(localizedContent ? { localizedContent } : {}),
       ...(messageRecord.tag ? { tag: messageRecord.tag } : {}),
+      ...(translationState ? { translationState } : {}),
     });
   }
 

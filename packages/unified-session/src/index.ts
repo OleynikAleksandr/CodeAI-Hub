@@ -48,6 +48,7 @@ export interface SessionMessageRecord {
   readonly role: MessageRole;
   readonly tag?: string;
   readonly timestamp: string;
+  readonly translationState?: "pending";
   readonly type: "message";
 }
 
@@ -64,6 +65,7 @@ export interface AppendMessageOptions {
   readonly role: MessageRole;
   readonly tag?: string;
   readonly timestamp?: string;
+  readonly translationState?: "pending";
 }
 
 export interface CloseSessionOptions {
@@ -130,6 +132,9 @@ const createMessageRecord = (
   role: message.role,
   content: message.content,
   ...(message.tag ? { tag: message.tag } : {}),
+  ...(message.translationState
+    ? { translationState: message.translationState }
+    : {}),
 });
 
 export class UnifiedSessionWriter {
