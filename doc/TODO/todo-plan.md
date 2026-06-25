@@ -4,31 +4,47 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "translation-benchmark-load-failures-2026-06-25",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "localization-gemini-flash-lite-engine-2026-06-25",
   "branch": "main",
-  "baseHead": "3bd63a876",
+  "baseHead": "d617a7461",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "currentTaskId": "localization-gemini-engine.phase0.task2",
+  "expectedCommitMessage": "feat: expose Gemini Flash Lite localization engine",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-translation-benchmark-load-failures-2026-06-25.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md`
-- **Last recorded commit:** `self`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md`
+- Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
-## Start Next Scope
+## Правила выполнения
 
-There is no active execution scope. Before starting new implementation work:
+- Каждая подзадача должна затрагивать не более 3 файлов.
+- Каждая подзадача оформляется парой пунктов: изменение и отдельный `Git Commit: ...`.
+- Commit выполняется через `npm run plan:commit -- "<expected commit>"`.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 0 — Gemini Flash Lite Localization Engine (owner: Codex, updated: 2026-06-25)
+
+### Stream: Engine Catalog
+
+1. [DONE] `localization-gemini-engine.phase0.task1` Add Core runtime translation engine and language catalog for `google/gemini-2.5-flash-lite-preview-09-2025`.
+   - scope: `doc/TODO/todo-plan.md, packages/core/src/translation/core-translation-facade-factory.ts, packages/localization/src/language-catalog.ts`
+   - expected commit: `feat: add Gemini Flash Lite translation runtime`
+2. [DONE] `localization-gemini-engine.phase0.commit1` Git Commit: `feat: add Gemini Flash Lite translation runtime` (hash: self)
+3. [IN_PROGRESS] `localization-gemini-engine.phase0.task2` Expose the Gemini Flash Lite engine in both Localization settings selectors.
+   - scope: `doc/TODO/todo-plan.md, src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-engine-availability.ts`
+   - expected commit: `feat: expose Gemini Flash Lite localization engine`
+4. [TODO] `localization-gemini-engine.phase0.commit2` Git Commit: `feat: expose Gemini Flash Lite localization engine` (hash: TBD)
+5. [TODO] `localization-gemini-engine.phase0.closeout.anchor` Reserved post-closeout handoff anchor.

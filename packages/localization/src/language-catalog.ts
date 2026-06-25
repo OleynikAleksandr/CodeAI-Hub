@@ -101,4 +101,8 @@ export const DEFAULT_ENGINE_LANGUAGE_CATALOGS: readonly LocalizationEngineLangua
       engineId: "anthropic-claude-haiku-4-5",
       languages: GOOGLE_GTX_LANGUAGES,
     },
+    {
+      engineId: "google/gemini-2.5-flash-lite-preview-09-2025",
+      languages: GOOGLE_GTX_LANGUAGES,
+    },
   ];
