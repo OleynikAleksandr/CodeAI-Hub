@@ -8060,6 +8060,7 @@
   var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
     "apple-native",
     "google-gtx",
+    "google/gemini-2.5-flash-lite-preview-09-2025",
     "codex-gpt-5.4-mini",
     "codex-gpt-5.3-codex-spark",
     "anthropic-claude-haiku-4-5"

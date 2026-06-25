@@ -10,8 +10,8 @@
   "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": "release-1.2.606.phase0.stream2.task1",
-  "expectedCommitMessage": "chore: build 1.2.606 release",
+  "currentTaskId": "release-1.2.606.phase0.stream3.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -44,12 +44,13 @@
 
 ### Stream: Release Build
 
-3. [IN_PROGRESS] `release-1.2.606.phase0.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.606 release`).
-4. [TODO] Git Commit: `chore: build 1.2.606 release` (hash: TBD)
+3. [DONE] `release-1.2.606.phase0.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.606 release`).
+   - Evidence 2026-06-25: `./scripts/build-all.sh` completed for `1.2.606`; `./scripts/build-release.sh --use-current-version --allow-dirty` created `codeai-hub-1.2.606.vsix` and refreshed `doc/tmp/releases/*1.2.606*`.
+4. [DONE] Git Commit: `chore: build 1.2.606 release` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing
 
-5. [TODO] `release-1.2.606.phase0.stream3.task1` User installs release 1.2.606 and confirms the localization engine retest result (scope: `user workflow`).
+5. [IN_PROGRESS] `release-1.2.606.phase0.stream3.task1` User installs release 1.2.606 and confirms the localization engine retest result (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
