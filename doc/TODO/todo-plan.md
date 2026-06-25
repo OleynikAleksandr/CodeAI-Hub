@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase7.stream3.task1",
-  "expectedCommitMessage": "fix: keep translated reasoning reveal prefix stable",
+  "currentTaskId": "reasoning-reveal.phase7.stream4.task1",
+  "expectedCommitMessage": "chore: build 1.2.612 release",
   "debt": null
 }
 ```
@@ -126,12 +126,12 @@
 
 ### Stream: Reveal Prefix Stability
 
-29. [IN_PROGRESS] `reasoning-reveal.phase7.stream3.task1` Make translated reasoning reveal keep the longest already-visible prefix when translated content grows, instead of clearing and replaying the full text (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: keep translated reasoning reveal prefix stable`).
-30. [TODO] Git Commit: `fix: keep translated reasoning reveal prefix stable` (hash: TBD)
+29. [DONE] `reasoning-reveal.phase7.stream3.task1` Make translated reasoning reveal keep the longest already-visible prefix when translated content grows, instead of clearing and replaying the full text (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: keep translated reasoning reveal prefix stable`).
+30. [DONE] Git Commit: `fix: keep translated reasoning reveal prefix stable` (hash: self)
 
 ### Stream: Bugfix Release Build
 
-31. [TODO] `reasoning-reveal.phase7.stream4.task1` Build the next bugfix release only after explicit release-build confirmation (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.612 release`).
+31. [IN_PROGRESS] `reasoning-reveal.phase7.stream4.task1` Build the next bugfix release only after explicit release-build confirmation (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.612 release`).
 32. [TODO] Git Commit: `chore: build 1.2.612 release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Retest

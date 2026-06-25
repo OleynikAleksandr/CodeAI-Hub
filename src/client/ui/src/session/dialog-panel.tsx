@@ -17,6 +17,7 @@ import MarkdownContent from "./markdown-content";
 import {
   buildTranslatedTextRevealFrame,
   resolveTranslatedTextRevealBatchSize,
+  resolveTranslatedTextRevealPrefixText,
   splitTranslatedTextRevealTokens,
 } from "./translated-text-reveal";
 
@@ -249,7 +250,10 @@ const useTranslatedTextReveal = (content: string, enabled: boolean): string => {
 
     const tokens = splitTranslatedTextRevealTokens(content);
     const currentText = visibleTextRef.current;
-    const initialText = content.startsWith(currentText) ? currentText : "";
+    const initialText = resolveTranslatedTextRevealPrefixText(
+      content,
+      currentText
+    );
     let visibleTokenCount = splitTranslatedTextRevealTokens(initialText).length;
     const batchSize = resolveTranslatedTextRevealBatchSize(tokens.length);
     commitVisibleText(

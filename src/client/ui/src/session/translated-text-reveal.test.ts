@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   buildTranslatedTextRevealFrame,
   resolveTranslatedTextRevealBatchSize,
+  resolveTranslatedTextRevealPrefixText,
   splitTranslatedTextRevealTokens,
 } from "./translated-text-reveal";
 
@@ -28,4 +29,38 @@ test("resolveTranslatedTextRevealBatchSize grows for long translations", () => {
   assert.equal(resolveTranslatedTextRevealBatchSize(1), 1);
   assert.equal(resolveTranslatedTextRevealBatchSize(90), 1);
   assert.equal(resolveTranslatedTextRevealBatchSize(91), 2);
+});
+
+test("resolveTranslatedTextRevealPrefixText preserves an exact visible prefix", () => {
+  assert.equal(
+    resolveTranslatedTextRevealPrefixText(
+      "Первый абзац.\nВторой абзац.",
+      "Первый абзац."
+    ),
+    "Первый абзац."
+  );
+});
+
+test("resolveTranslatedTextRevealPrefixText keeps common text when the old tail changes", () => {
+  assert.equal(
+    resolveTranslatedTextRevealPrefixText(
+      "Первый абзац.\nВторой абзац.",
+      "Первый абзац. Старый хвост"
+    ),
+    "Первый абзац."
+  );
+});
+
+test("resolveTranslatedTextRevealPrefixText avoids partial-word prefixes", () => {
+  assert.equal(
+    resolveTranslatedTextRevealPrefixText("Первый абзац готов.", "Первый абx"),
+    "Первый "
+  );
+});
+
+test("resolveTranslatedTextRevealPrefixText resets unrelated text", () => {
+  assert.equal(
+    resolveTranslatedTextRevealPrefixText("Новый перевод.", "Старый перевод."),
+    ""
+  );
 });
