@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase3.stream2.task1",
-  "expectedCommitMessage": "feat: reveal translated reasoning progressively",
+  "currentTaskId": "reasoning-reveal.phase4.stream1.task1",
+  "expectedCommitMessage": "docs: document reasoning translation-first reveal",
   "debt": null
 }
 ```
@@ -65,14 +65,14 @@
 
 ### Stream: Progressive Reveal
 
-9. [IN_PROGRESS] `reasoning-reveal.phase3.stream2.task1` Reveal completed translated reasoning text progressively in the thinking bubble with source fallback on timeout (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `feat: reveal translated reasoning progressively`).
-10. [TODO] Git Commit: `feat: reveal translated reasoning progressively` (hash: TBD)
+9. [DONE] `reasoning-reveal.phase3.stream2.task1` Reveal completed translated reasoning text progressively in the thinking bubble with source fallback on timeout (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `feat: reveal translated reasoning progressively`).
+10. [DONE] Git Commit: `feat: reveal translated reasoning progressively` (hash: self)
 
 ## Phase 4 - Documentation Sync (owner: Codex, updated: 2026-06-25)
 
 ### Stream: SSOT Updates
 
-11. [TODO] `reasoning-reveal.phase4.stream1.task1` Document translation-first reasoning reveal in system/module/session UI SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`; expected commit: `docs: document reasoning translation-first reveal`).
+11. [IN_PROGRESS] `reasoning-reveal.phase4.stream1.task1` Document translation-first reasoning reveal in system/module/session UI SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`; expected commit: `docs: document reasoning translation-first reveal`).
 12. [TODO] Git Commit: `docs: document reasoning translation-first reveal` (hash: TBD)
 
 ## Phase 5 - Release 1.2.610 (owner: Codex, updated: 2026-06-25)

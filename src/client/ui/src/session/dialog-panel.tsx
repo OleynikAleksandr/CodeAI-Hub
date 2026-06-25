@@ -14,8 +14,15 @@ import { buildDialogPanelScrollAnchor } from "./dialog-panel-scroll-anchor";
 import type { FileLinkTarget } from "./file-link-target";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
+import {
+  buildTranslatedTextRevealFrame,
+  resolveTranslatedTextRevealBatchSize,
+  splitTranslatedTextRevealTokens,
+} from "./translated-text-reveal";
 
 const AUTO_SCROLL_EPSILON = 32;
+const THINKING_TRANSLATION_FALLBACK_MS = 16_000;
+const THINKING_TRANSLATION_REVEAL_INTERVAL_MS = 24;
 const USER_MESSAGES_CATEGORY = "system_feedback";
 const QUEUED_MANAGED_REVIEW_TAG = "managed-workflow-user-review-queued";
 
@@ -216,6 +223,66 @@ const DialogPanel = ({
 
 export default DialogPanel;
 
+const isReasoningTranslationPending = (message: SessionMessage): boolean =>
+  message.translationState === "pending" && !message.localizedContent;
+
+const useTranslatedTextReveal = (content: string, enabled: boolean): string => {
+  const [visibleText, setVisibleText] = useState(content);
+  const initializedRef = useRef(false);
+  const visibleTextRef = useRef(content);
+
+  useEffect(() => {
+    const commitVisibleText = (nextText: string) => {
+      visibleTextRef.current = nextText;
+      setVisibleText(nextText);
+    };
+    if (!(enabled && content)) {
+      initializedRef.current = true;
+      commitVisibleText(content);
+      return;
+    }
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      commitVisibleText(content);
+      return;
+    }
+
+    const tokens = splitTranslatedTextRevealTokens(content);
+    const currentText = visibleTextRef.current;
+    const initialText = content.startsWith(currentText) ? currentText : "";
+    let visibleTokenCount = splitTranslatedTextRevealTokens(initialText).length;
+    const batchSize = resolveTranslatedTextRevealBatchSize(tokens.length);
+    commitVisibleText(
+      buildTranslatedTextRevealFrame(tokens, visibleTokenCount)
+    );
+    if (visibleTokenCount >= tokens.length) {
+      commitVisibleText(content);
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      visibleTokenCount = Math.min(
+        tokens.length,
+        visibleTokenCount + batchSize
+      );
+      const nextText = buildTranslatedTextRevealFrame(
+        tokens,
+        visibleTokenCount
+      );
+      commitVisibleText(nextText);
+      if (visibleTokenCount >= tokens.length) {
+        window.clearInterval(timer);
+      }
+    }, THINKING_TRANSLATION_REVEAL_INTERVAL_MS);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [content, enabled]);
+
+  return visibleText;
+};
+
 const ThinkingMessage = ({
   message,
   onFileLinkActivate,
@@ -223,25 +290,59 @@ const ThinkingMessage = ({
   speakingMessageId,
   label,
   className,
-}: ThinkingMessageProps) => (
-  <article className={className}>
-    <header className="session-dialog__message-header session-dialog__message-header--thinking">
-      <span className="session-dialog__role">{label}</span>
-      <SpeakMessageButton
-        active={speakingMessageId === message.id}
-        label={label}
-        onClick={() => onSpeakMessage?.(message)}
+}: ThinkingMessageProps) => {
+  const { t } = useLocalization();
+  const translationPending = isReasoningTranslationPending(message);
+  const [showSourceFallback, setShowSourceFallback] = useState(false);
+
+  useEffect(() => {
+    if (!translationPending) {
+      setShowSourceFallback(false);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setShowSourceFallback(true);
+    }, THINKING_TRANSLATION_FALLBACK_MS);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [translationPending]);
+
+  const displayContent = showSourceFallback
+    ? message.content
+    : resolveDisplayContent(message);
+  const revealedContent = useTranslatedTextReveal(
+    displayContent,
+    Boolean(message.localizedContent && !showSourceFallback)
+  );
+  const pendingCopy = t(
+    USER_MESSAGES_CATEGORY,
+    "session.dialog.reasoning_translation_pending",
+    "Перевод..."
+  );
+  const content =
+    translationPending && !showSourceFallback ? pendingCopy : revealedContent;
+
+  return (
+    <article className={className}>
+      <header className="session-dialog__message-header session-dialog__message-header--thinking">
+        <span className="session-dialog__role">{label}</span>
+        <SpeakMessageButton
+          active={speakingMessageId === message.id}
+          label={label}
+          onClick={() => onSpeakMessage?.(message)}
+        />
+      </header>
+      <MarkdownContent
+        allowEmphasis={false}
+        className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
+        content={content}
+        id={`thinking-${message.id}`}
+        onFileLinkActivate={onFileLinkActivate}
       />
-    </header>
-    <MarkdownContent
-      allowEmphasis={false}
-      className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
-      content={resolveDisplayContent(message)}
-      id={`thinking-${message.id}`}
-      onFileLinkActivate={onFileLinkActivate}
-    />
-  </article>
-);
+    </article>
+  );
+};
 
 const StandardMessage = ({
   message,
