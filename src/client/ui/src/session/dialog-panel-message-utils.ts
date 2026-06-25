@@ -128,14 +128,23 @@ const mergeThinkingDisplayMessage = (
   const useAssistantThinking =
     isAssistantThinkingMessage(previous) || isAssistantThinkingMessage(next);
   const content = joinThinkingDisplayContent(previous.content, next.content);
-  const localizedContent = joinOptionalThinkingDisplayContent(
-    resolveDisplayContent(previous),
-    resolveDisplayContent(next)
-  );
   const pendingTranslation =
     isPendingTranslationMessage(previous) || isPendingTranslationMessage(next);
+  const resolveMergedDisplayContent = (message: SessionMessage): string =>
+    pendingTranslation
+      ? (message.localizedContent ?? "")
+      : resolveDisplayContent(message);
+  const localizedContent = joinOptionalThinkingDisplayContent(
+    resolveMergedDisplayContent(previous),
+    resolveMergedDisplayContent(next)
+  );
+  const {
+    localizedContent: _previousLocalizedContent,
+    translationState: _previousTranslationState,
+    ...base
+  } = previous;
   return {
-    ...previous,
+    ...base,
     content,
     ...(localizedContent && localizedContent !== content
       ? { localizedContent }

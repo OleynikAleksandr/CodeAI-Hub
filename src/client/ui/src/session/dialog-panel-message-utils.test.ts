@@ -328,6 +328,71 @@ test("mergeThinkingMessages does not mix pending English source into localized t
   assert.equal(merged[0].translationState, "pending");
 });
 
+test("mergeThinkingMessages hides raw thinking source when any merged segment is pending translation", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage("1", "assistant", "Let me inspect the workflow.", {
+      tag: "thinking",
+    }),
+    createMessage("2", "assistant", "Now I can draft the artifact.", {
+      tag: "thinking",
+      translationState: "pending",
+    }),
+  ];
+
+  const merged = mergeThinkingMessages(source);
+
+  assert.equal(merged.length, 1);
+  assert.equal(
+    merged[0].content,
+    "Let me inspect the workflow.\nNow I can draft the artifact."
+  );
+  assert.equal(merged[0].localizedContent, undefined);
+  assert.equal(merged[0].translationState, "pending");
+  assert.equal(resolveDisplayContent(merged[0]), "");
+});
+
+test("mergeThinkingMessages keeps growing translated reasoning prefix-stable while later segments are pending", () => {
+  const firstPass = mergeThinkingMessages([
+    createMessage("1", "assistant", "Let me inspect the workflow.", {
+      tag: "thinking",
+      localizedContent: "Позвольте мне проверить workflow.",
+    }),
+    createMessage("2", "assistant", "Now I can draft the artifact.", {
+      tag: "thinking",
+      translationState: "pending",
+    }),
+  ]);
+  const secondPass = mergeThinkingMessages([
+    createMessage("1", "assistant", "Let me inspect the workflow.", {
+      tag: "thinking",
+      localizedContent: "Позвольте мне проверить workflow.",
+    }),
+    createMessage("2", "assistant", "Now I can draft the artifact.", {
+      tag: "thinking",
+      localizedContent: "Теперь я могу подготовить artifact.",
+    }),
+    createMessage("3", "assistant", "I should mention boundaries.", {
+      tag: "thinking",
+      translationState: "pending",
+    }),
+  ]);
+
+  assert.equal(
+    firstPass[0].localizedContent,
+    "Позвольте мне проверить workflow."
+  );
+  assert.equal(
+    secondPass[0].localizedContent,
+    "Позвольте мне проверить workflow.\nТеперь я могу подготовить artifact."
+  );
+  assert.equal(
+    secondPass[0].localizedContent?.startsWith(
+      firstPass[0].localizedContent ?? ""
+    ),
+    true
+  );
+});
+
 test("mergeThinkingMessages preserves a blank line before the next standalone bold heading block", () => {
   const source: readonly SessionMessage[] = [
     createMessage(
