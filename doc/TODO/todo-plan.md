@@ -10,8 +10,8 @@
   "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": "release-1.2.607.phase1.stream5.task1",
-  "expectedCommitMessage": null,
+  "currentTaskId": "release-1.2.608.phase2.stream2.task1",
+  "expectedCommitMessage": "fix: apply live glossary protection to Gemini translation",
   "debt": null
 }
 ```
@@ -33,6 +33,7 @@
 - Release build confirmation gate: satisfied by the user request on 2026-06-25.
 - Before `build-all.sh`, update `README.md` Current Release and `CHANGELOG.md` for future version `1.2.606`.
 - Stable Gemini rebuild confirmation gate: satisfied by the user request on 2026-06-25; next release target is `1.2.607`.
+- Live glossary rebuild confirmation gate: satisfied by the user request on 2026-06-25; next release target is `1.2.608`.
 - Use `npm run plan:commit -- "<expected commit message>"` for tracked commits.
 - Do not close this release scope until the user explicitly accepts the installed release.
 
@@ -83,9 +84,40 @@
 
 ### Stream: User Workflow Acceptance Testing
 
-16. [IN_PROGRESS] `release-1.2.607.phase1.stream5.task1` User installs release 1.2.607 and confirms the stable Gemini localization engine retest result (scope: `user workflow`).
+16. [DONE] `release-1.2.607.phase1.stream5.task1` User installs release 1.2.607 and confirms the stable Gemini localization engine retest result (scope: `user workflow`). Result: user confirmed the release works, then requested dynamic live reasoning glossary protection in a follow-up release.
 
 ### Stream: Scope Closeout
 
 17. [TODO] `release-1.2.607.phase1.stream6.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close 1.2.607 release scope`).
 18. [TODO] Git Commit: `docs: close 1.2.607 release scope` (hash: TBD)
+
+## Phase 2 - Live Glossary Release 1.2.608 (owner: Codex, updated: 2026-06-25)
+
+### Stream: Live Glossary Protection
+
+19. [DONE] `release-1.2.608.phase2.stream1.task1` Add reusable marker protection for live reasoning translation glossary terms (scope: `packages/core/src/translation/open-router-translation-glossary-protection.ts, packages/core/src/translation/open-router-translation-glossary-protection.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: protect live reasoning glossary terms`).
+20. [DONE] Git Commit: `fix: protect live reasoning glossary terms` (hash: self)
+
+### Stream: Gemini Prompt Wiring
+
+21. [IN_PROGRESS] `release-1.2.608.phase2.stream2.task1` Wire Gemini OpenRouter translation through live glossary protection and non-exhaustive term instructions (scope: `packages/core/src/translation/core-translation-facade-factory.ts, packages/core/src/translation/core-translation-facade-factory.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply live glossary protection to Gemini translation`).
+22. [TODO] Git Commit: `fix: apply live glossary protection to Gemini translation` (hash: TBD)
+
+### Stream: Release Metadata
+
+23. [TODO] `release-1.2.608.phase2.stream3.task1` Prepare README and CHANGELOG for release 1.2.608 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.608 release notes`).
+24. [TODO] Git Commit: `docs: prepare 1.2.608 release notes` (hash: TBD)
+
+### Stream: Release Build
+
+25. [TODO] `release-1.2.608.phase2.stream4.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.608 release`).
+26. [TODO] Git Commit: `chore: build 1.2.608 release` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+27. [TODO] `release-1.2.608.phase2.stream5.task1` User installs release 1.2.608 and confirms dynamic live reasoning glossary protection (scope: `user workflow`).
+
+### Stream: Scope Closeout
+
+28. [TODO] `release-1.2.608.phase2.stream6.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close 1.2.608 release scope`).
+29. [TODO] Git Commit: `docs: close 1.2.608 release scope` (hash: TBD)
