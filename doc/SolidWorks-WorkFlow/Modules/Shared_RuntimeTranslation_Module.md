@@ -1,7 +1,7 @@
 # Shared Runtime Translation Module - Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-05-28
+**Updated:** 2026-06-25
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.854`)
 
@@ -182,11 +182,14 @@ Current live overlay rules:
 - reasoning overlays now translate each provider-emitted thinking message as one block by default instead of re-planning it through the shared chunk planner;
 - live reasoning overlay translation uses a 15-second base timeout plus the existing per-character allowance, capped at 30 seconds; this avoids premature fallback for short Codex reasoning paragraphs while keeping translation failure non-blocking;
 - reasoning overlay translation is routed through the dedicated `reasoningEngineId` and the fifth user-facing `Reasoning` category target language (`reasoningLanguage`); the UI translation engine (`uiEngineId`) and the `Messages for the User` category language no longer control reasoning overlays after the UI/Reasoning translation split;
-- the Core translation gate still requires the persisted localization bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` to match the active UI localization settings and to report `system_feedback.source = "materialized"`; the gate is driven by UI bootstrap integrity only and is not gated on reasoning engine/language state — reasoning engine or reasoning language changes never pend/block this gate;
+- the Core translation gate still requires the persisted localization bootstrap snapshot under `.codeai-hub/<workspaceSlug>/runtime/localization/cache/browser-runtime-bootstrap.json` to match the active UI localization settings and to report `system_feedback.source = "materialized"`; the gate is driven by UI bootstrap integrity only and is not gated on reasoning engine/language state — reasoning engine or reasoning language changes never pend/block this gate;
 - successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;
 - history reads merge `localizedContent` from the sidecar only when `messageId + sourceHash` still match, so stale translations are ignored;
 - if a second pending translation resolves to the same `engineId + targetLanguage + sourceHash`, Core must reuse the in-flight promise instead of queueing a duplicate provider call; caller-specific `messageId` stays unique, but the translated text payload is shared;
-- UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
+- Core carries `translationState` through live events and history replay. Session UI projections must preserve that state when converting Core messages into visible dialog messages, otherwise a reread of dialog history can briefly expose the source text.
+- non-reasoning messages may render `localizedContent ?? content` and upgrade already-rendered messages in place when a translation patch arrives later.
+- live reasoning messages with `translationState = "pending"` must not render source `content` as the visible buffer. The UI renders a local pending label, waits for `localizedContent`, then reveals the translated text progressively.
+- when a reasoning translation patch extends the visible transcript with additional translated blocks, the UI keeps the longest already-visible translated prefix and streams only the suffix. Earlier translated reasoning blocks must not disappear and replay from the beginning.
 - runtime diagnostics for session translation must log both requested and resolved engine metadata. For `anthropic-claude-haiku-4-5`, that metadata includes provider `claude`, model `claude-haiku-4-5-20251001`, project slug `translation-runtime-haiku`, `persistSession: true`, and `runtimePath: "provider-owned"`.
 - Apple Native readiness failures must preserve the actionable error code in translation results and session translation warning logs; the session layer also records a `readinessAction` such as `download_translation_languages`, `install_xcode_26`, or `build_or_install_apple_translation_helper`.
 - providers that stream one reasoning item across multiple visible paragraph/block messages must not reuse the same `messageId` for every emitted block; overlay/replay stores are keyed by `messageId`, so later translations would otherwise overwrite earlier thinking fragments from the same provider item. Codex uses `<itemId>::summary-block::<index>` for this identity.

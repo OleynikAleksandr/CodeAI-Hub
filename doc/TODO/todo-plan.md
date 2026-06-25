@@ -10,8 +10,8 @@
   "baseHead": "478b726c0",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Localization_Documentation_GitHub_Push_Planning_RU.md",
-  "currentTaskId": "loc-docs-push.phase2.stream1.task1",
-  "expectedCommitMessage": "docs: clarify localization reasoning translation contract",
+  "currentTaskId": "loc-docs-push.phase2.stream2.task1",
+  "expectedCommitMessage": "docs: document session dialog reasoning translation projection",
   "debt": null
 }
 ```
@@ -49,12 +49,12 @@
 
 ### Stream: Localization And Translation SSOT
 
-3. [IN_PROGRESS] `loc-docs-push.phase2.stream1.task1` Clarify Localization/runtime translation ownership after release 1.2.612 (scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`; expected commit: `docs: clarify localization reasoning translation contract`).
-4. [TODO] Git Commit: `docs: clarify localization reasoning translation contract` (hash: TBD)
+3. [DONE] `loc-docs-push.phase2.stream1.task1` Clarify Localization/runtime translation ownership after release 1.2.612 (scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`; expected commit: `docs: clarify localization reasoning translation contract`).
+4. [DONE] Git Commit: `docs: clarify localization reasoning translation contract` (hash: self)
 
 ### Stream: Session UI Projection Docs
 
-5. [TODO] `loc-docs-push.phase2.stream2.task1` Document the Session Dialog translation-first projection and history replay path (scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionDialogPanel.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document session dialog reasoning translation projection`).
+5. [IN_PROGRESS] `loc-docs-push.phase2.stream2.task1` Document the Session Dialog translation-first projection and history replay path (scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionDialogPanel.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document session dialog reasoning translation projection`).
 6. [TODO] Git Commit: `docs: document session dialog reasoning translation projection` (hash: TBD)
 
 ## Phase 3 - Scope Closeout (owner: Codex, updated: 2026-06-25)

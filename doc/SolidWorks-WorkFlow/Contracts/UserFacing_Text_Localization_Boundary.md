@@ -1,7 +1,7 @@
 # User-Facing Text Localization Boundary (SSOT)
 
 **Status:** Active
-**Updated:** 2026-04-03
+**Updated:** 2026-06-25
 **Owner:** Oleksandr + Codex
 
 ---
@@ -101,6 +101,8 @@ Use for visible provider `Thinking` / `Reasoning` bubbles surfaced in the Sessio
 - target language is selected through the dedicated fifth `Reasoning` card in the localization settings section; it is independent from `Messages for the User` after the UI/Reasoning translation split;
 - translation engine is selected through the dedicated `Reasoning Translation Engine` selector (default `Google GTX Free` for low-risk live translation); it is independent from the `UI Translation Engine`;
 - `Reasoning` is a runtime-only category — there is no bundled English source dictionary for live thought bubbles, and reasoning does not participate in browser bootstrap bundle materialization;
+- visible pending labels for translation-first reasoning, for example `Перевод...`, are product-authored status copy rather than provider thought text. They must be localized through the ordinary UI/message dictionary boundary and must not be treated as model output or as a `Reasoning` overlay record;
+- while a visible reasoning bubble is pending translation, the UI must not render the source English `content` as an interim buffer. It should show the local pending label, then reveal translated `localizedContent` progressively when the runtime overlay arrives;
 - reasoning engine or reasoning language changes are never strict save-impact: they never block Settings save, never block Project Manager / new session sends, and never trigger a UI bundle rebuild;
 - hidden provider `Thinking` / `Reasoning` that is filtered out of the user-visible transcript stays outside the localization pipeline entirely and is never translated.
 
