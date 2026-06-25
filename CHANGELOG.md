@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.610] - 2026-06-25
+### Changed
+- **Visible reasoning translation is now translation-first.** Core marks
+  reasoning bubbles as pending only when the reasoning translation policy will
+  actually translate them, and the Session UI hides untranslated English source
+  while that pending overlay is active.
+- **Translated reasoning is revealed progressively.** When `localizedContent`
+  arrives, the Thinking bubble reveals the translated text by word-like tokens
+  instead of replacing an English paragraph all at once. English source remains
+  available only as the timeout/error fallback path.
+
+### Verification
+- `node --test --import tsx packages/core/src/session-translation/session-translation-facade.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`
+- `node --test --import tsx src/client/ui/src/session/dialog-panel-message-utils.test.ts src/client/ui/src/session/translated-text-reveal.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.609] - 2026-06-25
 ### Changed
 - **Gemini reasoning translation now has selective prompt examples.** The

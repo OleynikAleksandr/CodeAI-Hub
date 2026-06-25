@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase5.stream1.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.610 release notes",
+  "currentTaskId": "reasoning-reveal.phase5.stream2.task1",
+  "expectedCommitMessage": "chore: build 1.2.610 release",
   "debt": null
 }
 ```
@@ -79,12 +79,12 @@
 
 ### Stream: Release Metadata
 
-13. [IN_PROGRESS] `reasoning-reveal.phase5.stream1.task1` Prepare README and CHANGELOG for release 1.2.610 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.610 release notes`).
-14. [TODO] Git Commit: `docs: prepare 1.2.610 release notes` (hash: TBD)
+13. [DONE] `reasoning-reveal.phase5.stream1.task1` Prepare README and CHANGELOG for release 1.2.610 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.610 release notes`).
+14. [DONE] Git Commit: `docs: prepare 1.2.610 release notes` (hash: self)
 
 ### Stream: Release Build
 
-15. [TODO] `reasoning-reveal.phase5.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.610 release`).
+15. [IN_PROGRESS] `reasoning-reveal.phase5.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.610 release`).
 16. [TODO] Git Commit: `chore: build 1.2.610 release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing

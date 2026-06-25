@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.609** (Gemini Reasoning Translation Prompt Examples)
+**Current Release — v1.2.610** (Translation-First Reasoning Reveal)
+
+This release changes visible Thinking/Reasoning translation in the Session
+dialog from "show English first, replace later" to translation-first rendering.
+
+Core now marks reasoning bubbles whose translation is actually expected as
+pending. The Session UI keeps the original English source in the transcript,
+but hides it from the visible bubble while translation is pending. When the
+Russian `localizedContent` patch arrives, the UI reveals the translated text
+progressively by words, matching the live-reading feel of agent answers. Source
+English is shown only as the timeout/error fallback path.
+
+Retest focus: select `OpenRouter · Gemini 2.5 Flash Lite` as the Reasoning
+Translation Engine, trigger a GLM/OpenCode reasoning turn, and confirm the
+Thinking bubble does not flash English first; it should show pending
+translation state, then reveal Russian text progressively.
+
+**Previous Release — v1.2.609** (Gemini Reasoning Translation Prompt Examples)
 
 This release tunes the dedicated OpenRouter Gemini Flash-Lite reasoning
 translation prompt for the next live-translation experiment.
