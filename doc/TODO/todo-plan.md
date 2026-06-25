@@ -10,8 +10,8 @@
   "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": "release-1.2.609.phase3.stream2.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.609 release notes",
+  "currentTaskId": "release-1.2.609.phase3.stream3.task1",
+  "expectedCommitMessage": "chore: build 1.2.609 release",
   "debt": null
 }
 ```
@@ -133,12 +133,12 @@
 
 ### Stream: Release Metadata
 
-32. [IN_PROGRESS] `release-1.2.609.phase3.stream2.task1` Prepare README and CHANGELOG for release 1.2.609 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.609 release notes`).
-33. [TODO] Git Commit: `docs: prepare 1.2.609 release notes` (hash: TBD)
+32. [DONE] `release-1.2.609.phase3.stream2.task1` Prepare README and CHANGELOG for release 1.2.609 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.609 release notes`).
+33. [DONE] Git Commit: `docs: prepare 1.2.609 release notes` (hash: self)
 
 ### Stream: Release Build
 
-34. [TODO] `release-1.2.609.phase3.stream3.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.609 release`).
+34. [IN_PROGRESS] `release-1.2.609.phase3.stream3.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.609 release`).
 35. [TODO] Git Commit: `chore: build 1.2.609 release` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
