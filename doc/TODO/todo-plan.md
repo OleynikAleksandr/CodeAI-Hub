@@ -10,8 +10,8 @@
   "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": "release-1.2.607.phase1.stream2.task1",
-  "expectedCommitMessage": "fix: expose stable Gemini localization engine",
+  "currentTaskId": "release-1.2.607.phase1.stream3.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.607 release notes",
   "debt": null
 }
 ```
@@ -67,12 +67,12 @@
 
 ### Stream: Stable Model UI
 
-10. [IN_PROGRESS] `release-1.2.607.phase1.stream2.task1` Replace the Localization settings selector id/label with stable `google/gemini-2.5-flash-lite` (scope: `src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-engine-availability.ts, doc/TODO/todo-plan.md`; expected commit: `fix: expose stable Gemini localization engine`).
-11. [TODO] Git Commit: `fix: expose stable Gemini localization engine` (hash: TBD)
+10. [DONE] `release-1.2.607.phase1.stream2.task1` Replace the Localization settings selector id/label with stable `google/gemini-2.5-flash-lite` (scope: `src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-engine-availability.ts, doc/TODO/todo-plan.md`; expected commit: `fix: expose stable Gemini localization engine`).
+11. [DONE] Git Commit: `fix: expose stable Gemini localization engine` (hash: self)
 
 ### Stream: Release Metadata
 
-12. [TODO] `release-1.2.607.phase1.stream3.task1` Prepare README and CHANGELOG for release 1.2.607 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.607 release notes`).
+12. [IN_PROGRESS] `release-1.2.607.phase1.stream3.task1` Prepare README and CHANGELOG for release 1.2.607 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.607 release notes`).
 13. [TODO] Git Commit: `docs: prepare 1.2.607 release notes` (hash: TBD)
 
 ### Stream: Release Build

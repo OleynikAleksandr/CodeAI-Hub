@@ -9,12 +9,11 @@ const LOCALIZATION_ENGINE_PROVIDER_MAP: Readonly<
   "anthropic-claude-haiku-4-5": "claudeCodeCli",
   "codex-gpt-5.3-codex-spark": "codexCli",
   "codex-gpt-5.4-mini": "codexCli",
-  "google/gemini-2.5-flash-lite-preview-09-2025": "openRouter",
+  "google/gemini-2.5-flash-lite": "openRouter",
 };
 
 const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
-const GEMINI_FLASH_LITE_ENGINE_ID =
-  "google/gemini-2.5-flash-lite-preview-09-2025";
+const GEMINI_FLASH_LITE_ENGINE_ID = "google/gemini-2.5-flash-lite";
 const LM_STUDIO_TRANSLATION_ENGINE_PREFIX = "lmstudio:";
 const MAC_PLATFORM_PATTERN = /mac/iu;
 
@@ -48,7 +47,7 @@ export const formatUnknownLocalizationEngineLabel = (
     return `OpenAI Codex · ${engineId.slice("codex-".length)}`;
   }
   if (engineId === GEMINI_FLASH_LITE_ENGINE_ID) {
-    return "OpenRouter · Gemini 2.5 Flash Lite Preview";
+    return "OpenRouter · Gemini 2.5 Flash Lite";
   }
   if (engineId.startsWith(LM_STUDIO_TRANSLATION_ENGINE_PREFIX)) {
     const modelKey = engineId.slice(LM_STUDIO_TRANSLATION_ENGINE_PREFIX.length);

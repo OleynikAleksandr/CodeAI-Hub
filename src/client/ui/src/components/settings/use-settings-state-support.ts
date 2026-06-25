@@ -152,11 +152,14 @@ export const clampRemainingPercentThreshold = (value: number): number =>
 const LEGACY_SOURCE_LANGUAGE = "source";
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+const DEPRECATED_GEMINI_FLASH_LITE_PREVIEW_ENGINE_ID =
+  "google/gemini-2.5-flash-lite-preview-09-2025";
 const LM_STUDIO_LOCALIZATION_ENGINE_PREFIX = "lmstudio:";
+const STABLE_GEMINI_FLASH_LITE_ENGINE_ID = "google/gemini-2.5-flash-lite";
 export const SUPPORTED_LOCALIZATION_ENGINE_IDS = [
   "apple-native",
   "google-gtx",
-  "google/gemini-2.5-flash-lite-preview-09-2025",
+  STABLE_GEMINI_FLASH_LITE_ENGINE_ID,
   "codex-gpt-5.4-mini",
   "codex-gpt-5.3-codex-spark",
   "anthropic-claude-haiku-4-5",
@@ -183,6 +186,9 @@ const normalizeLocalizationEngineId = (value: string): string => {
 
   if (trimmed.startsWith(LM_STUDIO_LOCALIZATION_ENGINE_PREFIX)) {
     return trimmed;
+  }
+  if (trimmed === DEPRECATED_GEMINI_FLASH_LITE_PREVIEW_ENGINE_ID) {
+    return STABLE_GEMINI_FLASH_LITE_ENGINE_ID;
   }
 
   return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed)
