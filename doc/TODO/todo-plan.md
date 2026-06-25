@@ -5,9 +5,9 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "NONE",
-  "planId": "translation-benchmark-live-run-fixes-2026-06-25",
+  "planId": "translation-benchmark-load-failures-2026-06-25",
   "branch": "main",
-  "baseHead": "fcd3528fe",
+  "baseHead": "3bd63a876",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
   "currentTaskId": null,
@@ -20,7 +20,7 @@
 ## No Active Execution Scope
 
 - **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-translation-benchmark-live-run-fixes-2026-06-25.md`
+- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-translation-benchmark-load-failures-2026-06-25.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md`
 - **Last recorded commit:** `self`
 

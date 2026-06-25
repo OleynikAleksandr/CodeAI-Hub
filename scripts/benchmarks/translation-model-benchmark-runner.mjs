@@ -232,7 +232,11 @@ async function runLive() {
   const rows = [];
   for (const target of targets) {
     console.error(`Benchmarking ${target.provider} ${target.model}...`);
-    const warmup = target.kind === "lm" ? await warmupLm(target.key) : null;
+    const warmup = target.kind === "lm" ? await tryWarmupLm(target) : null;
+    if (warmup?.error) {
+      rows.push(loadFailed(target, warmup));
+      continue;
+    }
     const requestModel = warmup?.apiModel ?? target.model;
     const runs = [];
     for (let iteration = 1; iteration <= iterations; iteration += 1) {
@@ -243,6 +247,51 @@ async function runLive() {
     rows.push(summarize(target, runs, warmup));
   }
   return rows;
+}
+
+async function tryWarmupLm(target) {
+  try {
+    return await warmupLm(target.key);
+  } catch (error) {
+    const message = String(error?.message || error);
+    await log(`warmup error model=${target.model} ${message}`);
+    return {
+      error: message,
+      reusedExisting: false,
+      warmupMs: null,
+    };
+  }
+}
+
+function loadFailed(target, warmup) {
+  return {
+    autoScoreAvg: 0,
+    caseCount: 0,
+    caseResults: [
+      {
+        autoScore: 0,
+        error: warmup.error,
+        fullLatencyMs: 0,
+        hardFail: true,
+        iteration: 0,
+        missingTerms: [],
+        outputText: `ERROR: ${warmup.error}`,
+        protectedScore: 0,
+        sampleId: "load_failed",
+        tokensPerSecondApprox: 0,
+      },
+    ],
+    hardFails: cases.length * iterations,
+    model: target.model,
+    p50LatencyMs: null,
+    p95LatencyMs: null,
+    protectedScoreAvg: 0,
+    provider: target.provider,
+    route: target.route ?? null,
+    tokensPerSecondAvg: null,
+    warmup,
+    verdict: "load_failed",
+  };
 }
 
 async function runCase(target, requestModel, item, iteration) {
