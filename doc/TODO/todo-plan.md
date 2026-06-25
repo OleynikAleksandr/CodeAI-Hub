@@ -10,8 +10,8 @@
   "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": "release-1.2.608.phase2.stream4.task1",
-  "expectedCommitMessage": "chore: build 1.2.608 release",
+  "currentTaskId": "release-1.2.608.phase2.stream5.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -110,12 +110,13 @@
 
 ### Stream: Release Build
 
-25. [IN_PROGRESS] `release-1.2.608.phase2.stream4.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.608 release`).
-26. [TODO] Git Commit: `chore: build 1.2.608 release` (hash: TBD)
+25. [DONE] `release-1.2.608.phase2.stream4.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.608 release`).
+   - Evidence 2026-06-25: `./scripts/build-all.sh` completed for `1.2.608`; `./scripts/build-release.sh --use-current-version --allow-dirty` created `codeai-hub-1.2.608.vsix` and refreshed `doc/tmp/releases/*1.2.608*`.
+26. [DONE] Git Commit: `chore: build 1.2.608 release` (hash: self)
 
 ### Stream: User Workflow Acceptance Testing
 
-27. [TODO] `release-1.2.608.phase2.stream5.task1` User installs release 1.2.608 and confirms dynamic live reasoning glossary protection (scope: `user workflow`).
+27. [IN_PROGRESS] `release-1.2.608.phase2.stream5.task1` User installs release 1.2.608 and confirms dynamic live reasoning glossary protection (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
