@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.611] - 2026-06-25
+### Fixed
+- **Pending reasoning no longer leaks English source through merged bubbles.**
+  When any merged Thinking/Reasoning segment is still pending translation, the
+  visible projection uses only translated `localizedContent`; canonical English
+  source remains stored in `content` for transcript/fallback use.
+- **Growing translated reasoning stays prefix-stable.** New translated blocks
+  append after the already revealed Russian prefix, so the word-by-word reveal
+  continues from the new suffix instead of restarting from the first block.
+
+### Verification
+- `node --test --import tsx src/client/ui/src/session/dialog-panel-message-utils.test.ts`
+- `npm run typecheck:webview`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.610] - 2026-06-25
 ### Changed
 - **Visible reasoning translation is now translation-first.** Core marks

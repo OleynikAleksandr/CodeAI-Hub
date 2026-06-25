@@ -10,7 +10,7 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase6.stream2.task1",
+  "currentTaskId": "reasoning-reveal.phase6.stream2.task2",
   "expectedCommitMessage": "chore: build 1.2.611 release",
   "debt": null
 }
@@ -33,7 +33,7 @@
 
 - **Required reading before each fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Release build confirmation gate: satisfied by the user request on 2026-06-25.
-- Next release target: `1.2.610`.
+- Next release target: `1.2.611`.
 - Use `npm run plan:commit -- "<expected commit message>"` for tracked commits.
 - Do not close this scope until the user explicitly accepts the installed release.
 
@@ -98,17 +98,22 @@
 18. [DONE] `reasoning-reveal.phase6.stream1.task1` Keep pending reasoning source hidden and continue progressive reveal when translated reasoning grows across blocks (scope: `src/client/ui/src/session/dialog-panel-message-utils.ts, src/client/ui/src/session/dialog-panel-message-utils.test.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `fix: stabilize reasoning translation reveal`).
 19. [DONE] Git Commit: `fix: stabilize reasoning translation reveal` (hash: self)
 
+### Stream: Bugfix Release Metadata
+
+20. [DONE] `reasoning-reveal.phase6.stream2.task1` Prepare README and CHANGELOG for release 1.2.611 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.611 release notes`).
+21. [DONE] Git Commit: `docs: prepare 1.2.611 release notes` (hash: self)
+
 ### Stream: Bugfix Release Build
 
-20. [IN_PROGRESS] `reasoning-reveal.phase6.stream2.task1` Build the next bugfix release only after explicit release-build confirmation (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.611 release`).
-21. [TODO] Git Commit: `chore: build 1.2.611 release` (hash: TBD)
+22. [IN_PROGRESS] `reasoning-reveal.phase6.stream2.task2` Run release build scripts and commit generated version state for 1.2.611 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.611 release`).
+23. [TODO] Git Commit: `chore: build 1.2.611 release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Retest
 
-22. [TODO] `reasoning-reveal.phase6.stream3.task1` User installs the bugfix release and verifies translated reasoning no longer shows English source and no longer restarts reveal from the first block (scope: `user workflow`).
+24. [TODO] `reasoning-reveal.phase6.stream3.task1` User installs the bugfix release and verifies translated reasoning no longer shows English source and no longer restarts reveal from the first block (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 
-23. [TODO] `reasoning-reveal.phase5.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close reasoning translation reveal scope`).
-24. [TODO] Git Commit: `docs: close reasoning translation reveal scope` (hash: TBD)
-25. [TODO] `reasoning-reveal.phase5.stream4.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+25. [TODO] `reasoning-reveal.phase5.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close reasoning translation reveal scope`).
+26. [TODO] Git Commit: `docs: close reasoning translation reveal scope` (hash: TBD)
+27. [TODO] `reasoning-reveal.phase5.stream4.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
