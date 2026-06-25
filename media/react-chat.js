@@ -8056,11 +8056,13 @@
   var LEGACY_SOURCE_LANGUAGE2 = "source";
   var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
+  var DEPRECATED_GEMINI_FLASH_LITE_PREVIEW_ENGINE_ID = "google/gemini-2.5-flash-lite-preview-09-2025";
   var LM_STUDIO_LOCALIZATION_ENGINE_PREFIX = "lmstudio:";
+  var STABLE_GEMINI_FLASH_LITE_ENGINE_ID = "google/gemini-2.5-flash-lite";
   var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
     "apple-native",
     "google-gtx",
-    "google/gemini-2.5-flash-lite-preview-09-2025",
+    STABLE_GEMINI_FLASH_LITE_ENGINE_ID,
     "codex-gpt-5.4-mini",
     "codex-gpt-5.3-codex-spark",
     "anthropic-claude-haiku-4-5"
@@ -8082,6 +8084,9 @@
     }
     if (trimmed.startsWith(LM_STUDIO_LOCALIZATION_ENGINE_PREFIX)) {
       return trimmed;
+    }
+    if (trimmed === DEPRECATED_GEMINI_FLASH_LITE_PREVIEW_ENGINE_ID) {
+      return STABLE_GEMINI_FLASH_LITE_ENGINE_ID;
     }
     return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed) ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
   };
