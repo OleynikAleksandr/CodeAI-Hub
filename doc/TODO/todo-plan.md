@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase6.stream2.task2",
-  "expectedCommitMessage": "chore: build 1.2.611 release",
+  "currentTaskId": "reasoning-reveal.phase6.stream3.task1",
+  "expectedCommitMessage": null,
   "debt": null
 }
 ```
@@ -105,12 +105,12 @@
 
 ### Stream: Bugfix Release Build
 
-22. [IN_PROGRESS] `reasoning-reveal.phase6.stream2.task2` Run release build scripts and commit generated version state for 1.2.611 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.611 release`).
-23. [TODO] Git Commit: `chore: build 1.2.611 release` (hash: TBD)
+22. [DONE] `reasoning-reveal.phase6.stream2.task2` Run release build scripts and commit generated version state for 1.2.611 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, media/react-chat.js, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.611 release`).
+23. [DONE] Git Commit: `chore: build 1.2.611 release` (hash: self)
 
 ### Stream: User Visual Acceptance Retest
 
-24. [TODO] `reasoning-reveal.phase6.stream3.task1` User installs the bugfix release and verifies translated reasoning no longer shows English source and no longer restarts reveal from the first block (scope: `user workflow`).
+24. [IN_PROGRESS] `reasoning-reveal.phase6.stream3.task1` User installs the bugfix release and verifies translated reasoning no longer shows English source and no longer restarts reveal from the first block (scope: `user workflow`).
 
 ### Stream: Scope Closeout
 

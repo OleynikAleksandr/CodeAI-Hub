@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.2.610",
-    "package": "glm-opencode-module-1.2.610.tar.bz2",
-    "size": 13833,
-    "sha1": "52a1d1250233c20d5fbb3841a77f51a5722a628a"
+    "version": "1.2.611",
+    "package": "glm-opencode-module-1.2.611.tar.bz2",
+    "size": 13825,
+    "sha1": "223b6365aff020ee6adbac428d7a2c49d84bf302"
   }
 }
