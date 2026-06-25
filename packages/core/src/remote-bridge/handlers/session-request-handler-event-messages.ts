@@ -203,17 +203,16 @@ export class SessionRequestHandlerEventMessages {
     const tag = deduped.tag ?? options.tag;
     const providerId = resolveTranslationProviderId(session?.providerId);
     const settingsPath = session?.modelBinding?.settingsPath;
-    let visibilityAtEmission: "visible" | "hidden" | undefined;
-    if (emissionThinking && providerId) {
-      visibilityAtEmission =
-        this.deps.sessionTranslation.resolveThinkingVisibilityForProvider(
-          providerId,
-          settingsPath
-        )
-          ? "visible"
-          : "hidden";
-    }
-    const message = this.deps.sessionManager.appendMessage(
+    const displayState = emissionThinking
+      ? this.deps.sessionTranslation.resolveThinkingDisplayState({
+          content,
+          role: options.role,
+          ...(providerId ? { providerId } : {}),
+          ...(tag ? { tag } : {}),
+          ...(settingsPath ? { settingsPath } : {}),
+        })
+      : {};
+    const persistedMessage = this.deps.sessionManager.appendMessage(
       options.sessionId,
       options.role,
       content,
@@ -221,12 +220,12 @@ export class SessionRequestHandlerEventMessages {
         ...(options.messageId ? { messageId: options.messageId } : {}),
         ...(options.timestamp ? { timestamp: options.timestamp } : {}),
         ...(tag ? { tag } : {}),
-        ...(visibilityAtEmission ? { visibilityAtEmission } : {}),
       }
     );
-    if (!message) {
+    if (!persistedMessage) {
       return;
     }
+    const message = { ...persistedMessage, ...displayState };
     const thinkingMessage = isThinkingDisplayMessage(message);
 
     this.enqueueMessagePersistence(options.sessionId, async () => {

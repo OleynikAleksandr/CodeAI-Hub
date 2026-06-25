@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase2.stream2.task1",
-  "expectedCommitMessage": "feat: mark visible reasoning pending translation",
+  "currentTaskId": "reasoning-reveal.phase3.stream1.task1",
+  "expectedCommitMessage": "fix: keep pending reasoning source hidden",
   "debt": null
 }
 ```
@@ -53,14 +53,14 @@
 
 ### Stream: Core Policy Wiring
 
-5. [IN_PROGRESS] `reasoning-reveal.phase2.stream2.task1` Mark visible reasoning messages as pending only when Core policy will translate them (scope: `packages/core/src/session-manager/index.ts, packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`; expected commit: `feat: mark visible reasoning pending translation`).
-6. [TODO] Git Commit: `feat: mark visible reasoning pending translation` (hash: TBD)
+5. [DONE] `reasoning-reveal.phase2.stream2.task1` Mark visible reasoning messages as pending only when Core policy will translate them (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`; expected commit: `feat: mark visible reasoning pending translation`).
+6. [DONE] Git Commit: `feat: mark visible reasoning pending translation` (hash: self)
 
 ## Phase 3 - Session UI Translation-First Reveal (owner: Codex, updated: 2026-06-25)
 
 ### Stream: Display Projection
 
-7. [TODO] `reasoning-reveal.phase3.stream1.task1` Stop merged thinking display content from falling back to English while a translated segment is pending (scope: `src/client/ui/src/session/dialog-panel-message-utils.ts, src/client/ui/src/session/dialog-panel-message-utils.test.ts, src/client/ui/src/session/session-message-localization-facade.ts`; expected commit: `fix: keep pending reasoning source hidden`).
+7. [IN_PROGRESS] `reasoning-reveal.phase3.stream1.task1` Stop merged thinking display content from falling back to English while a translated segment is pending (scope: `src/client/ui/src/session/dialog-panel-message-utils.ts, src/client/ui/src/session/dialog-panel-message-utils.test.ts, src/client/ui/src/session/session-message-localization-facade.ts`; expected commit: `fix: keep pending reasoning source hidden`).
 8. [TODO] Git Commit: `fix: keep pending reasoning source hidden` (hash: TBD)
 
 ### Stream: Progressive Reveal

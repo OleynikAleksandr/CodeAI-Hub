@@ -58,6 +58,11 @@ export interface SessionMessageTranslationResult {
   readonly translatedContent: string;
 }
 
+interface SessionThinkingDisplayState {
+  readonly translationState?: "pending";
+  readonly visibilityAtEmission?: "visible" | "hidden";
+}
+
 const resolveCandidateSettingsPath = (
   candidate: Pick<SessionMessageTranslationCandidate, "settingsPath">,
   fallback: string
@@ -141,14 +146,46 @@ export class SessionTranslationFacade {
     return this.dispatcher.shouldTranslateDialogMessage(candidate);
   }
 
-  resolveThinkingVisibilityForProvider(
-    providerId: SessionTranslationProviderId,
-    settingsPath?: string
-  ): boolean {
-    return this.policyResolver.resolveThinkingVisibility(
-      settingsPath ?? this.settingsPath,
-      providerId
+  resolveThinkingDisplayState(
+    candidate: SessionTranslationDispatchCandidate & {
+      readonly providerId?: SessionTranslationProviderId;
+      readonly settingsPath?: string;
+    }
+  ): SessionThinkingDisplayState {
+    const settingsPath = resolveCandidateSettingsPath(
+      candidate,
+      this.settingsPath
     );
+    let visibilityAtEmission: "visible" | "hidden" | undefined;
+    if (candidate.providerId) {
+      visibilityAtEmission = this.policyResolver.resolveThinkingVisibility(
+        settingsPath,
+        candidate.providerId
+      )
+        ? "visible"
+        : "hidden";
+    }
+    const baseState = visibilityAtEmission ? { visibilityAtEmission } : {};
+    if (
+      visibilityAtEmission === "hidden" ||
+      !this.dispatcher.shouldTranslateDialogMessage(candidate)
+    ) {
+      return baseState;
+    }
+    const policy = this.policyResolver.resolve(
+      settingsPath,
+      resolveTranslationPolicyCategory(candidate)
+    );
+    if (
+      !(policy.enabled && policy.targetLanguage) ||
+      shouldSkipAlreadyRussianReasoningTranslation(
+        candidate.content,
+        policy.targetLanguage
+      )
+    ) {
+      return baseState;
+    }
+    return { ...baseState, translationState: "pending" };
   }
 
   private createTranslationReporter(

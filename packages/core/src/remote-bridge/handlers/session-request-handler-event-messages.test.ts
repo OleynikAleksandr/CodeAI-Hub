@@ -36,16 +36,19 @@ const assertThinkingTranslationRouting = async (params: {
     updatedAt: "2026-06-16T07:19:31.139Z",
   });
 
-  let visibilityArgs: readonly unknown[] = [];
+  let displayStateArgs: readonly unknown[] = [];
   const translatedCandidates: Array<{
     readonly providerId?: string;
     readonly role: string;
     readonly settingsPath?: string;
     readonly tag?: string;
   }> = [];
-  const captureVisibilityArgs = (...args: readonly unknown[]): boolean => {
-    visibilityArgs = args;
-    return true;
+  const captureDisplayStateArgs = (candidate: {
+    readonly providerId?: string;
+    readonly settingsPath?: string;
+  }) => {
+    displayStateArgs = [candidate.providerId, candidate.settingsPath];
+    return { translationState: "pending", visibilityAtEmission: "visible" };
   };
   const captureTranslationCandidate = (
     candidate: (typeof translatedCandidates)[number]
@@ -63,7 +66,7 @@ const assertThinkingTranslationRouting = async (params: {
       appendMessageTranslation: () => Promise.resolve(),
     } as never,
     sessionTranslation: {
-      resolveThinkingVisibilityForProvider: captureVisibilityArgs,
+      resolveThinkingDisplayState: captureDisplayStateArgs,
       shouldTranslateDialogMessage: (candidate: {
         readonly role: string;
         readonly tag?: string;
@@ -77,7 +80,7 @@ const assertThinkingTranslationRouting = async (params: {
     tag: "thinking",
   });
   await handler.waitForMessagePersistence(session.id);
-  assert.deepEqual(visibilityArgs, [
+  assert.deepEqual(displayStateArgs, [
     params.expectedProviderId,
     "/tmp/workflow/runtime/settings/settings.json",
   ]);
@@ -121,7 +124,7 @@ test("SessionRequestHandlerEventMessages normalizes assistant content before per
       appendMessageTranslation: () => Promise.resolve(),
     } as never,
     sessionTranslation: {
-      resolveThinkingVisibilityForProvider: () => true,
+      resolveThinkingDisplayState: () => ({ visibilityAtEmission: "visible" }),
       shouldTranslateDialogMessage: () => false,
       translateDialogMessage: async () => null,
     } as never,
@@ -190,7 +193,7 @@ test("SessionRequestHandlerEventMessages preserves append order during async per
       appendMessageTranslation: () => Promise.resolve(),
     } as never,
     sessionTranslation: {
-      resolveThinkingVisibilityForProvider: () => true,
+      resolveThinkingDisplayState: () => ({ visibilityAtEmission: "visible" }),
       shouldTranslateDialogMessage: (candidate: {
         readonly role: string;
         readonly tag?: string;
@@ -250,7 +253,7 @@ test("SessionRequestHandlerEventMessages does not translate Core system messages
       appendMessageTranslation: () => Promise.resolve(),
     } as never,
     sessionTranslation: {
-      resolveThinkingVisibilityForProvider: () => true,
+      resolveThinkingDisplayState: () => ({ visibilityAtEmission: "visible" }),
       shouldTranslateDialogMessage: () => false,
       translateDialogMessage: () => {
         translateCalls += 1;
@@ -295,7 +298,7 @@ test("SessionRequestHandlerEventMessages does not queue translation for workflow
       appendMessageTranslation: () => Promise.resolve(),
     } as never,
     sessionTranslation: {
-      resolveThinkingVisibilityForProvider: () => true,
+      resolveThinkingDisplayState: () => ({ visibilityAtEmission: "visible" }),
       shouldTranslateDialogMessage: () => false,
       translateDialogMessage: (candidate: { readonly tag?: string }) => {
         translatedTags.push(candidate.tag);
