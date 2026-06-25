@@ -8,6 +8,26 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.606] - 2026-06-25
+### Added
+- **OpenRouter Gemini Flash Lite is now a dedicated localization engine.**
+  `google/gemini-2.5-flash-lite-preview-09-2025` is available in both the UI
+  Translation Engine and Reasoning Translation Engine selectors.
+
+### Changed
+- **The Gemini localization engine uses an exact OpenRouter model slug.** It
+  reads OpenRouter credentials/base URL but does not inherit the model selected
+  in general OpenRouter provider settings.
+- **The translation prompt preserves protected technical terms and structured
+  text.** Code spans, paths, commands, URLs, model ids, provider/product names,
+  JSON keys, placeholders, and localization markers are kept unchanged.
+
+### Verification
+- `node --test --import tsx packages/core/src/translation/core-translation-facade-factory.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts`
+- `npm run lint -- packages/core/src/translation/core-translation-facade-factory.ts packages/localization/src/language-catalog.ts src/client/ui/src/components/settings/use-settings-state-support.ts src/client/ui/src/components/settings/localization-engine-availability.ts`
+- `npm run typecheck:webview`
+- Plan-managed commit hooks: architecture, lint, knip, formatting.
+
 ## [1.2.605] - 2026-06-24
 ### Added
 - **Local Models workflow-agent prompts can be overridden for benchmark/control

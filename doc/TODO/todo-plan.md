@@ -4,31 +4,54 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
-  "planId": "localization-gemini-flash-lite-engine-2026-06-25",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "localization-gemini-flash-lite-release-1.2.606-2026-06-25",
   "branch": "main",
-  "baseHead": "d617a7461",
+  "baseHead": "973c18596",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md",
-  "currentTaskId": null,
-  "expectedCommitMessage": null,
+  "currentTaskId": "release-1.2.606.phase0.stream2.task1",
+  "expectedCommitMessage": "chore: build 1.2.606 release",
   "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## No Active Execution Scope
+## Context Pack For This Cycle
 
-- **Execution Scope Status:** NONE
-- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-localization-gemini-flash-lite-engine-2026-06-25.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Backlog/Benchmarks/Translation_Model_Benchmark_RU.md`
-- **Last recorded commit:** `self`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
+- Only this list is the context source for this execution cycle.
 
-## Start Next Scope
+## Execution Rules
 
-There is no active execution scope. Before starting new implementation work:
+- Release build confirmation gate: satisfied by the user request on 2026-06-25.
+- Before `build-all.sh`, update `README.md` Current Release and `CHANGELOG.md` for future version `1.2.606`.
+- Use `npm run plan:commit -- "<expected commit message>"` for tracked commits.
+- Do not close this release scope until the user explicitly accepts the installed release.
 
-- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
-- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
-- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
-- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
+## Phase 0 - Release 1.2.606 (owner: Codex, updated: 2026-06-25)
+
+### Stream: Release Metadata
+
+1. [DONE] `release-1.2.606.phase0.stream1.task1` Prepare README and CHANGELOG for release 1.2.606 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.606 release notes`).
+2. [DONE] Git Commit: `docs: prepare 1.2.606 release notes` (hash: self)
+
+### Stream: Release Build
+
+3. [IN_PROGRESS] `release-1.2.606.phase0.stream2.task1` Run release build scripts and commit generated version state (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.606 release`).
+4. [TODO] Git Commit: `chore: build 1.2.606 release` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+5. [TODO] `release-1.2.606.phase0.stream3.task1` User installs release 1.2.606 and confirms the localization engine retest result (scope: `user workflow`).
+
+### Stream: Scope Closeout
+
+6. [TODO] `release-1.2.606.phase0.stream4.task1` Close the release scope after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close 1.2.606 release scope`).
+7. [TODO] Git Commit: `docs: close 1.2.606 release scope` (hash: TBD)

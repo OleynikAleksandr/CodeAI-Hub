@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.605** (Local Models Prompt Controls)
+**Current Release — v1.2.606** (Gemini Flash Lite Localization Engine)
+
+This release adds OpenRouter
+`google/gemini-2.5-flash-lite-preview-09-2025` as a dedicated localization
+translation engine for both UI bundle materialization and live reasoning
+translation.
+
+The engine sends the exact OpenRouter model slug for translation requests and
+uses OpenRouter settings only for credentials/base URL, so it is not affected
+by whichever model is selected for general OpenRouter provider turns. The
+translation profile asks for text-only output and preserves code, paths, model
+ids, provider names, placeholders, Markdown, JSON keys, CLI commands, URLs,
+and protected technical terms.
+
+Retest focus: select `OpenRouter · Gemini 2.5 Flash Lite Preview` in both
+Localization selectors, set Russian for reasoning/UI targets, and confirm
+translated text appears while terms such as `shell`, `Project Manager`, model
+ids, commands, and file paths remain in English.
+
+**Previous Release — v1.2.605** (Local Models Prompt Controls)
 
 This release adds env-driven system prompt controls for Local Models / LM
 Studio workflow-agent turns.
