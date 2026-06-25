@@ -14,8 +14,6 @@ Dry run / shape check:
 
 ```bash
 node scripts/benchmarks/translation-model-benchmark-runner.mjs \
-  --openrouter-model TODO_OPENROUTER_MODEL \
-  --local-model lmstudio:TODO_LOCAL_MODEL \
   --case-limit 2
 ```
 
@@ -24,21 +22,21 @@ Typical live run:
 ```bash
 OPENROUTER_API_KEY=... node scripts/benchmarks/translation-model-benchmark-runner.mjs \
   --live \
-  --openrouter-model <openrouter/model-slug> \
-  --local-model lmstudio:<modelKey> \
   --iterations 3 \
   --timeout-ms 30000 \
   --out doc/tmp/prototypes/translation-model-benchmark-live.md
 ```
 
-The script writes a Markdown report plus raw JSON payload to the output file. Its automated score covers protected terms, structure, and output discipline only; semantic fidelity and Russian style stay manual review fields.
+By default the script uses the candidate list in §9. Custom ad-hoc candidates can still be passed with `--openrouter-model <slug>` and `--local-model lmstudio:<modelKey>`; an OpenRouter provider route can be forced with `--openrouter-model <slug>@groq` or `--openrouter-model <slug>@parasail`.
+
+The script writes a Markdown report plus raw JSON payload to the output file. Its automated score covers protected terms, structure, and output discipline only; semantic fidelity and Russian style stay manual review fields. OpenRouter routed candidates use `provider.order` with `allow_fallbacks: false`; this follows the official OpenRouter provider routing contract.
 
 ## 1. Цель
 
 Проверить две provider-линии:
 
-- OpenRouter hosted models: exact model slugs будут добавлены перед прогоном.
-- Local Models через LM Studio: exact `lmstudio:<modelKey>` будут добавлены перед прогоном.
+- OpenRouter hosted models: exact model slugs and endpoint routes are listed in §9.
+- Local Models через LM Studio: exact `lmstudio:<modelKey>` candidates are listed in §9.
 
 Главный сценарий — plain text in, plain text out. Модель получает английский reasoning-фрагмент и возвращает только русский перевод. JSON, tool calls, file writes, schema output и repair parsing в этом benchmark не нужны.
 
@@ -217,8 +215,10 @@ No tools are exposed to the model. Each request is one chat completion:
 
 - system: fixed Claude system prompt from §2;
 - user: translation-only task prompt from §2 with `<TERMS>` and `<TEXT>`;
-- temperature: `0.1`;
+- temperature: `0.3`;
 - top_p: `0.8`;
+- OpenRouter reasoning controls: `reasoning: { enabled: false, exclude: true }` and `reasoning_effort: "none"`; if a model/provider ignores or rejects this, record it in the report.
+- Local Models reasoning controls: Qwen-family model keys receive `/no_think` before the translation prompt; other local models rely on the translation-only prompt unless LM Studio exposes a model-specific non-thinking switch.
 - streaming: enabled when provider supports it;
 - max output tokens: enough for full translation, default `2048`;
 - source language: English;
@@ -268,16 +268,20 @@ Record:
 
 ## 9. Current Candidate Slots
 
-Exact names will be filled before running:
-
 | Provider | Candidate |
 | --- | --- |
-| OpenRouter | `TODO_OPENROUTER_MODEL_1` |
-| OpenRouter | `TODO_OPENROUTER_MODEL_2` |
-| OpenRouter | `TODO_OPENROUTER_MODEL_3` |
-| Local Models | `lmstudio:TODO_LOCAL_MODEL_1` |
-| Local Models | `lmstudio:TODO_LOCAL_MODEL_2` |
-| Local Models | `lmstudio:TODO_LOCAL_MODEL_3` |
+| OpenRouter | `openai/gpt-oss-120b:free` |
+| OpenRouter | `nvidia/nemotron-3-super-120b-a12b:free` |
+| OpenRouter | `meta-llama/llama-3.1-8b-instruct@groq` |
+| OpenRouter | `google/gemma-4-26b-a4b-it@parasail` |
+| OpenRouter | `google/gemini-2.5-flash-lite-preview-09-2025` |
+| OpenRouter | `openai/gpt-oss-20b@groq` |
+| Local Models | `lmstudio:Llama-3.3-8B-Instruct-128K_Abliterated-mlx-4Bit` |
+| Local Models | `lmstudio:Meta-Llama-3-8B-Instruct-4bit` |
+| Local Models | `lmstudio:gemma-3-12b` |
+| Local Models | `lmstudio:Hy-MT2-30B-A3B-oQ2-MLX` |
+| Local Models | `lmstudio:Hy-MT2-1.8B-4bit` |
+| Local Models | `lmstudio:qwen3.5-9b` |
 
 ## 10. Expected Output Shape
 
