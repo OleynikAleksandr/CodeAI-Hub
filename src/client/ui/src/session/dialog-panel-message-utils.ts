@@ -45,9 +45,6 @@ export const buildMessageClassNames = (
   return classes.join(" ");
 };
 
-export const resolveDisplayContent = (message: SessionMessage): string =>
-  message.localizedContent ?? message.content;
-
 export const resolveRoleLabel = (
   message: SessionMessage,
   providerLabel: string | null
@@ -69,6 +66,16 @@ export const resolveRoleLabel = (
 
 const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
   message.role === "thinking" || isAssistantThinkingMessage(message);
+
+const isPendingTranslationMessage = (message: SessionMessage): boolean =>
+  isThinkingDisplayMessage(message) &&
+  message.translationState === "pending" &&
+  !message.localizedContent;
+
+export const resolveDisplayContent = (message: SessionMessage): string =>
+  isPendingTranslationMessage(message)
+    ? ""
+    : (message.localizedContent ?? message.content);
 
 const shouldRepairSplitListMarker = (
   previousContent: string,
@@ -101,6 +108,19 @@ const joinThinkingDisplayContent = (
   return `${previousContent}\n${nextContent}`;
 };
 
+const joinOptionalThinkingDisplayContent = (
+  previousContent: string,
+  nextContent: string
+): string => {
+  if (!previousContent) {
+    return nextContent;
+  }
+  if (!nextContent) {
+    return previousContent;
+  }
+  return joinThinkingDisplayContent(previousContent, nextContent);
+};
+
 const mergeThinkingDisplayMessage = (
   previous: SessionMessage,
   next: SessionMessage
@@ -108,14 +128,19 @@ const mergeThinkingDisplayMessage = (
   const useAssistantThinking =
     isAssistantThinkingMessage(previous) || isAssistantThinkingMessage(next);
   const content = joinThinkingDisplayContent(previous.content, next.content);
-  const localizedContent = joinThinkingDisplayContent(
+  const localizedContent = joinOptionalThinkingDisplayContent(
     resolveDisplayContent(previous),
     resolveDisplayContent(next)
   );
+  const pendingTranslation =
+    isPendingTranslationMessage(previous) || isPendingTranslationMessage(next);
   return {
     ...previous,
     content,
-    ...(localizedContent === content ? {} : { localizedContent }),
+    ...(localizedContent && localizedContent !== content
+      ? { localizedContent }
+      : {}),
+    ...(pendingTranslation ? { translationState: "pending" as const } : {}),
     ...(useAssistantThinking ? { role: "assistant", tag: "thinking" } : {}),
   };
 };

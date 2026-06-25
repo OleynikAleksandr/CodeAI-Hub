@@ -5,6 +5,7 @@ import {
   buildMessageClassNames,
   mergeLiveAssistantMessages,
   mergeThinkingMessages,
+  resolveDisplayContent,
 } from "./dialog-panel-message-utils";
 
 const ASSISTANT_MESSAGE_CLASS_REGEX = /\bsession-dialog__message--assistant\b/u;
@@ -22,6 +23,7 @@ const createMessage = (
   options?: {
     readonly tag?: SessionMessage["tag"];
     readonly localizedContent?: string;
+    readonly translationState?: SessionMessage["translationState"];
   }
 ): SessionMessage => ({
   id,
@@ -31,6 +33,9 @@ const createMessage = (
   ...(options?.tag ? { tag: options.tag } : {}),
   ...(options?.localizedContent
     ? { localizedContent: options.localizedContent }
+    : {}),
+  ...(options?.translationState
+    ? { translationState: options.translationState }
     : {}),
 });
 
@@ -286,6 +291,41 @@ test("mergeThinkingMessages repairs a split marker-only list boundary", () => {
     merged[0].localizedContent,
     "Вопросы, которые я выделил:\n1. UX управления несколькими проектами\n2. Первоначальный запуск"
   );
+});
+
+test("resolveDisplayContent hides pending reasoning source until translation arrives", () => {
+  const message = createMessage("1", "assistant", "I need to inspect inputs.", {
+    tag: "thinking",
+    translationState: "pending",
+  });
+
+  assert.equal(resolveDisplayContent(message), "");
+});
+
+test("mergeThinkingMessages does not mix pending English source into localized thinking", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage("1", "assistant", "I need to inspect inputs.", {
+      tag: "thinking",
+      translationState: "pending",
+    }),
+    createMessage("2", "assistant", "Now I can draft the artifact.", {
+      tag: "thinking",
+      localizedContent: "Теперь я могу подготовить артефакт.",
+    }),
+  ];
+
+  const merged = mergeThinkingMessages(source);
+
+  assert.equal(merged.length, 1);
+  assert.equal(
+    merged[0].content,
+    "I need to inspect inputs.\nNow I can draft the artifact."
+  );
+  assert.equal(
+    merged[0].localizedContent,
+    "Теперь я могу подготовить артефакт."
+  );
+  assert.equal(merged[0].translationState, "pending");
 });
 
 test("mergeThinkingMessages preserves a blank line before the next standalone bold heading block", () => {

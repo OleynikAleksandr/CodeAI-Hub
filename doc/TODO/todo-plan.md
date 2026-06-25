@@ -10,8 +10,8 @@
   "baseHead": "62d92f09e",
   "lastRecordedCommit": "self",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionDialog_ReasoningTranslationFirstReveal_Planning_RU.md",
-  "currentTaskId": "reasoning-reveal.phase3.stream1.task1",
-  "expectedCommitMessage": "fix: keep pending reasoning source hidden",
+  "currentTaskId": "reasoning-reveal.phase3.stream2.task1",
+  "expectedCommitMessage": "feat: reveal translated reasoning progressively",
   "debt": null
 }
 ```
@@ -60,12 +60,12 @@
 
 ### Stream: Display Projection
 
-7. [IN_PROGRESS] `reasoning-reveal.phase3.stream1.task1` Stop merged thinking display content from falling back to English while a translated segment is pending (scope: `src/client/ui/src/session/dialog-panel-message-utils.ts, src/client/ui/src/session/dialog-panel-message-utils.test.ts, src/client/ui/src/session/session-message-localization-facade.ts`; expected commit: `fix: keep pending reasoning source hidden`).
-8. [TODO] Git Commit: `fix: keep pending reasoning source hidden` (hash: TBD)
+7. [DONE] `reasoning-reveal.phase3.stream1.task1` Stop merged thinking display content from falling back to English while a translated segment is pending (scope: `src/client/ui/src/session/dialog-panel-message-utils.ts, src/client/ui/src/session/dialog-panel-message-utils.test.ts, src/client/ui/src/session/session-message-localization-facade.ts`; expected commit: `fix: keep pending reasoning source hidden`).
+8. [DONE] Git Commit: `fix: keep pending reasoning source hidden` (hash: self)
 
 ### Stream: Progressive Reveal
 
-9. [TODO] `reasoning-reveal.phase3.stream2.task1` Reveal completed translated reasoning text progressively in the thinking bubble with source fallback on timeout (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `feat: reveal translated reasoning progressively`).
+9. [IN_PROGRESS] `reasoning-reveal.phase3.stream2.task1` Reveal completed translated reasoning text progressively in the thinking bubble with source fallback on timeout (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/translated-text-reveal.ts, src/client/ui/src/session/translated-text-reveal.test.ts`; expected commit: `feat: reveal translated reasoning progressively`).
 10. [TODO] Git Commit: `feat: reveal translated reasoning progressively` (hash: TBD)
 
 ## Phase 4 - Documentation Sync (owner: Codex, updated: 2026-06-25)
